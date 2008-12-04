@@ -18,7 +18,7 @@ map.to.segments <- function(map) {
 
 join.segments <- function(segs) {
   map <- matrix(0, 0, 2)
-  for (i in 1:length(segs)) {
+  for (i in 1:length(segs)) { 
     map <- rbind(map, segs[[i]])
   }
   return(map) 
@@ -63,7 +63,6 @@ check.intersection <- function(x1, y1, x2, y2) {
   }
   return(FALSE)
 }
-
 
 segs <- map.to.segments(map)
 ## map <- join.segments(list(segs[[1]], segs[[3]], segs[[4]]))
@@ -145,7 +144,31 @@ gmap[is.na(gmap[,"nu"]),"Lu"] <- NA
 gmap[,"Ld"] <- r * dtheta
 gmap[is.na(gmap[,"nd"]),"Ld"] <- NA
 
+## Convert to proximity matricies A and B
+## Points 1:((N-1)*M) are variable points
+## Points ((N-1)*M+1):(N*M) are fixed
+C <- matrix(0, (N-1)*M, N*M)
+mgmap <- as.matrix(gmap)
+for (k in 1:(((N-1)*M))) {
+  C[k,na.omit(mgmap[k,c("nl","nr","nu","nd")])] <- 1/na.omit(mgmap[k,c("Ll","Lr","Lu","Ld")])
+}
+A <- C[,1:((N-1)*M)]
+B <- C[,((N-1)*M+1):(N*M)]
+## Diagonal matrix of row sums of [ A B ]
+D <- diag(apply(cbind(C), 1, sum))
 
+## Initial test with P lying on circle
+P <-  mgmap[((N-1)*M+1):(N*M),c("X","Y")]
+
+## The matrix Q is an n by 2 matrix comprising the row vectors of the
+## solution points
+Q <- solve(D - A) %*% B %*% P
+
+mgmap[,c("X","Y")] <- rbind(Q, P)
+
+plot(NA,NA,xlim=c(-pi, pi), ylim=c(-pi, pi))
+plot.mesh(mgmap)
+x11()
 ## Compute force on each element
 compute.force <- function(gmap) {
   ## Compute the force due to a component
@@ -177,49 +200,75 @@ compute.force <- function(gmap) {
 }
 
 ## Compute energy
-compute.energy <- function(gmap) {
+compute.energy <- function(X1, Y1, gmap) {
   ## Compute the energy due to a component
   compute.energy.component <- function(X1, Y1, n, l, L) {
-  X2 <- gmap[gmap[,n],"X"]
-  Y2 <- gmap[gmap[,n],"Y"]
-  gmap[,l] <<- sqrt((X2 - X1)^2 + (Y2 - Y1)^2)
-  E <- (gmap[,l] - gmap[,L])^2 / gmap[,L]
-  E[is.na(E)] <- 0
-  return(E)
-}
-  X1 <- gmap[,"X"]
-  Y1 <- gmap[,"Y"]
+    X2 <- X1[gmap[,n]]
+    Y2 <- Y1[gmap[,n]]
+    l <- sqrt((X2 - X1)^2 + (Y2 - Y1)^2)
+    E <- (l - gmap[,L])^2 / (2 * gmap[,L])
+    E[is.na(E)] <- 0
+    return(E)
+  }
 
   El <- compute.energy.component(X1, Y1, "nl", "ll", "Ll")
   Er <- compute.energy.component(X1, Y1, "nr", "lr", "Lr")
   Eu <- compute.energy.component(X1, Y1, "nu", "lu", "Lu")
   Ed <- compute.energy.component(X1, Y1, "nd", "ld", "Ld")
 
-##  print(Fl)
-  Etot <- El + Er + Eu + Ed
-  
-  gmap[,"E"] <- Etot
-  return(gmap)
+  Etot <- sum(El + Er + Eu + Ed)
+  print(Etot)
+  return(Etot)
 }
 
-compute.total.energy <- function(p) {
-  gmap[,"X"] <- p[1:nrow(gmap)]
-  gmap[,"Y"] <- p[(1:nrow(gmap))+nrow(gmap)]
-  
-  gmap <- compute.energy(gmap)
-  E <- sum(gmap[,"E"])
-  return(E)
+compute.energy.gr <- function(X1, Y1, gmap) {
+  compute.energy.gr.component <- function(X1, Y1, n, L) {
+    X2 <- X1[gmap[,n]]
+    Y2 <- Y1[gmap[,n]]
+    l <- sqrt((X2 - X1)^2 + (Y2 - Y1)^2)
+    L <- gmap[,L]
+    dE <-   (l - L)/ (l * L) * c(X1 - X2, Y1 - Y2)
+    dE[is.na(dE)] <- 0
+    return(dE)
+  }
+  dEl <- compute.energy.gr.component(X1, Y1, "nl", "Ll")
+  dEr <- compute.energy.gr.component(X1, Y1, "nr", "Lr")
+  dEu <- compute.energy.gr.component(X1, Y1, "nu", "Lu")
+  dEd <- compute.energy.gr.component(X1, Y1, "nd", "Ld")
+
+  dE <- dEl + dEr + dEu + dEd
+  return(dE)
 }
 
-if (TRUE) {
+compute.total.energy <- function(p, gmap) {
+  X <- p[1:nrow(gmap)]
+  Y <- p[(1:nrow(gmap))+nrow(gmap)]
+  return(compute.energy(X, Y, gmap))
+}
+
+compute.total.energy.gr <- function(p, gmap) {
+  X <- p[1:nrow(gmap)]
+  Y <- p[(1:nrow(gmap))+nrow(gmap)]
+  return(compute.energy.gr(X, Y, gmap))
+}
+
+
+
 dt <- 0.001
-opt <- list(p = c(gmap[,"X"],gmap[,"Y"]))
+opt <- list(par = c(gmap[,"X"],gmap[,"Y"]) * r)
+if (FALSE) {
 for (time in 1:1000) {
   print(time)
 ##  plot.map(map)
-  plot(NA,NA,xlim=c(-pi, pi), ylim=c(-pi, pi))
+  plot(NA,NA,xlim=r*c(-pi, pi), ylim=r*c(-pi, pi))
   plot.mesh(gmap)
-  opt <- optim(opt$p, fn=compute.total.energy, control=list(maxit=10))
+  opt <- optim(opt$par,
+               method="CG",
+               fn=compute.total.energy,
+               gr=compute.total.energy.gr,
+               control=list(maxit=10), gmap=gmap)
+  gmap[,"X"] <- opt$par[1:nrow(gmap)]
+  gmap[,"Y"] <- opt$par[(1:nrow(gmap))+nrow(gmap)]
   ##  gmap <- compute.force(gmap)
 ##  gmap[,"X"] <- gmap[,"X"] + dt * gmap[,"F.X"]
 ##  gmap[,"Y"] <- gmap[,"Y"] + dt * gmap[,"F.Y"]
