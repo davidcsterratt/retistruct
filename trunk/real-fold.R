@@ -72,7 +72,6 @@ plot.mesh2 <- function(P, L) {
   }
 }
 
-
 ## matrix that has two stripes on either side of the diagonal
 stripe.matrix <- function(n) {
   M <- matrix(0, n, n)
@@ -80,6 +79,17 @@ stripe.matrix <- function(n) {
   M[1,n] <- 1
   M <- M + t(M)
   return(M)
+}
+
+## which.max.matrix - find row and column of matrix
+which.max.matrix <- function(M) {
+  ## Find the maxium within each row
+  row.maxs <-  apply(M, 1, max)
+  ## Find which row has the biggest max
+  i <- which.max(row.maxs)
+  ## Find the location of the max in that row
+  j <- which.max(M[i,])
+  return(c(i,j))
 }
 
 ## Read in data
@@ -99,7 +109,7 @@ dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
 
 ## Make a grid of indicies
 ## Specify maxium elevation and grid spacing in degrees
-theta.max.deg <- 90 
+theta.max.deg <- 120
 dtheta.deg <- 10 
 dphi.deg   <- 10 
 r <- 1000                                # radius
@@ -219,16 +229,20 @@ for (k in 1:length(s.P)) {
 
 ## Fitting of mesh to data
 
-## Convert to proximity matricies A and B
+
+for (iter in 1:3) {
+  ## Convert to proximity matricies A and B
 ## Points 1:((N-1)*M+1) are variable points
 ## Points ((N-1)*M+2):(N*M+1) are fixed
-C <- 1/L[1:((N-1)*M+1),]
+C <- cbind(1/L[1:((N-1)*M+1),1:((N-1)*M+1)],
+           1/L[1:((N-1)*M+1),((N-1)*M+2):(N*M+1)])
+
 C[is.na(C)] <- 0
 
 A <- C[,1:((N-1)*M+1)]
 B <- C[,((N-1)*M+2):(N*M+1)]
 ## Diagonal matrix of row sums of [ A B ]
-D <- diag(apply(cbind(C), 1, sum))
+D <- diag(apply(C, 1, sum))
 
 ## The matrix Q is an n by 2 matrix comprising the row vectors of the
 ## solution points
@@ -249,5 +263,20 @@ for (i in 1:length(rim)) {
 points(P[,1], P[,2], pch=16)
 #text(P[,1], P[,2], labels=1:M)
 
-plot.mesh2(rbind(Q, P), L)
+R <- rbind(Q, P)
+plot.mesh2(R, L)
+
+
+## Next step: what happens if the longest links are removed?
+## Need to find the length of all the links
+l <- matrix(0, 1+(N-1)*M, 1+N*M)
+for (i in 1:((N-1)*M+1)) {
+  js <- which(!is.na(L[i,]))
+  l[i, js] <- sqrt(apply((t(R[js,]) - R[i,])^2, 2, sum))
+}
+m.i <- which.max.matrix(l)
+L[m.i[1], m.i[2]] <- NA
+L[m.i[2], m.i[1]] <- NA
+C[which.max(l)] <- 0
+}
 
