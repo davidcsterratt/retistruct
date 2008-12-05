@@ -58,7 +58,7 @@ plot.mesh <- function(gmap) {
   ## Plot the radial lines
   for (i in is) {
     inds <- (gmap[,"i"] == i)
-    polygon(gmap[inds,"X"], gmap[inds,"Y"])
+    lines(gmap[inds,"X"], gmap[inds,"Y"])
   }
 }
 
@@ -79,7 +79,7 @@ dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
 
 ## Make a grid of indicies
 ## Specify maxium elevation and grid spacing in degrees
-theta.max.deg <- 140 
+theta.max.deg <- 90 
 dtheta.deg <- 10 
 dphi.deg   <- 10 
 r <- 1000                                # radius
@@ -180,8 +180,11 @@ for (i in 1:length(rim)) {
 rim.dist[,"s"] <- c(0,rim.dist[-nrow(rim.dist),"s"])
 
 ## Distribute points equally along edges
-## Find the distance along the rim at which the points shoudl be
-s.P <- seq(0, by=max(rim.dist[,"s"])/36, len=36)
+## Find the distance along the rim at which the points should be
+## The last "s" element of rim.dist is actually the distance at
+## the *start* of the last line segment, so we need to add on "l".
+## This is not ideal, but is necessetated by the behaviour of findInterval()
+s.P <- seq(0, by=sum(rim.dist[nrow(rim.dist),c("s","l")])/36, len=36)
 
 ## Find the ind of the line segment in which they occur
 inds <- findInterval(s.P, rim.dist[,"s"]) 
