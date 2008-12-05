@@ -1,18 +1,5 @@
 source("../../data/Anatomy/cluster-analysis.R")
 
-map.to.segments <- function(map) {
-  segs <- list()
-  i <- 1
-  while(i < dim(map)[1]) {
-    n <- map[i, 2]
-    inds <- (i+1):(i+n)
-    segs <- c(segs, list(map[inds,]))
-    lines(map[inds, 1], map[inds, 2], lwd=2)
-    i <- i + n + 1
-  }
-  return(segs)
-}
-
 join.segments <- function(segs) {
   map <- matrix(0, 0, 2)
   for (i in 1:length(segs)) { 
@@ -80,10 +67,15 @@ map <- as.matrix(read.map("../../data/Anatomy/ALU/M643-4/CONTRA"))
 
 ## Corner analysis
 segs <- map.to.segments(map)
-edge <- join.segments(list(segs[[1]], segs[[3]], segs[[4]]))
+## Some curation is required here
+segs4 <- segs[[4]][23:1,]
+edge <- join.segments(list(segs[[1]], segs[[3]], segs4))
 ##map <- segs[[1]]
-palette(rainbow(180))
 angles <- find.corners(edge) * 180/pi
+
+## Find the distance of each point from the centroid of the data
+cent <- apply(edge, 2, mean)
+dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
 
 ## Make a grid of indicies
 ## Specify maxium elevation and grid spacing in degrees
@@ -97,8 +89,8 @@ is <- 1:(360/dphi.deg)
 js <- 1:(theta.max.deg/dtheta.deg)
 
 ## Convert to radians
-phi <-   dphi.deg * pi/180
-theta <- dtheta.deg * pi/180
+dphi <-   dphi.deg * pi/180
+dtheta <- dtheta.deg * pi/180
 theta.max <- theta.max.deg * pi/180
 
 ## The matricies X and Y specify the mapping from point i,j in polar space
@@ -109,8 +101,8 @@ Y <- matrix(NA, length(is), length(js))
 ## Put these into gmap structure
 gmap <- expand.grid(i=is, j=js)
 gmap <- cbind(gmap,
-              phi=  gmap[,"i"]*phi,
-              theta=gmap[,"j"]*theta)
+              phi=  gmap[,"i"]*dphi,
+              theta=gmap[,"j"]*dtheta)
 gmap <- cbind(gmap, X=r*gmap[,"theta"]*cos(gmap[,"phi"]))
 gmap <- cbind(gmap, Y=r*gmap[,"theta"]*sin(gmap[,"phi"]))
 
@@ -138,6 +130,77 @@ gmap[is.na(gmap[,"nu"]),"Lu"] <- NA
 gmap[,"Ld"] <- r * dtheta
 gmap[is.na(gmap[,"nd"]),"Ld"] <- NA
 
+
+## Heuristics for finding corners
+## P.corner <- exp(-0.5*((angles-90)/30)^2) * (dist/max(dist))^1
+
+## points(edge[,1], edge[,2], col=dist/max(dist)*100, pch=20)
+## s <- sort(dist, index.return=TRUE, decreasing=TRUE)
+## inds <- s$ix[1:6]
+
+## points(edge[,1], edge[,2], col=P.corner*50, pch=20)
+## s <- sort(P.corner, index.return=TRUE, decreasing=TRUE)
+## inds <- s$ix[1:14] + 1
+
+## points(edge[inds,1], edge[inds,2], pch="x")
+## text(edge[inds,1], edge[inds,2], labels=format(inds,digits=2))
+
+## Plot the grid
+## plot(NA,NA,xlim=c(-pi, pi), ylim=c(-pi, pi))
+## plot.mesh(gmap)
+
+## Hand pick corners
+
+c(16, 31)
+c(53, 65)
+c(83, 102)
+
+## Define rim as list of line segments
+rim <- list(edge[16:31,],
+            edge[53:65,],
+            edge[83:94,])
+
+## Find distance along edges
+## Need a matrix to store segment ind and ind with in segment
+rim.dist <- matrix(0, 0, 4)
+s.cum <- 0
+for (i in 1:length(rim)) {
+  seg <- rim[[i]]
+  v <- diff(seg)
+  l <- sqrt(apply(v^2, 1, sum))
+  s <- s.cum + cumsum(l)
+  print(s)
+  s.cum <- s[length(s)]
+  rim.dist <- rbind(rim.dist,
+                    cbind(s,
+                          l,
+                          seg=rep(i, length(s)),
+                          i=1:length(s)))
+}
+rim.dist[,"s"] <- c(0,rim.dist[-nrow(rim.dist),"s"])
+
+## Distribute points equally along edges
+## Find the distance along the rim at which the points shoudl be
+s.P <- seq(0, by=max(rim.dist[,"s"])/36, len=36)
+
+## Find the ind of the line segment in which they occur
+inds <- findInterval(s.P, rim.dist[,"s"]) 
+
+## Find the distance along the segment
+ds.P <- s.P - rim.dist[inds,"s"] 
+
+## Now find the points themselves
+P <- matrix(NA, length(s.P), 2)
+f <- ds.P/rim.dist[inds,"l"]
+for (k in 1:length(s.P)) {
+  i <-  rim.dist[inds[k],"i"]
+  si <- rim.dist[inds[k],"seg"]
+  ends <- rim[[si]][c(i,i+1),]
+  P[k,] <- (1 - f[k]) * ends[1,] + f[k] * ends[2,]
+##  print(norm2(as.vector(v)))
+##  print(ds.P[k]/rim.dist[k,"l"])
+}
+
 ## Fitting of mesh to data
 
 ## Convert to proximity matricies A and B
@@ -154,7 +217,7 @@ B <- C[,((N-1)*M+1):(N*M)]
 D <- diag(apply(cbind(C), 1, sum))
 
 ## Initial test with P lying on circle
-P <-  mgmap[((N-1)*M+1):(N*M),c("X","Y")]
+## P <-  mgmap[((N-1)*M+1):(N*M),c("X","Y")]
 
 ## The matrix Q is an n by 2 matrix comprising the row vectors of the
 ## solution points
@@ -164,13 +227,23 @@ Q <- solve(D - A) %*% B %*% P
 mgmap[,c("X","Y")] <- rbind(Q, P)
 
 ## Plotting
-plot.map(map)
 
-##text(edge[,1], edge[,2], labels=format(angles,digits=2))
-points(edge[,1], edge[,2], col=angles, pch=20)
+palette(rainbow(100))
+
+plot.map(map, seginfo=FALSE)
+
+## Highlight rim
+for (i in 1:length(rim)) {
+  seg <- rim[[i]]
+  lines(seg[,1], seg[,2], col="red")
+}
+
+points(P[,1], P[,2], pch=16)
+#text(P[,1], P[,2], labels=1:M)
 
 plot.mesh(mgmap)
 
-## Plot the grid
-## plot(NA,NA,xlim=c(-pi, pi), ylim=c(-pi, pi))
-## plot.mesh(gmap)
+## To fix:
+## 1. get evenly spaced points on rim
+## 2. get centre point
+## 3. get plotting function working
