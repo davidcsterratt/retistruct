@@ -62,6 +62,26 @@ plot.mesh <- function(gmap) {
   }
 }
 
+## Plot a mesh of radial and tangential lines 
+plot.mesh2 <- function(P, L) {
+  for (i in 1:nrow(P)) {
+    js <- which(!is.na(L[i,]))
+    for (j in js) {
+      lines(P[c(i,j),1], P[c(i,j),2])
+    }
+  }
+}
+
+
+## matrix that has two stripes on either side of the diagonal
+stripe.matrix <- function(n) {
+  M <- matrix(0, n, n)
+  diag(M[2:n,1:(n-1)]) <- 1
+  M[1,n] <- 1
+  M <- M + t(M)
+  return(M)
+}
+
 ## Read in data
 map <- as.matrix(read.map("../../data/Anatomy/ALU/M643-4/CONTRA"))
 
@@ -85,51 +105,44 @@ dphi.deg   <- 10
 r <- 1000                                # radius
 
 ## Make some indicies
-is <- 1:(360/dphi.deg)
-js <- 1:(theta.max.deg/dtheta.deg)
+is <- c(1:(360/dphi.deg))
+js <- c(1:(theta.max.deg/dtheta.deg))
+
+M <- length(is)
+N <- length(js)
 
 ## Convert to radians
 dphi <-   dphi.deg * pi/180
 dtheta <- dtheta.deg * pi/180
 theta.max <- theta.max.deg * pi/180
 
-## The matricies X and Y specify the mapping from point i,j in polar space
-## to cartesian coordinates
-X <- matrix(NA, length(is), length(js))
-Y <- matrix(NA, length(is), length(js))
-
 ## Put these into gmap structure
-gmap <- expand.grid(i=is, j=js)
+gmap <- rbind(c(i=0, j=0), expand.grid(i=is, j=js))
 gmap <- cbind(gmap,
               phi=  gmap[,"i"]*dphi,
               theta=gmap[,"j"]*dtheta)
 gmap <- cbind(gmap, X=r*gmap[,"theta"]*cos(gmap[,"phi"]))
 gmap <- cbind(gmap, Y=r*gmap[,"theta"]*sin(gmap[,"phi"]))
 
-## Find the neigbours and put them in columns
-## - nl - tangential left (in direction of increasing phi)
-## - nr - tangential right (in direction of decreasing phi)
-## - nu - radial up (in direction of increasing theta)
-## - nd - radial down (in direction of decreasing theta)
-M <- length(is)
-N <- length(js)
-gmap[,"nl"] <- (1:nrow(gmap))+ 1 - M * (((1:nrow(gmap)) %% M) == 0)
-gmap[,"nr"] <- (1:nrow(gmap))- 1 + M * (((1:nrow(gmap)) %% M) == 1)
-gmap[,"nu"] <- (1:nrow(gmap))+ M
-gmap[gmap[,"nu"]>nrow(gmap),"nu"] <- NA
-gmap[,"nd"] <- (1:nrow(gmap))- M
-gmap[gmap[,"nd"]<1,"nd"] <- NA
+## Find the matrix L of lengths to neigbours
+## No connection is indicated by NA
+L <- matrix(NA, 1+N*M, 1+N*M)
+## First block: connections from (0,0) to neigbours
+L[1, 1+(1:M)] <- dtheta
 
-## Computes the distance between grid points if they were
-## spread over the surface of a sphere
-## Find distance to left neigbours
-gmap[,"Ll"] <- r * dphi * sin(gmap[,"theta"])
-gmap[,"Lr"] <- r * dphi * sin(gmap[,"theta"])
-gmap[,"Lu"] <- r * dtheta
-gmap[is.na(gmap[,"nu"]),"Lu"] <- NA
-gmap[,"Ld"] <- r * dtheta
-gmap[is.na(gmap[,"nd"]),"Ld"] <- NA
-
+## Subsequent blocks, grouped by increment in theta
+for (j in js) {
+  rows <- 1 + (j-1)*M + 1:M
+  # connections from (dphi * i, dtheta * j) to neigbours
+  L[rows,rows] <- stripe.matrix(M) * dphi * sin(gmap[rows,"theta"])
+  if (j > 1) {
+    L[rows,rows-M] <- diag(M) * dtheta
+  }
+  if (j < N) {
+    L[rows,rows+M] <- diag(M) * dtheta
+  }
+}
+L[L==0] <- NA
 
 ## Heuristics for finding corners
 ## P.corner <- exp(-0.5*((angles-90)/30)^2) * (dist/max(dist))^1
@@ -207,27 +220,19 @@ for (k in 1:length(s.P)) {
 ## Fitting of mesh to data
 
 ## Convert to proximity matricies A and B
-## Points 1:((N-1)*M) are variable points
-## Points ((N-1)*M+1):(N*M) are fixed
-C <- matrix(0, (N-1)*M, N*M)
-mgmap <- as.matrix(gmap)
-for (k in 1:(((N-1)*M))) {
-  C[k,na.omit(mgmap[k,c("nl","nr","nu","nd")])] <- 1/na.omit(mgmap[k,c("Ll","Lr","Lu","Ld")])
-}
-A <- C[,1:((N-1)*M)]
-B <- C[,((N-1)*M+1):(N*M)]
+## Points 1:((N-1)*M+1) are variable points
+## Points ((N-1)*M+2):(N*M+1) are fixed
+C <- 1/L[1:((N-1)*M+1),]
+C[is.na(C)] <- 0
+
+A <- C[,1:((N-1)*M+1)]
+B <- C[,((N-1)*M+2):(N*M+1)]
 ## Diagonal matrix of row sums of [ A B ]
 D <- diag(apply(cbind(C), 1, sum))
-
-## Initial test with P lying on circle
-## P <-  mgmap[((N-1)*M+1):(N*M),c("X","Y")]
 
 ## The matrix Q is an n by 2 matrix comprising the row vectors of the
 ## solution points
 Q <- solve(D - A) %*% B %*% P
-
-## Put new distances back in map for plotting
-mgmap[,c("X","Y")] <- rbind(Q, P)
 
 ## Plotting
 
@@ -244,9 +249,5 @@ for (i in 1:length(rim)) {
 points(P[,1], P[,2], pch=16)
 #text(P[,1], P[,2], labels=1:M)
 
-plot.mesh(mgmap)
+plot.mesh2(rbind(Q, P), L)
 
-## To fix:
-## 1. get evenly spaced points on rim
-## 2. get centre point
-## 3. get plotting function working
