@@ -36,6 +36,14 @@ plot.triangle <- function(map, inds) {
   lines(map[i,1], map[i,2])
 }
 
+## Compute area of triangle defined by corners x1, x2 & x3
+tri.area <- function(x1, x2, x3) {
+  a <- x2-x1
+  b <- x3-x1
+  area <- 0.5 * sqrt(t(a) %*% a * t(b) %*% b - (t(a) %*% b)^2)
+  return(as.vector(area))
+}
+
 ## Check whether line from x1 to y1 and from x2 to y2 intersect
 check.intersection <- function(x1, y1, x2, y2) {
   m <- cbind(y1-x1, -y2+x2)
@@ -112,7 +120,7 @@ dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
 theta.max.deg <- 120
 dtheta.deg <- 10 
 dphi.deg   <- 10 
-r <- 1000                                # radius
+r <- 2000                                # radius
 
 ## Make some indicies
 is <- c(1:(360/dphi.deg))
@@ -145,14 +153,18 @@ for (j in js) {
   rows <- 1 + (j-1)*M + 1:M
   # connections from (dphi * i, dtheta * j) to neigbours
   L[rows,rows] <- stripe.matrix(M) * dphi * sin(gmap[rows,"theta"])
-  if (j > 1) {
-    L[rows,rows-M] <- diag(M) * dtheta
+  if (j == 1) {
+    ## connections from the pole
+    L[rows,1] <- dtheta
+  } else {
+    L[rows,rows-M] <-  diag(M) * dtheta
   }
   if (j < N) {
     L[rows,rows+M] <- diag(M) * dtheta
   }
 }
 L[L==0] <- NA
+L <- L * r
 
 ## Heuristics for finding corners
 ## P.corner <- exp(-0.5*((angles-90)/30)^2) * (dist/max(dist))^1
@@ -230,7 +242,7 @@ for (k in 1:length(s.P)) {
 ## Fitting of mesh to data
 
 
-for (iter in 1:3) {
+for (iter in 1:1) {
   ## Convert to proximity matricies A and B
 ## Points 1:((N-1)*M+1) are variable points
 ## Points ((N-1)*M+2):(N*M+1) are fixed
@@ -266,17 +278,52 @@ points(P[,1], P[,2], pch=16)
 R <- rbind(Q, P)
 plot.mesh2(R, L)
 
+## Find length of all links between points in P, where links
+## are specified by not NAs in L
+link.lengths <- function(P, L) {
+  l <- matrix(0, nrow(L), ncol(L))
+  for (i in 1:nrow(L)) {
+    js <- which(!is.na(L[i,]))
+    l[i, js] <- sqrt(apply((t(P[js,]) - P[i,])^2, 2, sum))
+  }
+  return(l)
+}
 
 ## Next step: what happens if the longest links are removed?
 ## Need to find the length of all the links
-l <- matrix(0, 1+(N-1)*M, 1+N*M)
-for (i in 1:((N-1)*M+1)) {
-  js <- which(!is.na(L[i,]))
-  l[i, js] <- sqrt(apply((t(R[js,]) - R[i,])^2, 2, sum))
-}
+l <- link.lengths(R, L[1:((N-1)*M)+1,])
 m.i <- which.max.matrix(l)
 L[m.i[1], m.i[2]] <- NA
 L[m.i[2], m.i[1]] <- NA
 C[which.max(l)] <- 0
 }
 
+## Now try improving on this initial guess by using the energy function
+## (l - L)^2
+E <- function(p, P, L) {
+  ## Construct Q from p
+  Q <- matrix(p, length(p)/2, 2)
+  l <- link.lengths(rbind(Q, P), L[1:nrow(Q),])
+  E <- sum(sum((L[1:nrow(Q),] - l)^2, na.rm=TRUE))
+  print(E)
+  return(E)
+}
+
+dE <- function(p, P, L) {
+  ## Construct Q from p
+  Q <- matrix(p, length(p)/2, 2)
+
+  l <- link.lengths(rbind(Q, P), L[1:nrow(Q),])
+
+  C <- 1 - L[1:nrow(Q),]/l
+  C[is.na(C)] <- 0
+
+  ## Diagonal matrix of row sums of [ A B ]
+  D <- diag(apply(C, 1, sum))
+  dEdQ <- D %*% Q - C %*% rbind(Q, P)
+  return(as.vector(dEdQ))
+}
+
+opt <- optim(as.vector(Q), E, gr=dE, method="BFGS", L=L, P=P, control=list(maxit=100))
+plot.map(map)
+plot.mesh2(rbind(Q, P), L)
