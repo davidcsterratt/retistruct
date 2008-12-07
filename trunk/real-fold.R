@@ -190,58 +190,65 @@ c(16, 31)
 c(53, 65)
 c(83, 102)
 
+## We need a structure in which to store paths, such as the rim, which
+## may have gaps in them. The structure should have one row for each
+## point. Each row should contain:
+## * the X & Y coords of each point
+## * the cumulative distance along the edge
+## * the length of the edge which starts at that point (the
+##   last point will have no information
+## Each continuous section of a path is called a segment. At the
+## boundary between two segments, there is a row containing NA 
+
+## create.path(segments)
+## create a path from a list of line segments
+create.path <- function(segs) {
+  p <- matrix(0, 0, 4)                  # the path matrix
+  colnames(p) <- c("X", "Y", "s", "l")
+  s.cum <- 0
+  for (i in 1:length(segs)) {
+    seg <- segs[[i]]
+    v <- diff(seg)
+    l <- sqrt(apply(v^2, 1, sum))
+    s <- s.cum + c(0, cumsum(l))
+    s.cum <- s[length(s)]
+    if (i > 1) {
+      p <- rbind(p, rep(NA, 4))
+    }
+    p <- rbind(p,
+               cbind(seg,
+                     s,
+                     c(l, NA)))
+  }
+  return(p)
+}
+
+## Find a point a fractional distance f along a path p
+find.points.in.path <- function(f, p) {
+  F <- p[,"s"] / s[length(s)]                  # fractional distance along path
+  # remove NAs. Have to replce with distances in sequence
+  F[is.na(F)] <- F[which(is.na(F))-1]          
+  ## Find intervals in which points occur
+  is <- findInterval(f, F, rightmost.closed=TRUE)
+  ## Find fractional distance *within* interval
+  f <- (f - F[is])/(F[is+1] - F[is])
+  ## Interpolate to find the points
+  P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
+  return(P)
+}
+
 ## Define rim as list of line segments
 rim <- list(edge[16:31,],
             edge[53:65,],
             edge[83:94,])
 
 ## Find distance along edges
-## Need a matrix to store segment ind and ind with in segment
-rim.dist <- matrix(0, 0, 4)
-s.cum <- 0
-for (i in 1:length(rim)) {
-  seg <- rim[[i]]
-  v <- diff(seg)
-  l <- sqrt(apply(v^2, 1, sum))
-  s <- s.cum + cumsum(l)
-  print(s)
-  s.cum <- s[length(s)]
-  rim.dist <- rbind(rim.dist,
-                    cbind(s,
-                          l,
-                          seg=rep(i, length(s)),
-                          i=1:length(s)))
-}
-rim.dist[,"s"] <- c(0,rim.dist[-nrow(rim.dist),"s"])
+rim.path <- create.path(rim)
 
 ## Distribute points equally along edges
-## Find the distance along the rim at which the points should be
-## The last "s" element of rim.dist is actually the distance at
-## the *start* of the last line segment, so we need to add on "l".
-## This is not ideal, but is necessetated by the behaviour of findInterval()
-s.P <- seq(0, by=sum(rim.dist[nrow(rim.dist),c("s","l")])/36, len=36)
-
-## Find the ind of the line segment in which they occur
-inds <- findInterval(s.P, rim.dist[,"s"]) 
-
-## Find the distance along the segment
-ds.P <- s.P - rim.dist[inds,"s"] 
-
-## Now find the points themselves
-P <- matrix(NA, length(s.P), 2)
-f <- ds.P/rim.dist[inds,"l"]
-for (k in 1:length(s.P)) {
-  i <-  rim.dist[inds[k],"i"]
-  si <- rim.dist[inds[k],"seg"]
-  ends <- rim[[si]][c(i,i+1),]
-  P[k,] <- (1 - f[k]) * ends[1,] + f[k] * ends[2,]
-##  print(norm2(as.vector(v)))
-##  print(ds.P[k]/rim.dist[k,"l"])
-}
+P <- find.points.in.path(seq(0, by=1/M, len=M), rim.p)
 
 ## Fitting of mesh to data
-
-
 for (iter in 1:1) {
   ## Convert to proximity matricies A and B
 ## Points 1:((N-1)*M+1) are variable points
