@@ -1,0 +1,171 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+
+\begin{document}
+
+\section{Algorithm}
+\label{fold-retina:sec:method}
+
+Consider a partial sphere where location on the surface is defined by
+the azimuth angle $\phi$ and angle  $\theta$ from the pole. The part
+of the sphere opposite the pole is removed, leaving a rim at an
+elevation of $\theta_0$.
+
+A grid is laid over the surface of the sphere.  There are $M$
+divisions in the azimuthal direction, each subtending an angle of
+$\Delta \phi=2\pi/M$. There are $N$ divisions in t in the azimuthal
+directions, each subtending an angle of $\Delta\theta=\theta_0/N$. The
+distance of a point $i$ to any of its nearest neighbours $j$ is
+defined $L_{ij}$. For the nearest neighbours above and below $L_{ij} =
+\Delta\theta$ and in the azimuthal direction is $L_{ij}
+=\sin(\theta_i)\Delta \phi$.
+
+It is supposed that this grid is to be projected onto a flattened
+retina. First, portions of the original rim of the retina are
+identified. At present, this is done by eye, but it may be possible to
+automate the procedure. Next the $M$ points corresponding to the rim
+of the partial sphere $\vec{p}_i$ are laid out at equal intervals
+along the rim of the flattened retina. 
+
+The aim now is to infer the locations $\vec{q}_i$ of the remaining
+$m=(M-1)N$ points of the grid.  In furtherance of this aim, an energy
+function is defined:
+\begin{equation}
+  \label{fold-retina:eq:1}
+  E = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m A_{ij} |\vec{q}_i - \vec{q}_j|^2
+  + \sum_{i=1}^m \sum_{j=1}^M B_{ij} |\vec{q}_i - \vec{p}_j|^2
+\end{equation}
+where the elements of the $m$ by $m$ matrix $A$ are defined
+\begin{equation}
+  \label{fold-retina:eq:2}
+  A_{ij} =\left\{
+  \begin{array}{ll}
+    0       & \mbox{if $i$ and $j$ are not connected in the grid} \\
+    1/L_{ij} & \mbox{if $i$ and $j$ are  connected in the grid}
+  \end{array}\right.
+\end{equation}
+and the elements of the $m$ by $M$ matrix $B$ is similarly defined.
+Minising this energy function should have the effect of minising the
+total lengths of the connections and while also making the lengths of
+the connections between nearest neigbours on the flattened retina
+proportional to the distance between the corresponding connections on
+the partial sphere.
+
+
+We define the $x$ and $y$ coordinates of $\vec{q}_i$ as $q_{i1}$ and
+$q_{i2}$ respectively. Now
+ differentiating Equation~(\ref{fold-retina:eq:1}) with respect to
+the elements of the $\vec{q}_i$:
+\begin{equation}
+  \label{fold-retina:eq:5}
+  \frac{\partial E}{\partial q_{i1}} = 
+  \frac{1}{2}\sum_j A_{ij} 2(q_{i1} - q_{j1}) 
+  +   \frac{1}{2}\sum_j B_{ij} 2(q_{i1} - q_{j1}) 
+\end{equation}
+
+and setting it to zero, we can find
+the set of points $\vec{q}_i$ that minimise the energy. This can be
+written conveniently as a matrix equation:
+\begin{equation}
+  \label{fold-retina:eq:3}
+  Q = (D - A)^{-1}BP
+\end{equation}
+where the matrices $Q=[ \vec{q}_1 \dots \vec{q}_m]^T$, $P=[ \vec{p}_1
+\dots \vec{p}_M]^T$ and $D$ is a $m$ by $m$  diagonal matrix with
+\begin{equation}
+  \label{fold-retina:eq:4}
+  D_{ii} = \sum_j A_{ij} + \sum_j B_{ij}
+\end{equation}
+
+\section{Application to retina}
+\label{fold-retina:sec:application-retina}
+
+Figures~\ref{fold-retina:fig:map090}--\ref{fold-retina:fig:map140}
+show the results of the algorithm applied to one of Dan's flattened
+retinae for various values of $\theta_0$ and $\Delta\theta=\Delta\phi=10^\circ$. I've marked up what I think is the original rim of the retina
+in red, and distributed 36 points along it, which are considered to be
+the fixed points $\vec{p}_i$ of the algorithm.
+
+A mapping is produced, but it is clearly distorted around the tears,
+and generally in the elevation ($\theta$) direction.
+
+For a good mapping, the increments along the radial lines would be
+expected to be equal, but in fact they are larger towards the rim than
+in the cnetre (apart from the most central interval between the pole
+and the $\theta=10^\circ$ line of elevation. This effect is less
+pronounced as $\theta_0$ is increased towards $140^\circ$
+(Figure~\ref{fold-retina:fig:map140}).
+
+In the vicinity of the tears, the mapping is obviously skewed. This is
+because the tug of the points on the other side of the tear is from
+the wrong direction.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{map-theta_max090}
+  \caption{Results of the method applied to a flattened retina with $\theta0=90^\circ$}
+  \label{fold-retina:fig:map090}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{map-theta_max100}
+  \caption{Results of the method applied to a flattened retina with $\theta_0=100^\circ$}
+  \label{fold-retina:fig:map100}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{map-theta_max120}
+  \caption{Results of the method applied to a flattened retina with $\theta_0=120^\circ$}
+  \label{fold-retina:fig:map120}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{map-theta_max140}
+  \caption{Results of the method applied to a flattened retina with $\theta_0=140^\circ$}
+  \label{fold-retina:fig:map140}
+\end{figure}
+
+\section{Discussion}
+\label{fold-retina:sec:discussion}
+
+The algorithm produces a mapping, but because there is no tear
+information in the model, it is a poor one.
+
+Possible ways forward:
+\begin{itemize}
+\item Try a completely different method (e.g. stiching and tiling).
+\item Find some way of dealing with distance across a tear
+  \begin{itemize}
+  \item This is likely to be hard to deal with ananlytically, so use an
+  optimisation algorithm such as conjugate gradient to find the minimum.
+  \end{itemize}
+\end{itemize}
+
+\section{Exteneded algorithm}
+\label{fold-retina:sec:exteneded-algorithm}
+
+The aim now is to infer the locations $\vec{q}_i$ of the remaining
+$m=(M-1)N$ points of the grid.  In furtherance of this aim, an energy
+function is defined:
+\begin{equation}
+  \begin{split}
+    E = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m A_{ij} |\vec{q}_i -
+    \vec{q}_j|^2
+    +  \sum_{i=1}^m \sum_{j=1}^M B_{ij} |\vec{q}_i -
+    \vec{p}_j|^2 \\
+    + \sum_{k=1}^{n_s} \left(\sum_{i=1}^m  C_{ik}|\vec{q}_i -
+      \vec{r}_{ik} - s_k\vec{v}_{ik}|
+    \right)^2
+  \end{split}
+\end{equation}
+
+
+\end{document}
+
+% LocalWords:  ij BP
