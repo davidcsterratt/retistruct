@@ -45,12 +45,12 @@ tri.area <- function(x1, x2, x3) {
 }
 
 ## Check whether line from x1 to y1 and from x2 to y2 intersect
-check.intersection <- function(x1, y1, x2, y2) {
-  m <- cbind(y1-x1, -y2+x2)
-  if (!(det(m) == 0)) {
-    lambda <- solve(m) %*% (x2-x1)
+check.intersection <- function(P1, Q1, P2, Q2) {
+  M <- cbind(Q1-P1, -Q2+P2)
+  if (!(det(M) == 0)) {
+    lambda <- solve(M) %*% (P2-P1)
     if (all((lambda<1) & (lambda>0))) {
-      return(lambda)
+      return(list(lambda=lambda, R=(1-lambda[1])*P1 + lambda[1]*Q1))
     }
   }
   return(FALSE)
@@ -100,6 +100,108 @@ which.max.matrix <- function(M) {
   return(c(i,j))
 }
 
+highlight.possible.corners <- function(edge) {
+  angles <- find.corners(edge) * 180/pi
+
+  ## Find the distance of each point from the centroid of the data
+  cent <- apply(edge, 2, mean)
+  dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
+
+  ## Heuristics for finding corners
+  P.corner <- exp(-0.5*((angles-90)/30)^2) * (dist/max(dist))^1
+
+  palette(rainbow(100))
+
+  ## points(edge[,1], edge[,2], col=dist/max(dist)*100, pch=20)
+  ## s <- sort(dist, index.return=TRUE, decreasing=TRUE)
+  ## inds <- s$ix[1:6]
+
+  points(edge[,1], edge[,2], col=P.corner*50, pch=20)
+  s <- sort(P.corner, index.return=TRUE, decreasing=TRUE)
+  inds <- s$ix[1:14] + 1
+
+  points(edge[inds,1], edge[inds,2], pch="x")
+  text(edge[inds,1], edge[inds,2], labels=format(inds,digits=2))
+}
+
+## We need a structure in which to store paths, such as the rim, which
+## may have gaps in them. The structure should have one row for each
+## point. Each row should contain:
+## * the X & Y coords of each point
+## * the cumulative distance along the edge
+## * the length of the edge which starts at that point (the
+##   last point will have no information
+## Each continuous section of a path is called a segment. At the
+## boundary between two segments, there is a row containing NA 
+
+## create.path(segments)
+## create a path from a list of line segments
+create.path <- function(segs) {
+  p <- matrix(0, 0, 4)                  # the path matrix
+  colnames(p) <- c("X", "Y", "s", "l")
+  s.cum <- 0
+  for (i in 1:length(segs)) {
+    seg <- segs[[i]]
+    v <- diff(seg)
+    l <- sqrt(apply(v^2, 1, sum))
+    s <- s.cum + c(0, cumsum(l))
+    s.cum <- s[length(s)]
+    if (i > 1) {
+      p <- rbind(p, rep(NA, 4))
+    }
+    p <- rbind(p,
+               cbind(seg,
+                     s,
+                     c(l, NA)))
+  }
+  return(p)
+}
+
+## Find a point a fractional distance f along a path p
+find.points.in.path <- function(f, p) {
+  s <- p[,"s"]
+  F <- s/s[length(s)]                  # fractional distance along path
+  # remove NAs. Have to replce with distances in sequence
+  F[is.na(F)] <- F[which(is.na(F))-1]          
+  ## Find intervals in which points occur
+  is <- findInterval(f, F, rightmost.closed=TRUE)
+  ## Find fractional distance *within* interval
+  f <- (f - F[is])/(F[is+1] - F[is])
+  ## Interpolate to find the points
+  P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
+  return(P)
+}
+
+## Find length of all links between points in P, where links
+## are specified by not NAs in L
+link.lengths <- function(P, L) {
+  l <- matrix(0, nrow(L), ncol(L))
+  for (i in 1:nrow(L)) {
+    js <- which(!is.na(L[i,]))
+    l[i, js] <- sqrt(apply((t(P[js,]) - P[i,])^2, 2, sum))
+  }
+  return(l)
+}
+
+## Test to see if there is an intersection between two paths
+check.intersection.paths <- function(p1, p2) {
+  out <- list()
+  for(i in 1:(nrow(p1)-1)) {
+    for(j in 1:(nrow(p2)-1)) {
+      ci <- check.intersection(p1[i,c("X", "Y")],p1[i+1,c("X", "Y")],
+                                   p2[j,c("X", "Y")],p2[j+1,c("X", "Y")])
+      if (is.list(ci)) {
+        out <- c(out, list(i, j, ci))
+      }
+    }
+  }
+  return(out)
+}
+
+###
+### Start of code
+### 
+
 ## Read in data
 map <- as.matrix(read.map("../../data/Anatomy/ALU/M643-4/CONTRA"))
 
@@ -109,11 +211,6 @@ segs <- map.to.segments(map)
 segs4 <- segs[[4]][23:1,]
 edge <- join.segments(list(segs[[1]], segs[[3]], segs4))
 ##map <- segs[[1]]
-angles <- find.corners(edge) * 180/pi
-
-## Find the distance of each point from the centroid of the data
-cent <- apply(edge, 2, mean)
-dist <- sqrt(apply((t(edge) - cent)^2, 2, sum))
 
 ## Make a grid of indicies
 ## Specify maxium elevation and grid spacing in degrees
@@ -166,77 +263,10 @@ for (j in js) {
 L[L==0] <- NA
 L <- L * r
 
-## Heuristics for finding corners
-## P.corner <- exp(-0.5*((angles-90)/30)^2) * (dist/max(dist))^1
-
-## points(edge[,1], edge[,2], col=dist/max(dist)*100, pch=20)
-## s <- sort(dist, index.return=TRUE, decreasing=TRUE)
-## inds <- s$ix[1:6]
-
-## points(edge[,1], edge[,2], col=P.corner*50, pch=20)
-## s <- sort(P.corner, index.return=TRUE, decreasing=TRUE)
-## inds <- s$ix[1:14] + 1
-
-## points(edge[inds,1], edge[inds,2], pch="x")
-## text(edge[inds,1], edge[inds,2], labels=format(inds,digits=2))
-
-## Plot the grid
-## plot(NA,NA,xlim=c(-pi, pi), ylim=c(-pi, pi))
-## plot.mesh(gmap)
-
 ## Hand pick corners
-
-c(16, 31)
-c(53, 65)
-c(83, 102)
-
-## We need a structure in which to store paths, such as the rim, which
-## may have gaps in them. The structure should have one row for each
-## point. Each row should contain:
-## * the X & Y coords of each point
-## * the cumulative distance along the edge
-## * the length of the edge which starts at that point (the
-##   last point will have no information
-## Each continuous section of a path is called a segment. At the
-## boundary between two segments, there is a row containing NA 
-
-## create.path(segments)
-## create a path from a list of line segments
-create.path <- function(segs) {
-  p <- matrix(0, 0, 4)                  # the path matrix
-  colnames(p) <- c("X", "Y", "s", "l")
-  s.cum <- 0
-  for (i in 1:length(segs)) {
-    seg <- segs[[i]]
-    v <- diff(seg)
-    l <- sqrt(apply(v^2, 1, sum))
-    s <- s.cum + c(0, cumsum(l))
-    s.cum <- s[length(s)]
-    if (i > 1) {
-      p <- rbind(p, rep(NA, 4))
-    }
-    p <- rbind(p,
-               cbind(seg,
-                     s,
-                     c(l, NA)))
-  }
-  return(p)
-}
-
-## Find a point a fractional distance f along a path p
-find.points.in.path <- function(f, p) {
-  F <- p[,"s"] / s[length(s)]                  # fractional distance along path
-  # remove NAs. Have to replce with distances in sequence
-  F[is.na(F)] <- F[which(is.na(F))-1]          
-  ## Find intervals in which points occur
-  is <- findInterval(f, F, rightmost.closed=TRUE)
-  ## Find fractional distance *within* interval
-  f <- (f - F[is])/(F[is+1] - F[is])
-  ## Interpolate to find the points
-  P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
-  return(P)
-}
-
+## c(16, 31)
+## c(53, 65)
+## c(83, 102)
 ## Define rim as list of line segments
 rim <- list(edge[16:31,],
             edge[53:65,],
@@ -246,63 +276,55 @@ rim <- list(edge[16:31,],
 rim.path <- create.path(rim)
 
 ## Distribute points equally along edges
-P <- find.points.in.path(seq(0, by=1/M, len=M), rim.p)
+P <- find.points.in.path(seq(0, by=1/M, len=M), rim.path)
+
+## Experimental code: add a hand-curated tear pair
+tear <- list()
+tear[[1]]  = create.path(list(edge[42:31,]))
+tear[[2]]  = create.path(list(edge[42:53,]))
+
 
 ## Fitting of mesh to data
 for (iter in 1:1) {
   ## Convert to proximity matricies A and B
-## Points 1:((N-1)*M+1) are variable points
-## Points ((N-1)*M+2):(N*M+1) are fixed
-C <- cbind(1/L[1:((N-1)*M+1),1:((N-1)*M+1)],
-           1/L[1:((N-1)*M+1),((N-1)*M+2):(N*M+1)])
+  ## Points 1:((N-1)*M+1) are variable points
+  ## Points ((N-1)*M+2):(N*M+1) are fixed
+  C <- cbind(1/L[1:((N-1)*M+1),1:((N-1)*M+1)],
+             1/L[1:((N-1)*M+1),((N-1)*M+2):(N*M+1)])
 
-C[is.na(C)] <- 0
+  C[is.na(C)] <- 0
 
-A <- C[,1:((N-1)*M+1)]
-B <- C[,((N-1)*M+2):(N*M+1)]
-## Diagonal matrix of row sums of [ A B ]
-D <- diag(apply(C, 1, sum))
+  A <- C[,1:((N-1)*M+1)]
+  B <- C[,((N-1)*M+2):(N*M+1)]
+  ## Diagonal matrix of row sums of [ A B ]
+  D <- diag(apply(C, 1, sum))
 
-## The matrix Q is an n by 2 matrix comprising the row vectors of the
-## solution points
-Q <- solve(D - A) %*% B %*% P
-
-## Plotting
-
-palette(rainbow(100))
-
-plot.map(map, seginfo=FALSE)
-
-## Highlight rim
-for (i in 1:length(rim)) {
-  seg <- rim[[i]]
-  lines(seg[,1], seg[,2], col="red")
-}
-
-points(P[,1], P[,2], pch=16)
-#text(P[,1], P[,2], labels=1:M)
-
-R <- rbind(Q, P)
-plot.mesh2(R, L)
-
-## Find length of all links between points in P, where links
-## are specified by not NAs in L
-link.lengths <- function(P, L) {
-  l <- matrix(0, nrow(L), ncol(L))
-  for (i in 1:nrow(L)) {
-    js <- which(!is.na(L[i,]))
-    l[i, js] <- sqrt(apply((t(P[js,]) - P[i,])^2, 2, sum))
+  ## The matrix Q is an n by 2 matrix comprising the row vectors of the
+  ## solution points
+  Q <- solve(D - A) %*% B %*% P
+  
+  ## Plotting
+  plot.map(map, seginfo=FALSE)
+  
+  ## Highlight rim
+  for (i in 1:length(rim)) {
+    seg <- rim[[i]]
+    lines(seg[,1], seg[,2], col="red")
   }
-  return(l)
-}
+  
+  points(P[,1], P[,2], pch=16)
+  ##text(P[,1], P[,2], labels=1:M)
+  
+  R <- rbind(Q, P)
+  plot.mesh2(R, L)
 
-## Next step: what happens if the longest links are removed?
-## Need to find the length of all the links
-l <- link.lengths(R, L[1:((N-1)*M)+1,])
-m.i <- which.max.matrix(l)
-L[m.i[1], m.i[2]] <- NA
-L[m.i[2], m.i[1]] <- NA
-C[which.max(l)] <- 0
+  ## Next step: what happens if the longest links are removed?
+  ## Need to find the length of all the links
+  l <- link.lengths(R, L[1:((N-1)*M)+1,])
+  m.i <- which.max.matrix(l)
+  L[m.i[1], m.i[2]] <- NA
+  L[m.i[2], m.i[1]] <- NA
+  C[which.max(l)] <- 0
 }
 
 ## Now try improving on this initial guess by using the energy function
@@ -331,6 +353,6 @@ dE <- function(p, P, L) {
   return(as.vector(dEdQ))
 }
 
-opt <- optim(as.vector(Q), E, gr=dE, method="BFGS", L=L, P=P, control=list(maxit=100))
+##opt <- optim(as.vector(Q), E, gr=dE, method="BFGS", L=L, P=P, control=list(maxit=100))
 plot.map(map)
 plot.mesh2(rbind(Q, P), L)
