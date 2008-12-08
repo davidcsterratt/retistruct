@@ -184,37 +184,45 @@ link.lengths <- function(P, L) {
 }
 
 ## Test to see if there is an intersection between two paths p1 and p2
-## Return a list comprising:
+## Return a matrix whose columns comprise:
 ## * P  : the point of intersection
 ## * s1 : the distance along path 1 of the intersection
 ## * s2 : the distance along path 2 of the intersection
 ## * f1 : the fraction along path 1 of the intersection
 ## * f2 : the fraction along path 2 of the intersection
 check.intersection.paths <- function(p1, p2) {
-  out <- list()
+  out <- matrix(0, 0, 6)
+  colnames(out) <- c("X", "Y", "s1", "s2", "f1", "f2")
   for(i in 1:(nrow(p1)-1)) {
     for(j in 1:(nrow(p2)-1)) {
       ci <- check.intersection(p1[i,c("X", "Y")],p1[i+1,c("X", "Y")],
-                                   p2[j,c("X", "Y")],p2[j+1,c("X", "Y")])
+                               p2[j,c("X", "Y")],p2[j+1,c("X", "Y")])
       if (is.list(ci)) {
         s1 <- p1[i,"s"]+p1[i,"l"]*ci$lambda[1]
         f1 <- s1/p1[nrow(p1), "s"]
-        s2=p2[j,"s"]+p2[j,"l"]*ci$lambda[2]
+        s2 <- p2[j,"s"]+p2[j,"l"]*ci$lambda[2]
         f2 <- s2/p2[nrow(p2), "s"]
-        out <- c(out, list(s1=s1, s2=s2,
-                           f1=f1, f2=f2,
-                           P=ci$R))
+        out <- rbind(out,
+                     c(ci$R,
+                       s1, s2,
+                       f1, f2))
       }
     }
   }
-  return(out)
+  if(length(out) > 0) {
+    return(out)
+  } else {
+    return(NULL)
+  }
 }
 
 ## Test code:        
 ## p1 = create.path(list(rbind(c(0, 0), c(1, 1))))
 ## p2 = create.path(list(rbind(c(0, 1), c(1, 0))))
 ## check.intersection.paths(p1, p2)
-## Output should be : list(s1=0.7071068, s2=0.7071068,f1=0.5,f2=0.5,P=c(0.5, 0.5))
+## Output should be
+##        X   Y        s1        s2  f1  f2
+## [1,] 0.5 0.5 0.7071068 0.7071068 0.5 0.5
 
 ###
 ### Start of code
@@ -330,6 +338,21 @@ for (iter in 1:1) {
   R <- rbind(Q, P)
   plot.mesh2(R, L)
 
+  ## Next step: try to find points at which the mesh intersects the tears
+  ## Work through the connectivity matrix L
+  for (i in 1:nrow(L)) {
+    for(j in which(!is.na(L[i,]))) {
+      path <- create.path(list(rbind(R[i,], R[j,])))
+      lines(path[,"X"], path[,"Y"], col="green")
+      for (k in 1:length(tear)) {
+        ci <- check.intersection.paths(path, tear[[k]])
+        if (!is.null(ci)) {
+          points(ci[,"X"], ci[,"Y"])
+        }
+      }
+    }
+  }
+  
   ## Next step: what happens if the longest links are removed?
   ## Need to find the length of all the links
   l <- link.lengths(R, L[1:((N-1)*M)+1,])
