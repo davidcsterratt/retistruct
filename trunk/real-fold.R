@@ -44,8 +44,14 @@ tri.area <- function(x1, x2, x3) {
   return(as.vector(area))
 }
 
-## Check whether line from x1 to y1 and from x2 to y2 intersect
+## Check whether line from P1 to Q1 and from P2 to Q2 intersect
 check.intersection <- function(P1, Q1, P2, Q2) {
+  if ((max(P1[1], Q1[1]) < min(P2[1], Q2[1])) ||
+      (min(P1[1], Q1[1]) > max(P2[1], Q2[1])) ||
+      (max(P1[2], Q1[2]) < min(P2[2], Q2[2])) ||
+      (min(P1[2], Q1[2]) > max(P2[2], Q2[2]))) {
+    return(FALSE)
+  }
   M <- cbind(Q1-P1, -Q2+P2)
   if (!(det(M) == 0)) {
     lambda <- solve(M) %*% (P2-P1)
@@ -79,6 +85,17 @@ plot.mesh2 <- function(P, L) {
     }
   }
 }
+
+## Plot a mesh of radial and tangential lines 
+plot.mesh3 <- function(P, L) {
+  for (i in 1:ncol(L)) {
+    js <- which(L[,i] != 0)
+    for (j in js) {
+      lines(P[c(i,j),1], P[c(i,j),2])
+    }
+  }
+}
+
 
 ## matrix that has two stripes on either side of the diagonal
 stripe.matrix <- function(n) {
@@ -183,6 +200,21 @@ link.lengths <- function(P, L) {
   return(l)
 }
 
+link.lengths2 <- function(P, L) {
+  l <- matrix(0, nrow(L), ncol(L))
+  for (j in 1:ncol(L)) {
+    is <- which(L[,j] != 0)
+##    print(length(is))
+    if (length(is) == 1) {
+      l[is, j] <- sqrt(sum((t(P[j,]) - P[is,])^2))
+    } else {
+      l[is, j] <- sqrt(apply((t(P[j,]) - P[is,])^2, 2, sum))
+    }
+  }
+  return(l)
+}
+
+
 ## Test to see if there is an intersection between two paths p1 and p2
 ## Return a matrix whose columns comprise:
 ## * P  : the point of intersection
@@ -191,21 +223,29 @@ link.lengths <- function(P, L) {
 ## * f1 : the fraction along path 1 of the intersection
 ## * f2 : the fraction along path 2 of the intersection
 check.intersection.paths <- function(p1, p2) {
-  out <- matrix(0, 0, 6)
-  colnames(out) <- c("X", "Y", "s1", "s2", "f1", "f2")
+  out <- matrix(0, 0, 14)
+  colnames(out) <- c("X", "Y", "s1", "s2", "f1", "f2", "V1X", "V1Y", "R1X", "R1Y", "V2X", "V2Y", "R2X", "R2Y")
   for(i in 1:(nrow(p1)-1)) {
     for(j in 1:(nrow(p2)-1)) {
       ci <- check.intersection(p1[i,c("X", "Y")],p1[i+1,c("X", "Y")],
                                p2[j,c("X", "Y")],p2[j+1,c("X", "Y")])
       if (is.list(ci)) {
         s1 <- p1[i,"s"]+p1[i,"l"]*ci$lambda[1]
-        f1 <- s1/p1[nrow(p1), "s"]
         s2 <- p2[j,"s"]+p2[j,"l"]*ci$lambda[2]
-        f2 <- s2/p2[nrow(p2), "s"]
+        stot1 <- p1[nrow(p1), "s"]
+        stot2 <- p2[nrow(p2), "s"]
+        f1 <- s1/stot1
+        f2 <- s2/stot2
+        v1 <- (p1[i+1,c("X", "Y")] - p1[i,c("X", "Y")]) * stot1/p1[i,"l"]
+        v2 <- (p2[i+1,c("X", "Y")] - p2[i,c("X", "Y")]) * stot2/p2[i,"l"]
+        r1 <- p1[i,c("X", "Y")] - p1[i,"s"]/stot1 * v1
+        r2 <- p2[i,c("X", "Y")] - p2[i,"s"]/stot2 * v2
         out <- rbind(out,
                      c(ci$R,
                        s1, s2,
-                       f1, f2))
+                       f1, f2,
+                       v1, r1,
+                       v2, r2))
       }
     }
   }
@@ -311,83 +351,173 @@ tear[[2]]  = create.path(list(edge[42:53,]))
 
 
 ## Fitting of mesh to data
+m <- (N-1)*M+1
+A <- 1/L[1:m,1:m]
+B <- 1/L[1:m,(m+1):(m+M)]
+C <- matrix(0, m, 0)
+A[is.na(A)] <- 0
+B[is.na(B)] <- 0
+V1 <- matrix(0, 0, 2)
+colnames(V1) <- c("X", "Y")
+V2 <- V1
+R1 <- V1
+R2 <- V1
+S <- matrix(0, 0, 2)
+f <- c()                                # sliding points
 for (iter in 1:1) {
   ## Convert to proximity matricies A and B
   ## Points 1:((N-1)*M+1) are variable points
   ## Points ((N-1)*M+2):(N*M+1) are fixed
-  C <- cbind(1/L[1:((N-1)*M+1),1:((N-1)*M+1)],
-             1/L[1:((N-1)*M+1),((N-1)*M+2):(N*M+1)])
-
-  C[is.na(C)] <- 0
-
-  A <- C[,1:((N-1)*M+1)]
-  B <- C[,((N-1)*M+2):(N*M+1)]
   ## Diagonal matrix of row sums of [ A B ]
-  D <- diag(apply(C, 1, sum))
+  D <- diag(apply(cbind(A, 2*B), 1, sum))
 
   ## The matrix Q is an n by 2 matrix comprising the row vectors of the
   ## solution points
-  Q <- solve(D - A) %*% B %*% P
+  Q <- 2 * solve(D - A) %*% B %*% P
   
   ## Plot the outline, highlighting the rim in red
   plot.map(map, seginfo=FALSE)
-  lines(rim.path[,"X"], rim.path[,"Y"], col="red")
+  dev.print(pdf, file="demo1.pdf")
+  
+  lines(rim.path[,"X"], rim.path[,"Y"], col="red", lwd=2)
+  dev.print(pdf, file="demo2.pdf")
+  
   points(P[,1], P[,2], pch=16)
+  dev.print(pdf, file="demo3.pdf")
   ## text(P[,1], P[,2], labels=1:M)
   
   R <- rbind(Q, P)
   plot.mesh2(R, L)
+  dev.print(pdf, file="demo4.pdf")
 
   ## Next step: try to find points at which the mesh intersects the tears
   ## Work through the connectivity matrix L
-  for (i in 1:nrow(L)) {
-    for(j in which(!is.na(L[i,]))) {
+  for (i in 1:m) {
+    js <- which(!is.na(L[i,]))
+    js <- js[js>i]
+    for(j in js) {
       path <- create.path(list(rbind(R[i,], R[j,])))
       lines(path[,"X"], path[,"Y"], col="green")
-      for (k in 1:length(tear)) {
-        ci <- check.intersection.paths(path, tear[[k]])
-        if (!is.null(ci)) {
-          points(ci[,"X"], ci[,"Y"])
+      ci <- check.intersection.paths(path, tear[[1]])
+      if (!is.null(ci)) {
+        ##        print(ci)
+        points(ci[,"X"], ci[,"Y"])
+        ## Remove connection from i to j
+        if (j <= m) {
+          A[i, j] <- 0
+          A[j, i] <- 0
+          ## Create a new sliding point
+          f.new <- ci[1,"f2"]
+          f <- c(f, f.new)
+          n.f <- length(f)
+          C.new <- matrix(0, m, 2)
+          C.new[i, 1] <- 1/L[i,j]
+          C.new[j, 2] <- 1/L[i,j]          
+          C <- cbind(C, C.new)
+
+          ## Find the V and R of this tear
+          V1 <- rbind(V1, ci[1,c("V2X", "V2Y")])
+          R1 <- rbind(R1, ci[1,c("R2X", "R2Y")])
+
+          ## Find the V and R of the corresponding tear
+          ci <- check.intersection.paths(path, tear[[1]])
+          V2 <- rbind(V2, ci[1,c("V2X", "V2Y")])
+          R2 <- rbind(R2, ci[1,c("R2X", "R2Y")])
+
+          ## Plot the intersection points
+          S <- rbind(S,
+                     find.points.in.path(f.new, tear[[1]]),
+                     find.points.in.path(f.new, tear[[2]]))
+          points(inf[,1], inf[,2], col="blue")
+          
+        } else {
+          B[i, j-m] <- 0
         }
       }
     }
   }
-  
+
+  plot.mesh3(rbind(Q, P, S), cbind(A, B, C))
   ## Next step: what happens if the longest links are removed?
   ## Need to find the length of all the links
-  l <- link.lengths(R, L[1:((N-1)*M)+1,])
-  m.i <- which.max.matrix(l)
-  L[m.i[1], m.i[2]] <- NA
-  L[m.i[2], m.i[1]] <- NA
-  C[which.max(l)] <- 0
+  ## l <- link.lengths(R, L[1:((N-1)*M)+1,])
+  ## m.i <- which.max.matrix(l)
+  ## L[m.i[1], m.i[2]] <- NA
+  ## L[m.i[2], m.i[1]] <- NA
+  ## C[which.max(l)] <- 0
 }
 
 ## Now try improving on this initial guess by using the energy function
 ## (l - L)^2
-E <- function(p, P, L) {
-  ## Construct Q from p
-  Q <- matrix(p, length(p)/2, 2)
-  l <- link.lengths(rbind(Q, P), L[1:nrow(Q),])
-  E <- sum(sum((L[1:nrow(Q),] - l)^2, na.rm=TRUE))
+E <- function(p, P, A, B, C, L, tear) {
+  ## Construct Q and f from p
+  Q <- matrix(p[1:(2*m)], m, 2)
+  f <- p[(2*m+1):length(p)]
+
+  ## Get some useful constants
+  m <- ncol(A)
+  M <- ncol(B) 
+  n.s <- ncol(C)
+  
+  ## Find the intersection points from the sliding points
+  S <- matrix(0, 0, 2)
+  for (f.new in f) {
+    S <- rbind(S,
+               find.points.in.path(f.new, tear[[1]]),
+               find.points.in.path(f.new, tear[[2]]))
+  }
+
+  l    <-   link.lengths(Q, L[1:m,1:m])
+  lhat <-   link.lengths2(rbind(Q, P), B)
+  ltilde <- link.lengths2(rbind(Q, S), C)
+  E <-
+    sum(sum((A*L[1:m,1:m]     - l)^2   , na.rm=TRUE)) +
+    sum(sum((B*L[1:m,(m+1):(m+M)] - lhat)^2, na.rm=TRUE))
   print(E)
   return(E)
 }
 
-dE <- function(p, P, L) {
-  ## Construct Q from p
-  Q <- matrix(p, length(p)/2, 2)
+dE <- function(p, P, A, B, C, L, tear) {
+  ## Construct Q and f from p
+  Q <- matrix(p[1:(2*m)], m, 2)
+  f <- p[(2*m+1):length(p)]
 
-  l <- link.lengths(rbind(Q, P), L[1:nrow(Q),])
+  print(f)
+  
+  ## Get some useful constants
+  m <- ncol(A)
+  M <- ncol(B) 
+  n.s <- ncol(C)
 
-  C <- 1 - L[1:nrow(Q),]/l
-  C[is.na(C)] <- 0
+  ## Find the intersection points from the sliding points
+  S <- matrix(0, 0, 2)
+  for (f.new in f) {
+    S <- rbind(S,
+               find.points.in.path(f.new, tear[[1]]),
+               find.points.in.path(f.new, tear[[2]]))
+  }
 
+  l    <-   link.lengths(Q, L[1:m,1:m])
+  lhat <-   link.lengths2(rbind(Q, P), B)
+  ltilde <- link.lengths2(rbind(Q, S), C)
+
+  Ahat <- A * (1 - l/L[1:m,1:m])
+  Ahat[is.na(Ahat)] <- 0
+
+  Bhat <- B * (1 - lhat/L[1:m,(m+1):(m+M)])
+  Bhat[is.na(Bhat)] <- 0
+  
   ## Diagonal matrix of row sums of [ A B ]
-  D <- diag(apply(C, 1, sum))
-  dEdQ <- D %*% Q - C %*% rbind(Q, P)
-  return(as.vector(dEdQ))
+  D <- diag(apply(cbind(Ahat, Bhat), 1, sum))
+  
+  dEdQ <- D %*% Q - cbind(Ahat, Bhat) %*% rbind(Q, P)
+  dEdQ <- c(as.vector(dEdQ),  rep(0, length(f)))
+  
+  return(dEdQ)
 }
 
-##opt <- optim(as.vector(Q), E, gr=dE, method="BFGS", L=L, P=P, control=list(maxit=100))
+dev.print(pdf, file="demo5.pdf")
+opt <- optim(c(as.vector(Q), f), E, gr=dE, method="BFGS", L=L, P=P,
+             A=A, B=B, C=C, tear=tear, control=list(maxit=100))
 ##plot.map(map)
 ##plot.mesh2(rbind(Q, P), L)
