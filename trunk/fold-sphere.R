@@ -1,4 +1,5 @@
 source("../../data/Anatomy/cluster-analysis.R")
+require("SparseM")
 
 ## We need a structure in which to store paths, such as the rim, which
 ## may have gaps in them. The structure should have one row for each
@@ -100,14 +101,14 @@ check.intersection.paths <- function(p1, p2) {
 }
 
 
-M <- 40                               # Number of grid points in x-dir
+M <- 60                               # Number of grid points in x-dir
 N <- 40                               # Number of grid points in y-dir
-x0 <- -2000                             # minium x
-y0 <- -3600                             # minium y
-Delta <- 200                            # increment
+x0 <-  1000                             # minium x
+y0 <- -1000                             # minium y
+L <- 200                            # spacing between grid points
 G <- expand.grid(ix=1:M, iy=1:N)  # Grid; ix and iy are x & y indicies
-G[,"x"] <- x0 + Delta*(G[,"ix"]-G[,"iy"]/2)
-G[,"y"] <- y0 + Delta*G[,"iy"]*sqrt(3)/2
+G[,"x"] <- x0 + L*(-M/2+G[,"ix"]-G[,"iy"]/2)
+G[,"y"] <- y0 + L*(-N/2+G[,"iy"])*sqrt(3)/2
 
 ## A is the connectivity matrix: One row for each connection,
 ## which contains indicies of pairs of connected points
@@ -148,13 +149,12 @@ G.keep <- c()
 for (iy in unique(G[,"iy"])) {
   iG <- which(G[,"iy"] == iy)
   y <- unique(G[iG,"y"])
-  horiz <- create.path(list(rbind(c(x0 - Delta*N ,y),
-                                  c(x0 + Delta*M ,y))))
-  lines(horiz[,"X"], horiz[,"Y"], col="red")
+  horiz <- create.path(list(rbind(c(x0 - L*N ,y),
+                                  c(x0 + L*M ,y))))
+  ## lines(horiz[,"X"], horiz[,"Y"], col="red")
   ci <- check.intersection.paths(horiz, edge.path)
 
   if (!is.null(ci)) {
-    if (nrow(ci) > 1) {
     for(i in 1:(nrow(ci)/2)) {
       cii <- ci[(i-1)*2+1:2,]
                 points(cii[,"X"], cii[,"Y"], col="blue")
@@ -162,10 +162,108 @@ for (iy in unique(G[,"iy"])) {
                                     (G[, "x"] < max(cii[,"X"])) &
                                     (G[,"iy"] == iy))
                 points(G[G.keep.new,"x"], G[G.keep.new,"y"], col="blue")
-      if((length(G.keep.new) < 10)) { print(cii) }
-    }
+      G.keep <- c(G.keep, G.keep.new)
+      ## if((length(G.keep.new) < 10)) { print(cii) }
     }
   }
 }
 
+## Keep only connections within the retina ("any" in place of "all" would
+## allow connections to go over the boundary
+A <- A[apply(matrix(A %in% G.keep, nrow(A), ncol(A)),1,all),]
+A <- cbind(match(A[,1], G.keep), match(A[,2], G.keep))
+G <- G[G.keep,]
+segments(G[A[,1],"x"], G[A[,1],"y"],
+         G[A[,2],"x"], G[A[,2],"y"],col="blue")
+## Matrix to map line segments onto the points they link
+B <- matrix(0, nrow(G), nrow(A))
+for (i in 1:nrow(A)) {
+  B[A[i,],i] <- 1
+}
 
+## Estimate the area. It's roughly equal to the number of remaining points
+## times the area of the rhomboid.
+area <- length(G.keep) * L^2 * sqrt(3)/2
+
+## From this we can infer what the radius should be from the formula
+## for the area of a sphere which is cut off at a lattitude of phi0
+## area = 2 * PI * R^2 * (sin(phi0)+1)
+phi0 <- 40
+R <- sqrt(area/(2*pi*(sin(phi0)+1)))
+
+## Now assign each point to a location in the phi, lambda
+## Shift coordinates to rough centre of grid
+x <- G[,"x"] - x0 
+y <- G[,"y"] - y0 
+phi <- -pi/2 + sqrt(x^2 + y^2)/(1.2*R)
+lambda <- atan2(y, x)
+
+plot.retina <- function(phi, lambda, R) {
+  ## Now plot this in 3D space....
+  x <- R*cos(phi)*cos(lambda) 
+  y <- R*cos(phi)*sin(lambda)
+  z <- R*sin(phi)
+  rgl.clear()
+  segments3d(rbind(x[A[,1]],x[A[,2]]),
+             rbind(y[A[,1]],y[A[,2]]),
+             rbind(z[A[,1]],z[A[,2]]),xlab="x")
+}
+plot.retina(phi, lambda, R)
+
+central.angle <- function(phi1, lambda1, phi2, lambda2) {
+  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2) ))
+}
+
+## Now for the dreaded error function....
+E <- function(p, A, L, B, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+  phi1    <- phi[A[,1]]
+  lambda1 <- lambda[A[,1]]
+  phi2    <- phi[A[,2]]
+  lambda2 <- lambda[A[,2]]
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+  if (verbose==2) {
+    print(l)
+  }
+  E <- sum((l - L)^2)
+  if (verbose>=1) {
+    print(E)
+  }
+  return(E)
+}
+
+## ... and the even more dreaded gradient of the error
+dE <- function(p, A, L, B, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+  phi1    <- phi[A[,1]]
+  lambda1 <- lambda[A[,1]]
+  phi2    <- phi[A[,2]]
+  lambda2 <- lambda[A[,2]]
+  ## x is the argument of the acos in the central angle
+  x <- sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)
+  ## the central angle
+  l <- R * acos(x)
+  if (verbose==2) {
+    print(l)
+  }
+  fac <- R * (l - L)/sqrt(1-x^2)/2
+  dE.phi1     <- B %*% (fac * (cos(phi1)*sin(phi1) -
+                        sin(phi1)*cos(phi2)*sin(lambda1-lambda2)))
+  dE.dlambda1 <- B %*% (fac * cos(phi1)*cos(phi2)*sin(lambda1-lambda2))
+  return(c(dE.phi1, dE.dlambda1))
+}
+
+
+##opt <- optim(c(phi, lambda), E, gr=dE,
+##             method="BFGS", A=A, L=L, B=B, verbose=1)
+
+opt <- optim(c(phi, lambda), E,
+             method="Nelder-Mead", A=A, L=L, B=B, verbose=1,
+             control=list(maxit=100000))
+
+phi    <- opt$p[1:(length(opt$p)/2)]
+lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+
+plot.retina(phi, lambda, R)
