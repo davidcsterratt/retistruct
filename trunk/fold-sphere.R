@@ -1,4 +1,5 @@
 source("../../data/Anatomy/cluster-analysis.R")
+require("rgl")
 require("SparseM")
 
 ## We need a structure in which to store paths, such as the rim, which
@@ -175,10 +176,13 @@ A <- cbind(match(A[,1], G.keep), match(A[,2], G.keep))
 G <- G[G.keep,]
 segments(G[A[,1],"x"], G[A[,1],"y"],
          G[A[,2],"x"], G[A[,2],"y"],col="blue")
+
+## Symmetric version of A
+A.sym <- rbind(A, A[,2:1])
 ## Matrix to map line segments onto the points they link
-B <- matrix(0, nrow(G), nrow(A))
-for (i in 1:nrow(A)) {
-  B[A[i,],i] <- 1
+B <- matrix(0, nrow(G), nrow(A.sym))
+for (i in 1:nrow(A.sym)) {
+  B[A.sym[i,1],i] <- 1
 }
 
 ## Estimate the area. It's roughly equal to the number of remaining points
@@ -188,14 +192,14 @@ area <- length(G.keep) * L^2 * sqrt(3)/2
 ## From this we can infer what the radius should be from the formula
 ## for the area of a sphere which is cut off at a lattitude of phi0
 ## area = 2 * PI * R^2 * (sin(phi0)+1)
-phi0 <- 40
+phi0 <- 50*pi/180
 R <- sqrt(area/(2*pi*(sin(phi0)+1)))
 
 ## Now assign each point to a location in the phi, lambda
 ## Shift coordinates to rough centre of grid
 x <- G[,"x"] - x0 
 y <- G[,"y"] - y0 
-phi <- -pi/2 + sqrt(x^2 + y^2)/(1.2*R)
+phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
 lambda <- atan2(y, x)
 
 plot.retina <- function(phi, lambda, R) {
@@ -204,18 +208,19 @@ plot.retina <- function(phi, lambda, R) {
   y <- R*cos(phi)*sin(lambda)
   z <- R*sin(phi)
   rgl.clear()
+  rgl.bg(color="white")
   segments3d(rbind(x[A[,1]],x[A[,2]]),
              rbind(y[A[,1]],y[A[,2]]),
-             rbind(z[A[,1]],z[A[,2]]),xlab="x")
+             rbind(z[A[,1]],z[A[,2]]),xlab="x", color="black")
 }
 plot.retina(phi, lambda, R)
 
 central.angle <- function(phi1, lambda1, phi2, lambda2) {
-  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2) ))
+  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
 }
 
 ## Now for the dreaded error function....
-E <- function(p, A, L, B, verbose=FALSE) {
+E <- function(p, A, A.sym, L, B, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   phi1    <- phi[A[,1]]
@@ -234,36 +239,53 @@ E <- function(p, A, L, B, verbose=FALSE) {
 }
 
 ## ... and the even more dreaded gradient of the error
-dE <- function(p, A, L, B, verbose=FALSE) {
+dE <- function(p, A, A.sym, L, B, R, verbose=FALSE) {
+  A <- A.sym
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
-  phi1    <- phi[A[,1]]
-  lambda1 <- lambda[A[,1]]
-  phi2    <- phi[A[,2]]
-  lambda2 <- lambda[A[,2]]
+  phii   <- phi[A[,1]]
+  lambdai <- lambda[A[,1]]
+  phij    <- phi[A[,2]]
+  lambdaj <- lambda[A[,2]]
   ## x is the argument of the acos in the central angle
-  x <- sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)
+  x <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
   ## the central angle
   l <- R * acos(x)
   if (verbose==2) {
     print(l)
   }
-  fac <- R * (l - L)/sqrt(1-x^2)/2
-  dE.phi1     <- B %*% (fac * (cos(phi1)*sin(phi1) -
-                        sin(phi1)*cos(phi2)*sin(lambda1-lambda2)))
-  dE.dlambda1 <- B %*% (fac * cos(phi1)*cos(phi2)*sin(lambda1-lambda2))
-  return(c(dE.phi1, dE.dlambda1))
+  fac <- R * (l - L)/sqrt(1-x^2)
+  dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
+                               - cos(phii)*sin(phij)))
+  dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
+  return(c(dE.phii, dE.dlambdai))
 }
 
 
-##opt <- optim(c(phi, lambda), E, gr=dE,
-##             method="BFGS", A=A, L=L, B=B, verbose=1)
+opt <- list()
+opt$p <- c(phi, lambda)
+opt$conv <- 1
+while (opt$conv) {
+  opt <- optim(opt$p, E, gr=dE,
+               method="BFGS", A=A, L=L, B=B, A.sym=A.sym, R=R, verbose=1)
+##               control=list(maxit=200))
+  phi    <- opt$p[1:(length(opt$p)/2)]
+  lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+  plot.retina(phi, lambda, R)
+}
+## CG min: 288037
+##
+## BFGS maxit=100 is 261000
+## with maxit=10 it is 277226
+## with maxit=200 it is 273882
+## with maxit=100 and phi0=50 it is 325785
 
-opt <- optim(c(phi, lambda), E,
-             method="Nelder-Mead", A=A, L=L, B=B, verbose=1,
-             control=list(maxit=100000))
 
-phi    <- opt$p[1:(length(opt$p)/2)]
-lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+##opt <- optim(c(phi, lambda), E,
+##             method="Nelder-Mead", A=A, L=L, B=B, verbose=1,
+##             control=list(maxit=100000))
 
-plot.retina(phi, lambda, R)
+
+
+
+
