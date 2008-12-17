@@ -118,13 +118,14 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 }
 
 ## Now for the dreaded error function....
-E <- function(p, C, C.sym, L, B, R, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
-  phi1    <- phi[C[,1]]
-  lambda1 <- lambda[C[,1]]
-  phi2    <- phi[C[,2]]
-  lambda2 <- lambda[C[,2]]
+  ## Use the upper triagular part of the connectivity matrix Cu
+  phi1    <- phi[Cu[,1]]
+  lambda1 <- lambda[Cu[,1]]
+  phi2    <- phi[Cu[,2]]
+  lambda2 <- lambda[Cu[,2]]
   l <- R*central.angle(phi1, lambda1, phi2, lambda2)
   if (verbose==2) {
     print(l)
@@ -137,8 +138,7 @@ E <- function(p, C, C.sym, L, B, R, verbose=FALSE) {
 }
 
 ## ... and the even more dreaded gradient of the error
-dE <- function(p, C, C.sym, L, B, R, verbose=FALSE) {
-  C <- C.sym
+dE <- function(p, C, Cu, L, B, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   phii   <- phi[C[,1]]
@@ -159,7 +159,6 @@ dE <- function(p, C, C.sym, L, B, R, verbose=FALSE) {
   return(c(dE.phii, dE.dlambdai))
 }
 
-
 ###
 ### Start of the code proper
 ### 
@@ -178,22 +177,23 @@ G <- expand.grid(ix=1:M, iy=1:N)
 G[,"x"] <- x0 + L*(-M/2+G[,"ix"]-G[,"iy"]/2)
 G[,"y"] <- y0 + L*(-N/2+G[,"iy"])*sqrt(3)/2
 
-## C is the connectivity matrix: One row for each connection,
-## which contains indicies of pairs of connected points
+## Cu is the part of the connectivity matrix above the leading
+## diagonal: One row for each connection, which contains indicies of
+## pairs of connected points
 ## Connect (x,y) to (x,y+1)
 ## Connect (x,y) to (x+1,y+1)
 ## Connect (x,y) to (x,y+1)
-m <- M*N
+m <- M*N                              # total number of points in grid
 ## Start points & endpoints
 sp <- (1:m)[(1:m %% M) != 0]
 ep <- sp + 1
-C <- cbind(sp, ep)
+Cu <- cbind(sp, ep)
 sp <- 1:(m-M)
 ep <- sp + M
-C <- rbind(C, cbind(sp, ep))
+Cu <- rbind(Cu, cbind(sp, ep))
 sp <- (1:(m-M))[(1:(m-M) %% M) != 0]
 ep <- sp + M + 1
-C <- rbind(C, cbind(sp, ep))
+Cu <- rbind(Cu, cbind(sp, ep))
 
 ## Read in data
 map <- as.matrix(read.map("../../data/Anatomy/ALU/M643-4/CONTRA"))
@@ -209,8 +209,8 @@ plot(edge.path[,"X"], edge.path[,"Y"])
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=2)
 
 ## Plot the entire grid
-segments(G[C[,1],"x"], G[C[,1],"y"],
-         G[C[,2],"x"], G[C[,2],"y"])
+segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
+         G[Cu[,2],"x"], G[Cu[,2],"y"])
 
 ## Now remove points that are outside the retina
 ## To do this, the intersections of each of the horizontal
@@ -239,21 +239,22 @@ for (iy in unique(G[,"iy"])) {
 
 ## Keep only connections within the retina ("any" in place of "all" would
 ## allow connections to go over the boundary
-C <- C[apply(matrix(C %in% iG.keep, nrow(C), ncol(C)),1,all),]
+Cu <- Cu[apply(matrix(Cu %in% iG.keep, nrow(Cu), ncol(Cu)),1,all),]
 ## Now reorganise G and C so that only the remaining nodes are left in G
 ## and that the elements of C point to the pruned version of G
 G <- G[iG.keep,]
-C <- cbind(match(C[,1], iG.keep), match(C[,2], iG.keep))
+Cu <- cbind(match(Cu[,1], iG.keep), match(Cu[,2], iG.keep))
 
-segments(G[C[,1],"x"], G[C[,1],"y"],
-         G[C[,2],"x"], G[C[,2],"y"],col="blue")
+## Plot the connections that remain after the pruning
+segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
+         G[Cu[,2],"x"], G[Cu[,2],"y"],col="blue")
 
-## Symmetric version of A
-C.sym <- rbind(C, C[,2:1])
+## C is the symmetric connectivity matrix
+C <- rbind(Cu, Cu[,2:1])
 ## Matrix to map line segments onto the points they link
-B <- matrix(0, nrow(G), nrow(C.sym))
-for (i in 1:nrow(C.sym)) {
-  B[C.sym[i,1],i] <- 1
+B <- matrix(0, nrow(G), nrow(C))
+for (i in 1:nrow(C)) {
+  B[C[i,1],i] <- 1
 }
 
 ## Estimate the area. It's roughly equal to the number of remaining points
@@ -273,15 +274,16 @@ y <- G[,"y"] - y0
 phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
 lambda <- atan2(y, x)
 
+## Initial plot in 3D space
+plot.retina(phi, lambda, R, Cu)
 
-plot.retina(phi, lambda, R, C)
-
+## Optimisation and plotting 
 opt <- list()
 opt$p <- c(phi, lambda)
 opt$conv <- 1
 while (opt$conv) {
   opt <- optim(opt$p, E, gr=dE,
-               method="BFGS", C=C, L=L, B=B, C.sym=C.sym, R=R, verbose=1)
+               method="BFGS", Cu=Cu, L=L, B=B, C=C, R=R, verbose=1)
 ##               control=list(maxit=200))
   phi    <- opt$p[1:(length(opt$p)/2)]
   lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
