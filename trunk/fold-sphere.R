@@ -1,5 +1,5 @@
-source("../../data/Anatomy/cluster-analysis.R")
-require("rgl")
+source("../cluster-analysis/cluster-analysis.R")
+library("rgl")
 
 ## We need a structure in which to store paths, such as the rim, which
 ## may have gaps in them. The structure should have one row for each
