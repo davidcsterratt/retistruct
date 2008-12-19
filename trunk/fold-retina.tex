@@ -62,22 +62,21 @@ the elements of the $\vec{q}_i$:
 \begin{equation}
   \label{fold-retina:eq:5}
   \frac{\partial E}{\partial q_{i1}} = 
-  \frac{1}{2}\sum_j A_{ij} 2(q_{i1} - q_{j1}) 
-  +   \frac{1}{2}\sum_j B_{ij} 2(q_{i1} - q_{j1}) 
+  \sum_{j=1}^m A_{ij} (q_{i1} - q_{j1}) 
+  + 2\sum_{j=1}^M B_{ij} (q_{i1} - p_{j1}) 
 \end{equation}
-
-and setting it to zero, we can find
-the set of points $\vec{q}_i$ that minimise the energy. This can be
+By setting each $\partial E/\partial q_{i1}$ to zero, we can find the
+set of points $\vec{q}_i$ that minimise the energy. This can be
 written conveniently as a matrix equation:
 \begin{equation}
   \label{fold-retina:eq:3}
-  Q = (D - A)^{-1}BP
+  Q = 2(D - A)^{-1}BP
 \end{equation}
 where the matrices $Q=[ \vec{q}_1 \dots \vec{q}_m]^T$, $P=[ \vec{p}_1
 \dots \vec{p}_M]^T$ and $D$ is a $m$ by $m$  diagonal matrix with
 \begin{equation}
   \label{fold-retina:eq:4}
-  D_{ii} = \sum_j A_{ij} + \sum_j B_{ij}
+  D_{ii} = \sum_j A_{ij} + 2\sum_j B_{ij}
 \end{equation}
 
 \section{Application to retina}
@@ -159,9 +158,153 @@ function is defined:
     \vec{q}_j|^2
     +  \sum_{i=1}^m \sum_{j=1}^M B_{ij} |\vec{q}_i -
     \vec{p}_j|^2 \\
-    + \sum_{k=1}^{n_s} \left(\sum_{i=1}^m  C_{ik}|\vec{q}_i -
+    + \sum_{k=1}^{n_s} \left(\sum_{i=1}^m  \sqrt{C_{ik}}|\vec{q}_i -
       \vec{r}_{ik} - s_k\vec{v}_{ik}|
     \right)^2
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+  \frac{\partial E}{\partial q_{i1}} = 
+  \sum_{j=1}^m A_{ij} (q_{i1} - q_{j1}) 
+  + 2\sum_{j=1}^M B_{ij} (q_{i1} - p_{j1})  \\
+  +  2\sum_{k=1}^{n_s} \sqrt{C_{ik}}\frac{q_{i1}-r_{ik1}-s_kv_{ik1}}{|\vec{q}_i -
+      \vec{r}_{ik} - s_k\vec{v}_{ik}|}
+  \left(\sum_{j=1}^m  \sqrt{C_{jk}}|\vec{q}_j -
+      \vec{r}_{jk} - s_k\vec{v}_{jk}|
+    \right)
+  \end{split}
+\end{equation}
+where $C_{ij}$ is a matrix in which each column contains zero elements
+apart from in rows $i$ and $j$ which have the value $1/L_{ij}$, where
+$L_{ij}$ is the original distance between $\vec{q}_i$ and $\vec{q}_j$.
+\begin{equation}
+  \begin{split}
+  \frac{\partial E}{\partial s_k} = 
+  2\sum_{i=1}^m\sqrt{C_{ik}}\frac{q_{i1}-r_{ik1}-s_kv_{ik1}}{|\vec{q}_i -
+      \vec{r}_{ik} - s_k\vec{v}_{ik}|}
+  \left(\sum_{j=1}^m  \sqrt{C_{jk}}|\vec{q}_j -
+      \vec{r}_{jk} - s_k\vec{v}_{jk}|
+    \right)
+  \end{split}
+\end{equation}
+These equations can be written more intuitively:
+\begin{equation}
+  \begin{split}
+  \frac{\partial E}{\partial q_{i1}} = 
+  \sum_{j=1}^m A_{ij} (q_{i1} - q_{j1}) 
+  + 2\sum_{j=1}^M B_{ij} (q_{i1} - p_{j1})  \\
+  +  2\sum_{k=1}^{n_s}
+  \sqrt{C_{ik}}\frac{q_{i1}-r_{ik1}-s_kv_{ik1}}{\tilde l_{ik}}
+  \left(\sum_{j=1}^m  \sqrt{C_{jk}} \tilde l_{jk}
+    \right)
+  \end{split}
+\end{equation}
+
+\section{Sum of squares}
+\label{fold-retina:sec:sum-squares}
+
+\begin{equation}
+  \begin{split}
+    E = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m A_{ij} (|\vec{q}_i -
+    \vec{q}_j|-L_{ij})^2
+    +  \sum_{i=1}^m \sum_{j=1}^M B_{ij} (|\vec{q}_i -
+    \vec{p}_j| - L_{ij})^2 \\
+    + \sum_{i=1}^m \sum_{j=1}^m \left(L_{ij} -   \sum_{k=1}^{n_s}C_{ijk}(|\vec{q}_i -
+      \vec{r}_{ik} - s_k\vec{v}_{ik}| +|\vec{q}_j -
+      \vec{r}_{jk} - s_k\vec{v}_{jk}|)
+    \right)^2 \\
+    = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m A_{ij} (l_{ij}-L_{ij})^2
+    + \sum_{i=1}^m \sum_{j=1}^M B_{ij} (\hat l_{ij} - L_{ij})^2 \\
+    + \sum_{i=1}^m \sum_{j=1}^m \sum_{k=1}^{n_s} C_{ijk} \left(L_{ij} -
+      (\tilde l_{ik} + \tilde l_{jk})
+    \right)^2 \\
+  \end{split}
+\end{equation}
+
+Derivative:
+\begin{equation}
+  \begin{split}
+    \frac{\partial E}{\partial q_{i1}} = 
+    \frac{1}{2} \sum_{j=1}^m A_{ij} 2(l_{ij}-L_{ij})
+    \frac{\partial l_{ij}}{\partial{q_{i1}}}
+    + \sum_{j=1}^M B_{ij} 2(\hat l_{ij} -
+    L_{ij})\frac{\partial \hat l_{ij}}{\partial{q_{i1}}}\\
+    + \sum_{j=1}^m \sum_{k=1}^{n_s}C_{ijk}2 \left(L_{ij} -
+      (\tilde l_{ik} + \tilde l_{jk}) 
+    \right)     \frac{\partial \tilde l_{ik}}{\partial{q_{i1}}}  \\
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+    \frac{\partial E}{\partial q_{i1}} = 
+     \sum_{j=1}^m A_{ij} (l_{ij}-L_{ij})
+    \frac{q_{i1} - q_{j1}}{l_{ij}}
+    + 2\sum_{j=1}^M B_{ij} (\hat l_{ij} -
+    L_{ij})    \frac{q_{i1} - p_{j1}}{\hat l_{ij}}
+\\
+    + 2\sum_{j=1}^m \sum_{k=1}^{n_s}C_{ijk} \left(L_{ij} -
+      (\tilde l_{ik} + \tilde l_{jk}) 
+    \right)   \frac{q_{i1} - r_{ik1} - s_k v_{ik1}}{\tilde l_{ik}} \\
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+    \frac{\partial E}{\partial s_k} = 
+    - 2\sum_{i=1}^m \sum_{j=1}^mC_{ijk} \left(L_{ij} -
+      (\tilde l_{ik} + \tilde l_{jk}) 
+    \right)  \left(v_{ik1} \frac{q_{i1} - r_{ik1} - s_k v_{ik1}}{\tilde
+      l_{ik}} 
+    + v_{jk1} \frac{q_{j1} - r_{jk1} - s_k v_{jk1}}{\tilde l_{jk}} \right)
+\\
+  \end{split}
+\end{equation}
+
+Define:
+\begin{equation}
+  \label{fold-retina:eq:6}
+  \begin{split}
+      \hat A_{ij} = A_{ij}(l_{ij}-L_{ij})/l_{ij} \\
+      \hat B_{ij} = B_{ij}(\hat l_{ij}-L_{ij})/\hat l_{ij} \\
+      \hat C_{ijk} = C_{ijk}(\tilde l_{ik} + \tilde l_{jk} -L_{ij})/\tilde l_{ik} \\
+      D_{ii} = \sum_j \hat A_{ij} + \hat B_{ij} +  \sum_k \hat C_{ijk}
+      \\
+      G_{ik} = \sum_j \hat C_{ijk} 
+    \end{split}
+\end{equation}
+
+
+\begin{equation}
+  \label{fold-retina:eq:7}
+  -\hat A Q  -\hat B P + D Q - GR - GV\vec{s}
+\end{equation}
+
+\section{Simplifying approximation}
+\label{fold-retina:sec:simpl-appr}
+
+Suppose we go with the $l_{ij}^2/L_{ij}$ energy function, and suppose
+that $\tilde l_{ik}\approx \tilde l_{jk}$. Then:
+
+\begin{equation}
+  \begin{split}
+    \frac{\partial E}{\partial q_{i1}} = 
+    \sum_{j=1}^m A_{ij} (q_{i1} - q_{j1})
+    + 2\sum_{j=1}^M B_{ij} (q_{i1} - p_{j1}) \\
+    + 4\sum_{j=1}^{n_s}C_{ij} 
+    (q_{i1} - r_{ij1} - s_j v_{ij1}) \\
+  \end{split}
+\end{equation}
+and
+\begin{equation}
+  \begin{split}
+    \frac{\partial E}{\partial s_k} = 
+    - 4\sum_{i=1}^m \sum_{j=1}^mC_{ijk} \left(
+      v_{ik1} (q_{i1} - r_{ik1} - s_k v_{ik1})
+    + v_{jk1} (q_{j1} - r_{jk1} - s_k v_{jk1}) \right)
+\\
   \end{split}
 \end{equation}
 
@@ -169,3 +312,6 @@ function is defined:
 \end{document}
 
 % LocalWords:  ij BP
+%%% Local Variables: 
+%%% TeX-PDF-mode: t
+%%% End: 
