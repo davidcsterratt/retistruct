@@ -1,0 +1,157 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+
+\title{Inference of original retinal coordinates from  flattenend
+  retinae}
+
+\author{David Sterratt}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  In retrograde tracing experiments to determine the mapping of
+  connections from the retina to the superior colliculus in mice, a
+  small blob of dye is injected in the superior colliculus and allowed
+  to diffuse retrogradely down the axons of retinal ganglion cells to
+  their cell bodies in the retina. The retina is dissected and
+  flattened, and the pattern of dye in cell bodies can be seen in the
+  flattened retina.  In the process of flattening the retina, a number
+  incisions are made, and the pattern of dye can cut across incisions,
+  complicating analysis.  One way of simplifying the analysis would be
+  to infer the position of the cell bodies in the spherical coordinate
+  system of the intact retina.  
+\end{abstract}
+
+\section{Algorithm}
+\label{fold-retina:sec:method}
+
+An equilateral triangular grid of length $L$ is laid over the surface
+of the flattened retina (Figure~\ref{fold-sphere:fig:test1}).  It is
+supposed that this grid is to be projected onto a sphere with a radius
+appropriate for the area $A$ of the flattened retina. The radius is
+\begin{equation}
+  \label{fold-sphere:eq:1}
+  R = \sqrt{\frac{A}{2\pi\sin\phi_0+1}}
+\end{equation}
+where $\phi_0$ is the latitude at which the rim of the intact retina
+would be expected.
+
+The aim now is to infer the latitude $\phi_i$ and longitude
+$\lambda_i$ on the sphere to which each grid point $i$ on the
+flattened retina is projected.  It is proposed to achieve this aim by
+minimising the following energy function:
+\begin{equation}
+  E  = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m C_{ij} (l_{ij}-L_{ij})^2
+\end{equation}
+where $C_{ij}$ is a symmetric, binary-valued matrix that defines if
+there is a connection between $i$ and $j$, $L_{ij}$ is the distance
+between grid points on the flattened retina, and $l_{ij}$ is the
+distance between grid points on the sphere and is given by the formula
+for the central angle:
+\begin{equation}
+  \label{fold-sphere:eq:2}
+  l_{ij} = R\cos^{-1}(\cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) + \sin\phi_i\sin\phi_j)
+\end{equation}
+Minimising this energy function should lead to the distances between
+neighbouring points on the sphere being similar to the corresponding
+distances on the flattened retina.
+
+In order to minimise the function efficiently, the derivatives with
+respect to $\phi_i$ and $\lambda_i$ are found:
+\begin{equation}
+  \label{fold-sphere:eq:3}
+  \begin{split}
+    \frac{\partial E}{\partial\phi_i} = 
+    \sum_j C_{ij} (l_{ij} - L_{ij})R
+    \frac{\sin\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) - \cos\phi_i\sin\phi_j}
+    {\sqrt{1-(\sin\phi_i\sin\phi_j +
+        \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}} \\
+    \frac{\partial E}{\partial\lambda_i} = 
+    \sum_j C_{ij} (l_{ij} - L_{ij})R
+    \frac{\cos\phi_i\cos\phi_j\sin(\lambda_i-\lambda_j)}
+    {\sqrt{1-(\sin\phi_i\sin\phi_j + \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}}
+  \end{split}
+\end{equation}
+A quasi-Newton-Raphson method is then used in R to achieve this
+optimisation, and the resulting grid on the sphere is plotted in 3D
+(Figure~\ref{fold-sphere:fig:test2}).
+
+% \section{Application to retina}
+% \label{fold-retina:sec:application-retina}
+
+% Figure~\ref{fold-sphere:fig:test1}. 
+% Figure~\ref{fold-sphere:fig:test2}. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\linewidth]{flattened-grid}
+  \includegraphics[width=0.6\linewidth]{test1-sphere}
+  \caption{The basic algorithm applied to Dan's data. Top: the grid on
+    the flattened retina. Bottom: the mapping of the grid onto the
+    sphere. $\phi_0= 60^\circ$.}
+  \label{fold-sphere:fig:test1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\linewidth]{test2-sphere}
+  \caption{The same retina as in Figure~\ref{fold-sphere:fig:test1},
+    but mapped onto a partial sphere with $\phi_0= 50^\circ$.}
+  \label{fold-sphere:fig:test2}
+\end{figure}
+
+
+\section{Discussion}
+\label{fold-retina:sec:discussion}
+
+Figures~\ref{fold-sphere:fig:test1} and~\ref{fold-sphere:fig:test2}
+show that the algorithm does project the flattened retina onto a
+sphere. The edges of the retina at the outer ends of tears are closer
+together on the sphere than they are in the flattened coordinate
+system. However, towards the base of the tears, there is considerable
+overlap between neighbouring ``flaps'' of the flattened retina. The
+algorithm as it stands is therefore not sufficient to allocate every
+point on the flattened retina a coordinate in the presumed sphere of
+the intact retina.
+
+The reason for these overlaps is that there is no component of the
+energy function that prevents them occurring. I envisage that it would
+be possible to put in a component of the energy function that provides
+for short range repulsion between vertices on the edge of the
+flattened retina and edges of the flattened retina. The energy
+function might have longer range attraction. One possible
+parametrisation would be the Lennard-Jones potential which is used to
+model short range repulsion and longer range attraction between
+molecules:
+\begin{equation}
+  \label{fold-sphere:eq:4}
+  E(r) = 4\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-
+    \left(\frac{\sigma}{r}\right)^{6}\right)
+\end{equation}
+where $r$ is the distance between molecules, $\epsilon$ defines the
+depth of the potential well and $\sigma$ is the distance at which the
+potential is zero.
+
+A useful preliminary step before implementing this would be to improve
+the algorithm that creates the triangular mesh over the flattened
+retina, so that it completely fills the space by making links to the
+edge of the retina and by laying links along the edge of the retina.
+
+Were this approach to work, additional refinements might be possible,
+such as adding a component of the energy function that draws together
+points on either side of a rip which are correspond to each other with
+high probability. Another possibility would be to allow the radius of
+the sphere $R$ to vary within realistic bounds, to optimise the fit
+further.
+
+\end{document}
+
+% LocalWords:  ij BP Raphson PDF
+%%% Local Variables: 
+%%% TeX-PDF-mode: t
+%%% End: 
