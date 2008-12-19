@@ -1,4 +1,4 @@
-source("../cluster-analysis/cluster-analysis.R")
+source("cluster-analysis.R")
 library("rgl")
 
 ## We need a structure in which to store paths, such as the rim, which
