@@ -205,12 +205,12 @@ segs4 <- segs[[4]][23:1,]
 edge.path <- create.path(list(segs[[1]], segs[[3]], segs4), close=TRUE)
 
 ## Plot the outline of the flattened retina
-plot(edge.path[,"X"], edge.path[,"Y"])
+plot(edge.path[,"X"], edge.path[,"Y"], xlab="x", ylab="y")
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=2)
 
 ## Plot the entire grid
-segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
-         G[Cu[,2],"x"], G[Cu[,2],"y"])
+## segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
+##         G[Cu[,2],"x"], G[Cu[,2],"y"])
 
 ## Now remove points that are outside the retina
 ## To do this, the intersections of each of the horizontal
@@ -222,16 +222,18 @@ for (iy in unique(G[,"iy"])) {
   y <- unique(G[iG,"y"])
   horiz <- create.path(list(rbind(c(x0 - L*N ,y),
                                   c(x0 + L*M ,y))))
+  ## This returns a list of intersection points
+  ## There should be an even number of them
   ci <- check.intersection.paths(horiz, edge.path)
 
   if (!is.null(ci)) {
     for(i in 1:(nrow(ci)/2)) {
       cii <- ci[(i-1)*2+1:2,]
-                points(cii[,"X"], cii[,"Y"], col="blue")
+                ## points(cii[,"X"], cii[,"Y"], col="blue")
                 iG.keep.new <- which((G[, "x"] > min(cii[,"X"])) &
                                     (G[, "x"] < max(cii[,"X"])) &
                                     (G[,"iy"] == iy))
-                points(G[iG.keep.new,"x"], G[iG.keep.new,"y"], col="blue")
+      ## points(G[iG.keep.new,"x"], G[iG.keep.new,"y"], col="blue")
       iG.keep <- c(iG.keep, iG.keep.new)
     }
   }
