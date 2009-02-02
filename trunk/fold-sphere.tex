@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage[british]{babel}
 \usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
 
 \title{Inference of original retinal coordinates from  flattenend
@@ -27,13 +28,32 @@
   system of the intact retina.  
 \end{abstract}
 
+\section{Introduction}
+\label{fold-sphere:sec:introduction}
+
+The general idea behind this method is to image folding the flattend
+retina onto a sphere (or ellipsoid) that has the same dimensions that
+would be expected of the real eye. Tears in the retina will naturally
+tend to close up as they are folded onto the sphere.  In order to
+perform the folding, the method has to allow for some elasticity in
+the retina, and also prevent the edges of the flattened retina from
+overlapping with each other on the surface of the sphere. The method
+as developed so far does incorporate elasticity, but the prevention of
+overlap has not yet been implemented.
+
 \section{Algorithm}
 \label{fold-retina:sec:method}
 
-An equilateral triangular grid of length $L$ is laid over the surface
-of the flattened retina (Figure~\ref{fold-sphere:fig:test1}).  It is
-supposed that this grid is to be projected onto a sphere with a radius
-appropriate for the area $A$ of the flattened retina. The radius is
+An equilateral triangular grid, where each link has length $L$, is
+laid over the surface of the flattened retina
+(Figure~\ref{fold-sphere:fig:test1}). At present the grid does not
+fill the area entirely, but it would be possible to acheive this by
+creating shorter links from the edge of the current grid to the edge
+of the folded retina. 
+
+It is supposed that this grid is to be projected onto a sphere with a
+radius appropriate for the area $A$ of the flattened retina. The
+radius is
 \begin{equation}
   \label{fold-sphere:eq:1}
   R = \sqrt{\frac{A}{2\pi\sin\phi_0+1}}
