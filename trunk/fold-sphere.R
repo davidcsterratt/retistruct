@@ -1,4 +1,6 @@
 source("cluster-analysis.R")
+source("triangulate.R")
+source("tsearch.R")
 library("rgl")
 
 ## We need a structure in which to store paths, such as the rim, which
@@ -100,7 +102,14 @@ check.intersection.paths <- function(p1, p2) {
 }
 
 ## Function to plot the retina in spherical coordinates
-plot.retina <- function(phi, lambda, R, C) {
+## phi - lattitude of points
+## lambda - longitude of points
+## R - radius of sphere
+## C - connection table
+## Ct - triagulated connection table
+## sys - data frame containing positions of points
+plot.retina <- function(phi, lambda, R, C,
+                        Ct=matrix(NA, 0, 3), ts.red, ts.green) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -110,6 +119,25 @@ plot.retina <- function(phi, lambda, R, C) {
   segments3d(rbind(x[C[,1]],x[C[,2]]),
              rbind(y[C[,1]],y[C[,2]]),
              rbind(z[C[,1]],z[C[,2]]),xlab="x", color="black")
+
+  ## In order to plot the points, we need to know in which triangle they
+  ## lie and where in that triangle they are. The first job is to create
+  ## a triangulation, and then we can use tsearch to find the identity of the
+  ## triangles and the location in the triangles.
+  P <- cbind(x, y, z)
+
+  ## Now plot points
+  Pi.cart <- matrix(0, 0, 3)
+  for(i in 1:(dim(ts.red$p)[1])) {
+    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.red$idx[i],],], ts.red$p[i,]))
+  }
+  points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="red", size=5)
+  Pi.cart <- matrix(0, 0, 3)
+  for(i in 1:(dim(ts.green$p)[1])) {
+    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.green$idx[i],],], ts.green$p[i,]))
+  }
+  points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="green", size=5)
+  
 }
 
 ## Formula for central angle
@@ -196,6 +224,7 @@ ep <- sp + M + 1
 Cu <- rbind(Cu, cbind(sp, ep))
 
 ## Read in data
+sys <- read.sys("../../data/Anatomy/ALU/M643-4/CONTRA")
 map <- as.matrix(read.map("../../data/Anatomy/ALU/M643-4/CONTRA"))
 
 ## Corner analysis
@@ -207,6 +236,7 @@ edge.path <- create.path(list(segs[[1]], segs[[3]], segs4), close=TRUE)
 ## Plot the outline of the flattened retina
 plot(edge.path[,"X"], edge.path[,"Y"], xlab="x", ylab="y")
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=2)
+plot.sys.map(sys, map)
 
 ## Plot the entire grid
 ## segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
@@ -215,7 +245,7 @@ lines(edge.path[,"X"], edge.path[,"Y"],lwd=2)
 ## Now remove points that are outside the retina
 ## To do this, the intersections of each of the horizontal
 ## grid lines with the retina are determined
-## Points outwith the range of thses connections are discareded
+## Points outwith the range of these connections are discareded
 iG.keep <- c()                         # Indicies of rows of G to keep
 for (iy in unique(G[,"iy"])) {
   iG <- which(G[,"iy"] == iy)
@@ -251,6 +281,24 @@ Cu <- cbind(match(Cu[,1], iG.keep), match(Cu[,2], iG.keep))
 segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
          G[Cu[,2],"x"], G[Cu[,2],"y"],col="blue")
 
+## In order to plot the points, we need to know in which triangle they
+## lie and where in that triangle they are. The first job is to create
+## a triangulation, and then we can use tsearch to find the identity of the
+## triangles and the location in the triangles.
+Ct <- connections2triangulation(Cu)
+P.grid <- cbind(G[, "x"], G[, "y"])
+P.red   <- cbind(na.omit(sys[,"XRED"]), na.omit(sys[, "YRED"]))
+P.green <- cbind(na.omit(sys[,"XGREEN"]), na.omit(sys[, "YGREEN"]))
+ts.red   <- tsearchn(P.grid, Ct, P.red)
+ts.green <- tsearchn(P.grid, Ct, P.green)
+
+## Now test this by replotting points using new coordinates
+##for(i in 1:(dim(Pi)[1])) {
+##  Pi.cart <- bary2cart(P[Ct[ts$idx[i],],], ts$p[i,])
+##  points(Pi.cart[1], Pi.cart[2], pch="x")
+##}
+
+
 ## C is the symmetric connectivity matrix
 C <- rbind(Cu, Cu[,2:1])
 ## Matrix to map line segments onto the points they link
@@ -277,26 +325,28 @@ phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
-plot.retina(phi, lambda, R, Cu)
+plot.retina(phi, lambda, R, Cu, Ct, ts.red, ts.green)
 
-## Optimisation and plotting 
-opt <- list()
-opt$p <- c(phi, lambda)
-opt$conv <- 1
-while (opt$conv) {
-  opt <- optim(opt$p, E, gr=dE,
-               method="BFGS", Cu=Cu, L=L, B=B, C=C, R=R, verbose=1)
-##               control=list(maxit=200))
-  phi    <- opt$p[1:(length(opt$p)/2)]
-  lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-  plot.retina(phi, lambda, R, C)
+optimise.mapping <- function() {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi, lambda)
+  opt$conv <- 1
+  while (opt$conv) {
+    opt <- optim(opt$p, E, gr=dE,
+                 method="BFGS", Cu=Cu, L=L, B=B, C=C, R=R, verbose=1)
+    ##               control=list(maxit=200))
+    phi    <- opt$p[1:(length(opt$p)/2)]
+    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    plot.retina(phi, lambda, R, Cu, Ct, ts.red, ts.green)
+  }
+  ## CG min: 288037
+  ##
+  ## BFGS maxit=100 is 261000
+  ## with maxit=10 it is 277226
+  ## with maxit=200 it is 273882
+  ## with maxit=100 and phi0=50 it is 325785
 }
-## CG min: 288037
-##
-## BFGS maxit=100 is 261000
-## with maxit=10 it is 277226
-## with maxit=200 it is 273882
-## with maxit=100 and phi0=50 it is 325785
 
 
 
