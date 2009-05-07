@@ -49,13 +49,14 @@ tsearchn <- function(x, t, xi) {
     ## sum(b,2) == 1 we only need to test all(b>=0). Note need to add
     ## a small margin for rounding errors
     intri <- apply(b >= -1e-12, 1, all)
-    if ((sum(intri))!=0) {
-      print(paste(sum(intri), "points found in triangle", i))
-    }
+    ## if ((sum(intri))!=0) {
+    ##   print(paste(sum(intri), "points found in triangle", i))
+    ## } else {
     idx[ni[intri]] <- i
     p[ni[intri],] <- b[intri, ]
     ## ni[intri] <- FALSE;
     ni <- ni[!intri]
+    if (length(ni) == 0) { break }
   }
   return(list(idx=idx, p=p))
 }
