@@ -14,6 +14,12 @@ create.path <- function(segs, close=FALSE) {
   p <- matrix(0, 0, 4)                  # the path matrix
   colnames(p) <- c("X", "Y", "s", "l")
   s.cum <- 0
+  ## Close the path by putting the initial point at the end of the list of
+  ## segs
+  if (close) {
+    segs[[length(segs)]] <- rbind(segs[[length(segs)]],
+                                  segs[[1]][1,])
+  }
   for (i in 1:length(segs)) {
     seg <- segs[[i]]
     v <- diff(seg)
@@ -27,9 +33,6 @@ create.path <- function(segs, close=FALSE) {
                cbind(seg,
                      s,
                      c(l, NA)))
-  }
-  if (close) {
-    p <- rbind(p, p[1,]) 
   }
   return(p)
 }
@@ -102,4 +105,19 @@ check.intersection.paths <- function(p1, p2) {
 ## Output should be
 ##        X   Y        s1        s2  f1  f2
 ## [1,] 0.5 0.5 0.7071068 0.7071068 0.5 0.5
+
+## Find a point a fractional distance f along a path p
+find.points.in.path <- function(f, p) {
+  s <- p[,"s"]
+  F <- s/s[length(s)]                  # fractional distance along path
+  # remove NAs. Have to replce with distances in sequence
+  F[is.na(F)] <- F[which(is.na(F))-1]          
+  ## Find intervals in which points occur
+  is <- findInterval(f, F, rightmost.closed=TRUE)
+  ## Find fractional distance *within* interval
+  f <- (f - F[is])/(F[is+1] - F[is])
+  ## Interpolate to find the points
+  P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
+  return(P)
+}
 
