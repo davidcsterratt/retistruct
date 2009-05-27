@@ -39,7 +39,8 @@ create.hemisphere <- function(phi=40*pi/180) {
   ## the sphere proper. The number of fixed points is chosen so
   ## that the intervals along the rim are approximately the same
   ## as the internode spacing
-  nfix <- round(cos(phi)* 2 * pi / 0.24 - 1)
+  ## nfix <- round(cos(phi)* 2 * pi / 0.24 - 1)
+  nfix <- 100
   pfix <- cbind(cos(phi) * sin(2*pi*(1:nfix)/nfix),
                 cos(phi) * cos(2*pi*(1:nfix)/nfix),
                 sin(phi))
@@ -55,16 +56,25 @@ create.hemisphere <- function(phi=40*pi/180) {
   normals <- tri.normals(P, Ptri)
 
   ## Remove upward-facing triangles as they are on the flattened part
-  ptri <- Ptri[atan2(normals[,3], sqrt(apply(normals[,1:2]^2, 1, sum))) < (pi/2 - 0.001),]
+  angles <- abs(atan2(normals[,3], sqrt(apply(normals[,1:2]^2, 1, sum))))
+  ptri <- Ptri[angles < (pi/2 - 0.001),]
 
   ## Create the asymmetric connectivity matrix
   Cu <- rbind(ptri[,1:2], ptri[,2:3], ptri[,c(1,3)])
   Cu <- Unique(Cu)
 
+  ## Take out points that are no longer in the mesh
+  k <- unique(sort(Cu))  # Indicies to keep
+  old.to.new <- c()
+  old.to.new[k] <- 1:length(k)
+  P <- P[k,]
+  Cu <- matrix(old.to.new[Cu], nrow(Cu), 2)
+  ptri <- matrix(old.to.new[ptri], nrow(ptri), 3)
+  
   ## Find lengths of connections
   Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
 
-  return(list(P=P, Ptri=ptri, Cu=Cu, Ls=Ls))
+  return(list(nfix=nfix, P=P, Ptri=ptri, Cu=Cu, Ls=Ls))
 }
 
 hs <- create.hemisphere()
