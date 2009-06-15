@@ -1,21 +1,19 @@
-
-
-## Create test point at q
-q <-  matrix(c(0, 0.01), 1, 2)
+## dipole.R - quasi van-der-waals force exerted by dipole on point
 
 ## scalar product of two column matricies
 dot <- function(x, y) {
   return(as.vector(apply(x * y, 1, sum)))
 }
 
-
+## Create a mesh of x and y values of all possible combination of
+## the elements of a and b
 meshgrid <- function(a,b) {
-  list(
-       x=outer(b*0,a,FUN="+"),
-       y=outer(b,a*0,FUN="+")
-       )
+  list(x=outer(b*0,a,FUN="+"),
+       y=outer(b,a*0,FUN="+"))
 }
 
+## Compute the dipole potential between a dipole with ends at
+## p1 and p2 and a point at q
 compute.potential <- function(p1, p2, q) {
   if (nrow(q) > nrow(p1)) {
     p1 <- matrix(p1, nrow(q), 2, byrow=TRUE)
@@ -40,10 +38,12 @@ compute.potential <- function(p1, p2, q) {
   ## E <- (abs(s2) + sqrt(r0^2 + s2^2))/(abs(s1) + sqrt(r0^2 + s1^2))o
   E <- E - (asinh(s2/r0) - asinh(s1/r0))
 
-##  print(cbind(q, s1, r1, r0, E))
+  ##  print(cbind(q, s1, r1, r0, E))
   return(E)
 }
 
+## Compute the gradient with respect to q of the dipole potential
+## between a dipole with ends at p1 and p2 and a point at q
 compute.gradient <- function(p1, p2, q, d=0.1) {
   if (nrow(q) > nrow(p1)) {
     p1 <- matrix(p1, nrow(q), 2, byrow=TRUE)
@@ -75,7 +75,8 @@ compute.gradient <- function(p1, p2, q, d=0.1) {
   return(gr)
 }
 
-## Create three points and two line segments, and then let them move with the dipole force
+## Create three points and two line segments, and then let them move
+## with the dipole force
 demo.hinge <- function(d=0.01, tmax=1, dt=0.001) {
   ## Connectivity matrix
   Cu <- matrix(c(1, 2, 2, 3), 2, 2, byrow=TRUE)
@@ -146,29 +147,32 @@ demo.hinge <- function(d=0.01, tmax=1, dt=0.001) {
   }
 }
 
-xs <- seq(-0.5, 0.5, by=0.05)
-ys <- seq(-0.5, 0.5, by=0.05)
-q.mesh <- meshgrid(xs, ys)
-q <- cbind(as.vector(q.mesh$x), as.vector(q.mesh$y))
+## Plot the potential and the gradient due to a diople 
+demo.potential <- function() {
+  xs <- seq(-0.5, 0.5, by=0.05)
+  ys <- seq(-0.5, 0.5, by=0.05)
+  q.mesh <- meshgrid(xs, ys)
+  q <- cbind(as.vector(q.mesh$x), as.vector(q.mesh$y))
   
-## plot(NA, NA, xlim=c(-1,1), ylim=c(-1, 1))
-## points(p1[,1], p1[,2])
-## points(p2[,1], p2[,2])
-## points(q[,1],  q[,2], col="red")
+  ## plot(NA, NA, xlim=c(-1,1), ylim=c(-1, 1))
+  ## points(p1[,1], p1[,2])
+  ## points(p2[,1], p2[,2])
+  ## points(q[,1],  q[,2], col="red")
 
-## Create diople with ends at p1 and p2
-p1 <- matrix(c(-0.3, 0), 1, 2)
-p2 <- matrix(c( 0, 0), 1, 2)
-E <- compute.potential(p1, p2, q)
-gr <- compute.gradient(p1, p2, q)
+  ## Create diople with ends at p1 and p2
+  p1 <- matrix(c(-0.3, 0), 1, 2)
+  p2 <- matrix(c( 0, 0), 1, 2)
+  E <- compute.potential(p1, p2, q)
+  gr <- compute.gradient(p1, p2, q)
 
-p1 <- matrix(c( 0, 0), 1, 2)
-p2 <- matrix(c( 0.3, 0), 1, 2)
-E <- E + compute.potential(p1, p2, q)
-gr <- gr + compute.gradient(p1, p2, q)
+  p1 <- matrix(c( 0, 0), 1, 2)
+  p2 <- matrix(c( 0.3, 0), 1, 2)
+  E <- E + compute.potential(p1, p2, q)
+  gr <- gr + compute.gradient(p1, p2, q)
 
-Emat <- matrix(E, length(xs), length(ys), byrow=TRUE)
-image(xs, ys, Emat ,zlim=c(min(E), 2), col=rainbow(100))
+  Emat <- matrix(E, length(xs), length(ys), byrow=TRUE)
+  image(xs, ys, Emat ,zlim=c(min(E), 2), col=rainbow(100))
 
 
-arrows(q[,1], q[,2], q[,1] + 0.0005 * gr[,1], q[,2] + 0.0005 * gr[,2], len=0.1)
+  arrows(q[,1], q[,2], q[,1] + 0.0005 * gr[,1], q[,2] + 0.0005 * gr[,2], len=0.1)
+}
