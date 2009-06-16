@@ -1,6 +1,7 @@
 source("cluster-analysis.R")
 source("triangulate.R")
 source("common.R")
+#source("dipole.R")
 library("geometry")
 source("tsearch.R")
 library("gtools")
@@ -14,7 +15,8 @@ library("rgl")
 ## Ct - triagulated connection table
 ## sys - data frame containing positions of points
 plot.retina <- function(phi, lambda, R, C,
-                        Ct=matrix(NA, 0, 3), ts.red, ts.green) {
+                        Ct=matrix(NA, 0, 3), ts.red, ts.green,
+                        edge.inds=NA) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -23,13 +25,25 @@ plot.retina <- function(phi, lambda, R, C,
   rgl.clear()
   rgl.bg(color="white")
 
-  ## Pt.surf = t(surf.tri(P, Pt))
-  ## Not run: 
-  ## rgl.triangles(P[Pt.surf,1], P[Pt.surf,2], P[Pt.surf,3],
-  ## col="blue", alpha=.2)
-  segments3d(rbind(x[C[,1]],x[C[,2]]),
-             rbind(y[C[,1]],y[C[,2]]),
-             rbind(z[C[,1]],z[C[,2]]),xlab="x", color="black")
+  ## Plot links, highlighting the edges in black
+  cent.links <- 1:nrow(C)
+  ## If edge connections are specified, find the connections
+  ## which lie on the edge and those which lie on the centre
+  if (!any(is.na(edge.inds))) {
+    edge.links <- apply(matrix(C %in% edge.inds, nrow(C), 2), 1, all)
+    cent.links <- setdiff(cent.links, edge.links)
+
+    ## Plot the edge links
+    segments3d(rbind(x[C[edge.links,1]],x[C[edge.links,2]]),
+               rbind(y[C[edge.links,1]],y[C[edge.links,2]]),
+               rbind(z[C[edge.links,1]],z[C[edge.links,2]]),
+               xlab="x", color="black", size=2)
+  }
+  ## Plot the centre links
+  segments3d(rbind(x[C[cent.links,1]],x[C[cent.links,2]]),
+             rbind(y[C[cent.links,1]],y[C[cent.links,2]]),
+             rbind(z[C[cent.links,1]],z[C[cent.links,2]]),
+             xlab="x", color="grey")
 
   ## In order to plot the points, we need to know in which triangle they
   ## lie and where in that triangle they are. The first job is to create
@@ -47,7 +61,6 @@ plot.retina <- function(phi, lambda, R, C,
     Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.green$idx[i],],], ts.green$p[i,]))
   }
   points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="green", size=5)
-  
 }
 
 ## Formula for central angle
@@ -55,8 +68,8 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
   return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
 }
 
-## Now for the dreaded error function....
-E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+## Now for the dreaded elastic error function....
+E.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   ## Use the upper triagular part of the connectivity matrix Cu
@@ -75,8 +88,8 @@ E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   return(E)
 }
 
-## ... and the even more dreaded gradient of the error
-dE <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+## ... and the even more dreaded gradient of the elastic error
+dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   phii   <- phi[C[,1]]
@@ -163,9 +176,9 @@ source("M634-4.R")
 P <- cbind(X=edge.path[-1,"X"], Y=edge.path[-1,"Y"])
 
 ## Find the bottom left corner of the box around the edge
-P0 <- c(min(P[,"X"])-1, min(P[,"Y"])-1)
+P0   <- c(min(P[,"X"])-1, min(P[,"Y"])-1)
 ## Find the top right corner of the box around the edge
-P1 <- c(max(P[,"X"])+1, max(P[,"Y"])+1)
+P1   <- c(max(P[,"X"])+1, max(P[,"Y"])+1)
 ## Find the top left corner of the box around the edge
 P.TL <- c(min(P[,"X"])-1, max(P[,"Y"])+1)
 ## Find the bottom right corner of the box around the edge
@@ -173,8 +186,8 @@ P.BR <- c(max(P[,"X"])+1, min(P[,"Y"])-1)
 
 ## Convert these points to the trignometric coordinates, and
 ## find the maximum coordinates along the u v axes
-Q0 <- cart.to.trig(P0, P0, L)
-Q1 <- cart.to.trig(P1, P0, L)
+Q0   <- cart.to.trig(P0, P0, L)
+Q1   <- cart.to.trig(P1, P0, L)
 R.TL <- xy.to.uw(P.TL, P.TL, L)
 R.BR <- xy.to.uw(P.BR, P.TL, L)
 
@@ -259,6 +272,7 @@ for (u in 0:umax) {
 ##points(P.edge[,"X"], P.edge[,"Y"], col="blue")
 ##points(P.grid[,"X"], P.grid[,"Y"], col="orange")
 ## Full set of points
+N.edge <- nrow(P.edge)
 P <- rbind(P.edge, P.grid)
 ## P <- P.grid
 
@@ -333,7 +347,7 @@ area <- sum(areas)
 phi0 <- 50*pi/180
 R <- sqrt(area/(2*pi*(sin(phi0)+1)))
 
-## Now assign each point to a location in the phi, lambda
+## Now assign each point to a location in the phi, lambda coordinates
 ## Shift coordinates to rough centre of grid
 x <- P[,"X"] - mean(P[,"X"]) 
 y <- P[,"Y"] - mean(P[,"Y"]) 
@@ -341,7 +355,7 @@ phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
-plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green)
+plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
 
 optimise.mapping <- function() {
   ## Optimisation and plotting 
@@ -349,12 +363,12 @@ optimise.mapping <- function() {
   opt$p <- c(phi, lambda)
   opt$conv <- 1
   while (opt$conv) {
-    opt <- optim(opt$p, E, gr=dE,
+    opt <- optim(opt$p, E.E, gr=dE.E,
                  method="BFGS", Cu=Cu, C=C, L=Ls, B=B, R=R, verbose=1)
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green)
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
   }
   ## CG min: 288037
   ##
@@ -364,6 +378,35 @@ optimise.mapping <- function() {
   ## with maxit=100 and phi0=50 it is 325785
 }
 
+
+## Energy function with elastic and dipole forces
+E.ED <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+  E <- E.E(p, Cu, C, L, B, R, verbose)
+
+  compute.E()
+  return(E)
+}
+
+dE.ED <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+  dE <- dE.E(p, Cu, C, L, B, R, verbose)
+  return(dE)
+}
+
+optimise.mapping.dipole <- function(dt) {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi, lambda)
+  opt$conv <- 1
+  for (epoch in 1:200) {
+    for (time in 1:10) {
+      opt$p <- opt$p - dt * dE.E(opt$p, Cu, C, L, B, R)
+    }
+    phi    <- opt$p[1:(length(opt$p)/2)]
+    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    print(E(opt$p, Cu, C, L, B, R))
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green)
+  }
+}
 
 
 
