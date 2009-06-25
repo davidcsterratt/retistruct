@@ -1,11 +1,24 @@
 source("cluster-analysis.R")
 source("triangulate.R")
 source("common.R")
-#source("dipole.R")
+source("dipole.R")
 library("geometry")
 source("tsearch.R")
 library("gtools")
 library("rgl")
+
+## Function to return "signed area" of triangles on a plane
+## given points P and a triangulation Pt. Positive sign
+## indicates points are anticlockwise direction; negative indicates
+## clockwise
+tri.area.signed <- function(P, Pt) {
+  A <- P[Pt[,1],]
+  B <- P[Pt[,2],]
+  C <- P[Pt[,3],]
+  AB <- cbind(B-A, 0)
+  BC <- cbind(C-B, 0)
+  return(0.5 * extprod3d(AB, BC)[,3])
+}
 
 ## Function to plot the retina in spherical coordinates
 ## phi - lattitude of points
@@ -61,6 +74,31 @@ plot.retina <- function(phi, lambda, R, C,
     Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.green$idx[i],],], ts.green$p[i,]))
   }
   points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="green", size=5)
+
+  ## Plot any flipped triangles
+  ## First find verticies
+  P1 <- P[Ct[,1],]
+  P2 <- P[Ct[,2],]
+  P3 <- P[Ct[,3],]
+  cents <- (P1 + P2 + P3)/3
+  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
+  areas <- apply(normals^2, 1, sum)
+##  print(cents)
+##  print(areas)
+  flipped <- (-dot(cents, normals) < 0)
+  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
+  print(Ct[flipped,])
+  h <- 2 * cbind(areas/sqrt(sum((P2 - P3)^2)),
+                 areas/sqrt(sum((P3 - P1)^2)),
+                 areas/sqrt(sum((P2 - P1)^2)))
+  closest <- apply(h, 1, which.min)
+  print(closest)
+  cp <- Ct[(nrow(Ct)*(closest-1))+1:nrow(Ct)] ## closest point
+  ## print(Ct[,closest])
+##  print(h1[flipped])
+##  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
+points3d(P[cp[flipped],1], P[cp[flipped],2], P[cp[flipped],3], col="blue", size=5)
+##  rgl.triangles(x[Ct[flipped,]], y[Ct[flipped,]], z[Ct[flipped,]], col="gray")
 }
 
 ## Formula for central angle
@@ -278,7 +316,10 @@ P <- rbind(P.edge, P.grid)
 
 ## Find Delaunay triangulation of the points
 Pt <- delaunayn(P)
-areas <- tri.area(P, Pt)
+areas.signed <- tri.area.signed(P, Pt)
+areas <- abs(areas.signed)
+## Swap orientation of triangles which have clockwise orientation
+Pt[areas.signed<0,c(2,3)] <- Pt[areas.signed<0,c(3,2)]
 Pt <- Pt[areas>0,]
 
 ## Get rid of triangles whose centres are outside the retina
@@ -296,9 +337,11 @@ for (i in  1:nrow(Pt)) {
   ## If there is an even number of intersections, then discard the triangle
   if (is.null(ci) || even(nrow(ci))) {
     Pt[i,] <- c(NA, NA, NA)
+    areas[i] <- NA
   }
 }
 Pt <- na.omit(Pt)
+areas <- na.omit(areas)
 
 ## Plot the triangles that remain after the pruning
 trimesh(Pt, P, col="gray", add=TRUE)
@@ -364,7 +407,83 @@ optimise.mapping <- function() {
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E.E, gr=dE.E,
-                 method="BFGS", Cu=Cu, C=C, L=Ls, B=B, R=R, verbose=1)
+                 method="BFGS", Cu=Cu, C=C, L=Ls, B=B, R=R, verbose=FALSE)
+    ##               control=list(maxit=200))
+    phi    <- opt$p[1:(length(opt$p)/2)]
+    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+  }
+  ## CG min: 288037
+  ##
+  ## BFGS maxit=100 is 261000
+  ## with maxit=10 it is 277226
+  ## with maxit=200 it is 273882
+  ## with maxit=100 and phi0=50 it is 325785
+}
+
+
+## Energy function with areas
+E.area <- function(p, Pt, A, R, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+
+  ## Find areas of all triangles
+  areas <- -0.5/R * dot(P[Pt[,1],], extprod3d(P[Pt[,2],], P[Pt[,3],]))
+  E <- sum(0.5 * (areas - A)^2)
+  return(E)
+}
+
+dE.area <- function(p, Pt, A, R, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+
+  ## expand triangulation
+  Pt <- rbind(Pt, Pt[,c(2,3,1)], Pt[,c(3,1,2)])
+  A  <- c(A, A, A)
+  
+
+  ## Slow way of computing gradient
+  dAdPt1 <- -0.5/R * extprod3d(P[Pt[,2],], P[Pt[,3],])
+
+  ## Find areas of all triangles
+  areas <- dot(P[Pt[,1],], dAdPt1)
+
+  dEdPt1 <- (areas - A) * dAdPt1
+
+  Pt1topi <- matrix(0, length(phi), nrow(Pt))
+  for(m in 1:nrow(Pt)) {
+    Pt1topi[Pt[m,1],m] <- 1
+  }
+  dEdpi <- Pt1topi %*% dEdPt1
+  dpidphi <- R * cbind(-sin(phi) * cos(lambda),
+                   -sin(phi) * sin(lambda),
+                   cos(phi))
+  dpidlambda <- R * cbind(-cos(phi) * sin(lambda),
+                           cos(phi) * cos(lambda),
+                           0)
+
+  dEdphi    <- apply(dEdpi * dpidphi,    1, sum)
+  dEdlambda <- apply(dEdpi * dpidlambda, 1, sum)
+  return(c(dEdphi, dEdlambda))
+
+}
+
+optimise.mapping.area <- function() {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi, lambda)
+  opt$conv <- 1
+  while (opt$conv) {
+    opt <- optim(opt$p, E.area, gr=dE.area,
+                 method="BFGS", Pt=Pt, A=areas, R=R, verbose=FALSE)
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
