@@ -32,6 +32,27 @@ connections2triangulation <- function(C) {
   return(T)
 }
 
+## Function to return "signed area" of triangles on a plane
+## given points P and a triangulation Pt. Positive sign
+## indicates points are anticlockwise direction; negative indicates
+## clockwise
+tri.area.signed <- function(P, Pt) {
+  A <- P[Pt[,1],]
+  B <- P[Pt[,2],]
+  C <- P[Pt[,3],]
+  AB <- cbind(B-A, 0)
+  BC <- cbind(C-B, 0)
+  return(0.5 * extprod3d(AB, BC)[,3])
+}
+
+## Function to return area of triangles on a plane
+## given points P and a triangulation Pt. Positive sign
+## indicates points are anticlockwise direction; negative indicates
+## clockwise
+tri.area <- function(P, Pt) {
+  return(abs(tri.area.signed(P, Pt)))
+}
+
 ## Create grid of N random points around the outline P
 create.grid.random <- function(P, N=1000) {
   Q <- cbind(runif(N, min(P[,1]), max(P[,1])),
@@ -69,19 +90,14 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   ## Create grid of points around outline
   Q <- create.grid(P, ...)
 
-  ## Plot them
-  ## points(Q, col="red")
-                   
   ## Remove points outwith retinal outline
   Q <- Q[point.in.polygon(Q[,1], Q[,2], P[,1], P[,2])==1,]
 
   ## Remove points that are within circle wtih diameter given
   ## by the minimum distance between a point and its neighbour
-
-  d1 <- sqrt(apply((P[c(2:nrow(P),1),]           - P)^2, 1, sum))
+  d1 <- sqrt(apply((P[c(2:nrow(P),1),] - P)^2, 1, sum))
   d2 <- d1[c(nrow(P), 1:(nrow(P)-1))]
   d <- apply(cbind(d1, d2), 1, max)
-  
   ## Distances between each internal point and each vertex
   r2 <- (outer(P[,1], Q[,1], "-"))^2 + (outer(P[,2], Q[,2], "-"))^2 
   Q <- Q[apply(r2 > d^2, 2, all),]
@@ -90,11 +106,14 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   S <- rbind(P, Q)
   St <- delaunayn(S)
 
-  ## Remove triangles outwith the retninal outline
-  ## Centres
-  Sc <- (S[St[,1],] + S[St[,2],] + S[St[,3],])/3
+  ## Remove triangles outwith the retinal outline
+  Sc <- (S[St[,1],] + S[St[,2],] + S[St[,3],])/3 # Centres
   St <- St[point.in.polygon(Sc[,1], Sc[,2], P[,1], P[,2])==1,]
 
+  ## Swap orientation of triangles which have clockwise orientation
+  areas.signed <- tri.area.signed(S, St)
+  St[areas.signed<0,c(2,3)] <- St[areas.signed<0,c(3,2)]
+  
   ## Create the asymmetric connectivity matrix
   Cu <- rbind(St[,1:2], St[,2:3], St[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
@@ -118,6 +137,6 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   ## solution points
   Q <- 2 * solve(D - A) %*% B %*% P
 
-  return(list(St=St, P=P, Q=Q))
+  return(list(St=St, P=P, Q=Q, Cu=Cu, C=C))
 }
 
