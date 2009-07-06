@@ -1,3 +1,7 @@
+require("sp")                           # For point.in.polygon
+require("geometry")                     # For delauynayn
+source("common.R")                      # For meshgrid
+
 connections2triangulation <- function(C) {
   T <- matrix(NA, 0, 3)
   ## Convert a matrix containing links into a triangulation
@@ -66,7 +70,7 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   Q <- create.grid(P, ...)
 
   ## Plot them
-  points(Q, col="red")
+  ## points(Q, col="red")
                    
   ## Remove points outwith retinal outline
   Q <- Q[point.in.polygon(Q[,1], Q[,2], P[,1], P[,2])==1,]
@@ -114,11 +118,6 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   ## solution points
   Q <- 2 * solve(D - A) %*% B %*% P
 
-  points(P)
-  points(Q, col="gray")
-  S <- rbind(P, Q)
-  trimesh(St, S, col="gray", add=TRUE)
-
-  return(St=St, P=P, Q=Q)
+  return(list(St=St, P=P, Q=Q))
 }
 
