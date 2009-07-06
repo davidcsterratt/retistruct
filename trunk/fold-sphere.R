@@ -59,11 +59,14 @@ plot.retina <- function(phi, lambda, R, C,
   ## If edge connections are specified, find the connections
   ## which lie on the edge and those which lie on the centre
   if (!any(is.na(edge.inds))) {
-
+    ## This depends on the edge points being in the right order to form
+    ## a polygon
+    from <- edge.inds
+    to <- c(edge.inds[-1], edge.inds[1])
     ## Plot the edge links
-    segments3d(rbind(x[C[links$edge,1]],x[C[links$edge,2]]),
-               rbind(y[C[links$edge,1]],y[C[links$edge,2]]),
-               rbind(z[C[links$edge,1]],z[C[links$edge,2]]),
+    segments3d(rbind(x[from],x[to]),
+               rbind(y[from],y[to]),
+               rbind(z[from],z[to]),
                xlab="x", color="black", size=2)
   }
   ## Plot the centre links
