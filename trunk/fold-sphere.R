@@ -20,6 +20,35 @@ tri.area.signed <- function(P, Pt) {
   return(0.5 * extprod3d(AB, BC)[,3])
 }
 
+## Given the link matrix C and edge.inds, the indicies
+## of points on the edge, classify the links as either being
+## edge links or centre links. 
+classify.links <- function(C, edge.inds=NA) {
+  edge.links <- c()
+  cent.links <- 1:nrow(C)
+  if(!any(is.na(edge.inds))) {
+    edge.links <- which(apply(matrix(C %in% edge.inds, nrow(C), 2), 1, all))
+    ## Remove edge.links between nodes that have more than 1 from and to links
+    n.to   <- hist(C[edge.links,1], breaks=c(-1, edge.inds+0.5), plot=FALSE)$counts
+    n.from <- hist(C[edge.links,2], breaks=c(-1, edge.inds+0.5), plot=FALSE)$counts
+    omit.to   <- which(n.to   == 0)
+    omit.from <- which(n.from == 0)
+    print(omit.to)
+    print(omit.from)
+    dup.to   <- which(n.to   > 1)
+    dup.from <- which(n.from > 1)
+    dup.links <- which((C[,1] %in% dup.from) & (C[,2] %in% dup.to))
+    print(dup.to)
+    print(dup.from)
+    print(dup.links)
+    edge.links <- setdiff(edge.links, dup.links)
+    ##    C[edge.links,1] 
+    
+    cent.links <- setdiff(cent.links, edge.links)
+  }
+  return(list(edge=edge.links, cent=cent.links, dup.to=dup.to, dup.from=dup.from))
+}
+
 ## Function to plot the retina in spherical coordinates
 ## phi - lattitude of points
 ## lambda - longitude of points
@@ -39,23 +68,21 @@ plot.retina <- function(phi, lambda, R, C,
   rgl.bg(color="white")
 
   ## Plot links, highlighting the edges in black
-  cent.links <- 1:nrow(C)
+  links <- classify.links(C, edge.inds)
   ## If edge connections are specified, find the connections
   ## which lie on the edge and those which lie on the centre
   if (!any(is.na(edge.inds))) {
-    edge.links <- apply(matrix(C %in% edge.inds, nrow(C), 2), 1, all)
-    cent.links <- setdiff(cent.links, edge.links)
 
     ## Plot the edge links
-    segments3d(rbind(x[C[edge.links,1]],x[C[edge.links,2]]),
-               rbind(y[C[edge.links,1]],y[C[edge.links,2]]),
-               rbind(z[C[edge.links,1]],z[C[edge.links,2]]),
+    segments3d(rbind(x[C[links$edge,1]],x[C[links$edge,2]]),
+               rbind(y[C[links$edge,1]],y[C[links$edge,2]]),
+               rbind(z[C[links$edge,1]],z[C[links$edge,2]]),
                xlab="x", color="black", size=2)
   }
   ## Plot the centre links
-  segments3d(rbind(x[C[cent.links,1]],x[C[cent.links,2]]),
-             rbind(y[C[cent.links,1]],y[C[cent.links,2]]),
-             rbind(z[C[cent.links,1]],z[C[cent.links,2]]),
+  segments3d(rbind(x[C[links$cent,1]],x[C[links$cent,2]]),
+             rbind(y[C[links$cent,1]],y[C[links$cent,2]]),
+             rbind(z[C[links$cent,1]],z[C[links$cent,2]]),
              xlab="x", color="grey")
 
   ## In order to plot the points, we need to know in which triangle they
@@ -87,12 +114,10 @@ plot.retina <- function(phi, lambda, R, C,
 ##  print(areas)
   flipped <- (-dot(cents, normals) < 0)
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
-  print(Ct[flipped,])
   h <- 2 * cbind(areas/sqrt(sum((P2 - P3)^2)),
                  areas/sqrt(sum((P3 - P1)^2)),
                  areas/sqrt(sum((P2 - P1)^2)))
   closest <- apply(h, 1, which.min)
-  print(closest)
   cp <- Ct[(nrow(Ct)*(closest-1))+1:nrow(Ct)] ## closest point
   ## print(Ct[,closest])
 ##  print(h1[flipped])
@@ -104,48 +129,6 @@ points3d(P[cp[flipped],1], P[cp[flipped],2], P[cp[flipped],3], col="blue", size=
 ## Formula for central angle
 central.angle <- function(phi1, lambda1, phi2, lambda2) {
   return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
-}
-
-## Now for the dreaded elastic error function....
-E.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
-  ## Use the upper triagular part of the connectivity matrix Cu
-  phi1    <- phi[Cu[,1]]
-  lambda1 <- lambda[Cu[,1]]
-  phi2    <- phi[Cu[,2]]
-  lambda2 <- lambda[Cu[,2]]
-  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
-  if (verbose==2) {
-    print(l)
-  }
-  E <- sum((l - L)^2/L)
-  if (verbose>=1) {
-    print(E)
-  }
-  return(E)
-}
-
-## ... and the even more dreaded gradient of the elastic error
-dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
-  phii   <- phi[C[,1]]
-  lambdai <- lambda[C[,1]]
-  phij    <- phi[C[,2]]
-  lambdaj <- lambda[C[,2]]
-  ## x is the argument of the acos in the central angle
-  x <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
-  ## the central angle
-  l <- R * acos(x)
-  if (verbose==2) {
-    print(l)
-  }
-  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-x^2))
-  dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
-                               - cos(phii)*sin(phij)))
-  dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
-  return(c(dE.phii, dE.dlambdai))
 }
 
 ## Given a matrix of points Q in trignometric normalised coordinates,
@@ -320,7 +303,9 @@ areas.signed <- tri.area.signed(P, Pt)
 areas <- abs(areas.signed)
 ## Swap orientation of triangles which have clockwise orientation
 Pt[areas.signed<0,c(2,3)] <- Pt[areas.signed<0,c(3,2)]
-Pt <- Pt[areas>0,]
+## This gets rid of any very small triangles - it is a bit of a hack...
+Pt    <- Pt[areas>0.1,]
+areas <- areas[areas>0.1]
 
 ## Get rid of triangles whose centres are outside the retina
 ##for (i in 1:nrow(Pt)) {
@@ -362,10 +347,10 @@ ts.green <- tsearchn(P, Pt, P.green)
 ##}
 
 ## Create the asymmetric connectivity matrix
-Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(1,3)])
+Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
 ##Cu <- t(apply(Cu, 1, sort))
 ##Cu <- Cu[!duplicated(Cu),]
-Cu <- Unique(Cu)
+Cu <- Unique(Cu, TRUE)
 
 ## C is the symmetric connectivity matrix
 C <- rbind(Cu, Cu[,2:1])
@@ -400,6 +385,53 @@ lambda <- atan2(y, x)
 ## Initial plot in 3D space
 plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
 
+##
+## Energy/error functions
+## 
+
+## Now for the dreaded elastic error function....
+E.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+  ## Use the upper triagular part of the connectivity matrix Cu
+  phi1    <- phi[Cu[,1]]
+  lambda1 <- lambda[Cu[,1]]
+  phi2    <- phi[Cu[,2]]
+  lambda2 <- lambda[Cu[,2]]
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+  if (verbose==2) {
+    print(l)
+  }
+  E <- sum((l - L)^2/L)
+  if (verbose>=1) {
+    print(E)
+  }
+  return(E)
+}
+
+## ... and the even more dreaded gradient of the elastic error
+dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+  phii   <- phi[C[,1]]
+  lambdai <- lambda[C[,1]]
+  phij    <- phi[C[,2]]
+  lambdaj <- lambda[C[,2]]
+  ## x is the argument of the acos in the central angle
+  x <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
+  ## the central angle
+  l <- R * acos(x)
+  if (verbose==2) {
+    print(l)
+  }
+  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-x^2))
+  dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
+                               - cos(phii)*sin(phij)))
+  dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
+  return(c(dE.phii, dE.dlambdai))
+}
+
+## Optimisation with just the elastic energy
 optimise.mapping <- function() {
   ## Optimisation and plotting 
   opt <- list()
@@ -421,7 +453,6 @@ optimise.mapping <- function() {
   ## with maxit=100 and phi0=50 it is 325785
 }
 
-
 ## Energy function with areas
 E.area <- function(p, Pt, A, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
@@ -433,7 +464,7 @@ E.area <- function(p, Pt, A, R, verbose=FALSE) {
 
   ## Find areas of all triangles
   areas <- -0.5/R * dot(P[Pt[,1],], extprod3d(P[Pt[,2],], P[Pt[,3],]))
-  E <- sum(0.5 * (areas - A)^2)
+  E <- sum(0.5 * (areas - A)^2/A)
   return(E)
 }
 
@@ -456,7 +487,7 @@ dE.area <- function(p, Pt, A, R, verbose=FALSE) {
   ## Find areas of all triangles
   areas <- dot(P[Pt[,1],], dAdPt1)
 
-  dEdPt1 <- (areas - A) * dAdPt1
+  dEdPt1 <- (areas - A)/A * dAdPt1
 
   Pt1topi <- matrix(0, length(phi), nrow(Pt))
   for(m in 1:nrow(Pt)) {
@@ -487,27 +518,69 @@ optimise.mapping.area <- function() {
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    print(E.area(opt$p, Pt, areas, R))
     plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
   }
-  ## CG min: 288037
-  ##
-  ## BFGS maxit=100 is 261000
-  ## with maxit=10 it is 277226
-  ## with maxit=200 it is 273882
-  ## with maxit=100 and phi0=50 it is 325785
 }
 
+
+E.E.area <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
+  return(E.E(p, Cu, C, L, B, R, verbose=verbose)
+         + E.area(p, Pt, A, R, verbose=verbose))
+}
+    
+
+dE.E.area <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
+  return(dE.E(p, Cu, C, L, B, R, verbose=verbose)
+         + dE.area(p, Pt, A, R, verbose=verbose))
+}
+
+optimise.mapping.E.area <- function() {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi, lambda)
+  opt$conv <- 1
+  while (opt$conv) {
+    opt <- optim(opt$p, E.E.area, gr=dE.E.area,
+                 method="BFGS",
+                 Cu=Cu, C=C, L=Ls, B=B,
+                 Pt=Pt, A=areas, R=R, verbose=FALSE)
+    ##               control=list(maxit=200))
+    phi    <- opt$p[1:(length(opt$p)/2)]
+    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    print(E.area(opt$p, Pt, areas, R))
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+  }
+}
 
 ## Energy function with elastic and dipole forces
-E.ED <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  E <- E.E(p, Cu, C, L, B, R, verbose)
+E.D <- function(p, Cu, R, L, edge.inds, verbose=FALSE) {
+  phi    <- p[1:(length(p)/2)]
+  lambda <- p[((length(p)/2)+1):length(p)]
+  
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
 
-  compute.E()
-  return(E)
+  ## Consider points on the edge only
+  P <- P[edge.inds,]
+
+  ## Need to go round rim finding neigbours
+  ## First find distances between all pairs of points on the rim
+  ## (Maybe this isn't necessary?)
+  E <- (outer(P[,1], P[,1], "-")^2 +
+        outer(P[,2], P[,2], "-")^2 +
+        outer(P[,3], P[,3], "-")^2) < (2*L)^2
+  diag(E) <- FALSE
+
+  print(Cu)
+  ## Find the vector product of neigbouring pairs of points
+  links <- classify.links(Cu, edge.inds)
+  
+  return(links$edge)
 }
 
-dE.ED <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  dE <- dE.E(p, Cu, C, L, B, R, verbose)
+dE.D <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   return(dE)
 }
 
