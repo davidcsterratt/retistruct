@@ -7,19 +7,6 @@ source("tsearch.R")
 library("gtools")
 library("rgl")
 
-## Function to return "signed area" of triangles on a plane
-## given points P and a triangulation Pt. Positive sign
-## indicates points are anticlockwise direction; negative indicates
-## clockwise
-tri.area.signed <- function(P, Pt) {
-  A <- P[Pt[,1],]
-  B <- P[Pt[,2],]
-  C <- P[Pt[,3],]
-  AB <- cbind(B-A, 0)
-  BC <- cbind(C-B, 0)
-  return(0.5 * extprod3d(AB, BC)[,3])
-}
-
 ## Given the link matrix C and edge.inds, the indicies
 ## of points on the edge, classify the links as either being
 ## edge links or centre links. 
@@ -131,59 +118,6 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
   return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
 }
 
-## Given a matrix of points Q in trignometric normalised coordinates,
-## return the cartesian coordinates P, given the grid offset P0 and
-## the grid spacing L
-trig.to.cart <- function(Q, P0, L) {
-  M <- L * matrix(c(1, -1/2, 0, sqrt(3)/2), 2, 2)
-  P <- Q %*% M + matrix(P0, nrow(Q), 2, byrow=TRUE)
-  colnames(P) <- c("X", "Y")
-  return(P)
-}
-
-## Given a matrix of points P in cartesian coordinates,
-## return the trignometric coordinates Q, given the grid offset P0 and
-## the grid spacing L
-cart.to.trig <- function(P, P0, L) {
-  if (is.vector(P)) {
-    P <- t(as.matrix(P))
-  }
-  M <- 1/L * matrix(c(1, 1/sqrt(3), 0, 2/sqrt(3)), 2, 2)  
-  return(t(t(P) - P0) %*% M)
-}
-
-## Given a matrix of points P in cartesian coordinates,
-## return the trignometric coordinates Q, given the grid offset P0 and
-## the grid spacing L
-xy.to.uw <- function(P, P0, L) {
-  if (is.vector(P)) {
-    P <- t(as.matrix(P))
-  }
-  M <- 1/L * matrix(c(1, -1/sqrt(3), 0, -2/sqrt(3)), 2, 2)  
-  return(t(t(P) - P0) %*% M)
-}
-
-## Given a matrix of points P in cartesian coordinates,
-## return the trignometric coordinates Q, given the grid offset P0 and
-## the grid spacing L
-uw.to.xy <- function(P, P0, L) {
-  if (is.vector(P)) {
-    P <- t(as.matrix(P))
-  }
-  M <- 1/L * matrix(c(1, -1/2, 0, -sqrt(3)/2), 2, 2)  
-  return(t(t(P) - P0) %*% M)
-}
-
-tri.area <- function(P, Pt) {
-  A <- P[Pt[,1],]
-  B <- P[Pt[,2],]
-  C <- P[Pt[,3],]
-  AB <- cbind(B-A, 0)
-  AC <- cbind(C-A, 0)
-  return(0.5 * abs(extprod3d(AB, AC)[,3]))
-}
-
-
 ###
 ### Start of the code proper
 ### 
@@ -196,137 +130,28 @@ source("M634-4.R")
 ## All the points on the edge path apart from the first, which is repeated by the last
 P <- cbind(X=edge.path[-1,"X"], Y=edge.path[-1,"Y"])
 
-## Find the bottom left corner of the box around the edge
-P0   <- c(min(P[,"X"])-1, min(P[,"Y"])-1)
-## Find the top right corner of the box around the edge
-P1   <- c(max(P[,"X"])+1, max(P[,"Y"])+1)
-## Find the top left corner of the box around the edge
-P.TL <- c(min(P[,"X"])-1, max(P[,"Y"])+1)
-## Find the bottom right corner of the box around the edge
-P.BR <- c(max(P[,"X"])+1, min(P[,"Y"])-1)
-
-## Convert these points to the trignometric coordinates, and
-## find the maximum coordinates along the u v axes
-Q0   <- cart.to.trig(P0, P0, L)
-Q1   <- cart.to.trig(P1, P0, L)
-R.TL <- xy.to.uw(P.TL, P.TL, L)
-R.BR <- xy.to.uw(P.BR, P.TL, L)
-
-umax <- ceiling(Q1[1])
-vmax <- ceiling(Q1[2])
-wmax <- ceiling(R.BR[2])
-
 ## Plot the outline of the flattened retina
 plot(edge.path[,"X"], edge.path[,"Y"], xlab="x", ylab="y")
 plot.sys.map(sys, map)
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
 
-## Plot the entire grid
-## segments(G[Cu[,1],"x"], G[Cu[,1],"y"],
-##         G[Cu[,2],"x"], G[Cu[,2],"y"])
+## Create the mesh
+M <- create.mesh(P)
+P.edge <- M$P
+P.grid <- M$Q
+Pt <- M$St                      # Delaunay triangulation of all points
+Cu <- M$Cu                              # Assymetric connectivity matrix
+C <-  M$C                               # Symmetric connectivity matrix
 
-
-## Now remove points that are outside the retina
-## To do this, the intersections of each of the horizontal
-## grid lines with the retina are determined
-## Points outwith the range of these connections are discareded
-## Points of grid
-Q.grid <- matrix(0, 0, 2)
-P.edge <- P
-colnames(P.edge) <- c("X", "Y")
-for (v in 0:vmax) {
-  vfix <- create.path(list(trig.to.cart(matrix(c(0, v, umax, v), 2, 2, byrow=TRUE), P0, L)))
-  ## This returns a list of intersection points
-  ## There should be an even number of them
-  ci <- check.intersection.paths(vfix, edge.path)
-
-  if (!is.null(ci)) {
-    ## Make sure points are in order of X so that there is no double-couting
-    ## of points
-    ci <- ci[order(ci[,"X"]),]
-    for(i in 1:(nrow(ci)/2)) {
-      cii <- ci[(i-1)*2+1:2,]
-      ## points(cii[,"X"], cii[,"Y"], col="blue")
-      ## Add all points between the intersection points
-      Qlim <- cart.to.trig(cii[,c("X","Y")], P0, L)
-      print(nrow(Q.grid))
-      print(Qlim)
-      Q.grid <- rbind(Q.grid, cbind(ceiling(min(Qlim[,1])):floor(max(Qlim[,1])), v))
-      ## Add the intersection points of the line to the grid
-      P.edge <- rbind(P.edge,cii[,c("X","Y")])
-    }
-  }
-}
-P.grid <- trig.to.cart(Q.grid, P0, L)
-colnames(P.grid) <- c("X", "Y")
-
-##Do the same thing along the w-axis
-for (w in 0:wmax) {
-  wfix <- create.path(list(uw.to.xy(matrix(c(w, 0, w, vmax), 2, 2, byrow=TRUE), P.TL, L)))
-  ## This returns a list of intersection points
-  ## There should be an even number of them
-  ci <- check.intersection.paths(wfix, edge.path)
-
-  if (!is.null(ci)) {
-    for(i in 1:(nrow(ci)/2)) {
-      cii <- ci[(i-1)*2+1:2,]
-      ## Add the intersection points of the line to the grid
-      P.edge <- rbind(P.edge, cii[,c("X","Y")])
-    }
-  }
-}
-## Do the same thing along the u-axis
-for (u in 0:umax) {
-  ufix <- create.path(list(trig.to.cart(matrix(c(u, 0, u, vmax), 2, 2, byrow=TRUE), P0, L)))
-  ## This returns a list of intersection points
-  ## There should be an even number of them
-  ci <- check.intersection.paths(ufix, edge.path)
-
-  if (!is.null(ci)) {
-    for(i in 1:(nrow(ci)/2)) {
-      cii <- ci[(i-1)*2+1:2,]
-      ## Add the intersection points of the line to the grid
-      P.edge <- rbind(P.edge, cii[,c("X","Y")])
-    }
-  }
-}
-##points(P.edge[,"X"], P.edge[,"Y"], col="blue")
-##points(P.grid[,"X"], P.grid[,"Y"], col="orange")
 ## Full set of points
 N.edge <- nrow(P.edge)
 P <- rbind(P.edge, P.grid)
-## P <- P.grid
 
-## Find Delaunay triangulation of the points
-Pt <- delaunayn(P)
-areas.signed <- tri.area.signed(P, Pt)
-areas <- abs(areas.signed)
-## Swap orientation of triangles which have clockwise orientation
-Pt[areas.signed<0,c(2,3)] <- Pt[areas.signed<0,c(3,2)]
-## This gets rid of any very small triangles - it is a bit of a hack...
-Pt    <- Pt[areas>0.1,]
-areas <- areas[areas>0.1]
-
-## Get rid of triangles whose centres are outside the retina
-##for (i in 1:nrow(Pt)) {
-## for (i in  which(apply(matrix(Pt %in% 1:nrow(P.edge), nrow(Pt), 3), 1, any))) {
-for (i in  1:nrow(Pt)) {
-  print(i)
-  ## Find the centre of each triangle
-  C <- apply(P[Pt[i,],], 2, mean)
-  ## Does a line between C and P0 intersect the edge
-  C.P0 <- create.path(list(rbind(C, P0)))
-  ## This returns a list of intersection points
-  ## There should be an even number of them
-  ci <- check.intersection.paths(C.P0, edge.path)
-  ## If there is an even number of intersections, then discard the triangle
-  if (is.null(ci) || even(nrow(ci))) {
-    Pt[i,] <- c(NA, NA, NA)
-    areas[i] <- NA
-  }
+## Matrix to map line segments onto the points they link
+B <- matrix(0, nrow(P), nrow(C))
+for (i in 1:nrow(C)) {
+  B[C[i,1],i] <- 1
 }
-Pt <- na.omit(Pt)
-areas <- na.omit(areas)
 
 ## Plot the triangles that remain after the pruning
 trimesh(Pt, P, col="gray", add=TRUE)
@@ -346,27 +171,13 @@ ts.green <- tsearchn(P, Pt, P.green)
 ##  points(Pi.cart[1], Pi.cart[2], pch="x")
 ##}
 
-## Create the asymmetric connectivity matrix
-Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
-##Cu <- t(apply(Cu, 1, sort))
-##Cu <- Cu[!duplicated(Cu),]
-Cu <- Unique(Cu, TRUE)
-
-## C is the symmetric connectivity matrix
-C <- rbind(Cu, Cu[,2:1])
-
-## Matrix to map line segments onto the points they link
-B <- matrix(0, nrow(P), nrow(C))
-for (i in 1:nrow(C)) {
-  B[C[i,1],i] <- 1
-}
-
 ## Find lengths of connections
 Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
 
 ## Estimate the area. It's roughly equal to the number of remaining points
 ## times the area of the rhomboid.
 ## area <- nrow(Pt) * L^2 * sqrt(3)/2
+areas <- tri.area(P, Pt)
 area <- sum(areas)
 
 ## From this we can infer what the radius should be from the formula
