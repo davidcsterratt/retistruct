@@ -367,8 +367,13 @@ optimise.mapping.E.area <- function() {
   }
 }
 
+## Constrain theta to lie between -pi and pi
+regularise.angle <- function(theta) {
+  return(((theta + pi) %% (2*pi)) - pi)
+}
+
 ## Energy function with elastic and dipole forces
-E.D <- function(p, Cu, R, L, edge.inds, verbose=FALSE) {
+E.D <- function(p, Cu, R, L, N.edge, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   
@@ -377,26 +382,104 @@ E.D <- function(p, Cu, R, L, edge.inds, verbose=FALSE) {
                  sin(phi))
 
   ## Consider points on the edge only
-  P <- P[edge.inds,]
+  P <- P[1:N.edge,]
 
   ## Need to go round rim finding neigbours
   ## First find distances between all pairs of points on the rim
   ## (Maybe this isn't necessary?)
-  E <- (outer(P[,1], P[,1], "-")^2 +
-        outer(P[,2], P[,2], "-")^2 +
-        outer(P[,3], P[,3], "-")^2) < (2*L)^2
-  diag(E) <- FALSE
+  ##E <- (outer(P[,1], P[,1], "-")^2 +
+  ##        outer(P[,2], P[,2], "-")^2 +
+  ## outer(P[,3], P[,3], "-")^2) < (2*L)^2
+  ## diag(E) <- FALSE
 
-  print(Cu)
-  ## Find the vector product of neigbouring pairs of points
-  links <- classify.links(Cu, edge.inds)
+  E <- c()
+  d <- 10
+  for (i in 1:N.edge) {
+    j <- (i %% N.edge) + 1
+    k <- ((i + 1) %% N.edge) + 1
+    r0 <- 1/R^2 * sum(extprod3d(P[i,], P[j,]) * P[k,])
+    s1 <- sum((P[i,] - P[k,]) * (P[j,] - P[i,])/sqrt(sum((P[j,] - P[i,])^2)))
+    s2 <- sum((P[j,] - P[k,]) * (P[j,] - P[i,])/sqrt(sum((P[j,] - P[i,])^2)))
+
+    s0 <- sqrt(d^2 + r0^2)
+    E[i] <- - d^2/s0*(atan(s2/s0)  - atan(s1/s0))
+
+    ##    print(format(c(i, r0, s1, s2, E),digits=2, nsmall=3))
+  }
   
-  return(links$edge)
+  ## Find the vector product of neigbouring pairs of points
+  ## links <- classify.links(Cu, 1:N.edge)
+  
+  return(sum(E))
 }
 
-dE.D <- function(p, Cu, C, L, B, R, verbose=FALSE) {
+dE.D <- function(p, Cu, R, L, n, verbose=FALSE) {
+  ## Consider points on the edge only
+  phi    <- p[1:n]
+  lambda <- p[(length(p)/2)+1:n]
+  
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+  texts3d(P[,1], P[,2], P[,3], 1:n, col="red")
+
+  dE <- matrix(0, n, 3)
+  d <- 10
+
+  ## Go through each vertex in turn
+  for (i in 1:n) {
+
+    ## Find neigbouring verticies, as measured in polar coordinates
+    j <- ((abs(regularise.angle(phi    - phi[i]))    < pi/10) &
+          (abs(regularise.angle(lambda - lambda[i])) < pi/10))
+    
+    ## Remove dipoles that contain this point
+    j[i] <- 0
+    j[ifelse(i-1, i-1, n)] <- 0
+    
+    j <- which(j==1)
+    print(i)
+    print(j)
+    if (length(j) > 0) {
+      jp1 <- (j %% n) + 1       # Indicies of second vertex in dipoles
+      print(jp1)
+      ## Make matricies of the same size
+      Pi <- matrix(P[i,], length(j), 3, byrow=TRUE)
+      Pj   <- P[j  ,,drop=FALSE]
+      Pjp1 <- P[jp1,,drop=FALSE]
+
+      
+      dr0dpi <- extprod3d(Pj, Pjp1)
+      dr0dpi <- dr0dpi/sqrt(apply(dr0dpi^2, 1, sum))
+      print(dr0dpi)
+      
+      r0 <- dot(dr0dpi, Pi)
+      print(r0)
+      
+      v <-  Pjp1 - Pj
+      ds1dpi <- -v/sqrt(apply(v^2, 1, sum))
+      s1 <- - dot(Pj - Pi, ds1dpi)
+      
+      ds2dpi <- ds1dpi
+      s2 <- - dot(Pjp1 - Pi, ds2dpi)
+
+      s0 <- sqrt(d^2 + r0^2)
+  
+      dEdr0 <- d^2*r0/s0^3*(atan(s2/s0)         - atan(s1/s0) +
+                            s2/s0/(1+(s2/s0)^2) - s1/s0/(1+(s1/s0)^2))
+      print(dEdr0)
+      dEds1 <- - 1/(1+(r0^2 + s1^2)/d^2)
+      dEds2 <- + 1/(1+(r0^2 + s2^2)/d^2)
+      
+      dE[i,] <- apply(dEdr0 * dr0dpi + dEds1 * ds1dpi + dEds2 * ds2dpi, 2, sum)
+      
+      ##    print(format(c(i, r0, s1, s2, E),digits=2, nsmall=3))
+    }
+  }
+  
   return(dE)
 }
+
 
 optimise.mapping.dipole <- function(dt) {
   ## Optimisation and plotting 
@@ -413,6 +496,25 @@ optimise.mapping.dipole <- function(dt) {
     plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green)
   }
 }
+
+plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=N.edge),
+                               fac=100)
+ {
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+
+  n <- N.edge
+  P <- P[1:n,]
+  segments3d(rbind(P[,1], P[,1] + fac * dE[,1]),
+             rbind(P[,2], P[,2] + fac * dE[,2]),
+             rbind(P[,3], P[,3] + fac * dE[,3]),
+             xlab="x", color="red", size=2)
+}
+
 
 
 
