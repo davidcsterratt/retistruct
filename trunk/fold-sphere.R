@@ -3,6 +3,7 @@ source("triangulate.R")
 source("common.R")
 source("dipole.R")
 library("geometry")
+library("deSolve")
 source("tsearch.R")
 library("gtools")
 library("rgl")
@@ -147,7 +148,7 @@ Cu <- M$Cu                              # Assymetric connectivity matrix
 C <-  M$C                               # Symmetric connectivity matrix
 
 ## Full set of points
-N.edge <- nrow(P.edge)
+n <- nrow(P.edge)
 P <- rbind(P.edge, P.grid)
 
 ## Matrix to map line segments onto the points they link
@@ -197,7 +198,7 @@ phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
-plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
 
 ##
 ## Energy/error functions
@@ -246,7 +247,7 @@ dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
 }
 
 ## Optimisation with just the elastic energy
-optimise.mapping <- function() {
+optimise.mapping.E <- function() {
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi, lambda)
@@ -257,7 +258,7 @@ optimise.mapping <- function() {
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
   }
   ## CG min: 288037
   ##
@@ -267,8 +268,9 @@ optimise.mapping <- function() {
   ## with maxit=100 and phi0=50 it is 325785
 }
 
+
 ## Energy function with areas
-E.area <- function(p, Pt, A, R, verbose=FALSE) {
+E.A <- function(p, Pt, A, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
 
@@ -282,7 +284,7 @@ E.area <- function(p, Pt, A, R, verbose=FALSE) {
   return(E)
 }
 
-dE.area <- function(p, Pt, A, R, verbose=FALSE) {
+dE.A <- function(p, Pt, A, R, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
 
@@ -327,43 +329,43 @@ optimise.mapping.area <- function() {
   opt$p <- c(phi, lambda)
   opt$conv <- 1
   while (opt$conv) {
-    opt <- optim(opt$p, E.area, gr=dE.area,
+    opt <- optim(opt$p, E.A, gr=dE.A,
                  method="BFGS", Pt=Pt, A=areas, R=R, verbose=FALSE)
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    print(E.area(opt$p, Pt, areas, R))
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+    print(E.A(opt$p, Pt, areas, R))
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
   }
 }
 
 
-E.E.area <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
+E.E.A <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
   return(E.E(p, Cu, C, L, B, R, verbose=verbose)
-         + E.area(p, Pt, A, R, verbose=verbose))
+         + E.A(p, Pt, A, R, verbose=verbose))
 }
     
 
-dE.E.area <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
+dE.E.A <- function(p, Cu, C, L, B, Pt, A, R, verbose=FALSE) {
   return(dE.E(p, Cu, C, L, B, R, verbose=verbose)
-         + dE.area(p, Pt, A, R, verbose=verbose))
+         + dE.A(p, Pt, A, R, verbose=verbose))
 }
 
-optimise.mapping.E.area <- function() {
+optimise.mapping.E.A <- function() {
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi, lambda)
   opt$conv <- 1
   while (opt$conv) {
-    opt <- optim(opt$p, E.E.area, gr=dE.E.area,
+    opt <- optim(opt$p, E.E.A, gr=dE.E.A,
                  method="BFGS",
                  Cu=Cu, C=C, L=Ls, B=B,
                  Pt=Pt, A=areas, R=R, verbose=FALSE)
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    print(E.area(opt$p, Pt, areas, R))
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:N.edge)
+    print(E.A(opt$p, Pt, areas, R))
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
   }
 }
 
@@ -373,7 +375,7 @@ regularise.angle <- function(theta) {
 }
 
 ## Energy function with elastic and dipole forces
-E.D <- function(p, Cu, R, L, N.edge, verbose=FALSE) {
+E.D <- function(p, Cu, R, L, n, verbose=FALSE) {
   phi    <- p[1:(length(p)/2)]
   lambda <- p[((length(p)/2)+1):length(p)]
   
@@ -382,7 +384,7 @@ E.D <- function(p, Cu, R, L, N.edge, verbose=FALSE) {
                  sin(phi))
 
   ## Consider points on the edge only
-  P <- P[1:N.edge,]
+  P <- P[1:n,]
 
   ## Need to go round rim finding neigbours
   ## First find distances between all pairs of points on the rim
@@ -394,9 +396,9 @@ E.D <- function(p, Cu, R, L, N.edge, verbose=FALSE) {
 
   E <- c()
   d <- 10
-  for (i in 1:N.edge) {
-    j <- (i %% N.edge) + 1
-    k <- ((i + 1) %% N.edge) + 1
+  for (i in 1:n) {
+    j <- (i %% n) + 1
+    k <- ((i + 1) %% n) + 1
     r0 <- 1/R^2 * sum(extprod3d(P[i,], P[j,]) * P[k,])
     s1 <- sum((P[i,] - P[k,]) * (P[j,] - P[i,])/sqrt(sum((P[j,] - P[i,])^2)))
     s2 <- sum((P[j,] - P[k,]) * (P[j,] - P[i,])/sqrt(sum((P[j,] - P[i,])^2)))
@@ -408,7 +410,7 @@ E.D <- function(p, Cu, R, L, N.edge, verbose=FALSE) {
   }
   
   ## Find the vector product of neigbouring pairs of points
-  ## links <- classify.links(Cu, 1:N.edge)
+  ## links <- classify.links(Cu, 1:n)
   
   return(sum(E))
 }
@@ -421,9 +423,9 @@ dE.D <- function(p, Cu, R, L, n, verbose=FALSE) {
   P <- R * cbind(cos(phi)*cos(lambda),
                  cos(phi)*sin(lambda),
                  sin(phi))
-  texts3d(P[,1], P[,2], P[,3], 1:n, col="red")
+  ## texts3d(P[,1], P[,2], P[,3], 1:n, col="red")
 
-  dE <- matrix(0, n, 3)
+  dEdpi <- matrix(0, n, 3)
   d <- 10
 
   ## Go through each vertex in turn
@@ -438,23 +440,23 @@ dE.D <- function(p, Cu, R, L, n, verbose=FALSE) {
     j[ifelse(i-1, i-1, n)] <- 0
     
     j <- which(j==1)
-    print(i)
-    print(j)
+    ##    print(i)
+    ## print(j)
     if (length(j) > 0) {
       jp1 <- (j %% n) + 1       # Indicies of second vertex in dipoles
-      print(jp1)
+      ## print(jp1)
       ## Make matricies of the same size
       Pi <- matrix(P[i,], length(j), 3, byrow=TRUE)
       Pj   <- P[j  ,,drop=FALSE]
       Pjp1 <- P[jp1,,drop=FALSE]
 
       
-      dr0dpi <- extprod3d(Pj, Pjp1)
+      dr0dpi <- cross(Pj, Pjp1)
       dr0dpi <- dr0dpi/sqrt(apply(dr0dpi^2, 1, sum))
-      print(dr0dpi)
+      ## print(dr0dpi)
       
       r0 <- dot(dr0dpi, Pi)
-      print(r0)
+      ## print(r0)
       
       v <-  Pjp1 - Pj
       ds1dpi <- -v/sqrt(apply(v^2, 1, sum))
@@ -467,37 +469,32 @@ dE.D <- function(p, Cu, R, L, n, verbose=FALSE) {
   
       dEdr0 <- d^2*r0/s0^3*(atan(s2/s0)         - atan(s1/s0) +
                             s2/s0/(1+(s2/s0)^2) - s1/s0/(1+(s1/s0)^2))
-      print(dEdr0)
+      ## print(dEdr0)
       dEds1 <- - 1/(1+(r0^2 + s1^2)/d^2)
       dEds2 <- + 1/(1+(r0^2 + s2^2)/d^2)
       
-      dE[i,] <- apply(dEdr0 * dr0dpi + dEds1 * ds1dpi + dEds2 * ds2dpi, 2, sum)
+      dEdpi[i,] <- apply(dEdr0 * dr0dpi + dEds1 * ds1dpi + dEds2 * ds2dpi, 2, sum)
       
       ##    print(format(c(i, r0, s1, s2, E),digits=2, nsmall=3))
     }
   }
-  
-  return(dE)
+
+  ## Now need to convert dE to phi, lambda coordinates
+  dpidphi <- R * cbind(-sin(phi) * cos(lambda),
+                       -sin(phi) * sin(lambda),
+                       cos(phi))
+  dpidlambda <- R * cbind(-cos(phi) * sin(lambda),
+                          cos(phi) * cos(lambda),
+                          0)
+
+  dEdphi    <- apply(dEdpi * dpidphi,    1, sum)
+  dEdlambda <- apply(dEdpi * dpidlambda, 1, sum)
+
+  return(c(dEdphi   , rep(0, length(p)/2 - n),
+           dEdlambda, rep(0, length(p)/2 - n)))
 }
 
-
-optimise.mapping.dipole <- function(dt) {
-  ## Optimisation and plotting 
-  opt <- list()
-  opt$p <- c(phi, lambda)
-  opt$conv <- 1
-  for (epoch in 1:200) {
-    for (time in 1:10) {
-      opt$p <- opt$p - dt * dE.E(opt$p, Cu, C, L, B, R)
-    }
-    phi    <- opt$p[1:(length(opt$p)/2)]
-    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    print(E(opt$p, Cu, C, L, B, R))
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green)
-  }
-}
-
-plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=N.edge),
+plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=n),
                                fac=100)
  {
   P <- R * cbind(cos(phi)*cos(lambda),
@@ -506,8 +503,6 @@ plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=N.edge),
   P <- R * cbind(cos(phi)*cos(lambda),
                  cos(phi)*sin(lambda),
                  sin(phi))
-
-  n <- N.edge
   P <- P[1:n,]
   segments3d(rbind(P[,1], P[,1] + fac * dE[,1]),
              rbind(P[,2], P[,2] + fac * dE[,2]),
@@ -516,7 +511,73 @@ plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=N.edge),
 }
 
 
+E <- function(p, Cu, C, L, B, Pt, A, R, n, verbose=FALSE) {
+  return(E.E(p, Cu, C, L, B, R, verbose=verbose)
+         + E.A(p, Pt, A, R, verbose=verbose)
+         + 100 * E.D(p, Cu, R, L, n, verbose=verbose))
+  
+}
+
+dE <- function(p, Cu, C, L, B, Pt, A, R, n, verbose=FALSE) {
+  return(dE.E(p, Cu, C, L, B, R, verbose=verbose)
+         + dE.A(p, Pt, A, R, verbose=verbose)
+         + 100 * dE.D(p, Cu, R, L, n, verbose=verbose))
+}
 
 
+## Grand  optimisation function
+optimise.mapping <- function() {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi, lambda)
+  opt$conv <- 1
+  while (opt$conv) {
+    opt <- optim(opt$p, E, gr=dE,
+                 method="BFGS", Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n, verbose=FALSE)
+    ##               control=list(maxit=200))
+    phi    <- opt$p[1:(length(opt$p)/2)]
+    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
+  }
+  ## CG min: 288037
+  ##
+  ## BFGS maxit=100 is 261000
+  ## with maxit=10 it is 277226
+  ## with maxit=200 it is 273882
+  ## with maxit=100 and phi0=50 it is 325785
+}
+
+dE.ode <- function(t, y, p) {
+  return(list(-1/p$tau*dE(y, Cu=p$Cu, C=p$C, L=p$L, B=p$B, Pt=p$Pt, A=p$A, R=p$R, n=p$n,)))
+}
+
+## Solve mapping using ODE solver
+solve.mapping <- function(tmax=10, nepochs=10, tau=1e10, method="lsoda", ...) {
+  ## Optimisation and plotting
+  plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
+  y <- c(phi, lambda)
+  print(phi[1:10])
+  print(lambda[1:10])
+  for (epoch in 1:nepochs) {
+    ys <- ode(y=y, times=c(0, tmax), func=dE.ode,
+              parms=list(Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n, tau=tau),
+              method=method, ...)
+    y <- ys[2,-1]
+    print(ys[,1:10])
+    ##               control=list(maxit=200))
+    phi    <- y[1:(length(y)/2)]
+    lambda <- y[((length(y)/2)+1):length(y)]
+    print(phi[1:10])
+    print(lambda[1:10])
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
+  }
+  ## CG min: 288037
+  ##
+  ## BFGS maxit=100 is 261000
+  ## with maxit=10 it is 277226
+  ## with maxit=200 it is 273882
+  ## with maxit=100 and phi0=50 it is 325785
+  return(list(phi=phi, lambda=lambda))
+}
 
 
