@@ -135,8 +135,10 @@ source("M634-4.R")
 P <- cbind(X=edge.path[-1,"X"], Y=edge.path[-1,"Y"])
 
 ## Plot the outline of the flattened retina
-plot(edge.path[,"X"], edge.path[,"Y"], xlab="x", ylab="y")
-plot.sys.map(sys, map)
+par(mar=c(0, 0, 0, 0))
+plot(edge.path[,"X"], edge.path[,"Y"], xlab="", ylab="",
+     xaxt="n", yaxt="n", bty="n", pch=20, cex=0.1)
+points.sys(sys)
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
 
 ## Create the mesh
@@ -511,29 +513,37 @@ plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=n),
 }
 
 
-E <- function(p, Cu, C, L, B, Pt, A, R, n, verbose=FALSE) {
-  return(E.E(p, Cu, C, L, B, R, verbose=verbose)
-         + E.A(p, Pt, A, R, verbose=verbose)
-         + 100 * E.D(p, Cu, R, L, n, verbose=verbose))
-  
+E <- function(p, Cu, C, L, B, Pt, A, R, n,
+              E0.E=1, E0.A=1, E0.D=1, d=10, verbose=FALSE) {
+  E <- E0.E * E.E(p, Cu, C, L, B, R, verbose=verbose) +
+    E0.A * E.A(p, Pt, A, R, verbose=verbose)
+  if (E0.D) {
+    E <- E + E0.D * E.D(p, Cu, R, L, n, verbose=verbose)
+  }
+  return(E) 
 }
 
-dE <- function(p, Cu, C, L, B, Pt, A, R, n, verbose=FALSE) {
-  return(dE.E(p, Cu, C, L, B, R, verbose=verbose)
-         + dE.A(p, Pt, A, R, verbose=verbose)
-         + 100 * dE.D(p, Cu, R, L, n, verbose=verbose))
+dE <- function(p, Cu, C, L, B, Pt, A, R, n,
+               E0.E=1, E0.A=1, E0.D=1, d=10, verbose=FALSE) {
+  dE <- E0.E * dE.E(p, Cu, C, L, B, R, verbose=verbose) +
+    E0.A * dE.A(p, Pt, A, R, verbose=verbose)
+  if (E0.D) {
+    dE <- dE + E0.D * dE.D(p, Cu, R, L, n, verbose=verbose)
+  }
+  return(dE)
 }
 
 
 ## Grand  optimisation function
-optimise.mapping <- function() {
+optimise.mapping <- function(E0.E=1, E0.A=1, E0.D=1, d=10) {
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi, lambda)
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
-                 method="BFGS", Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n, verbose=FALSE)
+                 method="BFGS", Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n,
+                 E0.E=E0.E, E0.A=E0.A, E0.D=E0.D, d=d, verbose=FALSE)
     ##               control=list(maxit=200))
     phi    <- opt$p[1:(length(opt$p)/2)]
     lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
