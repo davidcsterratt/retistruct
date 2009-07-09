@@ -5,6 +5,16 @@ dot <- function(x, y) {
   return(as.vector(apply(x * y, 1, sum)))
 }
 
+## vector product of two column matricies, returning matrix
+## (in contrast to extprod3d, which drops return value)
+cross <- function(x, y) {
+  x <- matrix(x, ncol = 3)
+  y <- matrix(y, ncol = 3)
+  return(cbind(x[, 2] * y[, 3] - x[, 3] * y[, 2],
+               x[, 3] * y[, 1] - x[, 1] * y[, 3],
+               x[, 1] * y[, 2] - x[, 2] * y[, 1]))
+}
+
 ## Create a mesh of x and y values of all possible combination of
 ## the elements of a and b
 meshgrid <- function(a,b) {
