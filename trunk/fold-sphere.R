@@ -55,8 +55,14 @@ plot.retina <- function(phi, lambda, R, C,
   rgl.clear()
   rgl.bg(color="white")
 
+
   ## Plot links, highlighting the edges in black
-  links <- classify.links(C, edge.inds)
+  ## Plot the centre links
+  segments3d(rbind(x[C[,1]],x[C[,2]]),
+             rbind(y[C[,1]],y[C[,2]]),
+             rbind(z[C[,1]],z[C[,2]]),
+             xlab="x", color="grey")
+
   ## If edge connections are specified, find the connections
   ## which lie on the edge and those which lie on the centre
   if (!any(is.na(edge.inds))) {
@@ -70,11 +76,6 @@ plot.retina <- function(phi, lambda, R, C,
                rbind(z[from],z[to]),
                xlab="x", color="black", size=2)
   }
-  ## Plot the centre links
-  segments3d(rbind(x[C[links$cent,1]],x[C[links$cent,2]]),
-             rbind(y[C[links$cent,1]],y[C[links$cent,2]]),
-             rbind(z[C[links$cent,1]],z[C[links$cent,2]]),
-             xlab="x", color="grey")
 
   ## In order to plot the points, we need to know in which triangle they
   ## lie and where in that triangle they are. The first job is to create
