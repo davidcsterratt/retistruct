@@ -153,6 +153,9 @@ C <-  M$C                               # Symmetric connectivity matrix
 ## Full set of points
 n <- nrow(P.edge)
 P <- rbind(P.edge, P.grid)
+N <- nrow(P)
+nfix <- length(ifix)
+Nphi <- N - nfix
 
 ## Matrix to map line segments onto the points they link
 B <- matrix(0, nrow(P), nrow(C))
@@ -198,6 +201,7 @@ R <- sqrt(area/(2*pi*(sin(phi0)+1)))
 x <- P[,"X"] - mean(P[,"X"]) 
 y <- P[,"Y"] - mean(P[,"Y"]) 
 phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+phi[ifix] <- phi0
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
@@ -208,9 +212,11 @@ plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
 ## 
 
 ## Now for the dreaded elastic error function....
-E.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
+E.E <- function(p, Cu, C, L, B, R, ifix, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-ifix] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
+  
   ## Use the upper triagular part of the connectivity matrix Cu
   phi1    <- phi[Cu[,1]]
   lambda1 <- lambda[Cu[,1]]
@@ -228,9 +234,11 @@ E.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
+dE.E <- function(p, Cu, C, L, B, R, ifix, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-ifix] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
+
   phii   <- phi[C[,1]]
   lambdai <- lambda[C[,1]]
   phij    <- phi[C[,2]]
@@ -246,36 +254,14 @@ dE.E <- function(p, Cu, C, L, B, R, verbose=FALSE) {
   dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
                                - cos(phii)*sin(phij)))
   dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
-  return(c(dE.phii, dE.dlambdai))
+  return(c(dE.phii[-ifix], dE.dlambdai))
 }
-
-## Optimisation with just the elastic energy
-optimise.mapping.E <- function() {
-  ## Optimisation and plotting 
-  opt <- list()
-  opt$p <- c(phi, lambda)
-  opt$conv <- 1
-  while (opt$conv) {
-    opt <- optim(opt$p, E.E, gr=dE.E,
-                 method="BFGS", Cu=Cu, C=C, L=Ls, B=B, R=R, verbose=FALSE)
-    ##               control=list(maxit=200))
-    phi    <- opt$p[1:(length(opt$p)/2)]
-    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
-  }
-  ## CG min: 288037
-  ##
-  ## BFGS maxit=100 is 261000
-  ## with maxit=10 it is 277226
-  ## with maxit=200 it is 273882
-  ## with maxit=100 and phi0=50 it is 325785
-}
-
 
 ## Energy function with areas
-E.A <- function(p, Pt, A, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
+E.A <- function(p, Pt, A, R, ifix, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-ifix] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
 
   P <- R * cbind(cos(phi)*cos(lambda),
                  cos(phi)*sin(lambda),
@@ -287,9 +273,10 @@ E.A <- function(p, Pt, A, R, verbose=FALSE) {
   return(E)
 }
 
-dE.A <- function(p, Pt, A, R, verbose=FALSE) {
-  phi    <- p[1:(length(p)/2)]
-  lambda <- p[((length(p)/2)+1):length(p)]
+dE.A <- function(p, Pt, A, R, ifix, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-ifix] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
 
   P <- R * cbind(cos(phi)*cos(lambda),
                  cos(phi)*sin(lambda),
@@ -322,7 +309,7 @@ dE.A <- function(p, Pt, A, R, verbose=FALSE) {
 
   dEdphi    <- apply(dEdpi * dpidphi,    1, sum)
   dEdlambda <- apply(dEdpi * dpidlambda, 1, sum)
-  return(c(dEdphi, dEdlambda))
+  return(c(dEdphi[-ifix], dEdlambda))
 
 }
 
@@ -515,9 +502,12 @@ plot.dipole.forces <- function(dE=dE.D(c(phi, lambda), Cu, R, L, n=n),
 
 
 E <- function(p, Cu, C, L, B, Pt, A, R, n,
-              E0.E=1, E0.A=1, E0.D=1, d=10, verbose=FALSE) {
-  E <- E0.E * E.E(p, Cu, C, L, B, R, verbose=verbose) +
-    E0.A * E.A(p, Pt, A, R, verbose=verbose)
+              E0.E=1, E0.A=1, E0.D=1, d=10,
+              ifix, phi0, verbose=FALSE) {
+  E <- E0.E * E.E(p, Cu, C, L, B, R, ifix, phi0, verbose=verbose) 
+  if (E0.A) {
+    E <- E + E0.A * E.A(p, Pt, A, R, ifix, phi0, verbose=verbose)
+  }
   if (E0.D) {
     E <- E + E0.D * E.D(p, Cu, R, L, n, verbose=verbose)
   }
@@ -525,9 +515,12 @@ E <- function(p, Cu, C, L, B, Pt, A, R, n,
 }
 
 dE <- function(p, Cu, C, L, B, Pt, A, R, n,
-               E0.E=1, E0.A=1, E0.D=1, d=10, verbose=FALSE) {
-  dE <- E0.E * dE.E(p, Cu, C, L, B, R, verbose=verbose) +
-    E0.A * dE.A(p, Pt, A, R, verbose=verbose)
+               E0.E=1, E0.A=1, E0.D=1, d=10,
+               ifix, phi0, verbose=FALSE) {
+  dE <- E0.E * dE.E(p, Cu, C, L, B, R, ifix, phi0, verbose=verbose)
+  if (E0.A) {
+    dE <- dE + E0.A * dE.A(p, Pt, A, R, ifix, phi0, verbose=verbose)
+  }
   if (E0.D) {
     dE <- dE + E0.D * dE.D(p, Cu, R, L, n, verbose=verbose)
   }
@@ -539,15 +532,17 @@ dE <- function(p, Cu, C, L, B, Pt, A, R, n,
 optimise.mapping <- function(E0.E=1, E0.A=1, E0.D=1, d=10) {
   ## Optimisation and plotting 
   opt <- list()
-  opt$p <- c(phi, lambda)
+  opt$p <- c(phi[-ifix], lambda)
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
-                 method="BFGS", Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n,
-                 E0.E=E0.E, E0.A=E0.A, E0.D=E0.D, d=d, verbose=FALSE)
+                 method="BFGS", Pt=Pt, A=areas, Cu=Cu, C=C, L=Ls, B=B, R=R, n=n, 
+                 E0.E=E0.E, E0.A=E0.A, E0.D=E0.D, d=d,
+                 ifix=ifix, phi0=phi0, verbose=FALSE)
     ##               control=list(maxit=200))
-    phi    <- opt$p[1:(length(opt$p)/2)]
-    lambda <- opt$p[((length(opt$p)/2)+1):length(opt$p)]
+    phi        <- rep(phi0, N)
+    phi[-ifix] <- opt$p[1:Nphi]
+    lambda     <- opt$p[Nphi+1:N]
     plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
   }
   ## CG min: 288037
