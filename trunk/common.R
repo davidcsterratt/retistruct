@@ -28,7 +28,6 @@ create.path <- function(segs, close=FALSE) {
     s.cum <- s[length(s)]
     if ((i > 1) && !close) {
       p <- rbind(p, rep(NA, 4))
-    }
     p <- rbind(p,
                cbind(seg,
                      s,
@@ -119,5 +118,12 @@ find.points.in.path <- function(f, p) {
   ## Interpolate to find the points
   P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
   return(P)
+}
+
+## Create a mesh of x and y values of all possible combination of
+## the elements of a and b
+meshgrid <- function(a,b) {
+  list(x=outer(b*0,a,FUN="+"),
+       y=outer(b,a*0,FUN="+"))
 }
 
