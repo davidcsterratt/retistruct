@@ -50,3 +50,13 @@ tears[[5]]  =
 tears[[6]]  =
   list(create.path(list(edge.path[66:67,1:2])),
        create.path(list(edge.path[66:65,1:2])))
+
+tearmat <- rbind(c(42,  31, 53),
+                 c(78,  67, 83),
+                 c(108, 94, 16),
+                 c(74,  70, 76),
+                 c(88,  87, 89),
+                 c(66,  65, 67))
+colnames(tearmat) <- c("apex", "end1", "end2")
+
+ifix <- c(16:31, 53:65, 83:94)
