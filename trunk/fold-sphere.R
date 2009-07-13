@@ -72,10 +72,10 @@ plot.retina <- function(phi, lambda, R, C,
     from <- edge.inds
     to <- c(edge.inds[-1], edge.inds[1])
     ## Plot the edge links
-#    segments3d(rbind(x[from],x[to]),
-#               rbind(y[from],y[to]),
-#               rbind(z[from],z[to]),
-#               xlab="x", color="black", size=2)
+    segments3d(rbind(x[from],x[to]),
+               rbind(y[from],y[to]),
+               rbind(z[from],z[to]),
+               xlab="x", color="black", size=2)
   }
 
   ## In order to plot the points, we need to know in which triangle they
@@ -193,6 +193,7 @@ trans[s$corrs[,1]] <- s$corrs[,2]
 Cu <- matrix(trans[Cu], ncol=2)
 C <-  matrix(trans[C] , ncol=2)
 Pt <- matrix(trans[Pt], ncol=3) 
+edge.inds <- trans[1:n]
 
 ## Remove redundant indicies
 inds <- unique(as.vector(Cu))
@@ -202,6 +203,7 @@ trans[inds] <- 1:length(inds)
 Cu <- matrix(trans[Cu], ncol=2)
 C <-  matrix(trans[C] , ncol=2)
 Pt <- matrix(trans[Pt], ncol=3) 
+edge.inds <- trans[edge.inds]
 
 P <- P[inds,]
 
@@ -231,7 +233,7 @@ phi[ifix] <- phi0
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
-plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
+plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, edge.inds)
 
 ##
 ## Energy/error functions
@@ -569,7 +571,7 @@ optimise.mapping <- function(E0.E=1, E0.A=1, E0.D=1, d=10) {
     phi        <- rep(phi0, N)
     phi[-ifix] <- opt$p[1:Nphi]
     lambda     <- opt$p[Nphi+1:N]
-    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, 1:n)
+    plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, edge.inds)
   }
   ## CG min: 288037
   ##
