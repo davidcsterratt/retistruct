@@ -5,6 +5,7 @@ source("dipole.R")
 library("geometry")
 library("deSolve")
 source("tsearch.R")
+source("stitch.R")
 library("gtools")
 library("rgl")
 
@@ -71,10 +72,10 @@ plot.retina <- function(phi, lambda, R, C,
     from <- edge.inds
     to <- c(edge.inds[-1], edge.inds[1])
     ## Plot the edge links
-    segments3d(rbind(x[from],x[to]),
-               rbind(y[from],y[to]),
-               rbind(z[from],z[to]),
-               xlab="x", color="black", size=2)
+#    segments3d(rbind(x[from],x[to]),
+#               rbind(y[from],y[to]),
+#               rbind(z[from],z[to]),
+#               xlab="x", color="black", size=2)
   }
 
   ## In order to plot the points, we need to know in which triangle they
@@ -142,6 +143,10 @@ plot(edge.path[,"X"], edge.path[,"Y"], xlab="", ylab="",
 points.sys(sys)
 lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
 
+## Stitch the retina
+s <- stitch.retina(tearmat, edge.path)
+P <- s$P[,c("X", "Y")]
+
 ## Create the mesh
 M <- create.mesh(P)
 P.edge <- M$P
@@ -153,15 +158,6 @@ C <-  M$C                               # Symmetric connectivity matrix
 ## Full set of points
 n <- nrow(P.edge)
 P <- rbind(P.edge, P.grid)
-N <- nrow(P)
-nfix <- length(ifix)
-Nphi <- N - nfix
-
-## Matrix to map line segments onto the points they link
-B <- matrix(0, nrow(P), nrow(C))
-for (i in 1:nrow(C)) {
-  B[C[i,1],i] <- 1
-}
 
 ## Plot the triangles that remain after the pruning
 trimesh(Pt, P, col="gray", add=TRUE)
@@ -189,6 +185,36 @@ Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
 ## area <- nrow(Pt) * L^2 * sqrt(3)/2
 areas <- tri.area(P, Pt)
 area <- sum(areas)
+
+## Stitching translation
+trans <- 1:nrow(P)
+trans[s$corrs[,1]] <- s$corrs[,2]
+
+Cu <- matrix(trans[Cu], ncol=2)
+C <-  matrix(trans[C] , ncol=2)
+Pt <- matrix(trans[Pt], ncol=3) 
+
+## Remove redundant indicies
+inds <- unique(as.vector(Cu))
+trans <- rep(NA, nrow(P))
+trans[inds] <- 1:length(inds)
+
+Cu <- matrix(trans[Cu], ncol=2)
+C <-  matrix(trans[C] , ncol=2)
+Pt <- matrix(trans[Pt], ncol=3) 
+
+P <- P[inds,]
+
+## Matrix to map line segments onto the points they link
+B <- matrix(0, nrow(P), nrow(C))
+for (i in 1:nrow(C)) {
+  B[C[i,1],i] <- 1
+}
+
+N <- nrow(P)
+ifix <- c(40)
+nfix <- length(ifix)
+Nphi <- N - nfix
 
 ## From this we can infer what the radius should be from the formula
 ## for the area of a sphere which is cut off at a lattitude of phi0
