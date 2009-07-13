@@ -114,6 +114,8 @@ stitch.retina <- function(tm, edge.path) {
   P <- cbind(P, id=1:N,  Cf=c(2:N, 1), Cb=(c(N, 1:(N-1))))
   corrs <- matrix(0, 0, 2)
 
+  ifix <- 1:N
+  
   for(i in 1:nrow(tm)) {
     ## Sort out edge1 and edge2 to account for circular nature of path
     ## Edge 1 goes from apex to end1, and is in the backwards (decreasing)
@@ -131,7 +133,10 @@ stitch.retina <- function(tm, edge.path) {
     } else {
       e2 <- c(tm[i,1]:N, 1:tm[i,3])       # Goes around end of path
     }
-
+    ifix <- c(setdiff(ifix,
+                      c(setdiff(e1, tm[i,2]),
+                        setdiff(e2, tm[i,3])))) # Get rid of tears from fixed points
+    
     ## Check to see if any other tears appear in this tear
     in.tears <- setdiff(which(tm[,1] %in% e1), i)
     for (j in in.tears) {
@@ -173,17 +178,19 @@ stitch.retina <- function(tm, edge.path) {
     corrs <- rbind(corrs, s$corrs)
     ## Insert the new points in the path
   }
+
   
   P <- reorder.path(P)
   trans <- 1:nrow(P)
   trans[P[,'id']] <- 1:nrow(P)
   corrs <- matrix(trans[corrs], ncol=2)
-
+  ifix <- trans[ifix]
+  
   segments(P[corrs[,1],"X"], P[corrs[,1], "Y"],
            P[corrs[,2],"X"], P[corrs[,2], "Y"], col="green")
   points(P[c(110, 135, 167), 1:2], col="blue")
   
-  return(list(P=P, corrs=corrs))
+  return(list(P=P, corrs=corrs, ifix=ifix))
 }
 
 ## Put the path so that the points are in order around the path
