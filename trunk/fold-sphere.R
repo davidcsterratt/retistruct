@@ -204,6 +204,7 @@ Cu <- matrix(trans[Cu], ncol=2)
 C <-  matrix(trans[C] , ncol=2)
 Pt <- matrix(trans[Pt], ncol=3) 
 edge.inds <- trans[edge.inds]
+ifix <- na.omit(trans[s$ifix])
 
 P <- P[inds,]
 
@@ -214,7 +215,6 @@ for (i in 1:nrow(C)) {
 }
 
 N <- nrow(P)
-ifix <- c(40)
 nfix <- length(ifix)
 Nphi <- N - nfix
 
