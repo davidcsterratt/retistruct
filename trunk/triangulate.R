@@ -98,10 +98,11 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   d1 <- sqrt(apply((P[c(2:nrow(P),1),] - P)^2, 1, sum))
   d2 <- d1[c(nrow(P), 1:(nrow(P)-1))]
   d <- apply(cbind(d1, d2), 1, max)
+
   ## Distances between each internal point and each vertex
   r2 <- (outer(P[,1], Q[,1], "-"))^2 + (outer(P[,2], Q[,2], "-"))^2 
   Q <- Q[apply(r2 > d^2, 2, all),]
-
+  
   ## Triangulate
   S <- rbind(P, Q)
   St <- delaunayn(S)
@@ -110,6 +111,9 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   Sc <- (S[St[,1],] + S[St[,2],] + S[St[,3],])/3 # Centres
   St <- St[point.in.polygon(Sc[,1], Sc[,2], P[,1], P[,2])==1,]
 
+  ## FIXME: If any triangles have all their verticies in the edge,
+  ## split them??
+  
   ## Swap orientation of triangles which have clockwise orientation
   areas.signed <- tri.area.signed(S, St)
   St[areas.signed<0,c(2,3)] <- St[areas.signed<0,c(3,2)]
