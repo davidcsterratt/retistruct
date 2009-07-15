@@ -172,14 +172,20 @@ stitch.retina <- function(tm, edge.path) {
 
     s <- stitch(create.path(p1), create.path(p2), P)
     ## print(s$p)
-    segments(s$P[s$corrs[,1],"X"], s$P[s$corrs[,1], "Y"],
-             s$P[s$corrs[,2],"X"], s$P[s$corrs[,2], "Y"], col="red")
+    ## segments(s$P[s$corrs[,1],"X"], s$P[s$corrs[,1], "Y"],
+    ## s$P[s$corrs[,2],"X"], s$P[s$corrs[,2], "Y"], col="red")
     P <- s$P
     corrs <- rbind(corrs, s$corrs)
     ## Insert the new points in the path
   }
 
-  
+  ## Make sure that any for any triple correspondances, that the
+  ## same point is pointed to
+  dups <- corrs[corrs[,2] %in% corrs[,1],2]
+  inds <- which(corrs[,1] %in% dups)
+  corrs[inds,] <- corrs[inds,2:1]
+
+  ## Reorder the edge path so that it is in ascending order
   P <- reorder.path(P)
   trans <- 1:nrow(P)
   trans[P[,'id']] <- 1:nrow(P)
@@ -187,8 +193,7 @@ stitch.retina <- function(tm, edge.path) {
   ifix <- trans[ifix]
   
   segments(P[corrs[,1],"X"], P[corrs[,1], "Y"],
-           P[corrs[,2],"X"], P[corrs[,2], "Y"], col="green")
-  points(P[c(110, 135, 167), 1:2], col="blue")
+           P[corrs[,2],"X"], P[corrs[,2], "Y"], col="blue")
   
   return(list(P=P, corrs=corrs, ifix=ifix))
 }
