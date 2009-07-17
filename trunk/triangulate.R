@@ -103,44 +103,69 @@ create.mesh <- function(P, create.grid=create.grid.random, ...) {
   r2 <- (outer(P[,1], Q[,1], "-"))^2 + (outer(P[,2], Q[,2], "-"))^2 
   Q <- Q[apply(r2 > d^2, 2, all),]
   
-  ## Triangulate
-  S <- rbind(P, Q)
-  St <- delaunayn(S)
+  i.et <- 1 ## Indicies of edge triangles
+  while (any(i.et)) {
+    ## Triangulate
+    S <- rbind(P, Q)
+    St <- delaunayn(S)
 
-  ## Remove triangles outwith the retinal outline
-  Sc <- (S[St[,1],] + S[St[,2],] + S[St[,3],])/3 # Centres
-  St <- St[point.in.polygon(Sc[,1], Sc[,2], P[,1], P[,2])==1,]
+    ## Remove triangles outwith the retinal outline
+    Sc <- (S[St[,1],] + S[St[,2],] + S[St[,3],])/3 # Centres
+    St <- St[point.in.polygon(Sc[,1], Sc[,2], P[,1], P[,2])==1,]
 
-  ## FIXME: If any triangles have all their verticies in the edge,
-  ## split them??
-  
-  ## Swap orientation of triangles which have clockwise orientation
-  areas.signed <- tri.area.signed(S, St)
-  St[areas.signed<0,c(2,3)] <- St[areas.signed<0,c(3,2)]
-  
-  ## Create the asymmetric connectivity matrix
-  Cu <- rbind(St[,1:2], St[,2:3], St[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
+    ## FIXME: If any triangles have all their verticies in the edge,
+    ## split them?? This commented code is a previous attempt
+                                        # indicies of edge triangles
+    ##   i.et <- which(apply(matrix(St %in% 1:nrow(P), ncol=3), 1, all))
+    ##   while(length(i.et) > 0) {
+    ##     print("Fixing mesh")
+    ##     print(i.et)
+    ##     i.new <- nrow(S)+1:length(i.et)
+    
+    ##     S.new <- (S[St[i.et,1],] + S[St[i.et,2],] + S[St[i.et,3],])/3
+    ##     St.new <- rbind(cbind(i.new, St[i.et,c(1,2)]),
+    ##                     cbind(i.new, St[i.et,c(2,3)]),
+    ##                     cbind(i.new, St[i.et,c(1,3)]))
+    ##     St <- St[-i.et,]
+    ##     St <- rbind(St, St.new)
+    ##     S <- rbind(S, S.new)
+    ##     i.et <- which(apply(matrix(St %in% 1:nrow(P), ncol=3), 1, all))
+    ##   }
+    
+    ## Swap orientation of triangles which have clockwise orientation
+    areas.signed <- tri.area.signed(S, St)
+    St[areas.signed<0,c(2,3)] <- St[areas.signed<0,c(3,2)]
+    
+    ## Create the asymmetric connectivity matrix
+    Cu <- rbind(St[,1:2], St[,2:3], St[,c(3,1)])
+    Cu <- Unique(Cu, TRUE)
 
-  ## C is the symmetric connectivity matrix
-  C <- rbind(Cu, Cu[,2:1])
+    ## C is the symmetric connectivity matrix
+    C <- rbind(Cu, Cu[,2:1])
 
-  ## Create connection matrix
-  Cmat <- matrix(0, nrow(S), nrow(S))
-  for (i in 1:nrow(C)) {
-    Cmat[C[i,1], C[i,2]] <- 1
+    ## Create connection matrix
+    Cmat <- matrix(0, nrow(S), nrow(S))
+    for (i in 1:nrow(C)) {
+      Cmat[C[i,1], C[i,2]] <- 1
+    }
+    ## Connections from free points to free points
+    A <- Cmat[(nrow(P)+1):nrow(S), (nrow(P)+1):nrow(S)]
+    ## i.new
+    ## Connections from free points to fixed points
+    B <- Cmat[(nrow(P)+1):nrow(S), 1:nrow(P)]
+    
+    D <- diag(apply(cbind(A, 2 * B), 1, sum))
+
+    ## The matrix Q is an n by 2 matrix comprising the row vectors of the
+    ## solution points
+    Q <- 2 * solve(D - A) %*% B %*% P
+
+    i.et <- which(apply(matrix(St %in% 1:nrow(P), ncol=3), 1, all))
+
+    Q <- rbind(Q, (S[St[i.et,1],] + S[St[i.et,2],] + S[St[i.et,3],])/3)
+    print(i.et)
   }
-  ## Connections from free points to free points
-  A <- Cmat[nrow(P)+1:nrow(Q), nrow(P)+1:nrow(Q)]
-  ## Connections from free points to fixed points
-  B <- Cmat[nrow(P)+1:nrow(Q), 1:nrow(P)]
   
-  D <- diag(apply(cbind(A, 2 * B), 1, sum))
-
-  ## The matrix Q is an n by 2 matrix comprising the row vectors of the
-  ## solution points
-  Q <- 2 * solve(D - A) %*% B %*% P
-
   return(list(St=St, P=P, Q=Q, Cu=Cu, C=C))
 }
 
