@@ -642,24 +642,85 @@ solve.mapping <- function(tmax=10, nepochs=10, tau=1e10, method="lsoda", ...) {
   return(list(phi=phi, lambda=lambda))
 }
 
-plot.sphere.in.flat <- function() {
-  ## For a point on the sphere, find in which triangle it occurs
+## For a point on the sphere, find in which triangle it occurs
+tsearch.sphere <- function(phii, lambdai) {
+  phitol   <- 40/180*pi
+  lambdatol <- 40/180*pi
+  ## Weed out points that are unlikely
+  inds <- which((phi    > phii    - phitol) &
+                (phi    < phii    + phitol) &
+                (lambda > lambdai - lambdatol) &
+                (lambda < lambdai + lambdatol))
+  if (length(inds)==0) {
+    return(FALSE)
+  }
+
+  phi <- phi[inds]
+  lambda <- lambda[inds]
 
   ## Projection matrix in z-dir
   M <- diag(3)
   M[3,3] <- 0
 
-  x <- R*cos(phi)*cos(lambda) 
-  y <- R*cos(phi)*sin(lambda)
-  z <- R*sin(phi)
+  ## Want to rotate the data so that phii, lambdai is at (0, 0, 1)
+  ## To do this use the rgl function rotate3d
+  ## We need to specify an axis of rotation and an angle
+  ## The axis is perpendicular to the the line
+  
+  ## Rotate it to the desired point
+  ## Rotation matrix in longitude direction
+  
+  x <- cos(phi)*cos(lambda) 
+  y <- cos(phi)*sin(lambda)
+  z <- sin(phi)
 
   P <- cbind(x, y, z)
 
-  Q <- M %*% t(P)
+  Q <- M %*%  t(rotate3d(P, pi/2 - phii, sin(-lambdai), -cos(-lambdai), 0))
   plot(Q[1,], Q[2,])
+  plot(0, 0, col="red")
+  
+  trans <- rep(NA, max(inds))
+  trans[inds] <- 1:nrow(P)
+  
+  Pti <- which(apply(matrix(Pt %in% inds, ncol=3), 1, all))
+  Pt <- matrix(trans[Pt], ncol=3)
 
+  Pt <- Pt[Pti,]
+  
   trimesh(Pt, t(Q[1:2,]), col="gray", add=TRUE)
   ts <- tsearchn(t(Q[1:2,]), Pt, matrix(0, ncol=2))
+  ts$idx <- Pti[ts$idx]
   
-  return(Q)
+  return(ts)
+}
+
+plot.gridlines.flat.retina <- function() {
+  G <- meshgrid((1:2)*pi/6, (1:2)*pi/6)
+
+  Pc <- matrix(NA, ncol=2, nrow=length(G$x))
+  for (i in 1:length(G$x)) {
+    ts <- tsearch.sphere(G$x[i], G$y[i])
+    if (is.list(ts)) {
+      print(ts)
+      Pc[i,] <- bary2cart(P[Pt[ts$idx,],], ts$p)
+      print(Pc[i,])
+    }
+  }
+  Gc <- G
+  Gc$x <- Pc[,1]
+  Gc$y <- Pc[,2]
+
+  print(Gc)
+  plot(edge.path[,"X"], edge.path[,"Y"], xlab="", ylab="",
+       xaxt="n", yaxt="n", bty="n", pch=20, cex=0.1)
+  lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
+
+  for(i in nrow(Gc$x)) {
+    lines(Gc$x[i,], Gc$y[i,])
+  }
+  for(i in ncol(Gc$x)) {
+    lines(Gc$x[,i], Gc$y[,i])
+  }
+
 }
