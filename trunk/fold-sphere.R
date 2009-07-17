@@ -119,6 +119,21 @@ points3d(P[cp[flipped],1], P[cp[flipped],2], P[cp[flipped],3], col="blue", size=
 ##  rgl.triangles(x[Ct[flipped,]], y[Ct[flipped,]], z[Ct[flipped,]], col="gray")
 }
 
+## Plot map of stress of connections
+plot.stress <- function(P, Cu, Ls, ls) {
+  par(mar=c(0, 0, 0, 0))
+  plot(edge.path[,"X"], edge.path[,"Y"], xlab="", ylab="",
+       xaxt="n", yaxt="n", bty="n", pch=20, cex=0.1)
+  lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
+
+  colmap <- rainbow(100)
+  stress <- (ls-Ls)/Ls
+  stress[stress>5] <- 5
+  inds <- ceiling((stress - min(stress))/(max(stress) - min(stress)) * 100)
+  segments(P[Cu[,1],1], P[Cu[,1],2],
+           P[Cu[,2],1], P[Cu[,2],2], col=colmap[inds])
+}
+
 ## Formula for central angle
 central.angle <- function(phi1, lambda1, phi2, lambda2) {
   return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
@@ -135,6 +150,7 @@ source("M634-4.R")
 
 ## All the points on the edge path apart from the first, which is repeated by the last
 P <- cbind(X=edge.path[-1,"X"], Y=edge.path[-1,"Y"])
+N.rim <- nrow(P)
 
 ## Plot the outline of the flattened retina
 par(mar=c(0, 0, 0, 0))
@@ -238,6 +254,18 @@ plot.retina(phi, lambda, R, Cu, Pt, ts.red, ts.green, edge.inds)
 ##
 ## Energy/error functions
 ## 
+
+## Calculate lengths of connections on sphere
+compute.lengths <- function(phi, lamba, Cu, R) {
+  ## Use the upper triagular part of the connectivity matrix Cu
+  phi1    <- phi[Cu[,1]]
+  lambda1 <- lambda[Cu[,1]]
+  phi2    <- phi[Cu[,2]]
+  lambda2 <- lambda[Cu[,2]]
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+
+  return(l)
+}
 
 ## Now for the dreaded elastic error function....
 E.E <- function(p, Cu, C, L, B, R, ifix, phi0, verbose=FALSE) {
@@ -614,4 +642,24 @@ solve.mapping <- function(tmax=10, nepochs=10, tau=1e10, method="lsoda", ...) {
   return(list(phi=phi, lambda=lambda))
 }
 
+plot.sphere.in.flat <- function() {
+  ## For a point on the sphere, find in which triangle it occurs
 
+  ## Projection matrix in z-dir
+  M <- diag(3)
+  M[3,3] <- 0
+
+  x <- R*cos(phi)*cos(lambda) 
+  y <- R*cos(phi)*sin(lambda)
+  z <- R*sin(phi)
+
+  P <- cbind(x, y, z)
+
+  Q <- M %*% t(P)
+  plot(Q[1,], Q[2,])
+
+  trimesh(Pt, t(Q[1:2,]), col="gray", add=TRUE)
+  ts <- tsearchn(t(Q[1:2,]), Pt, matrix(0, ncol=2))
+  
+  return(Q)
+}
