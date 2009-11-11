@@ -1,15 +1,23 @@
 \documentclass{article}
 
+\usepackage{xspace}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{todo}
 \usepackage[british]{babel}
 \usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
 
+\newcommand{\EE}{\ensuremath{E_\mathrm{E}}\xspace}
+\newcommand{\EA}{\ensuremath{E_\mathrm{A}}\xspace}
+\newcommand{\ED}{\ensuremath{E_\mathrm{D}}\xspace}
+\newcommand{\Ed}{\ensuremath{E_\mathrm{d}}\xspace}
+\newcommand{\p}{\vec{p}}
+\newcommand{\q}{\vec{q}}
+
+
 \title{Inference of original retinal coordinates from  flattenend
   retinae}
-
 \author{David Sterratt}
-
 
 \begin{document}
 \maketitle
@@ -44,12 +52,31 @@ overlap has not yet been implemented.
 \section{Algorithm}
 \label{fold-retina:sec:method}
 
+\subsection{Triangulation of flattened retina}
+\label{fold-sphere:sec:triang-flatt-retina}
+
+\todo{Write the actual procedure for triangulation}
+
 An equilateral triangular grid, where each link has length $L$, is
 laid over the surface of the flattened retina
 (Figure~\ref{fold-sphere:fig:test1}). At present the grid does not
 fill the area entirely, but it would be possible to acheive this by
 creating shorter links from the edge of the current grid to the edge
 of the folded retina. 
+
+The starting point is $n$ fixed points on the boundary
+$\vec{P}_1,\dots,\vec{P}_n$. To this is added $N-n$ internal points
+$\vec{P}_{n+1},\dots,\vec{P}_N$. The triangulation comprises $M$
+triangles and is described by an $M\times3$ matrix $T$, where each row
+contains the indicies of the points in the triangle in anticlockwise order.
+
+The connections are defined by $C_{ij}$, a symmetric, binary-valued
+matrix that defines if there is a connection between $i$ and $j$ and
+$L_{ij}$ are the distances between grid points on the flattened
+retina.
+
+\subsection{Projection onto hemisphere}
+\label{fold-sphere:sec:proj-onto-hemisph}
 
 It is supposed that this grid is to be projected onto a sphere with a
 radius appropriate for the area $A$ of the flattened retina. The
@@ -64,15 +91,30 @@ would be expected.
 The aim now is to infer the latitude $\phi_i$ and longitude
 $\lambda_i$ on the sphere to which each grid point $i$ on the
 flattened retina is projected.  It is proposed to achieve this aim by
-minimising the following energy function:
+minimising an energy function which depends on three components, an
+elastic component $E_\mathrm{E}$, an area-preserving component
+$E_\mathrm{A}$ and a dipole component $E_\mathrm{D}:$
 \begin{equation}
-  E  = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m C_{ij} (l_{ij}-L_{ij})^2
+  \begin{split}
+  E(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) = & \\
+  E_\mathrm{E}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
+  & + E_\mathrm{A}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
+  + E_\mathrm{D}(\phi_1,\dots,\phi_n,\lambda_1,\dots,\lambda_n)
+  \end{split}
 \end{equation}
-where $C_{ij}$ is a symmetric, binary-valued matrix that defines if
-there is a connection between $i$ and $j$, $L_{ij}$ is the distance
-between grid points on the flattened retina, and $l_{ij}$ is the
-distance between grid points on the sphere and is given by the formula
-for the central angle:
+
+\subsection{The elastic energy}
+\label{fold-sphere:sec:elastic-force}
+
+This component of the energy corresponds to the energy contained in
+imageinary springs with the natural lenght of the distances in the
+flattened retina, $L_{ij}$:
+\begin{equation}
+  \label{fold-sphere:eq:5}
+  \EE  = \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N C_{ij} (l_{ij}-L_{ij})^2  
+\end{equation}
+where $l_{ij}$ is the distance between grid points on the sphere and
+is given by the formula for the central angle:
 \begin{equation}
   \label{fold-sphere:eq:2}
   l_{ij} = R\cos^{-1}(\cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) + \sin\phi_i\sin\phi_j)
@@ -86,12 +128,12 @@ respect to $\phi_i$ and $\lambda_i$ are found:
 \begin{equation}
   \label{fold-sphere:eq:3}
   \begin{split}
-    \frac{\partial E}{\partial\phi_i} = 
+    \frac{\partial \EE}{\partial\phi_i} = 
     \sum_j C_{ij} (l_{ij} - L_{ij})R
     \frac{\sin\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) - \cos\phi_i\sin\phi_j}
     {\sqrt{1-(\sin\phi_i\sin\phi_j +
         \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}} \\
-    \frac{\partial E}{\partial\lambda_i} = 
+    \frac{\partial \EE}{\partial\lambda_i} = 
     \sum_j C_{ij} (l_{ij} - L_{ij})R
     \frac{\cos\phi_i\cos\phi_j\sin(\lambda_i-\lambda_j)}
     {\sqrt{1-(\sin\phi_i\sin\phi_j + \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}}
@@ -100,6 +142,105 @@ respect to $\phi_i$ and $\lambda_i$ are found:
 A quasi-Newton-Raphson method is then used in R to achieve this
 optimisation, and the resulting grid on the sphere is plotted in 3D
 (Figure~\ref{fold-sphere:fig:test2}).
+
+\subsection{The area-preserving energy}
+\label{fold-sphere:sec:area-pres-energy}
+
+\subsection{The dipole energy}
+\label{fold-sphere:sec:dipole-energy}
+
+The total dipole energy is
+\begin{equation}
+  \label{fold-sphere:eq:6}
+  \ED = \sum_{j=1}^n \sum_{k=1, k\ne j, k\ne j+1}^n \Ed(\p_j,
+    \p_{j+1}, \p_k)
+\end{equation}
+where $\Ed(\p_j,\p_{j+1}, \p_k)$ is the energy due to
+the attraction of the line segment between adjacent points $\p_j$ and
+$\p_{j+1}$ on the boundary and the point $\p_k$.
+
+The dipole energy is derived by integrating the point energy function of two
+points separated by $r$:
+\begin{equation}
+  \frac{1}{1 + (r/d)^2}
+\end{equation}
+over the line segment
+\begin{equation}
+  \label{fold-sphere:eq:7}
+  \Ed(\p_1, \p_2, \p_3) = -\int_{s_1}^{s_2}  \frac{1}{1 + (r/d)^2} ds
+\end{equation}
+where $r = \sqrt{r_0^2 + s^2}$ and
+\begin{equation}
+  \label{fold-sphere:eq:8}
+  r_0 = \frac{1}{R^2}(\p_1 \times \p_2) \cdot \p_3
+\end{equation}
+and 
+\begin{equation}
+  s_1 = (\p_1 - \p_3)\cdot
+  \frac{\p_2-\p_1}{|\p_2-\p_1|} \quad
+  s_2 = (\p_2 - \p_3)\cdot
+  \frac{\p_2-\p_1}{|\p_2-\p_1|}
+\end{equation}
+Solving~(\ref{fold-sphere:eq:7}) gives
+\begin{equation}
+  \label{fold-sphere:eq:9}
+  \Ed(\p_1, \p_2, \p_3) = 
+-\frac{d^2}{s_0}\left[\tan^{-1}\frac{s}{s_0}\right]_{s_1}^{s_2}
+\end{equation}
+where $s_0=\sqrt{d^2 + r_0^2}$
+
+Differentiate:
+\begin{equation}
+  \label{fold-sphere:eq:10}
+  \frac{\partial \ED}{\partial \p_i} = 
+  \sum_{k=1, k\ne i, k\ne i+1}^n 
+  \frac{\partial \Ed(\p_i, \p_{i+1}, \p_k)}{\partial \p_i}
+  + \sum_{k=1, k\ne i-1, k\ne i}^n 
+  \frac{\partial\Ed(\p_{i-1}, \p_{i}, \p_k)}{\partial \p_i}
+  + \sum_{j=1, j\ne i-1, j\ne i}^n 
+  \frac{\partial \Ed(\p_{j}, \p_{j+1}, \p_i)}{\partial \p_i}
+\end{equation}
+
+\begin{equation}
+  \label{fold-sphere:eq:11}
+  \frac{\partial \Ed(\p_i, \p_{i+1}, \p_k)}{\partial \p_i} =
+  \frac{\partial \Ed}{\partial r_0} \frac{r_0(\p_i, \p_{i+1}, \p_k)}{\p_i}
+\end{equation}
+
+\begin{equation}
+  \label{fold-sphere:eq:12}
+  \frac{\partial r_0(\p_i, \p_{i+1}, \p_k)}{\partial \p_i} = 
+  \frac{1}{R^2} \p_{i+1} \times \p_k \quad
+  \frac{\partial r_0(\p_{i-1}, \p_{i}, \p_k)}{\partial \p_i} = 
+  \frac{1}{R^2} \p_{k} \times \p_{i-1} \quad
+  \frac{\partial r_0(\p_{j}, \p_{j+1}, \p_i)}{\partial \p_i} = 
+  \frac{1}{R^2} \p_{j} \times \p_{j+1} 
+\end{equation}
+
+\begin{equation}
+  \frac{\partial s_1}{\partial \p_1} = 
+  \frac{\p_2 - \p_1}{|\p_2 - \p_1|} \quad
+  \frac{\partial s_2}{\partial \p_1} = \vec{0}
+\end{equation}
+
+\begin{equation}
+  \frac{\partial s_1}{\partial \p_2} = \vec{0} \quad
+  \frac{\partial s_2}{\partial \p_2} =   \frac{\p_2 - \p_1}{|\p_2 - \p_1|} 
+\end{equation}
+
+\begin{equation}
+  \frac{\partial s_1}{\partial \p_3} = 
+  -\frac{\p_2 - \p_1}{|\p_2 - \p_1|} \quad
+  \frac{\partial s_2}{\partial \p_3} = 
+  -\frac{\p_2 - \p_1}{|\p_2 - \p_1|} \quad
+\end{equation}
+
+
+
+
+\begin{equation}
+  \label{fold-sphere:eq:13}
+\end{equation}
 
 % \section{Application to retina}
 % \label{fold-retina:sec:application-retina}
@@ -124,6 +265,38 @@ optimisation, and the resulting grid on the sphere is plotted in 3D
     but mapped onto a partial sphere with $\phi_0= 50^\circ$.}
   \label{fold-sphere:fig:test2}
 \end{figure}
+
+\begin{equation}
+  \ED = \sum_{j=1}^n \sum_{k=1}^n \ED^{jk}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+  \frac{\partial \ED}{\partial \p_i} = 
+  \sum_{k=1}^n & 
+  \frac{\partial \ED^{ik}}{\partial r_0^{ik}}
+  \frac{\partial r_0^{ik}}{\partial \p_i} +
+  \frac{\partial \ED^{ik}}{\partial s_1^{ik}}
+  \frac{\partial s_1^{ik}}{\partial \p_i} +
+  \frac{\partial \ED^{ik}}{\partial s_2^{ik}}
+  \frac{\partial s_2^{ik}}{\partial \p_i} \\
+  &   
+  + \frac{\partial \ED^{i-1k}}{\partial r_0^{ik}}
+  \frac{\partial r_0^{i-1k}}{\partial \p_i} +
+  \frac{\partial \ED^{i-1k}}{\partial s_1^{i-1k}}
+  \frac{\partial s_1^{i-1k}}{\partial \p_i} +
+  \frac{\partial \ED^{ik}}{\partial s_2^{ik}}
+  \frac{\partial s_2^{i-1k}}{\partial \p_i} \\
+  & 
+  + \frac{\partial \ED^{ki}}{\partial r_0^{ki}}
+  \frac{\partial r_0^{ki}}{\partial \p_i} +
+  \frac{\partial \ED^{ki}}{\partial s_1^{ki}}
+  \frac{\partial s_1^{ki}}{\partial \p_i} +
+  \frac{\partial \ED^{ki}}{\partial s_2^{ki}}
+  \frac{\partial s_2^{ki}}{\partial \p_i} \\
+  \end{split}
+\end{equation}
+
 
 
 \section{Discussion}
