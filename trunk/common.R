@@ -11,8 +11,8 @@
 ## create.path(segments)
 ## create a path from a list of line segments
 create.path <- function(segs, close=FALSE) {
-  p <- matrix(0, 0, 4)                  # the path matrix
-  colnames(p) <- c("X", "Y", "s", "l")
+  p <- matrix(0, 0, ncol(segs[[1]]) + 2) # the path matrix
+  colnames(p) <- c(colnames(segs[[1]]), "s", "l")
   s.cum <- 0
   ## Close the path by putting the initial point at the end of the list of
   ## segs
@@ -22,12 +22,12 @@ create.path <- function(segs, close=FALSE) {
   }
   for (i in 1:length(segs)) {
     seg <- segs[[i]]
-    v <- diff(seg)
+    v <- diff(seg[,1:2])
     l <- sqrt(apply(v^2, 1, sum))
     s <- s.cum + c(0, cumsum(l))
     s.cum <- s[length(s)]
     if ((i > 1) && !close) {
-      p <- rbind(p, rep(NA, 4))
+##      p <- rbind(p, rep(NA, 4))
     }
     p <- rbind(p,
                cbind(seg,
@@ -117,7 +117,7 @@ find.points.in.path <- function(f, p) {
   ## Find fractional distance *within* interval
   f <- (f - F[is])/(F[is+1] - F[is])
   ## Interpolate to find the points
-  P <- (1-f)*p[is,c("X","Y")] + f*p[is+1,c("X","Y")]
+  P <- (1-f)*p[is,c("X","Y"),drop=FALSE] + f*p[is+1,c("X","Y"),drop=FALSE]
   return(P)
 }
 
@@ -126,5 +126,29 @@ find.points.in.path <- function(f, p) {
 meshgrid <- function(a,b) {
   return(list(x=outer(b*0,a,FUN="+"),
               y=outer(b,a*0,FUN="+")))
+}
+
+## Split a vector containing NA into a list of vectors without the NAs
+navec.to.list <- function(v) {
+  l <- list()
+  v <- c(v, NA)
+  n0 <- 1
+  for (n in which(is.na(v))) {
+    l <- c(l, list(v[n0:(n-1)]))
+    n0 <- n + 1
+  }
+  return(l)    
+}
+
+## Split a matrix containing NA into a list of matricies without the NAs
+namat.to.list <- function(v) {
+  l <- list()
+  v <- rbind(v, NA)
+  n0 <- 1
+  for (n in which(is.na(v[,1]))) {
+    l <- c(l, list(v[n0:(n-1),]))
+    n0 <- n + 1
+  }
+  return(l)    
 }
 
