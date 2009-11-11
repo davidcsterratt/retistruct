@@ -61,7 +61,7 @@ create.hemisphere <- function(phi=40*pi/180) {
 
   ## Create the asymmetric connectivity matrix
   Cu <- rbind(ptri[,1:2], ptri[,2:3], ptri[,c(1,3)])
-  Cu <- Unique(Cu)
+  Cu <- Unique(Cu, rows.are.sets=TRUE)
 
   ## Take out points that are no longer in the mesh
   k <- unique(sort(Cu))  # Indicies to keep
