@@ -167,7 +167,7 @@ if (!exists("hs")) {
 
 
 ## Distribute points equally along edges
-P <- find.points.in.path(seq(0, by=1/hs$nfix, len=hs$nfix), edge.path)
+P <- find.points.in.path(seq(0, by=1/hs$nfix, len=hs$nfix), rim.path)
 
 ## In hs$P the first hs$nfix points are fixed, and the rest are
 ## free
@@ -222,7 +222,7 @@ for (iter in 1:1) {
   points(Q, pch=16, col="gray")
 
   ## Plot the triangles
-  ## PQ <- rbind(P, Q)
+  PQ <- rbind(P, Q)
   ## trimesh(PQtri, PQ, col="gray", add=TRUE)
   
   ls <- sqrt(apply((R[Cu[,1],] - R[Cu[,2],])^2, 1, sum))
