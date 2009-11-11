@@ -47,7 +47,8 @@ classify.links <- function(C, edge.inds=NA) {
 ## sys - data frame containing positions of points
 plot.retina <- function(phi, lambda, R, C,
                         Ct=matrix(NA, 0, 3), ts.red, ts.green,
-                        edge.inds=NA) {
+                        edge.inds=NA,
+                        alpha=0.5) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -55,14 +56,13 @@ plot.retina <- function(phi, lambda, R, C,
   P <- cbind(x, y, z)
   rgl.clear()
   rgl.bg(color="white")
-
-
+  
   ## Plot links, highlighting the edges in black
   ## Plot the centre links
-  segments3d(rbind(x[C[,1]],x[C[,2]]),
-             rbind(y[C[,1]],y[C[,2]]),
-             rbind(z[C[,1]],z[C[,2]]),
-             xlab="x", color="grey")
+##   segments3d(rbind(x[C[,1]],x[C[,2]]),
+##              rbind(y[C[,1]],y[C[,2]]),
+##              rbind(z[C[,1]],z[C[,2]]),
+##              xlab="x", color="grey")
 
   ## If edge connections are specified, find the connections
   ## which lie on the edge and those which lie on the centre
@@ -84,14 +84,15 @@ plot.retina <- function(phi, lambda, R, C,
   ## triangles and the location in the triangles.
 
   ## Now plot points
+  ## The 0.98 mutliplier ensures they are plotted just inside the retina
   Pi.cart <- matrix(0, 0, 3)
   for(i in 1:(dim(ts.red$p)[1])) {
-    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.red$idx[i],],], ts.red$p[i,]))
+    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.red$idx[i],],] * 0.98, ts.red$p[i,]))
   }
   points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="red", size=5)
   Pi.cart <- matrix(0, 0, 3)
   for(i in 1:(dim(ts.green$p)[1])) {
-    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.green$idx[i],],], ts.green$p[i,]))
+    Pi.cart <- rbind(Pi.cart, bary2cart(P[Ct[ts.green$idx[i],],] * 0.98, ts.green$p[i,]))
   }
   points3d(Pi.cart[,1], Pi.cart[,2], Pi.cart[,3], color="green", size=5)
 
@@ -117,6 +118,18 @@ plot.retina <- function(phi, lambda, R, C,
 ##  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 points3d(P[cp[flipped],1], P[cp[flipped],2], P[cp[flipped],3], col="blue", size=5)
 ##  rgl.triangles(x[Ct[flipped,]], y[Ct[flipped,]], z[Ct[flipped,]], col="gray")
+  ## inner triangles
+  triangles3d(rbind(x[Ct[,1]], x[Ct[,2]], x[Ct[,3]]),
+              rbind(y[Ct[,1]], y[Ct[,2]], y[Ct[,3]]),
+              rbind(z[Ct[,1]], z[Ct[,2]], z[Ct[,3]]),
+              xlab="x", color="white", alpha=alpha)
+
+  ## outer triangles
+  triangles3d(rbind(x[Ct[,2]], x[Ct[,1]], x[Ct[,3]]),
+              rbind(y[Ct[,2]], y[Ct[,1]], y[Ct[,3]]),
+              rbind(z[Ct[,2]], z[Ct[,1]], z[Ct[,3]]),
+              xlab="x", color="grey", alpha=alpha)
+  
 }
 
 ## Plot map of stress of connections
@@ -607,6 +620,7 @@ optimise.mapping <- function(E0.E=1, E0.A=1, E0.D=1, d=10) {
   ## with maxit=10 it is 277226
   ## with maxit=200 it is 273882
   ## with maxit=100 and phi0=50 it is 325785
+  return(list(phi=phi, lambda=lambda))
 }
 
 dE.ode <- function(t, y, p) {
@@ -642,85 +656,117 @@ solve.mapping <- function(tmax=10, nepochs=10, tau=1e10, method="lsoda", ...) {
   return(list(phi=phi, lambda=lambda))
 }
 
-## For a point on the sphere, find in which triangle it occurs
-tsearch.sphere <- function(phii, lambdai) {
-  phitol   <- 40/180*pi
-  lambdatol <- 40/180*pi
-  ## Weed out points that are unlikely
-  inds <- which((phi    > phii    - phitol) &
-                (phi    < phii    + phitol) &
-                (lambda > lambdai - lambdatol) &
-                (lambda < lambdai + lambdatol))
-  if (length(inds)==0) {
-    return(FALSE)
-  }
+## ## For a point on the sphere, find in which triangle it occurs
+## tsearch.sphere <- function(phii, lambdai) {
+##   phitol   <- 10/180*pi
+##   lambdatol <- 40/180*pi
+##   ## Weed out points that are unlikely
+##   inds <- which((phi    > phii    - phitol) &
+##                 (phi    < phii    + phitol))
+## #                (lambda > lambdai - lambdatol) &
+## #                (lambda < lambdai + lambdatol))
+##   if (length(inds)==0) {
+##     return(FALSE)
+##   }
 
-  phi <- phi[inds]
-  lambda <- lambda[inds]
+##   phi <- phi[inds]
+##   lambda <- lambda[inds]
 
-  ## Projection matrix in z-dir
-  M <- diag(3)
-  M[3,3] <- 0
+##   ## Projection matrix in z-dir
+##   M <- diag(3)
+##   M[3,3] <- 0
 
-  ## Want to rotate the data so that phii, lambdai is at (0, 0, 1)
-  ## To do this use the rgl function rotate3d
-  ## We need to specify an axis of rotation and an angle
-  ## The axis is perpendicular to the the line
+##   ## Want to rotate the data so that phii, lambdai is at (0, 0, 1)
+##   ## To do this use the rgl function rotate3d
+##   ## We need to specify an axis of rotation and an angle
+##   ## The axis is perpendicular to the the line
   
-  ## Rotate it to the desired point
-  ## Rotation matrix in longitude direction
+##   ## Rotate it to the desired point
+##   ## Rotation matrix in longitude direction
   
+##   x <- cos(phi)*cos(lambda) 
+##   y <- cos(phi)*sin(lambda)
+##   z <- sin(phi)
+
+##   P <- cbind(x, y, z)
+
+##   Q <- M %*%  t(rotate3d(P, pi/2 + phii, sin(-lambdai), -cos(-lambdai), 0))
+##   ## Q <- M %*%  t(P)
+##   plot(Q[1,], Q[2,])
+##   plot(0, 0, col="red")
+  
+##   trans <- rep(NA, max(inds))
+##   trans[inds] <- 1:nrow(P)
+  
+##   Pti <- which(apply(matrix(Pt %in% inds, ncol=3), 1, all))
+##   Pt <- matrix(trans[Pt], ncol=3)
+
+##   Pt <- Pt[Pti,]
+  
+##   trimesh(Pt, t(Q[1:2,]), col="gray", add=TRUE)
+##   ts <- tsearchn(t(Q[1:2,]), Pt, matrix(0, ncol=2))
+##   ts$idx <- Pti[ts$idx]
+  
+##   return(ts)
+## }
+
+plot.gridlines.flat.retina <- function(Pc, phi, lambda, Ptc, Pt) {
+  ## FIXME: For some reason we end up with triangles with duplicated elements
+  ## This fixes it
+  ##   duprows <- )
+  ##   print(duprows)
+
+  Pt[apply(apply(Pt, 1, duplicated), 2, any),] <- NA
+  ## Convert all indicies of mesh points to Cartesian coordinates
   x <- cos(phi)*cos(lambda) 
   y <- cos(phi)*sin(lambda)
   z <- sin(phi)
-
   P <- cbind(x, y, z)
 
-  Q <- M %*%  t(rotate3d(P, pi/2 - phii, sin(-lambdai), -cos(-lambdai), 0))
-  plot(Q[1,], Q[2,])
-  plot(0, 0, col="red")
-  
-  trans <- rep(NA, max(inds))
-  trans[inds] <- 1:nrow(P)
-  
-  Pti <- which(apply(matrix(Pt %in% inds, ncol=3), 1, all))
-  Pt <- matrix(trans[Pt], ncol=3)
+  ## Create grid of points at intersections of lines of lattitude and
+  ## longitude
+  Gs <- meshgrid((-3:2)*pi/6, (0:12)*pi/6)
 
-  Pt <- Pt[Pti,]
+  ## Convert these to Cartesian coordinates
+  P.Gs <- list()
+  P.Gs$x <- cos(Gs$x)*cos(Gs$y)
+  P.Gs$y <- cos(Gs$x)*sin(Gs$y)
+  P.Gs$z <- sin(Gs$x)
   
-  trimesh(Pt, t(Q[1:2,]), col="gray", add=TRUE)
-  ts <- tsearchn(t(Q[1:2,]), Pt, matrix(0, ncol=2))
-  ts$idx <- Pti[ts$idx]
+  ## Grid in Cartesisian coordinates on flatteend retina
+  P.Gc <- list(x=P.Gs$x, y=P.Gs$y)
   
-  return(ts)
-}
-
-plot.gridlines.flat.retina <- function() {
-  G <- meshgrid((1:2)*pi/6, (1:2)*pi/6)
-
-  Pc <- matrix(NA, ncol=2, nrow=length(G$x))
-  for (i in 1:length(G$x)) {
-    ts <- tsearch.sphere(G$x[i], G$y[i])
+  for (i in 1:length(P.Gs$x)) {
+    ts <- tsearch.sphere(P, Pt, rbind(c(P.Gs$x[i], P.Gs$y[i], P.Gs$z[i])))
     if (is.list(ts)) {
       print(ts)
-      Pc[i,] <- bary2cart(P[Pt[ts$idx,],], ts$p)
-      print(Pc[i,])
+      PGc <- bary2cart(Pc[Ptc[ts$idx,],], ts$p[1, 1:3])
+      print(PGc)
+      P.Gc$x[i] <- PGc[1,1]
+      P.Gc$y[i] <- PGc[1,2]
     }
   }
-  Gc <- G
-  Gc$x <- Pc[,1]
-  Gc$y <- Pc[,2]
 
-  print(Gc)
   plot(edge.path[,"X"], edge.path[,"Y"], xlab="", ylab="",
        xaxt="n", yaxt="n", bty="n", pch=20, cex=0.1)
   lines(edge.path[,"X"], edge.path[,"Y"],lwd=4)
 
-  for(i in nrow(Gc$x)) {
-    lines(Gc$x[i,], Gc$y[i,])
+  for(i in 1:nrow(P.Gc$x)) {
+    lines(P.Gc$x[i,], P.Gc$y[i,])
+    points(P.Gc$x[i,], P.Gc$y[i,])
   }
-  for(i in ncol(Gc$x)) {
-    lines(Gc$x[,i], Gc$y[,i])
+  for(i in 1:ncol(P.Gc$x)) {
+    lines( P.Gc$x[,i], P.Gc$y[,i])
+    points(P.Gc$x[,i], P.Gc$y[,i])
   }
-
+  return(P.Gc)
 }
+options(error=dump.frames)
+## Ps <- optimise.mapping(E0.A=0.1, E0.D=0)
+## plot.gridlines.flat.retina(rbind(M$P, M$Q) , phi, lambda, M$St, Pt)
+
+## rgl.pop("lights")
+## light3d(phi=-40)
+## play3d(spin3d(axis=c(0,0,1), rpm=10), duration=6)
+## movie3d(spin3d(axis=c(0,0,1), rpm=5), duration=12, fps=15)
+
