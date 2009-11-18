@@ -80,7 +80,6 @@ stitch.retina <- function(P, T) {
 
     ## For each point in the forward path, create one in the backwards
     ## path at the same fractional location
-    ## print("TF")
     for (i in setdiff(TFset[[j]], c(A[j], VF[j]))) {
       sf <- path.length(A[j], i, gf, hf, P)
       ## print(paste("sf", sf/Sf))
@@ -94,34 +93,30 @@ stitch.retina <- function(P, T) {
         k0 <- k
         sb0 <- sb
       }
-      ## print(paste("sb", sb/Sb))
-      ## print(paste("sb0", sb0/Sb))
+
+      ## Create new point
       f <- (sf/Sf*Sb-sb0)/(sb-sb0)
-      ## print(paste("f", f))
       p <- (1-f) * P[k0,] + f * P[k,]
-      print(nrow(P))
-      print(p)
       P <- rbind(P, p)
-      print(nrow(P))
 
       ## Update forward and backward pointers
       n <- nrow(P)
-      ## k0 <- gf[k]
-      gb[n]      <- k
-      gf[n]      <- gf[k] # k0
+      gb[n]     <- k
+      gf[n]     <- gf[k]
       gb[gf[k]] <- n
-      gf[k]      <- n
-      print(paste("n =", n, "; k =", k, "; k0 =", k0,
-                  "; gf[", n, "] =", gf[n], "; gb[", n,  "] =", gb[n],
-                  "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
+      gf[k]     <- n
+
       ## Update correspondences
       h[i] <- n
       hf[n] <- n
       hb[n] <- n
+
+      ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
+      ##            "; gf[", n, "] =", gf[n], "; gb[", n,  "] =", gb[n],
+      ##             "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
     }
 
     ## Go along backward path
-    print("TB")
     for (i in setdiff(TBset[[j]], c(A[j], VB[j]))) {
       sb <- path.length(A[j], i, gb, hb, P)
       ## print(paste("i", i, "sb", sb/Sb))
@@ -132,20 +127,14 @@ stitch.retina <- function(P, T) {
         if (sf/Sf > sb/Sb) {
           break;
         }
-        sf0 <- sf
         k0 <- k
+        sf0 <- sf
       }
-      ## print(paste("sf", sf/Sf))
-      ## print(paste("sf0", sf0/Sf))
+
+      ## Create new point
       f <- (sb/Sb*Sf-sf0)/(sf-sf0)
-      ## print(paste("f", f))
       p <- (1-f) * P[k0,] + f * P[k,]
-
-      print(nrow(P))
-      print(p)
       P <- rbind(P, p)
-      print(nrow(P))      
-
 
       ## Update forward and backward pointers
       n <- nrow(P)
@@ -153,15 +142,15 @@ stitch.retina <- function(P, T) {
       gb[n]  <- gb[k]
       gf[gb[k]] <- n
       gb[k]  <- n
-
-      print(paste("n =", n, "; k =", k, "; k0 =", k0,
-                  "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
-                  "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
       
       ## Update correspondences
       h[i] <- n
       hf[n] <- n
       hb[n] <- n
+      
+      ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
+      ##            "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
+      ##            "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
     }
   }
     
