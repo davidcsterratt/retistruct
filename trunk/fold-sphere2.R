@@ -46,12 +46,11 @@ stitch.retina <- function(P, T) {
   gf <- Mod((1:N) + 1, N) # c(2:N, 1)
   gb <- Mod((1:N) - 1, N) # c(N, 1:(N-1))
   
-  ## Create initial set of correspondances
+  ## Create initial sets of correspondances
   hf <- 1:N
   hb <- 1:N
   hf[VB] <- VF
   hb[VF] <- VB
-
   h <- hf
 
   ## Initialise the set of points in the rim
@@ -60,12 +59,8 @@ stitch.retina <- function(P, T) {
   ## Create lists of forward and backward tears
   TFset <- list()
   TBset <- list()
-
-  ## Create copies of the pointers
-  gfp <- gf
-  gbp <- gb
   
-  ## Iterate through the tears
+  ## Iterate through the tears to create tear sets and rim set
   for (j in 1:nrow(T)) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
@@ -73,7 +68,10 @@ stitch.retina <- function(P, T) {
     TBset[[j]] <- Mod(path(A[j], VB[j], gb, hb), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
+  }
 
+  ## Iterate through tears to insert new points
+  for (j in 1:nrow(T)) {
     ## Compute the total path length along each side of the tear
     Sf <- path.length(A[j], VF[j], gf, hf, P)
     Sb <- path.length(A[j], VB[j], gb, hb, P)
@@ -108,14 +106,14 @@ stitch.retina <- function(P, T) {
 
       ## Update forward and backward pointers
       n <- nrow(P)
-      ## k0 <- gfp[k]
-      gbp[n]      <- k
-      gfp[n]      <- gfp[k] # k0
-      gbp[gfp[k]] <- n
-      gfp[k]      <- n
+      ## k0 <- gf[k]
+      gb[n]      <- k
+      gf[n]      <- gf[k] # k0
+      gb[gf[k]] <- n
+      gf[k]      <- n
       print(paste("n =", n, "; k =", k, "; k0 =", k0,
-                  "; gfp[", n, "] =", gfp[n], "; gbp[", n,  "] =", gbp[n],
-                  "; gfp[", k, "] =", gfp[k], "; gbp[", k0, "] =", gbp[k0]))
+                  "; gf[", n, "] =", gf[n], "; gb[", n,  "] =", gb[n],
+                  "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
       ## Update correspondences
       h[i] <- n
       hf[n] <- n
@@ -129,7 +127,7 @@ stitch.retina <- function(P, T) {
       ## print(paste("i", i, "sb", sb/Sb))
       ## print(TFset[[j]])
       for (k in TFset[[j]]) {
-        sf <- path.length(A[j], k, gfp, hb, P)
+        sf <- path.length(A[j], k, gf, hb, P)
         ## print(paste("k", k, "; sf/Sf", sf/Sf))
         if (sf/Sf > sb/Sb) {
           break;
@@ -151,14 +149,14 @@ stitch.retina <- function(P, T) {
 
       ## Update forward and backward pointers
       n <- nrow(P)
-      gfp[n]  <- k
-      gbp[n]  <- gbp[k]
-      gfp[gbp[k]] <- n
-      gbp[k]  <- n
+      gf[n]  <- k
+      gb[n]  <- gb[k]
+      gf[gb[k]] <- n
+      gb[k]  <- n
 
       print(paste("n =", n, "; k =", k, "; k0 =", k0,
-                  "; gfp[", n,  "] =", gfp[n], "; gbp[", n,  "] =", gbp[n],
-                  "; gfp[", k0, "] =", gfp[k0], "; gbp[", k, "] =", gbp[k]))
+                  "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
+                  "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
       
       ## Update correspondences
       h[i] <- n
@@ -171,7 +169,7 @@ stitch.retina <- function(P, T) {
               VF=VF, VB=VB, A=A,
               TFset=TFset, TBset=TBset,
               P=P, h=h, hf=hf, hb=hb,
-              gf=gfp, gb=gbp))
+              gf=gf, gb=gb))
 }
 
 ## Read in and curate data to give edge.path and map
