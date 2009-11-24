@@ -5,6 +5,15 @@ Mod <- function(i, N) {
   return((i - 1) %% N + 1)
 }
 
+## Distance norm
+norm <- function(X) {
+  if (is.vector(X)) {
+    return(sqrt(sum(X^2)))
+  } else {
+    return(sqrt(apply(X^2, 1, sum)))
+  }
+}
+
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
 path <- function(i, j, g, h) {
@@ -194,4 +203,120 @@ for (j in 1:length(s$hf)) {
 
 points(P[s$Rset,], col="red")
 
+
+## plot(P, type="l")
+## points(Q, col="red")
+
+## Triangulate
+## S <- rbind(P, Q)
+
+## ordered version of P for outline
+Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
+
+## Random points
+#Q <- cbind(runif(1000, min(P[,1]), max(P[,1])),
+#           runif(1000, min(P[,2]), max(P[,2])))
+
+## Remove points outwith retinal outline
+#Q <- Q[point.in.polygon(Q[,1], Q[,2], Po[,1], Po[,2])==1,]
+
+#P <- rbind(s$P, Q)
+P <- s$P
+Pt <- delaunayn(P)
+
+## Remove triangles outwith the retinal outline
+Pc <- (P[Pt[,1],] + P[Pt[,2],] + P[Pt[,3],])/3 # Centres
+Pt <- Pt[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
+
+trimesh(Pt, P, col="gray", add=TRUE)
+
+## Find lines which join non-adjacent parts of the outline
+Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+Cu <- Unique(Cu, TRUE)
+
+for (i in 1:nrow(Cu)) {
+  C1 <- Cu[i,1]
+  C2 <- Cu[i,2]
+  if ((C1 %in% s$Rset) && (C2 %in% s$Rset)) {
+    if (!((C1 == s$gf[C2]) ||
+          (C2 == s$gf[C1]))) {
+      ## Find triangles containing the line
+      segments(P[C1,1], P[C1,2],
+               P[C2,1], P[C2,2], col="red")
+      Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+      print(Cu[i,])
+      print(Tind)
+      T1 <- setdiff(Pt[Tind[1],], Cu[i,])
+      T2 <- setdiff(Pt[Tind[2],], Cu[i,])
+      print(T1)
+      print(paste(C1, C2, T1, T2))
+##      if (length(js) == 4) {
+        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+        points(p[1], p[2], col="red")
+        P <- rbind(P, p)
+        n <- nrow(P)
+        Pt[Tind[1],] <- c(n, C1, T1)
+        Pt[Tind[2],] <- c(n, C1, T2)
+        Pt <- rbind(Pt,
+                    c(n, C2, T1),
+                    c(n, C2, T2))
+##      } else {
+##              segments(P[C1,1], P[C1,2],
+##                       P[C2,1], P[C2,2], col="green")
+##      }
+    }
+  }
+}
+
+
+Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+Cu <- Unique(Cu, TRUE)
+  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+
+
+l <- d + 1
+while (max(l) > d) {
+  i <- which.max(l)
+##  print(l[i])
+  
+##  print(max(l))
+  C1 <- Cu[i,1]
+  C2 <- Cu[i,2]
+  
+  ## Find triangles containing the line
+  segments(P[C1,1], P[C1,2],
+           P[C2,1], P[C2,2], col="red")
+  Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+##  print(Cu[i,])
+##  print(Tind)
+  T1 <- setdiff(Pt[Tind[1],], Cu[i,])
+  T2 <- setdiff(Pt[Tind[2],], Cu[i,])
+#  print(T1)
+#  print(paste(C1, C2, T1, T2))
+
+  p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+  points(p[1], p[2], col="red")
+  P <- rbind(P, p)
+  n <- nrow(P)
+  Pt[Tind[1],] <- c(n, C1, T1)
+  Pt[Tind[2],] <- c(n, C1, T2)
+  Pt <- rbind(Pt,
+              c(n, C2, T1),
+              c(n, C2, T2))
+  
+  Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+
+  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+  Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
+  Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
+  ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
+  l <- norm(P[Cu[,1],] - P[Cu[,2],])
+}
+
+plot(P)
+trimesh(Pt, P, col="pink")
+lines(Po)
 
