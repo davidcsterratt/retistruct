@@ -170,56 +170,49 @@ stitch.retina <- function(P, T) {
               gf=gf, gb=gb))
 }
 
+plot.stitch <- function(P, s) {
+  plot(s$P, pch=".", cex=4, xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+  with(s, segments(P[,1], P[,2], P[gb,1], P[gb, 2]))
+  points(P[s$VF,], col="purple", pch="+")
+  points(P[s$VB,], col="blue", pch="+")
+  points(P[s$A, ], col="cyan", pch="+")
+  for (TFset in s$TFset) {
+    lines(P[TFset,], col="purple")
+  }
+  for (TBset in s$TBset) {
+    lines(P[TBset,], col="blue")
+  }
+  for (j in 1:length(s$h)) {
+    if (s$h[j] != j) {
+      lines(s$P[c(j,s$h[j]),], col="orange")
+    }
+  }
+
+  for (j in 1:length(s$hf)) {
+    if (s$hf[j] != j) {
+      lines(P[c(j,s$hf[j]),], col="green")
+    }
+  }
+  ## points(P[s$Rset,], col="red")
+}
+
+## Parameters
+d <- 200           # Minimum spacing at which new points are inserted 
+
+## ds <- with(s, apply(cbind(norm(P - P[gf,]), norm(P - P[gb,]))/2, 1, max))
+
 ## Read in and curate data to give edge.path and map
 source("M634-4.R")
-
 P <- edge.path[-nrow(edge.path),1:2]
 
 s <- stitch.retina(P, tearmat)
 
-plot(s$P, pch=".", cex=4)
-with(s, segments(P[,1], P[,2], P[gb,1], P[gb, 2]))
-points(P[s$VF,], col="purple", pch="+")
-points(P[s$VB,], col="blue", pch="+")
-points(P[s$A, ], col="cyan", pch="+")
-for (TFset in s$TFset) {
-  lines(P[TFset,], col="purple")
-}
-for (TBset in s$TBset) {
-  lines(P[TBset,], col="blue")
-}
-for (j in 1:length(s$h)) {
-  if (s$h[j] != j) {
-    lines(s$P[c(j,s$h[j]),], col="orange")
-  }
-}
+plot.stitch(P, s)
 
-for (j in 1:length(s$hf)) {
-  if (s$hf[j] != j) {
-#    lines(P[c(j,s$hf[j]),], col="green")
-  }
-}
-
-points(P[s$Rset,], col="red")
-
-## plot(P, type="l")
-## points(Q, col="red")
-
-## Triangulate
-## S <- rbind(P, Q)
-
-## ordered version of P for outline
+## Create ordered version of P for determining outline
 Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
 
-## Random points
-#Q <- cbind(runif(1000, min(P[,1]), max(P[,1])),
-#           runif(1000, min(P[,2]), max(P[,2])))
-
-## Remove points outwith retinal outline
-#Q <- Q[point.in.polygon(Q[,1], Q[,2], Po[,1], Po[,2])==1,]
-
-#P <- rbind(s$P, Q)
-
+## Attempt to create Nrand points in the retina
 P <- s$P
 Nrand <- 1000
 xmin <- min(P[,1])
@@ -232,13 +225,14 @@ for (i in 1:Nrand) {
   if (point.in.polygon(C[1], C[2], Po[,1], Po[,2])) {
     if (all(norm(t(t(P) - C)) > d)) {
       P <- rbind(P, C)
+      ## ds <- c(ds, d)
     }
   }
 }
 
+## Delaunay triangulation and remove triangles outwith the retinal
+## outline
 Pt <- delaunayn(P)
-
-## Remove triangles outwith the retinal outline
 Pc <- (P[Pt[,1],] + P[Pt[,2],] + P[Pt[,3],])/3 # Centres
 Pt <- Pt[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
 
@@ -251,33 +245,27 @@ Cu <- Unique(Cu, TRUE)
 for (i in 1:nrow(Cu)) {
   C1 <- Cu[i,1]
   C2 <- Cu[i,2]
-  if ((C1 %in% s$Rset) && (C2 %in% s$Rset)) {
+  if (all(Cu[i,] %in% s$Rset)) {
     if (!((C1 == s$gf[C2]) ||
           (C2 == s$gf[C1]))) {
       ## Find triangles containing the line
-      segments(P[C1,1], P[C1,2],
-               P[C2,1], P[C2,2], col="red")
+      segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="red")
       Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-      print(Cu[i,])
-      print(Tind)
+      ## print(Cu[i,])
+      ## print(Tind)
       T1 <- setdiff(Pt[Tind[1],], Cu[i,])
       T2 <- setdiff(Pt[Tind[2],], Cu[i,])
-      print(T1)
-      print(paste(C1, C2, T1, T2))
-##      if (length(js) == 4) {
-        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-        points(p[1], p[2], col="red")
-        P <- rbind(P, p)
-        n <- nrow(P)
-        Pt[Tind[1],] <- c(n, C1, T1)
-        Pt[Tind[2],] <- c(n, C1, T2)
-        Pt <- rbind(Pt,
-                    c(n, C2, T1),
-                    c(n, C2, T2))
-##      } else {
-##              segments(P[C1,1], P[C1,2],
-##                       P[C2,1], P[C2,2], col="green")
-##      }
+      ## print(T1)
+      ## print(paste(C1, C2, T1, T2))
+      p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+      points(p[1], p[2], col="red")
+      P <- rbind(P, p)
+      n <- nrow(P)
+      Pt[Tind[1],] <- c(n, C1, T1)
+      Pt[Tind[2],] <- c(n, C1, T2)
+      Pt <- rbind(Pt,
+                  c(n, C2, T1),
+                  c(n, C2, T2))
     }
   }
 }
@@ -285,31 +273,30 @@ for (i in 1:nrow(Cu)) {
 
 Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
 Cu <- Unique(Cu, TRUE)
-  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+print(length(which(Cu[,2] == s$gf[Cu[,1]])))
 
-  l <- norm(P[Cu[,1],] - P[Cu[,2],])
-while (max(l) > d) {
+l <- norm(P[Cu[,1],] - P[Cu[,2],])
+while (max(l) > 2*d) {
   i <- which.max(l)
-##  print(l[i])
-  
-##  print(max(l))
+  ##  print(l[i])
+
   C1 <- Cu[i,1]
   C2 <- Cu[i,2]
   
   ## Find triangles containing the line
-  segments(P[C1,1], P[C1,2],
-           P[C2,1], P[C2,2], col="red")
+  ## segments(P[C1,1], P[C1,2],
+  ## P[C2,1], P[C2,2], col="red")
   Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-##  print(Cu[i,])
-##  print(Tind)
+  ##  print(Cu[i,])
+  ##  print(Tind)
   T1 <- setdiff(Pt[Tind[1],], Cu[i,])
   T2 <- setdiff(Pt[Tind[2],], Cu[i,])
-#  print(T1)
-#  print(paste(C1, C2, T1, T2))
+  ##  print(T1)
+  ##  print(paste(C1, C2, T1, T2))
 
   p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-  points(p[1], p[2], col="red")
+  ## points(p[1], p[2], col="red")
   P <- rbind(P, p)
   n <- nrow(P)
   Pt[Tind[1],] <- c(n, C1, T1)
@@ -330,6 +317,6 @@ while (max(l) > d) {
 }
 
 plot(P)
-trimesh(Pt, P, col="pink")
+trimesh(Pt, P, col="black")
 lines(Po)
 
