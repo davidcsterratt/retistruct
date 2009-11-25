@@ -177,7 +177,6 @@ P <- edge.path[-nrow(edge.path),1:2]
 
 s <- stitch.retina(P, tearmat)
 
-
 plot(s$P, pch=".", cex=4)
 with(s, segments(P[,1], P[,2], P[gb,1], P[gb, 2]))
 points(P[s$VF,], col="purple", pch="+")
@@ -203,7 +202,6 @@ for (j in 1:length(s$hf)) {
 
 points(P[s$Rset,], col="red")
 
-
 ## plot(P, type="l")
 ## points(Q, col="red")
 
@@ -221,7 +219,23 @@ Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
 #Q <- Q[point.in.polygon(Q[,1], Q[,2], Po[,1], Po[,2])==1,]
 
 #P <- rbind(s$P, Q)
+
 P <- s$P
+Nrand <- 1000
+xmin <- min(P[,1])
+xmax <- max(P[,1])
+ymin <- min(P[,2])
+ymax <- max(P[,2])
+for (i in 1:Nrand) {
+  C <- c(runif(1, xmin, xmax),
+         runif(1, ymin, ymax))
+  if (point.in.polygon(C[1], C[2], Po[,1], Po[,2])) {
+    if (all(norm(t(t(P) - C)) > d)) {
+      P <- rbind(P, C)
+    }
+  }
+}
+
 Pt <- delaunayn(P)
 
 ## Remove triangles outwith the retinal outline
@@ -274,8 +288,7 @@ Cu <- Unique(Cu, TRUE)
   print(length(which(Cu[,1] == s$gf[Cu[,2]])))
   print(length(which(Cu[,2] == s$gf[Cu[,1]])))
 
-
-l <- d + 1
+  l <- norm(P[Cu[,1],] - P[Cu[,2],])
 while (max(l) > d) {
   i <- which.max(l)
 ##  print(l[i])
