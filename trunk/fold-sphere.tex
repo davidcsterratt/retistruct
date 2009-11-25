@@ -3,6 +3,7 @@
 \usepackage{xspace}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{natbib}
 \usepackage{todo}
 \usepackage[british]{babel}
 \usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
@@ -52,23 +53,184 @@ overlap has not yet been implemented.
 \section{Algorithm}
 \label{fold-retina:sec:method}
 
+\subsection{Stitching algorithm}
+\label{fold-sphere:sec:stitching-algorithm}
+
+\begin{figure}[tp]
+  \centering
+  \includegraphics{plots/stitch}  
+  \caption{Stitching. The solid line is the outline of the retina. The
+    red circled-points are ones that were originally on the rim. The
+    blue lines are the + tears and the purple lines are the - tears.
+    Green lines indicate corresponding verticies at the end of tears.
+    Yellow lines indicate corresponding points along the tears. }
+  \label{fold-sphere:fig:stitch}
+\end{figure}
+
+Figure~\ref{fold-sphere:fig:stitch} shows a flattened
+retina which has had the stitching algorithm applied to it.  The edge
+of the flattend retina is described by a ordered set of $N$ points:
+$\mathcal{P} = \{\vec{p}_1,\dots,\vec{p}_N$\}.  Vectors $\vec{g}^+$
+and $\vec{g}^-$ of forwards and backwards pointers are set up:
+\begin{displaymath}
+  g^+_i = \left\{
+    \begin{array}{ll}
+      i+1 & i < N \\
+      1   & i = N
+    \end{array}\right.
+  \quad
+  g^-_i = \left\{
+    \begin{array}{ll}
+      i-1 & i > 1 \\
+      N   & i = 1
+    \end{array}\right.
+\end{displaymath}
+Cuts and tears marked up by an expert.  Each of the $M$ cuts or tears
+$j$ is defined by a common apex at the point indexed by $A_j$, a
+vertex in the forwards direction (indexed by $V^+_j$) and in the
+backwards directions (indexed by $V^-_j$).  Pairs of verticies will
+correspond to each other in the morphed retina, and this relationship
+is indicated by a correspondence vectors $\vec{h}^+$ and $\vec{h}^-$:
+\begin{displaymath}
+  h^+_i =  \left\{
+    \begin{array}{ll}
+      i & \mbox{ if } i \not\in \{V^-_1,\dots, V^-_M\} \\
+      V^+_j  & \mbox{ if } \exists j: i = V^-_j
+    \end{array}\right.
+  \quad
+  h^-_i =  \left\{
+    \begin{array}{ll}
+      i & \mbox{ if } i \not\in \{V^+_1,\dots, V^+_M\} \\
+      V^-_j  & \mbox{ if } \exists j: i = V^+_j
+    \end{array}\right.
+\end{displaymath}
+At this stage, a correpondence vector $\vec{h}$ is initialiased to be
+the same as $\vec{h}^+$.
+
+The set of points in each tear is determined using the function
+$\mathrm{path}$:
+\begin{displaymath}
+  \mathrm{path}(i, j, \vec{g}, \vec{h})  = \left\{ 
+  \begin{array}{ll}
+    \{i\} & \mbox{ if } i = j \\
+      \{i, \mathrm{path}(g_i, j, \vec{g}, \vec{h})\} & \mbox{ if } i \ne j, h_i=i \\
+      \{i, \mathrm{path}(h_i, j, \vec{g}, \vec{h})\}    & \mbox{ if } i \ne j, h_i\ne i \\
+    \end{array}\right.
+\end{displaymath}
+This allows us to write:
+\begin{displaymath}
+  \mathcal{T}^+_j  = \mathrm{path}(A_j, V_j^+, \vec{g}^+, \vec{h}^+) \quad 
+  \mathcal{T}^-_j  = \mathrm{path}(A_j, V_j^-, \vec{g}^-, \vec{h}^-)
+\end{displaymath}
+It is useful to determine the set of points $\mathcal{R}$ on the rim
+of the retina.
+\begin{displaymath}
+  \mathcal{R} = \{1,\dots,N\} 
+  \setminus (\mathcal{T}^+_1 \setminus V^+_1) 
+  \setminus (\mathcal{T}^-_1 \setminus V^-_1)  
+  \dots 
+  \setminus (\mathcal{T}^+_M \setminus V^+_M)
+  \setminus (\mathcal{T}^-_M \setminus V^-_M)
+\end{displaymath}
+
+The function $\mathrm{pl}$ defines the path length from one point to another
+point:
+\begin{displaymath}
+  \mathrm{pl}(i, j, \vec{g}, \vec{h}, \mathcal{P}) = \left\{ 
+    \begin{array}{ll}
+      0 & \mbox{ if } i = j \\
+      |\vec{p}_i-\vec{p}_{g_i}| + \mathrm{pl}(g_i, j, \vec{g}, \vec{h}, \mathcal{P}) & \mbox{ if } i \ne j, h_i=i \\
+      \mathrm{pl}(h_i, j, \vec{g}, \vec{h}, \mathcal{P})    & \mbox{ if } i \ne j, h_i\ne i \\
+    \end{array}\right.
+\end{displaymath}
+For each tear, the length of each side of the tear is computed:
+\begin{displaymath}
+  S^+_j = \mathrm{pl}(A_j, V^+_j, \vec{g}^+, \vec{h}^+, \mathcal{P}) \quad 
+  S^-_j = \mathrm{pl}(A_j, V^-_j, \vec{g}^-, \vec{h}^-, \mathcal{P})
+\end{displaymath}
+Then for each point on one side of the tear, a new, corresponding,
+point, with the index $n=N+1$ is placed at the same fractional
+distance along the corresponding tear. To do this, the distance of a
+point $i\in{\mathcal{T}^+_j}\setminus A_j \setminus V^+_j$ along the +
+tear is computed:
+\begin{displaymath}
+  s^+_{ji} = \mathrm{pl}(A_j, i, \vec{g}^+, \vec{h}^+, \mathcal{P}) \quad 
+\end{displaymath}
+The node $k$ in the corresponding tear is the node which has the node
+with the highest fractional distance $s^-_{jk}=\mathrm{pl}(A_j, k,
+\vec{g}^-, \vec{h}^-, \mathcal{P})$ along the - tear which is still below
+$s^+_{ji}$. The location of the new point is
+\begin{displaymath}
+  \vec{p}_n = (1-f)\vec{p}_k + f\vec{p}_{g^-_k}
+\end{displaymath}
+where
+\begin{displaymath}
+  f = \frac{s^+_{ji}S^-_j/S^+_j-s^-_{jk}}{s^-_{jg^-_k}-s^-_{jk}}
+\end{displaymath}
+The correspondnaces vector is updated so that $h_i = n$. The vector of
+forward pointers is updated so that
+\begin{displaymath}
+  \begin{array}{ll}
+    g^-_n = k     & g^+_n = g^+_k \\
+    g^-_{g^+_k} = n & g^+_k = n 
+  \end{array}
+\end{displaymath}
+A similar procecudure is carried out for the $-$ tear.
+
+% The stitching algorithm uses this information to create
+% correspondances between points on cuts and tears using an algorithm
+% that
+
 \subsection{Triangulation of flattened retina}
 \label{fold-sphere:sec:triang-flatt-retina}
 
-\todo{Write the actual procedure for triangulation}
+\begin{figure}[tp]
+  \centering
+  \includegraphics{plots/mesh}
+  \caption{Triangular mesh}
+  \label{fold-sphere:fig:mesh}
+\end{figure}
 
-An equilateral triangular grid, where each link has length $L$, is
-laid over the surface of the flattened retina
-(Figure~\ref{fold-sphere:fig:test1}). At present the grid does not
-fill the area entirely, but it would be possible to acheive this by
-creating shorter links from the edge of the current grid to the edge
-of the folded retina. 
+Triangulation proceeds in a number of steps. 
+\begin{enumerate}
+\item $N_\mathrm{rand}=1000$ attempts are made to lay random points
+  within the rectangle bounded by the minimum and maxiumum $x$ and $y$
+  coordinates of members of $\mathcal{P}$.  Points which are outwith
+  the retinal outline, as determined using the \texttt{InPoly}
+  algorithm \citep{ORou98comp}, are rejected. Points which are less
+  than $d=200$ from existing points are also rejected.
+\item A Delaunay Triangulation of $\mathcal{D}$ the set of points
+  $\mathcal{P}$, is formed. Triangles in $\mathcal{D}$ whose centres
+  are outwith the retinal outline are excluded from $\mathcal{D}$.
+\item From the triangluation $\mathcal{D}$ the set $\mathcal{C}$ of pairs of
+  indicies representing line segments is constructed.
+\item For the morphing algorithm, it is essential that no line segment
+  connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
+  segments may be created by the triangulation. To detect such line
+  segments, each member of $\mathcal{C}$ is checked to see if it is a
+  subset of $\mathcal{R}$ and that its ends are not adjacent, by
+  using $g^+$ and $g^-$. For each line segment that is found, it is
+  removed by
+  \begin{itemize}
+  \item removing the two triangles that it belongs to from the list
+    $\mathcal{D}$
+  \item Creating a new point at the centroid of the four verticies
+    shared by these two triangles.
+  \item Creating four new triangles, who all share the new point and
+    the each of which has two verticies from the set of four
+    triangles.
+  \end{itemize}
+\item The same procedure is applyed to the longest edge that is longer
+  than $2d$ and repeated until no edges are longer than $2d$. At every
+  stage the set of connections $\mathcal{C}$ is recomputed to match
+  $\mathcal{D}$.
+\end{enumerate}
 
-The starting point is $n$ fixed points on the boundary
-$\vec{P}_1,\dots,\vec{P}_n$. To this is added $N-n$ internal points
-$\vec{P}_{n+1},\dots,\vec{P}_N$. The triangulation comprises $M$
-triangles and is described by an $M\times3$ matrix $T$, where each row
-contains the indicies of the points in the triangle in anticlockwise order.
+\todo{Incorporate this old meshing stuff}
+
+The triangulation comprises $M$ triangles and is described by an
+$M\times3$ matrix $T$, where each row contains the indicies of the
+points in the triangle in anticlockwise order.
 
 The connections are defined by $C_{ij}$, a symmetric, binary-valued
 matrix that defines if there is a connection between $i$ and $j$ and
@@ -235,28 +397,8 @@ Differentiate:
   -\frac{\p_2 - \p_1}{|\p_2 - \p_1|} \quad
 \end{equation}
 
-
-
-
-\begin{equation}
-  \label{fold-sphere:eq:13}
-\end{equation}
-
 % \section{Application to retina}
 % \label{fold-retina:sec:application-retina}
-
-% Figure~\ref{fold-sphere:fig:test1}. 
-% Figure~\ref{fold-sphere:fig:test2}. 
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.6\linewidth]{flattened-grid}
-  \includegraphics[width=0.6\linewidth]{test1-sphere}
-  \caption{The basic algorithm applied to Dan's data. Top: the grid on
-    the flattened retina. Bottom: the mapping of the grid onto the
-    sphere. $\phi_0= 60^\circ$.}
-  \label{fold-sphere:fig:test1}
-\end{figure}
 
 \begin{figure}
   \centering
@@ -341,6 +483,9 @@ points on either side of a rip which are correspond to each other with
 high probability. Another possibility would be to allow the radius of
 the sphere $R$ to vary within realistic bounds, to optimise the fit
 further.
+
+\bibliographystyle{natbib}
+\bibliography{mystrings,my}
 
 \end{document}
 
