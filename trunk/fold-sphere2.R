@@ -325,61 +325,7 @@ while (max(l) > 2*d) {
   l <- norm(P[Cu[,1],] - P[Cu[,2],])
 }
 
-trimesh(Pt, P, col="pink", add=TRUE)
-
-## Remove triangles with large ratio
-l <- cbind(norm(P[Pt[,2],] - P[Pt[,3],]),
-           norm(P[Pt[,3],] - P[Pt[,1],]),
-           norm(P[Pt[,1],] - P[Pt[,2],]))
-rat <- apply(l, 1, max)/apply(l, 1, min)
-while (max(rat) > 5) {
-  print(max(rat))
-  i <- which.max(rat)
-  print(i)
-
-  print(Pt[i,])
-  print(l[i,])
-  C1 <- Pt[i,-which.max(l[i,])][1]
-  C2 <- Pt[i,-which.max(l[i,])][2]
-  print(paste(C1, C2))
-  
-  ## Find triangles containing the line
-  segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="blue")
-  Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-  ##  print(Cu[i,])
-  ##  print(Tind)
-  T1 <- setdiff(Pt[Tind[1],], c(C1, C2))
-  T2 <- setdiff(Pt[Tind[2],], c(C1, C2))
-  ##  print(T1)
-  ##  print(paste(C1, C2, T1, T2))
-
-  p <- (P[C1,] + P[C2,])/2
-  points(p[1], p[2], col="blue")
-  P <- rbind(P, p)
-  n <- nrow(P)
-  Pt[Tind[1],] <- c(n, C1, T1)
-  Pt[Tind[2],] <- c(n, C1, T2)
-  Pt <- rbind(Pt,
-              c(n, C2, T1),
-              c(n, C2, T2))
-
-  Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-
-  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
-  Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
-  Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
-
-  ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
-  l <- cbind(norm(P[Pt[,2],] - P[Pt[,3],]),
-             norm(P[Pt[,3],] - P[Pt[,1],]),
-             norm(P[Pt[,1],] - P[Pt[,2],]))
-  rat <- apply(l, 1, max)/apply(l, 1, min)
-}
-
-
 plot(P)
-trimesh(Pt, P, col="black",add=TRUE)
+trimesh(Pt, P, col="black")
 lines(Po)
 
