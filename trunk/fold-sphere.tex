@@ -148,11 +148,12 @@ For each tear, the length of each side of the tear is computed:
   S^+_j = \mathrm{pl}(A_j, V^+_j, \vec{g}^+, \vec{h}^+, \mathcal{P}) \quad 
   S^-_j = \mathrm{pl}(A_j, V^-_j, \vec{g}^-, \vec{h}^-, \mathcal{P})
 \end{displaymath}
-Then for each point on one side of the tear, a new, corresponding,
-point, with the index $n=N+1$ is placed at the same fractional
-distance along the corresponding tear. To do this, the distance of a
-point $i\in{\mathcal{T}^+_j}\setminus A_j \setminus V^+_j$ along the +
-tear is computed:
+Then for each point $i$ on the $+$ side of the tear for which there is
+no corresponding point $h_i^-$, a new, corresponding, point, with the
+index $n=N+1$ is placed at the same fractional distance along the
+corresponding $-$ tear. To do this, the distance of a point
+$i\in{\mathcal{T}^+_j}\setminus A_j \setminus V^+_j$ along the + tear
+is computed:
 \begin{displaymath}
   s^+_{ji} = \mathrm{pl}(A_j, i, \vec{g}^+, \vec{h}^+, \mathcal{P}) \quad 
 \end{displaymath}
@@ -175,6 +176,10 @@ forward pointers is updated so that
     g^-_{g^+_k} = n & g^+_k = n 
   \end{array}
 \end{displaymath}
+If a correspondance $h^-_i$ exists for point $i$, then no new point is
+made, but this point is set to correspond to the same point as $h^-_i$
+corresponds to by setting $h_i = h_{h^-_i}$.
+
 A similar procecudure is carried out for the $-$ tear.
 
 % The stitching algorithm uses this information to create
