@@ -120,11 +120,10 @@ stitch.retina <- function(P, T) {
         ## Update correspondences
         hf[n] <- n
         hb[n] <- n
+      } else {
+        h[i] <- h[hb[i]]
       }
-
-      n <- nrow(P)
-      h[i] <- n
-
+      
       ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
       ##            "; gf[", n, "] =", gf[n], "; gb[", n,  "] =", gb[n],
       ##             "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
@@ -162,9 +161,9 @@ stitch.retina <- function(P, T) {
         ## Update correspondences
         hf[n] <- n
         hb[n] <- n
+      } else {
+        h[i] <- h[hf[i]]
       }
-      n <- nrow(P)
-      h[i] <- n
       
       ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
       ##            "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
@@ -323,6 +322,11 @@ while (max(l) > 2*d) {
   Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
   ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
   l <- norm(P[Cu[,1],] - P[Cu[,2],])
+}
+
+## Check there are no zero-length lines
+if (any(l==0)) {
+  print("WARNING: zero-length lines")
 }
 
 plot(P)
