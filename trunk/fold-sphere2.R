@@ -1,3 +1,6 @@
+source("triangulate.R")                 # for tri.area and tri.area.signed
+require("rgl")                 
+
 ## Modulus function, that returns
 ## i , if i <= N
 ## i - N, if i > N
@@ -120,6 +123,7 @@ stitch.retina <- function(P, T) {
         ## Update correspondences
         hf[n] <- n
         hb[n] <- n
+        h[i] <- n
       } else {
         h[i] <- h[hb[i]]
       }
@@ -161,6 +165,7 @@ stitch.retina <- function(P, T) {
         ## Update correspondences
         hf[n] <- n
         hb[n] <- n
+        h[i] <- n
       } else {
         h[i] <- h[hf[i]]
       }
@@ -204,6 +209,21 @@ plot.stitch <- function(P, s) {
   ## points(P[s$Rset,], col="red")
 }
 
+plot.retina <- function(phi, lambda, R, Dt) {
+  ## Now plot this in 3D space....
+  x <- R*cos(phi)*cos(lambda) 
+  y <- R*cos(phi)*sin(lambda)
+  z <- R*sin(phi)
+  P <- cbind(x, y, z)
+  rgl.clear()
+  rgl.bg(color="white")
+
+  triangles3d(matrix(x[t(Dt)], nrow=3),
+              matrix(y[t(Dt)], nrow=3),
+              matrix(z[t(Dt)], nrow=3))
+}
+
+
 ## Parameters
 d <- 200           # Minimum spacing at which new points are inserted 
 
@@ -240,14 +260,14 @@ for (i in 1:Nrand) {
 
 ## Delaunay triangulation and remove triangles outwith the retinal
 ## outline
-Pt <- delaunayn(P)
-Pc <- (P[Pt[,1],] + P[Pt[,2],] + P[Pt[,3],])/3 # Centres
-Pt <- Pt[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
+T <- delaunayn(P)
+Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
+T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
 
-trimesh(Pt, P, col="gray", add=TRUE)
+trimesh(T, P, col="gray", add=TRUE)
 
 ## Find lines which join non-adjacent parts of the outline
-Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
 Cu <- Unique(Cu, TRUE)
 
 for (i in 1:nrow(Cu)) {
@@ -258,20 +278,20 @@ for (i in 1:nrow(Cu)) {
           (C2 == s$gf[C1]))) {
       ## Find triangles containing the line
       segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="red")
-      Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+      Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
       ## print(Cu[i,])
       ## print(Tind)
-      T1 <- setdiff(Pt[Tind[1],], Cu[i,])
-      T2 <- setdiff(Pt[Tind[2],], Cu[i,])
+      T1 <- setdiff(T[Tind[1],], Cu[i,])
+      T2 <- setdiff(T[Tind[2],], Cu[i,])
       ## print(T1)
       ## print(paste(C1, C2, T1, T2))
       p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
       points(p[1], p[2], col="red")
       P <- rbind(P, p)
       n <- nrow(P)
-      Pt[Tind[1],] <- c(n, C1, T1)
-      Pt[Tind[2],] <- c(n, C1, T2)
-      Pt <- rbind(Pt,
+      T[Tind[1],] <- c(n, C1, T1)
+      T[Tind[2],] <- c(n, C1, T2)
+      T <- rbind(T,
                   c(n, C2, T1),
                   c(n, C2, T2))
     }
@@ -279,7 +299,7 @@ for (i in 1:nrow(Cu)) {
 }
 
 
-Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
 Cu <- Unique(Cu, TRUE)
 print(length(which(Cu[,1] == s$gf[Cu[,2]])))
 print(length(which(Cu[,2] == s$gf[Cu[,1]])))
@@ -295,11 +315,11 @@ while (max(l) > 2*d) {
   ## Find triangles containing the line
   ## segments(P[C1,1], P[C1,2],
   ## P[C2,1], P[C2,2], col="red")
-  Tind <- which(apply(Pt, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+  Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
   ##  print(Cu[i,])
   ##  print(Tind)
-  T1 <- setdiff(Pt[Tind[1],], Cu[i,])
-  T2 <- setdiff(Pt[Tind[2],], Cu[i,])
+  T1 <- setdiff(T[Tind[1],], Cu[i,])
+  T2 <- setdiff(T[Tind[2],], Cu[i,])
   ##  print(T1)
   ##  print(paste(C1, C2, T1, T2))
 
@@ -307,13 +327,13 @@ while (max(l) > 2*d) {
   ## points(p[1], p[2], col="red")
   P <- rbind(P, p)
   n <- nrow(P)
-  Pt[Tind[1],] <- c(n, C1, T1)
-  Pt[Tind[2],] <- c(n, C1, T2)
-  Pt <- rbind(Pt,
+  T[Tind[1],] <- c(n, C1, T1)
+  T[Tind[2],] <- c(n, C1, T2)
+  T <- rbind(T,
               c(n, C2, T1),
               c(n, C2, T2))
   
-  Cu <- rbind(Pt[,1:2], Pt[,2:3], Pt[,c(3,1)])
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
 
   print(length(which(Cu[,1] == s$gf[Cu[,2]])))
@@ -329,7 +349,46 @@ if (any(l==0)) {
   print("WARNING: zero-length lines")
 }
 
+## Swap orientation of triangles which have clockwise orientation
+a.signed <- tri.area.signed(P, T)
+T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+
+## Estimate the area. It's roughly equal to the number of remaining points
+## times the area of the rhomboid.
+## area <- nrow(T) * L^2 * sqrt(3)/2
+a <- abs(a.signed)
+A <- sum(a)
+
+## Plotting
 plot(P)
-trimesh(Pt, P, col="black")
+trimesh(T, P, col="black")
 lines(Po)
+
+## Merge the corresponding points
+h <- c(s$h, (length(s$h)+1):nrow(P))
+Tt <- T
+while (!all(Tt == h[Tt])) {
+  Tt <- matrix(h[Tt], ncol=3)
+}
+trimesh(Tt, P, col="black")
+
+N <- nrow(P)
+Nphi <- N - length(s$Rset)
+
+## From this we can infer what the radius should be from the formula
+## for the area of a sphere which is cut off at a lattitude of phi0
+## area = 2 * PI * R^2 * (sin(phi0)+1)
+phi0 <- 50*pi/180
+R <- sqrt(A/(2*pi*(sin(phi0)+1)))
+
+## Now assign each point to a location in the phi, lambda coordinates
+## Shift coordinates to rough centre of grid
+x <- P[,1] - mean(P[,1]) 
+y <- P[,2] - mean(P[,2]) 
+phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+phi[s$Rset] <- phi0
+lambda <- atan2(y, x)
+
+## Initial plot in 3D space
+plot.retina(phi, lambda, R, Tt)
 
