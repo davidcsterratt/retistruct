@@ -204,10 +204,23 @@ Triangulation proceeds in a number of steps.
   the retinal outline, as determined using the \texttt{InPoly}
   algorithm \citep{ORou98comp}, are rejected. Points which are less
   than $d=200$ from existing points are also rejected.
-\item A Delaunay Triangulation of $\mathcal{D}$ the set of points
-  $\mathcal{P}$, is formed. Triangles in $\mathcal{D}$ whose centres
-  are outwith the retinal outline are excluded from $\mathcal{D}$.
-\item From the triangluation $\mathcal{D}$ the set $\mathcal{C}$ of pairs of
+\item A Delaunay triangulation of the set of points $\mathcal{P}$ is
+  formed.  The triangulation comprises $M$ triangles and is described
+  by an $M\times3$ matrix $\mathbf{T}$, where each row contains the
+  indicies of the points in the triangle in anticlockwise order.
+  Triangles in $\mathbf{T}$ whose centres are outwith the retinal
+  outline are excluded from $\mathbf{T}$. The anticlockwise order is
+  ensured by finding the signed area $a^\mathrm{sign}_i$ of each
+  triangle using the vector product:
+  \begin{displaymath}
+    a^\mathrm{sign}_i = 0.5 (\vec{p}_{T_{i2}}-\vec{p}_{T_{i1}})\times
+        (\vec{p}_{T_{i3}}-\vec{p}_{T_{i2}})
+  \end{displaymath}
+  This is positive when the order of the indicies is anticlockwise,
+  and negative when it is clockwise.  If the signed area of triangle
+  $i$ is negative, two of the members of row $i$ of $\mathbf{T}$ are
+  flipped.
+\item From the triangluation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
   indicies representing line segments is constructed.
 \item For the morphing algorithm, it is essential that no line segment
   connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
@@ -218,7 +231,7 @@ Triangulation proceeds in a number of steps.
   removed by
   \begin{itemize}
   \item removing the two triangles that it belongs to from the list
-    $\mathcal{D}$
+    $\mathbf{T}$
   \item Creating a new point at the centroid of the four verticies
     shared by these two triangles.
   \item Creating four new triangles, who all share the new point and
@@ -228,14 +241,11 @@ Triangulation proceeds in a number of steps.
 \item The same procedure is applyed to the longest edge that is longer
   than $2d$ and repeated until no edges are longer than $2d$. At every
   stage the set of connections $\mathcal{C}$ is recomputed to match
-  $\mathcal{D}$.
+  $\mathbf{T}$.
 \end{enumerate}
 
 \todo{Incorporate this old meshing stuff}
 
-The triangulation comprises $M$ triangles and is described by an
-$M\times3$ matrix $T$, where each row contains the indicies of the
-points in the triangle in anticlockwise order.
 
 The connections are defined by $C_{ij}$, a symmetric, binary-valued
 matrix that defines if there is a connection between $i$ and $j$ and
@@ -245,9 +255,25 @@ retina.
 \subsection{Projection onto hemisphere}
 \label{fold-sphere:sec:proj-onto-hemisph}
 
-It is supposed that this grid is to be projected onto a sphere with a
-radius appropriate for the area $A$ of the flattened retina. The
-radius is
+When the points are projected onto the hemisphere, the points which
+have the stitching algorithm has identified as corresponding with each
+other are merged. To achieve this, a new triangulation
+$\tilde{\mathbf{T}}$ is derived from $\mathbf{T}$, by setting
+\begin{displaymath}
+  \tilde{T}_{ij} = h_{T_{ij}}
+\end{displaymath}
+As there may be chains of correspondances, this has to be iterated
+until all the elements $\tilde{T}_{ij} = h_{T_{ij}}$.
+
+
+The total area $A$ of the retina is computed by summing the areas of
+individual triangles:
+\begin{displaymath}
+  A = \sum_{i=1}^M a_i
+\end{displaymath}
+where $a_i = | a_i^\mathrm{sign}|$.  It is supposed that this grid is
+to be projected onto a sphere with a radius appropriate for the area
+$A$ of the flattened retina. The radius is
 \begin{equation}
   \label{fold-sphere:eq:1}
   R = \sqrt{\frac{A}{2\pi\sin\phi_0+1}}
