@@ -52,10 +52,11 @@ nstiff <- function(M, Q, Q.v, Phi, Phi.q, Phi.q.q,
 }
 
 ## Demo of nstiff()
+##
+## This is a bead on a circular wire, under the influence of gravity
+## and friction
 nstiff.demo <- function() {
-  ## The system
-  gamma <- 1.5                              # Friction coeff
-
+  gamma <- 1.5                          # Friction coeff
   out <- nstiff(M = diag(c(1, 1)),                       # Mass
                 Q = function(q, v)    { c(0, -1) - gamma*v },
                 Q.v = function(q, v)  { diag(gamma*c(-1, -1)) },
