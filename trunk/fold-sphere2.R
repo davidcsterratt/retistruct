@@ -183,6 +183,124 @@ stitch.retina <- function(P, T) {
               gf=gf, gb=gb))
 }
 
+
+##
+## Energy/error functions
+## 
+
+## Formula for central angle
+central.angle <- function(phi1, lambda1, phi2, lambda2) {
+  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
+}
+
+## Calculate lengths of connections on sphere
+compute.lengths <- function(phi, lamba, Cu, R) {
+  ## Use the upper triagular part of the connectivity matrix Cu
+  phi1    <- phi[Cu[,1]]
+  lambda1 <- lambda[Cu[,1]]
+  phi2    <- phi[Cu[,2]]
+  lambda2 <- lambda[Cu[,2]]
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+
+  return(l)
+}
+
+## Now for the dreaded elastic error function....
+E.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-Rset] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
+  
+  ## Use the upper triagular part of the connectivity matrix Cu
+  phi1    <- phi[Cu[,1]]
+  lambda1 <- lambda[Cu[,1]]
+  phi2    <- phi[Cu[,2]]
+  lambda2 <- lambda[Cu[,2]]
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+  if (verbose==2) {
+    print(l)
+  }
+  E <- sum((l - L)^2/L)
+  # E <- sum((l - L)^2)
+  if (verbose>=1) {
+    print(E)
+  }
+  return(E)
+}
+
+## ... and the even more dreaded gradient of the elastic error
+dE.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-Rset] <- p[1:Nphi]
+  lambda <- p[Nphi+1:N]
+
+  phii   <- phi[C[,1]]
+  lambdai <- lambda[C[,1]]
+  phij    <- phi[C[,2]]
+  lambdaj <- lambda[C[,2]]
+  ## x is the argument of the acos in the central angle
+  x <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
+  ## the central angle
+  l <- R * acos(x)
+  if (verbose==2) {
+    print(l)
+  }
+  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-x^2))
+  # fac <- R * (l - c(L, L))/sqrt(1-x^2)
+  dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
+                               - cos(phii)*sin(phij)))
+  dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
+  return(c(dE.phii[-Rset], dE.dlambdai))
+}
+
+## Combined energy function
+E <- function(p, Cu, C, L, B, Pt, A, R, n,
+              E0.E=1, E0.A=1, E0.D=1, d=10,
+              Rset, phi0, verbose=FALSE) {
+  E <- E0.E * E.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose) 
+##  if (E0.A) {
+##    E <- E + E0.A * E.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
+##  }
+  return(E) 
+}
+
+## Combined gradient
+dE <- function(p, Cu, C, L, B, Pt, A, R, n,
+               E0.E=1, E0.A=1, E0.D=1, d=10,
+               Rset, phi0, verbose=FALSE) {
+  dE <- E0.E * dE.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose)
+##  if (E0.A) {
+##    dE <- dE + E0.A * dE.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
+##  }
+  return(dE)
+}
+
+## Grand optimisation function
+optimise.mapping <- function(E0.E=1, E0.A=1, Rset=Rsett) {
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$p <- c(phi[-Rset], lambda)
+  opt$conv <- 1
+  while (opt$conv) {
+    opt <- optim(opt$p, E, gr=dE,
+                 method="BFGS",
+                 Pt=Tt, A=areas, Cu=Cut, C=Ct, L=Ls, B=Bt, R=R, n=n, 
+                 E0.E=E0.E, E0.A=E0.A,
+                 Rset=Rset, phi0=phi0, verbose=FALSE)
+    print(opt)
+    ##               control=list(maxit=200))
+    phi        <- rep(phi0, N)
+    phi[-Rset] <- opt$p[1:Nphi]
+    lambda     <- opt$p[Nphi+1:N]
+    plot.retina(phi, lambda, R, Tt) ## , ts.red, ts.green, edge.inds)
+  }
+  return(list(phi=phi, lambda=lambda))
+}
+
+##
+## Plotting functions
+## 
+
 plot.stitch <- function(P, s) {
   plot(s$P, pch=".", cex=4, xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
   with(s, segments(P[,1], P[,2], P[gb,1], P[gb, 2]))
@@ -359,6 +477,9 @@ T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
 a <- abs(a.signed)
 A <- sum(a)
 
+## Find lengths of connections
+Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
+
 ## Plotting
 plot(P)
 trimesh(T, P, col="black")
@@ -366,14 +487,31 @@ lines(Po)
 
 ## Merge the corresponding points
 h <- c(s$h, (length(s$h)+1):nrow(P))
-Tt <- T
-while (!all(Tt == h[Tt])) {
-  Tt <- matrix(h[Tt], ncol=3)
+while (!all(h==h[h])) {
+  h <- h[h]
 }
-trimesh(Tt, P, col="black")
 
-N <- nrow(P)
-Nphi <- N - length(s$Rset)
+## Translation into unique points
+U <- unique(h)
+for (i in 1:length(h)) {
+  H[i] <- which(U == h[i])
+}
+Tt  <- matrix(H[T], ncol=3)
+Cut <- matrix(H[Cu], ncol=2)
+Pt  <- P[U,]
+Rsett <- unique(H[s$Rset])
+Ct <- rbind(Cut, Cut[,2:1])
+## Matrix to map line segments onto the points they link
+Bt <- matrix(0, nrow(Pt), nrow(Ct))
+for (i in 1:nrow(Ct)) {
+  Bt[Ct[i,1],i] <- 1
+}
+
+## Plot stiched retina in 2D (messy)
+trimesh(Tt, Pt, col="black")
+
+N <- nrow(Pt)
+Nphi <- N - length(Rsett)
 
 ## From this we can infer what the radius should be from the formula
 ## for the area of a sphere which is cut off at a lattitude of phi0
@@ -383,10 +521,10 @@ R <- sqrt(A/(2*pi*(sin(phi0)+1)))
 
 ## Now assign each point to a location in the phi, lambda coordinates
 ## Shift coordinates to rough centre of grid
-x <- P[,1] - mean(P[,1]) 
-y <- P[,2] - mean(P[,2]) 
+x <- Pt[,1] - mean(Pt[,1]) 
+y <- Pt[,2] - mean(Pt[,2]) 
 phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
-phi[s$Rset] <- phi0
+phi[Rsett] <- phi0
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
