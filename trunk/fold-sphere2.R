@@ -175,7 +175,13 @@ stitch.retina <- function(P, T) {
       ##            "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
     }
   }
-    
+
+  ## Make sure that there are no chains of correspondences
+  h <- c(h, (length(h)+1):nrow(P))
+  while (!all(h==h[h])) {
+    h <- h[h]
+  }
+  
   return(list(Rset=Rset,
               VF=VF, VB=VB, A=A,
               TFset=TFset, TBset=TBset,
@@ -467,6 +473,9 @@ if (any(l==0)) {
   print("WARNING: zero-length lines")
 }
 
+## Add the new points to the correspondances vector
+h <- c(s$h, (length(s$h)+1):nrow(P))
+
 ## Swap orientation of triangles which have clockwise orientation
 a.signed <- tri.area.signed(P, T)
 T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
@@ -484,12 +493,6 @@ Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
 plot(P)
 trimesh(T, P, col="black")
 lines(Po)
-
-## Merge the corresponding points
-h <- c(s$h, (length(s$h)+1):nrow(P))
-while (!all(h==h[h])) {
-  h <- h[h]
-}
 
 ## Translation into unique points
 U <- unique(h)
