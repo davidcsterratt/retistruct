@@ -260,8 +260,8 @@ dE.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
 }
 
 ## Combined energy function
-E <- function(p, Cu, C, L, B, Pt, A, R, n,
-              E0.E=1, E0.A=1, E0.D=1, d=10,
+E <- function(p, Cu, C, L, B, Pt, A, R,
+              E0.E=1, E0.A=1,
               Rset, phi0, verbose=FALSE) {
   E <- E0.E * E.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose) 
 ##  if (E0.A) {
@@ -271,8 +271,8 @@ E <- function(p, Cu, C, L, B, Pt, A, R, n,
 }
 
 ## Combined gradient
-dE <- function(p, Cu, C, L, B, Pt, A, R, n,
-               E0.E=1, E0.A=1, E0.D=1, d=10,
+dE <- function(p, Cu, C, L, B, Pt, A, R,
+               E0.E=1, E0.A=1,
                Rset, phi0, verbose=FALSE) {
   dE <- E0.E * dE.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose)
 ##  if (E0.A) {
@@ -282,19 +282,21 @@ dE <- function(p, Cu, C, L, B, Pt, A, R, n,
 }
 
 ## Grand optimisation function
-optimise.mapping <- function(E0.E=1, E0.A=1, Rset=Rsett) {
+optimise.mapping <- function(E0.E=1, E0.A=1, Rset=Rsett, L=L, method="BFGS") {
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi[-Rset], lambda)
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
-                 method="BFGS",
-                 Pt=Tt, A=areas, Cu=Cut, C=Ct, L=Ls, B=Bt, R=R, n=n, 
+                 method=method,
+                 Pt=Tt, A=areas, Cu=Cut, C=Ct, L=L, B=Bt, R=R,
                  E0.E=E0.E, E0.A=E0.A,
                  Rset=Rset, phi0=phi0, verbose=FALSE)
-    print(opt)
+    ## print(opt)
     ##               control=list(maxit=200))
+    print(E(opt$p, Cut, Ct, L, Bt, Tt, areas, R, 
+            E0.E=E0.E, E0.A=E0.A, Rset=Rset, phi0=phi0))
     phi        <- rep(phi0, N)
     phi[-Rset] <- opt$p[1:Nphi]
     lambda     <- opt$p[Nphi+1:N]
@@ -460,8 +462,10 @@ while (max(l) > 2*d) {
   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
 
-  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+  ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+
+  ## Exlcude line segments which are on the edge for splitting
   Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
   Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
   ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
@@ -487,7 +491,9 @@ a <- abs(a.signed)
 A <- sum(a)
 
 ## Find lengths of connections
-Ls <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
+Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+Cu <- Unique(Cu, TRUE)
+L <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
 
 ## Plotting
 plot(P)
@@ -495,14 +501,44 @@ trimesh(T, P, col="black")
 lines(Po)
 
 ## Translation into unique points
-U <- unique(h)
+u <- unique(h)
+ht <- c()
 for (i in 1:length(h)) {
-  H[i] <- which(U == h[i])
+  ht[i] <- which(u == h[i])
 }
-Tt  <- matrix(H[T], ncol=3)
-Cut <- matrix(H[Cu], ncol=2)
-Pt  <- P[U,]
-Rsett <- unique(H[s$Rset])
+Tt  <- matrix(ht[T], ncol=3)
+
+## Determine correspondance of line edges
+Cut <- matrix(ht[Cu], ncol=2)
+Cut <- t(apply(Cut, 1, sort))
+M <- nrow(Cut)
+H <- rep(0, M)
+for (i in 1:M) {
+  if (!H[i]) {
+    H[i] <- i
+    for (j in i:M) {
+      if (identical(Cut[i,], Cut[j,])) {
+        H[j] <- i
+      }
+    }
+  }
+}
+U <- unique(H)
+Cut <- Cut[U,]
+Ht <- c()
+for (i in 1:length(H)) {
+  Ht[i] <- which(U == H[i])
+}
+Lt <- c()
+for (k in 1:length(U)) {
+  is <- which(Ht == k)
+  Lt[k] <- mean(L[is])
+}
+
+## Cut <- rbind(Tt[,1:2], Tt[,2:3], Tt[,c(3,1)])
+## Cut <- Unique(Cut, TRUE)
+Pt  <- P[u,]
+Rsett <- unique(ht[s$Rset])
 Ct <- rbind(Cut, Cut[,2:1])
 ## Matrix to map line segments onto the points they link
 Bt <- matrix(0, nrow(Pt), nrow(Ct))
