@@ -1,6 +1,11 @@
 source("triangulate.R")                 # for tri.area and tri.area.signed
 require("rgl")                 
 
+## scalar product of two column matricies
+dot <- function(x, y) {
+  return(rowSums(x * y))
+}
+
 ## Modulus function, that returns
 ## i , if i <= N
 ## i - N, if i > N
@@ -13,7 +18,7 @@ norm <- function(X) {
   if (is.vector(X)) {
     return(sqrt(sum(X^2)))
   } else {
-    return(sqrt(apply(X^2, 1, sum)))
+    return(sqrt(rowSums(X^2)))
   }
 }
 
@@ -211,12 +216,28 @@ compute.lengths <- function(phi, lamba, Cu, R) {
   return(l)
 }
 
+## Calculate lengths of connections on sphere
+compute.areas <- function(phi, lamba, T, R) {
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+
+  ## Find areas of all triangles
+  areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+
+  return(areas)
+}
+
+
 ## Now for the dreaded elastic error function....
-E.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- p[Nphi+1:N]
-  
+
+  ##
+  ## Compute derivative of elastic energy
+  ##
   ## Use the upper triagular part of the connectivity matrix Cu
   phi1    <- phi[Cu[,1]]
   lambda1 <- lambda[Cu[,1]]
@@ -226,81 +247,145 @@ E.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
   if (verbose==2) {
     print(l)
   }
-  E <- sum((l - L)^2/L)
-  # E <- sum((l - L)^2)
+  E.E <- 0.5 * sum((l - L)^2/L)
+  ## E.E <- 0.5 * sum((l - L)^2)
+  ## E <- 0.5*sum((l)^2/L)
   if (verbose>=1) {
-    print(E)
+    print(E.E)
   }
-  return(E)
+
+  E.A <- 0
+  if (E0.A) {
+    ##
+    ## Compute areas
+    ##
+    P <- R * cbind(cos(phi)*cos(lambda),
+                   cos(phi)*sin(lambda),
+                   sin(phi))
+
+    ## Find areas of all triangles
+    areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+    E.A <- 0.5 * sum((areas - A)^2/A)
+  }
+  
+  return(E.E + E0.A*E.A)
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE.E <- function(p, Cu, C, L, B, R, Rset, phi0, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- p[Nphi+1:N]
 
+  ##
+  ## Compute derivative of elastic energy
+  ##
   phii   <- phi[C[,1]]
   lambdai <- lambda[C[,1]]
   phij    <- phi[C[,2]]
   lambdaj <- lambda[C[,2]]
   ## x is the argument of the acos in the central angle
-  x <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
+  u <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
   ## the central angle
-  l <- R * acos(x)
+  l <- R * acos(u)
   if (verbose==2) {
     print(l)
   }
-  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-x^2))
-  # fac <- R * (l - c(L, L))/sqrt(1-x^2)
-  dE.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
+  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-u^2))
+  ## fac <- R * (l - c(L, L))/(sqrt(1-u^2))
+  ## fac <- R * (l)/(c(L, L) * sqrt(1-u^2))
+  dE.E.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
                                - cos(phii)*sin(phij)))
-  dE.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
-  return(c(dE.phii[-Rset], dE.dlambdai))
+  dE.E.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
+
+  dE.A.dphi <- rep(0, N)
+  dE.A.dlambda <- 0
+  if (E0.A) {
+    ##
+    ## Compute derivative of areas
+    ##
+    P <- R * cbind(cos(phi)*cos(lambda),
+                   cos(phi)*sin(lambda),
+                   sin(phi))
+
+    ## expand triangulation
+    T <- rbind(T, T[,c(2,3,1)], T[,c(3,1,2)])
+    A  <- c(A, A, A)
+
+    ## Slow way of computing gradient
+    dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
+
+    ## Find areas of all triangles
+    areas <- dot(P[T[,1],], dAdPt1)
+
+    dEdPt1 <- (areas - A)/A * dAdPt1
+
+    Pt1topi <- matrix(0, length(phi), nrow(T))
+    for(m in 1:nrow(T)) {
+      Pt1topi[T[m,1],m] <- 1
+    }
+    dEdpi <- Pt1topi %*% dEdPt1
+    dpidphi <- R * cbind(-sin(phi) * cos(lambda),
+                         -sin(phi) * sin(lambda),
+                         cos(phi))
+    dpidlambda <- R * cbind(-cos(phi) * sin(lambda),
+                            cos(phi) * cos(lambda),
+                            0)
+
+    dE.A.dphi    <- rowSums(dEdpi * dpidphi)
+    dE.A.dlambda <- rowSums(dEdpi * dpidlambda)
+  }
+  
+  return(c(dE.E.phii[-Rset] + E0.A * dE.A.dphi[-Rset],
+           dE.E.dlambdai    + E0.A * dE.A.dlambda))
 }
 
 ## Combined energy function
-E <- function(p, Cu, C, L, B, Pt, A, R,
-              E0.E=1, E0.A=1,
-              Rset, phi0, verbose=FALSE) {
-  E <- E0.E * E.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose) 
+##E <- function(p, Cu, C, L, B, Pt, A, R,
+##              E0.E=1, E0.A=1,
+##              Rset, phi0, verbose=FALSE) {
+##  E <- E0.E * E.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose) 
 ##  if (E0.A) {
 ##    E <- E + E0.A * E.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
 ##  }
-  return(E) 
-}
+##  return(E) 
+##}
 
 ## Combined gradient
-dE <- function(p, Cu, C, L, B, Pt, A, R,
-               E0.E=1, E0.A=1,
-               Rset, phi0, verbose=FALSE) {
-  dE <- E0.E * dE.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose)
+##dE <- function(p, Cu, C, L, B, Pt, A, R,
+##               E0.E=1, E0.A=1,
+##               Rset, phi0, verbose=FALSE) {
+##  dE <- E0.E * dE.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose)
 ##  if (E0.A) {
 ##    dE <- dE + E0.A * dE.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
 ##  }
-  return(dE)
-}
+##  return(dE)
+##}
 
 ## Grand optimisation function
-optimise.mapping <- function(E0.E=1, E0.A=1, Rset=Rsett, L=L, method="BFGS") {
+optimise.mapping <- function(E0.A=1, method="BFGS") {
   ## Optimisation and plotting 
   opt <- list()
-  opt$p <- c(phi[-Rset], lambda)
+  opt$p <- c(phi[-Rsett], lambda)
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
-                 Pt=Tt, A=areas, Cu=Cut, C=Ct, L=L, B=Bt, R=R,
-                 E0.E=E0.E, E0.A=E0.A,
-                 Rset=Rset, phi0=phi0, verbose=FALSE)
+                 T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=2*R,
+                 E0.A=E0.A, N=Nt,
+                 Rset=Rsett, phi0=phi0, verbose=FALSE)
     ## print(opt)
     ##               control=list(maxit=200))
-    print(E(opt$p, Cut, Ct, L, Bt, Tt, areas, R, 
-            E0.E=E0.E, E0.A=E0.A, Rset=Rset, phi0=phi0))
-    phi        <- rep(phi0, N)
-    phi[-Rset] <- opt$p[1:Nphi]
-    lambda     <- opt$p[Nphi+1:N]
-    plot.retina(phi, lambda, R, Tt) ## , ts.red, ts.green, edge.inds)
+    print(E(opt$p, Cu=Cut, C=Ct, L=L, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+            Rset=Rsett, phi0=phi0))
+    phi        <- rep(phi0, Nt)
+    phi[-Rsett] <- opt$p[1:Nphi]
+    lambda     <- opt$p[Nphi+1:Nt]
+
+    lt <- compute.lengths(phi, lamba, Cut, R)
+    ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
+    plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
   }
   return(list(phi=phi, lambda=lambda))
 }
@@ -329,13 +414,19 @@ plot.stitch <- function(P, s) {
 
   for (j in 1:length(s$hf)) {
     if (s$hf[j] != j) {
-      lines(P[c(j,s$hf[j]),], col="green")
+##      lines(P[c(j,s$hf[j]),], col="green")
     }
   }
   ## points(P[s$Rset,], col="red")
 }
 
-plot.retina <- function(phi, lambda, R, Dt) {
+## Function to plot the retina in spherical coordinates
+## phi - lattitude of points
+## lambda - longitude of points
+## R - radius of sphere
+## C - connection table
+## Ct - triagulated connection table
+plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -344,9 +435,12 @@ plot.retina <- function(phi, lambda, R, Dt) {
   rgl.clear()
   rgl.bg(color="white")
 
-  triangles3d(matrix(x[t(Dt)], nrow=3),
-              matrix(y[t(Dt)], nrow=3),
-              matrix(z[t(Dt)], nrow=3))
+  triangles3d(matrix(x[t(Tt)], nrow=3),
+              matrix(y[t(Tt)], nrow=3),
+              matrix(z[t(Tt)], nrow=3),
+              color="white", alpha=0.9)
+
+  points3d(x[Rsett], y[Rsett], z[Rsett], col="blue")
 }
 
 
@@ -484,16 +578,16 @@ h <- c(s$h, (length(s$h)+1):nrow(P))
 a.signed <- tri.area.signed(P, T)
 T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
 
-## Estimate the area. It's roughly equal to the number of remaining points
-## times the area of the rhomboid.
-## area <- nrow(T) * L^2 * sqrt(3)/2
+## Calculate the area of each triangle a and the total area A
 a <- abs(a.signed)
 A <- sum(a)
 
-## Find lengths of connections
+## Create the connection matrix from the triangulation
 Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
 Cu <- Unique(Cu, TRUE)
-L <- sqrt(apply((P[Cu[,1],] - P[Cu[,2],])^2, 1, sum))
+
+## Find lengths of connections
+L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
 
 ## Plotting
 plot(P)
@@ -502,11 +596,16 @@ lines(Po)
 
 ## Translation into unique points
 u <- unique(h)
+uset <- list()
+for (i in 1:length(u)) {
+  uset[[i]] <- which(h == u[i])
+}
 ht <- c()
 for (i in 1:length(h)) {
   ht[i] <- which(u == h[i])
 }
 Tt  <- matrix(ht[T], ncol=3)
+gft <- ht[s$gf]
 
 ## Determine correspondance of line edges
 Cut <- matrix(ht[Cu], ncol=2)
@@ -532,12 +631,20 @@ for (i in 1:length(H)) {
 Lt <- c()
 for (k in 1:length(U)) {
   is <- which(Ht == k)
+  if (length(is)>1) {
+    print(L[is])
+  }
   Lt[k] <- mean(L[is])
 }
 
 ## Cut <- rbind(Tt[,1:2], Tt[,2:3], Tt[,c(3,1)])
 ## Cut <- Unique(Cut, TRUE)
 Pt  <- P[u,]
+##for (i in 1:length(uset)) {
+##  if (length(uset[[i]]) > 1) {
+##    Pt[i,] <- colMeans(P[uset[[i]],])
+##  }
+##}
 Rsett <- unique(ht[s$Rset])
 Ct <- rbind(Cut, Cut[,2:1])
 ## Matrix to map line segments onto the points they link
@@ -549,8 +656,8 @@ for (i in 1:nrow(Ct)) {
 ## Plot stiched retina in 2D (messy)
 trimesh(Tt, Pt, col="black")
 
-N <- nrow(Pt)
-Nphi <- N - length(Rsett)
+Nt <- nrow(Pt)
+Nphi <- Nt - length(Rsett)
 
 ## From this we can infer what the radius should be from the formula
 ## for the area of a sphere which is cut off at a lattitude of phi0
@@ -567,5 +674,5 @@ phi[Rsett] <- phi0
 lambda <- atan2(y, x)
 
 ## Initial plot in 3D space
-plot.retina(phi, lambda, R, Tt)
+plot.retina(phi, lambda, R, Tt, Rsett)
 
