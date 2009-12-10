@@ -205,7 +205,7 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 }
 
 ## Calculate lengths of connections on sphere
-compute.lengths <- function(phi, lamba, Cu, R) {
+compute.lengths <- function(phi, lambda, Cu, R) {
   ## Use the upper triagular part of the connectivity matrix Cu
   phi1    <- phi[Cu[,1]]
   lambda1 <- lambda[Cu[,1]]
@@ -217,7 +217,7 @@ compute.lengths <- function(phi, lamba, Cu, R) {
 }
 
 ## Calculate lengths of connections on sphere
-compute.areas <- function(phi, lamba, T, R) {
+compute.areas <- function(phi, lambda, T, R) {
   P <- R * cbind(cos(phi)*cos(lambda),
                  cos(phi)*sin(lambda),
                  sin(phi))
@@ -383,12 +383,35 @@ optimise.mapping <- function(E0.A=1, method="BFGS") {
     phi[-Rsett] <- opt$p[1:Nphi]
     lambda     <- opt$p[Nphi+1:Nt]
 
-    lt <- compute.lengths(phi, lamba, Cut, R)
+    lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
     plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
   }
   return(list(phi=phi, lambda=lambda))
 }
+
+## Try to simulate the mapping using Euler integation
+solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, verbose=FALSE) {
+  ## Optimisation and plotting
+  for (i in 0:nstep) {
+    p <- c(phi[-Rsett], lambda)
+    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0)
+    p <- p - dEbydp * dt
+    print(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+            Rset=Rsett, phi0=phi0, verbose=verbose))
+    phi        <- rep(phi0, Nt)
+    phi[-Rsett] <- p[1:Nphi]
+    lambda     <- p[Nphi+1:Nt]
+    if (!(((i*dt) / 1E-6) %% 10)) {
+      lt <- compute.lengths(phi, lambda, Cut, R)
+      ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
+      plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    }
+  }
+  return(list(phi=phi, lambda=lambda))
+}
+
 
 ##
 ## Plotting functions
