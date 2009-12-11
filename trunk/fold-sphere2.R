@@ -228,7 +228,6 @@ compute.areas <- function(phi, lambda, T, R) {
   return(areas)
 }
 
-
 ## Now for the dreaded elastic error function....
 E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
@@ -249,7 +248,7 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
   }
   E.E <- 0.5 * sum((l - L)^2/L)
   ## E.E <- 0.5 * sum((l - L)^2)
-  ## E <- 0.5*sum((l)^2/L)
+  ## E.E <- 0.5*sum((l)^2/L)
   if (verbose>=1) {
     print(E.E)
   }
@@ -391,21 +390,23 @@ optimise.mapping <- function(E0.A=1, method="BFGS") {
 }
 
 ## Try to simulate the mapping using Euler integation
-solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, verbose=FALSE) {
+solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
   ## Optimisation and plotting
   for (i in 0:nstep) {
     p <- c(phi[-Rsett], lambda)
-    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0)
+    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0)
     p <- p - dEbydp * dt
-    print(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
-            E0.A=E0.A, N=Nt,
-            Rset=Rsett, phi0=phi0, verbose=verbose))
+
     phi        <- rep(phi0, Nt)
     phi[-Rsett] <- p[1:Nphi]
     lambda     <- p[Nphi+1:Nt]
+
+    ## Output
+    lt <- compute.lengths(phi, lambda, Cut, R)
+    print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+            Rset=Rsett, phi0=phi0, verbose=verbose), cor(lt, Lt)))
     if (!(((i*dt) / 1E-6) %% 10)) {
-      lt <- compute.lengths(phi, lambda, Cut, R)
-      ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
     }
   }
@@ -447,8 +448,8 @@ plot.stitch <- function(P, s) {
 ## phi - lattitude of points
 ## lambda - longitude of points
 ## R - radius of sphere
-## C - connection table
-## Ct - triagulated connection table
+## Tt - triagulation
+## Rsett - members of rim set
 plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
@@ -463,7 +464,21 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
               matrix(z[t(Tt)], nrow=3),
               color="white", alpha=0.9)
 
-  points3d(x[Rsett], y[Rsett], z[Rsett], col="blue")
+  ## Highlight rim points
+  points3d(x[Rsett], y[Rsett], z[Rsett], col="orange")
+
+  ## Plot any flipped triangles
+  ## First find verticies and find centres and normals of the triangles
+  P1 <- P[Tt[,1],]
+  P2 <- P[Tt[,2],]
+  P3 <- P[Tt[,3],]
+  cents <- (P1 + P2 + P3)/3
+  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
+  areas <- apply(normals^2, 1, sum)
+  ##  print(cents)
+  ##  print(areas)
+  flipped <- (-dot(cents, normals) < 0)
+  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 }
 
 
