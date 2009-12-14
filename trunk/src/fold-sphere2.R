@@ -465,7 +465,7 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
               color="white", alpha=0.9)
 
   ## Highlight rim points
-  points3d(x[Rsett], y[Rsett], z[Rsett], col="orange")
+  points3d(x[Rsett], y[Rsett], z[Rsett], col="orange", size=5)
 
   ## Plot any flipped triangles
   ## First find verticies and find centres and normals of the triangles
@@ -478,6 +478,7 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   ##  print(cents)
   ##  print(areas)
   flipped <- (-dot(cents, normals) < 0)
+  print(paste(sum(flipped), "flipped triangles:", which(flipped)))
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 }
 
