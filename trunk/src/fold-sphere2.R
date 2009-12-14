@@ -408,6 +408,8 @@ solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
             Rset=Rsett, phi0=phi0, verbose=verbose), cor(lt, Lt)))
     if (!(((i*dt) / 1E-6) %% 10)) {
       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+      with(s, plot.outline(P, gb))
+      plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
     }
   }
   return(list(phi=phi, lambda=lambda))
@@ -481,29 +483,42 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0) {
 ## Plotting functions
 ## 
 
-plot.stitch <- function(P, s) {
-  plot(s$P, pch=".", cex=4, xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
-  with(s, segments(P[,1], P[,2], P[gb,1], P[gb, 2]))
-  points(P[s$VF,], col="purple", pch="+")
-  points(P[s$VB,], col="blue", pch="+")
-  points(P[s$A, ], col="cyan", pch="+")
-  for (TFset in s$TFset) {
-    lines(P[TFset,], col="purple")
-  }
-  for (TBset in s$TBset) {
-    lines(P[TBset,], col="blue")
-  }
-  for (j in 1:length(s$h)) {
-    if (s$h[j] != j) {
-      lines(s$P[c(j,s$h[j]),], col="orange")
-    }
-  }
+## plot.outline(P, gb)
+##
+## Plot outline of retina given set of outline points P and backwards
+## pointer gb
+plot.outline <- function(P, gb) {
+  plot(P, pch=".", cex=4, xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+  segments(P[,1], P[,2], P[gb,1], P[gb, 2])
+}
 
-  for (j in 1:length(s$hf)) {
-    if (s$hf[j] != j) {
-##      lines(P[c(j,s$hf[j]),], col="green")
+## plot.stitch(P, s)
+##
+## Plot stitch given set of outline points stitch information s
+plot.stitch <- function(s) {
+  with(s, {
+    plot.outline(P, gb)
+    points(P[VF,], col="purple", pch="+")
+    points(P[VB,], col="blue", pch="+")
+    points(P[A, ], col="cyan", pch="+")
+    for (TF in TFset) {
+      lines(P[TF,], col="purple")
     }
-  }
+    for (TB in TBset) {
+      lines(P[TB,], col="blue")
+    }
+    for (j in 1:length(h)) {
+      if (h[j] != j) {
+        lines(P[c(j,h[j]),], col="orange")
+      }
+    }
+    
+    for (j in 1:length(hf)) {
+      if (hf[j] != j) {
+        lines(P[c(j,s$hf[j]),], col="green")
+      }
+    }
+  })
   ## points(P[s$Rset,], col="red")
 }
 
@@ -557,7 +572,7 @@ P <- edge.path[-nrow(edge.path),1:2]
 
 s <- stitch.retina(P, tearmat)
 
-plot.stitch(P, s)
+plot.stitch(s)
 
 ## Create ordered version of P for determining outline
 Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
