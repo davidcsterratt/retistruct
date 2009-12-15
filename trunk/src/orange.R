@@ -18,9 +18,11 @@ colnames(tearmat) <- c("apex", "end1", "end2")
 ## Stitching
 s <- stitch.retina(P, tearmat)
 plot.stitch(s)
+dev.print(pdf, file="../figures/orange-stitched.pdf", width=5)
 
 t <- make.triangulation(s, d=30)
-with(t, trimesh(T, P, col="black"))
+with(t, trimesh(T, P, col="black", add=TRUE))
+dev.print(pdf, file="../figures/orange-stitched-triangulated.pdf", width=5)
 
 m <- merge.points(t, s)
 ## Plot stiched retina in 2D (messy)
@@ -29,8 +31,10 @@ m <- merge.points(t, s)
 ## Plotting
 plot(P)
 with(s, plot.outline(P, gb))
+dev.print(pdf, file="../figures/orange-outline.pdf", width=5)
 
 p <- project.to.sphere(m, t, phi0=45*pi/180)
+rgl.postscript(file="orange-projected.pdf", fmt="pdf")
 
 ## Initial plot in 3D space
 plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
