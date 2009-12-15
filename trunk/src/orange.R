@@ -39,5 +39,8 @@ plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
 f <- solve.mapping(p, m, t, s, dt=1E-5, nstep=2000)
 
 plot(im)
+dev.print(png, file="../figures/orange-no-grid.png", width=500)
 plot.gridlines.flat(t$P, t$T, f$phi, f$lambda, m$Tt, p$phi0,
                                 Phis=(-1:2)*pi/4, Lambdas=(0:1)*pi/2, lwd=3)
+
+dev.print(png, file="../figures/orange-grid.png", width=5)
