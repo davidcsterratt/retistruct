@@ -36,8 +36,8 @@ p <- project.to.sphere(m, t, phi0=45*pi/180)
 plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
 
 ## Optimisation
-f <- solve.mapping(p, m, t, s, dt=1E-5, nstep=1000)
+f <- solve.mapping(p, m, t, s, dt=1E-5, nstep=2000)
 
 plot(im)
 plot.gridlines.flat(t$P, t$T, f$phi, f$lambda, m$Tt, p$phi0,
-                                Phis=(-1:2)*pi/4, Lambdas=(0:1)*pi/2, lwd=2)
+                                Phis=(-1:2)*pi/4, Lambdas=(0:1)*pi/2, lwd=3)
