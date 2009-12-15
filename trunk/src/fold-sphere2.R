@@ -455,7 +455,7 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ## points P and triangulation T). The gridline is described by a
 ## normal n to a plane and a distance to the plane. The intersectio of
 ## the plane and the spehere is the gridline.
-plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d) {
+plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
   mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
 
   ## Take out rows that are not intersections
@@ -473,7 +473,7 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d) {
 
   P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
   P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
-  segments(P1[,1], P1[,2], P2[,1], P2[,2])
+  segments(P1[,1], P1[,2], P2[,1], P2[,2], ...)
 }
 
 ## plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
@@ -481,15 +481,14 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d) {
 ## Plot a mesh of gridlines from the spherical retina (described by
 ## points phi, lambda and triangulation Tt and cutoff point phi0) onto
 ## a flattened retina (described by points P and triangulation T).
-plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0) {
-  Phis <- (-5:6)*pi/12
+plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
+                                Phis=(-5:6)*pi/12, Lambdas=(0:23)*pi/24, ...) {
   Phis <- Phis[Phis<phi0]
   for (Phi in Phis) {
-    plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi))
+    plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi), ...)
   }
-  Lambdas <- (0:23)*pi/24
   for (Lambda in Lambdas) {
-    plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0)
+    plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, ...)
   }
 }
 

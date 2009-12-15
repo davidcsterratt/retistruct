@@ -1,4 +1,4 @@
-source("fold-sphere2.R")                
+source("fold-sphere2.R")
 library("pixmap")
 
 im <- read.pnm("../data/20091214191056-small.ppm")
@@ -30,8 +30,14 @@ m <- merge.points(t, s)
 plot(P)
 with(s, plot.outline(P, gb))
 
-p <- project.to.sphere(m, t, phi0=50*pi/180)
+p <- project.to.sphere(m, t, phi0=45*pi/180)
 
 ## Initial plot in 3D space
 plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
 
+## Optimisation
+f <- solve.mapping(p, m, t, s, dt=1E-5, nstep=1000)
+
+plot(im)
+plot.gridlines.flat(t$P, t$T, f$phi, f$lambda, m$Tt, p$phi0,
+                                Phis=(-1:2)*pi/4, Lambdas=(0:1)*pi/2, lwd=2)
