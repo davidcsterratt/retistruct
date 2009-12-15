@@ -229,7 +229,7 @@ compute.areas <- function(phi, lambda, T, R) {
 }
 
 ## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- p[Nphi+1:N]
@@ -271,7 +271,7 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, E0.A=0.1, N, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- p[Nphi+1:N]
@@ -390,11 +390,26 @@ optimise.mapping <- function(E0.A=1, method="BFGS") {
 }
 
 ## Try to simulate the mapping using Euler integation
-solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
+solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
+  phi <- p$phi
+  lambda <- p$lambda
+  R <- p$R
+  phi0 <- p$phi0
+  Tt <- m$Tt
+  a <- t$a
+  Cut <- m$Cut
+  Ct <- m$Ct
+  Pt <- m$Pt
+  Lt <- m$Lt
+  Bt <- m$Bt
+  Rsett <- m$Rsett
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+  
   ## Optimisation and plotting
   for (i in 0:nstep) {
     p <- c(phi[-Rsett], lambda)
-    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0)
+    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
     p <- p - dEbydp * dt
 
     phi        <- rep(phi0, Nt)
@@ -405,11 +420,11 @@ solve.mapping <- function(E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
     lt <- compute.lengths(phi, lambda, Cut, R)
     print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
-            Rset=Rsett, phi0=phi0, verbose=verbose), cor(lt, Lt)))
+            Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
     if (!(((i*dt) / 1E-6) %% 10)) {
       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
       with(s, plot.outline(P, gb))
-      plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
+      with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
     }
   }
   return(list(phi=phi, lambda=lambda))
@@ -448,7 +463,6 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d) {
 
   T  <- T[tri.int,]
   mu <- mu[tri.int,]
-
   line.int <- (mu >=0) & (mu <=1)
   
   ## Order rows so that the false indicator is in the third column
@@ -560,236 +574,232 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 }
 
+make.triangulation <- function(s, Nrand=1000, d=200) {
+  ## Create ordered version of P for determining outline
+  Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
 
-## Parameters
-d <- 200           # Minimum spacing at which new points are inserted 
-
-## ds <- with(s, apply(cbind(norm(P - P[gf,]), norm(P - P[gb,]))/2, 1, max))
-
-## Read in and curate data to give edge.path and map
-source("M634-4.R")
-P <- edge.path[-nrow(edge.path),1:2]
-
-s <- stitch.retina(P, tearmat)
-
-plot.stitch(s)
-
-## Create ordered version of P for determining outline
-Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
-
-## Attempt to create Nrand points in the retina
-P <- s$P
-Nrand <- 1000
-xmin <- min(P[,1])
-xmax <- max(P[,1])
-ymin <- min(P[,2])
-ymax <- max(P[,2])
-for (i in 1:Nrand) {
-  C <- c(runif(1, xmin, xmax),
-         runif(1, ymin, ymax))
-  if (point.in.polygon(C[1], C[2], Po[,1], Po[,2])) {
-    if (all(norm(t(t(P) - C)) > d)) {
-      P <- rbind(P, C)
-      ## ds <- c(ds, d)
-    }
-  }
-}
-
-## Delaunay triangulation and remove triangles outwith the retinal
-## outline
-T <- delaunayn(P)
-Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
-T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
-
-trimesh(T, P, col="gray", add=TRUE)
-
-## Find lines which join non-adjacent parts of the outline
-Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-Cu <- Unique(Cu, TRUE)
-
-for (i in 1:nrow(Cu)) {
-  C1 <- Cu[i,1]
-  C2 <- Cu[i,2]
-  if (all(Cu[i,] %in% s$Rset)) {
-    if (!((C1 == s$gf[C2]) ||
-          (C2 == s$gf[C1]))) {
-      ## Find triangles containing the line
-      segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="red")
-      Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-      ## print(Cu[i,])
-      ## print(Tind)
-      T1 <- setdiff(T[Tind[1],], Cu[i,])
-      T2 <- setdiff(T[Tind[2],], Cu[i,])
-      ## print(T1)
-      ## print(paste(C1, C2, T1, T2))
-      p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-      points(p[1], p[2], col="red")
-      P <- rbind(P, p)
-      n <- nrow(P)
-      T[Tind[1],] <- c(n, C1, T1)
-      T[Tind[2],] <- c(n, C1, T2)
-      T <- rbind(T,
-                  c(n, C2, T1),
-                  c(n, C2, T2))
-    }
-  }
-}
-
-
-Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-Cu <- Unique(Cu, TRUE)
-print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-print(length(which(Cu[,2] == s$gf[Cu[,1]])))
-
-l <- norm(P[Cu[,1],] - P[Cu[,2],])
-while (max(l) > 2*d) {
-  i <- which.max(l)
-  ##  print(l[i])
-
-  C1 <- Cu[i,1]
-  C2 <- Cu[i,2]
-  
-  ## Find triangles containing the line
-  ## segments(P[C1,1], P[C1,2],
-  ## P[C2,1], P[C2,2], col="red")
-  Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-  ##  print(Cu[i,])
-  ##  print(Tind)
-  T1 <- setdiff(T[Tind[1],], Cu[i,])
-  T2 <- setdiff(T[Tind[2],], Cu[i,])
-  ##  print(T1)
-  ##  print(paste(C1, C2, T1, T2))
-
-  p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-  ## points(p[1], p[2], col="red")
-  P <- rbind(P, p)
-  n <- nrow(P)
-  T[Tind[1],] <- c(n, C1, T1)
-  T[Tind[2],] <- c(n, C1, T2)
-  T <- rbind(T,
-              c(n, C2, T1),
-              c(n, C2, T2))
-  
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-
-  ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
-
-  ## Exlcude line segments which are on the edge for splitting
-  Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
-  Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
-  ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
-  l <- norm(P[Cu[,1],] - P[Cu[,2],])
-}
-
-## Check there are no zero-length lines
-if (any(l==0)) {
-  print("WARNING: zero-length lines")
-}
-
-## Add the new points to the correspondances vector
-h <- c(s$h, (length(s$h)+1):nrow(P))
-
-## Swap orientation of triangles which have clockwise orientation
-a.signed <- tri.area.signed(P, T)
-T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
-
-## Calculate the area of each triangle a and the total area A
-a <- abs(a.signed)
-A <- sum(a)
-
-## Create the connection matrix from the triangulation
-Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-Cu <- Unique(Cu, TRUE)
-
-## Find lengths of connections
-L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
-
-## Plotting
-plot(P)
-trimesh(T, P, col="black")
-lines(Po)
-
-## Translation into unique points
-u <- unique(h)
-uset <- list()
-for (i in 1:length(u)) {
-  uset[[i]] <- which(h == u[i])
-}
-ht <- c()
-for (i in 1:length(h)) {
-  ht[i] <- which(u == h[i])
-}
-Tt  <- matrix(ht[T], ncol=3)
-gft <- ht[s$gf]
-
-## Determine correspondance of line edges
-Cut <- matrix(ht[Cu], ncol=2)
-Cut <- t(apply(Cut, 1, sort))
-M <- nrow(Cut)
-H <- rep(0, M)
-for (i in 1:M) {
-  if (!H[i]) {
-    H[i] <- i
-    for (j in i:M) {
-      if (identical(Cut[i,], Cut[j,])) {
-        H[j] <- i
+  ## Attempt to create Nrand points in the retina
+  P <- s$P
+  xmin <- min(P[,1])
+  xmax <- max(P[,1])
+  ymin <- min(P[,2])
+  ymax <- max(P[,2])
+  for (i in 1:Nrand) {
+    C <- c(runif(1, xmin, xmax),
+           runif(1, ymin, ymax))
+    if (point.in.polygon(C[1], C[2], Po[,1], Po[,2])) {
+      if (all(norm(t(t(P) - C)) > d)) {
+        P <- rbind(P, C)
+        ## ds <- c(ds, d)
       }
     }
   }
-}
-U <- unique(H)
-Cut <- Cut[U,]
-Ht <- c()
-for (i in 1:length(H)) {
-  Ht[i] <- which(U == H[i])
-}
-Lt <- c()
-for (k in 1:length(U)) {
-  is <- which(Ht == k)
-  if (length(is)>1) {
-    print(L[is])
+  
+  ## Delaunay triangulation and remove triangles outwith the retinal
+  ## outline
+  T <- delaunayn(P)
+  Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
+  T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
+  
+  trimesh(T, P, col="gray", add=TRUE)
+
+  ## Find lines which join non-adjacent parts of the outline
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+  
+  for (i in 1:nrow(Cu)) {
+    C1 <- Cu[i,1]
+    C2 <- Cu[i,2]
+    if (all(Cu[i,] %in% s$Rset)) {
+      if (!((C1 == s$gf[C2]) ||
+            (C2 == s$gf[C1]))) {
+        ## Find triangles containing the line
+        segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="red")
+        Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+        ## print(Cu[i,])
+        ## print(Tind)
+        T1 <- setdiff(T[Tind[1],], Cu[i,])
+        T2 <- setdiff(T[Tind[2],], Cu[i,])
+        ## print(T1)
+        ## print(paste(C1, C2, T1, T2))
+        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+        points(p[1], p[2], col="red")
+        P <- rbind(P, p)
+        n <- nrow(P)
+        T[Tind[1],] <- c(n, C1, T1)
+        T[Tind[2],] <- c(n, C1, T2)
+        T <- rbind(T,
+                   c(n, C2, T1),
+                   c(n, C2, T2))
+      }
+    }
   }
-  Lt[k] <- mean(L[is])
+
+
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+
+  l <- norm(P[Cu[,1],] - P[Cu[,2],])
+  while (max(l) > 2*d) {
+    i <- which.max(l)
+    ##  print(l[i])
+
+    C1 <- Cu[i,1]
+    C2 <- Cu[i,2]
+    
+    ## Find triangles containing the line
+    ## segments(P[C1,1], P[C1,2],
+    ## P[C2,1], P[C2,2], col="red")
+    Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+    ##  print(Cu[i,])
+    ##  print(Tind)
+    T1 <- setdiff(T[Tind[1],], Cu[i,])
+    T2 <- setdiff(T[Tind[2],], Cu[i,])
+    ##  print(T1)
+    ##  print(paste(C1, C2, T1, T2))
+
+    p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+    ## points(p[1], p[2], col="red")
+    P <- rbind(P, p)
+    n <- nrow(P)
+    T[Tind[1],] <- c(n, C1, T1)
+    T[Tind[2],] <- c(n, C1, T2)
+    T <- rbind(T,
+               c(n, C2, T1),
+               c(n, C2, T2))
+    
+    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+    Cu <- Unique(Cu, TRUE)
+
+    ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+    ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+
+    ## Exlcude line segments which are on the edge for splitting
+    Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
+    Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
+    ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
+    l <- norm(P[Cu[,1],] - P[Cu[,2],])
+  }
+
+  ## Check there are no zero-length lines
+  if (any(l==0)) {
+    print("WARNING: zero-length lines")
+  }
+
+  ## Add the new points to the correspondances vector
+  h <- c(s$h, (length(s$h)+1):nrow(P))
+
+  ## Swap orientation of triangles which have clockwise orientation
+  a.signed <- tri.area.signed(P, T)
+  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+
+  ## Calculate the area of each triangle a and the total area A
+  a <- abs(a.signed)
+  A <- sum(a)
+
+  ## Create the connection matrix from the triangulation
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+
+  ## Find lengths of connections
+  L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
+
+  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L))
 }
 
-## Cut <- rbind(Tt[,1:2], Tt[,2:3], Tt[,c(3,1)])
-## Cut <- Unique(Cut, TRUE)
-Pt  <- P[u,]
-##for (i in 1:length(uset)) {
-##  if (length(uset[[i]]) > 1) {
-##    Pt[i,] <- colMeans(P[uset[[i]],])
-##  }
-##}
-Rsett <- unique(ht[s$Rset])
-Ct <- rbind(Cut, Cut[,2:1])
-## Matrix to map line segments onto the points they link
-Bt <- matrix(0, nrow(Pt), nrow(Ct))
-for (i in 1:nrow(Ct)) {
-  Bt[Ct[i,1],i] <- 1
+merge.points <- function(t, s) {
+  h <- t$h
+  T <- t$T
+  Cu <- t$Cu
+  L <- t$L
+  P <- t$P
+  
+  ## Translation into unique points
+  u <- unique(h)
+  uset <- list()
+  for (i in 1:length(u)) {
+    uset[[i]] <- which(h == u[i])
+  }
+  ht <- c()
+  for (i in 1:length(h)) {
+    ht[i] <- which(u == h[i])
+  }
+  Tt  <- matrix(ht[T], ncol=3)
+  gft <- ht[s$gf]
+
+  ## Determine correspondance of line edges
+  Cut <- matrix(ht[Cu], ncol=2)
+  Cut <- t(apply(Cut, 1, sort))
+  M <- nrow(Cut)
+  H <- rep(0, M)
+  for (i in 1:M) {
+    if (!H[i]) {
+      H[i] <- i
+      for (j in i:M) {
+        if (identical(Cut[i,], Cut[j,])) {
+          H[j] <- i
+        }
+      }
+    }
+  }
+  U <- unique(H)
+  Cut <- Cut[U,]
+  Ht <- c()
+  for (i in 1:length(H)) {
+    Ht[i] <- which(U == H[i])
+  }
+  Lt <- c()
+  for (k in 1:length(U)) {
+    is <- which(Ht == k)
+    if (length(is)>1) {
+      print(L[is])
+    }
+    Lt[k] <- mean(L[is])
+  }
+
+  ## Cut <- rbind(Tt[,1:2], Tt[,2:3], Tt[,c(3,1)])
+  ## Cut <- Unique(Cut, TRUE)
+  Pt  <- P[u,]
+  ##for (i in 1:length(uset)) {
+  ##  if (length(uset[[i]]) > 1) {
+  ##    Pt[i,] <- colMeans(P[uset[[i]],])
+  ##  }
+  ##}
+  Rsett <- unique(ht[s$Rset])
+  Ct <- rbind(Cut, Cut[,2:1])
+  ## Matrix to map line segments onto the points they link
+  Bt <- matrix(0, nrow(Pt), nrow(Ct))
+  for (i in 1:nrow(Ct)) {
+    Bt[Ct[i,1],i] <- 1
+  }
+  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, Rsett=Rsett, P=P))
 }
 
-## Plot stiched retina in 2D (messy)
-trimesh(Tt, Pt, col="black")
 
-Nt <- nrow(Pt)
-Nphi <- Nt - length(Rsett)
+project.to.sphere <- function(m, t, phi0=50*pi/180) {
+  Pt <- m$Pt
+  Rsett <- m$Rsett
+  A <- t$A
+  
+  Nt <- nrow(Pt)
+  Nphi <- Nt - length(Rsett)
 
-## From this we can infer what the radius should be from the formula
-## for the area of a sphere which is cut off at a lattitude of phi0
-## area = 2 * PI * R^2 * (sin(phi0)+1)
-phi0 <- 50*pi/180
-R <- sqrt(A/(2*pi*(sin(phi0)+1)))
+  ## From this we can infer what the radius should be from the formula
+  ## for the area of a sphere which is cut off at a lattitude of phi0
+  ## area = 2 * PI * R^2 * (sin(phi0)+1)
+  R <- sqrt(A/(2*pi*(sin(phi0)+1)))
 
-## Now assign each point to a location in the phi, lambda coordinates
-## Shift coordinates to rough centre of grid
-x <- Pt[,1] - mean(Pt[,1]) 
-y <- Pt[,2] - mean(Pt[,2]) 
-phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
-phi[Rsett] <- phi0
-lambda <- atan2(y, x)
+  ## Now assign each point to a location in the phi, lambda coordinates
+  ## Shift coordinates to rough centre of grid
+  x <- Pt[,1] - mean(Pt[,1]) 
+  y <- Pt[,2] - mean(Pt[,2]) 
+  phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+  phi[Rsett] <- phi0
+  lambda <- atan2(y, x)
 
-## Initial plot in 3D space
-plot.retina(phi, lambda, R, Tt, Rsett)
+  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0))
+}
+
 

@@ -1,3 +1,4 @@
+source("fold-sphere2.R")
 source("common.R")
 source("datafile-utils.R")
 
@@ -59,4 +60,24 @@ tearmat <- rbind(c(42,  31, 53),
                  c(66,  65, 67))
 colnames(tearmat) <- c("apex", "end1", "end2")
 
-ifix <- c(16:31, 53:65, 83:94)
+## Actual munging routine
+P <- edge.path[-nrow(edge.path),1:2]
+
+s <- stitch.retina(P, tearmat)
+plot.stitch(s)
+
+t <- make.triangulation(s)
+with(t, trimesh(T, P, col="black"))
+
+m <- merge.points(t, s)
+## Plot stiched retina in 2D (messy)
+## trimesh(Tt, Pt, col="black")
+
+## Plotting
+plot(P)
+with(s, plot.outline(P, gb))
+
+p <- project.to.sphere(m, t, phi0=50*pi/180)
+
+## Initial plot in 3D space
+plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
