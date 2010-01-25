@@ -81,3 +81,6 @@ p <- project.to.sphere(m, t, phi0=50*pi/180)
 
 ## Initial plot in 3D space
 plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+
+## Attempt to solve (or refine?) mapping
+r <- solve.mapping(p, m, t, s, E0.A=0, dt=2E-6, nstep=100, Rexp=1, verbose=FALSE)
