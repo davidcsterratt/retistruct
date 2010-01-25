@@ -569,7 +569,8 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   ##  print(cents)
   ##  print(areas)
   flipped <- (-dot(cents, normals) < 0)
-  print(paste(sum(flipped), "flipped triangles:", which(flipped)))
+  print(paste(sum(flipped), "flipped triangles:"))
+  print(which(flipped))
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 }
 
