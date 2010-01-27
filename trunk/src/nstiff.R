@@ -1,12 +1,12 @@
 ## NSTIFF - numerical integration of system with constraints
 ##
 ## Based on NSTIFF algorithm presented in Negrut, Jay & Khude
-## (2009). Journal of ##Computational and Nonlinear Dynamics 4
+## (2009). Journal of Computational and Nonlinear Dynamics 4
 ## 
 nstiff <- function(M, Q, Q.v, Phi, Phi.q, Phi.q.q,
                    q0, v0,
                    h=0.02,              # Time step
-                   epslion=1E-5,        # Tolerance
+                   epsilon=1E-5,        # Tolerance
                    T=20,                # Maximum time
                    kmax=10 # Maximum number of iterations per time step
                    ) {  
@@ -16,8 +16,8 @@ nstiff <- function(M, Q, Q.v, Phi, Phi.q, Phi.q.q,
 
   I <- T/h + 1                          # Number of steps
   t <- seq(from=0, by=h, len=I)         # Time store
-  q <- matrix(NA, N, I)                 # Position store
-  v <- matrix(NA, N, I)                 # Velocity store
+  q <- matrix(NA, n, I)                 # Position store
+  v <- matrix(NA, n, I)                 # Velocity store
   q[,1:2] <- q0                         # Initial values
   v[,1:2] <- v0                         # Initial values
   w <- rep(0, n + m)                    # Vector of dvdt and lambda
