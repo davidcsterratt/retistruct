@@ -362,7 +362,22 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=F
 ##}
 
 ## Grand optimisation function
-optimise.mapping <- function(E0.A=1, method="BFGS") {
+optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
+  phi <- p$phi
+  lambda <- p$lambda
+  R <- p$R
+  phi0 <- p$phi0
+  Tt <- m$Tt
+  a <- t$a
+  Cut <- m$Cut
+  Ct <- m$Ct
+  Pt <- m$Pt
+  Lt <- m$Lt
+  Bt <- m$Bt
+  Rsett <- m$Rsett
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda)
@@ -371,13 +386,13 @@ optimise.mapping <- function(E0.A=1, method="BFGS") {
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
                  T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=2*R,
-                 E0.A=E0.A, N=Nt,
-                 Rset=Rsett, phi0=phi0, verbose=FALSE)
+                 E0.A=E0.A, N=Nt, 
+                 Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=FALSE)
     ## print(opt)
     ##               control=list(maxit=200))
-    print(E(opt$p, Cu=Cut, C=Ct, L=L, B=Bt,  R=R, T=Tt, A=a,
+    print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
-            Rset=Rsett, phi0=phi0))
+            Rset=Rsett, phi0=phi0, Nphi=Nphi))
     phi        <- rep(phi0, Nt)
     phi[-Rsett] <- opt$p[1:Nphi]
     lambda     <- opt$p[Nphi+1:Nt]
@@ -385,6 +400,8 @@ optimise.mapping <- function(E0.A=1, method="BFGS") {
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
     plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    with(s, plot.outline(P, gb))
+    with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
   }
   return(list(phi=phi, lambda=lambda))
 }
@@ -405,23 +422,36 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
   Rsett <- m$Rsett
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
-  
+
+  p <- c(phi[-Rsett], lambda)
   ## Optimisation and plotting
   for (i in 0:nstep) {
-    p <- c(phi[-Rsett], lambda)
     dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
     p <- p - dEbydp * dt
 
+    p1 <- p - dEbydp * dt/2
+    dEbydp <- dE(p1, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
+    p1 <- p1 - dEbydp * dt/2
+
+    Delta <- max(p-p1)
+    print(dt)
+          lt <- compute.lengths(phi, lambda, Cut, R)
+      print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+            Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
+    
+    dt <- dt*(0.01/Delta)^(1/2)
+    
     phi        <- rep(phi0, Nt)
     phi[-Rsett] <- p[1:Nphi]
     lambda     <- p[Nphi+1:Nt]
 
     ## Output
-    lt <- compute.lengths(phi, lambda, Cut, R)
-    print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+    if (!(((i*dt) / 1E-6) %% 10)) {
+      lt <- compute.lengths(phi, lambda, Cut, R)
+      print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
             Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
-    if (!(((i*dt) / 1E-6) %% 10)) {
       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
       with(s, plot.outline(P, gb))
       with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
@@ -430,9 +460,70 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
   return(list(phi=phi, lambda=lambda))
 }
 
+## Try to simulate the mapping using Euler integation
+solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
+  phi <- p$phi
+  lambda <- p$lambda
+  R <- p$R
+  phi0 <- p$phi0
+  Tt <- m$Tt
+  a <- t$a
+  Cut <- m$Cut
+  Ct <- m$Ct
+  Pt <- m$Pt
+  Lt <- m$Lt
+  Bt <- m$Bt
+  Rsett <- m$Rsett
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+
+  p <- c(phi[-Rsett], lambda)
+  p1 <- p
+  p2 <- p
+  ## Optimisation and plotting
+  ## gamma <- 0.0002
+  gamma <- 0
+  mu <- 0.005
+  for (i in 0:nstep) {
+    dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
+    p <- 1/(mu/dt^2 + gamma/2/dt)*(-dEbydp + 2*mu/dt^2 * p - (mu/dt^2 - gamma/2/dt)*p1)
+    p2 <- p1
+    p1 <- p
+    
+    phi        <- rep(phi0, Nt)
+    phi[-Rsett] <- p[1:Nphi]
+    lambda     <- p[Nphi+1:Nt]
+
+    ## Output
+    if (!(((i*dt) / 1E-6) %% 10)) {
+      lt <- compute.lengths(phi, lambda, Cut, R)
+      print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+                Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
+      plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+      with(s, plot.outline(P, gb))
+      with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
+    }
+  }
+  return(list(phi=phi, lambda=lambda))
+}
+
+
+## Stuff for doing nstiff - not yet tried
+##   ## Convert phis and lambdas to Carteisan coordinates
+##   q0 <-  c(cos(phi)*cos(lambda),
+##            cos(phi)*sin(lambda),
+##            sin(phi))
+
+##   ## Now define matricies needed for nstiff
+##   gamma <- 1                            # friction coef
+##   M <- diag(rep(1, Nt))
+##   Q <- function(q, v) { - gamma * v }   # forces - friction and tension
+  
+
 ##
 ## Geometry functions
-##
+## 
 
 ## compute.intersections.sphere(phi, lambda, T, n, d)
 ##
