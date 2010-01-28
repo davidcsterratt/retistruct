@@ -591,35 +591,35 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ##
 ## Plot outline of retina given set of outline points P and backwards
 ## pointer gb
-plot.outline <- function(P, gb) {
-  plot(P, pch=".", cex=4, xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
-  segments(P[,1], P[,2], P[gb,1], P[gb, 2])
+plot.outline <- function(P, gb, ...) {
+  plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+  segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
 }
 
 ## plot.stitch(P, s)
 ##
 ## Plot stitch given set of outline points stitch information s
-plot.stitch <- function(s) {
+plot.stitch <- function(s, ...) {
   with(s, {
     plot.outline(P, gb)
     points(P[VF,], col="purple", pch="+")
     points(P[VB,], col="blue", pch="+")
     points(P[A, ], col="cyan", pch="+")
     for (TF in TFset) {
-      lines(P[TF,], col="purple")
+      lines(P[TF,], col="purple", ...)
     }
     for (TB in TBset) {
       lines(P[TB,], col="blue")
     }
     for (j in 1:length(h)) {
       if (h[j] != j) {
-        lines(P[c(j,h[j]),], col="orange")
+        lines(P[c(j,h[j]),], col="orange", ...)
       }
     }
     
     for (j in 1:length(hf)) {
       if (hf[j] != j) {
-        lines(P[c(j,s$hf[j]),], col="green")
+        lines(P[c(j,s$hf[j]),], col="green", ...)
       }
     }
   })
@@ -641,10 +641,19 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   rgl.clear()
   rgl.bg(color="white")
 
+  ## Outer triangles
+  triangles3d(matrix(1.01*x[t(Tt[,c(2,1,3)])], nrow=3),
+              matrix(1.01*y[t(Tt[,c(2,1,3)])], nrow=3),
+              matrix(1.01*z[t(Tt[,c(2,1,3)])], nrow=3),
+              color="darkgrey", alpha=1)
+
+  
+  ## Inner triangles
   triangles3d(matrix(x[t(Tt)], nrow=3),
               matrix(y[t(Tt)], nrow=3),
               matrix(z[t(Tt)], nrow=3),
-              color="white", alpha=0.9)
+              color="white", alpha=1)
+
 
   ## Highlight rim points
   points3d(x[Rsett], y[Rsett], z[Rsett], col="orange", size=5)
@@ -692,8 +701,6 @@ make.triangulation <- function(s, Nrand=1000, d=200) {
   Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
   T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
   
-  trimesh(T, P, col="gray", add=TRUE)
-
   ## Find lines which join non-adjacent parts of the outline
   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
