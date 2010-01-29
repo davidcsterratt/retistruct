@@ -339,6 +339,12 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=F
            dE.E.dlambdai    + E0.A * dE.A.dlambda))
 }
 
+E.dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N) {
+  E <- E(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=E0.A, N)
+  attr(E, "gradient") <- dE(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=E0.A, N)
+  return(E)
+}
+
 ## Combined energy function
 ##E <- function(p, Cu, C, L, B, Pt, A, R,
 ##              E0.E=1, E0.A=1,
@@ -505,6 +511,45 @@ solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=
       with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
     }
   }
+  return(list(phi=phi, lambda=lambda))
+}
+
+optimise.mapping.nlm <- function(p, m, t, s, E0.A=0, Rexp=1, verbose=FALSE) {
+  phi <- p$phi
+  lambda <- p$lambda
+  R <- p$R
+  phi0 <- p$phi0
+  Tt <- m$Tt
+  a <- t$a
+  Cut <- m$Cut
+  Ct <- m$Ct
+  Pt <- m$Pt
+  Lt <- m$Lt
+  Bt <- m$Bt
+  Rsett <- m$Rsett
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+
+  p <- c(phi[-Rsett], lambda)
+  ## Optimisation and plotting
+    opt <- nlm(E.dE, p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi, print.level=1, check.analyticals=TRUE, fscale=1000, gradtol=1e-4)
+
+  
+    phi        <- rep(phi0, Nt)
+    phi[-Rsett] <- opt$est[1:Nphi]
+    lambda     <- opt$est[Nphi+1:Nt]
+
+    ## Output
+
+      lt <- compute.lengths(phi, lambda, Cut, R)
+      print(c(E(opt$est, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+            E0.A=E0.A, N=Nt,
+            Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
+      plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+      with(s, plot.outline(P, gb))
+      with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
+
+
   return(list(phi=phi, lambda=lambda))
 }
 
