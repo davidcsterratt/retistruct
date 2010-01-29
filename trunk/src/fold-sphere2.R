@@ -232,7 +232,8 @@ compute.areas <- function(phi, lambda, T, R) {
 E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
-  lambda <- p[Nphi+1:N]
+  lambda <- rep(0, N)
+  lambda[-Rset[1]] <- p[Nphi+1:(N-1)]
 
   ##
   ## Compute derivative of elastic energy
@@ -274,7 +275,8 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FA
 dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
-  lambda <- p[Nphi+1:N]
+  lambda <- rep(0, N)
+  lambda[-Rset[1]] <- p[Nphi+1:(N-1)]
 
   ##
   ## Compute derivative of elastic energy
@@ -335,8 +337,8 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=F
     dE.A.dlambda <- rowSums(dEdpi * dpidlambda)
   }
   
-  return(c(dE.E.phii[-Rset] + E0.A * dE.A.dphi[-Rset],
-           dE.E.dlambdai    + E0.A * dE.A.dlambda))
+  return(c(dE.E.phii[-Rset]           + E0.A * dE.A.dphi[-Rset],
+           dE.E.dlambdai[-Rset[1]]    + E0.A * dE.A.dlambda[-Rset[1]]))
 }
 
 E.dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N) {
@@ -386,7 +388,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
 
   ## Optimisation and plotting 
   opt <- list()
-  opt$p <- c(phi[-Rsett], lambda)
+  opt$p <- c(phi[-Rsett], lambda[-Rsett[1]])
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
@@ -399,9 +401,10 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
     print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
             Rset=Rsett, phi0=phi0, Nphi=Nphi))
-    phi        <- rep(phi0, Nt)
-    phi[-Rsett] <- opt$p[1:Nphi]
-    lambda     <- opt$p[Nphi+1:Nt]
+    phi            <- rep(phi0, Nt)
+    phi[-Rsett]    <- opt$p[1:Nphi]
+    lambda         <- rep(0, Nt)
+    lambda[-Rsett[1]] <- opt$p[Nphi+1:(Nt-1)]
 
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
@@ -429,7 +432,7 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
 
-  p <- c(phi[-Rsett], lambda)
+  p <- c(phi[-Rsett], lambda[-Rsett[1]])
   ## Optimisation and plotting
   for (i in 0:nstep) {
     dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
@@ -448,9 +451,10 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
     
     dt <- dt*(0.01/Delta)^(1/2)
     
-    phi        <- rep(phi0, Nt)
-    phi[-Rsett] <- p[1:Nphi]
-    lambda     <- p[Nphi+1:Nt]
+    phi            <- rep(phi0, Nt)
+    phi[-Rsett]    <- p[1:Nphi]
+    lambda         <- rep(0, Nt)
+    lambda[-Rsett[1]] <- p[Nphi+1:(Nt-1)]
 
     ## Output
     if (!(((i*dt) / 1E-6) %% 10)) {
@@ -483,7 +487,7 @@ solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
 
-  p <- c(phi[-Rsett], lambda)
+  p <- c(phi[-Rsett], lambda[-Rsett[1]])
   p1 <- p
   p2 <- p
   ## Optimisation and plotting
@@ -496,9 +500,11 @@ solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=
     p2 <- p1
     p1 <- p
     
-    phi        <- rep(phi0, Nt)
-    phi[-Rsett] <- p[1:Nphi]
-    lambda     <- p[Nphi+1:Nt]
+    phi            <- rep(phi0, Nt)
+    phi[-Rsett]    <- p[1:Nphi]
+    lambda         <- rep(0, Nt)
+    lambda[-Rsett[1]] <- p[Nphi+1:(Nt-1)]
+
 
     ## Output
     if (!(((i*dt) / 1E-6) %% 10)) {
@@ -941,6 +947,7 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
   phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
   phi[Rsett] <- phi0
   lambda <- atan2(y, x)
+  lambda <- lambda-lambda[Rsett[1]]
 
   return(list(phi=phi, lambda=lambda, R=R, phi0=phi0))
 }
