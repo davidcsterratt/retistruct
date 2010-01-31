@@ -1,3 +1,4 @@
+source("tsearch.R")
 source("triangulate.R")                 # for tri.area and tri.area.signed
 require("rgl")                 
 
@@ -753,14 +754,12 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
               matrix(1.01*y[t(Tt[,c(2,1,3)])], nrow=3),
               matrix(1.01*z[t(Tt[,c(2,1,3)])], nrow=3),
               color="darkgrey", alpha=1)
-
   
   ## Inner triangles
   triangles3d(matrix(x[t(Tt)], nrow=3),
               matrix(y[t(Tt)], nrow=3),
               matrix(z[t(Tt)], nrow=3),
               color="white", alpha=1)
-
 
   ## Highlight rim points
   points3d(x[Rsett], y[Rsett], z[Rsett], col="orange", size=5)
@@ -779,6 +778,33 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   print(paste(sum(flipped), "flipped triangles:"))
   print(which(flipped))
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
+}
+
+## Function to plot cell bodies on a retina in spherical coordinates
+## It assumes that plot.retina has been called already
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## Tt     - triagulation
+## cb     - object returned by tsearch containing information on the
+##          triangle in which a cell body is found and its location
+##          within that triangle in barycentric coordinates
+## radius - radius of the spheres to plot
+## color  - colour of the spheres to plot
+plot.cell.bodies <- function(phi, lambda, R, Tt, cb, radius=R/50, color="red") {
+  ## Obtain Cartesian coordinates of points
+  P <- cbin(R*cos(phi)*cos(lambda),
+            R*cos(phi)*sin(lambda),
+            R*sin(phi))
+
+  ## Now find locations cc of cell bodies in Cartesian coordinates
+  cc <- matrix(0, 0, 3)
+  for(i in 1:(dim(ts$p)[1])) {
+    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
+  }
+
+  ## Plot
+  rgl.spheres(cc[,1], cc[,2], cc[,3], radius, color=color)
 }
 
 make.triangulation <- function(s, Nrand=1000, d=200) {

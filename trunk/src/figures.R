@@ -5,7 +5,7 @@ r <- optimise.mapping(p, m, t, s, E0.A=exp(4), k.A=1)
 p1 <- p
 p1$phi <- r$phi
 p1$lambda <- r$lambda
-r <- optimise.mapping(p1, m, t, s, E0.A=exp(8), k.A=10)
+r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
 
 par(mar=c(0,0,0,0))
 plot.stitch(s, lwd=2)
@@ -19,6 +19,8 @@ with(as.list(c(t, m, p)), plot.gridlines.flat(P, T, phi, lambda, Tt, phi0, lwd=2
 dev.print(pdf, "../figures/M634-4-initial-proj2.pdf", width=4, height=4)
 
 with(as.list(c(t, m, p)), plot.retina(phi, lambda, R, Tt, Rsett))
+with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.red, col="red"))
+with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.green, col="green"))
 view3d(0, -20, zoom=0.7)
 rgl.postscript("../figures/M634-4-initial-proj-3d2.pdf", fmt="pdf")
 
@@ -27,6 +29,8 @@ with(as.list(c(t, m, p)), plot.gridlines.flat(P, T, r$phi, r$lambda, Tt, phi0, l
 dev.print(pdf, "../figures/M634-4-final-proj2.pdf", width=4, height=4)
 
 with(as.list(c(t, m, p)), plot.retina(r$phi, r$lambda, R, Tt, Rsett))
+with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.red, col="red"))
+with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.green, col="green"))
 view3d(0, -20, zoom=0.7)
 rgl.postscript("../figures/M634-4-final-proj-3d2.pdf", fmt="pdf")
 
