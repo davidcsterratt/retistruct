@@ -229,7 +229,7 @@ compute.areas <- function(phi, lambda, T, R) {
 }
 
 ## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(0, N)
@@ -265,14 +265,15 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FA
 
     ## Find areas of all triangles
     areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
-    E.A <- 0.5 * sum((areas - A)^2/A)
+    ##E.A <- 0.5 * sum((areas - A)^2/A)
+    E.A <- sum(exp(-k.A*areas/A))
   }
   
   return(E.E + E0.A*E.A)
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(0, N)
@@ -319,8 +320,9 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N, verbose=F
     ## Find areas of all triangles
     areas <- dot(P[T[,1],], dAdPt1)
 
-    dEdPt1 <- (areas - A)/A * dAdPt1
-
+##     dEdPt1 <- (areas - A)/A * dAdPt1
+    dEdPt1 <- -k.A/A*exp(-k.A*areas/A) * dAdPt1
+    
     Pt1topi <- matrix(0, length(phi), nrow(T))
     for(m in 1:nrow(T)) {
       Pt1topi[T[m,1],m] <- 1
@@ -370,7 +372,7 @@ E.dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N) {
 ##}
 
 ## Grand optimisation function
-optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
+optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
   phi <- p$phi
   lambda <- p$lambda
   R <- p$R
@@ -393,7 +395,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
-                 T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=2*R,
+                 T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                  E0.A=E0.A, N=Nt, 
                  Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=FALSE)
     ## print(opt)
@@ -416,7 +418,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, method="BFGS") {
 }
 
 ## Try to simulate the mapping using Euler integation
-solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
+solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-12, nstep=100, Rexp=1, verbose=FALSE) {
   phi <- p$phi
   lambda <- p$lambda
   R <- p$R
@@ -442,14 +444,16 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
     dEbydp <- dE(p1, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
     p1 <- p1 - dEbydp * dt/2
 
-    Delta <- max(p-p1)
-    print(dt)
+    Delta <- max(abs(p-p1))
+
+  ##  print(dt)
           lt <- compute.lengths(phi, lambda, Cut, R)
       print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
             Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
     
-    dt <- dt*(0.01/Delta)^(1/2)
+    dt <- dt*(0.001/Delta)^(1/2)
+    print(dt)
     
     phi            <- rep(phi0, Nt)
     phi[-Rsett]    <- p[1:Nphi]
@@ -457,7 +461,7 @@ solve.mapping <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbos
     lambda[-Rsett[1]] <- p[Nphi+1:(Nt-1)]
 
     ## Output
-    if (!(((i*dt) / 1E-6) %% 10)) {
+    if (!(i %% 100)) {
       lt <- compute.lengths(phi, lambda, Cut, R)
       print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
@@ -491,8 +495,8 @@ solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=
   p1 <- p
   p2 <- p
   ## Optimisation and plotting
-  ## gamma <- 0.0002
-  gamma <- 0
+  gamma <- 0.0002
+  ## gamma <- 0
   mu <- 0.005
   for (i in 0:nstep) {
     dEbydp <- dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
@@ -507,20 +511,21 @@ solve.mapping.momentum <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=
 
 
     ## Output
-    if (!(((i*dt) / 1E-6) %% 10)) {
-      lt <- compute.lengths(phi, lambda, Cut, R)
-      print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
-            E0.A=E0.A, N=Nt,
-                Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
-      plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
-      with(s, plot.outline(P, gb))
-      with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
+    if (!(((i*dt) / 1E-6) %% 1000)) {
+       lt <- compute.lengths(phi, lambda, Cut, R)
+       print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+             E0.A=E0.A, N=Nt,
+                 Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
+       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+       with(s, plot.outline(P, gb))
+       with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
     }
   }
   return(list(phi=phi, lambda=lambda))
 }
 
-optimise.mapping.nlm <- function(p, m, t, s, E0.A=0, Rexp=1, verbose=FALSE) {
+## Method from Wang et al (2002)
+solve.mapping.momentum2 <- function(p, m, t, s, E0.A=0, dt=1E-6, nstep=100, Rexp=1, verbose=FALSE) {
   phi <- p$phi
   lambda <- p$lambda
   R <- p$R
@@ -536,14 +541,62 @@ optimise.mapping.nlm <- function(p, m, t, s, E0.A=0, Rexp=1, verbose=FALSE) {
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
 
-  p <- c(phi[-Rsett], lambda)
+  p <- c(phi[-Rsett], lambda[-Rsett[1]])
+  v <- rep(0, length(p))
+
+  for (i in 0:nstep) {
+    f <- -dE(p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi)
+    p <- p + dt*v + dt^2/2*f
+    v <- 0.9*v + dt*f
+    
+    phi            <- rep(phi0, Nt)
+    phi[-Rsett]    <- p[1:Nphi]
+    lambda         <- rep(0, Nt)
+    lambda[-Rsett[1]] <- p[Nphi+1:(Nt-1)]
+
+    ## Output
+    if (!(((i*dt) / 1E-6) %% 100)) {
+       lt <- compute.lengths(phi, lambda, Cut, R)
+       print(c(E(p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+             E0.A=E0.A, N=Nt,
+                 Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=verbose), cor(lt, Lt)))
+       plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+       with(s, plot.outline(P, gb))
+       with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
+    }
+  }
+  return(list(phi=phi, lambda=lambda))
+}
+
+
+optimise.mapping.nlm <- function(p, m, t, s, E0.A=0, Rexp=1, verbose=FALSE,
+                                 iterlim=1000) {
+  phi <- p$phi
+  lambda <- p$lambda
+  R <- p$R
+  phi0 <- p$phi0
+  Tt <- m$Tt
+  a <- t$a
+  Cut <- m$Cut
+  Ct <- m$Ct
+  Pt <- m$Pt
+  Lt <- m$Lt
+  Bt <- m$Bt
+  Rsett <- m$Rsett
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+
+  p <- c(phi[-Rsett], lambda[-Rsett[1]])
   ## Optimisation and plotting
-    opt <- nlm(E.dE, p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi, print.level=1, check.analyticals=TRUE, fscale=1000, gradtol=1e-4)
+    opt <- nlm(E.dE, p, T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R*Rexp, E0.A=E0.A, N=Nt, Rset=Rsett, phi0=phi0, Nphi=Nphi,
+               print.level=1, check.analyticals=TRUE,
+               fscale=1000, gradtol=1e-4, iterlim=iterlim, stepmax=10)
 
   
     phi        <- rep(phi0, Nt)
     phi[-Rsett] <- opt$est[1:Nphi]
-    lambda     <- opt$est[Nphi+1:Nt]
+    lambda         <- rep(0, Nt)
+    lambda[-Rsett[1]] <- p[Nphi+1:(Nt-1)]
 
     ## Output
 
@@ -595,7 +648,7 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ## Plot a gridline from the spherical retina (described by points phi,
 ## lambda and triangulation Tt) onto a flattened retina (described by
 ## points P and triangulation T). The gridline is described by a
-## normal n to a plane and a distance to the plane. The intersectio of
+## normal n to a plane and a distance to the plane. The intersection of
 ## the plane and the spehere is the gridline.
 plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
   mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
@@ -603,19 +656,22 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
   ## Take out rows that are not intersections
   tri.int <- (rowSums((mu >=0) & (mu <=1)) == 2)
 
-  T  <- T[tri.int,]
-  mu <- mu[tri.int,]
-  line.int <- (mu >=0) & (mu <=1)
-  
-  ## Order rows so that the false indicator is in the third column
-  T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
-  mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
-  T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
-  mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
+  if (any(tri.int)) {
+    T  <- T[tri.int,,drop=FALSE]
+    mu <- mu[tri.int,,drop=FALSE]
 
-  P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
-  P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
-  segments(P1[,1], P1[,2], P2[,1], P2[,2], ...)
+    line.int <- (mu >=0) & (mu <=1)
+    
+    ## Order rows so that the false indicator is in the third column
+    T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
+    mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
+    T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
+    mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
+
+    P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
+    P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
+    segments(P1[,1], P1[,2], P2[,1], P2[,2], ...)
+  }
 }
 
 ## plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
