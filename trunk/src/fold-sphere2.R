@@ -396,7 +396,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
                  T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                 E0.A=E0.A, N=Nt, 
+                 E0.A=E0.A, k.A=k.A, N=Nt, 
                  Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=FALSE)
     ## print(opt)
     ##               control=list(maxit=200))
