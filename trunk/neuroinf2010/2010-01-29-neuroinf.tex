@@ -1,308 +1,222 @@
-\documentclass{article}
-\usepackage[left=0.5in,right=0.5in,top=0.5in,bottom=0.5in]{geometry}
-%\usepackage{mhchem}
-\usepackage{amsmath}
+\documentclass[final,hyperref={pdfpagelabels=false}]{beamer} 
+\mode<presentation> {  %% check http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php for examples
+  \usetheme{Sterratt}    %% you should define your own theme e.g. for big headlines using your own logos 
+}
+% \usepackage[garamond]{mathdesign}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{amsmath,amsthm, amssymb, latexsym}
+\usepackage{helvet}%\usefonttheme{professionalfonts}  % times is
+% obsolete
+\usepackage[garamond]{mathdesign}
+\renewcommand{\rmdefault}{ugm}
+\renewcommand{\sfdefault}{ugm}
+\newcommand{\figack}[1]{{\par\small\vskip -0.5ex\hfill{\color{blue} #1}\par}}
 \usepackage{natbib}
-\usepackage{color}
-\newcommand{\myshortjournaltitles}{}
 \makeatletter
 \def\newblock{\beamer@newblock}
 \makeatother 
-\usepackage{graphicx}
-%\usefonttheme{serif}
-\usepackage[garamond]{mathdesign}
-\renewcommand{\rightharpoonup}{\rightharpoondown}
-\newcommand{\figack}[1]{{\par\small\vskip -0.5ex\hfill{\color{blue} #1}\par}}
-\newcommand{\frametitle}[1]{{\vspace{0.1in}\color{blue}\Huge #1}\\\vspace{0.2in}}
-\renewenvironment{frame}{\pagebreak[4]\LARGE
 
-}{}
-\title{}
-\author{}
 
-\date{}
-\pagestyle{empty}
-
+% \usefonttheme[onlymath]{serif}
+\boldmath
+\usepackage[orientation=landscape,size=a4,debug]{beamerposter}                       % e.g. for DIN-A0 poster
+% \usepackage[orientation=portrait,size=a1,scale=1.4,grid,debug]{beamerposter}                  % e.g. for DIN-A1 poster, with optional grid and debug output
+% \usepackage[size=custom,width=200,height=120,scale=2,debug]{beamerposter}                     % e.g. for custom size poster
+% \usepackage[orientation=portrait,size=a0,scale=1.0,printer=rwth-glossy-uv.df]{beamerposter}   % e.g. for DIN-A0 poster with rwth-glossy-uv printer check
+% ...
+% 
+\title{Inference of original retinal coordinates from flattened
+  retinae} \author{David C Sterratt$^1$ and Ian D Thompson$^2$}
+\institute{$^1$Institute for Adaptive \& Neural Computation, School of
+  Informatics, University of Edinburgh\\ $^2$MRC Centre for Developmental
+  Neurobiology, King's College London} \date{Jul. 31th, 2007}
 \begin{document}
-\setlength{\parindent}{0pt}
 
-\Huge
-\begin{center}
-  \color{blue}Inference of original retinal coordinates from flattened retinae
-\end{center}
+\begin{frame}{} 
+  \begin{columns}[T]
 
-\vspace{0.2\baselineskip}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{column}{.33\linewidth}
+      \begin{block}{Motivation: Retrograde labelling studies in the the
+          developing visual system}
 
-\begin{center}
-  David C Sterratt and Ian D Thompson
-\end{center}
+        \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer1}
+        \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer}
+        \figack{\citet{UptoEtal07deve}}
 
-\vspace{0.2\baselineskip}
+        \begin{itemize}
+        \item Problem: cell bodies which were neighbours in the original
+          retina may be far apart in the flattened retina
+        \item Solution: morph the flattened retina back onto a sphere
+        \end{itemize}
+      \end{block}
 
-\raggedright
-\Large
+    \end{column}
 
-\begin{center}
-  \begin{minipage}[t]{0.45\linewidth}\raggedright
-    Institute for Adaptive \& Neural Computation\\
-    School of Informatics\\
-    University of Edinburgh \\
-    \texttt{david.c.sterratt@ed.ac.uk}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{column}{.33\linewidth}
 
-  \end{minipage}
-  \begin{minipage}[t]{0.45\linewidth}\raggedright
-    MRC Centre for Developmental Neurobiology \\
-    King's College London
-
-  \end{minipage}
-\end{center}
-
-\vspace{\baselineskip}
-\Large
-In retrograde tracing experiments to determine the mapping of
-connections from the retina to the superior colliculus in mammals (see
-e.g.\ \citealp{RashEtal05oppo}), dye is injected at a point in the superior colliculus and allowed to diffuse retrogradely down the axons of retinal ganglion cells to their cell bodies in the retina. The retina is then dissected and flattened, and the pattern of dye in cell bodies can be seen in the flattened retina. In the process of flattening the retina, a number incisions are made and tearing occurs. The pattern of dye can be spread across incisions and tears in the flattened retina, complicating analysis of the mapping. One way of simplifying the analysis would be to infer the positions of the cell bodies in the spherical coordinate system of the intact retina from their positions in the flattened retina. We present a method to achieve this approximately by minimisation of an energy function. A triangular grid is laid over the flattened retina. The coordinates of the grid are then transformed so that they lie on a partial sphere with the correct dimensions for the intact retina, and the transformation is then adjusted so as to minimise the sum of the squared differences between the lengths between corresponding pairs of adjacent points on the flattened and intact retinae.  The method is able to produce a transformation which is sufficiently good for visualisation.
-
-\vfill
-
-  \begin{center}
-
-\begin{minipage}[b]{0.4\linewidth}\raggedright
-
-  \includegraphics[width=0.49\textwidth]{ANClogoWhite-nw}
-  \includegraphics[width=0.49\textwidth]{eushield-twocolour}\\
-  \includegraphics[width=\textwidth]{school_of_informatics}
-\end{minipage}
-\begin{minipage}[b]{0.4\linewidth}\raggedright
-  \includegraphics[width=0.6\textwidth]{kings_logo_v3}
-  \includegraphics[width=0.8\textwidth]{wtlogo} 
-\end{minipage}
-
-  \end{center}
+      \begin{block}{Method: Stitching and triangulation}
+        \begin{columns}
+          \begin{column}{0.4\linewidth}
+            \includegraphics[width=\linewidth]{../figures/M634-4-triangulated-stitched2}            
+          \end{column}
+          \begin{column}{0.55\linewidth}
+            \begin{itemize}
+            \item Cuts and tears marked up by expert and stitched
+              automatically by pairing points at equivalent fractional
+              distances along each cut or tear
+            \item Delaunay Triangulation of points on retinal outline and
+              randomly-generated internal points
+            \item Iterative procedure to detect and remove ``flaps''
+            \end{itemize}
+          \end{column}
+        \end{columns}
+      \end{block}
 
 
+      \begin{block}{Method: Initial projection}
+        \begin{columns}
+          \begin{column}{0.4\linewidth}
+            \includegraphics[width=\linewidth]{../figures/M634-4-initial-proj2}
+          \end{column}
+          \begin{column}{0.55\linewidth}
+            \includegraphics[width=0.5\linewidth]{../figures/M634-4-initial-proj-3d2}  
 
-\pagebreak[4]
+            \begin{itemize}
+            \item Project grid onto sphere curtailed at latitude of 50$^\circ$
+              \begin{itemize}
+              \item Radius determined by area of the flattened retina.
+              \end{itemize}
+            \item Fix points on rim of flattened retina to the
+              latitude of the rim 
+            \item Cell bodies projected using barycentric coordinates
+            \end{itemize}
+          \end{column}
+        \end{columns}
+      \end{block}
 
-\begin{frame}
-  \frametitle{Motivation: Retrograde labelling studies in the the
-    developing visual system}
+      \begin{block}{Method: Final projection}
+        \begin{columns}
+          \begin{column}{0.4\linewidth}
+            \includegraphics[width=\linewidth]{../figures/M634-4-final-proj2}
+          \end{column}
+          \begin{column}{0.55\linewidth}
+            \includegraphics[width=0.5\linewidth]{../figures/M634-4-final-proj-3d2}
 
-\includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer1}
-\includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer}
-\figack{\citet{UptoEtal07deve}}
+            % \item The aim now is to infer the latitude $\phi_i$ and longitude
+            %   $\lambda_i$ on the sphere to which each grid point $i$ on the
+            %   flattened retina is projected.
 
-\begin{itemize}
-\item Problem: cell bodies which were neighbours in the original
-  retina may be far apart in the flattened retina
-\item Solution: morph the flattened retina back onto a sphere
-  \end{itemize}
+            $E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
+              L_i)^2}{L_i}  + \alpha\sum_{i\in\mathcal{T}} \exp(-k\frac{a_i}{A_i})
+            $
+            
+            \begin{itemize}
+            \item Infer optimal projection onto sphere by changing
+              location of vertices on sphere so as to minimise an
+              energy function $E$ with two components:
+              \begin{itemize}
+              \item Sum of squared differences between lengths of corresponding
+                connections $\mathcal{C}$ in flattened retina $L_i$ and on sphere $l_i$
+              \item Sum of exponentials of ratios of areas  of 
+                triangles $\mathcal{T}$ in flattened retina $A_i$ and  on sphere $a_i$
+              \end{itemize}
+            \end{itemize}
+          \end{column}
+        \end{columns}
+      \end{block}
 
-% \item One way to measure this, as do our collaborators Ian Thompson and
-% coworkers*, is to inject dye particles into a particular spot on the
-% target. The dye is then transported retrogradely back down the axons
-% to the cell bodies of neurons in the retina. The resulting pattern of
-% dye spots in the retina shows which cells terminate in the target
-% region in which the dye was injected.
-
-\end{frame}  
-
-% \begin{frame}
-%   \frametitle{Motivation}
-
-%   \includegraphics[width=0.5\linewidth]{../M642-5-sys-map.pdf}
-
-%   Convert back to spherical polar coordinates
-
-% \end{frame}
-
-% \begin{frame}
-%   \frametitle{Method}
-  
-%   \begin{itemize}
-%  %  \item Stitch cuts and tears in flattened retina
-%  %  \item Triangulate flattened retina
-% %   \item Project grid onto sphere with radius appropriate for the area
-% %     of the flattened retina.
-% %     \begin{equation}
-% %       \label{fold-sphere:eq:1}
-% %       R = \sqrt{\frac{A}{2\pi\sin\phi_0+1}}
-% %     \end{equation}
-
-% % \begin{displaymath}
-% %   \begin{split}
-% %   E(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) = & \\
-% %   E_\mathrm{E}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
-% %   & + E_\mathrm{A}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) \\ 
-% %   & + E_\mathrm{D}(\phi_1,\dots,\phi_n,\lambda_1,\dots,\lambda_n)
-% %   \end{split}
-% % \end{displaymath}
-%   \end{itemize}
-  
-% \end{frame}
-
-\begin{frame}
-  \frametitle{Method: Stitching and triangulation}
-  
-\includegraphics[width=0.9\linewidth]{../figures/M634-4-triangulated-stitched2}
-  
-\begin{itemize}
-\item Cuts and tears marked up by expert and stitched automatically
-\item Delaunay Triangulation of points on retinal outline and
-  randomly-generated internal points
-  \begin{itemize}
-  \item Points close to boundary removed to prevent indented boundary
-    \citep{MaCaEtal99flat}
-  \end{itemize}
-\item Iterative procedure to detect and remove ``flaps''
-\item Regularisation so as to make the connection lengths more equal
-\end{itemize}
-
-  
-\end{frame}
-
-\begin{frame}
-  \frametitle{Initial projection onto hemisphere}
-
-  \includegraphics[width=\linewidth]{../figures/M634-4-initial-proj2}
-  \includegraphics[width=\linewidth]{../figures/M634-4-initial-proj-3d2}
-  \begin{itemize}
-  \item Project grid onto sphere curtailed at latitude of 50$^\circ$
-    \begin{itemize}
-    \item Radius determined by area of the flattened retina.
-    \end{itemize}
-  \item Fix points on rim of flattened retina to the latitude of the rim
-  \item Cell bodies projected using barycentric coordinates
-
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Final projection}
-  \includegraphics[width=0.95\linewidth]{../figures/M634-4-final-proj2}
-  \includegraphics[width=0.95\linewidth]{../figures/M634-4-final-proj-3d2}
-
-%   \item The aim now is to infer the latitude $\phi_i$ and longitude
-%     $\lambda_i$ on the sphere to which each grid point $i$ on the
-%     flattened retina is projected.
-  
-  \begin{itemize}
-  \item Infer optimal projection onto sphere by changing location of
-    vertices so as to minimise an energy (or error) function with two
-    components:
-  \begin{itemize}
-  \item Sum of squared differences between lengths of corresponding
-    connections in flattened retina and on sphere
-  \item Sum of squared differences between areas of corresponding
-    triangles in flattened retina
-  \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Projection of lines of lattitude and longitude onto
-    flattened retina}
-
-  %\includegraphics[width=\linewidth]{second-grid-on-flat}
-
-  \begin{itemize}
-  \item Lines of lattitude and longitude separated by 30$^\circ$
-  \item Hot off the press -- plotting not yet perfect!
-  \end{itemize}
-
-\end{frame}
-
-% \begin{frame}
-%   \frametitle{Optimised projection with no repulsion and 10 times as
-%     much elastic comopnent}
-%   \includegraphics[width=0.8\linewidth]{M634-4-final-proj-E10-A1-D0}
-%   \begin{itemize}
-%   \item Overlapping regions!
-%   \end{itemize}
-% \end{frame}
+%       \begin{block}{Problems}
+%         \begin{itemize}
+%         \item Method for folding flattened retina onto hemisphere has
+%           been developed 
+%         \end{itemize}
+%       \end{block}
 
 
-% \begin{frame}
-%   \frametitle{The energy function}
+    \end{column}
 
-%   \begin{itemize}
-%   \item Elastic force proportional to length of connection divided by
-%     natural length:
-%     \begin{displaymath}
-%       E = \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m A_{ij} \frac{|\vec{q}_i - \vec{q}_j|^2}{L_{ij}}
-%       + \sum_{i=1}^m \sum_{j=1}^M B_{ij} \frac{|\vec{q}_i -
-%         \vec{p}_j|^2}{\hat L_{ij}}
-%     \end{displaymath}
-%     where $A_{ij}$ and $B_{ij}$ are elements of binary connectivity
-%     matrices
-%   \item Verified to produce correct lengths in 1D, toy case
-%   \item In this case, minimisation reduces to matrix equation:
-%     \begin{displaymath}
-%       Q = 2(D - A)^{-1}BP
-%     \end{displaymath}
-%     \begin{displaymath}
-%       D_{ii} = \sum_j A_{ij} + 2\sum_j B_{ij}
-%     \end{displaymath}
-%   \end{itemize}
-% \end{frame}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{column}{.33\linewidth}
 
-% \begin{frame}
-%   \frametitle{Stress map}
-  
-% \end{frame}
+      \begin{block}{Validation}
+        \begin{columns}
+          \column[T]{0.7\linewidth}
 
-\begin{frame}
-\frametitle{Discussion \& Conclusions}
+          \includegraphics[width=0.33\linewidth]{../data/14-12-09_1754.jpg}
+          \includegraphics[width=0.33\linewidth]{../data/14-12-09_1755.jpg}
+          \includegraphics[width=0.33\linewidth]{../data/14-12-09_1758.jpg}
 
-\begin{itemize}
-\item Method for folding flattened retina onto hemisphere has been developed
-\item Allows for more quantitative indication of location of  cell bodies 
-\item At present, the method needs supervision to indicate where cuts
-  and tears are
-\item Possible unsupervised alternative approach to stitching:
-  attraction between edges
-  \begin{itemize}
-  \item This was tried, but proved complex to implement in a way such that the
-    correct mappings were made
-  \end{itemize}
-\item Applications
-  \begin{itemize}
-  \item Statistics of retrograde tracing
-  \item Allowing electrode stimulation arrays to map  activity in more
-    realistic fashion onto flattened retina
-  \end{itemize}
-\end{itemize}
-
-\vfill
-
-\section*{Acknowledgements}
-
-\large
-
-This work was funded by the Wellcome Trust. The authors thank Daniel
-Nedergaard, Andrew Lowe, David Willshaw, Matthias Hennig and Michael
-Herrmann for helpful discussions.
+          \includegraphics[width=0.33\linewidth]{../figures/orange-no-grid.png}
+          % \includegraphics[width=0.33\linewidth]{../figures/orange-outline.pdf}
+          % \includegraphics[width=0.33\linewidth]{../figures/orange-stitched.pdf}
+          % \includegraphics[width=0.33\linewidth]{../figures/orange-stitched-triangulated.pdf}
+          \includegraphics[width=0.33\linewidth]{../figures/orange-many-grid.pdf}
+          \includegraphics[width=0.33\linewidth]{../figures/orange-grid.png}
 
 
+          \column[T]{0.25\linewidth}
+          % \includegraphics[width=\linewidth]{../figures/orange-projected.pdf}
+          \includegraphics[width=\linewidth]{../figures/orange-final.pdf}
 
-%\frametitle{References}
-\large
-\bibliographystyle{apalike}
-\bibliography{mystrings,my}
+        \end{columns}
+      \end{block}
+
+      \begin{block}{Discussion \& Conclusions}
+        \begin{itemize}
+        \item Method for folding flattened retina onto partial sphere has
+          been developed, and validation study suggests it is
+          reasonably accurate.
+        \item Allows for more quantitative indication of location of
+          cell bodies  
+        \item At present, the method needs supervision to indicate where cuts
+          and tears are
+        \item Possible unsupervised alternative approach to stitching:
+          attraction between edges
+          \begin{itemize}
+          \item This was tried, but proved complex to implement in a
+            way such that the correct mappings were made
+          \end{itemize}
+        \item Applications
+          \begin{itemize}
+          \item Statistics of retrograde tracing
+          \item Allowing electrode stimulation arrays to map activity
+            in more realistic fashion onto flattened retina
+          \end{itemize}
+        \item Next steps:
+          \begin{itemize}
+          \item Test on more data
+          \item Speed up the optimisation procedure.
+          \end{itemize}
+        \end{itemize}
+      \end{block}
+
+      \begin{block}{Acknowledgements}
+
+        KCL: Daniel Nedergaard, Ian Thompson, Andrew Lowe
+
+        ANC: Michael Herrmann, David Willshaw, Matthias Hennig
+
+        This work was funded by the Wellcome Trust.
+      \end{block}
+
+
+      \begin{block}{References}
+        \footnotesize
+        \bibliographystyle{apalike}
+        \bibliography{mystrings,my}
+      \end{block}
+    \end{column}
+
+
+  \end{columns}
+
+
 
 \end{frame}
 
 
 \end{document}
-
-% LocalWords:  FitzEtal neur eprhinA TrkB RGC ephrinA kK RebeEtal rela Marler
-% LocalWords:  et al GF mystrings neuralmapmaking RGCs Eph McLaOLea FeldEtal ij
-% LocalWords:  pdf Cordery BP MRC ANClogoWhite nw informatics wtlogo eushield
-
-%%% Local Variables: 
-%%% TeX-PDF-mode: t
-%%% End: 
-% LocalWords:  twocolour proj Nedergaard Hennig  Sterratt RashEtal oppo deve
-% LocalWords:  UptoEtal MaCaEtal Willshaw Herrmann
