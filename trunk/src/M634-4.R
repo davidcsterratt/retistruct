@@ -83,4 +83,21 @@ p <- project.to.sphere(m, t, phi0=50*pi/180)
 plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
 
 ## Attempt to solve (or refine?) mapping
-r <- solve.mapping(p, m, t, s, E0.A=0, dt=2E-6, nstep=100, Rexp=1, verbose=FALSE)
+# r <- solve.mapping(p, m, t, s, E0.A=0, dt=2E-6, nstep=5000, Rexp=1, verbose=FALSE)
+# 3304 after 1000 steps
+# 3107 after 4000 steps; there is some jumping around if the tolerance isn't small enough
+# 2831 after 4000 steps with lower tolerance 0.002
+
+#r = solve.mapping.momentum(p, m, t, s, E0.A=0, dt=1E-4, nstep=1000, Rexp=1, verbose=FALSE)
+# 3439 after 1000 steps
+# 3039 after 2000 steps; optimise mapping doesn't work after this
+# 2884 after 4000 steps
+# 2991 after 4000 steps with lower tolerance
+
+
+
+## p1 <- p
+## p1$phi <- r$phi
+## p1$lambda <- r$lambda
+
+## r1 <- optimise.mapping.nlm(p1, m, t, s, E0.A=0, iterlim=10000)
