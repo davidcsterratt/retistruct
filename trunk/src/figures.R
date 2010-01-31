@@ -1,5 +1,12 @@
 source("M634-4.R")
 
+## r <- optimise.mapping(p, m, t, s, E0.A=100)
+r <- optimise.mapping(p, m, t, s, E0.A=exp(4), k.A=1)
+p1 <- p
+p1$phi <- r$phi
+p1$lambda <- r$lambda
+r <- optimise.mapping(p1, m, t, s, E0.A=exp(8), k.A=10)
+
 par(mar=c(0,0,0,0))
 plot.stitch(s, lwd=2)
 with(t, trimesh(T, P, col="grey", lwd=2, add=TRUE))
@@ -22,3 +29,15 @@ dev.print(pdf, "../figures/M634-4-final-proj2.pdf", width=4, height=4)
 with(as.list(c(t, m, p)), plot.retina(r$phi, r$lambda, R, Tt, Rsett))
 view3d(0, -20, zoom=0.7)
 rgl.postscript("../figures/M634-4-final-proj-3d2.pdf", fmt="pdf")
+
+
+## Basic
+##r = solve.mapping.momentum(p, m, t, s, E0.A=0, dt=1E-4, nstep=40000, Rexp=1, verbose=FALSE)
+
+## Rexp 2 - doesn't work with this step size
+## r1 = solve.mapping.momentum(p, m, t, s, E0.A=0, dt=1E-4, nstep=40000, Rexp=2, verbose=FALSE)
+
+
+
+
+
