@@ -39,16 +39,50 @@
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \begin{column}{.33\linewidth}
-      \begin{block}{Motivation: Retrograde labelling studies in the the
-          developing visual system}
 
+      \begin{block}{Abstract}
+        In retrograde tracing experiments to determine the mapping of
+        connections from the retina to the superior colliculus in
+        mammals (see e.g. \citealp{RashEtal05oppo}), fluorescent
+        tracer is injected at a point in the superior colliculus and
+        allowed to transport retrogradely down the axons of retinal
+        ganglion cells to their cell bodies in the retina. The retina
+        is then dissected and flattened, and the pattern of dye in
+        cell bodies can be seen in the flattened retina. In the
+        process of flattening the retina, a number incisions are made
+        and tearing occurs. The pattern of label can be spread across
+        incisions and tears in the flattened retina, complicating
+        analysis of the mapping.
+
+        One way of simplifying the analysis would be to infer the
+        positions of the cell bodies in the spherical coordinate
+        system of the intact retina from their positions in the
+        flattened retina. We present a method to achieve this
+        approximately by minimisation of an energy function. A
+        triangular grid is laid over the flattened retina. The
+        coordinates of the grid are then transformed so that they lie
+        on a partial sphere with the correct dimensions for the intact
+        retina, and the transformation is then adjusted so as to
+        minimise the sum of the squared differences between the
+        lengths between corresponding pairs of adjacent points on the
+        flattened and intact retinae. This also allows for lines of
+        latitude and longitude in the intact retina to be projected
+        onto the flattened retina.
+      \end{block}
+      
+
+      \begin{block}{The problem}
+
+        Example of data from retrograde labelling studies in the
+        developing visual system:
+        
         \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer1}
         \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer}
         \figack{\citet{UptoEtal07deve}}
 
         \begin{itemize}
-        \item Problem: cell bodies which were neighbours in the original
-          retina may be far apart in the flattened retina
+        \item \textbf{Problem: cell bodies which were neighbours in the original
+          retina may be far apart in the flattened retina}
         \item Solution: morph the flattened retina back onto a sphere
         \end{itemize}
       \end{block}
@@ -60,14 +94,14 @@
 
       \begin{block}{Method: Stitching and triangulation}
         \begin{columns}
-          \begin{column}{0.4\linewidth}
+          \begin{column}{0.35\linewidth}
             \includegraphics[width=\linewidth]{../figures/M634-4-triangulated-stitched2}            
           \end{column}
-          \begin{column}{0.55\linewidth}
+          \begin{column}{0.6\linewidth}
             \begin{itemize}
-            \item Cuts and tears marked up by expert and stitched
+            \item Incisions and tears marked up by expert and stitched
               automatically by pairing points at equivalent fractional
-              distances along each cut or tear
+              distances along each incision or tear
             \item Delaunay Triangulation of points on retinal outline and
               randomly-generated internal points
             \item Iterative procedure to detect and remove ``flaps''
@@ -79,12 +113,14 @@
 
       \begin{block}{Method: Initial projection}
         \begin{columns}
-          \begin{column}{0.4\linewidth}
+          \begin{column}{0.35\linewidth}
             \includegraphics[width=\linewidth]{../figures/M634-4-initial-proj2}
           \end{column}
-          \begin{column}{0.55\linewidth}
-            \includegraphics[width=0.5\linewidth]{../figures/M634-4-initial-proj-3d2}  
+          \begin{column}{0.5\linewidth}
+            \includegraphics[width=0.85\linewidth]{../figures/M634-4-initial-proj-3d2}  
 
+          \end{column}
+        \end{columns}
             \begin{itemize}
             \item Project grid onto sphere curtailed at latitude of 50$^\circ$
               \begin{itemize}
@@ -94,39 +130,42 @@
               latitude of the rim 
             \item Cell bodies projected using barycentric coordinates
             \end{itemize}
-          \end{column}
-        \end{columns}
+
       \end{block}
 
       \begin{block}{Method: Final projection}
         \begin{columns}
-          \begin{column}{0.4\linewidth}
+          \begin{column}{0.35\linewidth}
             \includegraphics[width=\linewidth]{../figures/M634-4-final-proj2}
           \end{column}
-          \begin{column}{0.55\linewidth}
-            \includegraphics[width=0.5\linewidth]{../figures/M634-4-final-proj-3d2}
+          \begin{column}{0.5\linewidth}
+            \includegraphics[width=0.85\linewidth]{../figures/M634-4-final-proj-3d2}
 
             % \item The aim now is to infer the latitude $\phi_i$ and longitude
             %   $\lambda_i$ on the sphere to which each grid point $i$ on the
             %   flattened retina is projected.
 
-            $E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
-              L_i)^2}{L_i}  + \alpha\sum_{i\in\mathcal{T}} \exp(-k\frac{a_i}{A_i})
-            $
-            
+          \end{column}
+        \end{columns}
+
             \begin{itemize}
             \item Infer optimal projection onto sphere by changing
               location of vertices on sphere so as to minimise an
               energy function $E$ with two components:
               \begin{itemize}
-              \item Sum of squared differences between lengths of corresponding
-                connections $\mathcal{C}$ in flattened retina $L_i$ and on sphere $l_i$
+              \item Sum of squared differences between lengths $L_i$
+                and $l_i$ of corresponding connections $\mathcal{C}$
+                in flattened and spherical retina
               \item Sum of exponentials of ratios of areas  of 
-                triangles $\mathcal{T}$ in flattened retina $A_i$ and  on sphere $a_i$
+                triangles $\mathcal{T}$ in flattened retina $A_i$ and
+                on sphere $a_i$
+              \item  $E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
+              L_i)^2}{L_i}  + \alpha\sum_{i\in\mathcal{T}} \exp(-k\frac{a_i}{A_i})
+            $
+            
               \end{itemize}
             \end{itemize}
-          \end{column}
-        \end{columns}
+
       \end{block}
 
 %       \begin{block}{Problems}
@@ -163,6 +202,13 @@
           \includegraphics[width=\linewidth]{../figures/orange-final.pdf}
 
         \end{columns}
+        \begin{itemize}
+        \item While the simulated retina does not have the same
+          material properties as a real retina, this experiment does
+          suggest that the reconstruction method has a reasonable
+          degree of accuracy.
+        \end{itemize}
+
       \end{block}
 
       \begin{block}{Discussion \& Conclusions}
@@ -170,10 +216,11 @@
         \item Method for folding flattened retina onto partial sphere has
           been developed, and validation study suggests it is
           reasonably accurate.
-        \item Allows for more quantitative indication of location of
-          cell bodies  
-        \item At present, the method needs supervision to indicate where cuts
-          and tears are
+        \item Allows the location of cell bodies to be inferred in
+          the original near-spherical coordinates, which is especially
+          useful when groups of cells cross incisions.
+        \item At present, the method needs supervision to indicate
+          where incisions and tears are
         \item Possible unsupervised alternative approach to stitching:
           attraction between edges
           \begin{itemize}
@@ -189,7 +236,8 @@
         \item Next steps:
           \begin{itemize}
           \item Test on more data
-          \item Speed up the optimisation procedure.
+          \item Speed and reliability improvements to the optimisation
+            procedure.
           \end{itemize}
         \end{itemize}
       \end{block}
@@ -220,3 +268,6 @@
 
 
 \end{document}
+
+% LocalWords:  colliculus RashEtal oppo UptoEtal deve Delaunay KCL Nedergaard
+% LocalWords:  ANC Herrmann Willshaw Hennig Wellcome mystrings

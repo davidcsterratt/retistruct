@@ -699,8 +699,10 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ##
 ## Plot outline of retina given set of outline points P and backwards
 ## pointer gb
-plot.outline <- function(P, gb, ...) {
-  plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+plot.outline <- function(P, gb, add=FALSE, ...) {
+  if (!add) {
+    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+  }
   segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
 }
 
@@ -709,19 +711,19 @@ plot.outline <- function(P, gb, ...) {
 ## Plot stitch given set of outline points stitch information s
 plot.stitch <- function(s, ...) {
   with(s, {
-    plot.outline(P, gb)
+    plot.outline(P, gb, ...)
     points(P[VF,], col="purple", pch="+")
     points(P[VB,], col="blue", pch="+")
     points(P[A, ], col="cyan", pch="+")
     for (TF in TFset) {
-      lines(P[TF,], col="purple", ...)
+      lines(P[TF,], col="yellow", ...)
     }
     for (TB in TBset) {
-      lines(P[TB,], col="blue")
+      lines(P[TB,], col="orange", ...)
     }
     for (j in 1:length(h)) {
       if (h[j] != j) {
-        lines(P[c(j,h[j]),], col="orange", ...)
+        lines(P[c(j,h[j]),], col="blue", ...)
       }
     }
     
