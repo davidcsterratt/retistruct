@@ -73,19 +73,46 @@
 
       \begin{block}{The problem}
 
-        Example of data from retrograde labelling studies in the
-        developing visual system:
-        
-        \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer1}
-        \includegraphics[width=0.49\linewidth]{../figures/UptoEtal07emer}
-        \figack{\citet{UptoEtal07deve}}
+        \begin{columns}
+          \begin{column}{0.25\linewidth}
+            Injection of red and green latex microbeads in superior
+            colliculus (SC) and resulting labelling in parts of retina
+
+            \includegraphics[width=\linewidth]{../figures/UptoEtal07emer2a-c}
+          \end{column}
+          \begin{column}{0.6\linewidth}
+            
+            Cell bodies dyed with one label in dissected and flattened
+            retinae at various ages.
+
+            \includegraphics[width=\linewidth]{../figures/UptoEtal07emer1} 
+            \figack{\citet{UptoEtal07deve}}
+          \end{column}
+        \end{columns}
+
 
         \begin{itemize}
-        \item \textbf{Problem: cell bodies which were neighbours in the original
-          retina may be far apart in the flattened retina}
-        \item Solution: morph the flattened retina back onto a sphere
+        \item \textbf{Problem: The pattern of label can be spread
+            across incisions and tears in the flattened retina. Cell
+            bodies which were neighbours in the original retina may be
+            far apart in the flattened retina.}
+        \item Solution: morph the flattened retina back onto a sphere,
+          using finite element methods employed in computer-aided
+          design (see, e.g., \citealp{MaCaEtal99flat})
         \end{itemize}
       \end{block}
+
+      \begin{block}{\large Acknowledgements}
+        \small
+        The authors wish to thank Daniel Nedergaard for help
+        collecting data and  Andrew Lowe, Michael Herrmann, David
+        Willshaw and Matthias Hennig for helpful comments.
+
+        This work was funded by the Wellcome Trust.
+      \end{block}
+
+
+
 
     \end{column}
 
@@ -128,7 +155,8 @@
               \end{itemize}
             \item Fix points on rim of flattened retina to the
               latitude of the rim 
-            \item Cell bodies projected using barycentric coordinates
+            \item Cell body locations and lines of latitude and
+              longitude projected using barycentric coordinates
             \end{itemize}
 
       \end{block}
@@ -150,41 +178,48 @@
 
             \begin{itemize}
             \item Infer optimal projection onto sphere by changing
-              location of vertices on sphere so as to minimise an
-              energy function $E$ with two components:
+              location of vertices on sphere so as to minimise the sum
+              of normalised squared differences between lengths of
+              corresponding connections in flattened and spherical
+              retina whilst maintaining the correct orientation of
+              triangles.
               \begin{itemize}
-              \item Sum of squared differences between lengths $L_i$
-                and $l_i$ of corresponding connections $\mathcal{C}$
-                in flattened and spherical retina
-              \item Sum of exponentials of ratios of areas  of 
-                triangles $\mathcal{T}$ in flattened retina $A_i$ and
-                on sphere $a_i$
-              \item  $E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
-              L_i)^2}{L_i}  + \alpha\sum_{i\in\mathcal{T}} \exp(-k\frac{a_i}{A_i})
-            $
-            
+              \item Most time consuming part of operation -- currently
+                takes a few minutes
               \end{itemize}
             \end{itemize}
 
       \end{block}
-
-%       \begin{block}{Problems}
-%         \begin{itemize}
-%         \item Method for folding flattened retina onto hemisphere has
-%           been developed 
-%         \end{itemize}
-%       \end{block}
-
-
     \end{column}
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     \begin{column}{.33\linewidth}
 
-      \begin{block}{Validation}
-        \begin{columns}
-          \column[T]{0.7\linewidth}
+       \begin{block}{The energy function}
+         \begin{displaymath}
+           E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
+             L_i)^2}{L_i}  + \alpha\sum_{j\in\mathcal{T}} \exp\left(-k\frac{a_j}{A_j}\right)
+         \end{displaymath}
+         \begin{itemize}
+         \item $L_i$ and $l_i$ are lengths of corresponding
+           connections $i\in\mathcal{C}$ in flattened and spherical
+           retina
+         \item $A_j$ and $a_j$ are signed areas of corresponding triangles
+           $j\in\mathcal{T}$ in flattened and spherical retina
+         \item Signed area is positive for triangles in correct
+           orientation, but negative for flipped triangles
+         \item Parameter $k$ should be large so that only triangles
+           with negative or near-zero area ratios are
+           penalised. Parameter $\alpha$ scaled according to number of
+           connections.
+         \end{itemize}
+       \end{block}
 
+
+
+      \begin{block}{Validation experiment}
+        \begin{columns}
+          \begin{column}{0.7\linewidth}
           \includegraphics[width=0.33\linewidth]{../data/14-12-09_1754.jpg}
           \includegraphics[width=0.33\linewidth]{../data/14-12-09_1755.jpg}
           \includegraphics[width=0.33\linewidth]{../data/14-12-09_1758.jpg}
@@ -196,29 +231,22 @@
           \includegraphics[width=0.33\linewidth]{../figures/orange-many-grid.pdf}
           \includegraphics[width=0.33\linewidth]{../figures/orange-grid.png}
 
+          \end{column}
 
-          \column[T]{0.25\linewidth}
+          \begin{column}{0.23\linewidth}
           % \includegraphics[width=\linewidth]{../figures/orange-projected.pdf}
           \includegraphics[width=\linewidth]{../figures/orange-final.pdf}
 
-        \end{columns}
-        \begin{itemize}
-        \item While the simulated retina does not have the same
+          While the physical model of a retina does not have the same
           material properties as a real retina, this experiment does
-          suggest that the reconstruction method has a reasonable
+          suggest that the reconstruction method can have a reasonable
           degree of accuracy.
-        \end{itemize}
-
+          \end{column}
+        \end{columns}
       \end{block}
 
-      \begin{block}{Discussion \& Conclusions}
+      \begin{block}{Discussion}
         \begin{itemize}
-        \item Method for folding flattened retina onto partial sphere has
-          been developed, and validation study suggests it is
-          reasonably accurate.
-        \item Allows the location of cell bodies to be inferred in
-          the original near-spherical coordinates, which is especially
-          useful when groups of cells cross incisions.
         \item At present, the method needs supervision to indicate
           where incisions and tears are
         \item Possible unsupervised alternative approach to stitching:
@@ -227,33 +255,20 @@
           \item This was tried, but proved complex to implement in a
             way such that the correct mappings were made
           \end{itemize}
-        \item Applications
-          \begin{itemize}
-          \item Statistics of retrograde tracing
-          \item Allowing electrode stimulation arrays to map activity
-            in more realistic fashion onto flattened retina
-          \end{itemize}
+        \item Possible application: Allowing electrode stimulation
+          arrays to map activity in more realistic fashion onto
+          flattened retina
         \item Next steps:
           \begin{itemize}
           \item Test on more data
           \item Speed and reliability improvements to the optimisation
-            procedure.
+            procedure
           \end{itemize}
         \end{itemize}
       \end{block}
 
-      \begin{block}{Acknowledgements}
-
-        KCL: Daniel Nedergaard, Ian Thompson, Andrew Lowe
-
-        ANC: Michael Herrmann, David Willshaw, Matthias Hennig
-
-        This work was funded by the Wellcome Trust.
-      \end{block}
-
-
-      \begin{block}{References}
-        \footnotesize
+      \begin{block}{\large References}
+        \small
         \bibliographystyle{apalike}
         \bibliography{mystrings,my}
       \end{block}
