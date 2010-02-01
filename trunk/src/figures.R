@@ -27,8 +27,9 @@ with(as.list(c(t, m, p)), plot.retina(phi, lambda, R, Tt, Rsett))
 plot.outline.retina(p$phi, p$lambda, p$R*1.01, s$gb, m$ht, lwd=5, color="orange")
 with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.red, col="red"))
 with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.green, col="green"))
-view3d(0, -20, zoom=0.7)
+view3d(0, -20, zoom=0.6)
 rgl.postscript("../figures/M634-4-initial-proj-3d2.pdf", fmt="pdf")
+rgl.snapshot("../figures/M634-4-initial-proj-3d2.png", top=TRUE)
 
 with(s, plot.outline(P, gb, lwd=2))
 points(P.red[,1], P.red[,2], col="red", pch=".", cex=5)
@@ -41,8 +42,9 @@ with(as.list(c(t, m, p)), plot.retina(r$phi, r$lambda, R, Tt, Rsett))
 plot.outline.retina(r$phi, r$lambda, p$R*1.01, s$gb, m$ht, lwd=5, color="orange")
 with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.red, col="red"))
 with(as.list(c(t, m, p)), plot.cell.bodies(phi, lambda, R, Tt, cb.green, col="green"))
-view3d(0, -20, zoom=0.7)
+view3d(0, -20, zoom=0.6)
 rgl.postscript("../figures/M634-4-final-proj-3d2.pdf", fmt="pdf")
+rgl.snapshot("../figures/M634-4-final-proj-3d2.png", top=TRUE)
 
 
 ## Basic
