@@ -761,9 +761,6 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
               matrix(z[t(Tt)], nrow=3),
               color="white", alpha=1)
 
-  ## Highlight rim points
-  points3d(x[Rsett], y[Rsett], z[Rsett], col="orange", size=5)
-
   ## Plot any flipped triangles
   ## First find verticies and find centres and normals of the triangles
   P1 <- P[Tt[,1],]
@@ -791,21 +788,82 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
 ##          within that triangle in barycentric coordinates
 ## radius - radius of the spheres to plot
 ## color  - colour of the spheres to plot
-plot.cell.bodies <- function(phi, lambda, R, Tt, cb, radius=R/50, color="red") {
+plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   ## Obtain Cartesian coordinates of points
-  P <- cbin(R*cos(phi)*cos(lambda),
-            R*cos(phi)*sin(lambda),
-            R*sin(phi))
+  P <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
 
   ## Now find locations cc of cell bodies in Cartesian coordinates
   cc <- matrix(0, 0, 3)
-  for(i in 1:(dim(ts$p)[1])) {
+  for(i in 1:(dim(cb$p)[1])) {
     cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
   }
 
   ## Plot
-  rgl.spheres(cc[,1], cc[,2], cc[,3], radius, color=color)
+  ## shade3d( translate3d( cube3d(col=color), cc[,1], cc[,2], cc[,3]))
+  ## rgl.spheres(cc[,1], cc[,2], cc[,3], radius, color=color)
+  ## points3d(cc[,1], cc[,2], cc[,3], size=size, color=color)
+  ## cc <- cc * 1.01
+  ## points3d(cc[,1], cc[,2], cc[,3], size=size, color=color)
+
+  ## Custom code required to plot triangles
+  ax1 <- 1/sqrt(apply(cc[,1:2]^2, 1, sum)) * cbind(-cc[,2], cc[,1], 0)
+  ## print(ax1)
+  
+  ax2 <- extprod3d(cc, ax1)
+  ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
+  ##print(ax2)
+
+  print(dot(ax1, ax2))
+  
+  v1 <- cc + size *  ax1/2
+  v2 <- cc + size * (-ax1/4 + sqrt(3)/4*ax2)
+  v3 <- cc + size * (-ax1/4 - sqrt(3)/4*ax2)
+
+  inmag <- 0.99
+  outmag <- 1.01
+  
+  x <- rbind(v2[,1], v1[,1], v3[,1])
+  y <- rbind(v2[,2], v1[,2], v3[,2])
+  z <- rbind(v2[,3], v1[,3], v3[,3])
+  triangles3d(inmag*x, inmag*y, inmag*z, color=color)
+
+  x <- rbind(v1[,1], v2[,1], v3[,1])
+  y <- rbind(v1[,2], v2[,2], v3[,2])
+  z <- rbind(v1[,3], v2[,3], v3[,3])
+  triangles3d(outmag*x, outmag*y, outmag*z, color=color)
 }
+
+plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
+  ## Obtain Cartesian coordinates of points
+  Pc <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
+
+  P <- Pc*0.99
+##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+##              ...)
+  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+            rbind(P[h[gb[gb]],2], P[h[gb],2]),
+            rbind(P[h[gb[gb]],3], P[h[gb],3]),
+             ...)
+  
+   P <- Pc*1.001
+##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+##              ...)
+
+  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+            rbind(P[h[gb[gb]],2], P[h[gb],2]),
+            rbind(P[h[gb[gb]],3], P[h[gb],3]),
+             ...)
+  
+}
+
 
 make.triangulation <- function(s, Nrand=1000, d=200) {
   ## Create ordered version of P for determining outline
@@ -1005,7 +1063,7 @@ merge.points <- function(t, s) {
   for (i in 1:nrow(Ct)) {
     Bt[Ct[i,1],i] <- 1
   }
-  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, Rsett=Rsett, P=P))
+  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht, Rsett=Rsett, P=P))
 }
 
 
