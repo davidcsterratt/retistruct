@@ -824,7 +824,7 @@ plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   v3 <- cc + size * (-ax1/4 - sqrt(3)/4*ax2)
 
   inmag <- 0.99
-  outmag <- 1.01
+  outmag <- 1.02
   
   x <- rbind(v2[,1], v1[,1], v3[,1])
   y <- rbind(v2[,2], v1[,2], v3[,2])
