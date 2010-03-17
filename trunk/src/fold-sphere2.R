@@ -1,6 +1,7 @@
 source("tsearch.R")
 source("triangulate.R")                 # for tri.area and tri.area.signed
-require("rgl")                 
+require("rgl")
+require("plotrix")                      # For polar plots
 
 ## scalar product of two column matricies
 dot <- function(x, y) {
@@ -779,6 +780,43 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
   points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
 }
 
+## Function to determine the locations of cell bodies on the folded
+## retina in Cartesian (X, Y, Z) coordinates
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## Tt     - triagulation
+## cb     - object returned by tsearch containing information on the
+cell.bodies.folded.cart <- function(phi, lambda, R, Tt, cb) {
+  ## Obtain Cartesian coordinates of points
+  P <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
+
+  ## Now find locations cc of cell bodies in Cartesian coordinates
+  cc <- matrix(0, 0, 3)
+  colnames(cc) <- c("X", "Y", "Z")
+  for(i in 1:(dim(cb$p)[1])) {
+    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
+  }
+  return(cc)
+}
+
+## Function to determine the locations of cell bodies on the folded
+## retina in spherical (lambda, phi) coordinates
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## Tt     - triagulation
+## cb     - object returned by tsearch containing information on the
+cell.bodies.folded.sphere <- function(phi, lambda, R, Tt, cb) {
+  ## Get locations in Cartesian coordinates
+  cc <- cell.bodies.folded.cart(phi, lambda, R, Tt, cb)
+  ## Convert to spherical coordinates
+  return(list(phi=asin(cc[,"Z"]/R),
+              lambda=atan2(cc[,"Y"], cc[,"X"])))
+}
+
 ## Function to plot cell bodies on a retina in spherical coordinates
 ## It assumes that plot.retina has been called already
 ## phi    - lattitude of points
@@ -792,16 +830,8 @@ plot.retina <- function(phi, lambda, R, Tt, Rsett) {
 ## color  - colour of the spheres to plot
 plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   ## Obtain Cartesian coordinates of points
-  P <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
-
-  ## Now find locations cc of cell bodies in Cartesian coordinates
-  cc <- matrix(0, 0, 3)
-  for(i in 1:(dim(cb$p)[1])) {
-    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
-  }
-
+  cc <- cell.bodies.folded.cart(phi, lambda, R, Tt, cb)
+  
   ## Plot
   ## shade3d( translate3d( cube3d(col=color), cc[,1], cc[,2], cc[,3]))
   ## rgl.spheres(cc[,1], cc[,2], cc[,3], radius, color=color)
@@ -835,6 +865,45 @@ plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   y <- rbind(v1[,2], v2[,2], v3[,2])
   z <- rbind(v1[,3], v2[,3], v3[,3])
   triangles3d(outmag*x, outmag*y, outmag*z, color=color)
+}
+
+## Function to plot cell bodies in spherical coordinates on a polar plot
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## Tt     - triagulation
+## cbs    - list of objects returned by tsearch containing information on the
+##          triangle in which a cell body is found and its location
+##          within that triangle in barycentric coordinates
+## phi0   - lattitude of the rim in radians
+## cols   - colour of points to plot for each object in cbs
+plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
+                                   pch=".", ...) {
+  phis <- matrix(NA, length(cbs), 0)
+  lambdas <- matrix(NA, length(cbs), 0)
+  for (i in 1:length(cbs)) {
+    cs <- cell.bodies.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    d <- length(cs$phi) - ncol(phis)
+    print(d)
+    if (d>0) {
+      phis <- cbind(phis, matrix(NA, length(cbs), d))
+      lambdas <- cbind(lambdas, matrix(NA, length(cbs), d))
+    }
+    phis[i,1:length(cs$phi)] <- cs$phi
+    lambdas[i,1:length(cs$lambda)] <- cs$lambda
+  }
+  print(phis)
+  radial.lim <- c(seq(-90, phi0*180/pi, by=15), phi0*180/pi)
+  radial.labels <- radial.lim
+  radial.labels[(radial.lim %% 90) != 0] <- ""
+  radial.labels[length(radial.labels)] <- phi0*180/pi
+  polar.plot(phis*180/pi, polar.pos=lambdas*180/pi+90,
+             rp.type="s", point.col=cols,
+             radial.lim=radial.lim,
+             radial.labels=radial.labels,
+             label.pos=c(0, 90, 180, 270),
+             labels=c("N", "D", "T", "V"),
+             point.symbols=pch, ...)
 }
 
 plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
