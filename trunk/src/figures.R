@@ -56,6 +56,11 @@ rgl.snapshot("../figures/M634-4-final-proj-3d2.png", top=TRUE)
 with(as.list(c(t, m, p)), plot.cell.bodies.polar(r$phi, r$lambda, R, Tt, list(cb.red, cb.green), phi0, cols=c("red", "green"), cex=5))
 dev.print(pdf, "../figures/M634-4-final-proj-polar2.pdf", width=4, height=4)
 
+## Figure of final projection in polar plot
+with(as.list(c(t, m, p)), plot.cell.bodies.polar.area(r$phi, r$lambda, R, Tt, list(cb.red, cb.green), phi0, cols=c("red", "green"), cex=5))
+dev.print(pdf, "../figures/M634-4-final-proj-polar-area2.pdf", width=4, height=4)
+
+
 ## Basic
 ##r = solve.mapping.momentum(p, m, t, s, E0.A=0, dt=1E-4, nstep=40000, Rexp=1, verbose=FALSE)
 
