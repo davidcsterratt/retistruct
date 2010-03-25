@@ -879,6 +879,8 @@ plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
 ## cols   - colour of points to plot for each object in cbs
 plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
                                    pch=".", ...) {
+  ## Need to organise phis and lambdas into matricies, with
+  ## one column per set of data
   phis <- matrix(NA, length(cbs), 0)
   lambdas <- matrix(NA, length(cbs), 0)
   for (i in 1:length(cbs)) {
@@ -893,7 +895,7 @@ plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
     lambdas[i,1:length(cs$lambda)] <- cs$lambda
   }
   print(phis)
-  radial.lim <- c(seq(-90, phi0*180/pi, by=15), phi0*180/pi)
+  radial.lim <- c(seq(-90, phi0*180/pi, by=10), phi0*180/pi)
   radial.labels <- radial.lim
   radial.labels[(radial.lim %% 90) != 0] <- ""
   radial.labels[length(radial.labels)] <- phi0*180/pi
@@ -904,6 +906,74 @@ plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
              label.pos=c(0, 90, 180, 270),
              labels=c("N", "D", "T", "V"),
              point.symbols=pch, ...)
+}
+
+## Compute mean on sphere
+folded.mean.sphere <- function(phi, lambda) {
+  ## First estimate of mean
+  P <- rbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi))
+  P.mean <- apply(P, 1, mean)
+  phi.mean <-    asin(P.mean[3])
+  lambda.mean <- atan2(P.mean[2], P.mean[1])
+
+  print(c(phi.mean, lambda.mean))
+  opt <- optim(c(phi.mean, lambda.mean),
+        function(p) { sum((central.angle(phi, lambda, p[1], p[2]))^2) })
+  return(opt$par)
+  ## return(c(phi.mean, lambda.mean))
+}
+
+## Convert elevation in spherical coordinates into radius in polar
+## coordinates in an area-preserving projection
+spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
+  sin(phi)))) }
+
+## Convert polar coordinates to cartesian coordinates
+polar.to.cart <- function(r, theta) {
+  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
+}
+
+## Function to plot cell bodies in spherical coordinates on a polar plot
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## Tt     - triagulation
+## cbs    - list of objects returned by tsearch containing information on the
+##          triangle in which a cell body is found and its location
+##          within that triangle in barycentric coordinates
+## phi0   - lattitude of the rim in radians
+## cols   - colour of points to plot for each object in cbs
+plot.cell.bodies.polar.area <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
+                                   pch=".", ...) {
+  plot(NA, NA, xlim=c(-2,2), ylim=c(-2, 2))
+  for (i in 1:length(cbs)) {
+    cs <- cell.bodies.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    ## Turn into polar coordinates, shifting round by 90 degress for plotting
+    lambdas <- cs$lambda+pi/2
+    p <- polar.to.cart(spherical.to.polar.area(cs$phi), lambdas)
+    points(p[,"x"], p[,"y"], pch=pch, col=cols[i], ...)
+
+    ## Compute mean and plot
+    m <- folded.mean.sphere(cs$phi, lambdas)
+    p <- polar.to.cart(spherical.to.polar.area(m[1]), m[2])
+    points(p[,"x"], p[,"y"], col=cols[i], pch="+", ...)
+  }
+  ## Draw circular grid
+  dl <- 2*pi/90
+  lambdas <- seq(dl, 2*pi, by=dl)
+  phi.degs <- seq(-80, phi0*180/pi, by=10)
+  rs <- spherical.to.polar.area(phi.degs*pi/180)
+  polygon(rbind(outer(cos(lambdas), rs), NA),
+          rbind(outer(sin(lambdas), rs), NA),  col=NA, border="grey")
+
+  ## Draw axes and label
+  axis(side=1, pos=0, at=c(-max(rs), 0, 1, max(rs)), labels=c(NA, -90, 0, phi0*180/pi))
+  axis(side=2, pos=0, at=c(-max(rs), max(rs)), labels=c(NA, NA))
+  text(2, 0, "N")
+  text(-2, 0, "T")
+  text(0, 2, "D")
+  text(0, -2, "V")
+  
 }
 
 plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
