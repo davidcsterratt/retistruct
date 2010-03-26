@@ -6,6 +6,7 @@ read.sys <- function(dir=NULL) {
   read.systat(paste(dir, "SYS.SYS", sep="/"))
 }
 
+## SYS.MAP might be better to use
 ## Function to read the file containing the "map", i.e. the outline of
 ## the retina
 read.map <- function(dir=NULL) {

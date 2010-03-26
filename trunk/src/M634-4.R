@@ -88,8 +88,10 @@ plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
 ## triangles and the location in the triangles.
 P.red   <- cbind(na.omit(sys[,"XRED"]), na.omit(sys[, "YRED"]))
 P.green <- cbind(na.omit(sys[,"XGREEN"]), na.omit(sys[, "YGREEN"]))
-cb.red   <- with(t, tsearchn(P, T, P.red))
-cb.green <- with(t, tsearchn(P, T, P.green))
+P.gridcoo <- cbind(na.omit(sys[,"XGRIDCOO"]), na.omit(sys[, "YGRIDCOO"]))
+cb.red     <- with(t, tsearchn(P, T, P.red))
+cb.green   <- with(t, tsearchn(P, T, P.green))
+cb.gridcoo <- with(t, tsearchn(P, T, P.gridcoo))
 
 ## Attempt to solve (or refine?) mapping
 # r <- solve.mapping(p, m, t, s, E0.A=0, dt=2E-6, nstep=5000, Rexp=1, verbose=FALSE)

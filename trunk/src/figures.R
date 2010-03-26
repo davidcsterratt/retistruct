@@ -53,11 +53,11 @@ rgl.postscript("../figures/M634-4-final-proj-3d2.pdf", fmt="pdf")
 rgl.snapshot("../figures/M634-4-final-proj-3d2.png", top=TRUE)
 
 ## Figure of final projection in polar plot
-with(as.list(c(t, m, p)), plot.cell.bodies.polar(r$phi, r$lambda, R, Tt, list(cb.red, cb.green), phi0, cols=c("red", "green"), cex=5))
+with(as.list(c(t, m, p)), plot.cell.bodies.polar(r$phi, r$lambda, R, Tt, list(cb.red, cb.green, cb.gridcoo), phi0, cols=c("red", "green", "black"), cex=5))
 dev.print(pdf, "../figures/M634-4-final-proj-polar2.pdf", width=4, height=4)
 
 ## Figure of final projection in polar plot
-with(as.list(c(t, m, p)), plot.cell.bodies.polar.area(r$phi, r$lambda, R, Tt, list(cb.red, cb.green), phi0, cols=c("red", "green"), cex=5))
+with(as.list(c(t, m, p)), plot.cell.bodies.polar.area(r$phi, r$lambda, R, Tt, list(cb.red, cb.green,  cb.gridcoo), phi0, cols=c("red", "green", "black"), cex=5))
 dev.print(pdf, "../figures/M634-4-final-proj-polar-area2.pdf", width=4, height=4)
 
 
