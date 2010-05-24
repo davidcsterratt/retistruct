@@ -1,0 +1,89 @@
+\documentclass{article}
+
+\usepackage[british]{babel}
+
+\title{The retinal mapping data and the nmf\_morph toolkit}
+
+\begin{document}
+
+\maketitle
+
+\section{Data format}
+\label{manual:sec:reading-data}
+
+\begin{table}
+  \begin{tabular}{ll}
+    \texttt{MAPNUM}   & \\  
+    \texttt{MINLAT}   & \\
+    \texttt{MAXLAT}   & \\
+    \texttt{MINLON}   & \\
+    \texttt{MAXLON}   & \\
+    \texttt{LABLAT}   & \\
+    \texttt{LABLON}   & \\
+    \texttt{XRED}     & $x$-coordinates of red-labeled cell bodies    \\
+    \texttt{YRED}     & $y$-coordinates of red-labeled cell bodies    \\
+    \texttt{XGREEN}   & $x$-coordinates of green-labeled cell bodies  \\
+    \texttt{YGREEN}   & $y$-coordinates of green-labeled cell bodies  \\
+    \texttt{XDOUBLE}  & $x$-coordinates of doubly-labeled cell bodies \\ 
+    \texttt{YDOUBLE}  & $y$-coordinates of doubly-labeled cell bodies \\
+    \texttt{XGRID}    & \\
+    \texttt{YGRID}    & \\
+    \texttt{PERIM}    & \\
+    \texttt{AREA}     & \\
+    \texttt{GRIDX}    & \\
+    \texttt{GRIDY}    & \\
+    \texttt{XGRIDCOO} & $x$-coordinate of centre of grid box \\
+    \texttt{YGRIDCOO} & $y$-coordinate of centre of grid box \\
+    \texttt{BOXSIZEX} & half width of grid box in $x$-direction \\
+    \texttt{BOXSIZEY} & half width of grid box in $y$-direction \\
+    \texttt{COMPLETE} & whether counting has been completed in a grid
+    box \\
+    \texttt{TOTALCEL} & total number of labelled cell bodies in a grid box \\
+    \texttt{TOTALRED} & number of red-labelled cell bodies in a grid box \\
+    \texttt{TOTALGRE} & number of green-labelled cell bodies in a grid box \\
+    \texttt{TOTALDOU} & number of doubly-labelled cell bodies in a grid box \\
+    \texttt{MEANPERI} & \\
+    \texttt{MEANAREA} & \\
+  \end{tabular}
+  \caption{Column headings of the \texttt{SYS.SYS} file.}
+  \label{tab:data-format}
+\end{table}
+
+The data for each retina is stored in a separate directory. Within
+each directory there are two files:
+\begin{description}
+\item[\texttt{SYS.SYS}] A table in SYSTAT format containing the
+  coordinates of the red, green and doubly labelled cell bodies, and
+  counts of labelled cell bodies within each grid box. The column
+  headings shown in Table~\ref{tab:data-format}.  Each row of the
+  table contains information only on a subset of the data, e.g.\ the
+  coordinates of a red-labelled cell.
+\item[\texttt{ALU.MAP}] A text file containing the coordinates of the
+  map outline. The file comprises a number of sections, each starting
+  with a single number, which is the number of lines to read in the
+  next section. These lines have two numbers each, the $x$ and $y$
+  coordinates of a vertex of the map outline.
+\end{description}
+
+\section{Reading in and displaying data}
+\label{manual:sec:datafile-utils}
+
+All code is to be found in the \texttt{trunk/src} directory. The R
+program should be started from this directory in the following examples.
+
+To read in data use the functions in \texttt{datafile-utils.R}. Here
+is code to read in the data from a directory contaning the
+\texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
+\begin{verbatim}
+source("datafile-utils.R")
+sys <- read.sys("/data/path/gm257-1-P8-C57BL6/")
+map <- read.map("/data/path/gm257-1-P8-C57BL6/")
+plot.sys.map(sys, map)
+\end{verbatim}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% TeX-PDF-mode: t
+%%% End: 
