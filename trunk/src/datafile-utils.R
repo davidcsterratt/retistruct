@@ -57,15 +57,20 @@ get.boxes <- function(sys, map) {
               upper=cbind(boxes.sys$upper, boxes.map$upper)))
 }
 
-## Convert map file to a list of segments
+## Convert map matrix to a list of segments
 map.to.segments <- function(map) {
+  ## Give named columns of the map, and hence segment list
   colnames(map) <- c("X", "Y")
-  segs <- list()
-  i <- 1
+  segs <- list()                        # Initialise list of segments
+  i <- 1                                # Current line of map
   while(i < dim(map)[1]) {
+    ## Read current line of map; this tells us how many points
+    ## belong to this stroke
     n <- map[i, 2]
+    ## Add the points to the list of segments
     inds <- (i+1):(i+n)
     segs <- c(segs, list(map[inds,]))
+    ## Update the current position
     i <- i + n + 1
   }
   return(segs)
@@ -75,8 +80,6 @@ map.to.segments <- function(map) {
 plot.map <- function(map, seginfo=FALSE) {
   par(mar=c(2,2,1.5,0.5))
   plot(NA, NA, xlim=lim(map[,1]), ylim=lim(map[,2]), xlab="", ylab="")
-  ## Read first line of map; this tells us how many points
-  ## are going to be plotted in this stroke
   segs <- map.to.segments(map)
   for (i in 1:length(segs)) {
     seg <- segs[[i]]
