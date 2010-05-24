@@ -1,5 +1,10 @@
 require("foreign")
 
+## Function to return minimum and maximum values of vector x
+lim <- function(x) {
+  return(c(min(x), max(x)))
+}
+
 ## Function to read the file containing the systat file with the
 ## locations of the cell bodies in it
 read.sys <- function(dir=NULL) {
