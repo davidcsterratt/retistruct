@@ -20,37 +20,45 @@
 
 \begin{table}
   \begin{tabular}{ll}
-    \texttt{MAPNUM}   & \\  
-    \texttt{MINLAT}   & \\
-    \texttt{MAXLAT}   & \\
-    \texttt{MINLON}   & \\
-    \texttt{MAXLON}   & \\
-    \texttt{LABLAT}   & \\
-    \texttt{LABLON}   & \\
-    \texttt{XRED}     & $x$-coordinates of red-labeled cell bodies    \\
-    \texttt{YRED}     & $y$-coordinates of red-labeled cell bodies    \\
-    \texttt{XGREEN}   & $x$-coordinates of green-labeled cell bodies  \\
-    \texttt{YGREEN}   & $y$-coordinates of green-labeled cell bodies  \\
-    \texttt{XDOUBLE}  & $x$-coordinates of doubly-labeled cell bodies \\ 
-    \texttt{YDOUBLE}  & $y$-coordinates of doubly-labeled cell bodies \\
-    \texttt{XGRID}    & \\
-    \texttt{YGRID}    & \\
-    \texttt{PERIM}    & \\
-    \texttt{AREA}     & \\
-    \texttt{GRIDX}    & \\
-    \texttt{GRIDY}    & \\
-    \texttt{XGRIDCOO} & $x$-coordinate of centre of grid box \\
-    \texttt{YGRIDCOO} & $y$-coordinate of centre of grid box \\
-    \texttt{BOXSIZEX} & half width of grid box in $x$-direction \\
-    \texttt{BOXSIZEY} & half width of grid box in $y$-direction \\
-    \texttt{COMPLETE} & whether counting has been completed in a grid
-    box \\
-    \texttt{TOTALCEL} & total number of labelled cell bodies in a grid box \\
-    \texttt{TOTALRED} & number of red-labelled cell bodies in a grid box \\
-    \texttt{TOTALGRE} & number of green-labelled cell bodies in a grid box \\
-    \texttt{TOTALDOU} & number of doubly-labelled cell bodies in a grid box \\
-    \texttt{MEANPERI} & \\
-    \texttt{MEANAREA} & \\
+    \hline
+    \multicolumn{2}{c}{\textbf{FOR EACH BOUNDARY}} \\
+    \hline
+    \texttt{MAPNUM}   & id number of boundary \\  
+    \texttt{MINLAT}   & min latitude      \\
+    \texttt{MAXLAT}   & max latitude      \\
+    \texttt{MINLON}   & min longitude     \\
+    \texttt{MAXLON}   & max longitude     \\
+    \texttt{LABLAT}   & latitude of label \\
+    \texttt{LABLON}   & longitude of label\\
+    \hline
+    \multicolumn{2}{c}{\textbf{FOR EACH CELL}} \\
+    \hline
+    \texttt{XRED}     & $x$-coordinate if cell labelled red but not doubly\\
+    \texttt{YRED}     & $y$-coordinate if cell labelled red but not doubly\\
+    \texttt{XGREEN}   & $x$-coordinate if cell labelled green but not doubly\\
+    \texttt{YGREEN}   & $y$-coordinate if cell labelled green but not doubly\\
+    \texttt{XDOUBLE}  & $x$-coordinate if cell labelled doubly\\ 
+    \texttt{YDOUBLE}  & $y$-coordinate if cell labelled doubly\\
+    \texttt{XGRID}    & sample box cell is in \\
+    \texttt{YGRID}    & sample box cell is in \\
+    \texttt{PERIM}    & perimeter of cell \\
+    \texttt{AREA}     & area of cell \\
+    \hline
+    \multicolumn{2}{c}{\textbf{ONE PER GRID BOX}} \\
+    \hline
+    \texttt{GRIDX}    & grid location of centre of sample box \\
+    \texttt{GRIDY}    & grid location of centre of sample box \\
+    \texttt{XGRIDCOO} & $x$-coordinate of centre of sample box \\
+    \texttt{YGRIDCOO} & $y$-coordinate of centre of sample box \\
+    \texttt{BOXSIZEX} & size (half width) of sample box in $x$-direction \\
+    \texttt{BOXSIZEY} & size (half width) of sample box in $y$-direction \\
+    \texttt{COMPLETE} & whether counting of sample has been completed\\
+    \texttt{TOTALCEL} & total number of cells in this box\\
+    \texttt{TOTALRED} & total number of red-only cells in this box\\
+    \texttt{TOTALGRE} & total number of green-only cells in this box\\
+    \texttt{TOTALDOU} & total number of double cells in this box\\
+    \texttt{MEANPERI} & average perimeter of all cells \\
+    \texttt{MEANAREA} & average area of all cells \\
   \end{tabular}
   \caption{Column headings of the \texttt{SYS.SYS} file.}
   \label{tab:data-format}
@@ -79,7 +87,7 @@ All code is to be found in the \texttt{trunk/src} directory. The R
 program should be started from this directory in the following examples.
 
 To read in data use the functions in \texttt{datafile-utils.R}. Here
-is code to read in the data from a directory contaning the
+is code to read in the data from a directory containing the
 \texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
 \begin{verbatim}
 source("datafile-utils.R")
@@ -94,3 +102,8 @@ plot.sys.map(sys, map)
 %%% Local Variables: 
 %%% TeX-PDF-mode: t
 %%% End: 
+
+% LocalWords:  MAPNUM MINLAT MAXLAT MINLON MAXLON LABLAT LABLON XRED YRED XGRID
+% LocalWords:  XGREEN YGREEN XDOUBLE labeled YGRID PERIM GRIDX GRIDY XGRIDCOO
+% LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
+% LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils
