@@ -1,27 +1,14 @@
 source("tsearch.R")
 source("triangulate.R")                 # for tri.area and tri.area.signed
+source("geometry.R")                    # for dot() and norm()
 require("rgl")
 require("plotrix")                      # For polar plots
-
-## scalar product of two column matricies
-dot <- function(x, y) {
-  return(rowSums(x * y))
-}
 
 ## Modulus function, that returns
 ## i , if i <= N
 ## i - N, if i > N
 Mod <- function(i, N) {
   return((i - 1) %% N + 1)
-}
-
-## Distance norm
-norm <- function(X) {
-  if (is.vector(X)) {
-    return(sqrt(sum(X^2)))
-  } else {
-    return(sqrt(rowSums(X^2)))
-  }
 }
 
 ## Return sequence of indicies in path between i and j, governed by
