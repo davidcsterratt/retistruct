@@ -80,11 +80,13 @@ map.to.segments <- function(map) {
   return(segs)
 }
 
-## Convert segments to outline of ordered points
-## The parmeter r is the radius of the circle in which to search
-## for matches
-segments.to.outline <- function(segs, r=50) {
-  N <- length(P)                        # Number of segments
+## Connect segments whose ends lie close to each other
+## Input arguments:
+## segs - list of segments to connect
+## Ouput:
+## Ts   - list of connected segments
+connect.segments <- function(segs) {
+  N <- length(segs)                        # Number of segments
   ## First find the first and last points of each segment
   ## The start points are in columns 1:N of P, and the end points in
   ## (N+1):(2*N)
@@ -104,36 +106,42 @@ segments.to.outline <- function(segs, r=50) {
 
   ## Now create matrix T in which to store the sorted points,
   ## one per row
-  T <- matrix(0, 0, 2)
   i <- 1                                # Initial index
-  while(any(!is.na(n))) {
+  Ts <- list()                          # New segment list
+  T <- matrix(0, 0, 2)                  # Initialisation
+  while(1) {
     j <- Mod(i + N, 2*N)                # Index at end of segment
     k <- n[j]                           # Closest index in another segment
     
     n[i] <- NA                   # Ignore these indicies in the future
     n[j] <- NA                   # Ignore these indicies in the future
 
-    ## Test if the segment connects back to itself.
-    ## This is used to remove the optic disk
-    if (i==k) {
-      print(paste("Discarding segment", Mod(i, N)))
+    if (i<=N) {
+      T <- rbind(T, segs[[i]])
+      print(paste("Adding old segment", i))
+    } else {
+      T <- rbind(T, flipud(segs[[j]]))
+      print(paste("Adding old segment", j))
+    }
+    ## If the segment connects back to a previously included point,
+    ## store the segment and find a new starting index, if one exists
+    if (is.na(k)) {
+      Ts <- c(Ts, list(unique(T)))
+      print(paste("Storing new segment", length(Ts)))
+      T <- matrix(0, 0, 2)
       rem <- which(!is.na(n))
       ## Find a new starting index
       if (length(rem) > 0) {
         i <- n[rem[1]]
+      } else {
+        break
       }
     } else {
-      if (i<=N) {
-        T <- rbind(T, segs[[i]])
-        print(paste("Adding segment", i))
-      } else {
-        T <- rbind(T, flipud(segs[[j]]))
-        print(paste("Adding segment", j))
-      }
+      ## Otherwise, continue
       i <- k
     }
   }
-  return(unique(T))
+  return(Ts)
 }
 
 ## Function to plot the "map", i.e. the outline of the retina
