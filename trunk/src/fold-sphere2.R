@@ -1,15 +1,9 @@
 source("tsearch.R")
 source("triangulate.R")                 # for tri.area and tri.area.signed
 source("geometry.R")                    # for dot() and norm()
+source("misc.R")                        # For Mod
 require("rgl")
 require("plotrix")                      # For polar plots
-
-## Modulus function, that returns
-## i , if i <= N
-## i - N, if i > N
-Mod <- function(i, N) {
-  return((i - 1) %% N + 1)
-}
 
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
