@@ -1,4 +1,7 @@
 require("foreign")
+source("geometry.R")
+source("misc.R")
+library(geometry)
 
 ## Function to return minimum and maximum values of vector x
 lim <- function(x) {
@@ -15,7 +18,8 @@ read.sys <- function(dir=NULL) {
 ## Function to read the file containing the "map", i.e. the outline of
 ## the retina
 read.map <- function(dir=NULL) {
-  read.csv(paste(dir, "ALU.MAP", sep="/"), sep=" ", header=FALSE)
+  map <- read.csv(paste(dir, "ALU.MAP", sep="/"), sep=" ", header=FALSE)
+  return(as.matrix(map))
 }
 
 ## Function to get corners of sample boxes in terms of lower and upper
@@ -76,6 +80,62 @@ map.to.segments <- function(map) {
   return(segs)
 }
 
+## Convert segments to outline of ordered points
+## The parmeter r is the radius of the circle in which to search
+## for matches
+segments.to.outline <- function(segs, r=50) {
+  N <- length(P)                        # Number of segments
+  ## First find the first and last points of each segment
+  ## The start points are in columns 1:N of P, and the end points in
+  ## (N+1):(2*N)
+  P <- as.matrix((sapply(segs, function(S) {S[1,]} )))
+  P <- cbind(P,
+             as.matrix((sapply(segs, function(S) {S[nrow(S),]} ))))
+
+  ## Now create vector of neighbours of points n
+  ## Each element is the index of the closest point
+  ## (apart from the point itself) 
+  n <- c()                              # Initialisation
+  for (i in 1:(2*N)) {
+    d <- norm(t(P[,i] - P))             # Distances of P_i from all other points
+    d[i] <- NA                          # Ignore distance to self
+    n[i] <- which.min(d)                # Find index of closest point
+  }
+
+  ## Now create matrix T in which to store the sorted points,
+  ## one per row
+  T <- matrix(0, 0, 2)
+  i <- 1                                # Initial index
+  while(any(!is.na(n))) {
+    j <- Mod(i + N, 2*N)                # Index at end of segment
+    k <- n[j]                           # Closest index in another segment
+    
+    n[i] <- NA                   # Ignore these indicies in the future
+    n[j] <- NA                   # Ignore these indicies in the future
+
+    ## Test if the segment connects back to itself.
+    ## This is used to remove the optic disk
+    if (i==k) {
+      print(paste("Discarding segment", Mod(i, N)))
+      rem <- which(!is.na(n))
+      ## Find a new starting index
+      if (length(rem) > 0) {
+        i <- n[rem[1]]
+      }
+    } else {
+      if (i<=N) {
+        T <- rbind(T, segs[[i]])
+        print(paste("Adding segment", i))
+      } else {
+        T <- rbind(T, flipud(segs[[j]]))
+        print(paste("Adding segment", j))
+      }
+      i <- k
+    }
+  }
+  return(unique(T))
+}
+
 ## Function to plot the "map", i.e. the outline of the retina
 plot.map <- function(map, seginfo=FALSE) {
   par(mar=c(2,2,1.5,0.5))
@@ -87,7 +147,7 @@ plot.map <- function(map, seginfo=FALSE) {
     if (seginfo) {
       col <- rainbow(10)[i]
       print(col)
-      text(seg[1,1], seg[1,2], labels=i, col=col)
+      text(seg[1,1], seg[1,2] + 100, labels=i, col=col)
     }
     lines(seg[, 1], seg[, 2], lwd=2, col=col)    
   }
@@ -122,4 +182,5 @@ points.sys <- function(sys) {
   points(sys[,'XGREEN'], sys[,'YGREEN'], col="green", pch=20,cex=0.5)
   points(sys[,'XRED'], sys[,'YRED'], col="red", pch=20,cex=0.5)
 }
+
 
