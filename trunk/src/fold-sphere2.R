@@ -1233,4 +1233,38 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
   return(list(phi=phi, lambda=lambda, R=R, phi0=phi0))
 }
 
+## Folding routine
+## Takes edge points in order DNVT
+## Takes tear matrix
+## Returns result of optimise.mapping()
+fold.retina <- function(P, tearmat, graphical=TRUE) {
+  s <- stitch.retina(P, tearmat)
+  if (graphical) {
+    plot.stitch(s)
+  }
+  
+  t <- make.triangulation(s)
+  if (graphical) {
+    with(t, trimesh(T, P, col="black"))
+  }
 
+  m <- merge.points(t, s)
+
+  if (graphical) {
+    plot(P)
+    with(s, plot.outline(P, gb))
+  }
+
+  p <- project.to.sphere(m, t, phi0=50*pi/180)
+
+  if (graphical) {
+    ## Initial plot in 3D space
+    plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+  }
+
+  r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
+  p1 <- p
+  p1$phi <- r$phi
+  p1$lambda <- r$lambda
+  r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
+}
