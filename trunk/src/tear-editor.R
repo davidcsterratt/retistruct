@@ -6,8 +6,65 @@ if (!require("cairoDevice")) install.packages("cairoDevice")
 library(gWidgetsRGtk2)
 options(guiToolkit = "RGtk2")
 
+A <- c()
+VB <- c()
+VF <- c()
+
+enable.group <- function(widgets, state=TRUE) {
+  for (w in widgets) {
+      enabled(w) <- state
+    }
+}
+
+enable.widgets <- function(state) {
+  enable.group(c(g.add, g.move, g.remove), state)
+}
+
 add.tear <- function(h, ...) {
-  print("Tear added")
+  enable.widgets(FALSE)
+  dev.set(d1)
+  id <- identify(P[,1], P[,2], n=1)
+  A  <<- c(A , id)
+  VF <<- c(VF, id+1)
+  VB <<- c(VB, id-1)
+  do.plot()
+  enable.widgets(TRUE)
+}
+
+remove.tear <- function(h, ...) {
+  enable.widgets(FALSE)
+  id <- identify(P[,1], P[,2], n=1)
+  tid <- which(id==A)
+  A  <<- A[-tid]
+  VF <<- VF[-tid]
+  VB <<- VB[-tid]
+  do.plot()
+  enable.widgets(TRUE)
+}
+
+move.point <- function(h, ...) {
+  enable.widgets(FALSE)
+  id <- identify(P[,1], P[,2], n=1)
+  tid <- which(id==VF)
+  if (length(tid)) {
+    points(P[VF[tid],1], P[VF[tid],2], col="yellow")
+    id <- identify(P[,1], P[,2], n=1)
+    VF[tid] <<- id
+  } 
+  tid <- which(id==VB)
+  if (length(tid)) {
+    points(P[VB[tid],1], P[VB[tid],2], col="yellow")
+    id <- identify(P[,1], P[,2], n=1)
+    VB[tid] <<- id
+  }
+  tid <- which(id==A)
+  if (length(tid)) {
+    points(P[A[tid],1], P[A[tid],2], col="yellow")
+    id <- identify(P[,1], P[,2], n=1)
+    A[tid] <<- id
+  }
+  do.plot()
+  enable.widgets(TRUE)
 }
 
 fileChoose <- function(action="print", text = "Select a file...",
@@ -40,18 +97,35 @@ tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dfn <- gbutton("/afs/inf.ed.ac
   setwd(curdir)
   map <<- read.map(svalue(h$obj))
   sys <<- read.sys(svalue(h$obj))
+  segs <- map.to.segments(map)
+  P <<- segments.to.outline(segs)
+  do.plot()
 }) 
-tbl[3, 1, anchor = c(1, 0)] = "denominator df"
-tbl[3, 2, anchor = c(0, 0), expand = TRUE] <- g.dfd <- gbutton("Add tear", handler=add.tear)
-tbl[3, 3, anchor = c(0, 0), expand = TRUE] <- g.b.plot <- gbutton("Plot sys and map",
-                              handler=function(h, ...) {
-                                dev.set(d1)
-                                plot.sys.map(sys, map)
-                                })
+tbl[3, 1, anchor = c(1, 0)] = "Mode"
+tbl[3, 2, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
+                              handler=add.tear)
+tbl[3, 3, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
+                              handler=move.point)
+tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
+                              handler=remove.tear)
 
-tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.b.plot <- gbutton("Plot map",
-                              handler=function(h, ...) {
-                                dev.set(d2)
-                                plot.map(map)
-                                })
+do.plot <- function() {
+  dev.set(d1)
+  if ("Sys" %in% svalue(g.show)) {
+    plot.sys.map(sys, map)
+  } else {
+    plot.map(map)
+  }
 
+  if (length(A) > 0) {
+    points(P[VF,], col="purple", pch="+")
+    points(P[VB,], col="blue", pch="+")
+    points(P[A, ], col="cyan", pch="+")
+  }
+}
+
+tbl[4, 1, anchor = c(1, 0)] <- "Show"
+tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
+                              handler=function(h, ...) {
+                                do.plot()
+                              })
