@@ -67,6 +67,12 @@ move.point <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
+save.state <- function(h, ...) {
+  datadir <- svalue(g.dataset)
+  write.csv(cbind(A, VB, VF), file.path(datadir, "T.csv"),  row.names=FALSE)
+  write.csv(P, file.path(datadir, "P.csv"), row.names=FALSE)
+}
+
 fileChoose <- function(action="print", text = "Select a file...",
                        type="open", ...) {
   gfile(text=text, type=type, ..., action = action, handler =
@@ -75,7 +81,7 @@ fileChoose <- function(action="print", text = "Select a file...",
         })
 }
 
-datadir <- NULL
+dataset <- NULL
 
 tbl <- glayout(container = gwindow("Tear editor"), spacing = 0)
 tbl[1, 1:2, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
@@ -85,29 +91,39 @@ tbl[1, 3:4, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
     expand = TRUE, ps = 11)
 d2 <- dev.cur()
 tbl[2, 1,   anchor = c(1, 0)] = "Dataset"
-tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dfn <- gbutton("/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/gm119-5-adult-C57BL6", handler = function(h, ...) {
+tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/gm119-5-adult-C57BL6", handler = function(h, ...) {
   curdir <- getwd()
   setwd(svalue(h$obj))
   setwd("..")
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
           print(h$file)
-          svalue(g.dfn) <- h$file
+          svalue(g.dataset) <- h$file
         })
   setwd(curdir)
-  map <<- read.map(svalue(h$obj))
-  sys <<- read.sys(svalue(h$obj))
+  dataset <<- svalue(h$obj)
+  map <<- read.map(dataset)
+  sys <<- read.sys(dataset)
   segs <- map.to.segments(map)
   P <<- segments.to.outline(segs)
+  tearfile <- file.path(dataset, "T.csv")
+  if (file.exists(tearfile)) {
+    T <- read.csv(tearfile)
+    A  <<- T[,1]                            # apicies of tears
+    VB <<- T[,2]                           # forward verticies
+    VF <<- T[,3]                           # backward verticies
+  }
   do.plot()
 }) 
-tbl[3, 1, anchor = c(1, 0)] = "Mode"
+tbl[3, 1, anchor = c(1, 0)] = "Actions"
 tbl[3, 2, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
                               handler=add.tear)
-tbl[3, 3, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
+tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
                               handler=move.point)
-tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
+tbl[5, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
                               handler=remove.tear)
+tbl[6, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Save",
+                              handler=save.state)
 
 do.plot <- function() {
   dev.set(d1)
@@ -124,8 +140,8 @@ do.plot <- function() {
   }
 }
 
-tbl[4, 1, anchor = c(1, 0)] <- "Show"
-tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
+tbl[3, 3, anchor = c(1, 0)] <- "Show"
+tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
                               handler=function(h, ...) {
                                 do.plot()
                               })
