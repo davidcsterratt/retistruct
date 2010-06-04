@@ -1,4 +1,5 @@
 source("datafile-utils.R")
+source("fold-sphere2.R")
 
 ## install.packages('gWidgetsRGtk2') first if not installed
 if (!require("gWidgetsRGtk2")) install.packages("gWidgetsRGtk2")
@@ -33,8 +34,11 @@ add.tear <- function(h, ...) {
 
 remove.tear <- function(h, ...) {
   enable.widgets(FALSE)
+  dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
+  print(id)
   tid <- which(id==A)
+  print(tid)
   A  <<- A[-tid]
   VF <<- VF[-tid]
   VB <<- VB[-tid]
@@ -44,6 +48,7 @@ remove.tear <- function(h, ...) {
 
 move.point <- function(h, ...) {
   enable.widgets(FALSE)
+  dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
   tid <- which(id==VF)
   if (length(tid)) {
@@ -71,6 +76,35 @@ save.state <- function(h, ...) {
   datadir <- svalue(g.dataset)
   write.csv(cbind(A, VB, VF), file.path(datadir, "T.csv"),  row.names=FALSE)
   write.csv(P, file.path(datadir, "P.csv"), row.names=FALSE)
+}
+
+h.fold.retina <- function(h, ...) {
+  dev.set(d2)
+  fold.retina(P, cbind(A, VB, VF), graphical=TRUE)
+}
+
+h.stitch.retina <- function(h, ...) {
+  s <- stitch.retina(P, cbind(A, VB, VF))
+  dev.set(d2)
+  plot.stitch(s)
+}
+
+do.plot <- function() {
+  dev.set(d1)
+  if ("Sys" %in% svalue(g.show)) {
+    plot.sys.map(sys, map)
+  } else {
+    plot.map(map)
+  }
+
+  if (length(A) > 0) {
+    points(P[VF,,drop=FALSE], col="red", pch="+")
+    segments(P[A,1], P[A,2], P[VF,1], P[VF,2], col="red")
+    points(P[VB,,drop=FALSE], col="orange", pch="+")
+    segments(P[A,1], P[A,2], P[VB,1], P[VB,2], col="orange")
+    points(P[A,,drop=FALSE], col="cyan", pch="+")
+    text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
+  }
 }
 
 fileChoose <- function(action="print", text = "Select a file...",
@@ -122,26 +156,17 @@ tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
                               handler=move.point)
 tbl[5, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
                               handler=remove.tear)
-tbl[6, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Save",
+tbl[6, 2, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Stitch retina",
+                              handler=h.stitch.retina)
+tbl[6, 4, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
+                              handler=h.fold.retina)
+
+tbl[7, 2, anchor = c(0, 0), expand = TRUE] <- g.save <- gbutton("Save",
                               handler=save.state)
-
-do.plot <- function() {
-  dev.set(d1)
-  if ("Sys" %in% svalue(g.show)) {
-    plot.sys.map(sys, map)
-  } else {
-    plot.map(map)
-  }
-
-  if (length(A) > 0) {
-    points(P[VF,], col="purple", pch="+")
-    points(P[VB,], col="blue", pch="+")
-    points(P[A, ], col="cyan", pch="+")
-  }
-}
 
 tbl[3, 3, anchor = c(1, 0)] <- "Show"
 tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
                               handler=function(h, ...) {
                                 do.plot()
                               })
+
