@@ -121,13 +121,17 @@ stitch.retina <- function(P, T) {
       ##             "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
     }
 
+    ## plot.outline(P, gb)
+    ## print(paste("Forwards", j))
+    ## readline("Press <Enter> to continue")
+      
     ## Go along backward path
     for (i in setdiff(TBset[[j]], c(A[j], VB[j]))) {
       sb <- path.length(A[j], i, gb, hb, P)
       ## print(paste("i", i, "sb", sb/Sb))
       ## print(TFset[[j]])
       for (k in TFset[[j]]) {
-        sf <- path.length(A[j], k, gf, hb, P)
+        sf <- path.length(A[j], k, gf, hf, P)
         ## print(paste("k", k, "; sf/Sf", sf/Sf))
         if (sf/Sf > sb/Sb) {
           break;
@@ -162,6 +166,10 @@ stitch.retina <- function(P, T) {
       ##            "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
       ##            "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
     }
+    
+    ## plot.outline(P, gb)
+    ## print(paste("Backwards", j))
+    ## readline("Press <Enter> to continue")
   }
 
   ## Make sure that there are no chains of correspondences
@@ -694,11 +702,11 @@ plot.outline <- function(P, gb, add=FALSE, ...) {
 plot.stitch <- function(s, ...) {
   with(s, {
     plot.outline(P, gb, ...)
-    points(P[VF,], col="purple", pch="+")
-    points(P[VB,], col="blue", pch="+")
+    points(P[VF,], col="red", pch="+")
+    points(P[VB,], col="orange", pch="+")
     points(P[A, ], col="cyan", pch="+")
     for (TF in TFset) {
-      lines(P[TF,], col="yellow", ...)
+      lines(P[TF,], col="red", ...)
     }
     for (TB in TBset) {
       lines(P[TB,], col="orange", ...)
@@ -985,7 +993,6 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
              ...)
   
 }
-
 
 make.triangulation <- function(s, Nrand=1000, d=200) {
   ## Create ordered version of P for determining outline
