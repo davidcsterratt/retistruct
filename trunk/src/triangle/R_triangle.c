@@ -15,50 +15,18 @@
 #include <Rdefines.h>
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
-
-
      
-     void
-     R_init_mylib(DllInfo *info)
-     {
-       /* Register routines, allocate resources. */
-     }
+void
+R_init_triangle(DllInfo *info)
+{
+  /* Register routines, allocate resources. */
+}
      
-     void
-     R_unload_mylib(DllInfo *info)
-     {
-       /* Release resources. */
-     }
-
-/*    void convolve(double *a, int *na, double *b, int *nb, double *ab)
-     {
-       int i, j, nab = *na + *nb - 1;
-     
-       for(i = 0; i < nab; i++)
-         ab[i] = 0.0;
-       for(i = 0; i < *na; i++)
-         for(j = 0; j < *nb; j++)
-           ab[i + j] += a[i] * b[j];
-           } */
-
-     SEXP convolve2(SEXP a, SEXP b)
-     {
-       int i, j, na, nb, nab;
-       double *xa, *xb, *xab;
-       SEXP ab;
-     
-       PROTECT(a = AS_NUMERIC(a));
-       PROTECT(b = AS_NUMERIC(b));
-       na = LENGTH(a); nb = LENGTH(b); nab = na + nb - 1;
-       PROTECT(ab = NEW_NUMERIC(nab));
-       xa = NUMERIC_POINTER(a); xb = NUMERIC_POINTER(b);
-       xab = NUMERIC_POINTER(ab);
-       for(i = 0; i < nab; i++) xab[i] = 0.0;
-       for(i = 0; i < na; i++)
-         for(j = 0; j < nb; j++) xab[i + j] += xa[i] * xb[j];
-       UNPROTECT(3);
-       return(ab);
-     }
+void
+R_unload_triangle(DllInfo *info)
+{
+  /* Release resources. */
+}
 
 SEXP R_triangulate (SEXP P)
 {
