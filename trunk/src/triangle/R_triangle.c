@@ -269,7 +269,7 @@ int tricall()
   return 0;
 }
 
-SEXP R_triangulate (SEXP P, SEXP B)
+SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB)
 {
   SEXP Q;
   SEXP T;
@@ -291,14 +291,17 @@ SEXP R_triangulate (SEXP P, SEXP B)
   in.numberofpointattributes = 0; 
   // in.pointlist = (TRIREAL *) malloc(in.numberofpoints * 2 * sizeof(TRIREAL));
   in.pointlist = REAL(P);
-  in.pointmarkerlist = INTEGER(B);
-
-  in.numberofsegments = 0;
+  in.pointmarkerlist = INTEGER(PB);
+  
+  
+  in.numberofsegments = LENGTH(S)/2;
+  in.segmentlist = INTEGER(S);
+  in.segmentmarkerlist = INTEGER(SB);
   in.numberofholes = 0;
   in.numberofregions = 0;
 
   printf("Input point set:\n\n");
-  report(&in, 1, 0, 0, 0, 0, 0);
+  report(&in, 1, 0, 0, 1, 0, 0);
 
   /* Make necessary initializations so that Triangle can return a */
   /*   triangulation in `mid' and a voronoi diagram in `vorout'.  */
@@ -330,7 +333,7 @@ SEXP R_triangulate (SEXP P, SEXP B)
   /*   produce an edge list (e), a Voronoi diagram (v), and a triangle */
   /*   neighbor list (n).                                              */
 
-  triangulate("pcAevn", &in, &mid, &vorout);
+  triangulate("pevn", &in, &mid, &vorout);
 
   printf("Initial triangulation:\n\n");
   report(&mid, 1, 1, 1, 1, 1, 0);
