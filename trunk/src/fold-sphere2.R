@@ -1021,6 +1021,8 @@ make.triangulation <- function(s, Nrand=1000, d=200) {
   Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
   T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
   
+  trimesh(T, P, col="grey", add=TRUE)
+  
   ## Find lines which join non-adjacent parts of the outline
   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
@@ -1032,14 +1034,13 @@ make.triangulation <- function(s, Nrand=1000, d=200) {
       if (!((C1 == s$gf[C2]) ||
             (C2 == s$gf[C1]))) {
         ## Find triangles containing the line
-        segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="red")
+        ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
         Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-        ## print(Cu[i,])
-        ## print(Tind)
+        print(paste("Non-adjacent points in rim connected by line:", C1, C2))
+        print(paste("In triangle:", Tind))
         T1 <- setdiff(T[Tind[1],], Cu[i,])
         T2 <- setdiff(T[Tind[2],], Cu[i,])
-        ## print(T1)
-        ## print(paste(C1, C2, T1, T2))
+        print(paste("Other points in triangle:", T1, T2))
         p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
         points(p[1], p[2], col="red")
         P <- rbind(P, p)
@@ -1256,3 +1257,4 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
   p1$lambda <- r$lambda
   r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
 }
+
