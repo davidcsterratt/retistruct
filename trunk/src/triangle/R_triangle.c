@@ -295,12 +295,7 @@ SEXP R_triangulate (SEXP P, SEXP B)
 
   in.numberofsegments = 0;
   in.numberofholes = 0;
-  in.numberofregions = 1;
-  in.regionlist = (TRIREAL *) malloc(in.numberofregions * 4 * sizeof(TRIREAL));
-  in.regionlist[0] = 0.5;
-  in.regionlist[1] = 5.0;
-  in.regionlist[2] = 7.0;            /* Regional attribute (for whole mesh). */
-  in.regionlist[3] = 0.1;          /* Area constraint that will not be used. */
+  in.numberofregions = 0;
 
   printf("Input point set:\n\n");
   report(&in, 1, 0, 0, 0, 0, 0);
@@ -345,43 +340,45 @@ SEXP R_triangulate (SEXP P, SEXP B)
   /* Attach area constraints to the triangles in preparation for */
   /*   refining the triangulation.                               */
 
-  /* Needed only if -r and -a switches used: */
-  mid.trianglearealist = (TRIREAL *) malloc(mid.numberoftriangles * sizeof(TRIREAL));
-  mid.trianglearealist[0] = 3.0;
-  mid.trianglearealist[1] = 1.0;
+  /* /\* Needed only if -r and -a switches used: *\/ */
+  /* mid.trianglearealist = (TRIREAL *) malloc(mid.numberoftriangles * sizeof(TRIREAL)); */
+  /* mid.trianglearealist[0] = 3.0; */
+  /* mid.trianglearealist[1] = 1.0; */
 
-  /* Make necessary initializations so that Triangle can return a */
-  /*   triangulation in `out'.                                    */
+  /* /\* Make necessary initializations so that Triangle can return a *\/ */
+  /* /\*   triangulation in `out'.                                    *\/ */
 
-  out.pointlist = (TRIREAL *) NULL;            /* Not needed if -N switch used. */
-  /* Not needed if -N switch used or number of attributes is zero: */
-  out.pointattributelist = (TRIREAL *) NULL;
-  out.trianglelist = (int *) NULL;          /* Not needed if -E switch used. */
-  /* Not needed if -E switch used or number of triangle attributes is zero: */
-  out.triangleattributelist = (TRIREAL *) NULL;
+  /* out.pointlist = (TRIREAL *) NULL;            /\* Not needed if -N switch used. *\/ */
+  /* /\* Not needed if -N switch used or number of attributes is zero: *\/ */
+  /* out.pointattributelist = (TRIREAL *) NULL; */
+  /* out.trianglelist = (int *) NULL;          /\* Not needed if -E switch used. *\/ */
+  /* /\* Not needed if -E switch used or number of triangle attributes is zero: *\/ */
+  /* out.triangleattributelist = (TRIREAL *) NULL; */
 
-  /* Refine the triangulation according to the attached */
-  /*   triangle area constraints.                       */
+  /* /\* Refine the triangulation according to the attached *\/ */
+  /* /\*   triangle area constraints.                       *\/ */
 
-  triangulate("praBP", &mid, &out, (struct triangulateio *) NULL);
+  /* triangulate("praBP", &mid, &out, (struct triangulateio *) NULL); */
 
-  printf("Refined triangulation:\n\n");
-  report(&out, 0, 1, 0, 0, 0, 0);
+  /* printf("Refined triangulation:\n\n"); */
+  /* report(&out, 0, 1, 0, 0, 0, 0); */
 
   /* Make space for answers */
-  PROTECT(Q = allocMatrix(REALSXP, out.numberofpoints, 2));
-  PROTECT(T = allocMatrix(INTSXP, out.numberoftriangles, 3));
+  printf("Number of output points %d", mid.numberofpoints);
+  PROTECT(Q = allocMatrix(REALSXP, mid.numberofpoints, 2));
+  PROTECT(T = allocMatrix(INTSXP, mid.numberoftriangles, 3));
+
   xQ = REAL(Q);
-  for (int i = 0; i < out.numberofpoints; i++) {
+  for (int i = 0; i < mid.numberofpoints; i++) {
     for (int j = 0; j < 2; j++) {
-      xQ[j * out.numberofpoints + i] = out.pointlist[i * 2 + j];
+      xQ[j * mid.numberofpoints + i] = mid.pointlist[i * 2 + j];
     }
   }
   
   xT = INTEGER(T);
-  for (int i = 0; i < out.numberoftriangles; i++) {
-    for (int j = 0; j < out.numberofcorners; j++) {
-      xT[j * out.numberoftriangles + i] = out.trianglelist[i * out.numberofcorners + j];
+  for (int i = 0; i < mid.numberoftriangles; i++) {
+    for (int j = 0; j < mid.numberofcorners; j++) {
+      xT[j * mid.numberoftriangles + i] = mid.trianglelist[i * mid.numberofcorners + j];
     }
   }
   
@@ -407,10 +404,10 @@ SEXP R_triangulate (SEXP P, SEXP B)
   free(vorout.pointattributelist);
   free(vorout.edgelist);
   free(vorout.normlist);
-  free(out.pointlist);
+  /*  free(out.pointlist);
   free(out.pointattributelist);
   free(out.trianglelist);
-  free(out.triangleattributelist);
+  free(out.triangleattributelist); */
 
   return(ans);
 } 
