@@ -333,14 +333,16 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
   /*   produce an edge list (e), a Voronoi diagram (v), and a triangle */
   /*   neighbor list (n).                                              */
 
-  char *flags = "pevn";
-  char flag_opts[100];
+  char flags[100];
+  strcpy(flags, "pevn");
+  char opts[100];
   if (isReal(a)) {
-    sprintf(flag_opts, "%sa%f", flags, *REAL(a));
-    printf("%s", flag_opts);
+    sprintf(opts, "a%f", *REAL(a));
+    strcat(flags, opts);
+    printf(flags);
   }
 
-  triangulate(flag_opts, &in, &mid, &vorout);
+  triangulate(flags, &in, &mid, &vorout);
 
   printf("Initial triangulation:\n\n");
   report(&mid, 1, 1, 1, 1, 1, 0);
