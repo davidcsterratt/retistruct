@@ -269,7 +269,7 @@ int tricall()
   return 0;
 }
 
-SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB)
+SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
 {
   SEXP Q;
   SEXP T;
@@ -277,7 +277,7 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB)
   double *xP, *xQ;
   int *xT;
   int nP, nQ, nT;
-
+  
   /* Convert input point matrix into array */
   PROTECT(P = AS_NUMERIC(P));
   xP = REAL(P);
@@ -333,7 +333,14 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB)
   /*   produce an edge list (e), a Voronoi diagram (v), and a triangle */
   /*   neighbor list (n).                                              */
 
-  triangulate("pevn", &in, &mid, &vorout);
+  char *flags = "pevn";
+  char flag_opts[100];
+  if (isReal(a)) {
+    sprintf(flag_opts, "%sa%f", flags, *REAL(a));
+    printf("%s", flag_opts);
+  }
+
+  triangulate(flag_opts, &in, &mid, &vorout);
 
   printf("Initial triangulation:\n\n");
   report(&mid, 1, 1, 1, 1, 1, 0);
