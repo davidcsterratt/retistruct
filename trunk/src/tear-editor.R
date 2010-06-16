@@ -1,5 +1,8 @@
 source("datafile-utils.R")
 source("fold-sphere2.R")
+require(geometry)
+source("triangle/triangle.R", chdir=TRUE)
+
 
 ## install.packages('gWidgetsRGtk2') first if not installed
 if (!require("gWidgetsRGtk2")) install.packages("gWidgetsRGtk2")
@@ -89,6 +92,12 @@ h.stitch.retina <- function(h, ...) {
   plot.stitch(s)
 }
 
+h.triangulate.retina <- function(h, ...) {
+  out <- triangulate(P)
+  dev.set(d2)
+  with(out, trimesh(T, Q))
+}
+
 do.plot <- function() {
   dev.set(d1)
   if ("Sys" %in% svalue(g.show)) {
@@ -163,6 +172,8 @@ tbl[6, 4, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
 
 tbl[7, 2, anchor = c(0, 0), expand = TRUE] <- g.save <- gbutton("Save",
                               handler=save.state)
+tbl[7, 4, anchor = c(0, 0), expand = TRUE] <- g.triangulate <- gbutton("Triangulate retina",
+                              handler=h.triangulate.retina)
 
 tbl[3, 3, anchor = c(1, 0)] <- "Show"
 tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
