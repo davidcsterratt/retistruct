@@ -1,5 +1,5 @@
-require("sp")                           # For point.in.polygon
-require("geometry")                     # For delauynayn
+if (!require("sp"))  install.packages("sp") # For point.in.polygon
+if (!require("geometry")) install.packages("geometry")
 source("common.R")                      # For meshgrid
 
 connections2triangulation <- function(C) {

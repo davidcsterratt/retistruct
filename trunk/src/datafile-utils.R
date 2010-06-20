@@ -1,7 +1,7 @@
 require("foreign")
 source("geometry.R")
 source("misc.R")
-library(geometry)
+if (!require("geometry")) install.packages("geometry")
 
 ## Function to return minimum and maximum values of vector x
 lim <- function(x) {
