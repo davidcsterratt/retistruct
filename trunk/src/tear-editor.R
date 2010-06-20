@@ -125,6 +125,7 @@ fileChoose <- function(action="print", text = "Select a file...",
 }
 
 dataset <- NULL
+initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
 
 tbl <- glayout(container = gwindow("Tear editor"), spacing = 0)
 tbl[1, 1:2, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
@@ -134,10 +135,17 @@ tbl[1, 3:4, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
     expand = TRUE, ps = 11)
 d2 <- dev.cur()
 tbl[2, 1,   anchor = c(1, 0)] = "Dataset"
-tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/gm119-5-adult-C57BL6", handler = function(h, ...) {
+tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("Select dataset", handler = function(h, ...) {
   curdir <- getwd()
-  setwd(svalue(h$obj))
-  setwd("..")
+  if (svalue(h$obj) == "Select dataset") {
+    info = file.info(initial.dir)
+    if (!is.na(info$isdir)) {
+      setwd(initial.dir)
+    }
+  } else {
+    setwd(svalue(h$obj))
+    setwd("..")
+  } 
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
           print(h$file)
