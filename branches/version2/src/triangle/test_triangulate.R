@@ -18,4 +18,5 @@ out <- triangulate(P, a=0.1)
 print(out)
 require(geometry)
 trimesh(out$T, out$Q)
+print(out$B)
 
