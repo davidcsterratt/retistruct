@@ -14,6 +14,6 @@ triangulate <- function(P, a=NULL) {
                as.integer(S),
                as.integer(SB),
                a)
-  names(out) <- c("P", "PB", "T", "S", "SB")
+  names(out) <- c("P", "PB", "T", "S", "SB", "E", "EB")
   return(out)
 }

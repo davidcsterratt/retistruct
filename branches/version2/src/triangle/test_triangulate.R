@@ -20,4 +20,11 @@ require(geometry)
 trimesh(out$T, out$P)
 
 with(out, segments(P[S[,1], 1], P[S[,1], 2],
-                   P[S[,2], 1], P[S[,2], 2], col="red"))
+                   P[S[,2], 1], P[S[,2], 2], col="red", lwd=4))
+
+with(out, segments(P[E[,1], 1], P[E[,1], 2],
+                   P[E[,2], 1], P[E[,2], 2], col="orange", lwd=2))
+
+with(out, segments(P[E[EB==1,1], 1], P[E[EB==1,1], 2],
+                   P[E[EB==1,2], 1], P[E[EB==1,2], 2], col="blue"))
+
