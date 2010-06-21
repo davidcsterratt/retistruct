@@ -994,138 +994,129 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
   
 }
 
-make.triangulation <- function(s, Nrand=1000, d=200) {
-  ## Create ordered version of P for determining outline
-  Po <- with(s, P[path(1, gb[1], gf, 1:nrow(P)),])
+## make.triagulation(P, n)
 
-  ## Attempt to create Nrand points in the retina
-  P <- s$P
-  xmin <- min(P[,1])
-  xmax <- max(P[,1])
-  ymin <- min(P[,2])
-  ymax <- max(P[,2])
-  for (i in 1:Nrand) {
-    C <- c(runif(1, xmin, xmax),
-           runif(1, ymin, ymax))
-    if (point.in.polygon(C[1], C[2], Po[,1], Po[,2])) {
-      if (all(norm(t(t(P) - C)) > d)) {
-        P <- rbind(P, C)
-        ## ds <- c(ds, d)
-      }
-    }
-  }
+## Create a triangulation of the outline defined by the points P,
+## which are represented as N*2 matrix. There should be at least n
+## triangles in the triangulation
+## Returns a list comprising:
+## P   - The set of new points, with the existing points at the start
+## T   - The triangulation
+## a   - Array containing area of each triangle
+## A   - Total area of outline
+## Cu  - Unique set of M connections, as M*2 matrix
+## L   - Length of each connection
+## h   - Correspondances vector?????
+make.triangulation <- function(P, n=100) {
+  ## Make initial triangulation to determine area
+  out <- triangulate(P)
+  A <- sum(with(out, tri.area(Q, T)))
+  print(A)
+  out <- triangulate(P, a=A/n)
+  Q <- out$Q
+  T <- out$T
+  a <- tri.area(Q, T)
+  ## trimesh(T, P, col="grey", add=TRUE)
   
-  ## Delaunay triangulation and remove triangles outwith the retinal
-  ## outline
-  T <- delaunayn(P)
-  Pc <- (P[T[,1],] + P[T[,2],] + P[T[,3],])/3 # Centres
-  T <- T[point.in.polygon(Pc[,1], Pc[,2], Po[,1], Po[,2])==1,]
+  ## ## Find lines which join non-adjacent parts of the outline
+  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  ## Cu <- Unique(Cu, TRUE)
   
-  trimesh(T, P, col="grey", add=TRUE)
-  
-  ## Find lines which join non-adjacent parts of the outline
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-  
-  for (i in 1:nrow(Cu)) {
-    C1 <- Cu[i,1]
-    C2 <- Cu[i,2]
-    if (all(Cu[i,] %in% s$Rset)) {
-      if (!((C1 == s$gf[C2]) ||
-            (C2 == s$gf[C1]))) {
-        ## Find triangles containing the line
-        ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-        Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-        print(paste("Non-adjacent points in rim connected by line:", C1, C2))
-        print(paste("In triangle:", Tind))
-        T1 <- setdiff(T[Tind[1],], Cu[i,])
-        T2 <- setdiff(T[Tind[2],], Cu[i,])
-        print(paste("Other points in triangle:", T1, T2))
-        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-        points(p[1], p[2], col="red")
-        P <- rbind(P, p)
-        n <- nrow(P)
-        T[Tind[1],] <- c(n, C1, T1)
-        T[Tind[2],] <- c(n, C1, T2)
-        T <- rbind(T,
-                   c(n, C2, T1),
-                   c(n, C2, T2))
-      }
-    }
-  }
+  ## for (i in 1:nrow(Cu)) {
+  ##   C1 <- Cu[i,1]
+  ##   C2 <- Cu[i,2]
+  ##   if (all(Cu[i,] %in% s$Rset)) {
+  ##     if (!((C1 == s$gf[C2]) ||
+  ##           (C2 == s$gf[C1]))) {
+  ##       ## Find triangles containing the line
+  ##       ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
+  ##       Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+  ##       print(paste("Non-adjacent points in rim connected by line:", C1, C2))
+  ##       print(paste("In triangle:", Tind))
+  ##       T1 <- setdiff(T[Tind[1],], Cu[i,])
+  ##       T2 <- setdiff(T[Tind[2],], Cu[i,])
+  ##       print(paste("Other points in triangle:", T1, T2))
+  ##       p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+  ##       points(p[1], p[2], col="red")
+  ##       P <- rbind(P, p)
+  ##       n <- nrow(P)
+  ##       T[Tind[1],] <- c(n, C1, T1)
+  ##       T[Tind[2],] <- c(n, C1, T2)
+  ##       T <- rbind(T,
+  ##                  c(n, C2, T1),
+  ##                  c(n, C2, T2))
+  ##     }
+  ##   }
+  ## }
 
 
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-  print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  ## Cu <- Unique(Cu, TRUE)
+  ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
 
-  l <- norm(P[Cu[,1],] - P[Cu[,2],])
-  while (max(l) > 2*d) {
-    i <- which.max(l)
-    ##  print(l[i])
+  ## l <- norm(P[Cu[,1],] - P[Cu[,2],])
+  ## while (max(l) > 2*d) {
+  ##   i <- which.max(l)
+  ##   ##  print(l[i])
 
-    C1 <- Cu[i,1]
-    C2 <- Cu[i,2]
+  ##   C1 <- Cu[i,1]
+  ##   C2 <- Cu[i,2]
     
-    ## Find triangles containing the line
-    ## segments(P[C1,1], P[C1,2],
-    ## P[C2,1], P[C2,2], col="red")
-    Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-    ##  print(Cu[i,])
-    ##  print(Tind)
-    T1 <- setdiff(T[Tind[1],], Cu[i,])
-    T2 <- setdiff(T[Tind[2],], Cu[i,])
-    ##  print(T1)
-    ##  print(paste(C1, C2, T1, T2))
+  ##   ## Find triangles containing the line
+  ##   ## segments(P[C1,1], P[C1,2],
+  ##   ## P[C2,1], P[C2,2], col="red")
+  ##   Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+  ##   ##  print(Cu[i,])
+  ##   ##  print(Tind)
+  ##   T1 <- setdiff(T[Tind[1],], Cu[i,])
+  ##   T2 <- setdiff(T[Tind[2],], Cu[i,])
+  ##   ##  print(T1)
+  ##   ##  print(paste(C1, C2, T1, T2))
 
-    p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-    ## points(p[1], p[2], col="red")
-    P <- rbind(P, p)
-    n <- nrow(P)
-    T[Tind[1],] <- c(n, C1, T1)
-    T[Tind[2],] <- c(n, C1, T2)
-    T <- rbind(T,
-               c(n, C2, T1),
-               c(n, C2, T2))
+  ##   p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+  ##   ## points(p[1], p[2], col="red")
+  ##   P <- rbind(P, p)
+  ##   n <- nrow(P)
+  ##   T[Tind[1],] <- c(n, C1, T1)
+  ##   T[Tind[2],] <- c(n, C1, T2)
+  ##   T <- rbind(T,
+  ##              c(n, C2, T1),
+  ##              c(n, C2, T2))
     
-    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-    Cu <- Unique(Cu, TRUE)
+  ##   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  ##   Cu <- Unique(Cu, TRUE)
 
-    ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-    ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
+  ##   ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
+  ##   ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
 
-    ## Exlcude line segments which are on the edge for splitting
-    Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
-    Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
-    ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
-    l <- norm(P[Cu[,1],] - P[Cu[,2],])
-  }
+  ##   ## Exlcude line segments which are on the edge for splitting
+  ##   Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
+  ##   Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
+  ##   ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
+  ##   l <- norm(P[Cu[,1],] - P[Cu[,2],])
+  ## }
 
-  ## Check there are no zero-length lines
-  if (any(l==0)) {
-    print("WARNING: zero-length lines")
-  }
+  ## ## Check there are no zero-length lines
+  ## if (any(l==0)) {
+  ##   print("WARNING: zero-length lines")
+  ## }
 
-  ## Add the new points to the correspondances vector
-  h <- c(s$h, (length(s$h)+1):nrow(P))
+  ## ## Add the new points to the correspondances vector
+  ## h <- c(s$h, (length(s$h)+1):nrow(P))
 
-  ## Swap orientation of triangles which have clockwise orientation
-  a.signed <- tri.area.signed(P, T)
-  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+  ## ## Swap orientation of triangles which have clockwise orientation
+  ## a.signed <- tri.area.signed(P, T)
+  ## T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
 
-  ## Calculate the area of each triangle a and the total area A
-  a <- abs(a.signed)
-  A <- sum(a)
+  ## ## Create the connection matrix from the triangulation
+  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  ## Cu <- Unique(Cu, TRUE)
 
-  ## Create the connection matrix from the triangulation
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
+  ## ## Find lengths of connections
+  ## L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
 
-  ## Find lengths of connections
-  L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
-
-  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L))
+  return(list(P=Q, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL))
 }
 
 merge.points <- function(t, s) {
