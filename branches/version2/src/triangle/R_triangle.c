@@ -137,13 +137,11 @@ int reportnorms;
 
 SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
 {
-  SEXP Q;
-  SEXP B;
-  SEXP T;
+  /* Output variables */
+  SEXP oP, oPB, oT, oS, oSB;
   SEXP ans;
-  double *xP, *xQ;
-  int *xT;
-  int *xB;
+  double *xP, *xoP;
+  int *xoT, *xoPB, *xoS, *xoSB;
   
   /* Convert input point matrix into array */
   PROTECT(P = AS_NUMERIC(P));
@@ -244,35 +242,52 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
 
   /* Make space for answers */
   printf("Number of output points %d", mid.numberofpoints);
-  PROTECT(Q = allocMatrix(REALSXP, mid.numberofpoints, 2));
-  PROTECT(B = allocMatrix(INTSXP,  mid.numberofpoints, 1));
-  PROTECT(T = allocMatrix(INTSXP,  mid.numberoftriangles, 3));
-
-  xQ = REAL(Q);
+  PROTECT(oP  = allocMatrix(REALSXP, mid.numberofpoints, 2));
+  PROTECT(oPB = allocMatrix(INTSXP,  mid.numberofpoints, 1));
+  PROTECT(oT  = allocMatrix(INTSXP,  mid.numberoftriangles, 3));
+  PROTECT(oS  = allocMatrix(INTSXP,  mid.numberofsegments, 2));
+  PROTECT(oSB = allocMatrix(INTSXP,  mid.numberofsegments, 1));
+  
+  xoP = REAL(oP);
   for (int i = 0; i < mid.numberofpoints; i++) {
     for (int j = 0; j < 2; j++) {
-      xQ[j * mid.numberofpoints + i] = mid.pointlist[i * 2 + j];
+      xoP[j * mid.numberofpoints + i] = mid.pointlist[i * 2 + j];
     }
   }
 
-  xB = INTEGER(B);
+  xoPB = INTEGER(oPB);
   for (int i = 0; i < mid.numberofpoints; i++) {
-    xB[i] = mid.pointmarkerlist[i];
+    xoPB[i] = mid.pointmarkerlist[i];
   }
   
-  xT = INTEGER(T);
+  xoT = INTEGER(oT);
   for (int i = 0; i < mid.numberoftriangles; i++) {
     for (int j = 0; j < mid.numberofcorners; j++) {
-      xT[j * mid.numberoftriangles + i] = mid.trianglelist[i * mid.numberofcorners + j];
+      xoT[j * mid.numberoftriangles + i] = mid.trianglelist[i * mid.numberofcorners + j];
     }
   }
-  
-  PROTECT(ans = allocVector(VECSXP, 3));
-  SET_VECTOR_ELT(ans, 0, Q);
-  SET_VECTOR_ELT(ans, 1, B);
-  SET_VECTOR_ELT(ans, 2, T);
 
-  UNPROTECT(5);
+  xoS = INTEGER(oS);
+  for (int i = 0; i < mid.numberofsegments; i++) {
+    for (int j = 0; j < 2; j++) {
+      xoS[j * mid.numberofsegments + i] = mid.segmentlist[i * 2 + j];
+    }
+  }
+
+  xoSB = INTEGER(oSB);
+  for (int i = 0; i < mid.numberofsegments; i++) {
+    xoSB[i] = mid.segmentmarkerlist[i];
+  }
+  
+  PROTECT(ans = allocVector(VECSXP, 5));
+  SET_VECTOR_ELT(ans, 0, oP);
+  SET_VECTOR_ELT(ans, 1, oPB);
+  SET_VECTOR_ELT(ans, 2, oT);
+  SET_VECTOR_ELT(ans, 3, oS);
+  SET_VECTOR_ELT(ans, 4, oSB);
+
+
+  UNPROTECT(7);
 
   /* Free all allocated arrays, including those allocated by Triangle. */
   free(mid.pointlist);

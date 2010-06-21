@@ -17,6 +17,7 @@ if (TRUE) {
 out <- triangulate(P, a=0.1)
 print(out)
 require(geometry)
-trimesh(out$T, out$Q)
-print(out$B)
+trimesh(out$T, out$P)
 
+with(out, segments(P[S[,1], 1], P[S[,1], 2],
+                   P[S[,2], 1], P[S[,2], 2], col="red"))
