@@ -1,0 +1,109 @@
+\documentclass{article}
+
+\newcommand{\svninfo}{$ $Rev$ $, $ $Date$ $}
+\pagestyle{myheadings}
+\markboth{\svninfo}{\svninfo}
+
+\usepackage[a4paper,left=1in,right=1in,top=1in,bottom=1in,head=1in]{geometry}
+
+\usepackage[british]{babel}
+
+\title{The retinal mapping data and the nmf\_morph toolkit}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{myheadings}
+
+\section{Data format}
+\label{manual:sec:reading-data}
+
+\begin{table}
+  \begin{tabular}{ll}
+    \hline
+    \multicolumn{2}{c}{\textbf{FOR EACH BOUNDARY}} \\
+    \hline
+    \texttt{MAPNUM}   & id number of boundary \\  
+    \texttt{MINLAT}   & min latitude      \\
+    \texttt{MAXLAT}   & max latitude      \\
+    \texttt{MINLON}   & min longitude     \\
+    \texttt{MAXLON}   & max longitude     \\
+    \texttt{LABLAT}   & latitude of label \\
+    \texttt{LABLON}   & longitude of label\\
+    \hline
+    \multicolumn{2}{c}{\textbf{FOR EACH CELL}} \\
+    \hline
+    \texttt{XRED}     & $x$-coordinate if cell labelled red but not doubly\\
+    \texttt{YRED}     & $y$-coordinate if cell labelled red but not doubly\\
+    \texttt{XGREEN}   & $x$-coordinate if cell labelled green but not doubly\\
+    \texttt{YGREEN}   & $y$-coordinate if cell labelled green but not doubly\\
+    \texttt{XDOUBLE}  & $x$-coordinate if cell labelled doubly\\ 
+    \texttt{YDOUBLE}  & $y$-coordinate if cell labelled doubly\\
+    \texttt{XGRID}    & sample box cell is in \\
+    \texttt{YGRID}    & sample box cell is in \\
+    \texttt{PERIM}    & perimeter of cell \\
+    \texttt{AREA}     & area of cell \\
+    \hline
+    \multicolumn{2}{c}{\textbf{ONE PER GRID BOX}} \\
+    \hline
+    \texttt{GRIDX}    & grid location of centre of sample box \\
+    \texttt{GRIDY}    & grid location of centre of sample box \\
+    \texttt{XGRIDCOO} & $x$-coordinate of centre of sample box \\
+    \texttt{YGRIDCOO} & $y$-coordinate of centre of sample box \\
+    \texttt{BOXSIZEX} & size (half width) of sample box in $x$-direction \\
+    \texttt{BOXSIZEY} & size (half width) of sample box in $y$-direction \\
+    \texttt{COMPLETE} & whether counting of sample has been completed\\
+    \texttt{TOTALCEL} & total number of cells in this box\\
+    \texttt{TOTALRED} & total number of red-only cells in this box\\
+    \texttt{TOTALGRE} & total number of green-only cells in this box\\
+    \texttt{TOTALDOU} & total number of double cells in this box\\
+    \texttt{MEANPERI} & average perimeter of all cells \\
+    \texttt{MEANAREA} & average area of all cells \\
+  \end{tabular}
+  \caption{Column headings of the \texttt{SYS.SYS} file.}
+  \label{tab:data-format}
+\end{table}
+
+The data for each retina is stored in a separate directory. Within
+each directory there are two files:
+\begin{description}
+\item[\texttt{SYS.SYS}] A table in SYSTAT format containing the
+  coordinates of the red, green and doubly labelled cell bodies, and
+  counts of labelled cell bodies within each grid box. The column
+  headings shown in Table~\ref{tab:data-format}.  Each row of the
+  table contains information only on a subset of the data, e.g.\ the
+  coordinates of a red-labelled cell.
+\item[\texttt{ALU.MAP}] A text file containing the coordinates of the
+  map outline. The file comprises a number of sections, each starting
+  with a single number, which is the number of lines to read in the
+  next section. These lines have two numbers each, the $x$ and $y$
+  coordinates of a vertex of the map outline.
+\end{description}
+
+\section{Reading in and displaying data}
+\label{manual:sec:datafile-utils}
+
+All code is to be found in the \texttt{trunk/src} directory. The R
+program should be started from this directory in the following examples.
+
+To read in data use the functions in \texttt{datafile-utils.R}. Here
+is code to read in the data from a directory containing the
+\texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
+\begin{verbatim}
+source("datafile-utils.R")
+sys <- read.sys("/data/path/gm257-1-P8-C57BL6/")
+map <- read.map("/data/path/gm257-1-P8-C57BL6/")
+plot.sys.map(sys, map)
+\end{verbatim}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% TeX-PDF-mode: t
+%%% End: 
+
+% LocalWords:  MAPNUM MINLAT MAXLAT MINLON MAXLON LABLAT LABLON XRED YRED XGRID
+% LocalWords:  XGREEN YGREEN XDOUBLE labeled YGRID PERIM GRIDX GRIDY XGRIDCOO
+% LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
+% LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils

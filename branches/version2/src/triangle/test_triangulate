@@ -1,0 +1,2 @@
+#!/bin/sh
+R CMD SHLIB *.c && R --vanilla < test_triangulate.R
