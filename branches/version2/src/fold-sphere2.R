@@ -1017,7 +1017,10 @@ make.triangulation <- function(P, n=200) {
   T <- out$T
   a <- tri.area(P, T)
 
-  gf <- segments2pointers(S)
+  ## Create pointers from segments
+  gf <- segments2pointers(out$S)
+  gb <- gf
+  gb[na.omit(gf)] <- which(!is.na(gf))
 
   ## trimesh(T, P, col="grey", add=TRUE)
   
