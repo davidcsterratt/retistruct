@@ -1007,7 +1007,7 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
 ## Cu  - Unique set of M connections, as M*2 matrix
 ## L   - Length of each connection
 ## h   - Correspondances vector?????
-make.triangulation <- function(P, n=100) {
+make.triangulation <- function(P, n=200) {
   ## Make initial triangulation to determine area
   out <- triangulate(P)
   A <- sum(with(out, tri.area(P, T)))
@@ -1016,6 +1016,9 @@ make.triangulation <- function(P, n=100) {
   P <- out$P
   T <- out$T
   a <- tri.area(P, T)
+
+  gf <- segments2pointers(S)
+
   ## trimesh(T, P, col="grey", add=TRUE)
   
   ## ## Find lines which join non-adjacent parts of the outline
@@ -1116,7 +1119,38 @@ make.triangulation <- function(P, n=100) {
   ## ## Find lengths of connections
   ## L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
 
-  return(list(P=P, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL))
+  return(list(P=P, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL,
+              gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
+}
+
+## Convert a matrix containing on each line the indicies of the points
+## forming a segment, and convert this to two sets of ordered pointers
+segments2pointers <- function(S) {
+  g <- c()
+  j <- 1                                # Row of S
+  k <- 1                                # Column of S
+  while(nrow(S) > 0) {
+    i <- S[j,3-k]
+    g[S[j,k]] <- i
+    print(paste(j, k, S[j,k], "connects to", i))
+    S <- S[-j,,drop=FALSE]
+    if (nrow(S) == 0) {
+      return(g)
+    }
+    j <- which(S[,1] == i)
+    if (length(j)) {
+      k <- 1
+    } else {
+      j <- which(S[,2] == i)
+      k <- 2
+      if (!length(j)) {
+        print("No matching index")
+        return(NULL)
+      }
+    }
+        
+  }
+  return(g)
 }
 
 merge.points <- function(t, s) {
