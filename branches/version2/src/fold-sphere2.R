@@ -1010,12 +1010,12 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
 make.triangulation <- function(P, n=100) {
   ## Make initial triangulation to determine area
   out <- triangulate(P)
-  A <- sum(with(out, tri.area(Q, T)))
+  A <- sum(with(out, tri.area(P, T)))
   print(A)
   out <- triangulate(P, a=A/n)
-  Q <- out$Q
+  P <- out$P
   T <- out$T
-  a <- tri.area(Q, T)
+  a <- tri.area(P, T)
   ## trimesh(T, P, col="grey", add=TRUE)
   
   ## ## Find lines which join non-adjacent parts of the outline
@@ -1116,7 +1116,7 @@ make.triangulation <- function(P, n=100) {
   ## ## Find lengths of connections
   ## L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
 
-  return(list(P=Q, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL))
+  return(list(P=P, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL))
 }
 
 merge.points <- function(t, s) {
