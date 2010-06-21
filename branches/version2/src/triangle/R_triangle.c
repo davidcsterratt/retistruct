@@ -138,11 +138,12 @@ int reportnorms;
 SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
 {
   SEXP Q;
+  SEXP B;
   SEXP T;
-  SEXP ans, dimnames;
+  SEXP ans;
   double *xP, *xQ;
   int *xT;
-  int nP, nQ, nT;
+  int *xB;
   
   /* Convert input point matrix into array */
   PROTECT(P = AS_NUMERIC(P));
@@ -151,7 +152,7 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
   // PROTECT(B = AS_NUMERIC(B));
 
   /* Create the triangulateio structures */
-  struct triangulateio in, mid, out, vorout;
+  struct triangulateio in, mid, vorout;
 
   in.numberofpoints = LENGTH(P)/2;
   in.numberofpointattributes = 0; 
@@ -244,13 +245,19 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
   /* Make space for answers */
   printf("Number of output points %d", mid.numberofpoints);
   PROTECT(Q = allocMatrix(REALSXP, mid.numberofpoints, 2));
-  PROTECT(T = allocMatrix(INTSXP, mid.numberoftriangles, 3));
+  PROTECT(B = allocMatrix(INTSXP,  mid.numberofpoints, 1));
+  PROTECT(T = allocMatrix(INTSXP,  mid.numberoftriangles, 3));
 
   xQ = REAL(Q);
   for (int i = 0; i < mid.numberofpoints; i++) {
     for (int j = 0; j < 2; j++) {
       xQ[j * mid.numberofpoints + i] = mid.pointlist[i * 2 + j];
     }
+  }
+
+  xB = INTEGER(B);
+  for (int i = 0; i < mid.numberofpoints; i++) {
+    xB[i] = mid.pointmarkerlist[i];
   }
   
   xT = INTEGER(T);
@@ -260,11 +267,12 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
     }
   }
   
-  PROTECT(ans = allocVector(VECSXP, 2));
+  PROTECT(ans = allocVector(VECSXP, 3));
   SET_VECTOR_ELT(ans, 0, Q);
-  SET_VECTOR_ELT(ans, 1, T);
+  SET_VECTOR_ELT(ans, 1, B);
+  SET_VECTOR_ELT(ans, 2, T);
 
-  UNPROTECT(4);
+  UNPROTECT(5);
 
   /* Free all allocated arrays, including those allocated by Triangle. */
   free(mid.pointlist);
