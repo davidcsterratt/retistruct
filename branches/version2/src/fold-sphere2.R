@@ -993,7 +993,7 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
 }
 
 ## make.triagulation(P, n)
-
+##
 ## Create a triangulation of the outline defined by the points P,
 ## which are represented as N*2 matrix. There should be at least n
 ## triangles in the triangulation
@@ -1005,7 +1005,7 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
 ## Cu  - Unique set of M connections, as M*2 matrix
 ## L   - Length of each connection
 ## h   - Correspondances vector?????
-make.triangulation <- function(P, g=NULL, n=200,
+make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
                                suppress.external.steiner=FALSE) {
   S <- NULL
   if (!is.null(g)) {
@@ -1067,7 +1067,7 @@ make.triangulation <- function(P, g=NULL, n=200,
   }
 
   ## Add the new points to the correspondances vector
-  ## h <- c(s$h, (length(s$h)+1):nrow(P))
+  h <- c(h, (length(h)+1):nrow(P))
 
   ## Swap orientation of triangles which have clockwise orientation
   a.signed <- tri.area.signed(P, T)
@@ -1086,7 +1086,7 @@ make.triangulation <- function(P, g=NULL, n=200,
     print("WARNING: zero-length lines")
   }
   
-  return(list(P=P, T=T, Cu=Cu, h=NULL, a=a, A=A, L=NULL,
+  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L,
               gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
 
@@ -1119,35 +1119,64 @@ segments2pointers <- function(S) {
   return(g)
 }
 
-## Convert a set of ordered pointers to a matrix containing on each line the indicies of the points forming a segment
+## Convert a set of ordered pointers to a matrix containing on each
+## line the indicies of the points forming a segment
 pointers2segments <- function(g) {
   S1 <- which(!is.na(g))
   S2 <- g[S1]
   return(cbind(S1, S2))
 }
 
-  
-merge.points <- function(t, s) {
+## Merge points and edges before optimising the elastic energy
+## The information to be merged is contained in the
+## triangulation list t and the stitch list s.
+##
+## The information includes 
+## h    - (in s) the point correspondence mapping
+## Rset - (in s) the set of points on the rim
+## T    - (in t) the triangulation
+## Cu   - (in t) the edge matrix
+## L    - (in t) the edge lengths
+## P    - (in t) the point locations
+##
+## The function returns merged and transformed versions of all these
+## objects (all suffixed with t), as well as a matrix Bt, which maps a
+## binary vector representation of edge indicies onto a binary vector
+## representation of the indicies of the points linked by the edge
+merge.points.edges <- function(t, s) {
   h <- t$h
   T <- t$T
   Cu <- t$Cu
   L <- t$L
   P <- t$P
   
-  ## Translation into unique points
+  ## Form the mapping from a new set of consecutive indicies
+  ## the existing indicies onto the existing indicies
   u <- unique(h)
-  uset <- list()
-  for (i in 1:length(u)) {
-    uset[[i]] <- which(h == u[i])
-  }
+
+  ## Transform the point set into the new indicies
+  Pt  <- P[u,]
+
+  ## Transform the point correspondance mapping to the new index space  
   ht <- c()
   for (i in 1:length(h)) {
     ht[i] <- which(u == h[i])
   }
+
+  ## DOESN'T WORK
+  ## Form the inverse mapping from the existing indicies to the new
+  ## set of consecutive indicies
+  ## uinv <- c()
+  ## uinv[u] <- 1:length(u)
+  ## ht <- uinv[h[u]]
+
+  ## Transform the triangulation to the new index space
   Tt  <- matrix(ht[T], ncol=3)
+
+  ## Tansform the forward pointer into the new indicies
   gft <- ht[s$gf]
 
-  ## Determine correspondance of line edges
+  ## Determine H, the mapping from edges onto corresponding edges
   Cut <- matrix(ht[Cu], ncol=2)
   Cut <- t(apply(Cut, 1, sort))
   M <- nrow(Cut)
@@ -1162,12 +1191,21 @@ merge.points <- function(t, s) {
       }
     }
   }
+
+  ## Form the mapping from a new set of consecutive edge indicies
+  ## the existing indicies onto the existing edge indicies
   U <- unique(H)
+
+  ## Transform the edge set into the new indicies
   Cut <- Cut[U,]
+
+  ## Transform the edge correspondance mapping to the new index space  
   Ht <- c()
   for (i in 1:length(H)) {
     Ht[i] <- which(U == H[i])
   }
+
+  ## Create the lengths of the merge edges by averaging
   Lt <- c()
   for (k in 1:length(U)) {
     is <- which(Ht == k)
@@ -1177,21 +1215,18 @@ merge.points <- function(t, s) {
     Lt[k] <- mean(L[is])
   }
 
-  ## Cut <- rbind(Tt[,1:2], Tt[,2:3], Tt[,c(3,1)])
-  ## Cut <- Unique(Cut, TRUE)
-  Pt  <- P[u,]
-  ##for (i in 1:length(uset)) {
-  ##  if (length(uset[[i]]) > 1) {
-  ##    Pt[i,] <- colMeans(P[uset[[i]],])
-  ##  }
-  ##}
+  ## Transform the rim set
   Rsett <- unique(ht[s$Rset])
+
+  ## Create the symmetric connection set
   Ct <- rbind(Cut, Cut[,2:1])
+
   ## Matrix to map line segments onto the points they link
   Bt <- matrix(0, nrow(Pt), nrow(Ct))
   for (i in 1:nrow(Ct)) {
     Bt[Ct[i,1],i] <- 1
   }
+  
   return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht, Rsett=Rsett, P=P))
 }
 
@@ -1226,7 +1261,7 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
 ## Takes tear matrix
 ## Returns result of optimise.mapping()
 fold.retina <- function(P, tearmat, graphical=TRUE) {
-  t <- make.triangulation(P, n=200)
+  t <- make.triangulation(P, h=1:nrow(P), n=200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
@@ -1236,14 +1271,14 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
     plot.stitch(s)
   }
 
-  t1 <- make.triangulation(s$P, g=s$gf, n=200, suppress.external.steiner=TRUE)
+  t1 <- make.triangulation(s$P, h=s$h, g=s$gf, n=200, suppress.external.steiner=TRUE)
   if (graphical) {
     plot.stitch(s)
     with(t1, trimesh(T, P, col="grey", add=TRUE))
 
   }
   
-  ## m <- merge.points(t, s)
+  m <- merge.points.edges(t1, s)
 
   ## if (graphical) {
   ##   plot(P)
