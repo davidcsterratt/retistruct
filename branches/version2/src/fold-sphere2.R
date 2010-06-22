@@ -1005,12 +1005,17 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
 ## Cu  - Unique set of M connections, as M*2 matrix
 ## L   - Length of each connection
 ## h   - Correspondances vector?????
-make.triangulation <- function(P, n=200) {
+make.triangulation <- function(P, g=NULL, n=200,
+                               suppress.external.steiner=FALSE) {
+  S <- NULL
+  if (!is.null(g)) {
+    S <- pointers2segments(g)
+  }
   ## Make initial triangulation to determine area
-  out <- triangulate(P)
+  out <- triangulate(P, S)
   A <- sum(with(out, tri.area(P, T)))
   print(A)
-  out <- triangulate(P, a=A/n, q=20)
+  out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
   P <- out$P
   T <- out$T
 
@@ -1114,6 +1119,14 @@ segments2pointers <- function(S) {
   return(g)
 }
 
+## Convert a set of ordered pointers to a matrix containing on each line the indicies of the points forming a segment
+pointers2segments <- function(g) {
+  S1 <- which(!is.na(g))
+  S2 <- g[S1]
+  return(cbind(S1, S2))
+}
+
+  
 merge.points <- function(t, s) {
   h <- t$h
   T <- t$T
@@ -1213,7 +1226,7 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
 ## Takes tear matrix
 ## Returns result of optimise.mapping()
 fold.retina <- function(P, tearmat, graphical=TRUE) {
-  t <- make.triangulation(P, 200)
+  t <- make.triangulation(P, n=200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
@@ -1222,8 +1235,14 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
   if (graphical) {
     plot.stitch(s)
   }
-  
 
+  t1 <- make.triangulation(s$P, g=s$gf, n=200, suppress.external.steiner=TRUE)
+  if (graphical) {
+    plot.stitch(s)
+    with(t1, trimesh(T, P, col="grey", add=TRUE))
+
+  }
+  
   ## m <- merge.points(t, s)
 
   ## if (graphical) {
