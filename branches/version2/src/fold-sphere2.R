@@ -34,19 +34,17 @@ path.length <- function(i, j, g, h, P) {
 }
 
 ## P is the set of points describing the edge.
+## gf is the forward pointer list
+## gb is the backward pointer list
 ## T is the tear matrix
-stitch.retina <- function(P, T) {
+stitch.retina <- function(P, gf, gb, T) {
   ## Extract information from tear matrix
   A  <- T[,1]                            # apicies of tears
   VB <- T[,2]                           # forward verticies
   VF <- T[,3]                           # backward verticies
 
-  ## Create forward and backward pointers
-  N <- nrow(P)                          # Number of points
-  gf <- Mod((1:N) + 1, N) # c(2:N, 1)
-  gb <- Mod((1:N) - 1, N) # c(N, 1:(N-1))
-  
   ## Create initial sets of correspondances
+  N <- nrow(P)                          # Number of points
   hf <- 1:N
   hb <- 1:N
   hf[VB] <- VF
@@ -1015,114 +1013,75 @@ make.triangulation <- function(P, n=200) {
   out <- triangulate(P, a=A/n)
   P <- out$P
   T <- out$T
-  a <- tri.area(P, T)
 
   ## Create pointers from segments
   gf <- segments2pointers(out$S)
   gb <- gf
   gb[na.omit(gf)] <- which(!is.na(gf))
-
+  Rset <- na.omit(gf)
+  
   ## trimesh(T, P, col="grey", add=TRUE)
+
+  ## Removal of lines which join non-ajancent parts of the outline
+
+  ## Find lines which join non-adjacent parts of the outline
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+
   
-  ## ## Find lines which join non-adjacent parts of the outline
-  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  ## Cu <- Unique(Cu, TRUE)
-  
-  ## for (i in 1:nrow(Cu)) {
-  ##   C1 <- Cu[i,1]
-  ##   C2 <- Cu[i,2]
-  ##   if (all(Cu[i,] %in% s$Rset)) {
-  ##     if (!((C1 == s$gf[C2]) ||
-  ##           (C2 == s$gf[C1]))) {
-  ##       ## Find triangles containing the line
-  ##       ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-  ##       Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-  ##       print(paste("Non-adjacent points in rim connected by line:", C1, C2))
-  ##       print(paste("In triangle:", Tind))
-  ##       T1 <- setdiff(T[Tind[1],], Cu[i,])
-  ##       T2 <- setdiff(T[Tind[2],], Cu[i,])
-  ##       print(paste("Other points in triangle:", T1, T2))
-  ##       p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-  ##       points(p[1], p[2], col="red")
-  ##       P <- rbind(P, p)
-  ##       n <- nrow(P)
-  ##       T[Tind[1],] <- c(n, C1, T1)
-  ##       T[Tind[2],] <- c(n, C1, T2)
-  ##       T <- rbind(T,
-  ##                  c(n, C2, T1),
-  ##                  c(n, C2, T2))
-  ##     }
-  ##   }
-  ## }
+  for (i in 1:nrow(Cu)) {
+    C1 <- Cu[i,1]
+    C2 <- Cu[i,2]
+    if (all(Cu[i,] %in% Rset)) {
+      if (!((C1 == gf[C2]) ||
+            (C2 == gf[C1]))) {
+        ## Find triangles containing the line
+        ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
+        Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+        print(paste("Non-adjacent points in rim connected by line:", C1, C2))
+        print(paste("In triangle:", Tind))
+        ## Find points T1 & T2 in the two triangles which are not common
+        ## with the edge
+        T1 <- setdiff(T[Tind[1],], Cu[i,])
+        T2 <- setdiff(T[Tind[2],], Cu[i,])
+        print(paste("Other points in triangles:", T1, T2))
+        ## Create a new point at the centroid of the four verticies
+        ## C1, C2, T1, T2
+        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+        points(p[1], p[2], col="red")
+        P <- rbind(P, p)
+        n <- nrow(P)
+        ## Remove the two old triangles, and create the four new ones
+        T[Tind[1],] <- c(n, C1, T1)
+        T[Tind[2],] <- c(n, C1, T2)
+        T <- rbind(T,
+                   c(n, C2, T1),
+                   c(n, C2, T2))
+      }
+    }
+  }
 
-
-  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  ## Cu <- Unique(Cu, TRUE)
-  ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
-
-  ## l <- norm(P[Cu[,1],] - P[Cu[,2],])
-  ## while (max(l) > 2*d) {
-  ##   i <- which.max(l)
-  ##   ##  print(l[i])
-
-  ##   C1 <- Cu[i,1]
-  ##   C2 <- Cu[i,2]
-    
-  ##   ## Find triangles containing the line
-  ##   ## segments(P[C1,1], P[C1,2],
-  ##   ## P[C2,1], P[C2,2], col="red")
-  ##   Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-  ##   ##  print(Cu[i,])
-  ##   ##  print(Tind)
-  ##   T1 <- setdiff(T[Tind[1],], Cu[i,])
-  ##   T2 <- setdiff(T[Tind[2],], Cu[i,])
-  ##   ##  print(T1)
-  ##   ##  print(paste(C1, C2, T1, T2))
-
-  ##   p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-  ##   ## points(p[1], p[2], col="red")
-  ##   P <- rbind(P, p)
-  ##   n <- nrow(P)
-  ##   T[Tind[1],] <- c(n, C1, T1)
-  ##   T[Tind[2],] <- c(n, C1, T2)
-  ##   T <- rbind(T,
-  ##              c(n, C2, T1),
-  ##              c(n, C2, T2))
-    
-  ##   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  ##   Cu <- Unique(Cu, TRUE)
-
-  ##   ## print(length(which(Cu[,1] == s$gf[Cu[,2]])))
-  ##   ## print(length(which(Cu[,2] == s$gf[Cu[,1]])))
-
-  ##   ## Exlcude line segments which are on the edge for splitting
-  ##   Cu <- Cu[-which(Cu[,1] == s$gf[Cu[,2]]),]
-  ##   Cu <- Cu[-which(Cu[,2] == s$gf[Cu[,1]]),]
-  ##   ## Cu <- Cu[!((Cu[,1] %in% s$gf) & (Cu[,2] %in% s$gf)),] 
-  ##   l <- norm(P[Cu[,1],] - P[Cu[,2],])
-  ## }
-
-  ## ## Check there are no zero-length lines
-  ## if (any(l==0)) {
-  ##   print("WARNING: zero-length lines")
-  ## }
-
-  ## ## Add the new points to the correspondances vector
+  ## Add the new points to the correspondances vector
   ## h <- c(s$h, (length(s$h)+1):nrow(P))
 
-  ## ## Swap orientation of triangles which have clockwise orientation
-  ## a.signed <- tri.area.signed(P, T)
-  ## T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+  ## Swap orientation of triangles which have clockwise orientation
+  a.signed <- tri.area.signed(P, T)
+  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+  a <- abs(a.signed)
+  
+  ## Create the edge matrix from the triangulation
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
 
-  ## ## Create the connection matrix from the triangulation
-  ## Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  ## Cu <- Unique(Cu, TRUE)
+  ## Find lengths of connections
+  L <- norm(P[Cu[,1],] - P[Cu[,2],])
 
-  ## ## Find lengths of connections
-  ## L <- sqrt(rowSums((P[Cu[,1],] - P[Cu[,2],])^2))
-
-  return(list(P=P, T=T, Cu=NULL, h=NULL, a=a, A=A, L=NULL,
+  ## Check there are no zero-length lines
+  if (any(L==0)) {
+    print("WARNING: zero-length lines")
+  }
+  
+  return(list(P=P, T=T, Cu=Cu, h=NULL, a=a, A=A, L=NULL,
               gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
 
@@ -1135,7 +1094,6 @@ segments2pointers <- function(S) {
   while(nrow(S) > 0) {
     i <- S[j,3-k]
     g[S[j,k]] <- i
-    print(paste(j, k, S[j,k], "connects to", i))
     S <- S[-j,,drop=FALSE]
     if (nrow(S) == 0) {
       return(g)
@@ -1255,34 +1213,35 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
 ## Takes tear matrix
 ## Returns result of optimise.mapping()
 fold.retina <- function(P, tearmat, graphical=TRUE) {
-  s <- stitch.retina(P, tearmat)
-  if (graphical) {
-    plot.stitch(s)
-  }
-  
-  t <- make.triangulation(s)
+  t <- make.triangulation(P, 200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
 
-  m <- merge.points(t, s)
-
+  s <- stitch.retina(t$P, t$gf, t$gb, tearmat)
   if (graphical) {
-    plot(P)
-    with(s, plot.outline(P, gb))
+    plot.stitch(s)
   }
+  
 
-  p <- project.to.sphere(m, t, phi0=50*pi/180)
+  ## m <- merge.points(t, s)
 
-  if (graphical) {
-    ## Initial plot in 3D space
-    plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
-  }
+  ## if (graphical) {
+  ##   plot(P)
+  ##   with(s, plot.outline(P, gb))
+  ## }
 
-  r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
-  p1 <- p
-  p1$phi <- r$phi
-  p1$lambda <- r$lambda
-  r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
+  ## p <- project.to.sphere(m, t, phi0=50*pi/180)
+
+  ## if (graphical) {
+  ##   ## Initial plot in 3D space
+  ##   plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+  ## }
+
+  ## r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
+  ## p1 <- p
+  ## p1$phi <- r$phi
+  ## p1$lambda <- r$lambda
+  ## r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
 }
 
