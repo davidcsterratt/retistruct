@@ -1010,7 +1010,7 @@ make.triangulation <- function(P, n=200) {
   out <- triangulate(P)
   A <- sum(with(out, tri.area(P, T)))
   print(A)
-  out <- triangulate(P, a=A/n)
+  out <- triangulate(P, a=A/n, q=20)
   P <- out$P
   T <- out$T
 

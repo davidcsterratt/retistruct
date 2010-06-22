@@ -135,7 +135,7 @@ int reportnorms;
 /*                                                                           */
 /*****************************************************************************/
 
-SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
+SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a, SEXP q)
 {
   /* Output variables */
   SEXP oP, oPB, oT, oS, oSB, oE, oEB;
@@ -198,13 +198,16 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a)
   /*   produce an edge list (e), a Voronoi diagram (v), and a triangle */
   /*   neighbor list (n).                                              */
 
-  char flags[100];
+  char flags[200];
   strcpy(flags, "pevn");
-  char opts[100];
+  char opts[200];
   if (isReal(a)) {
     sprintf(opts, "a%f", *REAL(a));
     strcat(flags, opts);
-    printf(flags);
+  }
+  if (isReal(q)) {
+    sprintf(opts, "q%f", *REAL(q));
+    strcat(flags, opts);
   }
 
   triangulate(flags, &in, &mid, &vorout);

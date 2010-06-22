@@ -53,25 +53,22 @@ overlap has not yet been implemented.
 \section{Algorithm}
 \label{fold-retina:sec:method}
 
-\subsection{Stitching algorithm}
-\label{fold-sphere:sec:stitching-algorithm}
+
+
+\subsection{Triangulation of flattened retina}
+\label{fold-sphere:sec:triang-flatt-retina}
 
 \begin{figure}[tp]
   \centering
-  \includegraphics{stitch}  
-  \caption{Stitching. The solid line is the outline of the retina. The
-    red circled-points are ones that were originally on the rim. The
-    blue lines are the + tears and the purple lines are the - tears.
-    Green lines indicate corresponding verticies at the end of tears.
-    Yellow lines indicate corresponding points along the tears. }
-  \label{fold-sphere:fig:stitch}
+  %\includegraphics{mesh}
+  \caption{Triangular mesh}
+  \label{fold-sphere:fig:mesh}
 \end{figure}
 
-Figure~\ref{fold-sphere:fig:stitch} shows a flattened
-retina which has had the stitching algorithm applied to it.  The edge
-of the flattend retina is described by a ordered set of $N$ points:
-$\mathcal{P} = \{\vec{p}_1,\dots,\vec{p}_N$\}.  Vectors $\vec{g}^+$
-and $\vec{g}^-$ of forwards and backwards pointers are set up:
+The edge of the flattend retina is described by a set of $N$ points:
+$\mathcal{P} = \{\vec{p}_1,\dots,\vec{p}_N$\}. Connections between
+points are represented by forwards and backwards pointers, which are
+represented as vectors $\vec{g}^+$ and $\vec{g}^-$:
 \begin{displaymath}
   g^+_i = \left\{
     \begin{array}{ll}
@@ -85,6 +82,74 @@ and $\vec{g}^-$ of forwards and backwards pointers are set up:
       N   & i = 1
     \end{array}\right.
 \end{displaymath}
+
+A triangular mesh with the set of points $\mathcal{P}$ as its boundary
+is created using the conforming Delaunay triangulation algorithm
+provided by the Triangle package \citep{shewchuk96b}. By summing the
+areas of the triangles in this rough triangulation, the total area $A$
+of the retina is computed. The retina is then triangulated again into
+at least $n=200$ triangles, by using the conforming Delaunay
+triangulation with the additional constraint that each triangle should
+by no larger than $A/n$, and and with Ruppert's
+\todo{Reference for Ruppert} method for ensuring the smallest angle of
+any triangle is no less than $20^\circ$.
+
+The triangulation comprises $M$ triangles and is described by an
+$M\times3$ matrix $\mathbf{T}$, where each row contains the indicies
+of the points in the triangle in anticlockwise order.
+
+The area $a_i$ of each triangle is computed:
+\begin{displaymath}
+  a_i = |0.5 (\vec{p}_{T_{i2}}-\vec{p}_{T_{i1}})\times
+  (\vec{p}_{T_{i3}}-\vec{p}_{T_{i2}})|
+\end{displaymath}
+
+\begin{enumerate}
+\item From the triangluation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
+  indicies representing line segments is constructed.
+\item For the morphing algorithm, it is essential that no line segment
+  connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
+  segments may be created by the triangulation. To detect such line
+  segments, each member of $\mathcal{C}$ is checked to see if it is a
+  subset of $\mathcal{R}$ and that its ends are not adjacent, by
+  using $g^+$ and $g^-$. For each line segment that is found, it is
+  removed by
+  \begin{itemize}
+  \item removing the two triangles that it belongs to from the list
+    $\mathbf{T}$
+  \item Creating a new point at the centroid of the four verticies
+    shared by these two triangles. This new point $i$ is added to the
+    correspondences vector: $h_i=i$.
+  \item Creating four new triangles, who all share the new point and
+    the each of which has two verticies from the set of four
+    triangles.
+  \end{itemize}
+\end{enumerate}
+
+The connection set is converted into $\mathbf{C}$, a symmetric,
+binary-valued matrix that defines if there is a connection between $i$
+and $j$.  
+
+The distances $L_{ij}$ are between grid points on the flattened retina
+are computed.
+
+\subsection{Stitching algorithm}
+\label{fold-sphere:sec:stitching-algorithm}
+
+\begin{figure}[tp]
+  \centering
+  %\includegraphics{stitch}  
+  \caption{Stitching. The solid line is the outline of the retina. The
+    red circled-points are ones that were originally on the rim. The
+    blue lines are the + tears and the purple lines are the - tears.
+    Green lines indicate corresponding verticies at the end of tears.
+    Yellow lines indicate corresponding points along the tears. }
+  \label{fold-sphere:fig:stitch}
+\end{figure}
+
+Figure~\ref{fold-sphere:fig:stitch} shows a flattened
+retina which has had the stitching algorithm applied to it. 
+
 Cuts and tears marked up by an expert.  Each of the $M$ cuts or tears
 $j$ is defined by a common apex at the point indexed by $A_j$, a
 vertex in the forwards direction (indexed by $V^+_j$) and in the
@@ -198,71 +263,6 @@ to as $\vec{h}$.
 % correspondances between points on cuts and tears using an algorithm
 % that
 
-\subsection{Triangulation of flattened retina}
-\label{fold-sphere:sec:triang-flatt-retina}
-
-\begin{figure}[tp]
-  \centering
-  \includegraphics{mesh}
-  \caption{Triangular mesh}
-  \label{fold-sphere:fig:mesh}
-\end{figure}
-
-Triangulation proceeds in a number of steps. 
-\begin{enumerate}
-\item $N_\mathrm{rand}=1000$ attempts are made to lay random points
-  within the rectangle bounded by the minimum and maxiumum $x$ and $y$
-  coordinates of members of $\mathcal{P}$.  Points which are outwith
-  the retinal outline, as determined using the \texttt{InPoly}
-  algorithm \citep{ORou98comp}, are rejected. Points which are less
-  than $d=200$ from existing points are also rejected.
-\item A Delaunay triangulation of the set of points $\mathcal{P}$ is
-  formed.  The triangulation comprises $M$ triangles and is described
-  by an $M\times3$ matrix $\mathbf{T}$, where each row contains the
-  indicies of the points in the triangle in anticlockwise order.
-  Triangles in $\mathbf{T}$ whose centres are outwith the retinal
-  outline are excluded from $\mathbf{T}$. The anticlockwise order is
-  ensured by finding the signed area $a^\mathrm{sign}_i$ of each
-  triangle using the vector product:
-  \begin{displaymath}
-    a^\mathrm{sign}_i = 0.5 (\vec{p}_{T_{i2}}-\vec{p}_{T_{i1}})\times
-        (\vec{p}_{T_{i3}}-\vec{p}_{T_{i2}})
-  \end{displaymath}
-  This is positive when the order of the indicies is anticlockwise,
-  and negative when it is clockwise.  If the signed area of triangle
-  $i$ is negative, two of the members of row $i$ of $\mathbf{T}$ are
-  flipped.
-\item From the triangluation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
-  indicies representing line segments is constructed.
-\item For the morphing algorithm, it is essential that no line segment
-  connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
-  segments may be created by the triangulation. To detect such line
-  segments, each member of $\mathcal{C}$ is checked to see if it is a
-  subset of $\mathcal{R}$ and that its ends are not adjacent, by
-  using $g^+$ and $g^-$. For each line segment that is found, it is
-  removed by
-  \begin{itemize}
-  \item removing the two triangles that it belongs to from the list
-    $\mathbf{T}$
-  \item Creating a new point at the centroid of the four verticies
-    shared by these two triangles. This new point $i$ is added to the
-    correspondences vector: $h_i=i$.
-  \item Creating four new triangles, who all share the new point and
-    the each of which has two verticies from the set of four
-    triangles.
-  \end{itemize}
-\item The same procedure is applyed to the longest edge that is longer
-  than $2d$ and repeated until no edges are longer than $2d$. At every
-  stage the set of connections $\mathcal{C}$ is recomputed to match
-  $\mathbf{T}$.
-\end{enumerate}
-
-The connection set is converted into $\mathbf{C}$, a symmetric,
-binary-valued matrix that defines if there is a connection between $i$
-and $j$.  
-
-The distances $L_{ij}$ are between grid points on the flattened retina
-are computed.
 
 \subsection{Projection onto hemisphere}
 \label{fold-sphere:sec:proj-onto-hemisph}
@@ -426,7 +426,7 @@ the sphere $R$ to vary within realistic bounds, to optimise the fit
 further.
 
 \bibliographystyle{natbib}
-\bibliography{mystrings,my}
+\bibliography{nmf_morph}
 
 \end{document}
 
