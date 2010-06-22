@@ -93,7 +93,7 @@ h.stitch.retina <- function(h, ...) {
 }
 
 h.triangulate.retina <- function(h, ...) {
-  out <- make.triangulation(P, 400)
+  out <- make.triangulation(P, n=400)
   dev.set(d2)
   with(out, trimesh(T, P))
 }
