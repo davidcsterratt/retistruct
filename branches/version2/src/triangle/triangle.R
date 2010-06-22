@@ -1,7 +1,7 @@
 if (is.loaded("R_triangulate")) dyn.unload("R_triangle.so")
 dyn.load("R_triangle.so")
 
-triangulate <- function(P, a=NULL, q=NULL) {
+triangulate <- function(P, a=NULL, q=NULL, Y=FALSE) {
   if (ncol(P) == 2) {
     P <- t(P)
   }
@@ -14,7 +14,8 @@ triangulate <- function(P, a=NULL, q=NULL) {
                as.integer(S),
                as.integer(SB),
                a,
-               q)
+               q,
+               Y)
   names(out) <- c("P", "PB", "T", "S", "SB", "E", "EB")
   return(out)
 }

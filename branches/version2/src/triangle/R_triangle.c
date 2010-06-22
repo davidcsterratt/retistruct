@@ -135,7 +135,7 @@ int reportnorms;
 /*                                                                           */
 /*****************************************************************************/
 
-SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a, SEXP q)
+SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a, SEXP q, SEXP Y)
 {
   /* Output variables */
   SEXP oP, oPB, oT, oS, oSB, oE, oEB;
@@ -208,6 +208,11 @@ SEXP R_triangulate (SEXP P, SEXP PB, SEXP S, SEXP SB, SEXP a, SEXP q)
   if (isReal(q)) {
     sprintf(opts, "q%f", *REAL(q));
     strcat(flags, opts);
+  }
+  if (isLogical(Y)) {
+    if (*LOGICAL(Y) == TRUE) {
+      strcat(flags, "Y");
+    }
   }
 
   triangulate(flags, &in, &mid, &vorout);
