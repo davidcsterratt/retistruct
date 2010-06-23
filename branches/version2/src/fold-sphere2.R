@@ -62,7 +62,9 @@ stitch.retina <- function(P, gf, gb, T) {
   for (j in 1:nrow(T)) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
+    ##print(paste("Forward tear", j))
     TFset[[j]] <- Mod(path(A[j], VF[j], gf, hf), N)
+    ##print(paste("Backward tear", j))
     TBset[[j]] <- Mod(path(A[j], VB[j], gb, hb), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
@@ -1020,7 +1022,18 @@ make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
   T <- out$T
 
   ## Create pointers from segments
-  gf <- segments2pointers(out$S)
+
+  ## To ensure the correct orientaion, we use the fact that the
+  ## triangles are all anticlockwise in orinentation, and that the
+  ## orientation of the first row of the segment matrix determines the
+  ## orientation of all the other rows.
+
+  ## We therefore find triangle which contains the first segment
+  S <- out$S
+  T1 <- which(apply(out$T, 1, function(x) {all(S[1,] %in% x)}))
+  S[1,] <- out$T[T1, out$T[T1,] %in% S[1,]] 
+  
+  gf <- segments2pointers(S)
   gb <- gf
   gb[na.omit(gf)] <- which(!is.na(gf))
   Rset <- na.omit(gf)
