@@ -29,8 +29,8 @@ add.tear <- function(h, ...) {
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
   A  <<- c(A , id)
-  VF <<- c(VF, id+1)
-  VB <<- c(VB, id-1)
+  VF <<- c(VF, gf[id])
+  VB <<- c(VB, gb[id])
   do.plot()
   enable.widgets(TRUE)
 }
@@ -79,6 +79,45 @@ save.state <- function(h, ...) {
   datadir <- svalue(g.dataset)
   write.csv(cbind(A, VB, VF), file.path(datadir, "T.csv"),  row.names=FALSE)
   write.csv(P, file.path(datadir, "P.csv"), row.names=FALSE)
+}
+
+h.load.dataset <- function(h, ...) {
+  curdir <- getwd()
+  if (svalue(h$obj) == "Select dataset") {
+    info = file.info(initial.dir)
+    if (!is.na(info$isdir)) {
+      setwd(initial.dir)
+    }
+  } else {
+    setwd(svalue(h$obj))
+    setwd("..")
+  } 
+  gfile(type="selectdir", text="Select a directory...",
+        handler = function(h, ...) {
+          print(h$file)
+          svalue(g.dataset) <- h$file
+        })
+  setwd(curdir)
+  dataset <<- svalue(h$obj)
+  map <<- read.map(dataset)
+  sys <<- read.sys(dataset)
+  segs <- map.to.segments(map)
+  P <<- segments.to.outline(segs)
+
+  ## Create forward and backward pointers
+  t <- make.triangulation(P, n=NA)
+  gf <<- t$gf
+  gb <<- t$gb
+
+  ## Read in tearfile
+  tearfile <- file.path(dataset, "T.csv")
+  if (file.exists(tearfile)) {
+    T <- read.csv(tearfile)
+    A  <<- T[,1]                            # apicies of tears
+    VB <<- T[,2]                           # forward verticies
+    VF <<- T[,3]                           # backward verticies
+  }
+  do.plot()
 }
 
 h.fold.retina <- function(h, ...) {
@@ -135,37 +174,7 @@ tbl[1, 3:4, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
     expand = TRUE, ps = 11)
 d2 <- dev.cur()
 tbl[2, 1,   anchor = c(1, 0)] = "Dataset"
-tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("Select dataset", handler = function(h, ...) {
-  curdir <- getwd()
-  if (svalue(h$obj) == "Select dataset") {
-    info = file.info(initial.dir)
-    if (!is.na(info$isdir)) {
-      setwd(initial.dir)
-    }
-  } else {
-    setwd(svalue(h$obj))
-    setwd("..")
-  } 
-  gfile(type="selectdir", text="Select a directory...",
-        handler = function(h, ...) {
-          print(h$file)
-          svalue(g.dataset) <- h$file
-        })
-  setwd(curdir)
-  dataset <<- svalue(h$obj)
-  map <<- read.map(dataset)
-  sys <<- read.sys(dataset)
-  segs <- map.to.segments(map)
-  P <<- segments.to.outline(segs)
-  tearfile <- file.path(dataset, "T.csv")
-  if (file.exists(tearfile)) {
-    T <- read.csv(tearfile)
-    A  <<- T[,1]                            # apicies of tears
-    VB <<- T[,2]                           # forward verticies
-    VF <<- T[,3]                           # backward verticies
-  }
-  do.plot()
-}) 
+tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("Select dataset", handler = h.load.dataset)
 tbl[3, 1, anchor = c(1, 0)] = "Actions"
 tbl[3, 2, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
                               handler=add.tear)
