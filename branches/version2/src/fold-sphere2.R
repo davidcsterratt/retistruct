@@ -1014,10 +1014,12 @@ make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
     S <- pointers2segments(g)
   }
   ## Make initial triangulation to determine area
-  out <- triangulate(P, S)
+  out <- triangulate(P, S, Y=TRUE)
   A <- sum(with(out, tri.area(P, T)))
   print(A)
-  out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
+  if (!is.na(n)) {
+    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
+  }
   P <- out$P
   T <- out$T
 
@@ -1031,7 +1033,16 @@ make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
   ## We therefore find triangle which contains the first segment
   S <- out$S
   T1 <- which(apply(out$T, 1, function(x) {all(S[1,] %in% x)}))
-  S[1,] <- out$T[T1, out$T[T1,] %in% S[1,]] 
+
+  ## Then find out which of the vertices in the triangle is not the
+  ## one we need
+  i <- which((out$T[T1,] %in% S[1,]) == FALSE)
+  if (i == 3) S[1,] <- out$T[T1,c(1,2)]
+  if (i == 2) S[1,] <- out$T[T1,c(3,1)]
+  if (i == 1) S[1,] <- out$T[T1,c(2,3)]
+
+  print(out$T[T1,])
+  print(S[1,])
   
   gf <- segments2pointers(S)
   gb <- gf
@@ -1040,57 +1051,58 @@ make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
   
   ## trimesh(T, P, col="grey", add=TRUE)
 
-  ## Removal of lines which join non-ajancent parts of the outline
-
-  ## Find lines which join non-adjacent parts of the outline
+  ## Derive edge matrix from triangulation
   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
 
-  
-  for (i in 1:nrow(Cu)) {
-    C1 <- Cu[i,1]
-    C2 <- Cu[i,2]
-    if (all(Cu[i,] %in% Rset)) {
-      if (!((C1 == gf[C2]) ||
-            (C2 == gf[C1]))) {
-        ## Find triangles containing the line
-        ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-        Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-        print(paste("Non-adjacent points in rim connected by line:", C1, C2))
-        print(paste("In triangle:", Tind))
-        ## Find points T1 & T2 in the two triangles which are not common
-        ## with the edge
-        T1 <- setdiff(T[Tind[1],], Cu[i,])
-        T2 <- setdiff(T[Tind[2],], Cu[i,])
-        print(paste("Other points in triangles:", T1, T2))
-        ## Create a new point at the centroid of the four verticies
-        ## C1, C2, T1, T2
-        p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-        points(p[1], p[2], col="red")
-        P <- rbind(P, p)
-        n <- nrow(P)
-        ## Remove the two old triangles, and create the four new ones
-        T[Tind[1],] <- c(n, C1, T1)
-        T[Tind[2],] <- c(n, C1, T2)
-        T <- rbind(T,
-                   c(n, C2, T1),
-                   c(n, C2, T2))
+  ## If we are in the business of refining triangles (i.e. specifying
+  ## n), remove lines which join non-ajancent parts of the outline
+  if (!is.na(n)) {
+    for (i in 1:nrow(Cu)) {
+      C1 <- Cu[i,1]
+      C2 <- Cu[i,2]
+      if (all(Cu[i,] %in% Rset)) {
+        if (!((C1 == gf[C2]) ||
+              (C2 == gf[C1]))) {
+          ## Find triangles containing the line
+          ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
+          Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+          print(paste("Non-adjacent points in rim connected by line:", C1, C2))
+          print(paste("In triangle:", Tind))
+          ## Find points T1 & T2 in the two triangles which are not common
+          ## with the edge
+          T1 <- setdiff(T[Tind[1],], Cu[i,])
+          T2 <- setdiff(T[Tind[2],], Cu[i,])
+          print(paste("Other points in triangles:", T1, T2))
+          ## Create a new point at the centroid of the four verticies
+          ## C1, C2, T1, T2
+          p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+          points(p[1], p[2], col="red")
+          P <- rbind(P, p)
+          n <- nrow(P)
+          ## Remove the two old triangles, and create the four new ones
+          T[Tind[1],] <- c(n, C1, T1)
+          T[Tind[2],] <- c(n, C1, T2)
+          T <- rbind(T,
+                     c(n, C2, T1),
+                     c(n, C2, T2))
+        }
       }
     }
-  }
 
-  ## Add the new points to the correspondances vector
-  h <- c(h, (length(h)+1):nrow(P))
+    ## Add the new points to the correspondances vector
+    h <- c(h, (length(h)+1):nrow(P))
+
+    ## Create the edge matrix from the triangulation
+    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+    Cu <- Unique(Cu, TRUE)
+  }
 
   ## Swap orientation of triangles which have clockwise orientation
   a.signed <- tri.area.signed(P, T)
   T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
   a <- abs(a.signed)
-  
-  ## Create the edge matrix from the triangulation
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-
+    
   ## Find lengths of connections
   L <- norm(P[Cu[,1],] - P[Cu[,2],])
 
