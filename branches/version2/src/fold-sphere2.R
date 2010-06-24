@@ -33,11 +33,31 @@ path.length <- function(i, j, g, h, P) {
   }
 }
 
-## P is the set of points describing the edge.
-## gf is the forward pointer list
-## gb is the backward pointer list
-## T is the tear matrix
-stitch.retina <- function(P, gf, gb, T) {
+## Stitch together tears in an outline
+##
+## Input arguments:
+## P     - the coordinates of points in a mesh, including those the outline
+## gf    - the forward pointer list
+## gb    - the backward pointer list
+## T     - the tear matrix
+##
+## The function returns a list contatining:
+## Rset  - the set of points on the rim
+## P     - a new set of meshpoints
+## A     - indicies of the apex of each tear
+## VF    - indicies of the forward vertex of each tear
+## VB    - indicies of the backward vertex of each tear
+## TFset - list containing indicies of points in each foward tear
+## TBset - list containing indicies of points in each backward tear
+## gf    - new forward pointer list
+## gb    - new backward pointer list
+## h     - correspondence mapping
+## hf    - correspondence mapping in forward direction for
+##         points on boundary
+## hb    - correspondence mapping in backward direction for
+##         points on boundary
+##
+stitch.outline <- function(P, gf, gb, T) {
   ## Extract information from tear matrix
   A  <- T[,1]                            # apicies of tears
   VB <- T[,2]                           # forward verticies
@@ -52,7 +72,9 @@ stitch.retina <- function(P, gf, gb, T) {
   h <- hf
 
   ## Initialise the set of points in the rim
-  Rset <- 1:N
+  ## We don't assume that P is the entire set of points; instead
+  ## get this information from the pointer list.
+  Rset <- gf
   
   ## Create lists of forward and backward tears
   TFset <- list()
@@ -1305,7 +1327,7 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
     with(t, trimesh(T, P, col="black"))
   }
 
-  s <- stitch.retina(t$P, t$gf, t$gb, tearmat)
+  s <- stitch.outline(t$P, t$gf, t$gb, tearmat)
   if (graphical) {
     plot.stitch(s)
   }

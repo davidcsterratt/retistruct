@@ -125,8 +125,8 @@ h.fold.retina <- function(h, ...) {
   fold.retina(P, cbind(A, VB, VF), graphical=TRUE)
 }
 
-h.stitch.retina <- function(h, ...) {
-  s <- stitch.retina(P, cbind(A, VB, VF))
+h.stitch.outline <- function(h, ...) {
+  s <- stitch.outline(P, cbind(A, VB, VF))
   dev.set(d2)
   plot.stitch(s)
 }
@@ -183,7 +183,7 @@ tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
 tbl[5, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
                               handler=remove.tear)
 tbl[6, 2, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Stitch retina",
-                              handler=h.stitch.retina)
+                              handler=h.stitch.outline)
 tbl[6, 4, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
                               handler=h.fold.retina)
 
