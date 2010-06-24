@@ -11,11 +11,13 @@ library(gWidgetsRGtk2)
 options(guiToolkit = "RGtk2")
 
 ## Global variables
-dataset <- NULL
+dataset <- NULL                         # Directory of dataset
 initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
-A <- c()
-VB <- c()
-VF <- c()
+A <- c()                                # Indices of apices of tears
+VB <- c()                      # Indices of forward verticies of tears
+VF <- c()                     # Indices of backward verticies of tears
+phi0 <- 50                 # Height of rim of retina in degrees
+f <- NULL                               # Fold object
 
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
@@ -25,11 +27,16 @@ enable.group <- function(widgets, state=TRUE) {
 }
 
 enable.widgets <- function(state) {
-  enable.group(c(g.add, g.move, g.remove, g.fold, g.save), state)
+  enable.group(c(g.add, g.move, g.remove, g.fold, g.phi0, g.show), state)
+}
+
+unsaved.data <- function(state) {
+  enable.group(c(g.save), state)
 }
 
 ## Editting handlers
 h.add <- function(h, ...) {
+  unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -41,6 +48,7 @@ h.add <- function(h, ...) {
 }
 
 h.remove <- function(h, ...) {
+  unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -55,6 +63,7 @@ h.remove <- function(h, ...) {
 }
 
 h.move <- function(h, ...) {
+  unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -80,11 +89,29 @@ h.move <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
+## Handler for setting phi0
+h.phi0 <- function(h, ...) {
+  unsaved.data(TRUE)
+  v <<- svalue(g.phi0)
+  if (v < -80) {
+    v <- -89
+  }
+  if (v > 89) {
+    v <- 89
+  }
+  phi0 <<- v
+}
+
 ## Handler for saving state
 h.save <- function(h, ...) {
-  datadir <- dataset
-  write.csv(cbind(A, VB, VF), file.path(datadir, "T.csv"),  row.names=FALSE)
-  write.csv(P, file.path(datadir, "P.csv"), row.names=FALSE)
+  if (!is.null(dataset)) {
+    write.csv(cbind(A, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
+    write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
+    if (!is.null(f)) {
+      save(f, file=file.path(dataset, "f.Rdata"))
+    }
+  }
+  unsaved.data(FALSE)
 }
 
 ## Handler for brining up a file dialogue to open a dataset
@@ -138,14 +165,25 @@ h.open <- function(h, ...) {
     VB <<- T[,2]                           # forward verticies
     VF <<- T[,3]                           # backward verticies
   }
+  foldfile <- file.path(dataset, "f.Rdata")
+  if (file.exists(foldfile)) {
+    load(foldfile, globalenv())
+    phi0 <<- f$p$phi0*180/pi
+    svalue(g.phi0) <- phi0
+  } else {
+    f <<- NULL
+  }
+  unsaved.data(FALSE)
+  enable.widgets(TRUE)
   do.plot()
 }
 
 ## Handler to start folding the outline
 h.fold <- function(h, ...) {
+  unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d2)
-  fold.retina(P, cbind(A, VB, VF), graphical=TRUE)
+  f <<- fold.outline(P, cbind(A, VB, VF), phi0, graphical=TRUE)
   enable.widgets(TRUE)
 }
 
@@ -205,17 +243,28 @@ tbl[4, 1, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
                               handler=h.move)
 tbl[5, 1, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
                               handler=h.remove)
-tbl[6, 1, anchor = c(1, 0)] <- "Show"
-tbl[7, 1, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
+
+## Editing of phi0
+tbl[6, 1, anchor = c(0, 0)] <- "Phi0"
+tbl[7, 1, anchor = c(0, 0), expand = TRUE] <- g.phi0 <- gedit(phi0,  
+                              handler=h.phi0, width=2, coerce.with=as.numeric)
+
+## What to show
+tbl[8, 1, anchor = c(0, 0)] <- "Show"
+tbl[9, 1, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(
+                              c("Sys", "Stitch", "Grid"),
                               handler=function(h, ...) {
                                 do.plot()
                               })
 
 ## Graphs at right
-tbl[3:20, 2:3, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
+tbl[3:9, 2:3, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
     expand = TRUE, ps = 11)
 d1 <- dev.cur()
-tbl[3:20, 4:5, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
+tbl[3:9, 4:5, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
     expand = TRUE, ps = 11)
 d2 <- dev.cur()
 
+## Disable buttons initially
+unsaved.data(FALSE)
+enable.widgets(FALSE)
