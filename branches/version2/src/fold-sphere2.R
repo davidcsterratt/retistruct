@@ -1077,7 +1077,6 @@ make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
           ## Create a new point at the centroid of the four verticies
           ## C1, C2, T1, T2
           p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-          points(p[1], p[2], col="red")
           P <- rbind(P, p)
           n <- nrow(P)
           ## Remove the two old triangles, and create the four new ones
