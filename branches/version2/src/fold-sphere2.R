@@ -1254,7 +1254,22 @@ merge.points.edges <- function(t, s) {
   return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht, Rsett=Rsett, P=P))
 }
 
-
+## Project mesh points in the flat outline onto a sphere
+##
+## The information to be merged is contained in the
+## merge structure m and the triangulation t and the lattitude
+## at which the sphere is cut off is given in phi0
+##
+## The information includes:
+## Pt     - (in m) the mesh point coordinates
+## Rsett  - (in m) the set of points on the rim
+## A      - (in t) the area of the flat outline
+##
+## The function returns a list with the following members:
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## phi0   - lattitude at which sphere is cut off (from input)
 project.to.sphere <- function(m, t, phi0=50*pi/180) {
   Pt <- m$Pt
   Rsett <- m$Rsett
@@ -1309,12 +1324,12 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
   ##   with(s, plot.outline(P, gb))
   ## }
 
-  ## p <- project.to.sphere(m, t, phi0=50*pi/180)
+  p <- project.to.sphere(m, t1, phi0=50*pi/180)
 
-  ## if (graphical) {
-  ##   ## Initial plot in 3D space
-  ##   plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
-  ## }
+  if (graphical) {
+    ## Initial plot in 3D space
+    plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+  }
 
   ## r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
   ## p1 <- p
