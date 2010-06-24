@@ -74,7 +74,7 @@ stitch.outline <- function(P, gf, gb, T) {
   ## Initialise the set of points in the rim
   ## We don't assume that P is the entire set of points; instead
   ## get this information from the pointer list.
-  Rset <- gf
+  Rset <- na.omit(gf)
   
   ## Create lists of forward and backward tears
   TFset <- list()
@@ -1353,10 +1353,10 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
     plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
   }
 
-  ## r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
-  ## p1 <- p
-  ## p1$phi <- r$phi
-  ## p1$lambda <- r$lambda
-  ## r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
+  r <- optimise.mapping(p, m, t1, s, E0.A=exp(3), k.A=1)
+  p1 <- p
+  p1$phi <- r$phi
+  p1$lambda <- r$lambda
+  r <- optimise.mapping(p1, m, t1, s, E0.A=exp(10), k.A=20)
 }
 
