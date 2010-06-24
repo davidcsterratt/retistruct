@@ -1321,7 +1321,7 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
 ## Takes edge points in order DNVT
 ## Takes tear matrix
 ## Returns result of optimise.mapping()
-fold.retina <- function(P, tearmat, graphical=TRUE) {
+fold.outline <- function(P, tearmat, phi0=50, graphical=TRUE) {
   t <- make.triangulation(P, h=1:nrow(P), n=200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
@@ -1346,7 +1346,7 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
   ##   with(s, plot.outline(P, gb))
   ## }
 
-  p <- project.to.sphere(m, t1, phi0=50*pi/180)
+  p <- project.to.sphere(m, t1, phi0=phi0*pi/180)
 
   if (graphical) {
     ## Initial plot in 3D space
@@ -1358,5 +1358,6 @@ fold.retina <- function(P, tearmat, graphical=TRUE) {
   p1$phi <- r$phi
   p1$lambda <- r$lambda
   r <- optimise.mapping(p1, m, t1, s, E0.A=exp(10), k.A=20)
+  return(list(t=t1, s=s, m=m, p=p, r=r))
 }
 
