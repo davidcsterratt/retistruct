@@ -10,10 +10,14 @@ if (!require("cairoDevice")) install.packages("cairoDevice")
 library(gWidgetsRGtk2)
 options(guiToolkit = "RGtk2")
 
+## Global variables
+dataset <- NULL
+initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
 A <- c()
 VB <- c()
 VF <- c()
 
+## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
   for (w in widgets) {
       enabled(w) <- state
@@ -21,10 +25,11 @@ enable.group <- function(widgets, state=TRUE) {
 }
 
 enable.widgets <- function(state) {
-  enable.group(c(g.add, g.move, g.remove), state)
+  enable.group(c(g.add, g.move, g.remove, g.fold, g.save), state)
 }
 
-add.tear <- function(h, ...) {
+## Editting handlers
+h.add <- function(h, ...) {
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -35,7 +40,7 @@ add.tear <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
-remove.tear <- function(h, ...) {
+h.remove <- function(h, ...) {
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -49,7 +54,7 @@ remove.tear <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
-move.point <- function(h, ...) {
+h.move <- function(h, ...) {
   enable.widgets(FALSE)
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
@@ -75,35 +80,51 @@ move.point <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
-save.state <- function(h, ...) {
-  datadir <- svalue(g.dataset)
+## Handler for saving state
+h.save <- function(h, ...) {
+  datadir <- dataset
   write.csv(cbind(A, VB, VF), file.path(datadir, "T.csv"),  row.names=FALSE)
   write.csv(P, file.path(datadir, "P.csv"), row.names=FALSE)
 }
 
-h.load.dataset <- function(h, ...) {
+## Handler for brining up a file dialogue to open a dataset
+## 
+## Changes the following global variables:
+##   dataset - directory in which data is contained
+##   map     - the map data
+##   sys     - the sys data
+##   P       - the outline
+##   gf      - forward pointers
+##   gb      - backward pointers
+##   A       - tear apices
+##   VF      - tear forward verticies
+##   VB      - tear backward verticies
+##
+## Produces a plot of the retina in device d1
+## 
+h.open <- function(h, ...) {
   curdir <- getwd()
-  if (svalue(h$obj) == "Select dataset") {
+  if (is.null(dataset)) {
     info = file.info(initial.dir)
     if (!is.na(info$isdir)) {
       setwd(initial.dir)
     }
   } else {
-    setwd(svalue(h$obj))
+    setwd(dataset)
     setwd("..")
   } 
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
           print(h$file)
-          svalue(g.dataset) <- h$file
+          dataset <<- h$file
         })
   setwd(curdir)
-  dataset <<- svalue(h$obj)
   map <<- read.map(dataset)
   sys <<- read.sys(dataset)
   segs <- map.to.segments(map)
   P <<- segments.to.outline(segs)
-
+  svalue(g.dataset) <- dataset 
+  
   ## Create forward and backward pointers
   t <- make.triangulation(P, n=NA)
   gf <<- t$gf
@@ -120,11 +141,15 @@ h.load.dataset <- function(h, ...) {
   do.plot()
 }
 
-h.fold.retina <- function(h, ...) {
+## Handler to start folding the outline
+h.fold <- function(h, ...) {
+  enable.widgets(FALSE)
   dev.set(d2)
   fold.retina(P, cbind(A, VB, VF), graphical=TRUE)
+  enable.widgets(TRUE)
 }
 
+## Unused handlers
 h.stitch.outline <- function(h, ...) {
   s <- stitch.outline(P, cbind(A, VB, VF))
   dev.set(d2)
@@ -137,6 +162,7 @@ h.triangulate.retina <- function(h, ...) {
   with(out, trimesh(T, P))
 }
 
+## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
   if ("Sys" %in% svalue(g.show)) {
@@ -155,46 +181,41 @@ do.plot <- function() {
   }
 }
 
-fileChoose <- function(action="print", text = "Select a file...",
-                       type="open", ...) {
-  gfile(text=text, type=type, ..., action = action, handler =
-        function(h,...) {
-          do.call(h$action, list(h$file))
-        })
-}
-
-dataset <- NULL
-initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
-
+##
+## GUI Layout
+## 
 tbl <- glayout(container = gwindow("Tear editor"), spacing = 0)
-tbl[1, 1:2, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
-    expand = TRUE, ps = 11)
-d1 <- dev.cur()
-tbl[1, 3:4, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
-    expand = TRUE, ps = 11)
-d2 <- dev.cur()
-tbl[2, 1,   anchor = c(1, 0)] = "Dataset"
-tbl[2, 2:4, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("Select dataset", handler = h.load.dataset)
-tbl[3, 1, anchor = c(1, 0)] = "Actions"
-tbl[3, 2, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
-                              handler=add.tear)
-tbl[4, 2, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
-                              handler=move.point)
-tbl[5, 2, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
-                              handler=remove.tear)
-tbl[6, 2, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Stitch retina",
-                              handler=h.stitch.outline)
-tbl[6, 4, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
-                              handler=h.fold.retina)
 
-tbl[7, 2, anchor = c(0, 0), expand = TRUE] <- g.save <- gbutton("Save",
-                              handler=save.state)
-tbl[7, 4, anchor = c(0, 0), expand = TRUE] <- g.triangulate <- gbutton("Triangulate retina",
-                              handler=h.triangulate.retina)
+## Toolbar in row 1
+tbl[1, 1, anchor = c(0, 0), expand = TRUE] <- g.open <- gbutton("Open",
+                              handler=h.open)
+tbl[1, 2, anchor = c(0, 0), expand = TRUE] <- g.save <- gbutton("Save",
+                              handler=h.save)
+tbl[1, 3, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
+                              handler=h.fold)
 
-tbl[3, 3, anchor = c(1, 0)] <- "Show"
-tbl[3, 4, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
+## Name of dataset in row 2
+tbl[2, 1:5, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("No datasetselected")
+enabled(g.dataset) <- FALSE
+
+## Tear editor down left side
+tbl[3, 1, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
+                              handler=h.add)
+tbl[4, 1, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
+                              handler=h.move)
+tbl[5, 1, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
+                              handler=h.remove)
+tbl[6, 1, anchor = c(1, 0)] <- "Show"
+tbl[7, 1, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(c("Sys"),
                               handler=function(h, ...) {
                                 do.plot()
                               })
+
+## Graphs at right
+tbl[3:20, 2:3, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
+    expand = TRUE, ps = 11)
+d1 <- dev.cur()
+tbl[3:20, 4:5, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
+    expand = TRUE, ps = 11)
+d2 <- dev.cur()
 
