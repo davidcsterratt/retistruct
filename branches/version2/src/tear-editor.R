@@ -34,58 +34,85 @@ unsaved.data <- function(state) {
   enable.group(c(g.save), state)
 }
 
+## Utility function
+identify.abort.text <- function() {
+  if (.Platform$GUI == "X11") {
+    return("Right-click to abort.")
+  }
+  if (.Platform$GUI == "AQUA") {
+    return("Press ESC to abort.")
+  }
+}
+
 ## Editting handlers
 h.add <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on the apex of the tear.",
+                            identify.abort.text())
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
   A  <<- c(A , id)
   VF <<- c(VF, gf[id])
   VB <<- c(VB, gb[id])
   do.plot()
+  svalue(g.status) <- ""
   enable.widgets(TRUE)
 }
 
 h.remove <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
+                            identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1)
+  id <- identify(P[,1], P[,2], n=1, plot=FALSE)
   print(id)
   tid <- which(id==A)
   print(tid)
-  A  <<- A[-tid]
-  VF <<- VF[-tid]
-  VB <<- VB[-tid]
+  if (length(tid) == 1) {
+    A  <<- A[-tid]
+    VF <<- VF[-tid]
+    VB <<- VB[-tid]
+  }
   do.plot()
+  svalue(g.status) <- ""
   enable.widgets(TRUE)
 }
 
 h.move <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on apex or vertex to move.",
+                            identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1)
+  id <- identify(P[,1], P[,2], n=1, plot=FALSE)
   tid <- which(id==VF)
   if (length(tid)) {
+    svalue(g.status) <- paste("Vertex selected. Click on point to move it to.",
+                            identify.abort.text())
     points(P[VF[tid],1], P[VF[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
-    VF[tid] <<- id
+    if (length(id)) VF[tid] <<- id
   } 
   tid <- which(id==VB)
   if (length(tid)) {
+    svalue(g.status) <- paste("Vertex selected. Click on point to move it to.",
+                            identify.abort.text())
     points(P[VB[tid],1], P[VB[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
-    VB[tid] <<- id
+    if (length(id)) VB[tid] <<- id
   }
   tid <- which(id==A)
   if (length(tid)) {
+    svalue(g.status) <- paste("Apex selected. Click on point to move it to.",
+                            identify.abort.text())
     points(P[A[tid],1], P[A[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
-    A[tid] <<- id
+    if (length(id)) A[tid] <<- id
   }
   do.plot()
+  svalue(g.status) <- ""
   enable.widgets(TRUE)
 }
 
@@ -265,6 +292,8 @@ tbl[3:9, 4:5, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tb
     expand = TRUE, ps = 11)
 d2 <- dev.cur()
 
+## Status bar
+tbl[10, 1:5, anchor = c(0, 0), expand = TRUE] = g.status = glabel("")
 ## Disable buttons initially
 unsaved.data(FALSE)
 enable.widgets(FALSE)
