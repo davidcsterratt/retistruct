@@ -249,51 +249,55 @@ do.plot <- function() {
 ##
 ## GUI Layout
 ## 
-tbl <- glayout(container = gwindow("Tear editor"), spacing = 0)
+g.win <- gwindow("NMF morph")
 
+g.rows <- ggroup(horizontal=FALSE, container=g.win)
 ## Toolbar in row 1
-tbl[1, 1, anchor = c(0, 0), expand = TRUE] <- g.open <- gbutton("Open",
-                              handler=h.open)
-tbl[1, 2, anchor = c(0, 0), expand = TRUE] <- g.save <- gbutton("Save",
-                              handler=h.save)
-tbl[1, 3, anchor = c(0, 0), expand = TRUE] <- g.fold <- gbutton("Fold retina",
-                              handler=h.fold)
+g.toolbar <- ggroup(container=g.rows)
+g.open <- gbutton("Open", handler=h.open, container=g.toolbar)
+g.save <- gbutton("Save", handler=h.save, container=g.toolbar)
+g.fold <- gbutton("Fold retina", handler=h.fold, container=g.toolbar)
+addSpring(g.toolbar)
 
 ## Name of dataset in row 2
-tbl[2, 1:5, anchor = c(0, 0), expand = TRUE] <- g.dataset <- gbutton("No datasetselected")
-enabled(g.dataset) <- FALSE
+g.dataset.row <- gframe(container=g.rows)
+g.dataset <- glabel("No dataset selected", anchor=0, container=g.dataset.row)
+addSpring(g.dataset.row)
+## enabled(g.dataset) <- FALSE
+
+## Body of interface
+g.body <- ggroup(container=g.rows)
 
 ## Tear editor down left side
-tbl[3, 1, anchor = c(0, 0), expand = TRUE] <- g.add <- gbutton("Add tear",
-                              handler=h.add)
-tbl[4, 1, anchor = c(0, 0), expand = TRUE] <- g.move <- gbutton("Move Point",
-                              handler=h.move)
-tbl[5, 1, anchor = c(0, 0), expand = TRUE] <- g.remove <- gbutton("Remove tear",
-                              handler=h.remove)
+g.editor <- ggroup(horizontal = FALSE, container=g.body)
+
+g.add  <-   gbutton("Add tear",    handler=h.add,    container=g.editor)
+g.move <-   gbutton("Move Point",  handler=h.move,   container=g.editor)
+g.remove <- gbutton("Remove tear", handler=h.remove, container=g.editor)
 
 ## Editing of phi0
-tbl[6, 1, anchor = c(0, 0)] <- "Phi0"
-tbl[7, 1, anchor = c(0, 0), expand = TRUE] <- g.phi0 <- gedit(phi0,  
-                              handler=h.phi0, width=2, coerce.with=as.numeric)
+g.phi0.frame <- gframe("Phi0", container=g.editor)
+g.phi0 <- gedit(phi0, handler=h.phi0, width=5, container=g.phi0.frame)
 
 ## What to show
-tbl[8, 1, anchor = c(0, 0)] <- "Show"
-tbl[9, 1, anchor = c(0, 0), expand = TRUE] <- g.show <- gcheckboxgroup(
-                              c("Sys", "Stitch", "Grid"),
-                              handler=function(h, ...) {
-                                do.plot()
-                              })
+g.show.frame <- gframe("Show", container=g.editor)
+g.show <- gcheckboxgroup(c("Sys", "Stitch", "Grid"),
+                         handler=function(h, ...) {
+                                 do.plot()
+                               }, container=g.show.frame)
 
 ## Graphs at right
-tbl[3:9, 2:3, anchor = c(0, 0), expand = TRUE] = g.f = ggraphics(container = tbl,
-    expand = TRUE, ps = 11)
+g.f <-  ggraphics(expand=TRUE, ps=11, container=g.body)
 d1 <- dev.cur()
-tbl[3:9, 4:5, anchor = c(0, 0), expand = TRUE] = g.f2 = ggraphics(container = tbl,
-    expand = TRUE, ps = 11)
+g.f2 <- ggraphics(expand=TRUE, ps=11, container=g.body)
 d2 <- dev.cur()
 
 ## Status bar
-tbl[10, 1:5, anchor = c(0, 0), expand = TRUE] = g.status = glabel("")
+## g.statusbar <- ggroup(container=g.rows)
+g.statusbar <- gframe("", expand=TRUE, container=g.rows)
+g.status = glabel("", container=g.statusbar)
+addSpring(g.statusbar)
+
 ## Disable buttons initially
 unsaved.data(FALSE)
 enable.widgets(FALSE)
