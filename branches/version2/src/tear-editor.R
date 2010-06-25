@@ -227,13 +227,18 @@ h.triangulate.retina <- function(h, ...) {
   with(out, trimesh(T, P))
 }
 
+## Handler for showing data
+h.show <- function(h, ...) {
+  do.plot()
+}
+
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
   if ("Sys" %in% svalue(g.show)) {
     plot.sys.map(sys, map)
   } else {
-    plot.map(map)
+    plot.outline(P, gb)
   }
 
   if (length(A) > 0) {
@@ -253,14 +258,13 @@ g.win <- gwindow("NMF morph")
 
 g.rows <- ggroup(horizontal=FALSE, container=g.win)
 ## Toolbar in row 1
-g.toolbar <- ggroup(container=g.rows)
-g.open <- gbutton("Open", handler=h.open, container=g.toolbar)
-g.save <- gbutton("Save", handler=h.save, container=g.toolbar)
-g.fold <- gbutton("Fold retina", handler=h.fold, container=g.toolbar)
-addSpring(g.toolbar)
+g.open <- gaction("Open", icon="open", handler=h.open)
+g.save <- gaction("Save", icon="save", handler=h.save)
+g.fold <- gaction("Fold retina", handler=h.fold)
+g.toolbar <- gtoolbar(list(open=g.open, save=g.save, fold=g.fold), container=g.rows)
 
 ## Name of dataset in row 2
-g.dataset.row <- gframe(container=g.rows)
+g.dataset.row <- ggroup(container=g.rows)
 g.dataset <- glabel("No dataset selected", anchor=0, container=g.dataset.row)
 addSpring(g.dataset.row)
 ## enabled(g.dataset) <- FALSE
@@ -282,9 +286,7 @@ g.phi0 <- gedit(phi0, handler=h.phi0, width=5, container=g.phi0.frame)
 ## What to show
 g.show.frame <- gframe("Show", container=g.editor)
 g.show <- gcheckboxgroup(c("Sys", "Stitch", "Grid"),
-                         handler=function(h, ...) {
-                                 do.plot()
-                               }, container=g.show.frame)
+                         handler=h.show, container=g.show.frame)
 
 ## Graphs at right
 g.f <-  ggraphics(expand=TRUE, ps=11, container=g.body)

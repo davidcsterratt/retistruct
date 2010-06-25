@@ -713,7 +713,9 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ## pointer gb
 plot.outline <- function(P, gb, add=FALSE, ...) {
   if (!add) {
-    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="", bty="n")
+    par(mar=c(1, 1, 1, 1))
+    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
+         bty="n")
   }
   segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
 }
