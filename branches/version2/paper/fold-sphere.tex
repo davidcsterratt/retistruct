@@ -1,5 +1,9 @@
 \documentclass{article}
 
+\newcommand{\svninfo}{$ $Rev$ $, $ $Date$ $}
+\pagestyle{myheadings}
+\markboth{\svninfo}{\svninfo}
+
 \usepackage{xspace}
 \usepackage{amsmath}
 \usepackage{graphicx}
@@ -22,6 +26,7 @@
 
 \begin{document}
 \maketitle
+\thispagestyle{myheadings}
 
 \begin{abstract}
   In retrograde tracing experiments to determine the mapping of
@@ -269,28 +274,38 @@ to as $\vec{h}$.
 
 When the points are projected onto the hemisphere, the points which
 have the stitching algorithm has identified as corresponding with each
-other are merged.  This proceeds in a number of steps:
+other are merged. This results in a new set of points, which is a
+subset of the existing set of points created by the triangulation and
+stitiching operations. It is desirable to renumber this set of points
+consecutively starting at 1. In order to do this, 
 \begin{itemize}
-\item A vector $\vec{u}$ of the unique values of $\vec{h}$ is
-  formed. This vector has $\tilde N$ elements.
-\item A new mapping $\tilde{\vec{h}}$ from the existing indicies to a
+\item An ordered set $\mathcal{U}$ of the unique values of the range
+  of $h$ is formed. $\mathcal{U}$ has $\tilde N$ elements. The mapping
+  $u: \{1,\dots, \tilde N\} \rightarrow \mathcal{U}$ maps the new index
+  to the old index.
+\item A transformed set of points $\mathcal{\tilde P}$ is formed by
+  setting $\tilde{\vec{p}}_i = \vec{p}_{u_i}$
+\item A new mapping $\tilde h$ from the existing indicies to a
   new set of unique indices is formed:
   \begin{displaymath}
-    \tilde h_i = j:u_j = h_i
+    \tilde h_i = j:u_j = h_i \quad
+    \tilde h(i) = u^{-1}(h(u(i)))
   \end{displaymath}
 \item A transformed triangulation $\tilde{\mathbf{T}}$ is derived from
   $\mathbf{T}$, by setting $\tilde{T}_{ij} = \tilde h_{T_{ij}}$
-\item A transformed set of points $\mathcal{\tilde P}$ is formed by
-  setting $\tilde{\vec{p}}_i = \vec{p}_{u_i}$
+\end{itemize}
+
+It is also necessary to transform the indices used by the edge sets
+and determine correspondences between edges which have been merged. 
+\begin{itemize}
 \item A mapping $\vec{H}$ between connections (as opposed to points)
   is formed by 
-\item A transformed set of connections is formed by setting
-  $C'_{ij} = \tilde h_{C_{ij}}$. A number of the rows of this
-  matrix contain identical elements to each other. A mapping
-  $\tilde{\vec{H}}$ from the rows of this matrix onto one with only
-  distinct rows is formed. This is analogous to $\vec{h}$. In an
-  Mappings $\tilde{\vec{H}}$ and $\tilde{\vec{U}}$ are formed
-  analogously to $\vec{h}$ and $\vec{u}$.
+\item A transformed set of edges is formed by setting $C'_{ij} =
+  \tilde h(C_{ij})$. A number of the rows of this matrix contain
+  identical elements to each other. A mapping $H$ from each rows of
+  this matrix the corresponding row. This is analogous to the mapping
+  $h$ for points. Mappings $\tilde{H}$ and $U$ are formed
+  analogously to $\tilde{h}$ and $u$.
 \item The final connection matrix $\tilde{\mathbf{C}}$ is formed using
   $\vec{U}$ and $\mathbf{C}'$: $\tilde C_{ij} = C'_{U_ij}$. The number
   of rows in $\tilde{\mathbf{C}}$ is $\tilde M$.
