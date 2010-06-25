@@ -18,6 +18,8 @@ VB <- c()                      # Indices of forward verticies of tears
 VF <- c()                     # Indices of backward verticies of tears
 phi0 <- 50                 # Height of rim of retina in degrees
 f <- NULL                               # Fold object
+iN <- NULL                              # Index of nasal point
+iD <- NULL                              # Index of dorsal point
 
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
@@ -27,11 +29,18 @@ enable.group <- function(widgets, state=TRUE) {
 }
 
 enable.widgets <- function(state) {
-  enable.group(c(g.add, g.move, g.remove, g.fold, g.phi0, g.show), state)
+  enable.group(c(g.add, g.move, g.remove, g.fold,
+                 g.mark.n, g.mark.d,
+                 g.phi0, g.show), state)
 }
 
 unsaved.data <- function(state) {
   enable.group(c(g.save), state)
+}
+
+## Function to report to set status
+set.status <- function(s) {
+  svalue(g.status) <- s
 }
 
 ## Utility function
@@ -111,6 +120,36 @@ h.move <- function(h, ...) {
     id <- identify(P[,1], P[,2], n=1)
     if (length(id)) A[tid] <<- id
   }
+  do.plot()
+  svalue(g.status) <- ""
+  enable.widgets(TRUE)
+}
+
+## Handler for marking nasal point
+h.mark.n <- function(h, ...) {
+  unsaved.data(TRUE)
+  enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on nasal point.",
+                            identify.abort.text())
+  dev.set(d1)
+  id <- identify(P[,1], P[,2], n=1)
+  iN <<- id
+  iD <<- NULL
+  do.plot()
+  svalue(g.status) <- ""
+  enable.widgets(TRUE)
+}
+
+## Handler for marking dorsal point
+h.mark.d <- function(h, ...) {
+  unsaved.data(TRUE)
+  enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on dorsal point.",
+                            identify.abort.text())
+  dev.set(d1)
+  id <- identify(P[,1], P[,2], n=1)
+  iD <<- id
+  iN <<- NULL
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -210,7 +249,18 @@ h.fold <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d2)
-  f <<- fold.outline(P, cbind(A, VB, VF), phi0, graphical=TRUE)
+  i0 <- 0
+  lambda0 <- 0
+  if (!is.null(iD)) {
+    i0 <- iD
+    lambda0 <- 90
+  }
+  if (!is.null(iN)) {
+    i0 <- iN
+    lambda0 <- 0
+  }
+  f <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
+                     graphical=TRUE, report=set.status)
   enable.widgets(TRUE)
 }
 
@@ -249,6 +299,12 @@ do.plot <- function() {
     points(P[A,,drop=FALSE], col="cyan", pch="+")
     text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
   }
+  if (!is.null(iD)) {
+    text(P[iD,1], P[iD,2], "D")
+  }
+  if (!is.null(iN)) {
+    text(P[iN,1], P[iN,2], "N")
+  }
 }
 
 ##
@@ -278,6 +334,8 @@ g.editor <- ggroup(horizontal = FALSE, container=g.body)
 g.add  <-   gbutton("Add tear",    handler=h.add,    container=g.editor)
 g.move <-   gbutton("Move Point",  handler=h.move,   container=g.editor)
 g.remove <- gbutton("Remove tear", handler=h.remove, container=g.editor)
+g.mark.n <- gbutton("Mark nasal",  handler=h.mark.n, container=g.editor)
+g.mark.d <- gbutton("Mark dorsal", handler=h.mark.d, container=g.editor)
 
 ## Editing of phi0
 g.phi0.frame <- gframe("Phi0", container=g.editor)

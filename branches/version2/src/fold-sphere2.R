@@ -40,9 +40,11 @@ path.length <- function(i, j, g, h, P) {
 ## gf    - the forward pointer list
 ## gb    - the backward pointer list
 ## T     - the tear matrix
+## i0    - the index of the landmark; this needs to be in the rim
 ##
 ## The function returns a list contatining:
 ## Rset  - the set of points on the rim
+## i0    - the index of the landmark
 ## P     - a new set of meshpoints
 ## A     - indicies of the apex of each tear
 ## VF    - indicies of the forward vertex of each tear
@@ -57,7 +59,7 @@ path.length <- function(i, j, g, h, P) {
 ## hb    - correspondence mapping in backward direction for
 ##         points on boundary
 ##
-stitch.outline <- function(P, gf, gb, T) {
+stitch.outline <- function(P, gf, gb, T, i0=NA) {
   ## Extract information from tear matrix
   A  <- T[,1]                            # apicies of tears
   VB <- T[,2]                           # forward verticies
@@ -92,6 +94,16 @@ stitch.outline <- function(P, gf, gb, T) {
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
   }
 
+  ## If not set, set the landmark marker index. Otherwise
+  ## check it
+  if (is.na(i0)) {
+    i0 <- Rset[1]
+  } else {
+    if (!(i0 %in% Rset)) {
+      return(NULL)
+    }
+  }
+  
   ## Iterate through tears to insert new points
   for (j in 1:nrow(T)) {
     ## Compute the total path length along each side of the tear
@@ -200,7 +212,7 @@ stitch.outline <- function(P, gf, gb, T) {
     h <- h[h]
   }
   
-  return(list(Rset=Rset,
+  return(list(Rset=Rset, i0=i0,
               VF=VF, VB=VB, A=A,
               TFset=TFset, TBset=TBset,
               P=P, h=h, hf=hf, hb=hb,
@@ -242,11 +254,11 @@ compute.areas <- function(phi, lambda, T, R) {
 }
 
 ## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(0, N)
-  lambda[-Rset[1]] <- p[Nphi+1:(N-1)]
+  lambda[-i0] <- p[Nphi+1:(N-1)]
 
   ##
   ## Compute derivative of elastic energy
@@ -286,11 +298,11 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, ver
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(0, N)
-  lambda[-Rset[1]] <- p[Nphi+1:(N-1)]
+  lambda[-i0] <- p[Nphi+1:(N-1)]
 
   ##
   ## Compute derivative of elastic energy
@@ -353,7 +365,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, k.A=1, N, ve
   }
   
   return(c(dE.E.phii[-Rset]           + E0.A * dE.A.dphi[-Rset],
-           dE.E.dlambdai[-Rset[1]]    + E0.A * dE.A.dlambda[-Rset[1]]))
+           dE.E.dlambdai[-i0]    + E0.A * dE.A.dlambda[-i0]))
 }
 
 E.dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N) {
@@ -398,28 +410,29 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
   Lt <- m$Lt
   Bt <- m$Bt
   Rsett <- m$Rsett
+  i0t <- m$i0t
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
 
   ## Optimisation and plotting 
   opt <- list()
-  opt$p <- c(phi[-Rsett], lambda[-Rsett[1]])
+  opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
   while (opt$conv) {
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
                  T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                  E0.A=E0.A, k.A=k.A, N=Nt, 
-                 Rset=Rsett, phi0=phi0, Nphi=Nphi, verbose=FALSE)
+                 Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi, verbose=FALSE)
     ## print(opt)
     ##               control=list(maxit=200))
     print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, N=Nt,
-            Rset=Rsett, phi0=phi0, Nphi=Nphi))
+            Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi))
     phi            <- rep(phi0, Nt)
     phi[-Rsett]    <- opt$p[1:Nphi]
     lambda         <- rep(0, Nt)
-    lambda[-Rsett[1]] <- opt$p[Nphi+1:(Nt-1)]
+    lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
@@ -1177,11 +1190,12 @@ pointers2segments <- function(g) {
 
 ## Merge points and edges before optimising the elastic energy
 ## The information to be merged is contained in the
-## triangulation list t and the stitch list s.
+## triangulation list t and the stitch list s, and the index of the landmark i0
 ##
 ## The information includes 
 ## h    - (in s) the point correspondence mapping
 ## Rset - (in s) the set of points on the rim
+## i0   - (is s) the index of the landmark
 ## T    - (in t) the triangulation
 ## Cu   - (in t) the edge matrix
 ## L    - (in t) the edge lengths
@@ -1265,6 +1279,7 @@ merge.points.edges <- function(t, s) {
 
   ## Transform the rim set
   Rsett <- unique(ht[s$Rset])
+  i0t <- ht[s$i0]
 
   ## Create the symmetric connection set
   Ct <- rbind(Cut, Cut[,2:1])
@@ -1275,7 +1290,8 @@ merge.points.edges <- function(t, s) {
     Bt[Ct[i,1],i] <- 1
   }
   
-  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht, Rsett=Rsett, P=P))
+  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
+              Rsett=Rsett, i0t=i0t, P=P))
 }
 
 ## Project mesh points in the flat outline onto a sphere
@@ -1294,9 +1310,10 @@ merge.points.edges <- function(t, s) {
 ## lambda - longitude of mesh points
 ## R      - radius of sphere
 ## phi0   - lattitude at which sphere is cut off (from input)
-project.to.sphere <- function(m, t, phi0=50*pi/180) {
+project.to.sphere <- function(m, t, phi0=50*pi/180, lambda0=lambda0) {
   Pt <- m$Pt
   Rsett <- m$Rsett
+  i0t <- m$i0t
   A <- t$A
   
   Nt <- nrow(Pt)
@@ -1314,33 +1331,57 @@ project.to.sphere <- function(m, t, phi0=50*pi/180) {
   phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
   phi[Rsett] <- phi0
   lambda <- atan2(y, x)
-  lambda <- lambda-lambda[Rsett[1]]
+  lambda <- lambda-lambda[i0t] + lambda0
 
-  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0))
+  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0))
 }
 
 ## Folding routine
-## Takes edge points in order DNVT
-## Takes tear matrix
-## Returns result of optimise.mapping()
-fold.outline <- function(P, tearmat, phi0=50, graphical=TRUE) {
+##
+## Input arguments:
+## P         - outline points as N-by-2 matrix
+## tearmat   - tear matrix
+## phi0      - lattitude of rim of folded object
+## i0        - index of the landmark on the rim
+## lambda0   - longitude of landmark on rim
+## graphical - whether to plot graphs during computation
+## 
+## Returns list containing:
+## t         - triangulation information
+## s         - stitching information
+## m         - information about merged points and edges
+## p         - information about projection onto sphere
+## r         - information about locations of gridlines
+##
+fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
+                         graphical=TRUE,
+                         report=print) {
+  report("Triangulating...")
   t <- make.triangulation(P, h=1:nrow(P), n=200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
 
-  s <- stitch.outline(t$P, t$gf, t$gb, tearmat)
+  report("Stitching...")
+  s <- stitch.outline(t$P, t$gf, t$gb, tearmat, i0)
+  if (is.null(s)) {
+    report("ERROR: Fixed point is not on the rim")
+    return(NULL)
+  }
   if (graphical) {
     plot.stitch(s)
   }
 
-  t1 <- make.triangulation(s$P, h=s$h, g=s$gf, n=200, suppress.external.steiner=TRUE)
+  report("Triangulating...")  
+  t1 <- make.triangulation(s$P, h=s$h, g=s$gf, n=200,
+                           suppress.external.steiner=TRUE)
   if (graphical) {
     plot.stitch(s)
     with(t1, trimesh(T, P, col="grey", add=TRUE))
 
   }
-  
+
+  report("Merging points...")
   m <- merge.points.edges(t1, s)
 
   ## if (graphical) {
@@ -1348,18 +1389,22 @@ fold.outline <- function(P, tearmat, phi0=50, graphical=TRUE) {
   ##   with(s, plot.outline(P, gb))
   ## }
 
-  p <- project.to.sphere(m, t1, phi0=phi0*pi/180)
+  report("Projecting to sphere...")
+  p <- project.to.sphere(m, t1, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
 
   if (graphical) {
     ## Initial plot in 3D space
     plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
   }
 
+  report("Optimising mapping...")
   r <- optimise.mapping(p, m, t1, s, E0.A=exp(3), k.A=1)
   p1 <- p
   p1$phi <- r$phi
   p1$lambda <- r$lambda
   r <- optimise.mapping(p1, m, t1, s, E0.A=exp(10), k.A=20)
+
+  report("Mapping optimised.")
   return(list(t=t1, s=s, m=m, p=p, r=r))
 }
 
