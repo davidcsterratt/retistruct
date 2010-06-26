@@ -736,9 +736,9 @@ plot.outline <- function(P, gb, add=FALSE, ...) {
 ## plot.stitch(P, s)
 ##
 ## Plot stitch given set of outline points stitch information s
-plot.stitch <- function(s, ...) {
+plot.stitch <- function(s, add=FALSE, ...) {
   with(s, {
-    plot.outline(P, gb, ...)
+    if (!add) plot.outline(P, gb, ...)
     points(P[VF,], col="red", pch="+")
     points(P[VB,], col="orange", pch="+")
     points(P[A, ], col="cyan", pch="+")
