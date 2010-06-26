@@ -248,7 +248,7 @@ h.open <- function(h, ...) {
 h.fold <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  dev.set(d2)
+  dev.set(d1)
   i0 <- 0
   lambda0 <- 0
   if (!is.null(iD)) {
@@ -262,6 +262,7 @@ h.fold <- function(h, ...) {
   f <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      graphical=TRUE, report=set.status)
   enable.widgets(TRUE)
+  do.plot()
 }
 
 ## Unused handlers
@@ -291,19 +292,31 @@ do.plot <- function() {
     plot.outline(P, gb)
   }
 
-  if (length(A) > 0) {
-    points(P[VF,,drop=FALSE], col="red", pch="+")
-    segments(P[A,1], P[A,2], P[VF,1], P[VF,2], col="red")
-    points(P[VB,,drop=FALSE], col="orange", pch="+")
-    segments(P[A,1], P[A,2], P[VB,1], P[VB,2], col="orange")
-    points(P[A,,drop=FALSE], col="cyan", pch="+")
-    text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
+  if ("Landmarks" %in% svalue(g.show)) {
+    if (length(A) > 0) {
+      points(P[VF,,drop=FALSE], col="red", pch="+")
+      segments(P[A,1], P[A,2], P[VF,1], P[VF,2], col="red")
+      points(P[VB,,drop=FALSE], col="orange", pch="+")
+      segments(P[A,1], P[A,2], P[VB,1], P[VB,2], col="orange")
+      points(P[A,,drop=FALSE], col="cyan", pch="+")
+      text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
+    }
+    if (!is.null(iD)) {
+      text(P[iD,1], P[iD,2], "D")
+    }
+    if (!is.null(iN)) {
+      text(P[iN,1], P[iN,2], "N")
+    }
   }
-  if (!is.null(iD)) {
-    text(P[iD,1], P[iD,2], "D")
+  if ("Stitch" %in% svalue(g.show)) {
+    if (!is.null(f$s)) {
+      plot.stitch(f$s, add=TRUE)
+    }  
   }
-  if (!is.null(iN)) {
-    text(P[iN,1], P[iN,2], "N")
+  if ("Grid" %in% svalue(g.show)) {
+    if (!is.null(f$t) && !is.null(f$r)) {
+      with(f, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0))
+    }
   }
 }
 
@@ -343,7 +356,8 @@ g.phi0 <- gedit(phi0, handler=h.phi0, width=5, container=g.phi0.frame)
 
 ## What to show
 g.show.frame <- gframe("Show", container=g.editor)
-g.show <- gcheckboxgroup(c("Sys", "Stitch", "Grid"),
+g.show <- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Sys"),
+                         checked=c(TRUE, FALSE, FALSE, FALSE),
                          handler=h.show, container=g.show.frame)
 
 ## Graphs at right
