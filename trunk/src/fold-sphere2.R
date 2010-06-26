@@ -368,34 +368,6 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N
            dE.E.dlambdai[-i0]    + E0.A * dE.A.dlambda[-i0]))
 }
 
-E.dE <- function(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=0.1, N) {
-  E <- E(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=E0.A, N)
-  attr(E, "gradient") <- dE(p, Cu, C, L, B, T, A, R, Rset, phi0, Nphi, E0.A=E0.A, N)
-  return(E)
-}
-
-## Combined energy function
-##E <- function(p, Cu, C, L, B, Pt, A, R,
-##              E0.E=1, E0.A=1,
-##              Rset, phi0, verbose=FALSE) {
-##  E <- E0.E * E.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose) 
-##  if (E0.A) {
-##    E <- E + E0.A * E.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
-##  }
-##  return(E) 
-##}
-
-## Combined gradient
-##dE <- function(p, Cu, C, L, B, Pt, A, R,
-##               E0.E=1, E0.A=1,
-##               Rset, phi0, verbose=FALSE) {
-##  dE <- E0.E * dE.E(p, Cu, C, L, B, R, Rset, phi0, verbose=verbose)
-##  if (E0.A) {
-##    dE <- dE + E0.A * dE.A(p, Pt, A, R, Rset, phi0, verbose=verbose)
-##  }
-##  return(dE)
-##}
-
 ## Grand optimisation function
 optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
   phi <- p$phi
