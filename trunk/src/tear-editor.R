@@ -219,7 +219,7 @@ h.open <- function(h, ...) {
   svalue(g.dataset) <- dataset 
   
   ## Create forward and backward pointers
-  t <- make.triangulation(P, n=NA)
+  t <- triangulate.outline(P, n=NA)
   gf <<- t$gf
   gb <<- t$gb
 
@@ -273,7 +273,7 @@ h.stitch.outline <- function(h, ...) {
 }
 
 h.triangulate.retina <- function(h, ...) {
-  out <- make.triangulation(P, n=400)
+  out <- triangulate.outline(P, n=400)
   dev.set(d2)
   with(out, trimesh(T, P))
 }

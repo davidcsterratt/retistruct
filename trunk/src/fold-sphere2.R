@@ -1,3 +1,4 @@
+
 source("tsearch.R")
 source("triangulate.R")                 # for tri.area and tri.area.signed
 source("geometry.R")                    # for dot() and norm()
@@ -31,6 +32,130 @@ path.length <- function(i, j, g, h, P) {
       return(path.length(h[i], j, g, h, P))
     }
   }
+}
+
+## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
+##
+## Create a triangulation of the outline defined by the points P,
+## which are represented as N*2 matrix.  If the pointer list
+## g is supplied, it is used to define the outline. There should be at least n
+## triangles in the triangulation. Correspondences for any new points added
+## are added to the h argument
+## 
+## Returns a list comprising:
+## P   - The set of new points, with the existing points at the start
+## T   - The triangulation
+## a   - Array containing area of each triangle
+## A   - Total area of outline
+## Cu  - Unique set of M connections, as M*2 matrix
+## L   - Length of each connection
+## h   - Correspondances mapping
+##
+triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
+                               suppress.external.steiner=FALSE) {
+  S <- NULL
+  if (!is.null(g)) {
+    S <- pointers2segments(g)
+  }
+  ## Make initial triangulation to determine area
+  out <- triangulate(P, S, Y=TRUE)
+  A <- sum(with(out, tri.area(P, T)))
+  print(A)
+  if (!is.na(n)) {
+    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
+  }
+  P <- out$P
+  T <- out$T
+
+  ## Create pointers from segments
+
+  ## To ensure the correct orientaion, we use the fact that the
+  ## triangles are all anticlockwise in orinentation, and that the
+  ## orientation of the first row of the segment matrix determines the
+  ## orientation of all the other rows.
+
+  ## We therefore find triangle which contains the first segment
+  S <- out$S
+  T1 <- which(apply(out$T, 1, function(x) {all(S[1,] %in% x)}))
+
+  ## Then find out which of the vertices in the triangle is not the
+  ## one we need
+  i <- which((out$T[T1,] %in% S[1,]) == FALSE)
+  if (i == 3) S[1,] <- out$T[T1,c(1,2)]
+  if (i == 2) S[1,] <- out$T[T1,c(3,1)]
+  if (i == 1) S[1,] <- out$T[T1,c(2,3)]
+
+  print(out$T[T1,])
+  print(S[1,])
+  
+  gf <- segments2pointers(S)
+  gb <- gf
+  gb[na.omit(gf)] <- which(!is.na(gf))
+  Rset <- na.omit(gf)
+  
+  ## trimesh(T, P, col="grey", add=TRUE)
+
+  ## Derive edge matrix from triangulation
+  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+  Cu <- Unique(Cu, TRUE)
+
+  ## If we are in the business of refining triangles (i.e. specifying
+  ## n), remove lines which join non-ajancent parts of the outline
+  if (!is.na(n)) {
+    for (i in 1:nrow(Cu)) {
+      C1 <- Cu[i,1]
+      C2 <- Cu[i,2]
+      if (all(Cu[i,] %in% Rset)) {
+        if (!((C1 == gf[C2]) ||
+              (C2 == gf[C1]))) {
+          ## Find triangles containing the line
+          ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
+          Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+          print(paste("Non-adjacent points in rim connected by line:", C1, C2))
+          print(paste("In triangle:", Tind))
+          ## Find points T1 & T2 in the two triangles which are not common
+          ## with the edge
+          T1 <- setdiff(T[Tind[1],], Cu[i,])
+          T2 <- setdiff(T[Tind[2],], Cu[i,])
+          print(paste("Other points in triangles:", T1, T2))
+          ## Create a new point at the centroid of the four verticies
+          ## C1, C2, T1, T2
+          p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+          P <- rbind(P, p)
+          n <- nrow(P)
+          ## Remove the two old triangles, and create the four new ones
+          T[Tind[1],] <- c(n, C1, T1)
+          T[Tind[2],] <- c(n, C1, T2)
+          T <- rbind(T,
+                     c(n, C2, T1),
+                     c(n, C2, T2))
+        }
+      }
+    }
+
+    ## Add the new points to the correspondances vector
+    h <- c(h, (length(h)+1):nrow(P))
+
+    ## Create the edge matrix from the triangulation
+    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+    Cu <- Unique(Cu, TRUE)
+  }
+
+  ## Swap orientation of triangles which have clockwise orientation
+  a.signed <- tri.area.signed(P, T)
+  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
+  a <- abs(a.signed)
+    
+  ## Find lengths of connections
+  L <- norm(P[Cu[,1],] - P[Cu[,2],])
+
+  ## Check there are no zero-length lines
+  if (any(L==0)) {
+    print("WARNING: zero-length lines")
+  }
+  
+  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L,
+              gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
 
 ## Stitch together tears in an outline
@@ -218,7 +343,6 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
               P=P, h=h, hf=hf, hb=hb,
               gf=gf, gb=gb))
 }
-
 
 ##
 ## Energy/error functions
@@ -408,7 +532,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
 
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
-    plot.retina(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    plot.sphere.3d(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
     with(s, plot.outline(P, gb))
     with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
   }
@@ -533,7 +657,7 @@ plot.stitch <- function(s, add=FALSE, ...) {
 ## R - radius of sphere
 ## Tt - triagulation
 ## Rsett - members of rim set
-plot.retina <- function(phi, lambda, R, Tt, Rsett) {
+plot.sphere.3d <- function(phi, lambda, R, Tt, Rsett) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -608,7 +732,7 @@ cell.bodies.folded.sphere <- function(phi, lambda, R, Tt, cb) {
 }
 
 ## Function to plot cell bodies on a retina in spherical coordinates
-## It assumes that plot.retina has been called already
+## It assumes that plot.sphere.3d has been called already
 ## phi    - lattitude of points
 ## lambda - longitude of points
 ## R      - radius of sphere
@@ -793,126 +917,6 @@ plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
             rbind(P[h[gb[gb]],3], P[h[gb],3]),
              ...)
   
-}
-
-## make.triagulation(P, n)
-##
-## Create a triangulation of the outline defined by the points P,
-## which are represented as N*2 matrix. There should be at least n
-## triangles in the triangulation
-## Returns a list comprising:
-## P   - The set of new points, with the existing points at the start
-## T   - The triangulation
-## a   - Array containing area of each triangle
-## A   - Total area of outline
-## Cu  - Unique set of M connections, as M*2 matrix
-## L   - Length of each connection
-## h   - Correspondances vector?????
-make.triangulation <- function(P, h=1:nrow(P), g=NULL, n=200,
-                               suppress.external.steiner=FALSE) {
-  S <- NULL
-  if (!is.null(g)) {
-    S <- pointers2segments(g)
-  }
-  ## Make initial triangulation to determine area
-  out <- triangulate(P, S, Y=TRUE)
-  A <- sum(with(out, tri.area(P, T)))
-  print(A)
-  if (!is.na(n)) {
-    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
-  }
-  P <- out$P
-  T <- out$T
-
-  ## Create pointers from segments
-
-  ## To ensure the correct orientaion, we use the fact that the
-  ## triangles are all anticlockwise in orinentation, and that the
-  ## orientation of the first row of the segment matrix determines the
-  ## orientation of all the other rows.
-
-  ## We therefore find triangle which contains the first segment
-  S <- out$S
-  T1 <- which(apply(out$T, 1, function(x) {all(S[1,] %in% x)}))
-
-  ## Then find out which of the vertices in the triangle is not the
-  ## one we need
-  i <- which((out$T[T1,] %in% S[1,]) == FALSE)
-  if (i == 3) S[1,] <- out$T[T1,c(1,2)]
-  if (i == 2) S[1,] <- out$T[T1,c(3,1)]
-  if (i == 1) S[1,] <- out$T[T1,c(2,3)]
-
-  print(out$T[T1,])
-  print(S[1,])
-  
-  gf <- segments2pointers(S)
-  gb <- gf
-  gb[na.omit(gf)] <- which(!is.na(gf))
-  Rset <- na.omit(gf)
-  
-  ## trimesh(T, P, col="grey", add=TRUE)
-
-  ## Derive edge matrix from triangulation
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-
-  ## If we are in the business of refining triangles (i.e. specifying
-  ## n), remove lines which join non-ajancent parts of the outline
-  if (!is.na(n)) {
-    for (i in 1:nrow(Cu)) {
-      C1 <- Cu[i,1]
-      C2 <- Cu[i,2]
-      if (all(Cu[i,] %in% Rset)) {
-        if (!((C1 == gf[C2]) ||
-              (C2 == gf[C1]))) {
-          ## Find triangles containing the line
-          ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-          Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-          print(paste("Non-adjacent points in rim connected by line:", C1, C2))
-          print(paste("In triangle:", Tind))
-          ## Find points T1 & T2 in the two triangles which are not common
-          ## with the edge
-          T1 <- setdiff(T[Tind[1],], Cu[i,])
-          T2 <- setdiff(T[Tind[2],], Cu[i,])
-          print(paste("Other points in triangles:", T1, T2))
-          ## Create a new point at the centroid of the four verticies
-          ## C1, C2, T1, T2
-          p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-          P <- rbind(P, p)
-          n <- nrow(P)
-          ## Remove the two old triangles, and create the four new ones
-          T[Tind[1],] <- c(n, C1, T1)
-          T[Tind[2],] <- c(n, C1, T2)
-          T <- rbind(T,
-                     c(n, C2, T1),
-                     c(n, C2, T2))
-        }
-      }
-    }
-
-    ## Add the new points to the correspondances vector
-    h <- c(h, (length(h)+1):nrow(P))
-
-    ## Create the edge matrix from the triangulation
-    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-    Cu <- Unique(Cu, TRUE)
-  }
-
-  ## Swap orientation of triangles which have clockwise orientation
-  a.signed <- tri.area.signed(P, T)
-  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
-  a <- abs(a.signed)
-    
-  ## Find lengths of connections
-  L <- norm(P[Cu[,1],] - P[Cu[,2],])
-
-  ## Check there are no zero-length lines
-  if (any(L==0)) {
-    print("WARNING: zero-length lines")
-  }
-  
-  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L,
-              gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
 
 ## Convert a matrix containing on each line the indicies of the points
@@ -1121,7 +1125,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          graphical=TRUE,
                          report=print) {
   report("Triangulating...")
-  t <- make.triangulation(P, h=1:nrow(P), n=200)
+  t <- triangulate.outline(P, h=1:nrow(P), n=200)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
@@ -1137,7 +1141,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   }
 
   report("Triangulating...")  
-  t1 <- make.triangulation(s$P, h=s$h, g=s$gf, n=200,
+  t1 <- triangulate.outline(s$P, h=s$h, g=s$gf, n=200,
                            suppress.external.steiner=TRUE)
   if (graphical) {
     plot.stitch(s)
@@ -1158,7 +1162,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
 
   if (graphical) {
     ## Initial plot in 3D space
-    plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+    plot.sphere.3d(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
   }
 
   report("Optimising mapping...")
