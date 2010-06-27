@@ -1,5 +1,5 @@
 source("datafile-utils.R")
-source("fold-sphere2.R")
+source("spheristruct.R")
 require(geometry)
 source("triangle/triangle.R", chdir=TRUE)
 
@@ -323,7 +323,7 @@ do.plot <- function() {
 ##
 ## GUI Layout
 ## 
-g.win <- gwindow("NMF morph")
+g.win <- gwindow("Retistruct")
 
 g.rows <- ggroup(horizontal=FALSE, container=g.win)
 ## Toolbar in row 1
