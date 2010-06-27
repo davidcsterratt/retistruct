@@ -1,7 +1,6 @@
 
 source("tsearch.R")
-source("triangulate.R")                 # for tri.area and tri.area.signed
-source("geometry.R")                    # for dot() and norm()
+source("geometry.R")                    # for dot(), norm(), tri.area() and tri.area.signed()
 source("misc.R")                        # For Mod
 require("rgl")
 require("plotrix")                      # For polar plots
