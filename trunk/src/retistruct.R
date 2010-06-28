@@ -158,7 +158,7 @@ h.mark.d <- function(h, ...) {
 ## Handler for setting phi0
 h.phi0 <- function(h, ...) {
   unsaved.data(TRUE)
-  v <<- svalue(g.phi0)
+  v <- svalue(g.phi0)
   if (v < -80) {
     v <- -89
   }
@@ -352,7 +352,8 @@ g.mark.d <- gbutton("Mark dorsal", handler=h.mark.d, container=g.editor)
 
 ## Editing of phi0
 g.phi0.frame <- gframe("Phi0", container=g.editor)
-g.phi0 <- gedit(phi0, handler=h.phi0, width=5, container=g.phi0.frame)
+g.phi0 <- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,
+                container=g.phi0.frame)
 
 ## What to show
 g.show.frame <- gframe("Show", container=g.editor)

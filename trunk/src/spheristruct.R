@@ -715,7 +715,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
 
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
-    plot.sphere.3d(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    plot.sphere.spherical(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
     with(s, plot.outline(P, gb))
     with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
   }
@@ -747,13 +747,13 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ## R      - radius of sphere
 ## Tt     - triagulation
 ## cb     - object returned by tsearch containing information on the
-datapoints.folded.cart <- function(phi, lambda, R, Tt, cb) {
+bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
   ## Obtain Cartesian coordinates of points
   P <- cbind(R*cos(phi)*cos(lambda),
              R*cos(phi)*sin(lambda),
              R*sin(phi))
 
-  ## Now find locations cc of cell bodies in Cartesian coordinates
+  ## Now find locations cc of datapoints in Cartesian coordinates
   cc <- matrix(0, 0, 3)
   colnames(cc) <- c("X", "Y", "Z")
   for(i in 1:(dim(cb$p)[1])) {
@@ -762,23 +762,23 @@ datapoints.folded.cart <- function(phi, lambda, R, Tt, cb) {
   return(cc)
 }
 
-## Function to determine the locations of cell bodies on the folded
-## retina in spherical (lambda, phi) coordinates
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
+## Function to convert locations on the surface of a sphere in cartesian
+## (X, Y, Z) coordinates to spherical (phi, lambda) coordinates
+##
+## Arguments:
+## Dsc    - locations of points on sphere
 ## R      - radius of sphere
-## Tt     - triagulation
-## cb     - object returned by tsearch containing information on the
-datapoints.folded.sphere <- function(phi, lambda, R, Tt, cb) {
-  ## Get locations in Cartesian coordinates
-  cc <- datapoints.folded.cart(phi, lambda, R, Tt, cb)
-  ## Convert to spherical coordinates
-  return(list(phi=asin(cc[,"Z"]/R),
-              lambda=atan2(cc[,"Y"], cc[,"X"])))
+##
+## Returns:
+## Matrix wtih columns ("phi" and "lambda") of new locations
+##
+sphere.cart.to.sphere.spherical <- function(Dsc, R) {
+  return(cbind(phi   =asin(Dsc[,"Z"]/R),
+               lambda=atan2(Dsc[,"Y"], Dsc[,"X"])))
 }
 
 ## Compute mean on sphere
-folded.mean.sphere <- function(phi, lambda) {
+sphere.mean.sphere <- function(phi, lambda) {
   ## First estimate of mean
   P <- rbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi))
   P.mean <- apply(P, 1, mean)
@@ -816,12 +816,13 @@ polar.to.cart <- function(r, theta) {
 ## where <structure> is one of
 ## - outline
 ## - stitch
+## - sphere
 ## - gridlines
 ## - datapoints
 ##
 ## and <view> is one of
 ## - flat [default]
-## - 3d
+## - spherical
 ## - polar
 ## - polararea
 ##
@@ -878,7 +879,7 @@ plot.stitch <- function(s, add=FALSE, ...) {
 ## Tt     - triagulation
 ## Rsett  - members of rim set
 ##
-plot.sphere.3d <- function(phi, lambda, R, Tt, Rsett) {
+plot.sphere.spherical <- function(phi, lambda, R, Tt, Rsett) {
   ## Now plot this in 3D space....
   x <- R*cos(phi)*cos(lambda) 
   y <- R*cos(phi)*sin(lambda)
@@ -923,7 +924,7 @@ plot.sphere.3d <- function(phi, lambda, R, Tt, Rsett) {
 ## Tt     - triagulation
 ## Rsett  - members of rim set
 ##
-plot.outline.3d <- function(phi, lambda, R, gb, h, ...) {
+plot.outline.spherical <- function(phi, lambda, R, gb, h, ...) {
   ## Obtain Cartesian coordinates of points
   Pc <- cbind(R*cos(phi)*cos(lambda),
              R*cos(phi)*sin(lambda),
@@ -1000,7 +1001,7 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 }
 
 ## Function to plot cell bodies on a retina in spherical coordinates
-## It assumes that plot.sphere.3d has been called already
+## It assumes that plot.sphere.spherical has been called already
 ## phi    - lattitude of points
 ## lambda - longitude of points
 ## R      - radius of sphere
@@ -1010,9 +1011,9 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ##          within that triangle in barycentric coordinates
 ## radius - radius of the spheres to plot
 ## color  - colour of the spheres to plot
-plot.datapoints.3d <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
+plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   ## Obtain Cartesian coordinates of points
-  cc <- datapoints.folded.cart(phi, lambda, R, Tt, cb)
+  cc <- datapoints.sphere.cart(phi, lambda, R, Tt, cb)
   
   ## Plot
   ## shade3d( translate3d( cube3d(col=color), cc[,1], cc[,2], cc[,3]))
@@ -1066,7 +1067,7 @@ plot.datapoints.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
   phis <- matrix(NA, length(cbs), 0)
   lambdas <- matrix(NA, length(cbs), 0)
   for (i in 1:length(cbs)) {
-    cs <- datapoints.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    cs <- datapoints.sphere.spherical(phi, lambda, R, Tt, cbs[[i]])
     d <- length(cs$phi) - ncol(phis)
     print(d)
     if (d>0) {
@@ -1104,14 +1105,14 @@ plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
                                    pch=".", ...) {
   plot(NA, NA, xlim=c(-2,2), ylim=c(-2, 2))
   for (i in 1:length(cbs)) {
-    cs <- datapoints.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    cs <- datapoints.sphere.spherical(phi, lambda, R, Tt, cbs[[i]])
     ## Turn into polar coordinates, shifting round by 90 degress for plotting
     lambdas <- cs$lambda+pi/2
     p <- polar.to.cart(spherical.to.polar.area(cs$phi), lambdas)
     points(p[,"x"], p[,"y"], pch=pch, col=cols[i], ...)
 
     ## Compute mean and plot
-    m <- folded.mean.sphere(cs$phi, lambdas)
+    m <- sphere.mean.sphere(cs$phi, lambdas)
     p <- polar.to.cart(spherical.to.polar.area(m[1]), m[2])
     points(p[,"x"], p[,"y"], col=cols[i], pch="+", ...)
   }
@@ -1138,9 +1139,10 @@ plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
 ## Input arguments:
 ## P         - outline points as N-by-2 matrix
 ## tearmat   - tear matrix
-## phi0      - lattitude of rim of folded object
+## phi0      - lattitude of rim of partial sphere
 ## i0        - index of the landmark on the rim
 ## lambda0   - longitude of landmark on rim
+## Ds        - list of sets of datapoints to plot
 ## graphical - whether to plot graphs during computation
 ## 
 ## Returns list containing:
@@ -1151,6 +1153,7 @@ plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
 ## r         - information about locations of gridlines
 ##
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
+                         Ds=NULL, 
                          graphical=TRUE,
                          report=print) {
   report("Triangulating...")
@@ -1170,16 +1173,15 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   }
 
   report("Triangulating...")  
-  t1 <- triangulate.outline(s$P, h=s$h, g=s$gf, n=200,
+  t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=200,
                            suppress.external.steiner=TRUE)
   if (graphical) {
     plot.stitch(s)
-    with(t1, trimesh(T, P, col="grey", add=TRUE))
-
+    with(t, trimesh(T, P, col="grey", add=TRUE))
   }
 
   report("Merging points...")
-  m <- merge.points.edges(t1, s)
+  m <- merge.points.edges(t, s)
 
   ## if (graphical) {
   ##   plot(P)
@@ -1187,21 +1189,34 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## }
 
   report("Projecting to sphere...")
-  p <- project.to.sphere(m, t1, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
+  p <- project.to.sphere(m, t, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
 
   if (graphical) {
     ## Initial plot in 3D space
-    plot.sphere.3d(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+    plot.sphere.spherical(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
   }
 
   report("Optimising mapping...")
-  r <- optimise.mapping(p, m, t1, s, E0.A=exp(3), k.A=1)
+  r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
   p1 <- p
   p1$phi <- r$phi
   p1$lambda <- r$lambda
-  r <- optimise.mapping(p1, m, t1, s, E0.A=exp(10), k.A=20)
+  r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
 
+  report("Inferring coordinates of datapoints")
+  Dsb <- list() # Datapoints in barycentric coordinates
+  Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
+  Dss <- list() # Datapoints on reconstructed sphere in cartesian coordinates
+  if (!is.null(Ds)) {
+    for (i in 1:length(Ds)) {
+      Dsb[[i]] <- with(t, tsearchn(P, T, Ds[[i]]))
+      Dsc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, p$R, t$Tt, Dsb[[i]])
+      Dss[[i]] <- sphere.cart.to.sphere.spherical(Dsc[[i]], p$R)
+    }
+  }
+  
   report("Mapping optimised.")
-  return(list(t=t1, s=s, m=m, p=p, r=r))
+  return(list(t=t, s=s, m=m, p=p, r=r,
+              Dsb=Dsb, Dsc=Dsc, Dss=Dss))
 }
 
