@@ -342,6 +342,191 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
               gf=gf, gb=gb))
 }
 
+## Convert a matrix containing on each line the indicies of the points
+## forming a segment, and convert this to two sets of ordered pointers
+segments2pointers <- function(S) {
+  g <- c()
+  j <- 1                                # Row of S
+  k <- 1                                # Column of S
+  while(nrow(S) > 0) {
+    i <- S[j,3-k]
+    g[S[j,k]] <- i
+    S <- S[-j,,drop=FALSE]
+    if (nrow(S) == 0) {
+      return(g)
+    }
+    j <- which(S[,1] == i)
+    if (length(j)) {
+      k <- 1
+    } else {
+      j <- which(S[,2] == i)
+      k <- 2
+      if (!length(j)) {
+        print("No matching index")
+        return(NULL)
+      }
+    }
+        
+  }
+  return(g)
+}
+
+## Convert a set of ordered pointers to a matrix containing on each
+## line the indicies of the points forming a segment
+pointers2segments <- function(g) {
+  S1 <- which(!is.na(g))
+  S2 <- g[S1]
+  return(cbind(S1, S2))
+}
+
+## Merge points and edges before optimising the elastic energy
+## The information to be merged is contained in the
+## triangulation list t and the stitch list s, and the index of the landmark i0
+##
+## The information includes 
+## h    - (in s) the point correspondence mapping
+## Rset - (in s) the set of points on the rim
+## i0   - (is s) the index of the landmark
+## T    - (in t) the triangulation
+## Cu   - (in t) the edge matrix
+## L    - (in t) the edge lengths
+## P    - (in t) the point locations
+##
+## The function returns merged and transformed versions of all these
+## objects (all suffixed with t), as well as a matrix Bt, which maps a
+## binary vector representation of edge indicies onto a binary vector
+## representation of the indicies of the points linked by the edge
+merge.points.edges <- function(t, s) {
+  h <- t$h
+  T <- t$T
+  Cu <- t$Cu
+  L <- t$L
+  P <- t$P
+  
+  ## Form the mapping from a new set of consecutive indicies
+  ## the existing indicies onto the existing indicies
+  u <- unique(h)
+
+  ## Transform the point set into the new indicies
+  Pt  <- P[u,]
+
+  ## Transform the point correspondance mapping to the new index space  
+  ht <- c()
+  for (i in 1:length(h)) {
+    ht[i] <- which(u == h[i])
+  }
+
+  ## DOESN'T WORK
+  ## Form the inverse mapping from the existing indicies to the new
+  ## set of consecutive indicies
+  ## uinv <- c()
+  ## uinv[u] <- 1:length(u)
+  ## ht <- uinv[h[u]]
+
+  ## Transform the triangulation to the new index space
+  Tt  <- matrix(ht[T], ncol=3)
+
+  ## Tansform the forward pointer into the new indicies
+  gft <- ht[s$gf]
+
+  ## Determine H, the mapping from edges onto corresponding edges
+  Cut <- matrix(ht[Cu], ncol=2)
+  Cut <- t(apply(Cut, 1, sort))
+  M <- nrow(Cut)
+  H <- rep(0, M)
+  for (i in 1:M) {
+    if (!H[i]) {
+      H[i] <- i
+      for (j in i:M) {
+        if (identical(Cut[i,], Cut[j,])) {
+          H[j] <- i
+        }
+      }
+    }
+  }
+
+  ## Form the mapping from a new set of consecutive edge indicies
+  ## the existing indicies onto the existing edge indicies
+  U <- unique(H)
+
+  ## Transform the edge set into the new indicies
+  Cut <- Cut[U,]
+
+  ## Transform the edge correspondance mapping to the new index space  
+  Ht <- c()
+  for (i in 1:length(H)) {
+    Ht[i] <- which(U == H[i])
+  }
+
+  ## Create the lengths of the merge edges by averaging
+  Lt <- c()
+  for (k in 1:length(U)) {
+    is <- which(Ht == k)
+    if (length(is)>1) {
+      print(L[is])
+    }
+    Lt[k] <- mean(L[is])
+  }
+
+  ## Transform the rim set
+  Rsett <- unique(ht[s$Rset])
+  i0t <- ht[s$i0]
+
+  ## Create the symmetric connection set
+  Ct <- rbind(Cut, Cut[,2:1])
+
+  ## Matrix to map line segments onto the points they link
+  Bt <- matrix(0, nrow(Pt), nrow(Ct))
+  for (i in 1:nrow(Ct)) {
+    Bt[Ct[i,1],i] <- 1
+  }
+  
+  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
+              Rsett=Rsett, i0t=i0t, P=P))
+}
+
+## Project mesh points in the flat outline onto a sphere
+##
+## The information to be merged is contained in the
+## merge structure m and the triangulation t and the lattitude
+## at which the sphere is cut off is given in phi0
+##
+## The information includes:
+## Pt     - (in m) the mesh point coordinates
+## Rsett  - (in m) the set of points on the rim
+## A      - (in t) the area of the flat outline
+##
+## The function returns a list with the following members:
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## phi0   - lattitude at which sphere is cut off (from input)
+project.to.sphere <- function(m, t, phi0=50*pi/180, lambda0=lambda0) {
+  Pt <- m$Pt
+  Rsett <- m$Rsett
+  i0t <- m$i0t
+  A <- t$A
+  
+  Nt <- nrow(Pt)
+  Nphi <- Nt - length(Rsett)
+
+  ## From this we can infer what the radius should be from the formula
+  ## for the area of a sphere which is cut off at a lattitude of phi0
+  ## area = 2 * PI * R^2 * (sin(phi0)+1)
+  R <- sqrt(A/(2*pi*(sin(phi0)+1)))
+
+  ## Now assign each point to a location in the phi, lambda coordinates
+  ## Shift coordinates to rough centre of grid
+  x <- Pt[,1] - mean(Pt[,1]) 
+  y <- Pt[,2] - mean(Pt[,2]) 
+  phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+  phi[Rsett] <- phi0
+  lambda <- atan2(y, x)
+  lambda <- lambda-lambda[i0t] + lambda0
+
+  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0))
+}
+
 ##
 ## Energy/error functions
 ## 
@@ -555,6 +740,218 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
                (d - P[T[,1],] %*% n)/((P[T[,2],] - P[T[,1],]) %*% n)))
 }
 
+## Function to determine the locations of cell bodies on the folded
+## retina in Cartesian (X, Y, Z) coordinates
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## Tt     - triagulation
+## cb     - object returned by tsearch containing information on the
+datapoints.folded.cart <- function(phi, lambda, R, Tt, cb) {
+  ## Obtain Cartesian coordinates of points
+  P <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
+
+  ## Now find locations cc of cell bodies in Cartesian coordinates
+  cc <- matrix(0, 0, 3)
+  colnames(cc) <- c("X", "Y", "Z")
+  for(i in 1:(dim(cb$p)[1])) {
+    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
+  }
+  return(cc)
+}
+
+## Function to determine the locations of cell bodies on the folded
+## retina in spherical (lambda, phi) coordinates
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+## Tt     - triagulation
+## cb     - object returned by tsearch containing information on the
+datapoints.folded.sphere <- function(phi, lambda, R, Tt, cb) {
+  ## Get locations in Cartesian coordinates
+  cc <- datapoints.folded.cart(phi, lambda, R, Tt, cb)
+  ## Convert to spherical coordinates
+  return(list(phi=asin(cc[,"Z"]/R),
+              lambda=atan2(cc[,"Y"], cc[,"X"])))
+}
+
+## Compute mean on sphere
+folded.mean.sphere <- function(phi, lambda) {
+  ## First estimate of mean
+  P <- rbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi))
+  P.mean <- apply(P, 1, mean)
+  phi.mean <-    asin(P.mean[3])
+  lambda.mean <- atan2(P.mean[2], P.mean[1])
+
+  print(c(phi.mean, lambda.mean))
+  opt <- optim(c(phi.mean, lambda.mean),
+        function(p) { sum((central.angle(phi, lambda, p[1], p[2]))^2) })
+  return(opt$par)
+  ## return(c(phi.mean, lambda.mean))
+}
+
+## Convert elevation in spherical coordinates into radius in polar
+## coordinates in an area-preserving projection
+spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
+  sin(phi)))) }
+
+## Convert polar coordinates to cartesian coordinates
+polar.to.cart <- function(r, theta) {
+  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
+}
+
+##
+## Plotting functions
+## 
+
+## Each function takes a list containing members from the orginal data
+## or derived from the reconstruction procedure
+##
+## General format for function name is
+##
+## plot.<structure>.<view>
+##
+## where <structure> is one of
+## - outline
+## - stitch
+## - gridlines
+## - datapoints
+##
+## and <view> is one of
+## - flat [default]
+## - 3d
+## - polar
+## - polararea
+##
+
+## plot.outline(P, gb)
+##
+## Plot outline of retina given set of outline points P and backwards
+## pointer gb
+plot.outline <- function(P, gb, add=FALSE, ...) {
+  if (!add) {
+    par(mar=c(1, 1, 1, 1))
+    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
+         bty="n")
+  }
+  segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
+}
+
+## plot.stitch(P, s)
+##
+## Plot stitch given set of outline points stitch information s
+plot.stitch <- function(s, add=FALSE, ...) {
+  with(s, {
+    if (!add) plot.outline(P, gb, ...)
+    points(P[VF,], col="red", pch="+")
+    points(P[VB,], col="orange", pch="+")
+    points(P[A, ], col="cyan", pch="+")
+    for (TF in TFset) {
+      lines(P[TF,], col="red", ...)
+    }
+    for (TB in TBset) {
+      lines(P[TB,], col="orange", ...)
+    }
+    for (j in 1:length(h)) {
+      if (h[j] != j) {
+        lines(P[c(j,h[j]),], col="blue", ...)
+      }
+    }
+    
+    for (j in 1:length(hf)) {
+      if (hf[j] != j) {
+        lines(P[c(j,s$hf[j]),], col="green", ...)
+      }
+    }
+  })
+  ## points(P[s$Rset,], col="red")
+}
+
+## Function to plot the mesh describing the reconstructed hemisphere
+## in 3D
+##
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## Tt     - triagulation
+## Rsett  - members of rim set
+##
+plot.sphere.3d <- function(phi, lambda, R, Tt, Rsett) {
+  ## Now plot this in 3D space....
+  x <- R*cos(phi)*cos(lambda) 
+  y <- R*cos(phi)*sin(lambda)
+  z <- R*sin(phi)
+  P <- cbind(x, y, z)
+  rgl.clear()
+  rgl.bg(color="white")
+
+  ## Outer triangles
+  triangles3d(matrix(1.01*x[t(Tt[,c(2,1,3)])], nrow=3),
+              matrix(1.01*y[t(Tt[,c(2,1,3)])], nrow=3),
+              matrix(1.01*z[t(Tt[,c(2,1,3)])], nrow=3),
+              color="darkgrey", alpha=1)
+  
+  ## Inner triangles
+  triangles3d(matrix(x[t(Tt)], nrow=3),
+              matrix(y[t(Tt)], nrow=3),
+              matrix(z[t(Tt)], nrow=3),
+              color="white", alpha=1)
+
+  ## Plot any flipped triangles
+  ## First find verticies and find centres and normals of the triangles
+  P1 <- P[Tt[,1],]
+  P2 <- P[Tt[,2],]
+  P3 <- P[Tt[,3],]
+  cents <- (P1 + P2 + P3)/3
+  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
+  areas <- apply(normals^2, 1, sum)
+  ##  print(cents)
+  ##  print(areas)
+  flipped <- (-dot(cents, normals) < 0)
+  print(paste(sum(flipped), "flipped triangles:"))
+  print(which(flipped))
+  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
+}
+
+## Function to plot outline in 3D
+## 
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## Tt     - triagulation
+## Rsett  - members of rim set
+##
+plot.outline.3d <- function(phi, lambda, R, gb, h, ...) {
+  ## Obtain Cartesian coordinates of points
+  Pc <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
+
+  P <- Pc*0.99
+##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+##              ...)
+  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+            rbind(P[h[gb[gb]],2], P[h[gb],2]),
+            rbind(P[h[gb[gb]],3], P[h[gb],3]),
+             ...)
+  
+   P <- Pc*1.001
+##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+##              ...)
+
+  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+            rbind(P[h[gb[gb]],2], P[h[gb],2]),
+            rbind(P[h[gb[gb]],3], P[h[gb],3]),
+             ...)
+  
+}
+
 ## plot.gridline.flat(P, T, phi, lambda, Tt, n, d)
 ##
 ## Plot a gridline from the spherical retina (described by points phi,
@@ -602,133 +999,6 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
   }
 }
 
-##
-## Plotting functions
-## 
-
-## plot.outline(P, gb)
-##
-## Plot outline of retina given set of outline points P and backwards
-## pointer gb
-plot.outline <- function(P, gb, add=FALSE, ...) {
-  if (!add) {
-    par(mar=c(1, 1, 1, 1))
-    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
-         bty="n")
-  }
-  segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
-}
-
-## plot.stitch(P, s)
-##
-## Plot stitch given set of outline points stitch information s
-plot.stitch <- function(s, add=FALSE, ...) {
-  with(s, {
-    if (!add) plot.outline(P, gb, ...)
-    points(P[VF,], col="red", pch="+")
-    points(P[VB,], col="orange", pch="+")
-    points(P[A, ], col="cyan", pch="+")
-    for (TF in TFset) {
-      lines(P[TF,], col="red", ...)
-    }
-    for (TB in TBset) {
-      lines(P[TB,], col="orange", ...)
-    }
-    for (j in 1:length(h)) {
-      if (h[j] != j) {
-        lines(P[c(j,h[j]),], col="blue", ...)
-      }
-    }
-    
-    for (j in 1:length(hf)) {
-      if (hf[j] != j) {
-        lines(P[c(j,s$hf[j]),], col="green", ...)
-      }
-    }
-  })
-  ## points(P[s$Rset,], col="red")
-}
-
-## Function to plot the retina in spherical coordinates
-## phi - lattitude of points
-## lambda - longitude of points
-## R - radius of sphere
-## Tt - triagulation
-## Rsett - members of rim set
-plot.sphere.3d <- function(phi, lambda, R, Tt, Rsett) {
-  ## Now plot this in 3D space....
-  x <- R*cos(phi)*cos(lambda) 
-  y <- R*cos(phi)*sin(lambda)
-  z <- R*sin(phi)
-  P <- cbind(x, y, z)
-  rgl.clear()
-  rgl.bg(color="white")
-
-  ## Outer triangles
-  triangles3d(matrix(1.01*x[t(Tt[,c(2,1,3)])], nrow=3),
-              matrix(1.01*y[t(Tt[,c(2,1,3)])], nrow=3),
-              matrix(1.01*z[t(Tt[,c(2,1,3)])], nrow=3),
-              color="darkgrey", alpha=1)
-  
-  ## Inner triangles
-  triangles3d(matrix(x[t(Tt)], nrow=3),
-              matrix(y[t(Tt)], nrow=3),
-              matrix(z[t(Tt)], nrow=3),
-              color="white", alpha=1)
-
-  ## Plot any flipped triangles
-  ## First find verticies and find centres and normals of the triangles
-  P1 <- P[Tt[,1],]
-  P2 <- P[Tt[,2],]
-  P3 <- P[Tt[,3],]
-  cents <- (P1 + P2 + P3)/3
-  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
-  areas <- apply(normals^2, 1, sum)
-  ##  print(cents)
-  ##  print(areas)
-  flipped <- (-dot(cents, normals) < 0)
-  print(paste(sum(flipped), "flipped triangles:"))
-  print(which(flipped))
-  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
-}
-
-## Function to determine the locations of cell bodies on the folded
-## retina in Cartesian (X, Y, Z) coordinates
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-## Tt     - triagulation
-## cb     - object returned by tsearch containing information on the
-cell.bodies.folded.cart <- function(phi, lambda, R, Tt, cb) {
-  ## Obtain Cartesian coordinates of points
-  P <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
-
-  ## Now find locations cc of cell bodies in Cartesian coordinates
-  cc <- matrix(0, 0, 3)
-  colnames(cc) <- c("X", "Y", "Z")
-  for(i in 1:(dim(cb$p)[1])) {
-    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
-  }
-  return(cc)
-}
-
-## Function to determine the locations of cell bodies on the folded
-## retina in spherical (lambda, phi) coordinates
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-## Tt     - triagulation
-## cb     - object returned by tsearch containing information on the
-cell.bodies.folded.sphere <- function(phi, lambda, R, Tt, cb) {
-  ## Get locations in Cartesian coordinates
-  cc <- cell.bodies.folded.cart(phi, lambda, R, Tt, cb)
-  ## Convert to spherical coordinates
-  return(list(phi=asin(cc[,"Z"]/R),
-              lambda=atan2(cc[,"Y"], cc[,"X"])))
-}
-
 ## Function to plot cell bodies on a retina in spherical coordinates
 ## It assumes that plot.sphere.3d has been called already
 ## phi    - lattitude of points
@@ -740,9 +1010,9 @@ cell.bodies.folded.sphere <- function(phi, lambda, R, Tt, cb) {
 ##          within that triangle in barycentric coordinates
 ## radius - radius of the spheres to plot
 ## color  - colour of the spheres to plot
-plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
+plot.datapoints.3d <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
   ## Obtain Cartesian coordinates of points
-  cc <- cell.bodies.folded.cart(phi, lambda, R, Tt, cb)
+  cc <- datapoints.folded.cart(phi, lambda, R, Tt, cb)
   
   ## Plot
   ## shade3d( translate3d( cube3d(col=color), cc[,1], cc[,2], cc[,3]))
@@ -789,14 +1059,14 @@ plot.cell.bodies <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
 ##          within that triangle in barycentric coordinates
 ## phi0   - lattitude of the rim in radians
 ## cols   - colour of points to plot for each object in cbs
-plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
+plot.datapoints.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
                                    pch=".", ...) {
   ## Need to organise phis and lambdas into matricies, with
   ## one column per set of data
   phis <- matrix(NA, length(cbs), 0)
   lambdas <- matrix(NA, length(cbs), 0)
   for (i in 1:length(cbs)) {
-    cs <- cell.bodies.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    cs <- datapoints.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
     d <- length(cs$phi) - ncol(phis)
     print(d)
     if (d>0) {
@@ -820,31 +1090,6 @@ plot.cell.bodies.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
              point.symbols=pch, ...)
 }
 
-## Compute mean on sphere
-folded.mean.sphere <- function(phi, lambda) {
-  ## First estimate of mean
-  P <- rbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi))
-  P.mean <- apply(P, 1, mean)
-  phi.mean <-    asin(P.mean[3])
-  lambda.mean <- atan2(P.mean[2], P.mean[1])
-
-  print(c(phi.mean, lambda.mean))
-  opt <- optim(c(phi.mean, lambda.mean),
-        function(p) { sum((central.angle(phi, lambda, p[1], p[2]))^2) })
-  return(opt$par)
-  ## return(c(phi.mean, lambda.mean))
-}
-
-## Convert elevation in spherical coordinates into radius in polar
-## coordinates in an area-preserving projection
-spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
-  sin(phi)))) }
-
-## Convert polar coordinates to cartesian coordinates
-polar.to.cart <- function(r, theta) {
-  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
-}
-
 ## Function to plot cell bodies in spherical coordinates on a polar plot
 ## phi    - lattitude of points
 ## lambda - longitude of points
@@ -855,11 +1100,11 @@ polar.to.cart <- function(r, theta) {
 ##          within that triangle in barycentric coordinates
 ## phi0   - lattitude of the rim in radians
 ## cols   - colour of points to plot for each object in cbs
-plot.cell.bodies.polar.area <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
+plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
                                    pch=".", ...) {
   plot(NA, NA, xlim=c(-2,2), ylim=c(-2, 2))
   for (i in 1:length(cbs)) {
-    cs <- cell.bodies.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
+    cs <- datapoints.folded.sphere(phi, lambda, R, Tt, cbs[[i]])
     ## Turn into polar coordinates, shifting round by 90 degress for plotting
     lambdas <- cs$lambda+pi/2
     p <- polar.to.cart(spherical.to.polar.area(cs$phi), lambdas)
@@ -886,220 +1131,6 @@ plot.cell.bodies.polar.area <- function(phi, lambda, R, Tt, cbs, phi0, cols="red
   text(0, 2, "D")
   text(0, -2, "V")
   
-}
-
-plot.outline.retina <- function(phi, lambda, R, gb, h, ...) {
-  ## Obtain Cartesian coordinates of points
-  Pc <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
-
-  P <- Pc*0.99
-##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-##              ...)
-  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-            rbind(P[h[gb[gb]],2], P[h[gb],2]),
-            rbind(P[h[gb[gb]],3], P[h[gb],3]),
-             ...)
-  
-   P <- Pc*1.001
-##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-##              ...)
-
-  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-            rbind(P[h[gb[gb]],2], P[h[gb],2]),
-            rbind(P[h[gb[gb]],3], P[h[gb],3]),
-             ...)
-  
-}
-
-## Convert a matrix containing on each line the indicies of the points
-## forming a segment, and convert this to two sets of ordered pointers
-segments2pointers <- function(S) {
-  g <- c()
-  j <- 1                                # Row of S
-  k <- 1                                # Column of S
-  while(nrow(S) > 0) {
-    i <- S[j,3-k]
-    g[S[j,k]] <- i
-    S <- S[-j,,drop=FALSE]
-    if (nrow(S) == 0) {
-      return(g)
-    }
-    j <- which(S[,1] == i)
-    if (length(j)) {
-      k <- 1
-    } else {
-      j <- which(S[,2] == i)
-      k <- 2
-      if (!length(j)) {
-        print("No matching index")
-        return(NULL)
-      }
-    }
-        
-  }
-  return(g)
-}
-
-## Convert a set of ordered pointers to a matrix containing on each
-## line the indicies of the points forming a segment
-pointers2segments <- function(g) {
-  S1 <- which(!is.na(g))
-  S2 <- g[S1]
-  return(cbind(S1, S2))
-}
-
-## Merge points and edges before optimising the elastic energy
-## The information to be merged is contained in the
-## triangulation list t and the stitch list s, and the index of the landmark i0
-##
-## The information includes 
-## h    - (in s) the point correspondence mapping
-## Rset - (in s) the set of points on the rim
-## i0   - (is s) the index of the landmark
-## T    - (in t) the triangulation
-## Cu   - (in t) the edge matrix
-## L    - (in t) the edge lengths
-## P    - (in t) the point locations
-##
-## The function returns merged and transformed versions of all these
-## objects (all suffixed with t), as well as a matrix Bt, which maps a
-## binary vector representation of edge indicies onto a binary vector
-## representation of the indicies of the points linked by the edge
-merge.points.edges <- function(t, s) {
-  h <- t$h
-  T <- t$T
-  Cu <- t$Cu
-  L <- t$L
-  P <- t$P
-  
-  ## Form the mapping from a new set of consecutive indicies
-  ## the existing indicies onto the existing indicies
-  u <- unique(h)
-
-  ## Transform the point set into the new indicies
-  Pt  <- P[u,]
-
-  ## Transform the point correspondance mapping to the new index space  
-  ht <- c()
-  for (i in 1:length(h)) {
-    ht[i] <- which(u == h[i])
-  }
-
-  ## DOESN'T WORK
-  ## Form the inverse mapping from the existing indicies to the new
-  ## set of consecutive indicies
-  ## uinv <- c()
-  ## uinv[u] <- 1:length(u)
-  ## ht <- uinv[h[u]]
-
-  ## Transform the triangulation to the new index space
-  Tt  <- matrix(ht[T], ncol=3)
-
-  ## Tansform the forward pointer into the new indicies
-  gft <- ht[s$gf]
-
-  ## Determine H, the mapping from edges onto corresponding edges
-  Cut <- matrix(ht[Cu], ncol=2)
-  Cut <- t(apply(Cut, 1, sort))
-  M <- nrow(Cut)
-  H <- rep(0, M)
-  for (i in 1:M) {
-    if (!H[i]) {
-      H[i] <- i
-      for (j in i:M) {
-        if (identical(Cut[i,], Cut[j,])) {
-          H[j] <- i
-        }
-      }
-    }
-  }
-
-  ## Form the mapping from a new set of consecutive edge indicies
-  ## the existing indicies onto the existing edge indicies
-  U <- unique(H)
-
-  ## Transform the edge set into the new indicies
-  Cut <- Cut[U,]
-
-  ## Transform the edge correspondance mapping to the new index space  
-  Ht <- c()
-  for (i in 1:length(H)) {
-    Ht[i] <- which(U == H[i])
-  }
-
-  ## Create the lengths of the merge edges by averaging
-  Lt <- c()
-  for (k in 1:length(U)) {
-    is <- which(Ht == k)
-    if (length(is)>1) {
-      print(L[is])
-    }
-    Lt[k] <- mean(L[is])
-  }
-
-  ## Transform the rim set
-  Rsett <- unique(ht[s$Rset])
-  i0t <- ht[s$i0]
-
-  ## Create the symmetric connection set
-  Ct <- rbind(Cut, Cut[,2:1])
-
-  ## Matrix to map line segments onto the points they link
-  Bt <- matrix(0, nrow(Pt), nrow(Ct))
-  for (i in 1:nrow(Ct)) {
-    Bt[Ct[i,1],i] <- 1
-  }
-  
-  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
-              Rsett=Rsett, i0t=i0t, P=P))
-}
-
-## Project mesh points in the flat outline onto a sphere
-##
-## The information to be merged is contained in the
-## merge structure m and the triangulation t and the lattitude
-## at which the sphere is cut off is given in phi0
-##
-## The information includes:
-## Pt     - (in m) the mesh point coordinates
-## Rsett  - (in m) the set of points on the rim
-## A      - (in t) the area of the flat outline
-##
-## The function returns a list with the following members:
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-## phi0   - lattitude at which sphere is cut off (from input)
-project.to.sphere <- function(m, t, phi0=50*pi/180, lambda0=lambda0) {
-  Pt <- m$Pt
-  Rsett <- m$Rsett
-  i0t <- m$i0t
-  A <- t$A
-  
-  Nt <- nrow(Pt)
-  Nphi <- Nt - length(Rsett)
-
-  ## From this we can infer what the radius should be from the formula
-  ## for the area of a sphere which is cut off at a lattitude of phi0
-  ## area = 2 * PI * R^2 * (sin(phi0)+1)
-  R <- sqrt(A/(2*pi*(sin(phi0)+1)))
-
-  ## Now assign each point to a location in the phi, lambda coordinates
-  ## Shift coordinates to rough centre of grid
-  x <- Pt[,1] - mean(Pt[,1]) 
-  y <- Pt[,2] - mean(Pt[,2]) 
-  phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
-  phi[Rsett] <- phi0
-  lambda <- atan2(y, x)
-  lambda <- lambda-lambda[i0t] + lambda0
-
-  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0))
 }
 
 ## Folding routine
