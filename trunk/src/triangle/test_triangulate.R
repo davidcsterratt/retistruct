@@ -1,3 +1,4 @@
+if (!require("geometry")) install.packages("geometry")
 source("triangle.R")
 if (TRUE) {
   P <- cbind(c(0, 0),

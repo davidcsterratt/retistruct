@@ -1,0 +1,5 @@
+#!/bin/sh
+WD=`pwd`
+cd triangle
+./test_triangulate
+cd ${WD}
