@@ -1000,7 +1000,20 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
   }
 }
 
-## Function to plot cell bodies on a retina in spherical coordinates
+## Function to plot data points on flat outline
+##
+## Arguments
+## Ds     - list of sets of datapoints, in which name of each set
+##          is the colour in which to plot
+##
+plot.datapoints <- function(Ds) {
+  for(col in names(Ds)) {
+    points(Ds[[col]][,1], Ds[[col]][,2], col=col, pch=20,cex=0.5)
+  }
+}
+
+## Function to plot cell bodies on a sphere
+##
 ## It assumes that plot.sphere.spherical has been called already
 ## phi    - lattitude of points
 ## lambda - longitude of points
@@ -1060,30 +1073,30 @@ plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="
 ##          within that triangle in barycentric coordinates
 ## phi0   - lattitude of the rim in radians
 ## cols   - colour of points to plot for each object in cbs
-plot.datapoints.polar <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
-                                   pch=".", ...) {
+plot.datapoints.polar <- function(Dss, phi0,
+                                  pch=".", ...) {
   ## Need to organise phis and lambdas into matricies, with
-  ## one column per set of data
-  phis <- matrix(NA, length(cbs), 0)
-  lambdas <- matrix(NA, length(cbs), 0)
-  for (i in 1:length(cbs)) {
-    cs <- datapoints.sphere.spherical(phi, lambda, R, Tt, cbs[[i]])
-    d <- length(cs$phi) - ncol(phis)
-    print(d)
-    if (d>0) {
-      phis <- cbind(phis, matrix(NA, length(cbs), d))
-      lambdas <- cbind(lambdas, matrix(NA, length(cbs), d))
-    }
-    phis[i,1:length(cs$phi)] <- cs$phi
-    lambdas[i,1:length(cs$lambda)] <- cs$lambda
+  ## one row per set of data
+
+  ## First find size of matrix
+  n <- max(sapply(Dss, nrow))
+
+  phis <-    matrix(NA, length(Dss), n)
+  lambdas <- matrix(NA, length(Dss), n)
+  
+  for (i in 1:length(Dss)) {
+    print(i)
+    print(nrow(Dss[[i]]))
+    phis[i,1:nrow(Dss[[i]])]    <- Dss[[i]][,"phi"]
+    lambdas[i,1:nrow(Dss[[i]])] <- Dss[[i]][,"lambda"]
   }
   print(phis)
   radial.lim <- c(seq(-90, phi0*180/pi, by=10), phi0*180/pi)
   radial.labels <- radial.lim
   radial.labels[(radial.lim %% 90) != 0] <- ""
   radial.labels[length(radial.labels)] <- phi0*180/pi
-  polar.plot(phis*180/pi, polar.pos=lambdas*180/pi+90,
-             rp.type="s", point.col=cols,
+  polar.plot(phis*180/pi, polar.pos=lambdas*180/pi,
+             rp.type="s", point.col=names(Dss),
              radial.lim=radial.lim,
              radial.labels=radial.labels,
              label.pos=c(0, 90, 180, 270),
@@ -1206,12 +1219,13 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
   Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
-  Dss <- list() # Datapoints on reconstructed sphere in cartesian coordinates
+  Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(Ds)) {
-    for (i in 1:length(Ds)) {
-      Dsb[[i]] <- with(t, tsearchn(P, T, Ds[[i]]))
-      Dsc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, p$R, t$Tt, Dsb[[i]])
-      Dss[[i]] <- sphere.cart.to.sphere.spherical(Dsc[[i]], p$R)
+    for (name in names(Ds)) {
+      print(name)
+      Dsb[[name]] <- with(t, tsearchn(P, T, Ds[[name]]))
+      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]) 
+      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], p$R)
     }
   }
   
@@ -1220,3 +1234,17 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
               Dsb=Dsb, Dsc=Dsc, Dss=Dss))
 }
 
+infer.datapoint.coordinates <- function(f, Ds) {
+  Dsb <- list() # Datapoints in barycentric coordinates
+  Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
+  Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
+  if (!is.null(Ds)) {
+    for (name in names(Ds)) {
+      print(name)
+      Dsb[[name]] <- with(f$t, tsearchn(P, T, Ds[[name]]))
+      Dsc[[name]] <- with(f, bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]))
+      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], f$p$R)
+    }
+  }
+  return(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss))
+}
