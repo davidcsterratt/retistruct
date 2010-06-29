@@ -17,7 +17,7 @@ A <- c()                                # Indices of apices of tears
 VB <- c()                      # Indices of forward verticies of tears
 VF <- c()                     # Indices of backward verticies of tears
 phi0 <- 50                 # Height of rim of retina in degrees
-f <- NULL                               # Fold object
+f <- NULL                               # Reconstruction object
 iN <- NULL                              # Index of nasal point
 iD <- NULL                              # Index of dorsal point
 
@@ -29,9 +29,12 @@ enable.group <- function(widgets, state=TRUE) {
 }
 
 enable.widgets <- function(state) {
-  enable.group(c(g.add, g.move, g.remove, g.fold,
+  enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d,
                  g.phi0, g.show), state)
+  if (is.null(iD) && is.null(iN)) {
+    enable.group(c(g.reconstruct), FALSE)
+  }
 }
 
 unsaved.data <- function(state) {
@@ -185,7 +188,7 @@ h.save <- function(h, ...) {
 ## Changes the following global variables:
 ##   dataset - directory in which data is contained
 ##   map     - the map data
-##   sys     - the sys data
+##   Ds      - list of datapoints
 ##   P       - the outline
 ##   gf      - forward pointers
 ##   gb      - backward pointers
@@ -213,7 +216,9 @@ h.open <- function(h, ...) {
         })
   setwd(curdir)
   map <<- read.map(dataset)
-  sys <<- read.sys(dataset)
+  sys <- read.sys(dataset)
+  Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
+              red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
   segs <- map.to.segments(map)
   P <<- segments.to.outline(segs)
   svalue(g.dataset) <- dataset 
@@ -244,8 +249,8 @@ h.open <- function(h, ...) {
   do.plot()
 }
 
-## Handler to start folding the outline
-h.fold <- function(h, ...) {
+## Handler to start reconstructing the retina
+h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d1)
@@ -286,12 +291,18 @@ h.show <- function(h, ...) {
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
-  if ("Sys" %in% svalue(g.show)) {
-    plot.sys.map(sys, map)
-  } else {
-    plot.outline(P, gb)
+  plot.outline(P, gb)
+  if ("Datapoints" %in% svalue(g.show)) {
+    plot.datapoints(Ds)
+    if (!is.null(f$Dss)) {
+      dev.set(d2)
+      with(f,
+           with(as.list(c(t, m, p)),
+                plot.datapoints.polar(f$Dss, phi0, cex=5)))
+      dev.set(d1)
+    }
   }
-
+  
   if ("Landmarks" %in% svalue(g.show)) {
     if (length(A) > 0) {
       points(P[VF,,drop=FALSE], col="red", pch="+")
@@ -327,10 +338,11 @@ g.win <- gwindow("Retistruct")
 
 g.rows <- ggroup(horizontal=FALSE, container=g.win)
 ## Toolbar in row 1
-g.open <- gaction("Open", icon="open", handler=h.open)
-g.save <- gaction("Save", icon="save", handler=h.save)
-g.fold <- gaction("Fold retina", handler=h.fold)
-g.toolbar <- gtoolbar(list(open=g.open, save=g.save, fold=g.fold), container=g.rows)
+g.open         <- gaction("Open", icon="open", handler=h.open)
+g.save         <- gaction("Save", icon="save", handler=h.save)
+g.reconstruct  <- gaction("Reconstuct retina", handler=h.reconstruct)
+g.toolbar <- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
+                      container=g.rows)
 
 ## Name of dataset in row 2
 g.dataset.row <- ggroup(container=g.rows)
@@ -357,7 +369,7 @@ g.phi0 <- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,
 
 ## What to show
 g.show.frame <- gframe("Show", container=g.editor)
-g.show <- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Sys"),
+g.show <- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints"),
                          checked=c(TRUE, FALSE, FALSE, FALSE),
                          handler=h.show, container=g.show.frame)
 
