@@ -1242,6 +1242,7 @@ infer.datapoint.coordinates <- function(f, Ds) {
     for (name in names(Ds)) {
       print(name)
       Dsb[[name]] <- with(f$t, tsearchn(P, T, Ds[[name]]))
+      print(Dsb[[name]])
       Dsc[[name]] <- with(f, bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]))
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], f$p$R)
     }

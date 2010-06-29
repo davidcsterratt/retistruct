@@ -265,6 +265,7 @@ h.reconstruct <- function(h, ...) {
     lambda0 <- 0
   }
   f <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
+                     Ds=Ds,
                      graphical=TRUE, report=set.status)
   enable.widgets(TRUE)
   do.plot()
