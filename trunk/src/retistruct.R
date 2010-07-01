@@ -342,9 +342,9 @@ g.rows <- ggroup(horizontal=FALSE, container=g.win)
 ## Toolbar in row 1
 g.open         <- gaction("Open", icon="open", handler=h.open)
 g.save         <- gaction("Save", icon="save", handler=h.save)
-g.reconstruct  <- gaction("Reconstuct retina", handler=h.reconstruct)
+g.reconstruct  <- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
 g.toolbar <- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
-                      container=g.rows)
+                      container=g.rows, style="both")
 
 ## Name of dataset in row 2
 g.dataset.row <- ggroup(container=g.rows)
