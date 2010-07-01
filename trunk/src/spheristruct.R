@@ -1169,9 +1169,10 @@ plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
                          graphical=TRUE,
+			 n=500,
                          report=print) {
   report("Triangulating...")
-  t <- triangulate.outline(P, h=1:nrow(P), n=200)
+  t <- triangulate.outline(P, h=1:nrow(P), n=n)
   if (graphical) {
     with(t, trimesh(T, P, col="black"))
   }
@@ -1187,7 +1188,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   }
 
   report("Triangulating...")  
-  t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=200,
+  t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=n,
                            suppress.external.steiner=TRUE)
   if (graphical) {
     plot.stitch(s)
