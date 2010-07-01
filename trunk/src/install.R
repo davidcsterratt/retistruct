@@ -1,6 +1,4 @@
-libdir <- file.path(getwd(), "library")
-system(paste("mkdir", libdir))
-.libPaths(new=libdir)
+source("config.R")
 if (!require("foreign"))       install.packages("foreign")
 if (!require("geometry"))      install.packages("geometry")
 if (!require("gWidgets"))      install.packages("gWidgets")

@@ -1,4 +1,4 @@
-if (!require("geometry")) install.packages("geometry")
+source("../config.R", chdir=TRUE)
 source("triangle.R")
 if (TRUE) {
   P <- cbind(c(0, 0),
