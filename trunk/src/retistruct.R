@@ -4,7 +4,6 @@ source("spheristruct.R")
 require(geometry)
 source("triangle/triangle.R", chdir=TRUE)
 
-
 ## install.packages('gWidgetsRGtk2') first if not installed
 if (!require("gWidgetsRGtk2")) install.packages("gWidgetsRGtk2")
 if (!require("cairoDevice")) install.packages("cairoDevice")
@@ -19,8 +18,8 @@ VB <- c()                      # Indices of forward verticies of tears
 VF <- c()                     # Indices of backward verticies of tears
 phi0 <- 50                 # Height of rim of retina in degrees
 f <- NULL                               # Reconstruction object
-iN <- NULL                              # Index of nasal point
-iD <- NULL                              # Index of dorsal point
+iN <- NA                              # Index of nasal point
+iD <- NA                              # Index of dorsal point
 
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
@@ -33,7 +32,7 @@ enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d,
                  g.phi0, g.show), state)
-  if (is.null(iD) && is.null(iN)) {
+  if (is.na(iD) && is.na(iN)) {
     enable.group(c(g.reconstruct), FALSE)
   }
 }
@@ -138,7 +137,7 @@ h.mark.n <- function(h, ...) {
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
   iN <<- id
-  iD <<- NULL
+  iD <<- NA
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -153,7 +152,7 @@ h.mark.d <- function(h, ...) {
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1)
   iD <<- id
-  iN <<- NULL
+  iN <<- NA
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -177,6 +176,9 @@ h.save <- function(h, ...) {
   if (!is.null(dataset)) {
     write.csv(cbind(A, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
     write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
+
+    markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
+    write.csv(markup, file.path(dataset, "markup.csv"))
     if (!is.null(f)) {
       save(f, file=file.path(dataset, "f.Rdata"))
     }
@@ -237,6 +239,16 @@ h.open <- function(h, ...) {
     VB <<- T[,2]                           # forward verticies
     VF <<- T[,3]                           # backward verticies
   }
+  markupfile <- file.path(dataset, "markup.csv")
+  if (file.exists(markupfile)) {
+    M <<- read.csv(markupfile)
+    print(M)
+    iD <<- M[1, "iD"]
+    iN <<- M[1, "iN"]
+    phi0 <<- M[1, "phi0"]
+    svalue(g.phi0) <- phi0
+  }
+
   foldfile <- file.path(dataset, "f.Rdata")
   if (file.exists(foldfile)) {
     load(foldfile, globalenv())
@@ -257,11 +269,11 @@ h.reconstruct <- function(h, ...) {
   dev.set(d1)
   i0 <- 0
   lambda0 <- 0
-  if (!is.null(iD)) {
+  if (!is.na(iD)) {
     i0 <- iD
     lambda0 <- 90
   }
-  if (!is.null(iN)) {
+  if (!is.na(iN)) {
     i0 <- iN
     lambda0 <- 0
   }
@@ -314,10 +326,10 @@ do.plot <- function() {
       points(P[A,,drop=FALSE], col="cyan", pch="+")
       text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
     }
-    if (!is.null(iD)) {
+    if (!is.na(iD)) {
       text(P[iD,1], P[iD,2], "D")
     }
-    if (!is.null(iN)) {
+    if (!is.na(iN)) {
       text(P[iN,1], P[iN,2], "N")
     }
   }
