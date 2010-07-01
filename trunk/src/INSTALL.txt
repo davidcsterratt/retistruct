@@ -1,0 +1,64 @@
+Installation of the nmf_morph/retistruct program
+================================================
+
+Fedora Linux 
+============
+
+1. Install the necessary system packages
+----------------------------------------
+
+As root,
+
+yum install R-core
+yum install R-devel
+yum install gtk2
+yum install gtk2-devel
+yum install mesa-libGL-devel
+yum install mesa-libGLU-devel
+yum install subversion # Only required if getting code with svn
+
+2. Obtain the source code
+-------------------------
+
+This can be either a tarball or via svn.
+
+I'll provide a tarball that unpacks into a directory called src
+
+To get the code via svn, in *theory* you should be able to do something like:
+
+kinit danial.nedergaard%kcl.ac.uk@FRIEND.ED.AC.UK
+svn co https://coltex.inf.ed.ac.uk/reposraw/nmf_morph
+
+Thereafter,
+
+svn update in the tree should get the files.
+
+The required files are in nmf_morph/trunk/src
+
+3. Install the required R pacakges
+----------------------------------
+
+Various R contributed packages are needed. To install them:
+
+1. Make sure you're in the src directory
+2. Start R, and then type:
+
+   source("install.R")
+
+   After some time, the packages should be installed.
+
+3. Exit R, and type
+
+  ./install
+
+   in the shell. This is required to compile custom C code in the package.
+
+4. Test that it works
+---------------------
+
+To start the program:
+
+$ R
+> source("retistruct.R")
+
+A window should appear.
