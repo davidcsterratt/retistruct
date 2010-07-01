@@ -1,2 +1,3 @@
 #!/bin/sh
+rm -f *.o *.so
 R CMD SHLIB *.c && R --vanilla < test_triangulate.R
