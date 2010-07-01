@@ -1,3 +1,4 @@
+source("config.R")
 source("geometry.R") # for dot(), norm(), tri.area() and tri.area.signed()
 source("misc.R")     # For Mod()
 source("tsearch.R")  # For mapping data points

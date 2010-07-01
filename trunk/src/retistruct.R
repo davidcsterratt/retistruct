@@ -1,3 +1,4 @@
+source("config.R")
 source("datafile-utils.R")
 source("spheristruct.R")
 require(geometry)

@@ -1,3 +1,4 @@
+source("config.R")
 require("foreign")
 source("geometry.R")
 source("misc.R")
