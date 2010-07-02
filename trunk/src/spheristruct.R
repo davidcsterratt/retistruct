@@ -447,7 +447,7 @@ merge.points.edges <- function(t, s) {
   }
 
   ## Form the mapping from a new set of consecutive edge indicies
-  ## the existing indicies onto the existing edge indicies
+  ## onto the existing edge indicies
   U <- unique(H)
 
   ## Transform the edge set into the new indicies
@@ -483,7 +483,7 @@ merge.points.edges <- function(t, s) {
   }
   
   return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
-              Rsett=Rsett, i0t=i0t, P=P))
+              Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht))
 }
 
 ## Project mesh points in the flat outline onto a sphere
@@ -820,6 +820,7 @@ polar.to.cart <- function(r, theta) {
 ## - sphere
 ## - gridlines
 ## - datapoints
+## - strain
 ##
 ## and <view> is one of
 ## - flat [default]
@@ -869,6 +870,21 @@ plot.stitch <- function(s, add=FALSE, ...) {
     }
   })
   ## points(P[s$Rset,], col="red")
+}
+
+## Function to plot the fractional change in length of connections 
+plot.strain.flat <- function(r) {
+  Ls <- r$t$L                  # Original lengths in flattened outline
+  ls <- compute.lengths(r$r$phi, r$r$lambda, r$m$Cut, r$p$R)
+  print(length(ls))
+  print(length(Ls))
+  print(length(ls[r$m$H]))
+  strain <- ls[r$m$H]/Ls
+  print(strain)
+  palette(rainbow(100)) ## Green is about 35; dark blue about 70
+  with(r$t, 
+       segments(P[Cu[,1],1], P[Cu[,1],2],
+                P[Cu[,2],1], P[Cu[,2],2], col=(-log(strain) * 30 + 35)))
 }
 
 ## Function to plot the mesh describing the reconstructed hemisphere

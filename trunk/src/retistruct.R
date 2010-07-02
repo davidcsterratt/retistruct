@@ -21,7 +21,7 @@ initialise.userdata <- function() {
   phi0 <<- 50        # Height of rim of retina in degrees
   r <<- NULL         # Reconstruction object
   iN <<- NA          # Index of nasal point
-  iD <<- NA         # Index of dorsal point
+  iD <<- NA          # Index of dorsal point
 }
 
 initialise.userdata()
