@@ -4,22 +4,27 @@ source("spheristruct.R")
 require(geometry)
 source("triangle/triangle.R", chdir=TRUE)
 
-## install.packages('gWidgetsRGtk2') first if not installed
-if (!require("gWidgetsRGtk2")) install.packages("gWidgetsRGtk2")
-if (!require("cairoDevice")) install.packages("cairoDevice")
-library(gWidgetsRGtk2)
+require(gWidgetsRGtk2)
+require(cairoDevice)
+library(gWidgets)
 options(guiToolkit = "RGtk2")
 
 ## Global variables
 dataset <- NULL                         # Directory of dataset
 initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
-A <- c()                                # Indices of apices of tears
-VB <- c()                      # Indices of forward verticies of tears
-VF <- c()                     # Indices of backward verticies of tears
-phi0 <- 50                 # Height of rim of retina in degrees
-f <- NULL                               # Reconstruction object
-iN <- NA                              # Index of nasal point
-iD <- NA                              # Index of dorsal point
+
+## Return initialised userdata list
+initialise.userdata <- function() {
+  A <<- c()          # Indices of apices of tears
+  VB <<- c()         # Indices of forward verticies of tears
+  VF <<- c()         # Indices of backward verticies of tears
+  phi0 <<- 50        # Height of rim of retina in degrees
+  r <<- NULL         # Reconstruction object
+  iN <<- NA          # Index of nasal point
+  iD <<- NA         # Index of dorsal point
+}
+
+initialise.userdata()
 
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
@@ -218,6 +223,7 @@ h.open <- function(h, ...) {
           dataset <<- h$file
         })
   setwd(curdir)
+  initialise.userdata()
   map <<- read.map(dataset)
   sys <- read.sys(dataset)
   Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
@@ -259,6 +265,8 @@ h.open <- function(h, ...) {
   }
   unsaved.data(FALSE)
   enable.widgets(TRUE)
+  dev.set(d2)
+  plot.new()
   do.plot()
 }
 
