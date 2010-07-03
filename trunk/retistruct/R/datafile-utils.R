@@ -1,8 +1,3 @@
-##source("config.R")
-##require("foreign")
-##source("geometry.R")
-##source("misc.R")
-
 ## Function to return minimum and maximum values of vector x
 lim <- function(x) {
   return(c(min(x), max(x)))
@@ -110,8 +105,8 @@ connect.segments <- function(segs) {
   Ts <- list()                          # New segment list
   T <- matrix(0, 0, 2)                  # Initialisation
   while(1) {
-    j <- Mod(i + N, 2*N)                # Index at end of segment
-    k <- n[j]                           # Closest index in another segment
+    j <- mod1(i + N, 2*N)           # Index at end of segment
+    k <- n[j]                       # Closest index in another segment
     
     n[i] <- NA                   # Ignore these indicies in the future
     n[j] <- NA                   # Ignore these indicies in the future

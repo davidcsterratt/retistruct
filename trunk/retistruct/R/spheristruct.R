@@ -1,10 +1,3 @@
-##source("config.R")
-##source("geometry.R") # for dot(), norm(), tri.area() and tri.area.signed()
-##source("misc.R")     # For Mod()
-##source("tsearch.R")  # For mapping data points
-##require("rgl")       # For 3D plots
-##require("plotrix")   # For polar plots
-
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
 path <- function(i, j, g, h) {
@@ -211,9 +204,9 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
     ##print(paste("Forward tear", j))
-    TFset[[j]] <- Mod(path(A[j], VF[j], gf, hf), N)
+    TFset[[j]] <- mod1(path(A[j], VF[j], gf, hf), N)
     ##print(paste("Backward tear", j))
-    TBset[[j]] <- Mod(path(A[j], VB[j], gb, hb), N)
+    TBset[[j]] <- mod1(path(A[j], VB[j], gb, hb), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
   }
