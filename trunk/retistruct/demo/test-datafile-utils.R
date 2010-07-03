@@ -1,4 +1,4 @@
-source("datafile-utils.R")
+## source("datafile-utils.R")
 
 datasets <- c("../../../data/Anatomy/marked-up-retinae-2010-03-24/gm119-5-adult-C57BL6",
               "../../../data/Anatomy/marked-up-retinae-2010-03-24/gm143-2-P2-C57BL6/",

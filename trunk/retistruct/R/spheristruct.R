@@ -1,9 +1,9 @@
-source("config.R")
-source("geometry.R") # for dot(), norm(), tri.area() and tri.area.signed()
-source("misc.R")     # For Mod()
-source("tsearch.R")  # For mapping data points
-require("rgl")       # For 3D plots
-require("plotrix")   # For polar plots
+##source("config.R")
+##source("geometry.R") # for dot(), norm(), tri.area() and tri.area.signed()
+##source("misc.R")     # For Mod()
+##source("tsearch.R")  # For mapping data points
+##require("rgl")       # For 3D plots
+##require("plotrix")   # For polar plots
 
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p

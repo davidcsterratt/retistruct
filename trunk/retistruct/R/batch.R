@@ -1,6 +1,6 @@
-source("spheristruct.R")
-source("common.R")
-source("datafile-utils.R")
+##source("spheristruct.R")
+##source("common.R")
+##source("datafile-utils.R")
 
 ## This is the master function to process a retina
 ## Its only argument is a directory, which contains the following files

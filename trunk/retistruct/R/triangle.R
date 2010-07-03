@@ -1,5 +1,5 @@
-if (is.loaded("R_triangulate")) dyn.unload("R_triangle.so")
-dyn.load("R_triangle.so")
+##if (is.loaded("R_triangulate")) dyn.unload("R_triangle.so")
+##dyn.load("R_triangle.so")
 
 triangulate <- function(P, S=NULL, a=NULL, q=NULL, Y=FALSE) {
   if (ncol(P) == 2) {

@@ -1,12 +1,12 @@
-source("config.R")
-source("datafile-utils.R")
-source("spheristruct.R")
-require(geometry)
-source("triangle/triangle.R", chdir=TRUE)
+##source("config.R")
+##source("datafile-utils.R")
+##source("spheristruct.R")
+##source("triangle/triangle.R", chdir=TRUE)
 
-require(gWidgetsRGtk2)
-require(cairoDevice)
-library(gWidgets)
+##library(geometry)
+##library(gWidgetsRGtk2)
+##library(cairoDevice)
+##library(gWidgets)
 options(guiToolkit = "RGtk2")
 
 ## Global variables
