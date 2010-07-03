@@ -1,5 +1,5 @@
-source("fold-sphere2.R")
-library("pixmap")
+library(retistruct)
+library(pixmap)
 
 im <- read.pnm("../data/20091214191056-small.ppm")
 # plot(im)

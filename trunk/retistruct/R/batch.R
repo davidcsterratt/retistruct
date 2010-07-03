@@ -1,4 +1,4 @@
-source("fold-sphere2.R")
+source("spheristruct.R")
 source("common.R")
 source("datafile-utils.R")
 
