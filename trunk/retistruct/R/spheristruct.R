@@ -1220,6 +1220,10 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     plot.sphere.spherical(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
   }
 
+  ##
+  ## FIXME: is lambda0 passed to optimise.mapping()?
+  ## 
+  
   report("Optimising mapping...")
   r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
   p1 <- p
