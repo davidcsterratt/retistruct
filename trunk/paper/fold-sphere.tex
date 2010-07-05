@@ -22,7 +22,7 @@
 
 \title{Inference of original retinal coordinates from  flattenend
   retinae}
-\author{David Sterratt}
+\author{David C. Sterratt, Daniel L. Nedergaard and Ian D. Thompson}
 
 \begin{document}
 \maketitle
@@ -45,15 +45,96 @@
 \section{Introduction}
 \label{fold-sphere:sec:introduction}
 
-The general idea behind this method is to image folding the flattend
-retina onto a sphere (or ellipsoid) that has the same dimensions that
-would be expected of the real eye. Tears in the retina will naturally
-tend to close up as they are folded onto the sphere.  In order to
-perform the folding, the method has to allow for some elasticity in
-the retina, and also prevent the edges of the flattened retina from
-overlapping with each other on the surface of the sphere. The method
-as developed so far does incorporate elasticity, but the prevention of
-overlap has not yet been implemented.
+There are a number of experiments in which the retina is labelled,
+then dissected, flattened, and the locations of labels analysed
+\citep{RashEtal05oppo} \todo{More examples of analysis of retinae}.
+During the dissection, incisions are made in retina, and tearing may
+occur as the retina is flattened. The locations of the labels are
+measured in the two-dimensional Euclidean space defined by the slide,
+but this coordinate system is not entirely satisfactory for at least
+two reasons. Firstly, the incisions and tears may splits clusters of
+labelled cells which were centred around the same point in the intact
+retina. The mean location of such a split cluster in the Euclidean
+plane may lie outside the retinal outline. Secondly, it is difficult
+to infer the location with respect to the retinal pole and the nasal,
+temporal, ventral and dorsal poles with any degree of accuracy.
+
+Therefore the aim of the method presented in this paper is to infer
+the coordinates in intact retinal space of points on a flattened
+retina. At present, the retina is approximated as a partial sphere,
+and the coordinate system can be thought of as lines of latitude and
+longitude on the globe. However, it would be possible to generalise
+the method to deal with a retina modelled by any shape with axial
+symmetry.  The method requires that an expert mark up the cuts and
+tears, and also that they indicate the position of at least one
+landmark on the rim of the eye. The method has been implemented as a
+program written in R, and can reconstruct a retina within a few
+minutes on a desktop machine. The accuracy of the method is estimated
+to be \todo{produce estimate for accuracy of method}.
+
+\todo{Previous work??} The authors are not aware of this particular problem
+having been addressed before, although the  finite element method for
+modelling materials is in common use in other fields \todo{Citations
+  of where FEM is used in other fields.}
+
+% The general idea behind this method is to imagine folding the
+% flattened retina onto a manifold with the same shape and size of the
+% real eye. In order to perform the folding, the method has to allow for
+% some elasticity in the retina. The method as developed so far does
+% incorporate elasticity, but the prevention of overlap has not yet been
+% implemented.
+
+\section{Results}
+\label{fold-sphere:sec:results}
+
+Figures~\ref{fold-sphere:fig:test1} and~\ref{fold-sphere:fig:test2}
+show that the algorithm does project the flattened retina onto a
+sphere.
+
+\subsection{Validation}
+\label{fold-sphere:sec:validation}
+
+
+
+\section{Discussion}
+\label{fold-sphere:sec:discussion}
+
+\subsection{Validity of the method}
+\label{fold-sphere:sec:validity-method}
+
+\subsection{Alternative methods}
+\label{fold-sphere:sec:alternative-methods}
+
+\begin{itemize}
+\item Unsupervised reconstruction, with edge binding.  I envisage that
+  it would be possible to put in a component of the energy function
+  that provides for short range repulsion between vertices on the edge
+  of the flattened retina and edges of the flattened retina. The
+  energy function might have longer range attraction. One possible
+  parametrisation would be the Lennard-Jones potential which is used
+  to model short range repulsion and longer range attraction between
+  molecules:
+  \begin{equation}
+    \label{fold-sphere:eq:4}
+    E(r) = 4\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-
+      \left(\frac{\sigma}{r}\right)^{6}\right)
+  \end{equation}
+  where $r$ is the distance between molecules, $\epsilon$ defines the
+  depth of the potential well and $\sigma$ is the distance at which the
+  potential is zero.
+
+  Were this approach to work, additional refinements might be possible,
+  such as adding a component of the energy function that draws together
+  points on either side of a rip which are correspond to each other with
+  high probability. Another possibility would be to allow the radius of
+  the sphere $R$ to vary within realistic bounds, to optimise the fit
+  further.
+\item Automated stitching.
+\end{itemize}
+
+\subsection{Applications of the method}
+\label{fold-sphere:sec:applications-method}
+
 
 \section{Algorithm}
 \label{fold-retina:sec:method}
@@ -70,7 +151,7 @@ overlap has not yet been implemented.
   \label{fold-sphere:fig:mesh}
 \end{figure}
 
-The edge of the flattend retina is described by a set of $N$ points:
+The edge of the flattened retina is described by a set of $N$ points:
 $\mathcal{P} = \{\vec{p}_1,\dots,\vec{p}_N$\}. Connections between
 points are represented by forwards and backwards pointers, which are
 represented as vectors $\vec{g}^+$ and $\vec{g}^-$:
@@ -110,7 +191,7 @@ The area $a_i$ of each triangle is computed:
 \end{displaymath}
 
 \begin{enumerate}
-\item From the triangluation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
+\item From the triangulation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
   indicies representing line segments is constructed.
 \item For the morphing algorithm, it is essential that no line segment
   connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
@@ -122,11 +203,11 @@ The area $a_i$ of each triangle is computed:
   \begin{itemize}
   \item removing the two triangles that it belongs to from the list
     $\mathbf{T}$
-  \item Creating a new point at the centroid of the four verticies
+  \item Creating a new point at the centroid of the four vertices
     shared by these two triangles. This new point $i$ is added to the
     correspondences vector: $h_i=i$.
   \item Creating four new triangles, who all share the new point and
-    the each of which has two verticies from the set of four
+    the each of which has two vertices from the set of four
     triangles.
   \end{itemize}
 \end{enumerate}
@@ -147,7 +228,7 @@ are computed.
   \caption{Stitching. The solid line is the outline of the retina. The
     red circled-points are ones that were originally on the rim. The
     blue lines are the + tears and the purple lines are the - tears.
-    Green lines indicate corresponding verticies at the end of tears.
+    Green lines indicate corresponding vertices at the end of tears.
     Yellow lines indicate corresponding points along the tears. }
   \label{fold-sphere:fig:stitch}
 \end{figure}
@@ -158,7 +239,7 @@ retina which has had the stitching algorithm applied to it.
 Cuts and tears marked up by an expert.  Each of the $M$ cuts or tears
 $j$ is defined by a common apex at the point indexed by $A_j$, a
 vertex in the forwards direction (indexed by $V^+_j$) and in the
-backwards directions (indexed by $V^-_j$).  Pairs of verticies will
+backwards directions (indexed by $V^-_j$).  Pairs of vertices will
 correspond to each other in the morphed retina, and this relationship
 is indicated by a correspondence vectors $\vec{h}^+$ and $\vec{h}^-$:
 \begin{displaymath}
@@ -174,7 +255,7 @@ is indicated by a correspondence vectors $\vec{h}^+$ and $\vec{h}^-$:
       V^-_j  & \mbox{ if } \exists j: i = V^+_j
     \end{array}\right.
 \end{displaymath}
-At this stage, a correpondence vector $\vec{h}$ is initialiased to be
+At this stage, a correspondence vector $\vec{h}$ is initialised to be
 the same as $\vec{h}^+$.
 
 The set of points in each tear is determined using the function
@@ -238,7 +319,7 @@ where
 \begin{displaymath}
   f = \frac{s^+_{ji}S^-_j/S^+_j-s^-_{jk}}{s^-_{jg^-_k}-s^-_{jk}}
 \end{displaymath}
-The correspondnaces vector is updated so that $h_i = n$. The vector of
+The correspondences vector is updated so that $h_i = n$. The vector of
 forward pointers is updated so that
 \begin{displaymath}
   \begin{array}{ll}
@@ -246,17 +327,17 @@ forward pointers is updated so that
     g^-_{g^+_k} = n & g^+_k = n 
   \end{array}
 \end{displaymath}
-If a correspondance $h^-_i$ exists for point $i$, then no new point is
+If a correspondence $h^-_i$ exists for point $i$, then no new point is
 made, but this point is set to correspond to the same point as $h^-_i$
 corresponds to by setting $h_i = h_{h^-_i}$. 
 
-A similar procecudure is carried out for the $-$ tear.
+A similar procedure is carried out for the $-$ tear.
 
 After this procedure, it is possible that there may be chains of
 correspondences where, for example, $i$ corresponds to $h_i$ and $h_i$
-correspondes to a different point $h_{h_i}$. These three points are in
+correspondences to a different point $h_{h_i}$. These three points are in
 fact actually one, but to indicate this, both $h_i$ and $i$ should
-point to $h_{h_i}$.  It order to ensure this, the correspondance
+point to $h_{h_i}$.  It order to ensure this, the correspondence
 vector is updated iteratively:
 \begin{displaymath}
   h^{k+1}_i = h^k_{h^k_i}  
@@ -276,7 +357,7 @@ When the points are projected onto the hemisphere, the points which
 have the stitching algorithm has identified as corresponding with each
 other are merged. This results in a new set of points, which is a
 subset of the existing set of points created by the triangulation and
-stitiching operations. It is desirable to renumber this set of points
+stitching operations. It is desirable to renumber this set of points
 consecutively starting at 1. In order to do this, 
 \begin{itemize}
 \item An ordered set $\mathcal{U}$ of the unique values of the range
@@ -286,7 +367,7 @@ consecutively starting at 1. In order to do this,
 \item A transformed set of points $\mathcal{\tilde P}$ is formed by
   setting $\tilde{\vec{p}}_i = \vec{p}_{u_i}$
 \item A new mapping $\tilde h$ from the existing indicies to a
-  new set of unique indices is formed:
+  new set of unique indicies is formed:
   \begin{displaymath}
     \tilde h_i = j:u_j = h_i \quad
     \tilde h(i) = u^{-1}(h(u(i)))
@@ -295,7 +376,7 @@ consecutively starting at 1. In order to do this,
   $\mathbf{T}$, by setting $\tilde{T}_{ij} = \tilde h_{T_{ij}}$
 \end{itemize}
 
-It is also necessary to transform the indices used by the edge sets
+It is also necessary to transform the indicies used by the edge sets
 and determine correspondences between edges which have been merged. 
 \begin{itemize}
 \item A mapping $\vec{H}$ between connections (as opposed to points)
@@ -312,7 +393,7 @@ and determine correspondences between edges which have been merged.
 \item New $\tilde L_k = \frac{1}{|\mathcal{H}_k|}
   \sum_{i\in\mathcal{H}_k} L_i$ where $\mathcal{H}_k = i: k=H_k$. 
 \item In order to compute derivatives efficiently later on in the
-  prodecdure, a we form a $\tilde N$ by $2\tilde M$ matrix
+  procedure, a we form a $\tilde N$ by $2\tilde M$ matrix
   $\tilde{\mathbf{B}}$ which maps by setting $\tilde B_{\tilde
     C_{k1}k} = 1$ and $\tilde B_{\tilde C_{k2}k} = 1$ for all
   $k=1\dots \tilde M$.
@@ -351,7 +432,7 @@ $E_\mathrm{A}$:
 \label{fold-sphere:sec:elastic-force}
 
 This component of the energy corresponds to the energy contained in
-imageinary springs with the natural lenght of the distances in the
+imaginary springs with the natural length of the distances in the
 flattened retina, $\tilde L_k$:
 % \begin{equation}
 %   \label{fold-sphere:eq:5}
@@ -396,56 +477,13 @@ optimisation, and the resulting grid on the sphere is plotted in 3D
 \label{fold-sphere:sec:area-pres-energy}
 
 
-
-\section{Discussion}
-\label{fold-retina:sec:discussion}
-
-Figures~\ref{fold-sphere:fig:test1} and~\ref{fold-sphere:fig:test2}
-show that the algorithm does project the flattened retina onto a
-sphere. The edges of the retina at the outer ends of tears are closer
-together on the sphere than they are in the flattened coordinate
-system. However, towards the base of the tears, there is considerable
-overlap between neighbouring ``flaps'' of the flattened retina. The
-algorithm as it stands is therefore not sufficient to allocate every
-point on the flattened retina a coordinate in the presumed sphere of
-the intact retina.
-
-The reason for these overlaps is that there is no component of the
-energy function that prevents them occurring. I envisage that it would
-be possible to put in a component of the energy function that provides
-for short range repulsion between vertices on the edge of the
-flattened retina and edges of the flattened retina. The energy
-function might have longer range attraction. One possible
-parametrisation would be the Lennard-Jones potential which is used to
-model short range repulsion and longer range attraction between
-molecules:
-\begin{equation}
-  \label{fold-sphere:eq:4}
-  E(r) = 4\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-
-    \left(\frac{\sigma}{r}\right)^{6}\right)
-\end{equation}
-where $r$ is the distance between molecules, $\epsilon$ defines the
-depth of the potential well and $\sigma$ is the distance at which the
-potential is zero.
-
-A useful preliminary step before implementing this would be to improve
-the algorithm that creates the triangular mesh over the flattened
-retina, so that it completely fills the space by making links to the
-edge of the retina and by laying links along the edge of the retina.
-
-Were this approach to work, additional refinements might be possible,
-such as adding a component of the energy function that draws together
-points on either side of a rip which are correspond to each other with
-high probability. Another possibility would be to allow the radius of
-the sphere $R$ to vary within realistic bounds, to optimise the fit
-further.
-
 \bibliographystyle{natbib}
 \bibliography{nmf_morph}
 
 \end{document}
 
-% LocalWords:  ij BP Raphson PDF
+% LocalWords:  ij BP Raphson PDF myheadings RashEtal oppo shewchuk Ruppert's ji
 %%% Local Variables: 
 %%% TeX-PDF-mode: t
 %%% End: 
+% LocalWords:  jk th nmf
