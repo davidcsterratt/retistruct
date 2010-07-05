@@ -3,26 +3,38 @@
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 
+void spheristruct_p_to_lambda_phi(double *xp, int *Rset, int N, int Nset) {
+
+}
+
+double central_angle(double phi1, double lambda1, double phi2, double lambda2) {
+  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)));
+}
+
 SEXP spheristruct_E(SEXP p, SEXP Cu, SEXP C, SEXP L, SEXP B, SEXP T,
                     SEXP A, SEXP R,
                     SEXP Rset, SEXP i0, SEXP phi0, SEXP Nphi, 
                     SEXP E0A, SEXP kA, SEXP N, SEXP verbose)
 {
   SEXP phi, lambda, ans;
-  double *xp, *xphi, *xlambda;
+  double *xp, *xphi, *xlambda, *xL;
   int *xRset;
+  int NRset;
+  int *xCu;
   /* phi <- rep(phi0, N) */
 
   PROTECT(phi = allocVector(REALSXP, *INTEGER(N)));
+  PROTECT(p = AS_NUMERIC(p));
   xp = REAL(p);
   xphi = REAL(phi);
   xRset = INTEGER(Rset);
+  NRset = LENGTH(Rset);
   int j=0;
   int k=0;
   for (int i=0; i<*INTEGER(N); i++) {
-    if (i==xRset[j]) {
+    if (i==(xRset[j]-1)) {
       xphi[i] = *REAL(phi0);
-      j++;
+      if (j + 1 < NRset) j++;
     } else {
       xphi[i] = xp[k];
       k++;
@@ -32,9 +44,8 @@ SEXP spheristruct_E(SEXP p, SEXP Cu, SEXP C, SEXP L, SEXP B, SEXP T,
   PROTECT(lambda = allocVector(REALSXP, *INTEGER(N)));
   xlambda = REAL(lambda);
   j=0;
-  k=0;
   for (int i=0; i<*INTEGER(N); i++) {
-    if (i==*INTEGER(i0)) {
+    if (i==(*INTEGER(i0)-1)) {
       xlambda[i] = 0;
       j++;
     } else {
@@ -43,16 +54,29 @@ SEXP spheristruct_E(SEXP p, SEXP Cu, SEXP C, SEXP L, SEXP B, SEXP T,
     }
   }
   
+  PROTECT(Cu = AS_INTEGER(Cu));
+  xCu = INTEGER(Cu);
+  PROTECT(L = AS_NUMERIC(L));
+  xL = REAL(L);
+  int M = LENGTH(Cu)/2;
 
+  /* 
+   *  Compute derivative of elastic energy
+   *  Use the upper triagular part of the connectivity matrix Cu 
+   */
+  double E=0;
+  double l;
+  for (int i=0; i<M; i++) {
+    /*    printf("%i %i %f %i %i %f %f\n", i, xCu[i], xphi[xCu[i]], 
+           i+M, xCu[i+M], xphi[xCu[i+M]],
+           central_angle(xphi[xCu[i]],   xlambda[xCu[i]], 
+           xphi[xCu[i+M]], xlambda[xCu[i+M]])); */
+    l = *REAL(R)*central_angle(xphi[xCu[i]],   xlambda[xCu[i]], 
+                        xphi[xCu[i+M]], xlambda[xCu[i+M]]);
+    E += (l - xL[i])*(l - xL[i])/xL[i];
+  }
+  E *= 0.5;
   /*
-  phi[-Rset] <- p[1:Nphi]
-  lambda <- rep(0, N)
-  lambda[-i0] <- p[Nphi+1:(N-1)]
-
-  ##
-  ## Compute derivative of elastic energy
-  ##
-  ## Use the upper triagular part of the connectivity matrix Cu
   phi1    <- phi[Cu[,1]]
   lambda1 <- lambda[Cu[,1]]
   phi2    <- phi[Cu[,2]]
@@ -86,8 +110,8 @@ SEXP spheristruct_E(SEXP p, SEXP Cu, SEXP C, SEXP L, SEXP B, SEXP T,
   return(E.E + E0.A*E.A) */
 
   PROTECT(ans = allocVector(REALSXP, 1));
-  REAL(ans)[0] = 45;
-  UNPROTECT(2);
+  REAL(ans)[0] = E;
+  UNPROTECT(6);
   
-  return(lambda);
+  return(ans);
 }
