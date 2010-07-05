@@ -1,0 +1,10 @@
+Package: retistruct
+Version: 0.1
+Date: 2010-07-02
+Title: Retinal reconstruction program
+Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
+Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
+Depends: R (>= 2.10.0), geometry, foreign, gWidgets, gWidgetsRGtk2, cairoDevice, rgl, plotrix
+Description: Program to reconstruct retinae from flattened retinae in which there are cuts and tears
+License: file LICENSE
+URL: http://www.neuralmapformation.org
