@@ -269,6 +269,16 @@ h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
   dev.set(d1)
+  ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
+  if (length(ct)) {
+    gmessage(paste("Invalid tears marked up. Somehow tears",
+                   toString(ct),
+                   "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
+                   toString(ct), "."), title="Error", icon="error")
+
+    enable.widgets(TRUE)
+    return()
+  }
   i0 <- 0
   lambda0 <- 0
   if (!is.na(iD)) {

@@ -35,5 +35,5 @@ E(p, Cu, C, L, B, T,
 }
 print("R finished")
 
-
-## E(p, f$m$Cut, f$m$Ct, f$m$Lt, f$m$Bt, f$m$Tt, f$t$a, f$p$R, f$m$Rsett, f$m$i0, f$p$phi0, nrow(f$m$Pt)-length(f$m$Rsett), 0, 1, nrow(f$m$Pt), FALSE)
+for (i in 1:1000) 
+E(p, f$m$Cut, f$m$Ct, f$m$Lt, f$m$Bt, f$m$Tt, f$t$a, f$p$R, f$m$Rsett, f$m$i0, f$p$phi0, nrow(f$m$Pt)-length(f$m$Rsett), 0, 1, nrow(f$m$Pt), FALSE)

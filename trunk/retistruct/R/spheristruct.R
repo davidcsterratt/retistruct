@@ -73,6 +73,28 @@ markers.to.apex.vertices <- function(m, gf, gb, P) {
   return(M)
 }
 
+## Check that tears are all in the correct direction
+##
+## Given a tear matrix T with columns "A", "VF", and "VB", check that
+## all tears are correct.
+##
+## Output:
+##   If all is OK, returns empty vector
+##   If not, returns indicies of problematic tears
+##
+check.tears <- function(T, gf, gb, P) {
+  out <- c()
+  for (i in 1:nrow(T)) {
+    ## Extract the markers for this row
+    m <- T[i, c("A", "VF", "VB")]
+    M <- markers.to.apex.vertices(m, gf, gb, P)
+    if (!all(M == m)) {
+      out <- c(out, i)
+    }
+  }
+  return(out)
+}
+
 ## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
 ##
 ## Create a triangulation of the outline defined by the points P,
