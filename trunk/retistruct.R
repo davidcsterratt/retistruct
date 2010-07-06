@@ -105,6 +105,12 @@ h.move <- function(h, ...) {
     points(P[VF[tid],1], P[VF[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
     if (length(id)) VF[tid] <<- id
+    ## It is possible to get the apex and vertex mixed up when moving points.
+    ## Fix any errors.
+    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
+    A[tid]  <<- M["A"]
+    VF[tid] <<- M["VF"]
+    VB[tid] <<- M["VB"]
   } 
   tid <- which(id==VB)
   if (length(tid)) {
@@ -113,6 +119,10 @@ h.move <- function(h, ...) {
     points(P[VB[tid],1], P[VB[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
     if (length(id)) VB[tid] <<- id
+    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
+    A[tid]  <<- M["A"]
+    VF[tid] <<- M["VF"]
+    VB[tid] <<- M["VB"]
   }
   tid <- which(id==A)
   if (length(tid)) {
@@ -121,6 +131,10 @@ h.move <- function(h, ...) {
     points(P[A[tid],1], P[A[tid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
     if (length(id)) A[tid] <<- id
+    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
+    A[tid]  <<- M["A"]
+    VF[tid] <<- M["VF"]
+    VB[tid] <<- M["VB"]
   }
   do.plot()
   svalue(g.status) <- ""
