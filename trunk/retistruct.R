@@ -91,51 +91,37 @@ h.remove <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
+## Handler for moving points
 h.move <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
+  dev.set(d1)
+  ## Find the intial point
   svalue(g.status) <- paste("Click on apex or vertex to move.",
                             identify.abort.text())
-  dev.set(d1)
   id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-  tid <- which(id==VF)
+
+  ## Locate tear in which th point occurs
+  T <- cbind(A, VF, VB)                 # Tear matrix
+  tid <- which(apply(id==T, 1, any))[1]
+  pid <- which(id==T[tid,])[1]
+
+  ## If there is a tear in which it occurs, select a point to move it to
   if (length(tid)) {
-    svalue(g.status) <- paste("Vertex selected. Click on point to move it to.",
+    svalue(g.status) <- paste("Click on point to move it to.",
                             identify.abort.text())
-    points(P[VF[tid],1], P[VF[tid],2], col="yellow")
+    points(P[T[tid,pid],1], P[T[tid,pid],2], col="yellow")
     id <- identify(P[,1], P[,2], n=1)
-    if (length(id)) VF[tid] <<- id
+    if (length(id)) T[tid,pid] <- id
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
-    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
-    A[tid]  <<- M["A"]
-    VF[tid] <<- M["VF"]
-    VB[tid] <<- M["VB"]
-  } 
-  tid <- which(id==VB)
-  if (length(tid)) {
-    svalue(g.status) <- paste("Vertex selected. Click on point to move it to.",
-                            identify.abort.text())
-    points(P[VB[tid],1], P[VB[tid],2], col="yellow")
-    id <- identify(P[,1], P[,2], n=1)
-    if (length(id)) VB[tid] <<- id
-    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
+    M <- markers.to.apex.vertices(T[tid,], gf, gb, P)
     A[tid]  <<- M["A"]
     VF[tid] <<- M["VF"]
     VB[tid] <<- M["VB"]
   }
-  tid <- which(id==A)
-  if (length(tid)) {
-    svalue(g.status) <- paste("Apex selected. Click on point to move it to.",
-                            identify.abort.text())
-    points(P[A[tid],1], P[A[tid],2], col="yellow")
-    id <- identify(P[,1], P[,2], n=1)
-    if (length(id)) A[tid] <<- id
-    M <- markers.to.apex.vertices(c(A[tid], VF[tid], VB[tid]), gf, gb, P)
-    A[tid]  <<- M["A"]
-    VF[tid] <<- M["VF"]
-    VB[tid] <<- M["VB"]
-  }
+
+  ## Display and cleanup
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
