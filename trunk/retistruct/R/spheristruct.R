@@ -26,6 +26,53 @@ path.length <- function(i, j, g, h, P) {
   }
 }
 
+## markers.to.apex.verties(m, gf, gb, P)
+##
+## Label a set of three unlabelled points supposed to refer to the
+## apex and vertcies of a cut and tear with the A (Apex), VF (forward
+## vertex) and VB (backward vertex) labels.
+##
+## Arguments:
+##   m  - the vector of three indicies
+##   gf - the forward pointer vector
+##   gb - the backward pointer vector
+##
+## Output:
+##   Vector of indicies labelled with A, VF and VB
+##
+markers.to.apex.vertices <- function(m, gf, gb, P) {
+  ## Each row of this matrix is a permutation of the markers
+  p <- rbind(c(1, 2, 3),
+             c(1, 3, 2),
+             c(2, 1, 3),
+             c(2, 3, 1),
+             c(3, 1, 2),
+             c(3, 2, 1))
+
+  ## For each permuation of A, VF, VB, measure the sum of length in
+  ## the forwards direction from A to VF and in the backwards
+  ## direction from A to VB. The permuation with the minimum distance
+  ## is the correct one.
+  tplmin <- Inf                      # The minimum path length
+  h <- 1:nrow(P)                     # identity correspondence mapping
+                                     # used for measuring distances
+                                     # (this effectively ignores
+                                     # sub-tears, but this doesn't
+                                     # matter)
+  for (i in 1:nrow(p)) {
+    A <-  m[p[i,1]]
+    VF <- m[p[i,2]]
+    VB <- m[p[i,3]]
+    tpl <- path.length(A, VF, gf, h, P) + path.length(A, VB, gb, h, P)
+    if (tpl < tplmin) {
+      M <- m[p[i,]]
+      tplmin <- tpl
+    }
+  }
+  names(M) <- c("A", "VF", "VB")
+  return(M)
+}
+
 ## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
 ##
 ## Create a triangulation of the outline defined by the points P,
