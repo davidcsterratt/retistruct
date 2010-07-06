@@ -57,13 +57,15 @@ identify.abort.text <- function() {
 h.add <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  svalue(g.status) <- paste("Click on the apex of the tear.",
+  svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                             identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1)
-  A  <<- c(A , id)
-  VF <<- c(VF, gf[id])
-  VB <<- c(VB, gb[id])
+  id <- identify(P[,1], P[,2], n=3)
+  print(id)
+  M <- markers.to.apex.vertices(id, gf, gb, P)
+  A  <<- c(A,  M["A"])
+  VF <<- c(VF, M["VF"])
+  VB <<- c(VB, M["VB"])
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
