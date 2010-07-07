@@ -137,25 +137,21 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 
   ## We therefore find triangle which contains the first segment
   S <- out$S
-  T1 <- which(apply(out$T, 1, function(x) {all(S[1,] %in% x)}))
+  T1 <- which(apply(T, 1, function(x) {all(S[1,] %in% x)}))
 
   ## Then find out which of the vertices in the triangle is not the
   ## one we need
-  i <- which((out$T[T1,] %in% S[1,]) == FALSE)
-  if (i == 3) S[1,] <- out$T[T1,c(1,2)]
-  if (i == 2) S[1,] <- out$T[T1,c(3,1)]
-  if (i == 1) S[1,] <- out$T[T1,c(2,3)]
+  i <- which((T[T1,] %in% S[1,]) == FALSE)
+  if (i == 3) S[1,] <- T[T1,c(1,2)]
+  if (i == 2) S[1,] <- T[T1,c(3,1)]
+  if (i == 1) S[1,] <- T[T1,c(2,3)]
 
-  print(out$T[T1,])
-  print(S[1,])
-  
+  ## Now create the pointers from the segments
   gf <- segments2pointers(S)
   gb <- gf
   gb[na.omit(gf)] <- which(!is.na(gf))
   Rset <- na.omit(gf)
   
-  ## trimesh(T, P, col="grey", add=TRUE)
-
   ## Derive edge matrix from triangulation
   Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
   Cu <- Unique(Cu, TRUE)
@@ -214,7 +210,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   if (any(L==0)) {
     print("WARNING: zero-length lines")
   }
-  
+
   return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L,
               gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
@@ -465,6 +461,7 @@ merge.points.edges <- function(t, s) {
   Cu <- t$Cu
   L <- t$L
   P <- t$P
+  gf <- t$gf
   
   ## Form the mapping from a new set of consecutive indicies
   ## the existing indicies onto the existing indicies
@@ -490,7 +487,7 @@ merge.points.edges <- function(t, s) {
   Tt  <- matrix(ht[T], ncol=3)
 
   ## Tansform the forward pointer into the new indicies
-  gft <- ht[s$gf]
+  gft <- ht[gf]
 
   ## Determine H, the mapping from edges onto corresponding edges
   Cut <- matrix(ht[Cu], ncol=2)
@@ -739,7 +736,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N
 }
 
 ## Grand optimisation function
-optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
+optimise.mapping <- function(p, m, t, E0.A=1, k.A=1, method="BFGS") {
   phi <- p$phi
   lambda <- p$lambda
   R <- p$R
@@ -779,7 +776,7 @@ optimise.mapping <- function(p, m, t, s, E0.A=1, k.A=1, method="BFGS") {
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
     plot.sphere.spherical(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
-    with(s, plot.outline(P, gb))
+    with(t, plot.outline(P, gb))
     with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
   }
   return(list(phi=phi, lambda=lambda))
@@ -896,12 +893,14 @@ polar.to.cart <- function(r, theta) {
 ## Plot outline of retina given set of outline points P and backwards
 ## pointer gb
 plot.outline <- function(P, gb, add=FALSE, ...) {
+  s <- which(!is.na(gb))                # source index
+  d <- na.omit(gb)                      # destination index
   if (!add) {
     par(mar=c(1, 1, 1, 1))
-    plot(P, pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
+    plot(P[s,1], P[s,2], pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
          bty="n")
   }
-  segments(P[,1], P[,2], P[gb,1], P[gb, 2], ...)
+  segments(P[s,1], P[s,2], P[d,1], P[d,2], ...)
 }
 
 ## plot.stitch(P, s)
@@ -1247,7 +1246,7 @@ plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
                          graphical=TRUE,
-			 n=500,
+                         n=500,
                          report=print) {
   report("Triangulating...")
   t <- triangulate.outline(P, h=1:nrow(P), n=n)
@@ -1272,21 +1271,23 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     plot.stitch(s)
     with(t, trimesh(T, P, col="grey", add=TRUE))
   }
+  r <- merge.lists(s, t)
 
   report("Merging points...")
-  m <- merge.points.edges(t, s)
-
+  m <- merge.points.edges(r, r)
+  r <- merge.lists(r, m)
+  
   ## if (graphical) {
   ##   plot(P)
   ##   with(s, plot.outline(P, gb))
   ## }
 
   report("Projecting to sphere...")
-  p <- project.to.sphere(m, t, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
+  p <- project.to.sphere(r, r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
 
   if (graphical) {
     ## Initial plot in 3D space
-    plot.sphere.spherical(p$phi, p$lambda, p$R, m$Tt, m$Rsett)
+    plot.sphere.spherical(p$phi, p$lambda, p$R, r$Tt, r$Rsett)
   }
 
   ##
@@ -1294,11 +1295,11 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## 
   
   report("Optimising mapping...")
-  r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
+  r <- optimise.mapping(p, m, t, E0.A=exp(3), k.A=1)
   p1 <- p
   p1$phi <- r$phi
   p1$lambda <- r$lambda
-  r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
+  r <- optimise.mapping(p1, m, t, E0.A=exp(10), k.A=20)
 
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
