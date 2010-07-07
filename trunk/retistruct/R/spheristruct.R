@@ -455,7 +455,7 @@ pointers2segments <- function(g) {
 ## objects (all suffixed with t), as well as a matrix Bt, which maps a
 ## binary vector representation of edge indicies onto a binary vector
 ## representation of the indicies of the points linked by the edge
-merge.points.edges <- function(t, s) {
+merge.points.edges <- function(t) {
   h <- t$h
   T <- t$T
   Cu <- t$Cu
@@ -529,8 +529,8 @@ merge.points.edges <- function(t, s) {
   }
 
   ## Transform the rim set
-  Rsett <- unique(ht[s$Rset])
-  i0t <- ht[s$i0]
+  Rsett <- unique(ht[t$Rset])
+  i0t <- ht[t$i0]
 
   ## Create the symmetric connection set
   Ct <- rbind(Cut, Cut[,2:1])
@@ -561,11 +561,11 @@ merge.points.edges <- function(t, s) {
 ## lambda - longitude of mesh points
 ## R      - radius of sphere
 ## phi0   - lattitude at which sphere is cut off (from input)
-project.to.sphere <- function(m, t, phi0=50*pi/180, lambda0=lambda0) {
+project.to.sphere <- function(m, phi0=50*pi/180, lambda0=lambda0) {
   Pt <- m$Pt
   Rsett <- m$Rsett
   i0t <- m$i0t
-  A <- t$A
+  A <- m$A
   
   Nt <- nrow(Pt)
   Nphi <- Nt - length(Rsett)
@@ -736,20 +736,20 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N
 }
 
 ## Grand optimisation function
-optimise.mapping <- function(p, m, t, E0.A=1, k.A=1, method="BFGS") {
-  phi <- p$phi
-  lambda <- p$lambda
-  R <- p$R
-  phi0 <- p$phi0
-  Tt <- m$Tt
-  a <- t$a
-  Cut <- m$Cut
-  Ct <- m$Ct
-  Pt <- m$Pt
-  Lt <- m$Lt
-  Bt <- m$Bt
-  Rsett <- m$Rsett
-  i0t <- m$i0t
+optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
+  phi <- r$phi
+  lambda <- r$lambda
+  R <- r$R
+  phi0 <- r$phi0
+  Tt <- r$Tt
+  a <- r$a
+  Cut <- r$Cut
+  Ct <- r$Ct
+  Pt <- r$Pt
+  Lt <- r$Lt
+  Bt <- r$Bt
+  Rsett <- r$Rsett
+  i0t <- r$i0t
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
 
@@ -776,8 +776,8 @@ optimise.mapping <- function(p, m, t, E0.A=1, k.A=1, method="BFGS") {
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
     plot.sphere.spherical(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
-    with(t, plot.outline(P, gb))
-    with(t, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0))
+    with(r, plot.outline(P, gb))
+    plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0)
   }
   return(list(phi=phi, lambda=lambda))
 }
@@ -1274,7 +1274,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   r <- merge.lists(s, t)
 
   report("Merging points...")
-  m <- merge.points.edges(r, r)
+  m <- merge.points.edges(r)
   r <- merge.lists(r, m)
   
   ## if (graphical) {
@@ -1283,11 +1283,12 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## }
 
   report("Projecting to sphere...")
-  p <- project.to.sphere(r, r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
-
+  p <- project.to.sphere(r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
+  r <- merge.lists(r, p)
+  
   if (graphical) {
     ## Initial plot in 3D space
-    plot.sphere.spherical(p$phi, p$lambda, p$R, r$Tt, r$Rsett)
+    plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
   }
 
   ##
@@ -1295,12 +1296,14 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## 
   
   report("Optimising mapping...")
-  r <- optimise.mapping(p, m, t, E0.A=exp(3), k.A=1)
-  p1 <- p
-  p1$phi <- r$phi
-  p1$lambda <- r$lambda
-  r <- optimise.mapping(p1, m, t, E0.A=exp(10), k.A=20)
-
+  o <- optimise.mapping(r, E0.A=exp(3), k.A=1)
+  r <- merge.lists(r, o)
+  ##p1 <- p
+  ##p1$phi <- r$phi
+  ## p1$lambda <- r$lambda
+  o <- optimise.mapping(r, E0.A=exp(10), k.A=20)
+  r <- merge.lists(r, o)
+  
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
   Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
@@ -1308,15 +1311,16 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   if (!is.null(Ds)) {
     for (name in names(Ds)) {
       print(name)
-      Dsb[[name]] <- with(t, tsearchn(P, T, Ds[[name]]))
-      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]) 
-      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], p$R)
+      Dsb[[name]] <- with(r, tsearchn(P, T, Ds[[name]]))
+      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]]) 
+      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
   }
   
   report("Mapping optimised.")
-  return(list(t=t, s=s, m=m, p=p, r=r,
-              Dsb=Dsb, Dsc=Dsc, Dss=Dss))
+  return(merge.lists(r,
+                     list(t=t, s=s, m=m, p=p, r=r,
+                          Dsb=Dsb, Dsc=Dsc, Dss=Dss)))
 }
 
 infer.datapoint.coordinates <- function(f, Ds) {
