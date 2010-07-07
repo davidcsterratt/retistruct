@@ -1,10 +1,3 @@
-library(retistruct)
-options(guiToolkit = "RGtk2")
-
-## Global variables
-dataset <- NULL                         # Directory of dataset
-initial.dir <- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
-
 ## Return initialised userdata list
 initialise.userdata <- function() {
   A <<- c()          # Indices of apices of tears
@@ -15,8 +8,6 @@ initialise.userdata <- function() {
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
 }
-
-initialise.userdata()
 
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
@@ -357,60 +348,70 @@ do.plot <- function() {
   }
 }
 
-##
-## GUI Layout
-## 
-g.win <- gwindow("Retistruct")
+retistruct <- function() {
+  options(guiToolkit = "RGtk2")
 
-g.rows <- ggroup(horizontal=FALSE, container=g.win)
-## Toolbar in row 1
-g.open         <- gaction("Open", icon="open", handler=h.open)
-g.save         <- gaction("Save", icon="save", handler=h.save)
-g.reconstruct  <- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
-g.toolbar <- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
-                      container=g.rows, style="both")
+  ## Global variables
+  dataset <<- NULL                         # Directory of dataset
+  initial.dir <<- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
 
-## Name of dataset in row 2
-g.dataset.row <- ggroup(container=g.rows)
-g.dataset <- glabel("No dataset selected", anchor=0, container=g.dataset.row)
-addSpring(g.dataset.row)
-## enabled(g.dataset) <- FALSE
+  initialise.userdata()
 
-## Body of interface
-g.body <- ggroup(container=g.rows)
+  ##
+  ## GUI Layout
+  ## 
+  g.win <<- gwindow("Retistruct")
 
-## Tear editor down left side
-g.editor <- ggroup(horizontal = FALSE, container=g.body)
+  g.rows <<- ggroup(horizontal=FALSE, container=g.win)
+  ## Toolbar in row 1
+  g.open         <<- gaction("Open", icon="open", handler=h.open)
+  g.save         <<- gaction("Save", icon="save", handler=h.save)
+  g.reconstruct  <<- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
+  g.toolbar <<- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
+                         container=g.rows, style="both")
 
-g.add  <-   gbutton("Add tear",    handler=h.add,    container=g.editor)
-g.move <-   gbutton("Move Point",  handler=h.move,   container=g.editor)
-g.remove <- gbutton("Remove tear", handler=h.remove, container=g.editor)
-g.mark.n <- gbutton("Mark nasal",  handler=h.mark.n, container=g.editor)
-g.mark.d <- gbutton("Mark dorsal", handler=h.mark.d, container=g.editor)
+  ## Name of dataset in row 2
+  g.dataset.row <<- ggroup(container=g.rows)
+  g.dataset <<- glabel("No dataset selected", anchor=0, container=g.dataset.row)
+  addSpring(g.dataset.row)
+  ## enabled(g.dataset) <<- FALSE
 
-## Editing of phi0
-g.phi0.frame <- gframe("Phi0", container=g.editor)
-g.phi0 <- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,
-                container=g.phi0.frame)
+  ## Body of interface
+  g.body <<- ggroup(container=g.rows)
 
-## What to show
-g.show.frame <- gframe("Show", container=g.editor)
-g.show <- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints"),
-                         checked=c(TRUE, FALSE, FALSE, FALSE),
-                         handler=h.show, container=g.show.frame)
+  ## Tear editor down left side
+  g.editor <<- ggroup(horizontal = FALSE, container=g.body)
 
-## Graphs at right
-g.f <-  ggraphics(expand=TRUE, ps=11, container=g.body)
-d1 <- dev.cur()
-g.f2 <- ggraphics(expand=TRUE, ps=11, container=g.body)
-d2 <- dev.cur()
+  g.add  <<-   gbutton("Add tear",    handler=h.add,    container=g.editor)
+  g.move <<-   gbutton("Move Point",  handler=h.move,   container=g.editor)
+  g.remove <<- gbutton("Remove tear", handler=h.remove, container=g.editor)
+  g.mark.n <<- gbutton("Mark nasal",  handler=h.mark.n, container=g.editor)
+  g.mark.d <<- gbutton("Mark dorsal", handler=h.mark.d, container=g.editor)
 
-## Status bar
-## g.statusbar <- ggroup(container=g.rows)
-g.statusbar <- gframe("", expand=TRUE, container=g.rows)
-g.status = glabel("", container=g.statusbar)
-addSpring(g.statusbar)
+  ## Editing of phi0
+  g.phi0.frame <<- gframe("Phi0", container=g.editor)
+  g.phi0 <<- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,
+                   container=g.phi0.frame)
 
-## Disable buttons initially
-unsaved.data(FALSE)
-enable.widgets(FALSE)
+  ## What to show
+  g.show.frame <<- gframe("Show", container=g.editor)
+  g.show <<- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints"),
+                            checked=c(TRUE, FALSE, FALSE, FALSE),
+                            handler=h.show, container=g.show.frame)
+
+  ## Graphs at right
+  g.f <<-  ggraphics(expand=TRUE, ps=11, container=g.body)
+  d1 <<- dev.cur()
+  g.f2 <<- ggraphics(expand=TRUE, ps=11, container=g.body)
+  d2 <<- dev.cur()
+
+  ## Status bar
+  ## g.statusbar <<- ggroup(container=g.rows)
+  g.statusbar <<- gframe("", expand=TRUE, container=g.rows)
+  g.status <<- glabel("", container=g.statusbar)
+  addSpring(g.statusbar)
+
+  ## Disable buttons initially
+  unsaved.data(FALSE)
+  enable.widgets(FALSE)
+}
