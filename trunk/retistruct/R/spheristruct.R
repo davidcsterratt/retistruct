@@ -934,16 +934,29 @@ plot.stitch <- function(s, add=FALSE, ...) {
 }
 
 ## Function to plot the fractional change in length of connections 
-plot.strain.flat <- function(r) {
-  Ls <- r$t$L                  # Original lengths in flattened outline
-  ls <- compute.lengths(r$r$phi, r$r$lambda, r$m$Cut, r$p$R)
+compute.strain <- function(r) {
+  Ls <- r$L                  # Original lengths in flattened outline
+  ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
   print(length(ls))
   print(length(Ls))
-  print(length(ls[r$m$H]))
-  strain <- ls[r$m$H]/Ls
+  print(length(ls[r$H]))
+  strain <- ls[r$H]/Ls
+  return(cbind(Ls=Ls, ls=ls[r$H], strain=strain))
+}
+
+
+## Function to plot the fractional change in length of connections 
+plot.strain.flat <- function(r) {
+  Ls <- r$L                  # Original lengths in flattened outline
+  ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
+  print(length(ls))
+  print(length(Ls))
+  print(length(ls[r$H]))
+  strain <- ls[r$H]/Ls
   print(strain)
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
-  with(r$t, 
+  plot.outline(r$P, r$gb)
+  with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
                 P[Cu[,2],1], P[Cu[,2],2], col=(-log(strain) * 30 + 35)))
 }

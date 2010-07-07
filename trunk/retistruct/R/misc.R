@@ -19,3 +19,15 @@ mod1 <- function(i, N) {
 flipud <- function(M) {
   return(M[nrow(M):1,])
 }
+
+## merge.lists(l, m)
+##
+## Merge the contents of list l and list m, overwriting any names in
+## l which also occur in m
+##
+merge.lists <- function(l, m) {
+  for (n in names(m)) {
+    l[n] = m[n]
+  }
+  return(l)
+}
