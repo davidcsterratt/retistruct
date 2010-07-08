@@ -930,35 +930,46 @@ plot.stitch <- function(s, add=FALSE, ...) {
       }
     }
   })
-  ## points(P[s$Rset,], col="red")
 }
 
 ## Function to plot the fractional change in length of connections 
 compute.strain <- function(r) {
-  Ls <- r$L                  # Original lengths in flattened outline
+  ## Original lengths in flattened outline is a vector with
+  ## M elements, the number of rows of Cu
+  L <- r$L
+  print(length(L))
+  ## New lenghts in reconstructed object is a vector wtih Mt < M
+  ## elements, the number of rows of Cut
   ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
   print(length(ls))
-  print(length(Ls))
-  print(length(ls[r$H]))
-  strain <- ls[r$H]/Ls
-  return(cbind(Ls=Ls, ls=ls[r$H], strain=strain))
+  ## For each connection in the flattened object, we want the length of
+  ## the corresponding connection in the reconstructed object
+  ## The mapping Ht achieves this@
+  l <- ls[r$Ht]
+  strain <- l/L
+  return(data.frame(L=L, l=l, strain=strain))
 }
-
 
 ## Function to plot the fractional change in length of connections 
 plot.strain.flat <- function(r) {
-  Ls <- r$L                  # Original lengths in flattened outline
-  ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
-  print(length(ls))
-  print(length(Ls))
-  print(length(ls[r$H]))
-  strain <- ls[r$H]/Ls
-  print(strain)
+  o <- compute.strain(r)
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   plot.outline(r$P, r$gb)
   with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
-                P[Cu[,2],1], P[Cu[,2],2], col=(-log(strain) * 30 + 35)))
+                P[Cu[,2],1], P[Cu[,2],2], col=(-log(o$strain) * 30 + 35)))
+}
+
+## Function to plot the fractional change in length of connections 
+plot.l.vs.L <- function(r) {
+  o <- compute.strain(r)
+  palette(rainbow(100)) ## Green is about 35; dark blue about 70
+  op <- par()["mar"]
+  par(mar=c(4.5, 4.5, 0.5,0.5))
+  with(o, plot(L, l, col=(-log(o$strain) * 30 + 35),
+               xlab="Length on flattened object",
+               ylab="Length on reconstructed object",))
+  par(op)
 }
 
 ## Function to plot the mesh describing the reconstructed hemisphere
