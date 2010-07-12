@@ -954,7 +954,6 @@ compute.strain <- function(r) {
 plot.strain.flat <- function(r) {
   o <- compute.strain(r)
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
-  plot.outline(r$P, r$gb)
   with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
                 P[Cu[,2],1], P[Cu[,2],2], col=(-log(o$strain) * 30 + 35)))
