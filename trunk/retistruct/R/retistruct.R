@@ -7,6 +7,7 @@ initialise.userdata <- function() {
   r <<- NULL         # Reconstruction object
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
+  recfile.version <<- 1   # Version of reconstruction file data format
 }
 
 ## Convenience functions for handlers
@@ -169,8 +170,9 @@ h.save <- function(h, ...) {
 
     markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
     write.csv(markup, file.path(dataset, "markup.csv"))
-    if (!is.null(f)) {
-      save(f, file=file.path(dataset, "f.Rdata"))
+    r$version <- recfile.version        # Datafile version
+    if (!is.null(r)) {
+      save(r, file=file.path(dataset, "r.Rdata"))
     }
   }
   unsaved.data(FALSE)
@@ -240,13 +242,26 @@ h.open <- function(h, ...) {
     svalue(g.phi0) <- phi0
   }
 
+  ## The format in f.Rdata is deprecated
   foldfile <- file.path(dataset, "f.Rdata")
   if (file.exists(foldfile)) {
-    load(foldfile, globalenv())
-    phi0 <<- f$p$phi0*180/pi
-    svalue(g.phi0) <- phi0
+    file.remove(foldfile)
+    gmessage("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
+             title="Warning", icon="warning")
+  }
+  recfile <- file.path(dataset, "r.Rdata")
+  if (file.exists(recfile)) {
+    load(recfile, globalenv())
+    if (r$version != recfile.version) {
+      gmessage("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
+               title="Warning", icon="warning")
+      r <<- NULL
+    } else {
+      phi0 <<- r$phi0*180/pi
+      svalue(g.phi0) <- phi0
+    }
   } else {
-    f <<- NULL
+    r <<- NULL
   }
   unsaved.data(FALSE)
   enable.widgets(TRUE)
@@ -280,7 +295,7 @@ h.reconstruct <- function(h, ...) {
     i0 <- iN
     lambda0 <- 0
   }
-  f <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
+  r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      Ds=Ds,
                      graphical=TRUE, report=set.status)
   enable.widgets(TRUE)
@@ -311,11 +326,20 @@ do.plot <- function() {
   plot.outline(P, gb)
   if ("Datapoints" %in% svalue(g.show)) {
     plot.datapoints(Ds)
-    if (!is.null(f$Dss)) {
+  }
+
+  if ("Strain" %in% svalue(g.show)) {
+    if (!is.null(r)) {
+      dev.set(d1)
+      plot.strain.flat(r)
       dev.set(d2)
-      with(f,
-           with(as.list(c(t, m, p)),
-                plot.datapoints.polar(f$Dss, phi0, cex=5)))
+      plot.l.vs.L(r)
+      dev.set(d1)
+    }
+  } else {
+    if (!is.null(r$Dss)) {
+      dev.set(d2)
+      plot.datapoints.polar(r$Dss, r$phi0, cex=5)
       dev.set(d1)
     }
   }
@@ -337,13 +361,14 @@ do.plot <- function() {
     }
   }
   if ("Stitch" %in% svalue(g.show)) {
-    if (!is.null(f$s)) {
-      plot.stitch(f$s, add=TRUE)
+    if (!is.null(r$s)) {
+      plot.stitch(r$s, add=TRUE)
     }  
   }
   if ("Grid" %in% svalue(g.show)) {
-    if (!is.null(f$t) && !is.null(f$r)) {
-      with(f, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0))
+    
+    if (!is.null(r$t) && !is.null(r$r)) {
+      with(r, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0))
     }
   }
 }
@@ -395,7 +420,8 @@ retistruct <- function() {
 
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)
-  g.show <<- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints"),
+  g.show <<- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints",
+                              "Strain"),
                             checked=c(TRUE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
