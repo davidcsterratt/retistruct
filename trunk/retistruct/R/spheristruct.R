@@ -944,7 +944,8 @@ compute.strain <- function(r) {
   ## The mapping Ht achieves this@
   l <- ls[r$Ht]
   strain <- l/L
-  return(data.frame(L=L, l=l, strain=strain))
+  logstrainnorm <- -log(strain)/max(abs(log(strain)))
+  return(data.frame(L=L, l=l, strain=strain, logstrainnorm=logstrainnorm))
 }
 
 ## Function to plot the fractional change in length of connections 
@@ -953,7 +954,7 @@ plot.strain.flat <- function(r) {
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
-                P[Cu[,2],1], P[Cu[,2],2], col=(-log(o$strain) * 30 + 35)))
+                P[Cu[,2],1], P[Cu[,2],2], col=o$logstrainnorm * 30 + 35))
 }
 
 ## Function to plot the fractional change in length of connections 
@@ -962,9 +963,11 @@ plot.l.vs.L <- function(r) {
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   op <- par()["mar"]
   par(mar=c(4.5, 4.5, 0.5,0.5))
-  with(o, plot(L, l, col=(-log(o$strain) * 30 + 35),
+  with(o, plot(L, l, col=o$logstrainnorm* 30 + 35, pch='.', cex=5,
                xlab="Length on flattened object",
                ylab="Length on reconstructed object",))
+  par(xpd=FALSE)
+  abline(0, 1)
   par(op)
 }
 
