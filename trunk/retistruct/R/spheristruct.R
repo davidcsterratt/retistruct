@@ -121,7 +121,6 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   ## Make initial triangulation to determine area
   out <- triangulate(P, S, Y=TRUE)
   A <- sum(with(out, tri.area(P, T)))
-  print(A)
   if (!is.na(n)) {
     out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
   }
@@ -522,9 +521,9 @@ merge.points.edges <- function(t) {
   Lt <- c()
   for (k in 1:length(U)) {
     is <- which(Ht == k)
-    if (length(is)>1) {
-      print(L[is])
-    }
+    ## if (length(is)>1) {
+    ##   print(L[is])
+    ## }
     Lt[k] <- mean(L[is])
   }
 
@@ -937,11 +936,9 @@ compute.strain <- function(r) {
   ## Original lengths in flattened outline is a vector with
   ## M elements, the number of rows of Cu
   L <- r$L
-  print(length(L))
   ## New lenghts in reconstructed object is a vector wtih Mt < M
   ## elements, the number of rows of Cut
   ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
-  print(length(ls))
   ## For each connection in the flattened object, we want the length of
   ## the corresponding connection in the reconstructed object
   ## The mapping Ht achieves this@
@@ -1144,7 +1141,7 @@ plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="
   ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
   ##print(ax2)
 
-  print(dot(ax1, ax2))
+  ##  print(dot(ax1, ax2))
   
   v1 <- cc + size *  ax1/2
   v2 <- cc + size * (-ax1/4 + sqrt(3)/4*ax2)
@@ -1186,12 +1183,9 @@ plot.datapoints.polar <- function(Dss, phi0,
   lambdas <- matrix(NA, length(Dss), n)
   
   for (i in 1:length(Dss)) {
-    print(i)
-    print(nrow(Dss[[i]]))
     phis[i,1:nrow(Dss[[i]])]    <- Dss[[i]][,"phi"]
     lambdas[i,1:nrow(Dss[[i]])] <- Dss[[i]][,"lambda"]
   }
-  print(phis)
   radial.lim <- c(seq(-90, phi0*180/pi, by=10), phi0*180/pi)
   radial.labels <- radial.lim
   radial.labels[(radial.lim %% 90) != 0] <- ""
@@ -1333,13 +1327,11 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(Ds)) {
     for (name in names(Ds)) {
-      print(name)
       Dsb[[name]] <- with(r, tsearchn(P, T, Ds[[name]]))
       Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]]) 
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
   }
-  
   report("Mapping optimised.")
   return(merge.lists(r,
                      list(t=t, s=s, m=m, p=p, r=r,
@@ -1352,9 +1344,7 @@ infer.datapoint.coordinates <- function(f, Ds) {
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(Ds)) {
     for (name in names(Ds)) {
-      print(name)
       Dsb[[name]] <- with(f$t, tsearchn(P, T, Ds[[name]]))
-      print(Dsb[[name]])
       Dsc[[name]] <- with(f, bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]))
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], f$p$R)
     }
