@@ -53,7 +53,6 @@ h.add <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=3)
-  print(id)
   M <- markers.to.apex.vertices(id, gf, gb, P)
   A  <<- c(A,  M["A"])
   VF <<- c(VF, M["VF"])
@@ -70,9 +69,7 @@ h.remove <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-  print(id)
   tid <- which(id==A)
-  print(tid)
   if (length(tid) == 1) {
     A  <<- A[-tid]
     VF <<- VF[-tid]
@@ -206,7 +203,6 @@ h.open <- function(h, ...) {
   } 
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
-          print(h$file)
           dataset <<- h$file
         })
   setwd(curdir)
@@ -235,7 +231,6 @@ h.open <- function(h, ...) {
   markupfile <- file.path(dataset, "markup.csv")
   if (file.exists(markupfile)) {
     M <<- read.csv(markupfile)
-    print(M)
     iD <<- M[1, "iD"]
     iN <<- M[1, "iN"]
     phi0 <<- M[1, "phi0"]
@@ -256,9 +251,6 @@ h.open <- function(h, ...) {
       gmessage("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
                title="Warning", icon="warning")
       r <<- NULL
-    } else {
-      phi0 <<- r$phi0*180/pi
-      svalue(g.phi0) <- phi0
     }
   } else {
     r <<- NULL
