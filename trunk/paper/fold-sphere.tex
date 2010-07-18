@@ -123,17 +123,73 @@ preserved -- nodes close in the 2D structure should still be close in
 the 3D structure -- and incorporates the notion of an elastic
 material. However, a more physically-principled method of modelling
 deformation of objects is offered by the finite element method (FEM)
-in which the stress and strain of each triangle in the mesh is derived
-as a function of the deformation of the points of the
-triangle. 
+in which the stress and strain of each element in the mesh is derived
+as a function of the deformation of the points of the element
+\citep{ZienTayl00fini}.
 
-FEM in surgery \citep{CartEtal05appl}.
+The FEM is used widely to describe properties of soft tissue in
+simulations of surgery \citep{CartEtal05appl}. The soft tissue is
+often described as a linear-elastic medium, in which the stress
+depends linearly of the strain, but it can also be modelled as a
+viscoelastic medium, in which the stress depends on the history of the
+strain in the material. 
 
-\subsection{Validity of the method}
-\label{fold-sphere:sec:validity-method}
+\todo{Use of FEM for modelling Development of retina.}
 
 \subsection{Alternative methods}
 \label{fold-sphere:sec:alternative-methods}
+
+In the process of developing the solution presented in this paper, a
+number of options were evaluated:
+
+\paragraph{Forward or backward model:} 
+
+In principle, we could use the FEM, along with data (or assumptions)
+about the material properties of retinal tissue to model directly the
+action of the retinal being flattend following the disection
+cuts. This would lead to a prediction of how a retina cut in a
+particular set of loci would look when flattened. Unfortunately, we do
+not have precise knowledge of where the cuts were made in the intact
+retina or how tears developed.
+
+It is conceivable that the result of a forward model could be compared
+to the flattened outline in question, and the difference between the
+two used to modify the locations of tears and cuts on the intact model
+retina and that this procedure could be iterated until the patterns of
+cuts and tears on the intact retina converged.
+
+However, because it is highly likely that the model is a
+simplification of material properties of the real retina, it would be
+very unlikely that the outline of flattened model retinal would match
+the actual flattened retina, and we would be left with the problem of
+how to match up the edges of the actual and model flattened
+retinae. It is also difficult to envision an algorithm for inferring
+the locations of the tears and cuts that would be efficient. For these
+reasons, we rejected an iterative forward-backward modelling approach
+in which the tear lactions on the intact retina were inferred.
+
+In the simple backward approach undertaken in this paper, the stresses
+and strains in the flattened retina are all assumed to be zero. In the
+mappeing onto the intact retina, the elements of the mesh become
+strained. This is clearly unphysical, but may be a reasonable
+approximation to the actual Physics beacause:
+\begin{enumerate}
+\item For small stresses and strains, if the nodes are mapped back
+  onto the flattened retina, the locations shouldn't change much
+  (evidence?).
+\end{enumerate}
+
+IDEA: do simple backwards model, and then map forwards, then map model
+back using initial strains computed from forward mapping.
+
+\paragraph{Finite element versus spring-mass}
+\label{fold-sphere:sec:finite-elem-vers}
+
+\paragraph{Supervised versus unsupervised cut and tear detection}
+\label{fold-sphere:sec:superv-vers-unsup}
+
+
+
 
 \begin{itemize}
 \item Unsupervised reconstruction, with edge binding.  I envisage that
@@ -161,6 +217,10 @@ FEM in surgery \citep{CartEtal05appl}.
   further.
 \item Automated stitching.
 \end{itemize}
+
+\subsection{Validity of the method}
+\label{fold-sphere:sec:validity-method}
+
 
 \subsection{Applications of the method}
 \label{fold-sphere:sec:applications-method}
