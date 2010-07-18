@@ -99,6 +99,36 @@ sphere.
 \section{Discussion}
 \label{fold-sphere:sec:discussion}
 
+\subsection{Approaches to similar problems in the literature}
+\label{fold-sphere:sec:appr-simil-probl}
+
+As far as we are aware, a computational algorithm for reconstructing
+retinae has never been described before. However, the problem of
+mapping 2D between and 3D surfaces appears in other situations, such
+as in clothes design and computer animation
+\citep{FanEtal98spri,MaCaEtal99flat,WangEtal02surf}. 3D surfaces are
+mapped to 2D surfaces by first triangulateing the 3D surface, then
+projecting the points to the 2D plane, and then moving the locations
+of nodes of the triangulation on the plance so as to minimise an
+energy function based on the differences between the lengths of edges
+in the 3D configureation and in the 2D configuration. A penalty term
+to the error function can be added to prevent nodes crossing over
+edges \citep{WangEtal02surf}. In the mapping from 2D surface to 3D
+surfaces, the effects of foruces due to sewing together edges of cloth
+and of gravity may be incorporated \citep{FanEtal98spri}.
+
+The basic physical model of the material as a mesh of masses connected
+by springs. This model should ensure that neighbourhood relations are
+preserved -- nodes close in the 2D structure should still be close in
+the 3D structure -- and incorporates the notion of an elastic
+material. However, a more physically-principled method of modelling
+deformation of objects is offered by the finite element method (FEM)
+in which the stress and strain of each triangle in the mesh is derived
+as a function of the deformation of the points of the
+triangle. 
+
+FEM in surgery \citep{CartEtal05appl}.
+
 \subsection{Validity of the method}
 \label{fold-sphere:sec:validity-method}
 
@@ -477,7 +507,7 @@ optimisation, and the resulting grid on the sphere is plotted in 3D
 \label{fold-sphere:sec:area-pres-energy}
 
 
-\bibliographystyle{natbib}
+\bibliographystyle{apalike}
 \bibliography{nmf_morph}
 
 \end{document}
