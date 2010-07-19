@@ -77,6 +77,22 @@ having been addressed before, although the  finite element method for
 modelling materials is in common use in other fields \todo{Citations
   of where FEM is used in other fields.}
 
+The bulk viscoelastic properties of bovine retinal tissue have been
+measured.  \citet{ReicEtal91deve} measured the Young's modulus of
+rabbit retina in varying stages of development, under the assumption
+that the retina had linear elasticity and a Poission ratio of 0.5.
+The Poission's ratio is an index of how much a material shrinks in the
+two dimentions perpendicular to an expansion. A perfectly
+incopressible matierial has an Poission's ratio of 0.5. They found
+that the modulus increased threefold between P2 and P15. They also
+found that the stiffness of the retinal tissue depended on its
+location within the retina. The centre of the retina was stiffer than
+the periphery. This was due to the thickness of the tissue, which was
+greater in the centre than in the periphery.  \citet{LuEtal06visc}
+found that the elastic properties of bovine retinal tissue dominate
+over the viscous properties, and that the material has a Poisson's
+ratio of around 0.45.
+
 % The general idea behind this method is to imagine folding the
 % flattened retina onto a manifold with the same shape and size of the
 % real eye. In order to perform the folding, the method has to allow for
@@ -179,17 +195,47 @@ approximation to the actual Physics beacause:
   (evidence?).
 \end{enumerate}
 
-IDEA: do simple backwards model, and then map forwards, then map model
-back using initial strains computed from forward mapping.
-
 \paragraph{Finite element versus spring-mass}
 \label{fold-sphere:sec:finite-elem-vers}
 
+The algorithm presented in this paper models the retinal tissue as a
+mesh of masses connected by springs. While this model is used in
+modelling deformable surfaces in computer graphics and has been used
+in models of tissue, the finite element method is based more strongly
+on the physics of materials and is regarded as superior
+\citep{CartEtal05appl}. In principle the finite element method allows
+parameters of the material to be measured and incorporated in the
+model in a straightforward way. Given enough data about
+the material properties of retinal tissue, the model could be made
+more realistic. 
+
+Weighed against this, is the fact that it is not possible to apply the
+finite element method simply to the problem of mapping the flattened
+retina onto the intact retina, as this would require knowledge of the
+stresses and strains in the flattened retina, whereas the only
+information available is the outline of the retina and the lcoation of
+the optic disk. 
+
+Nevertheless, it would be possible to attempt to try applying the
+finite element, initialised with unstressed elements, to the backward
+transformation. This would give an estimate of the positions of the
+locations of nodes on the intact retina. These nodal positions could
+then be used to estimate the stiffness matrix for each element,
+assuming that each element was unstressed on the intact retina. The
+deformation of this structure when flattened could then be estimated
+by fixing the locations around the rim and edges, and solving for the
+unknown positions. This would lead to each element being strained, and
+thsese strains could then be used to initialise a second mapping back
+on to the intact retina, which would hopefully give rise to a more
+accurate estimation of the nodal positions. 
+
+This method would have the advantages of greater physical plausibility,
+and would afford the opportunity to incorporate elastic properties
+which vary with distance from the centre of the retina. However, this
+would come at the cost of some increase in complexity.
+
 \paragraph{Supervised versus unsupervised cut and tear detection}
 \label{fold-sphere:sec:superv-vers-unsup}
-
-
-
 
 \begin{itemize}
 \item Unsupervised reconstruction, with edge binding.  I envisage that
