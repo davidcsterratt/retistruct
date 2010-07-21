@@ -84,11 +84,11 @@ map.to.segments <- function(map) {
 ## Connect segments whose ends lie close to each other
 ## Input arguments:
 ## segs -         list of segments to connect
-## merge.points - If true, merge the points at the start and end of segments.
-##                Otherwise, joint the points with a new line segment
+## merge.rad -    Radius within which to merge start and end points of segments
+##                NOT IMPLEMENTED YET
 ## Ouput:
 ## Ts   -         list of connected segments
-connect.segments <- function(segs, merge.points=TRUE) {
+connect.segments <- function(segs, merge.rad=10) {
   N <- length(segs)                        # Number of segments
   ## First find the first and last points of each segment
   ## The start points are in columns 1:N of P, and the end points in
@@ -101,10 +101,11 @@ connect.segments <- function(segs, merge.points=TRUE) {
   ## Each element is the index of the closest point
   ## (apart from the point itself) 
   n <- c()                              # Initialisation
+  d <- matrix(NA, 2*N, 2*N)
   for (i in 1:(2*N)) {
-    d <- norm(t(P[,i] - P))             # Distances of P_i from all other points
-    d[i] <- NA                          # Ignore distance to self
-    n[i] <- which.min(d)                # Find index of closest point
+    d[i,] <- norm(t(P[,i] - P))             # Distances of P_i from all other points
+    d[i,i] <- NA                          # Ignore distance to self
+    n[i] <- which.min(d[i,])                # Find index of closest point
   }
 
   ## Now create matrix T in which to store the sorted points,
@@ -114,11 +115,6 @@ connect.segments <- function(segs, merge.points=TRUE) {
   T <- matrix(0, 0, 2)                  # Initialisation
   while(1) {
     j <- mod1(i + N, 2*N)           # Index at end of segment
-    k <- n[j]                       # Closest index in another segment
-    
-    n[i] <- NA                   # Ignore these indicies in the future
-    n[j] <- NA                   # Ignore these indicies in the future
-
     if (i<=N) {
       T <- rbind(T, segs[[i]])
       print(paste("Adding old segment", i))
@@ -126,14 +122,16 @@ connect.segments <- function(segs, merge.points=TRUE) {
       T <- rbind(T, flipud(segs[[j]]))
       print(paste("Adding old segment", j))
     }
-    ## Remove the last point of the line to effect a merge
-    if (merge.points == TRUE) {
-      T <- T[-nrow(T),]
-    }
+    
+    k <- n[j]                       # Closest index in another segment
+    
+    n[i] <- NA                   # Ignore these indicies in the future
+    n[j] <- NA                   # Ignore these indicies in the future
+    
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
     if (is.na(k)) {
-      Ts <- c(Ts, list(unique(T)))
+      Ts <- c(Ts, list(remove.intersections(unique(T))))
       print(paste("Storing new segment", length(Ts)))
       T <- matrix(0, 0, 2)
       rem <- which(!is.na(n))
