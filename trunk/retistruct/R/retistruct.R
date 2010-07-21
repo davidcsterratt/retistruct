@@ -315,7 +315,7 @@ h.show <- function(h, ...) {
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
-  plot.outline(P, gb)
+  plot.outline(P, gb, axt="s")
   if ("Datapoints" %in% svalue(g.show)) {
     plot.datapoints(Ds)
   }

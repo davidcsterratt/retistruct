@@ -891,12 +891,12 @@ polar.to.cart <- function(r, theta) {
 ##
 ## Plot outline of retina given set of outline points P and backwards
 ## pointer gb
-plot.outline <- function(P, gb, add=FALSE, ...) {
+plot.outline <- function(P, gb, add=FALSE, axt="n", ...) {
   s <- which(!is.na(gb))                # source index
   d <- na.omit(gb)                      # destination index
   if (!add) {
-    par(mar=c(1, 1, 1, 1))
-    plot(P[s,1], P[s,2], pch=".", xaxt="n", yaxt="n", xlab="", ylab="",
+    par(mar=c(1.4, 1.4, 1, 1), mgp=c(2, 0.2, 0), tcl=-0.2)
+    plot(P[s,1], P[s,2], pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
          bty="n")
   }
   segments(P[s,1], P[s,2], P[d,1], P[d,2], ...)
