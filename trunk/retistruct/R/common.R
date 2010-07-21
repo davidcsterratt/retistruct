@@ -37,24 +37,6 @@ create.path <- function(segs, close=FALSE) {
   return(p)
 }
 
-## Check whether line from P1 to Q1 and from P2 to Q2 intersect
-check.intersection <- function(P1, Q1, P2, Q2) {
-  if ((max(P1[1], Q1[1]) < min(P2[1], Q2[1])) ||
-      (min(P1[1], Q1[1]) > max(P2[1], Q2[1])) ||
-      (max(P1[2], Q1[2]) < min(P2[2], Q2[2])) ||
-      (min(P1[2], Q1[2]) > max(P2[2], Q2[2]))) {
-    return(FALSE)
-  }
-  M <- cbind(Q1-P1, -Q2+P2)
-  if (!(det(M) == 0)) {
-    lambda <- solve(M) %*% (P2-P1)
-    if (all((lambda<1) & (lambda>0))) {
-      return(list(lambda=lambda, R=(1-lambda[1])*P1 + lambda[1]*Q1))
-    }
-  }
-  return(FALSE)
-}
-
 ## Test to see if there is an intersection between two paths p1 and p2
 ## Return a matrix whose columns comprise:
 ## * P  : the point of intersection
