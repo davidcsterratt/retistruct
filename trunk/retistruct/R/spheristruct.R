@@ -414,13 +414,16 @@ segments2pointers <- function(S) {
       return(g)
     }
     j <- which(S[,1] == i)
+    if (length(j) > 1) {
+      stop("The segment list is not valid as it contains an element more than twice.")
+    }
     if (length(j)) {
       k <- 1
     } else {
       j <- which(S[,2] == i)
       k <- 2
       if (!length(j)) {
-        print("No matching index")
+        stop("No matching index.")
         return(NULL)
       }
     }

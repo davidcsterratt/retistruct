@@ -77,10 +77,12 @@ map.to.segments <- function(map) {
 
 ## Connect segments whose ends lie close to each other
 ## Input arguments:
-## segs - list of segments to connect
+## segs -         list of segments to connect
+## merge.points - If true, merge the points at the start and end of segments.
+##                Otherwise, joint the points with a new line segment
 ## Ouput:
-## Ts   - list of connected segments
-connect.segments <- function(segs) {
+## Ts   -         list of connected segments
+connect.segments <- function(segs, merge.points=TRUE) {
   N <- length(segs)                        # Number of segments
   ## First find the first and last points of each segment
   ## The start points are in columns 1:N of P, and the end points in
@@ -117,6 +119,10 @@ connect.segments <- function(segs) {
     } else {
       T <- rbind(T, flipud(segs[[j]]))
       print(paste("Adding old segment", j))
+    }
+    ## Remove the last point of the line to effect a merge
+    if (merge.points == TRUE) {
+      T <- T[-nrow(T),]
     }
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
