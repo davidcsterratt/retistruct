@@ -365,6 +365,14 @@ do.plot <- function() {
   }
 }
 
+## It would be nice to have error messages displayed graphically.
+## This function should work, but has the problem that it always gives an
+## "Error in get(\"toolkit\", inherits = TRUE) : object 'toolkit' not found\n"
+## error itself.
+h.error <- function() {
+  gmessage(geterrmessage(), title="Error", icon="error")
+}
+
 retistruct <- function() {
   options(guiToolkit = "RGtk2")
 
