@@ -13,7 +13,13 @@ read.sys <- function(dir=NULL) {
 ## Function to read the file containing the "map", i.e. the outline of
 ## the retina
 read.map <- function(dir=NULL) {
-  map <- read.csv(paste(dir, "ALU.MAP", sep="/"), sep=" ", header=FALSE)
+  warn <- options()$warn
+  options(warn=2)
+  map <- try(read.csv(paste(dir, "ALU.MAP", sep="/"), sep=" ", header=FALSE))
+  options(warn=warn)
+  if (inherits(map, "try-error")) {
+    stop("Corrupt MAP file.")
+  }
   return(as.matrix(map))
 }
 
