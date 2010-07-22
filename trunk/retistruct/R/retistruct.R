@@ -208,7 +208,7 @@ h.open <- function(h, ...) {
   setwd(curdir)
   initialise.userdata()
   map <<- read.map(dataset)
-  sys <- read.sys(dataset)
+  sys <<- read.sys(dataset)
   Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
               red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
   segs <- map.to.segments(map)
