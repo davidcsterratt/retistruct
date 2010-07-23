@@ -108,10 +108,6 @@ shear3 <- function(k) {
   return(M)
 }
 
-circle <- function(n) {
-  return(cbind(sin((1:n)/n*2*pi), cos((1:n)/n*2*pi)))
-}
-
 solve.fem <- function(K, P, i.fix, P.fix, alpha=1000) {
   ## K %*% a = a
   abar <- matrix(0, nrow(P)*2, 1)
