@@ -66,3 +66,9 @@ remove.intersections <- function(P) {
   }
   return(P)
 }
+
+## Create n uniformly spaced points on the unit circle in an anti-clockwise
+## direction
+circle <- function(n) {
+  return(cbind(cos((1:n)/n*2*pi), sin((1:n)/n*2*pi)))
+}
