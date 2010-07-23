@@ -95,6 +95,17 @@ check.tears <- function(T, gf, gb, P) {
   return(out)
 }
 
+## order.Rset(Rset, gf, hf)
+##
+## It is nice to create Rset as an ordered set
+order.Rset <- function(Rset, gf, hf) {
+  ## To to this, join the path from the first two members of the set.
+  R12 <- path(Rset[1], Rset[2], gf, hf)
+  R21 <- path(Rset[2], Rset[1], gf, hf)
+  Rset <- c(R12[-1], R21[-1])
+  return(Rset)
+}
+
 ## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
 ##
 ## Create a triangulation of the outline defined by the points P,
@@ -547,6 +558,88 @@ merge.points.edges <- function(t) {
               Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht))
 }
 
+construct.C2 <- function(P, Cu, L) {
+  N <- max(Cu)
+  M <- length(L)
+  C <- matrix(0, 2*N, 2*N)
+  for (i in 1:M) {
+    C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
+    C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
+  }
+  return(C)
+}
+
+solve.C <- function(Cu, L, i.fix, P.fix) {
+  ## C <- construct.C2(P, Cu, L)
+  N <- max(Cu)
+  M <- length(L)
+  C <- matrix(0, 2*N, 2*N)
+  for (i in 1:M) {
+    C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
+    C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
+  }
+
+
+  ind = as.vector(rbind(2*i.fix-1, 2*i.fix))
+  print(ind)
+  A <- C[-ind, -ind]
+  print(dim(A))
+  B <- C[-ind,  ind]
+  print(dim(B))
+  P <- matrix(t(P.fix), ncol(B), 1)
+  print(P[1:10,1])
+  D <- diag(apply(cbind(A, 2*B), 1, sum))
+  print(dim(D))
+  print(dim(P))
+
+  Q <- 2 * solve(D - A) %*% B %*% P
+  Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
+  R <- matrix(0, nrow(Q) + length(i.fix), 2)
+  R[i.fix,] <- P.fix
+  R[-i.fix,] <- Q
+  return(R)
+}
+
+
+## Stretch the mesh in the flat retina to a circular outline
+##
+## Arguments:
+## Cu - connection matrix
+## L  - lengths
+## i.fix - indicies of fixed points
+## P.fix - coordinates of fixed points
+##
+## Returns:
+## New matrix of point locations
+stretch.mesh <- function(Cu, L, i.fix, P.fix) {
+  N <- max(Cu)
+  M <- length(L)
+  C <- matrix(0, 2*N, 2*N)
+  for (i in 1:M) {
+    C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
+    C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
+  }
+  ## solve.C <- function(C, P, i.fix, P.fix) 
+  ind <- as.vector(rbind(2*i.fix-1, 2*i.fix))
+  ##print(ind)
+  A <- C[-ind, -ind]
+  ##  print(dim(A))
+  B <- C[-ind,  ind]
+  ## print(dim(B))
+  P <- matrix(t(P.fix), ncol(B), 1)
+  ## print(P[1:10,1])
+  D <- diag(apply(cbind(A, 2*B), 1, sum))
+  ## print(dim(D))
+  ## print(dim(P))
+
+  Q <- 2 * solve(D - A) %*% B %*% P
+  Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
+  R <- matrix(0, nrow(Q) + length(i.fix), 2)
+  R[i.fix,] <- P.fix
+  R[-i.fix,] <- Q
+  return(R)
+}
+
 ## Project mesh points in the flat outline onto a sphere
 ##
 ## The information to be merged is contained in the
@@ -563,11 +656,13 @@ merge.points.edges <- function(t) {
 ## lambda - longitude of mesh points
 ## R      - radius of sphere
 ## phi0   - lattitude at which sphere is cut off (from input)
-project.to.sphere <- function(m, phi0=50*pi/180, lambda0=lambda0) {
-  Pt <- m$Pt
-  Rsett <- m$Rsett
-  i0t <- m$i0t
-  A <- m$A
+project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
+  Pt <- r$Pt
+  Rsett <- r$Rsett
+  i0t <- r$i0t
+  A <- r$A
+  Cut <- r$Cut
+  Lt <- r$Lt
   
   Nt <- nrow(Pt)
   Nphi <- Nt - length(Rsett)
@@ -579,14 +674,25 @@ project.to.sphere <- function(m, phi0=50*pi/180, lambda0=lambda0) {
 
   ## Now assign each point to a location in the phi, lambda coordinates
   ## Shift coordinates to rough centre of grid
-  x <- Pt[,1] - mean(Pt[,1]) 
-  y <- Pt[,2] - mean(Pt[,2]) 
-  phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+  ## x <- Pt[,1] - mean(Pt[,1]) 
+  ## y <- Pt[,2] - mean(Pt[,2])
+  ## phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
+  
+  ## Stretch mesh points to circle
+  Ps <- stretch.mesh(Cut, Lt, Rsett, circle(length(Rsett)))
+  x <- Ps[,1]
+  y <- Ps[,2]
+  print(max(x))
+  print(max(y))
+  print(max(sqrt(x^2+y^2)))
+  phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
+
+  print(max(phi))
   phi[Rsett] <- phi0
   lambda <- atan2(y, x)
   lambda <- lambda-lambda[i0t] + lambda0
 
-  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0))
+  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0, Ps=Ps))
 }
 
 ##
@@ -1295,6 +1401,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     with(t, trimesh(T, P, col="grey", add=TRUE))
   }
   r <- merge.lists(s, t)
+  r$Rset <- order.Rset(r$Rset, r$gf, r$hf)
 
   report("Merging points...")
   m <- merge.points.edges(r)
@@ -1319,8 +1426,8 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## 
   
   report("Optimising mapping...")
-  o <- optimise.mapping(r, E0.A=exp(3), k.A=1)
-  r <- merge.lists(r, o)
+  ## o <- optimise.mapping(r, E0.A=exp(3), k.A=1)
+  ## r <- merge.lists(r, o)
   ##p1 <- p
   ##p1$phi <- r$phi
   ## p1$lambda <- r$lambda
