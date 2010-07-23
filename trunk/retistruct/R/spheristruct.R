@@ -1200,7 +1200,7 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
 ## points phi, lambda and triangulation Tt and cutoff point phi0) onto
 ## a flattened retina (described by points P and triangulation T).
 plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
-                                Phis=(-5:6)*pi/12, Lambdas=(0:23)*pi/24, ...) {
+                                Phis=(-8:9)*pi/18, Lambdas=(0:17)*pi/18, ...) {
   Phis <- Phis[Phis<phi0]
   for (Phi in Phis) {
     plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi), ...)
