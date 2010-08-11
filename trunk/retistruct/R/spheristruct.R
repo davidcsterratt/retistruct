@@ -909,19 +909,32 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
                (d - P[T[,1],] %*% n)/((P[T[,2],] - P[T[,1],]) %*% n)))
 }
 
-## Function to determine the locations of cell bodies on the folded
-## retina in Cartesian (X, Y, Z) coordinates
+## Function to convert locations of points on sphere in spherical
+## coordinates to points in 3D cartesian space
+##
+## Arguemnts:
+## phi    - lattitude of mesh points
+## lambda - longitude of mesh points
+## R      - radius of sphere
+sphere.spherical.to.sphere.cart <- function(phi, lambda, R) {
+  P <- cbind(R*cos(phi)*cos(lambda),
+             R*cos(phi)*sin(lambda),
+             R*sin(phi))
+  colnames(P) <- c("X", "Y", "Z")
+  return(P)
+}
+
+## Function to determine the locations of points on the reconstructed surface
+## in Cartesian (X, Y, Z) coordinates
 ## phi    - lattitude of mesh points
 ## lambda - longitude of mesh points
 ## R      - radius of sphere
 ## Tt     - triagulation
 ## cb     - object returned by tsearch containing information on the
 bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
-  ## Obtain Cartesian coordinates of points
-  P <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
-
+  ## Find 3D coordinates of mesh points
+  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+  
   ## Now find locations cc of datapoints in Cartesian coordinates
   cc <- matrix(0, 0, 3)
   colnames(cc) <- c("X", "Y", "Z")
@@ -946,6 +959,16 @@ sphere.cart.to.sphere.spherical <- function(Dsc, R) {
                lambda=atan2(Dsc[,"Y"], Dsc[,"X"])))
 }
 
+## Convert elevation in spherical coordinates into radius in polar
+## coordinates in an area-preserving projection
+spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
+  sin(phi)))) }
+
+## Convert polar coordinates to cartesian coordinates
+polar.to.cart <- function(r, theta) {
+  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
+}
+
 ## Compute mean on sphere
 sphere.mean.sphere <- function(phi, lambda) {
   ## First estimate of mean
@@ -959,16 +982,6 @@ sphere.mean.sphere <- function(phi, lambda) {
         function(p) { sum((central.angle(phi, lambda, p[1], p[2]))^2) })
   return(opt$par)
   ## return(c(phi.mean, lambda.mean))
-}
-
-## Convert elevation in spherical coordinates into radius in polar
-## coordinates in an area-preserving projection
-spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
-  sin(phi)))) }
-
-## Convert polar coordinates to cartesian coordinates
-polar.to.cart <- function(r, theta) {
-  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
 }
 
 ##
@@ -1132,36 +1145,25 @@ plot.sphere.spherical <- function(phi, lambda, R, Tt, Rsett) {
 ## phi    - lattitude of points
 ## lambda - longitude of points
 ## R      - radius of sphere
-## Tt     - triagulation
-## Rsett  - members of rim set
+## gb     - outline pointer
+## h      - outline correspondences
 ##
 plot.outline.spherical <- function(phi, lambda, R, gb, h, ...) {
   ## Obtain Cartesian coordinates of points
-  Pc <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
+  Pc <- sphere.spherical.to.sphere.cart(phi, lambda, R)
 
+  ## Shrink so that they appear inside the hemisphere
   P <- Pc*0.99
-##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-##              ...)
   rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
             rbind(P[h[gb[gb]],2], P[h[gb],2]),
             rbind(P[h[gb[gb]],3], P[h[gb],3]),
              ...)
   
-   P <- Pc*1.001
-##   segments3d(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-##              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-##              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-##              ...)
-
+  P <- Pc*1.001
   rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
             rbind(P[h[gb[gb]],2], P[h[gb],2]),
             rbind(P[h[gb[gb]],3], P[h[gb],3]),
              ...)
-  
 }
 
 ## plot.gridline.flat(P, T, phi, lambda, Tt, n, d)
@@ -1274,6 +1276,62 @@ plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="
   triangles3d(outmag*x, outmag*y, outmag*z, color=color)
 }
 
+## Function to set up polar plot
+## 
+## phi    - lattitude of points
+## lambda - longitude of points
+## R      - radius of sphere
+## gb     - outline pointer
+## h      - outline correspondences
+##
+plot.polar <- function(phi0=40,
+                       show.grid=TRUE, grid.col="gray", grid.bg="transparent",
+                       grid.int.minor=15, grid.int.major=45,
+                       radial.labels.major=c("N", "", "D", "", "T", "", "V", "")) {
+  grid.pos <- c(seq(-90, phi0, by=grid.int.minor), phi0)
+  print(grid.pos)
+  maxlength <- diff(range(grid.pos))
+  print(maxlength)
+  plot(c(-maxlength, maxlength), c(-maxlength, maxlength), 
+       type = "n", axes = FALSE, xlab = "", ylab = "")
+
+  ## Plot the grid
+  ## Tangnential lines
+  angles <- seq(0, 1.96 * pi, by = 0.04 * pi)
+  if (show.grid) {
+    for (i in seq(length(grid.pos), 1, by = -1)) {
+      xpos <- cos(angles) * (grid.pos[i] - grid.pos[1])
+      ypos <- sin(angles) * (grid.pos[i] - grid.pos[1])
+      if (((grid.pos[i] %% grid.int.major) == 0) || (i == length(grid.pos))) {
+        col <- "black"
+      } else {
+        col <- grid.col
+      }
+      polygon(xpos, ypos, border = col, col = grid.bg)
+    }
+  }
+
+  ## Radial lines
+  angles <- seq(0, 180-grid.int.minor, by = grid.int.minor)
+  col <- rep(grid.col, length(angles))
+  col[(angles %% grid.int.major) == 0] <- "black"
+  angles <- angles * pi/180
+  xpos <- cos(angles) * maxlength
+  ypos <- sin(angles) * maxlength
+  segments(xpos, ypos, -xpos, -ypos, col=col)
+
+  ## Tangential Labels
+  labels <- c(seq(-90, phi0, by=grid.int.major), phi0)
+  label.pos <- labels - min(grid.pos)
+  text(label.pos, -maxlength/15, labels)
+
+  ## Radial Labels
+  angles <- seq(0, 360-grid.int.major, by=grid.int.major)*pi/180
+  xpos <- cos(angles) * maxlength * 1.05
+  ypos <- sin(angles) * maxlength * 1.05
+  text(xpos, ypos, radial.labels.major)
+}
+
 ## Function to plot cell bodies in spherical coordinates on a polar plot
 ## phi    - lattitude of points
 ## lambda - longitude of points
@@ -1284,32 +1342,14 @@ plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="
 ##          within that triangle in barycentric coordinates
 ## phi0   - lattitude of the rim in radians
 ## cols   - colour of points to plot for each object in cbs
-plot.datapoints.polar <- function(Dss, phi0,
-                                  pch=".", ...) {
-  ## Need to organise phis and lambdas into matricies, with
-  ## one row per set of data
-
-  ## First find size of matrix
-  n <- max(sapply(Dss, nrow))
-
-  phis <-    matrix(NA, length(Dss), n)
-  lambdas <- matrix(NA, length(Dss), n)
-  
+plot.datapoints.polar <- function(Dss, pch=".", ...) {
   for (i in 1:length(Dss)) {
-    phis[i,1:nrow(Dss[[i]])]    <- Dss[[i]][,"phi"]
-    lambdas[i,1:nrow(Dss[[i]])] <- Dss[[i]][,"lambda"]
+    phis    <- Dss[[i]][,"phi"]
+    lambdas <- Dss[[i]][,"lambda"]
+    xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+    ypos <- sin(lambdas) * ((phis * 180/pi) + 90)      
+    points(xpos, ypos, col=names(Dss)[i], pch=pch, ...)
   }
-  radial.lim <- c(seq(-90, phi0*180/pi, by=10), phi0*180/pi)
-  radial.labels <- radial.lim
-  radial.labels[(radial.lim %% 90) != 0] <- ""
-  radial.labels[length(radial.labels)] <- phi0*180/pi
-  polar.plot(phis*180/pi, polar.pos=lambdas*180/pi,
-             rp.type="s", point.col=names(Dss),
-             radial.lim=radial.lim,
-             radial.labels=radial.labels,
-             label.pos=c(0, 90, 180, 270),
-             labels=c("N", "D", "T", "V"),
-             point.symbols=pch, ...)
 }
 
 ## Function to plot cell bodies in spherical coordinates on a polar plot

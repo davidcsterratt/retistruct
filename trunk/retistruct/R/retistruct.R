@@ -331,7 +331,8 @@ do.plot <- function() {
   } else {
     if (!is.null(r$Dss)) {
       dev.set(d2)
-      plot.datapoints.polar(r$Dss, r$phi0, cex=5)
+      plot.polar(r$phi0 * 180/pi)
+      plot.datapoints.polar(r$Dss, cex=5)
       dev.set(d1)
     }
   }
