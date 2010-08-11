@@ -884,6 +884,7 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
     lt <- compute.lengths(phi, lambda, Cut, R)
     ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
     plot.sphere.spherical(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
     with(r, plot.outline(P, gb))
     plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0)
   }
@@ -1419,6 +1420,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   if (graphical) {
     ## Initial plot in 3D space
     plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
+    plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
   }
 
   ##
