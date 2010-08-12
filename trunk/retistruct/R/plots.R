@@ -367,38 +367,25 @@ plot.polar <- function(phi0=40,
 
 ## Function to plot the outline in polar coordinates
 plot.outline.polar <- function(r, ...) {
-  s <- which(!is.na(r$gb))                # source index
-  d <- na.omit(r$gb)                      # destination index
-
-  ## Find the points
-  P0 <- r$P[s,]
-  P1 <- r$P[d,]
-
-  ## Find barycentric coordinates
-  P0b <- tsearchn(r$P, r$T, P0)
-  P1b <- tsearchn(r$P, r$T, P1)
-
-  ## Find sphreical cartesian coordinates
-  P0sc <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, P0b)
-  P1sc <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, P1b)
-
-  ## Find sphreical spherical coordinates
-  P0ss <- sphere.cart.to.sphere.spherical(P0sc, r$R)
-  P1ss <- sphere.cart.to.sphere.spherical(P1sc, r$R)
-
-  plot.segments.polar(P0ss[,1], P0ss[,2], P1ss[,1], P1ss[,2], ...)
+  ## Look through forward tears
+  for (TF in r$TFset) {
+    ## Convert indicies to the spherical frame of reference
+    j <- r$ht[TF]
+    ## Plot
+    x <- with(r, cos(lambda[j]) * ((phi[j] * 180/pi) + 90))
+    y <- with(r, sin(lambda[j]) * ((phi[j] * 180/pi) + 90))
+    lines(x, y, ...)
+  }
 }
 
 ## Function to plot cell bodies in spherical coordinates on a polar plot
-## phi    - lattitude of points
-## lambda - longitude of points
-## R      - radius of sphere
-## Tt     - triagulation
-## cbs    - list of objects returned by tsearch containing information on the
-##          triangle in which a cell body is found and its location
-##          within that triangle in barycentric coordinates
-## phi0   - lattitude of the rim in radians
-## cols   - colour of points to plot for each object in cbs
+##
+## Arguments
+## Dss     - list of sets of datapoints, each of which is defined by a matrix
+##           with columns "phi" and "lambda".
+##           The name of each element in the list is the colour in which the
+##           datapoints in each set are plotted.
+##
 plot.datapoints.polar <- function(Dss, pch=".", ...) {
   for (i in 1:length(Dss)) {
     phis    <- Dss[[i]][,"phi"]
@@ -409,10 +396,11 @@ plot.datapoints.polar <- function(Dss, pch=".", ...) {
   }
 }
 
-## Function to plot landmarks on the flat outline
+## Function to plot landmarks on the polar plot
 ##
 ## Arguments
-## Sss     - list of segments
+## Sss     - list of landmarks, each of which is defined by a matrix
+##           with columns "phi" and "lambda"
 ##
 plot.landmarks.polar <- function(Sss, ...) {
   for (i in 1:length(Sss)) {
