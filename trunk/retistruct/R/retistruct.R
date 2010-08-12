@@ -361,7 +361,7 @@ do.plot <- function() {
   if ("Grid" %in% svalue(g.show)) {
     
     if (!is.null(r$t) && !is.null(r$r)) {
-      with(r, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0))
+      with(r, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0*180/pi))
     }
   }
 }

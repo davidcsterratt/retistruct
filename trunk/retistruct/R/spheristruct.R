@@ -1203,13 +1203,27 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
 ## points phi, lambda and triangulation Tt and cutoff point phi0) onto
 ## a flattened retina (described by points P and triangulation T).
 plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
-                                Phis=(-8:9)*pi/18, Lambdas=(0:17)*pi/18, ...) {
-  Phis <- Phis[Phis<phi0]
+                                Phis=(-8:9)*pi/18, Lambdas=(0:17)*pi/18,
+                                grid.int.minor=15, grid.int.major=45,
+                                grid.col="gray", ...) {
+  Phis <- seq(-90, phi0, by=grid.int.minor)
+  Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
   for (Phi in Phis) {
-    plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi), ...)
+    if ((!(Phi %% grid.int.major) || Phi == phi0)) {
+      col <- "black"
+    } else {
+      col <- grid.col
+    }
+    plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...)
   }
   for (Lambda in Lambdas) {
-    plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, ...)
+    if (!(Lambda %% grid.int.major)) {
+      col <- "black"
+    } else {
+      col <- grid.col
+    }
+    Lambda <- Lambda * pi/180
+    plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...)
   }
 }
 
@@ -1289,9 +1303,7 @@ plot.polar <- function(phi0=40,
                        grid.int.minor=15, grid.int.major=45,
                        radial.labels.major=c("N", "", "D", "", "T", "", "V", "")) {
   grid.pos <- c(seq(-90, phi0, by=grid.int.minor), phi0)
-  print(grid.pos)
   maxlength <- diff(range(grid.pos))
-  print(maxlength)
   plot(c(-maxlength, maxlength), c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "")
 
