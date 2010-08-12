@@ -332,8 +332,11 @@ do.plot <- function() {
   } else {
     dev.set(d2)
     plot.polar(phi0)
-    if (!is.null(r$Dss) && ("Datapoints" %in% svalue(g.show))) {
-      plot.datapoints.polar(r$Dss, cex=5)
+    if (!is.null(r$Dss)) {
+      plot.outline.polar(r)
+      if ("Datapoints" %in% svalue(g.show)) {
+        plot.datapoints.polar(r$Dss, cex=5)
+      }
     }
     dev.set(d1)
   }

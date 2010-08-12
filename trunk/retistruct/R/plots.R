@@ -28,7 +28,7 @@
 ## Flat plots
 ##
 
-## plot.outline(P, gb)
+## plot.outline.flat(P, gb)
 ##
 ## Plot outline of retina given set of outline points P and backwards
 ## pointer gb
@@ -43,7 +43,7 @@ plot.outline.flat <- function(P, gb, add=FALSE, axt="n", ...) {
   segments(P[s,1], P[s,2], P[d,1], P[d,2], ...)
 }
 
-## plot.stitch(P, s)
+## plot.stitch.flat(P, s)
 ##
 ## Plot stitch given set of outline points stitch information s
 plot.stitch.flat <- function(s, add=FALSE, ...) {
@@ -354,6 +354,30 @@ plot.polar <- function(phi0=40,
   text(xpos, ypos, radial.labels.major)
 }
 
+## Function to plot the outline in polar coordinates
+plot.outline.polar <- function(r, ...) {
+  s <- which(!is.na(r$gb))                # source index
+  d <- na.omit(r$gb)                      # destination index
+
+  ## Find the points
+  P0 <- r$P[s,]
+  P1 <- r$P[d,]
+
+  ## Find barycentric coordinates
+  P0b <- tsearchn(r$P, r$T, P0)
+  P1b <- tsearchn(r$P, r$T, P1)
+
+  ## Find sphreical cartesian coordinates
+  P0sc <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, P0b)
+  P1sc <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, P1b)
+
+  ## Find sphreical spherical coordinates
+  P0ss <- sphere.cart.to.sphere.spherical(P0sc, r$R)
+  P1ss <- sphere.cart.to.sphere.spherical(P1sc, r$R)
+
+  plot.segments.polar(P0ss[,1], P0ss[,2], P1ss[,1], P1ss[,2], ...)
+}
+
 ## Function to plot cell bodies in spherical coordinates on a polar plot
 ## phi    - lattitude of points
 ## lambda - longitude of points
@@ -374,11 +398,13 @@ plot.datapoints.polar <- function(Dss, pch=".", ...) {
   }
 }
 
-## Function to plot a line in the polar plot
-plot.lines.polar <- function(phi, lambda, ...) {
-  xpos <- cos(lambda) * ((phis* 180/pi) + 90)
-  ypos <- sin(lambda) * ((phis* 180/pi) + 90)
-  lines(xpos, ypos, ...)
+## Function to plot segments in the polar plot
+plot.segments.polar <- function(phi0, lambda0, phi1, lambda1, ...) {
+  x0 <- cos(lambda0) * ((phi0 * 180/pi) + 90)
+  y0 <- sin(lambda0) * ((phi0 * 180/pi) + 90)
+  x1 <- cos(lambda1) * ((phi1 * 180/pi) + 90)
+  y1 <- sin(lambda1) * ((phi1 * 180/pi) + 90)
+  segments(x0, y0, x1, y1, ...)
 }
 
 ## 
