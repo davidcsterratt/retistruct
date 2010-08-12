@@ -298,7 +298,7 @@ h.reconstruct <- function(h, ...) {
 h.stitch.outline <- function(h, ...) {
   s <- stitch.outline(P, cbind(A, VB, VF))
   dev.set(d2)
-  plot.stitch(s)
+  plot.stitch.flat(s)
 }
 
 h.triangulate.retina <- function(h, ...) {
@@ -317,7 +317,7 @@ do.plot <- function() {
   dev.set(d1)
   plot.outline(P, gb, axt="s")
   if ("Datapoints" %in% svalue(g.show)) {
-    plot.datapoints(Ds)
+    plot.datapoints.flat(Ds)
   }
 
   if ("Strain" %in% svalue(g.show)) {
@@ -355,7 +355,7 @@ do.plot <- function() {
   }
   if ("Stitch" %in% svalue(g.show)) {
     if (!is.null(r$s)) {
-      plot.stitch(r$s, add=TRUE)
+      plot.stitch.flat(r$s, add=TRUE)
     }  
   }
   if ("Grid" %in% svalue(g.show)) {
