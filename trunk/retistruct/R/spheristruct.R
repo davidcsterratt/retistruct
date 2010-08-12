@@ -347,7 +347,7 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
       ##             "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
     }
 
-    ## plot.outline(P, gb)
+    ## plot.outline.flat(P, gb)
     ## print(paste("Forwards", j))
     ## readline("Press <Enter> to continue")
       

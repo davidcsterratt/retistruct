@@ -48,7 +48,7 @@ plot.outline.flat <- function(P, gb, add=FALSE, axt="n", ...) {
 ## Plot stitch given set of outline points stitch information s
 plot.stitch.flat <- function(s, add=FALSE, ...) {
   with(s, {
-    if (!add) plot.outline(P, gb, ...)
+    if (!add) plot.outline.flat(P, gb, ...)
     points(P[VF,], col="red", pch="+")
     points(P[VB,], col="orange", pch="+")
     points(P[A, ], col="cyan", pch="+")
@@ -311,10 +311,11 @@ plot.polar <- function(phi0=40,
                        show.grid=TRUE, grid.col="gray", grid.bg="transparent",
                        grid.int.minor=15, grid.int.major=45,
                        radial.labels.major=c("N", "", "D", "", "T", "", "V", "")) {
+  par(mar=c(1, 1, 1, 1))
   grid.pos <- c(seq(-90, phi0, by=grid.int.minor), phi0)
   maxlength <- diff(range(grid.pos))
   plot(c(-maxlength, maxlength), c(-maxlength, maxlength), 
-       type = "n", axes = FALSE, xlab = "", ylab = "")
+       type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
 
   ## Plot the grid
   ## Tangnential lines
@@ -371,6 +372,13 @@ plot.datapoints.polar <- function(Dss, pch=".", ...) {
     ypos <- sin(lambdas) * ((phis * 180/pi) + 90)      
     points(xpos, ypos, col=names(Dss)[i], pch=pch, ...)
   }
+}
+
+## Function to plot a line in the polar plot
+plot.lines.polar <- function(phi, lambda, ...) {
+  xpos <- cos(lambda) * ((phis* 180/pi) + 90)
+  ypos <- sin(lambda) * ((phis* 180/pi) + 90)
+  lines(xpos, ypos, ...)
 }
 
 ## 

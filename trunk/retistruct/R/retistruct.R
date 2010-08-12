@@ -315,7 +315,8 @@ h.show <- function(h, ...) {
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
-  plot.outline(P, gb, axt="s")
+  plot.outline.flat(P, gb, axt="s")
+  
   if ("Datapoints" %in% svalue(g.show)) {
     plot.datapoints.flat(Ds)
   }
@@ -329,12 +330,12 @@ do.plot <- function() {
       dev.set(d1)
     }
   } else {
-    if (!is.null(r$Dss)) {
-      dev.set(d2)
-      plot.polar(r$phi0 * 180/pi)
+    dev.set(d2)
+    plot.polar(phi0)
+    if (!is.null(r$Dss) && ("Datapoints" %in% svalue(g.show))) {
       plot.datapoints.polar(r$Dss, cex=5)
-      dev.set(d1)
     }
+    dev.set(d1)
   }
   
   if ("Landmarks" %in% svalue(g.show)) {
