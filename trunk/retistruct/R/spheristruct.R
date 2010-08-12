@@ -453,16 +453,16 @@ pointers2segments <- function(g) {
 
 ## Merge points and edges before optimising the elastic energy
 ## The information to be merged is contained in the
-## triangulation list t and the stitch list s, and the index of the landmark i0
+## list t, and the index of the landmark i0
 ##
 ## The information includes 
-## h    - (in s) the point correspondence mapping
-## Rset - (in s) the set of points on the rim
-## i0   - (is s) the index of the landmark
-## T    - (in t) the triangulation
-## Cu   - (in t) the edge matrix
-## L    - (in t) the edge lengths
-## P    - (in t) the point locations
+## h    - the point correspondence mapping
+## Rset - the set of points on the rim
+## i0   - the index of the landmark
+## T    - the triangulation
+## Cu   - the edge matrix
+## L    - the edge lengths
+## P    - the point locations
 ##
 ## The function returns merged and transformed versions of all these
 ## objects (all suffixed with t), as well as a matrix Bt, which maps a
@@ -558,19 +558,7 @@ merge.points.edges <- function(t) {
               Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht))
 }
 
-construct.C2 <- function(P, Cu, L) {
-  N <- max(Cu)
-  M <- length(L)
-  C <- matrix(0, 2*N, 2*N)
-  for (i in 1:M) {
-    C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
-    C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
-  }
-  return(C)
-}
-
 solve.C <- function(Cu, L, i.fix, P.fix) {
-  ## C <- construct.C2(P, Cu, L)
   N <- max(Cu)
   M <- length(L)
   C <- matrix(0, 2*N, 2*N)
@@ -593,7 +581,6 @@ solve.C <- function(Cu, L, i.fix, P.fix) {
   R[-i.fix,] <- Q
   return(R)
 }
-
 
 ## Stretch the mesh in the flat retina to a circular outline
 ##
@@ -636,14 +623,13 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 
 ## Project mesh points in the flat outline onto a sphere
 ##
-## The information to be merged is contained in the
-## merge structure m and the triangulation t and the lattitude
-## at which the sphere is cut off is given in phi0
+## The information to be merged is contained in the list r and the
+## lattitude at which the sphere is cut off is given in phi0
 ##
 ## The information includes:
-## Pt     - (in m) the mesh point coordinates
-## Rsett  - (in m) the set of points on the rim
-## A      - (in t) the area of the flat outline
+## Pt     - the mesh point coordinates
+## Rsett  - the set of points on the rim
+## A      - the area of the flat outline
 ##
 ## The function returns a list with the following members:
 ## phi    - lattitude of mesh points
@@ -665,12 +651,6 @@ project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
   ## for the area of a sphere which is cut off at a lattitude of phi0
   ## area = 2 * PI * R^2 * (sin(phi0)+1)
   R <- sqrt(A/(2*pi*(sin(phi0)+1)))
-
-  ## Now assign each point to a location in the phi, lambda coordinates
-  ## Shift coordinates to rough centre of grid
-  ## x <- Pt[,1] - mean(Pt[,1]) 
-  ## y <- Pt[,2] - mean(Pt[,2])
-  ## phi <- -pi/2 + sqrt(x^2 + y^2)/(R)
   
   ## Stretch mesh points to circle
   Ps <- stretch.mesh(Cut, Lt, Rsett, circle(length(Rsett)))
@@ -679,7 +659,7 @@ project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
   phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
   phi[Rsett] <- phi0
   lambda <- atan2(y, x)
-  lambda <- lambda-lambda[i0t] + lambda0
+  lambda <- lambda - lambda[i0t] + lambda0
 
   return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0, Ps=Ps))
 }
@@ -718,10 +698,10 @@ compute.areas <- function(phi, lambda, T, R) {
 }
 
 ## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
-  lambda <- rep(0, N)
+  lambda <- rep(lambda0, N)
   lambda[-i0] <- p[Nphi+1:(N-1)]
 
   ##
@@ -762,10 +742,10 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N,
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
-  lambda <- rep(0, N)
+  lambda <- rep(lambda0, N)
   lambda[-i0] <- p[Nphi+1:(N-1)]
 
   ##
@@ -833,11 +813,13 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, Nphi, E0.A=0.1, k.A=1, N
 }
 
 ## Grand optimisation function
-optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
+optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
+                             d.grid=NA, d.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
   phi0 <- r$phi0
+  lambda0 <- r$lambda0
   Tt <- r$Tt
   a <- r$a
   Cut <- r$Cut
@@ -849,7 +831,7 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
   i0t <- r$i0t
   Nt <- nrow(Pt)  
   Nphi <- Nt - length(Rsett)
-
+  
   ## Optimisation and plotting 
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
@@ -860,22 +842,37 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
                  method=method,
                  T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                  E0.A=E0.A, k.A=k.A, N=Nt, 
-                 Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi, verbose=FALSE)
+                 Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+                 verbose=FALSE)
 
     ## Report
     print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, k.A=k.A, N=Nt,
-            Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi))
+            Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
 
-    phi            <- rep(phi0, Nt)
-    phi[-Rsett]    <- opt$p[1:Nphi]
-    lambda         <- rep(0, Nt)
+    ## Decode p vector
+    phi          <- rep(phi0, Nt)
+    phi[-Rsett]  <- opt$p[1:Nphi]
+    lambda       <- rep(lambda0, Nt)
     lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
+    ## Plot
     plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
     plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
-    with(r, plot.outline.flat(P, gb))
-    plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0*180/pi)
+
+    if (!is.na(d.grid)) {
+      dev.set(d.grid)
+      with(r, plot.outline.flat(P, gb))
+      plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0*180/pi)
+    }
+
+    if (!is.na(d.polar)) {
+      dev.set(d.polar)
+      plot.polar(phi0 * 180/pi)
+      r$phi <- phi
+      r$lambda <- lambda
+      plot.outline.polar(r)
+    }
   }
   return(list(phi=phi, lambda=lambda))
 }
@@ -907,6 +904,12 @@ compute.strain <- function(r) {
 ## lambda0   - longitude of landmark on rim
 ## Ds        - list of sets of datapoints to plot
 ## graphical - whether to plot graphs during computation
+## n         - number of points in triangulation
+## report    - function used to report
+## d.grid    - device to plot grid onto. Value of NA (default)
+##             means no plotting
+## d.polar   - device to plot polar plot onto. Value of NA (default)
+##             means no plotting
 ## 
 ## Returns list containing:
 ## t         - triangulation information
@@ -919,7 +922,8 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
                          graphical=TRUE,
                          n=500,
-                         report=print) {
+                         report=print,
+                         d.grid=NA, d.polar=NA) {
   report("Triangulating...")
   t <- triangulate.outline(P, h=1:nrow(P), n=n)
   if (graphical) {
@@ -965,17 +969,14 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
   }
 
-  ##
-  ## FIXME: is lambda0 passed to optimise.mapping()?
-  ## 
-  
   report("Optimising mapping...")
   ## o <- optimise.mapping(r, E0.A=exp(3), k.A=1)
   ## r <- merge.lists(r, o)
   ##p1 <- p
   ##p1$phi <- r$phi
   ## p1$lambda <- r$lambda
-  o <- optimise.mapping(r, E0.A=exp(10), k.A=20)
+  o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
+                        d.grid=d.grid, d.polar=d.polar)
   r <- merge.lists(r, o)
   
   report("Inferring coordinates of datapoints")

@@ -293,18 +293,19 @@ h.reconstruct <- function(h, ...) {
     return()
   }
   i0 <- 0
-  lambda0 <- 0
+  lambda0 <<- 0
   if (!is.na(iD)) {
     i0 <- iD
-    lambda0 <- 90
+    lambda0 <<- 90
   }
   if (!is.na(iN)) {
     i0 <- iN
-    lambda0 <- 0
+    lambda0 <<- 0
   }
   r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      Ds=Ds,
-                     graphical=TRUE, report=set.status)
+                     graphical=TRUE, report=set.status,
+                     d.grid=d1, d.polar=d2)
   enable.widgets(TRUE)
   do.plot()
 }
