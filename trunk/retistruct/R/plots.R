@@ -139,9 +139,20 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ## Ds     - list of sets of datapoints, in which name of each set
 ##          is the colour in which to plot
 ##
-plot.datapoints.flat <- function(Ds) {
+plot.datapoints.flat <- function(Ds, ...) {
   for(col in names(Ds)) {
-    points(Ds[[col]][,1], Ds[[col]][,2], col=col, pch=20,cex=0.5)
+    points(Ds[[col]][,1], Ds[[col]][,2], col=col, pch=20,cex=0.5, ...)
+  }
+}
+
+## Function to plot landmarks on the flat outline
+##
+## Arguments
+## Ss     - list of segments
+##
+plot.landmarks.flat <- function(Ss, ...) {
+  for(i in 1:length(Ss)) {
+    lines(Ss[[i]][,1], Ss[[i]][,2], ...)
   }
 }
 
@@ -395,6 +406,21 @@ plot.datapoints.polar <- function(Dss, pch=".", ...) {
     xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
     ypos <- sin(lambdas) * ((phis * 180/pi) + 90)      
     points(xpos, ypos, col=names(Dss)[i], pch=pch, ...)
+  }
+}
+
+## Function to plot landmarks on the flat outline
+##
+## Arguments
+## Sss     - list of segments
+##
+plot.landmarks.polar <- function(Sss, ...) {
+  for (i in 1:length(Sss)) {
+    phi    <- Sss[[i]][,"phi"]
+    lambda <- Sss[[i]][,"lambda"]
+    x <- cos(lambda) * ((phi * 180/pi) + 90)
+    y <- sin(lambda) * ((phi * 180/pi) + 90)
+    lines(x, y, ...)
   }
 }
 

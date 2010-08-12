@@ -212,7 +212,22 @@ h.open <- function(h, ...) {
   Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
               red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
   segs <- map.to.segments(map)
-  P <<- segments.to.outline(segs)
+
+  ## Connect together segments that look to be joined
+  Ss <<- connect.segments(segs)
+
+  ## Determine the lengths of the segments
+  l <- c()
+  for (i in 1:length(Ss)) {
+    l[i] <- segment.length(Ss[[i]])
+  }
+
+  ## The outline (P) is the longest connected segment and the outline
+  ## is removed from the list of segments
+  P  <<- Ss[[which.max(l)]]
+  Ss <<- Ss[-which.max(l)]
+  names(Ss) <<- 1:length(Ss)
+  
   svalue(g.dataset) <- dataset 
   
   ## Create forward and backward pointers
@@ -320,8 +335,8 @@ do.plot <- function() {
   if ("Datapoints" %in% svalue(g.show)) {
     plot.datapoints.flat(Ds)
   }
-
-  if ("Strain" %in% svalue(g.show)) {
+  
+  if ("Strain" %in% svalue(g.show)) {   # Strain plot
     if (!is.null(r)) {
       dev.set(d1)
       plot.strain.flat(r)
@@ -329,7 +344,7 @@ do.plot <- function() {
       plot.l.vs.L(r)
       dev.set(d1)
     }
-  } else {
+  } else {                              # Polar plot
     dev.set(d2)
     plot.polar(phi0)
     if (!is.null(r$Dss)) {
@@ -338,10 +353,13 @@ do.plot <- function() {
         plot.datapoints.polar(r$Dss, cex=5)
       }
     }
+    if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
+      plot.landmarks.polar(r$Sss, col="orange")
+    }
     dev.set(d1)
   }
   
-  if ("Landmarks" %in% svalue(g.show)) {
+  if ("Markup" %in% svalue(g.show)) {
     if (length(A) > 0) {
       points(P[VF,,drop=FALSE], col="red", pch="+")
       segments(P[A,1], P[A,2], P[VF,1], P[VF,2], col="red")
@@ -368,6 +386,11 @@ do.plot <- function() {
       with(r, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0*180/pi))
     }
   }
+
+  if ("Landmarks" %in% svalue(g.show)) {
+    plot.landmarks.flat(Ss, col="orange")
+  }
+
 }
 
 ## It would be nice to have error messages displayed graphically.
@@ -425,8 +448,8 @@ retistruct <- function() {
 
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)
-  g.show <<- gcheckboxgroup(c("Landmarks", "Stitch", "Grid", "Datapoints",
-                              "Strain"),
+  g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints",
+                              "Landmarks", "Strain"),
                             checked=c(TRUE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 

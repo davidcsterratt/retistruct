@@ -149,26 +149,14 @@ connect.segments <- function(segs, merge.rad=10) {
   return(Ts)
 }
 
-## Return the longest segment, which is hopefully the outline
+## Return the length of a segment
 ## Input arguments:
-## segs - list of segments to connect
+## S    - segment to measure
 ## Ouput:
-## P    - matrix containing the outline
-segments.to.outline <- function(segs) {
-  ## Connect together the segments
-  Ts <- connect.segments(segs)
-
-  ## Choose the longest segment
-  l <- c()
-  for (i in 1:length(Ts)) {
-    print(i)
-    seg <- Ts[[i]]
-    v <- diff(rbind(seg, seg[1,]))
-    print(dim(v))
-    l[i] <- sum(sqrt(apply(v^2, 1, sum)))
-  }
-  print(l)
-  return(Ts[[which.max(l)]])
+## l    - length of segment
+segment.length <- function(S) {
+  v <- diff(rbind(S, S[1,]))
+  return(sum(sqrt(apply(v^2, 1, sum))))
 }
 
 ## Function to plot the "map", i.e. the outline of the retina

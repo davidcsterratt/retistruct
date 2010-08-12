@@ -581,16 +581,10 @@ solve.C <- function(Cu, L, i.fix, P.fix) {
 
 
   ind = as.vector(rbind(2*i.fix-1, 2*i.fix))
-  print(ind)
   A <- C[-ind, -ind]
-  print(dim(A))
   B <- C[-ind,  ind]
-  print(dim(B))
   P <- matrix(t(P.fix), ncol(B), 1)
-  print(P[1:10,1])
   D <- diag(apply(cbind(A, 2*B), 1, sum))
-  print(dim(D))
-  print(dim(P))
 
   Q <- 2 * solve(D - A) %*% B %*% P
   Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
@@ -682,12 +676,7 @@ project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
   Ps <- stretch.mesh(Cut, Lt, Rsett, circle(length(Rsett)))
   x <- Ps[,1]
   y <- Ps[,2]
-  print(max(x))
-  print(max(y))
-  print(max(sqrt(x^2+y^2)))
   phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
-
-  print(max(phi))
   phi[Rsett] <- phi0
   lambda <- atan2(y, x)
   lambda <- lambda-lambda[i0t] + lambda0
@@ -866,27 +855,27 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS") {
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
   while (opt$conv) {
+    ## Optimise
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
                  T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                  E0.A=E0.A, k.A=k.A, N=Nt, 
                  Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi, verbose=FALSE)
-    ## print(opt)
-    ##               control=list(maxit=200))
+
+    ## Report
     print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
-            E0.A=E0.A, N=Nt,
+            E0.A=E0.A, k.A=k.A, N=Nt,
             Rset=Rsett, i0=i0t, phi0=phi0, Nphi=Nphi))
+
     phi            <- rep(phi0, Nt)
     phi[-Rsett]    <- opt$p[1:Nphi]
     lambda         <- rep(0, Nt)
     lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
-    lt <- compute.lengths(phi, lambda, Cut, R)
-    ## lt <- R*central.angle(phi1, lambda1, phi2, lambda2)
-    plot.sphere.spherical(phi, lambda, R, Tt, Rsett) ## , ts.red, ts.green, edge.inds)
+    plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
     plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
     with(r, plot.outline.flat(P, gb))
-    plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0)
+    plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0*180/pi)
   }
   return(list(phi=phi, lambda=lambda))
 }
@@ -1000,22 +989,22 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
   }
+
+  report("Inferring coordinates of landmarks")
+  Ssb <- list() # Landmarks in barycentric coordinates
+  Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
+  Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
+  if (!is.null(Ss)) {
+    for (name in names(Ss)) {
+      Ssb[[name]] <- with(r, tsearchn(P, T, Ss[[name]]))
+      Ssc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[name]]) 
+      Sss[[name]] <- sphere.cart.to.sphere.spherical(Ssc[[name]], r$R)
+    }
+  }
+
   report("Mapping optimised.")
   return(merge.lists(r,
                      list(t=t, s=s, m=m, p=p, r=r,
-                          Dsb=Dsb, Dsc=Dsc, Dss=Dss)))
-}
-
-infer.datapoint.coordinates <- function(f, Ds) {
-  Dsb <- list() # Datapoints in barycentric coordinates
-  Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
-  Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
-  if (!is.null(Ds)) {
-    for (name in names(Ds)) {
-      Dsb[[name]] <- with(f$t, tsearchn(P, T, Ds[[name]]))
-      Dsc[[name]] <- with(f, bary.to.sphere.cart(r$phi, r$lambda, p$R, m$Tt, Dsb[[name]]))
-      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], f$p$R)
-    }
-  }
-  return(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss))
+                          Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+                          Ssb=Ssb, Ssc=Ssc, Sss=Sss)))
 }
