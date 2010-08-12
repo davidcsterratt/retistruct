@@ -304,7 +304,7 @@ h.reconstruct <- function(h, ...) {
   }
   r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      Ds=Ds,
-                     graphical=TRUE, report=set.status,
+                     report=set.status,
                      d.grid=d1, d.polar=d2)
   enable.widgets(TRUE)
   do.plot()

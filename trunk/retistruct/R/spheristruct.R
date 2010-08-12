@@ -903,7 +903,6 @@ compute.strain <- function(r) {
 ## i0        - index of the landmark on the rim
 ## lambda0   - longitude of landmark on rim
 ## Ds        - list of sets of datapoints to plot
-## graphical - whether to plot graphs during computation
 ## n         - number of points in triangulation
 ## report    - function used to report
 ## d.grid    - device to plot grid onto. Value of NA (default)
@@ -920,30 +919,38 @@ compute.strain <- function(r) {
 ##
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
-                         graphical=TRUE,
                          n=500,
                          report=print,
                          d.grid=NA, d.polar=NA) {
+  ## Clear polar plot, if it's required
+  if (!is.na(d.polar)) {
+    dev.set(d.polar)
+    plot.polar(phi0)
+  }
+  
   report("Triangulating...")
   t <- triangulate.outline(P, h=1:nrow(P), n=n)
-  if (graphical) {
+  if (!is.na(d.grid)) {
+    dev.set(d.grid)
     with(t, trimesh(T, P, col="black"))
   }
-
+    
   report("Stitching...")
   s <- stitch.outline(t$P, t$gf, t$gb, tearmat, i0)
   if (is.null(s)) {
     report("ERROR: Fixed point is not on the rim")
     return(NULL)
   }
-  if (graphical) {
+  if (!is.na(d.grid)) {
+    dev.set(d.grid)
     plot.stitch.flat(s)
   }
 
   report("Triangulating...")  
   t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=n,
                            suppress.external.steiner=TRUE)
-  if (graphical) {
+  if (!is.na(d.grid)) {
+    dev.set(d.grid)
     plot.stitch.flat(s)
     with(t, trimesh(T, P, col="grey", add=TRUE))
   }
@@ -953,28 +960,19 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   report("Merging points...")
   m <- merge.points.edges(r)
   r <- merge.lists(r, m)
-  
-  ## if (graphical) {
-  ##   plot(P)
-  ##   with(s, plot.outline.flat(P, gb))
-  ## }
 
   report("Projecting to sphere...")
   p <- project.to.sphere(r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
   r <- merge.lists(r, p)
   
-  if (graphical) {
+  if (!is.na(d.grid)) {
+    dev.set(d.grid)
     ## Initial plot in 3D space
     plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
     plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
   }
 
   report("Optimising mapping...")
-  ## o <- optimise.mapping(r, E0.A=exp(3), k.A=1)
-  ## r <- merge.lists(r, o)
-  ##p1 <- p
-  ##p1$phi <- r$phi
-  ## p1$lambda <- r$lambda
   o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
                         d.grid=d.grid, d.polar=d.polar)
   r <- merge.lists(r, o)
