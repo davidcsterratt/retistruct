@@ -175,6 +175,88 @@ h.save <- function(h, ...) {
   unsaved.data(FALSE)
 }
 
+## Test message function, with similar arguments to gmessage
+mess <- function(message, title="",...) {
+  print(paste(title, ":", message, sep=""))
+}
+
+## Function to read a dataset
+## 
+## Changes the following global variables:
+##   dataset - directory in which data is contained
+##   map     - the map data
+##   Ds      - list of datapoints
+##   Ss      - list of landmark lines
+##   P       - the outline
+##   gf      - forward pointers
+##   gb      - backward pointers
+##   A       - tear apices
+##   VF      - tear forward verticies
+##   VB      - tear backward verticies
+read.dataset <- function(dataset, mess=gmessage) {
+  initialise.userdata()
+  map <<- read.map(dataset)
+  sys <<- read.sys(dataset)
+  Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
+              red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
+  segs <- map.to.segments(map)
+
+  ## Connect together segments that look to be joined
+  Ss <<- connect.segments(segs)
+
+  ## Determine the lengths of the segments
+  l <- c()
+  for (i in 1:length(Ss)) {
+    l[i] <- segment.length(Ss[[i]])
+  }
+
+  ## The outline (P) is the longest connected segment and the outline
+  ## is removed from the list of segments
+  P  <<- Ss[[which.max(l)]]
+  Ss <<- Ss[-which.max(l)]
+  names(Ss) <<- 1:length(Ss)
+
+  ## Create forward and backward pointers
+  t <- triangulate.outline(P, n=NA)
+  gf <<- t$gf
+  gb <<- t$gb
+
+  ## Read in tearfile
+  tearfile <- file.path(dataset, "T.csv")
+  if (file.exists(tearfile)) {
+    T <- read.csv(tearfile)
+    A  <<- T[,1]                            # apicies of tears
+    VB <<- T[,2]                           # forward verticies
+    VF <<- T[,3]                           # backward verticies
+  }
+  markupfile <- file.path(dataset, "markup.csv")
+  if (file.exists(markupfile)) {
+    M <<- read.csv(markupfile)
+    iD <<- M[1, "iD"]
+    iN <<- M[1, "iN"]
+    phi0 <<- M[1, "phi0"]
+  }
+
+  ## The format in f.Rdata is deprecated
+  foldfile <- file.path(dataset, "f.Rdata")
+  if (file.exists(foldfile)) {
+    file.remove(foldfile)
+    mess("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
+             title="Warning", icon="warning")
+  }
+  recfile <- file.path(dataset, "r.Rdata")
+  if (file.exists(recfile)) {
+    load(recfile, globalenv())
+    if (r$version != recfile.version) {
+      mess("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
+               title="Warning", icon="warning")
+      r <<- NULL
+    }
+  } else {
+    r <<- NULL
+  }
+}
+
 ## Handler for brining up a file dialogue to open a dataset
 ## 
 ## Changes the following global variables:
@@ -206,70 +288,11 @@ h.open <- function(h, ...) {
           dataset <<- h$file
         })
   setwd(curdir)
-  initialise.userdata()
-  map <<- read.map(dataset)
-  sys <<- read.sys(dataset)
-  Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
-              red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
-  segs <- map.to.segments(map)
 
-  ## Connect together segments that look to be joined
-  Ss <<- connect.segments(segs)
-
-  ## Determine the lengths of the segments
-  l <- c()
-  for (i in 1:length(Ss)) {
-    l[i] <- segment.length(Ss[[i]])
-  }
-
-  ## The outline (P) is the longest connected segment and the outline
-  ## is removed from the list of segments
-  P  <<- Ss[[which.max(l)]]
-  Ss <<- Ss[-which.max(l)]
-  names(Ss) <<- 1:length(Ss)
-  
+  read.dataset(dataset)
   svalue(g.dataset) <- dataset 
+  svalue(g.phi0)    <- phi0
   
-  ## Create forward and backward pointers
-  t <- triangulate.outline(P, n=NA)
-  gf <<- t$gf
-  gb <<- t$gb
-
-  ## Read in tearfile
-  tearfile <- file.path(dataset, "T.csv")
-  if (file.exists(tearfile)) {
-    T <- read.csv(tearfile)
-    A  <<- T[,1]                            # apicies of tears
-    VB <<- T[,2]                           # forward verticies
-    VF <<- T[,3]                           # backward verticies
-  }
-  markupfile <- file.path(dataset, "markup.csv")
-  if (file.exists(markupfile)) {
-    M <<- read.csv(markupfile)
-    iD <<- M[1, "iD"]
-    iN <<- M[1, "iN"]
-    phi0 <<- M[1, "phi0"]
-    svalue(g.phi0) <- phi0
-  }
-
-  ## The format in f.Rdata is deprecated
-  foldfile <- file.path(dataset, "f.Rdata")
-  if (file.exists(foldfile)) {
-    file.remove(foldfile)
-    gmessage("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
-             title="Warning", icon="warning")
-  }
-  recfile <- file.path(dataset, "r.Rdata")
-  if (file.exists(recfile)) {
-    load(recfile, globalenv())
-    if (r$version != recfile.version) {
-      gmessage("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.",
-               title="Warning", icon="warning")
-      r <<- NULL
-    }
-  } else {
-    r <<- NULL
-  }
   unsaved.data(FALSE)
   enable.widgets(TRUE)
   dev.set(d2)
