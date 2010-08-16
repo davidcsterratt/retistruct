@@ -20,27 +20,29 @@ yum install subversion # Only required if getting code with svn
 1b. Ubuntu Linux
 ----------------
 
+At the command line, enter:
+
+sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cran-rgl
+
 2. Install the retistruct package
 =================================
 
 1. Start R, in a directory containing the install.R and
-   retistruct_0.x.tgz files
+   retistruct_0.x.tar.gz files
 
 2. Type:
 
    source("install.R")
 
    The first time this runs, it should create a personal directory for
-   R packages, and it will take a few minutes to install the packages
-   should be installed. It should be a lot quicker when installing a
-   new version of retistruct.
+   R packages, and it will take a few minutes to install some required
+   packages.
 
 3. Test that it works
 =====================
 
-To start the program:
+To start the program, start R. At the R prompt type:
 
-$ R
 > library(retistruct)
 > retistruct()
 
