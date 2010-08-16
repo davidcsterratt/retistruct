@@ -1,11 +1,11 @@
 Installation of the nmf_morph/retistruct program
 ================================================
 
-Fedora Linux 
-============
-
 1. Install the necessary system packages
-----------------------------------------
+========================================
+
+1a. Fedora Linux 
+----------------
 
 As root,
 
@@ -17,48 +17,45 @@ yum install mesa-libGL-devel
 yum install mesa-libGLU-devel
 yum install subversion # Only required if getting code with svn
 
-2. Obtain the source code
--------------------------
+1b. Ubuntu Linux
+----------------
 
-This can be either a tarball or via svn.
+2. Install the retistruct package
+=================================
 
-I'll provide a tarball that unpacks into a directory called src
+1. Start R, in a directory containing the install.R and
+   retistruct_0.x.tgz files
+
+2. Type:
+
+   source("install.R")
+
+   The first time this runs, it should create a personal directory for
+   R packages, and it will take a few minutes to install the packages
+   should be installed. It should be a lot quicker when installing a
+   new version of retistruct.
+
+3. Test that it works
+=====================
+
+To start the program:
+
+$ R
+> library(retistruct)
+> retistruct()
+
+A window should appear.
+
+Advanced installation: Subversion access
+========================================
 
 To get the code via svn, in *theory* you should be able to do something like:
 
-kinit danial.nedergaard%kcl.ac.uk@FRIEND.ED.AC.UK
+kinit daniel.nedergaard%kcl.ac.uk@FRIEND.ED.AC.UK
 svn co https://coltex.inf.ed.ac.uk/reposraw/nmf_morph
 
 Thereafter,
 
 svn update in the tree should get the files.
 
-The required files are in nmf_morph/trunk/src
-
-3. Install the required R pacakges
-----------------------------------
-
-Various R contributed packages are needed. To install them:
-
-1. Make sure you're in the src directory
-2. Start R, and then type:
-
-   source("install.R")
-
-   After some time, the packages should be installed.
-
-3. Exit R, and type
-
-  ./install
-
-   in the shell. This is required to compile custom C code in the package.
-
-4. Test that it works
----------------------
-
-To start the program:
-
-$ R
-> source("retistruct.R")
-
-A window should appear.
+The required files are in nmf_morph/trunk/
