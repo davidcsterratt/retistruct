@@ -193,7 +193,7 @@ mess <- function(message, title="",...) {
 ##   A       - tear apices
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
-read.dataset <- function(dataset, mess=gmessage) {
+retistruct.read.dataset <- function(dataset, mess=mess) {
   initialise.userdata()
   map <<- read.map(dataset)
   sys <<- read.sys(dataset)
@@ -257,6 +257,35 @@ read.dataset <- function(dataset, mess=gmessage) {
   }
 }
 
+##  Reconstructing the retina
+retistruct.reconstruct <- function(mess=mess, dev.grid=NA, dev.polar=NA) {
+  ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
+  if (length(ct)) {
+    mess(paste("Invalid tears marked up. Somehow tears",
+                   toString(ct),
+                   "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
+                   toString(ct), "."), title="Error", icon="error")
+
+    enable.widgets(TRUE)
+    return()
+  }
+  i0 <- 0
+  lambda0 <<- 0
+  if (!is.na(iD)) {
+    i0 <- iD
+    lambda0 <<- 90
+  }
+  if (!is.na(iN)) {
+    i0 <- iN
+    lambda0 <<- 0
+  }
+  r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
+                     Ds=Ds,
+                     report=set.status,
+                     dev.grid=dev.grid, dev.polar=dev.polar)
+}
+
+
 ## Handler for brining up a file dialogue to open a dataset
 ## 
 ## Changes the following global variables:
@@ -289,7 +318,7 @@ h.open <- function(h, ...) {
         })
   setwd(curdir)
 
-  read.dataset(dataset)
+  retistruct.read.dataset(dataset, mess=gmessage)
   svalue(g.dataset) <- dataset 
   svalue(g.phi0)    <- phi0
   
@@ -304,31 +333,7 @@ h.open <- function(h, ...) {
 h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  dev.set(d1)
-  ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
-  if (length(ct)) {
-    gmessage(paste("Invalid tears marked up. Somehow tears",
-                   toString(ct),
-                   "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
-                   toString(ct), "."), title="Error", icon="error")
-
-    enable.widgets(TRUE)
-    return()
-  }
-  i0 <- 0
-  lambda0 <<- 0
-  if (!is.na(iD)) {
-    i0 <- iD
-    lambda0 <<- 90
-  }
-  if (!is.na(iN)) {
-    i0 <- iN
-    lambda0 <<- 0
-  }
-  r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
-                     Ds=Ds,
-                     report=set.status,
-                     d.grid=d1, d.polar=d2)
+  retistruct.reconstruct(mess=gmessage, dev.grid=d1, dev.polar=d2)
   enable.widgets(TRUE)
   do.plot()
 }
