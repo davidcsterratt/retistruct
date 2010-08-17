@@ -1,0 +1,34 @@
+Changes in version 0.1
+======================
+
+* New, hopefully easier installation method
+
+* Plotting improvements during optimisation
+
+* Fixed bug when specifying dorsal point (Issue #153)
+
+* During optimisation, correct error is now reported (Issue #164)
+
+* Landmarks (i.e. the optic disc an other marks) are now plotted
+  (Issue #159)
+
+* Tears now plotted in 3D and polar plots
+
+* Plotting of gridlines has been improved (hopefully)
+
+* The initial mapping has been improved so that there should be no
+  flipped triangles at the start of optimisation
+
+* Fix for Issue #169: Failure to read MAP file
+
+* Fix for issue #173: Failure to read map outline
+
+* Plotting of scale on flattened retina plot
+
+* Strain plot added
+
+* Tears are checked to see if they are valid after a move
+
+* Added three-click tear addition
+
+* Saving of iD, iN and phi0 in markup.csv
