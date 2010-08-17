@@ -185,7 +185,7 @@ h.open <- function(h, ...) {
         })
   setwd(curdir)
 
-  retistruct.read.dataset(dataset, mess=gmessage)
+  retistruct.read.dataset(mess=gmessage)
   svalue(g.dataset) <- dataset 
   svalue(g.phi0)    <- phi0
   
@@ -200,7 +200,8 @@ h.open <- function(h, ...) {
 h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  retistruct.reconstruct(mess=gmessage, dev.grid=d1, dev.polar=d2)
+  retistruct.reconstruct(mess=gmessage, report=set.status,
+                         plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
   enable.widgets(TRUE)
   do.plot()
 }

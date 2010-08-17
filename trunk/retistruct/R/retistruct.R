@@ -28,7 +28,7 @@ retistruct.mess <- function(message, title="",...) {
 ##   A       - tear apices
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
-retistruct.read.dataset <- function(dataset, mess=retistruct.mess) {
+retistruct.read.dataset <- function(mess=retistruct.mess) {
   retistruct.initialise.userdata()
   map <<- read.map(dataset)
   sys <<- read.sys(dataset)
@@ -93,7 +93,9 @@ retistruct.read.dataset <- function(dataset, mess=retistruct.mess) {
 }
 
 ##  Reconstructing the retina
-retistruct.reconstruct <- function(mess=retistruct.mess, dev.grid=NA, dev.polar=NA) {
+retistruct.reconstruct <- function(mess=retistruct.mess,
+                                   report=print,
+                                   plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
   if (length(ct)) {
     mess(paste("Invalid tears marked up. Somehow tears",
@@ -116,8 +118,8 @@ retistruct.reconstruct <- function(mess=retistruct.mess, dev.grid=NA, dev.polar=
   }
   r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      Ds=Ds,
-                     report=set.status,
-                     dev.grid=dev.grid, dev.polar=dev.polar)
+                     report=report,
+                     plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
 }
 
 ## retistruct.save() - save markup and state

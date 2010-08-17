@@ -1,5 +1,6 @@
 retistruct.cli <- function(dataset) {
-  retistruct.read.dataset(dataset)
+  dataset <<- dataset
+  retistruct.read.dataset()
   retistruct.reconstruct()
   retistruct.save()
 }

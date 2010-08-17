@@ -814,7 +814,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1,
 
 ## Grand optimisation function
 optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
-                             dev.grid=NA, dev.polar=NA) {
+                             plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
@@ -857,8 +857,10 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
     lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
     ## Plot
-    plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
-    plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
+    if (plot.3d) {
+      plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
+      plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
+    }
 
     if (!is.na(dev.grid)) {
       dev.set(dev.grid)
@@ -921,7 +923,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
                          n=500,
                          report=print,
-                         dev.grid=NA, dev.polar=NA) {
+                         plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
   if (!is.na(dev.polar)) {
     dev.set(dev.polar)
