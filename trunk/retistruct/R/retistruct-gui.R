@@ -149,17 +149,7 @@ h.phi0 <- function(h, ...) {
 
 ## Handler for saving state
 h.save <- function(h, ...) {
-  if (!is.null(dataset)) {
-    write.csv(cbind(A, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
-    write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
-
-    markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
-    write.csv(markup, file.path(dataset, "markup.csv"))
-    r$version <- recfile.version        # Datafile version
-    if (!is.null(r)) {
-      save(r, file=file.path(dataset, "r.Rdata"))
-    }
-  }
+  retistruct.save()
   unsaved.data(FALSE)
 }
 
