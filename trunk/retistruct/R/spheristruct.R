@@ -814,7 +814,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1,
 
 ## Grand optimisation function
 optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
-                             d.grid=NA, d.polar=NA) {
+                             dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
@@ -860,14 +860,14 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
     plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
     plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
 
-    if (!is.na(d.grid)) {
-      dev.set(d.grid)
+    if (!is.na(dev.grid)) {
+      dev.set(dev.grid)
       with(r, plot.outline.flat(P, gb))
       plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0*180/pi)
     }
 
-    if (!is.na(d.polar)) {
-      dev.set(d.polar)
+    if (!is.na(dev.polar)) {
+      dev.set(dev.polar)
       plot.polar(phi0 * 180/pi)
       r$phi <- phi
       r$lambda <- lambda
@@ -905,9 +905,9 @@ compute.strain <- function(r) {
 ## Ds        - list of sets of datapoints to plot
 ## n         - number of points in triangulation
 ## report    - function used to report
-## d.grid    - device to plot grid onto. Value of NA (default)
+## dev.grid    - device to plot grid onto. Value of NA (default)
 ##             means no plotting
-## d.polar   - device to plot polar plot onto. Value of NA (default)
+## dev.polar   - device to plot polar plot onto. Value of NA (default)
 ##             means no plotting
 ## 
 ## Returns list containing:
@@ -921,17 +921,17 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                          Ds=NULL, 
                          n=500,
                          report=print,
-                         d.grid=NA, d.polar=NA) {
+                         dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
-  if (!is.na(d.polar)) {
-    dev.set(d.polar)
+  if (!is.na(dev.polar)) {
+    dev.set(dev.polar)
     plot.polar(phi0)
   }
   
   report("Triangulating...")
   t <- triangulate.outline(P, h=1:nrow(P), n=n)
-  if (!is.na(d.grid)) {
-    dev.set(d.grid)
+  if (!is.na(dev.grid)) {
+    dev.set(dev.grid)
     with(t, trimesh(T, P, col="black"))
   }
     
@@ -941,16 +941,16 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     report("ERROR: Fixed point is not on the rim")
     return(NULL)
   }
-  if (!is.na(d.grid)) {
-    dev.set(d.grid)
+  if (!is.na(dev.grid)) {
+    dev.set(dev.grid)
     plot.stitch.flat(s)
   }
 
   report("Triangulating...")  
   t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=n,
                            suppress.external.steiner=TRUE)
-  if (!is.na(d.grid)) {
-    dev.set(d.grid)
+  if (!is.na(dev.grid)) {
+    dev.set(dev.grid)
     plot.stitch.flat(s)
     with(t, trimesh(T, P, col="grey", add=TRUE))
   }
@@ -965,8 +965,8 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   p <- project.to.sphere(r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
   r <- merge.lists(r, p)
   
-  if (!is.na(d.grid)) {
-    dev.set(d.grid)
+  if (!is.na(dev.grid)) {
+    dev.set(dev.grid)
     ## Initial plot in 3D space
     plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
     plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
@@ -974,7 +974,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
 
   report("Optimising mapping...")
   o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
-                        d.grid=d.grid, d.polar=d.polar)
+                        dev.grid=dev.grid, dev.polar=dev.polar)
   r <- merge.lists(r, o)
   
   report("Inferring coordinates of datapoints")
