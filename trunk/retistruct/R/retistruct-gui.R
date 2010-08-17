@@ -314,7 +314,7 @@ retistruct <- function() {
   dataset <<- NULL                         # Directory of dataset
   initial.dir <<- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
 
-  initialise.userdata()
+  retistruct.initialise.userdata()
 
   ##
   ## GUI Layout

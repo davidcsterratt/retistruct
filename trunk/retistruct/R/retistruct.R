@@ -29,7 +29,7 @@ retistruct.mess <- function(message, title="",...) {
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
 retistruct.read.dataset <- function(dataset, mess=retistruct.mess) {
-  initialise.userdata()
+  retistruct.initialise.userdata()
   map <<- read.map(dataset)
   sys <<- read.sys(dataset)
   Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
