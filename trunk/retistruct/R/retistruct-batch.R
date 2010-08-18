@@ -24,7 +24,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir) {
     print(dataset)
     ret <<- system(paste("R --vanilla >", logfile, "2>&1"),
                   input=paste("library(retistruct)
-retistruct.cli(\"", dataset, "\", 600)", sep=""),
+retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
                   intern=FALSE, wait=TRUE)
     stdout <- read.csv(logfile)
     logdat <- rbind(logdat, data.frame(Dataset=dataset,
