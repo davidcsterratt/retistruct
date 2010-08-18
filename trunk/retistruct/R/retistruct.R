@@ -12,7 +12,7 @@ retistruct.initialise.userdata <- function() {
 
 ## Test message function, with similar arguments to gmessage
 retistruct.mess <- function(message, title="",...) {
-  print(paste(title, ":", message, sep=""))
+  cat(paste(title, ":", message, sep=""))
 }
 
 ## Function to read a dataset
@@ -94,7 +94,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
 
 ##  Reconstructing the retina
 retistruct.reconstruct <- function(mess=retistruct.mess,
-                                   report=print,
+                                   report=cat,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
   if (length(ct)) {
