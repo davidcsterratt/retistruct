@@ -8,3 +8,12 @@ list.dirs <- function(path='.') {
   return(dirs)
 }
   
+retistruct.batch <- function(path='.') {
+  datasets <- list.dirs(path)
+  for (dataset in datasets) {
+    ret <- system(paste("R --vanilla <<EOF
+library(retistruct)
+retistruct.cli(\"", dataset, "\", 600)
+EOF", sep=""), intern=FALSE, wait=TRUE)
+  }
+}
