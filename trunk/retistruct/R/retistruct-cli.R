@@ -25,8 +25,9 @@ retistruct.cli.process <- function(outputdir=NA) {
 }
 
 retistruct.cli.figures <- function(outputdir) {
+  basepath <- gsub("/", "_", dataset)
   ## Flat plot
-  pdf(file=paste(outputdir, '/', basename(dataset), '-flat.pdf', sep=""),
+  pdf(file=paste(outputdir, "/", basepath, "-flat.pdf", sep=""),
       width=6, height=6)
   plot.outline.flat(P, gb, axt="s")
   if (!is.null(r$t) && !is.null(r$r)) {
@@ -34,11 +35,11 @@ retistruct.cli.figures <- function(outputdir) {
   }
   plot.datapoints.flat(Ds)
   plot.landmarks.flat(Ss, col="orange")
-  title(basename(dataset))
+  title(dataset)
   dev.off()
 
   ## Polar plot
-  pdf(file=paste(outputdir, '/', basename(dataset), '-polar.pdf', sep=""),
+  pdf(file=paste(outputdir, "/", basepath, "-polar.pdf", sep=""),
       width=6, height=6)
   plot.polar(phi0)
   if (!is.null(r$Dss)) {
@@ -48,6 +49,6 @@ retistruct.cli.figures <- function(outputdir) {
   if (!is.null(r$Sss)) {
     plot.landmarks.polar(r$Sss, col="orange")
   }
-  title(basename(dataset))
+  title(dataset)
   dev.off()
 }

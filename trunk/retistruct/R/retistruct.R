@@ -20,7 +20,6 @@ retistruct.report <- function(message, title="",...) {
   cat(paste(message, "\n", sep=""))
 }
 
-
 ## Function to read a dataset
 ## 
 ## Changes the following global variables:

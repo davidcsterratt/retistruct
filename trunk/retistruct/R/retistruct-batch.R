@@ -33,3 +33,6 @@ retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
     write.csv(logdat, paste(outputdir, "/retistruct-batch.csv", sep=""))
   }
 }
+
+retistruct.batch.figures <- function(tldir='.', outputdir=tldir) {
+}
