@@ -15,6 +15,12 @@ retistruct.mess <- function(message, title="",...) {
   cat(paste(title, ":", message, sep=""))
 }
 
+## Report function, with similar arguments to print
+retistruct.report <- function(message, title="",...) {
+  cat(paste(message, "\n", sep=""))
+}
+
+
 ## Function to read a dataset
 ## 
 ## Changes the following global variables:
@@ -94,7 +100,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
 
 ##  Reconstructing the retina
 retistruct.reconstruct <- function(mess=retistruct.mess,
-                                   report=cat,
+                                   report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
   if (length(ct)) {
