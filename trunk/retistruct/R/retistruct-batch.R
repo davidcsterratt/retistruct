@@ -15,15 +15,19 @@ list.dirs <- function(path='.') {
 ## tldir     - the top level of the tree through which to recurse
 ## outputdir - directory in which to dump a log file and images
 ##
-retistruct.batch <- function(tldir='.', outputdir='.') {
+retistruct.batch <- function(tldir='.', outputdir=tldir) {
+  print(outputdir)
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
   for (dataset in datasets) {
-    ret <- system("R --vanilla",
+    print(dataset)
+    ret <<- system("R --vanilla 2>&1",
                   input=paste("library(retistruct)
 retistruct.cli(\"", dataset, "\", 600)", sep=""),
-                  intern=FALSE, wait=TRUE)
-    logdat <- rbind(logdat, data.frame(Dataset=dataset, Return=ret))
-    write.csv(logdat, paste(outputdir, "/retistruct.log", sep=""))
+                  intern=TRUE, wait=TRUE)
+    print(ret)
+    write(ret, paste(dataset, "/retistruct.log", sep=""))
+    logdat <- rbind(logdat, data.frame(Dataset=dataset, Result=ret[length(ret)]))
+    write.csv(logdat, paste(outputdir, "/retistruct-batch.csv", sep=""))
   }
 }
