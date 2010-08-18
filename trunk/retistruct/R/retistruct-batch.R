@@ -19,10 +19,10 @@ retistruct.batch <- function(tldir='.', outputdir='.') {
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
   for (dataset in datasets) {
-    ret <- system(paste("R --vanilla <<EOF
-library(retistruct)
-retistruct.cli(\"", dataset, "\", 600)
-EOF", sep=""), intern=FALSE, wait=TRUE)
+    ret <- system("R --vanilla",
+                  input=paste("library(retistruct)
+retistruct.cli(\"", dataset, "\", 600)", sep=""),
+                  intern=FALSE, wait=TRUE)
     logdat <- rbind(logdat, data.frame(Dataset=dataset, Return=ret))
     write.csv(logdat, paste(outputdir, "/retistruct.log", sep=""))
   }
