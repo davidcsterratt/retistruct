@@ -46,9 +46,6 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir) {
   for (d in datasets) {
     print(d)
     dataset <<- d
-    retistruct.read.recdata()
-    if (!is.null(r)) {
-      retistruct.cli.figures(outputdir)
-    }
+    retistruct.cli.figure(outputdir)
   }
 }
