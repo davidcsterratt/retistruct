@@ -185,7 +185,15 @@ h.open <- function(h, ...) {
         })
   setwd(curdir)
 
+  ## Read the raw data
   retistruct.read.dataset(mess=gmessage)
+
+  ## Read the markup
+  try(retistruct.read.markup(mess))
+  
+  ## Read the reconstruction data
+  try(retistruct.read.recdata(mess))
+
   svalue(g.dataset) <- dataset 
   svalue(g.phi0)    <- phi0
   

@@ -17,6 +17,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA) {
 
 retistruct.cli.process <- function(outputdir=NA) {
   retistruct.read.dataset()
+  retistruct.read.markup()
   retistruct.reconstruct()
   retistruct.save()
   if (!is.na(outputdir)) {
