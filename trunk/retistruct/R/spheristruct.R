@@ -29,7 +29,7 @@ path.length <- function(i, j, g, h, P) {
 ## markers.to.apex.verties(m, gf, gb, P)
 ##
 ## Label a set of three unlabelled points supposed to refer to the
-## apex and vertcies of a cut and tear with the A (Apex), VF (forward
+## apex and vertcies of a cut and tear with the V0 (Apex), VF (forward
 ## vertex) and VB (backward vertex) labels.
 ##
 ## Arguments:
@@ -38,7 +38,7 @@ path.length <- function(i, j, g, h, P) {
 ##   gb - the backward pointer vector
 ##
 ## Output:
-##   Vector of indicies labelled with A, VF and VB
+##   Vector of indicies labelled with V0, VF and VB
 ##
 markers.to.apex.vertices <- function(m, gf, gb, P) {
   ## Each row of this matrix is a permutation of the markers
@@ -49,9 +49,9 @@ markers.to.apex.vertices <- function(m, gf, gb, P) {
              c(3, 1, 2),
              c(3, 2, 1))
 
-  ## For each permuation of A, VF, VB, measure the sum of length in
-  ## the forwards direction from A to VF and in the backwards
-  ## direction from A to VB. The permuation with the minimum distance
+  ## For each permuation of V0, VF, VB, measure the sum of length in
+  ## the forwards direction from V0 to VF and in the backwards
+  ## direction from V0 to VB. The permuation with the minimum distance
   ## is the correct one.
   tplmin <- Inf                      # The minimum path length
   h <- 1:nrow(P)                     # identity correspondence mapping
@@ -60,22 +60,22 @@ markers.to.apex.vertices <- function(m, gf, gb, P) {
                                      # sub-tears, but this doesn't
                                      # matter)
   for (i in 1:nrow(p)) {
-    A <-  m[p[i,1]]
+    V0 <- m[p[i,1]]
     VF <- m[p[i,2]]
     VB <- m[p[i,3]]
-    tpl <- path.length(A, VF, gf, h, P) + path.length(A, VB, gb, h, P)
+    tpl <- path.length(V0, VF, gf, h, P) + path.length(V0, VB, gb, h, P)
     if (tpl < tplmin) {
       M <- m[p[i,]]
       tplmin <- tpl
     }
   }
-  names(M) <- c("A", "VF", "VB")
+  names(M) <- c("V0", "VF", "VB")
   return(M)
 }
 
 ## Check that tears are all in the correct direction
 ##
-## Given a tear matrix T with columns "A", "VF", and "VB", check that
+## Given a tear matrix T with columns "V0", "VF", and "VB", check that
 ## all tears are correct.
 ##
 ## Output:
@@ -86,7 +86,7 @@ check.tears <- function(T, gf, gb, P) {
   out <- c()
   for (i in 1:nrow(T)) {
     ## Extract the markers for this row
-    m <- T[i, c("A", "VF", "VB")]
+    m <- T[i, c("V0", "VF", "VB")]
     M <- markers.to.apex.vertices(m, gf, gb, P)
     if (!all(M == m)) {
       out <- c(out, i)
@@ -238,7 +238,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 ## Rset  - the set of points on the rim
 ## i0    - the index of the landmark
 ## P     - a new set of meshpoints
-## A     - indicies of the apex of each tear
+## V0    - indicies of the apex of each tear
 ## VF    - indicies of the forward vertex of each tear
 ## VB    - indicies of the backward vertex of each tear
 ## TFset - list containing indicies of points in each foward tear
@@ -253,7 +253,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 ##
 stitch.outline <- function(P, gf, gb, T, i0=NA) {
   ## Extract information from tear matrix
-  A  <- T[,1]                            # apicies of tears
+  V0 <- T[,1]                            # apicies of tears
   VB <- T[,2]                           # forward verticies
   VF <- T[,3]                           # backward verticies
 
@@ -279,9 +279,9 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
     ##print(paste("Forward tear", j))
-    TFset[[j]] <- mod1(path(A[j], VF[j], gf, hf), N)
+    TFset[[j]] <- mod1(path(V0[j], VF[j], gf, hf), N)
     ##print(paste("Backward tear", j))
-    TBset[[j]] <- mod1(path(A[j], VB[j], gb, hb), N)
+    TBset[[j]] <- mod1(path(V0[j], VB[j], gb, hb), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
   }
@@ -299,19 +299,19 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
   ## Iterate through tears to insert new points
   for (j in 1:nrow(T)) {
     ## Compute the total path length along each side of the tear
-    Sf <- path.length(A[j], VF[j], gf, hf, P)
-    Sb <- path.length(A[j], VB[j], gb, hb, P)
+    Sf <- path.length(V0[j], VF[j], gf, hf, P)
+    Sb <- path.length(V0[j], VB[j], gb, hb, P)
     ## print(paste("Sf", Sf))
     ## print(paste("Sb", Sb))
 
     ## For each point in the forward path, create one in the backwards
     ## path at the same fractional location
-    for (i in setdiff(TFset[[j]], c(A[j], VF[j]))) {
-      sf <- path.length(A[j], i, gf, hf, P)
+    for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
+      sf <- path.length(V0[j], i, gf, hf, P)
       ## print(paste("sf", sf/Sf))
       ## print(TBset[[j]])
       for (k in TBset[[j]]) {
-        sb <- path.length(A[j], k, gb, hb, P)
+        sb <- path.length(V0[j], k, gb, hb, P)
         ## print(paste("k", k, "; sb/Sb", sb/Sb))
         if (sb/Sb > sf/Sf) {
           break;
@@ -405,7 +405,7 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
   }
   
   return(list(Rset=Rset, i0=i0,
-              VF=VF, VB=VB, A=A,
+              VF=VF, VB=VB, V0=V0,
               TFset=TFset, TBset=TBset,
               P=P, h=h, hf=hf, hb=hb,
               gf=gf, gb=gb))

@@ -51,7 +51,7 @@ plot.stitch.flat <- function(s, add=FALSE, ...) {
     if (!add) plot.outline.flat(P, gb, ...)
     points(P[VF,], col="red", pch="+")
     points(P[VB,], col="orange", pch="+")
-    points(P[A, ], col="cyan", pch="+")
+    points(P[V0,], col="cyan", pch="+")
     for (TF in TFset) {
       lines(P[TF,], col="red", ...)
     }
@@ -60,13 +60,13 @@ plot.stitch.flat <- function(s, add=FALSE, ...) {
     }
     for (j in 1:length(h)) {
       if (h[j] != j) {
-        lines(P[c(j,h[j]),], col="blue", ...)
+        lines(P[c(j, h[j]),], col="blue", ...)
       }
     }
     
     for (j in 1:length(hf)) {
       if (hf[j] != j) {
-        lines(P[c(j,s$hf[j]),], col="green", ...)
+        lines(P[c(j, hf[j]),], col="green", ...)
       }
     }
   })

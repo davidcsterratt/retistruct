@@ -42,7 +42,7 @@ h.add <- function(h, ...) {
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=3)
   M <- markers.to.apex.vertices(id, gf, gb, P)
-  A  <<- c(A,  M["A"])
+  V0 <<- c(V0, M["V0"])
   VF <<- c(VF, M["VF"])
   VB <<- c(VB, M["VB"])
   do.plot()
@@ -57,9 +57,9 @@ h.remove <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-  tid <- which(id==A)
+  tid <- which(id==V0)
   if (length(tid) == 1) {
-    A  <<- A[-tid]
+    V0 <<- V0[-tid]
     VF <<- VF[-tid]
     VB <<- VB[-tid]
   }
@@ -79,7 +79,7 @@ h.move <- function(h, ...) {
   id <- identify(P[,1], P[,2], n=1, plot=FALSE)
 
   ## Locate tear in which th point occurs
-  T <- cbind(A, VF, VB)                 # Tear matrix
+  T <- cbind(V0, VF, VB)                 # Tear matrix
   tid <- which(apply(id==T, 1, any))[1]
   pid <- which(id==T[tid,])[1]
 
@@ -93,7 +93,7 @@ h.move <- function(h, ...) {
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
     M <- markers.to.apex.vertices(T[tid,], gf, gb, P)
-    A[tid]  <<- M["A"]
+    V0[tid] <<- M["V0"]
     VF[tid] <<- M["VF"]
     VB[tid] <<- M["VB"]
   }
@@ -162,7 +162,7 @@ h.save <- function(h, ...) {
 ##   P       - the outline
 ##   gf      - forward pointers
 ##   gb      - backward pointers
-##   A       - tear apices
+##   V0      - tear apices
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
 ##
@@ -208,7 +208,7 @@ h.reconstruct <- function(h, ...) {
 
 ## Unused handlers
 h.stitch.outline <- function(h, ...) {
-  s <- stitch.outline(P, cbind(A, VB, VF))
+  s <- stitch.outline(P, cbind(V0, VB, VF))
   dev.set(d2)
   plot.stitch.flat(s)
 }
@@ -257,13 +257,13 @@ do.plot <- function() {
   }
   
   if ("Markup" %in% svalue(g.show)) {
-    if (length(A) > 0) {
+    if (length(V0) > 0) {
       points(P[VF,,drop=FALSE], col="red", pch="+")
-      segments(P[A,1], P[A,2], P[VF,1], P[VF,2], col="red")
+      segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
       points(P[VB,,drop=FALSE], col="orange", pch="+")
-      segments(P[A,1], P[A,2], P[VB,1], P[VB,2], col="orange")
-      points(P[A,,drop=FALSE], col="cyan", pch="+")
-      text(P[A,,drop=FALSE]+100, labels=1:length(A), col="cyan")
+      segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
+      points(P[V0,,drop=FALSE], col="cyan", pch="+")
+      text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
     }
     if (!is.na(iD)) {
       text(P[iD,1], P[iD,2], "D")
@@ -272,22 +272,22 @@ do.plot <- function() {
       text(P[iN,1], P[iN,2], "N")
     }
   }
+
   if ("Stitch" %in% svalue(g.show)) {
-    if (!is.null(r$s)) {
-      plot.stitch.flat(r$s, add=TRUE)
+    if (!is.null(r$gb)) {
+      plot.stitch.flat(r, add=TRUE)
     }  
   }
+
   if ("Grid" %in% svalue(g.show)) {
-    
-    if (!is.null(r$t) && !is.null(r$r)) {
-      with(r, plot.gridlines.flat(t$P, t$T, r$phi, r$lambda, m$Tt, p$phi0*180/pi))
+    if (!is.null(r$phi)) {
+      with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
     }
   }
 
   if ("Landmarks" %in% svalue(g.show)) {
     plot.landmarks.flat(Ss, col="orange")
   }
-
 }
 
 ## It would be nice to have error messages displayed graphically.

@@ -1,6 +1,6 @@
 ## Return initialised userdata list
 retistruct.initialise.userdata <- function() {
-  A <<- c()          # Indices of apices of tears
+  V0 <<- c()          # Indices of apices of tears
   VB <<- c()         # Indices of forward verticies of tears
   VF <<- c()         # Indices of backward verticies of tears
   phi0 <<- 50        # Height of rim of retina in degrees
@@ -30,7 +30,7 @@ retistruct.report <- function(message, title="",...) {
 ##   P       - the outline
 ##   gf      - forward pointers
 ##   gb      - backward pointers
-##   A       - tear apices
+##   V0      - tear apices
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
 retistruct.read.dataset <- function(mess=retistruct.mess) {
@@ -65,7 +65,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
   tearfile <- file.path(dataset, "T.csv")
   if (file.exists(tearfile)) {
     T <- read.csv(tearfile)
-    A  <<- T[,1]                            # apicies of tears
+    V0 <<- T[,1]                            # apicies of tears
     VB <<- T[,2]                           # forward verticies
     VF <<- T[,3]                           # backward verticies
   }
@@ -110,7 +110,7 @@ retistruct.read.recdata <- function(mess=retistruct.mess) {
 retistruct.reconstruct <- function(mess=retistruct.mess,
                                    report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
-  ct <- check.tears(cbind(A, VF, VB), gf, gb, P)
+  ct <- check.tears(cbind(V0, VF, VB), gf, gb, P)
   if (length(ct)) {
     mess(paste("Invalid tears marked up. Somehow tears",
                    toString(ct),
@@ -130,7 +130,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     i0 <- iN
     lambda0 <<- 0
   }
-  r <<- fold.outline(P, cbind(A, VB, VF), phi0, i0=i0, lambda0=lambda0,
+  r <<- fold.outline(P, cbind(V0, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      Ds=Ds,
                      report=report,
                      plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
@@ -140,7 +140,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
 retistruct.save <- function() {
   if (!is.null(dataset)) {
     ## Save the tear information and the outline
-    write.csv(cbind(A, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
+    write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
     write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
 
     ## Save the dorsal and nasal locations and phi0 to markup.csv
