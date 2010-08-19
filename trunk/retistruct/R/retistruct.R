@@ -77,6 +77,15 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
     phi0 <<- M[1, "phi0"]
   }
 
+  ## Read the reconstruction data
+  retistruct.read.recdata()
+}
+
+## retistruct.read.recdata - read the reconstruction data, if it exists
+##
+## Relies on global variable dataset
+##
+retistruct.read.recdata <- function(mess=retistruct.mess) {
   ## The format in f.Rdata is deprecated
   foldfile <- file.path(dataset, "f.Rdata")
   if (file.exists(foldfile)) {
