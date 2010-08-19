@@ -208,8 +208,11 @@ h.open <- function(h, ...) {
 h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  retistruct.reconstruct(mess=gmessage, report=set.status,
-                         plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
+  out <- try(retistruct.reconstruct(mess=gmessage, report=set.status,
+                        plot.3d=TRUE, dev.grid=d1, dev.polar=d2))
+  if (inherits(out, "try-error")) {
+    gmessage(out, title="Error", icon="error")
+  }
   enable.widgets(TRUE)
   do.plot()
 }
