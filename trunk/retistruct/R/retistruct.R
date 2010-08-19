@@ -7,7 +7,7 @@ retistruct.initialise.userdata <- function() {
   r <<- NULL         # Reconstruction object
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
-  recfile.version <<- 1   # Version of reconstruction file data format
+  recfile.version <<- 2   # Version of reconstruction file data format
 }
 
 ## Test message function, with similar arguments to gmessage
