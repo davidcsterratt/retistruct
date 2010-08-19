@@ -116,8 +116,6 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
                    toString(ct),
                    "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
                    toString(ct), "."), title="Error", icon="error")
-
-    enable.widgets(TRUE)
     return()
   }
   i0 <- 0
@@ -131,7 +129,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     lambda0 <<- 0
   }
   r <<- fold.outline(P, cbind(V0, VB, VF), phi0, i0=i0, lambda0=lambda0,
-                     Ds=Ds,
+                     Ds=Ds, Ss=Ss,
                      report=report,
                      plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
 }
