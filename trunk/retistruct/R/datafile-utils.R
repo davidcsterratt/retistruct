@@ -3,10 +3,22 @@ lim <- function(x) {
   return(c(min(x), max(x)))
 }
 
+## Function to check the wether the directory in question is a data
+## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
+## error if the directory appears to be corrupt.
+check.datadir <- function(dir=NULL) {
+  sys <- file.exists(file.path(dir, "SYS.SYS"))
+  map <- file.exists(file.path(dir, "ALU.MAP"))
+  if (sys  & map ) return(TRUE)
+  if (!sys & !map) return(FALSE)
+  if (!sys) stop("SYS.SYS file doesn't exist")
+  if (!map) stop("ALU.MAP file doesn't exist")
+}
+
 ## Function to read the file containing the systat file with the
 ## locations of the cell bodies in it
 read.sys <- function(dir=NULL) {
-  read.systat(paste(dir, "SYS.SYS", sep="/"))
+  read.systat(file.path(dir, "SYS.SYS"))
 }
 
 ## SYS.MAP might be better to use
@@ -15,7 +27,7 @@ read.sys <- function(dir=NULL) {
 read.map <- function(dir=NULL) {
   warn <- options()$warn
   options(warn=2)
-  map <- try(read.csv(paste(dir, "ALU.MAP", sep="/"), sep=" ", header=FALSE))
+  map <- try(read.csv(file.path(dir, "ALU.MAP"), sep=" ", header=FALSE))
   options(warn=warn)
   if (inherits(map, "try-error")) {
     stop("Corrupt MAP file.")
