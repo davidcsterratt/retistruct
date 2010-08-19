@@ -1003,9 +1003,10 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
     }
   }
 
+  r <- merge.lists(r, list(Ds=Ds, Ss=Ss,
+                           Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+                           Ssb=Ssb, Ssc=Ssc, Sss=Sss))
+  
   report("Mapping optimised.")
-  return(merge.lists(r,
-                     list(t=t, s=s, m=m, p=p, r=r,
-                          Dsb=Dsb, Dsc=Dsc, Dss=Dss,
-                          Ssb=Ssb, Ssc=Ssc, Sss=Sss)))
+  return(r)
 }
