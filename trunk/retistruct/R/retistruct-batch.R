@@ -34,5 +34,21 @@ retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
   }
 }
 
-retistruct.batch.figures <- function(tldir='.', outputdir=tldir) {
+## retistruct.bactch() - Recurse through a directory tree, determining
+## whether the directory contains valid derived data and
+## plotting graphs if it does.
+##
+## tldir     - the top level of the tree through which to recurse
+## outputdir - directory in which to dump a log file and images
+##
+retistruct.batch.figures <- function(tldir=".", outputdir=tldir) {
+  datasets <- list.dirs(tldir)
+  for (d in datasets) {
+    print(d)
+    dataset <<- d
+    retistruct.read.recdata()
+    if (!is.null(r)) {
+      retistruct.cli.figures(outputdir)
+    }
+  }
 }
