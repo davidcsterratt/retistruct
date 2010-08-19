@@ -33,12 +33,22 @@ retistruct.report <- function(message, title="",...) {
 ##   V0      - tear apices
 ##   VF      - tear forward verticies
 ##   VB      - tear backward verticies
+##
+## The function can throw various errors
+##
 retistruct.read.dataset <- function(mess=retistruct.mess) {
+  ## Initialise global variables
   retistruct.initialise.userdata()
+
+  ## Read the raw data
   map <<- read.map(dataset)
   sys <<- read.sys(dataset)
+
+  ## Extract datapoints
   Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
               red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
+
+  ## Extract line data
   segs <- map.to.segments(map)
 
   ## Connect together segments that look to be joined
@@ -60,7 +70,13 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
   t <- triangulate.outline(P, n=NA)
   gf <<- t$gf
   gb <<- t$gb
+}
 
+## retistruct.read.markup - read the markup data, if it exists
+##
+## Relies on global variable dataset
+## 
+retistruct.read.markup <- function(mess=retistruct.mess) {
   ## Read in tearfile
   tearfile <- file.path(dataset, "T.csv")
   if (file.exists(tearfile)) {
@@ -68,6 +84,8 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
     V0 <<- T[,1]                            # apicies of tears
     VB <<- T[,2]                           # forward verticies
     VF <<- T[,3]                           # backward verticies
+  } else {
+    stop("Tear file T.csv doesn't exist.")
   }
   markupfile <- file.path(dataset, "markup.csv")
   if (file.exists(markupfile)) {
@@ -75,10 +93,9 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
     iD <<- M[1, "iD"]
     iN <<- M[1, "iN"]
     phi0 <<- M[1, "phi0"]
+  } else {
+    stop("Markup file M.csv doesn't exist.")
   }
-
-  ## Read the reconstruction data
-  retistruct.read.recdata()
 }
 
 ## retistruct.read.recdata - read the reconstruction data, if it exists
