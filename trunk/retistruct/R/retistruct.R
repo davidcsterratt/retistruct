@@ -129,11 +129,10 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ct <- check.tears(cbind(V0, VF, VB), gf, gb, P)
   if (length(ct)) {
-    mess(paste("Invalid tears marked up. Somehow tears",
+    stop(paste("Invalid tears marked up. Somehow tears",
                    toString(ct),
                    "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
-                   toString(ct), "."), title="Error", icon="error")
-    return()
+                   toString(ct), "."))
   }
   i0 <- 0
   lambda0 <<- 0
