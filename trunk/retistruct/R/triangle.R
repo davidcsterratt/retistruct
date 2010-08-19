@@ -23,6 +23,7 @@ triangulate <- function(P, S=NULL, a=NULL, q=NULL, Y=FALSE) {
                a,
                q,
                Y)
+  cat("\n")
   names(out) <- c("P", "PB", "T", "S", "SB", "E", "EB")
   return(out)
 }
