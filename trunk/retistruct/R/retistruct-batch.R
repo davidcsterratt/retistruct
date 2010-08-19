@@ -22,11 +22,22 @@ retistruct.batch <- function(tldir='.', outputdir=tldir) {
   for (dataset in datasets) {
     logfile <- paste(dataset, "/retistruct.log", sep="")
     print(dataset)
-    ret <<- system(paste("R --vanilla >", logfile, "2>&1"),
-                  input=paste("library(retistruct)
+    is.data.dir <- try(check.datadir(dataset))
+
+    if (!is.data.dir) {
+      next
+    }
+    if (is.data.dir) {
+      ret <<- system(paste("R --vanilla >", logfile, "2>&1"),
+                     input=paste("library(retistruct)
 retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
-                  intern=FALSE, wait=TRUE)
-    stdout <- read.csv(logfile)
+                     intern=FALSE, wait=TRUE)
+      stdout <- read.csv(logfile)
+    }
+    if (inherits(is.data.dir, "try-error")) {
+      ret <- 1
+      Result <- is.data.dir
+    }
     logdat <- rbind(logdat, data.frame(Dataset=dataset,
                                        Return=ret,
                                        Result=stdout[nrow(stdout),1]))
