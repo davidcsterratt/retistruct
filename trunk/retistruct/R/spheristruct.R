@@ -84,12 +84,14 @@ markers.to.apex.vertices <- function(m, gf, gb, P) {
 ##
 check.tears <- function(T, gf, gb, P) {
   out <- c()
-  for (i in 1:nrow(T)) {
-    ## Extract the markers for this row
-    m <- T[i, c("V0", "VF", "VB")]
-    M <- markers.to.apex.vertices(m, gf, gb, P)
-    if (!all(M == m)) {
-      out <- c(out, i)
+  if (is.matrix(T)) {
+    for (i in 1:nrow(T)) {
+      ## Extract the markers for this row
+      m <- T[i, c("V0", "VF", "VB")]
+      M <- markers.to.apex.vertices(m, gf, gb, P)
+      if (!all(M == m)) {
+        out <- c(out, i)
+      }
     }
   }
   return(out)
@@ -920,7 +922,7 @@ compute.strain <- function(r) {
 ## r         - information about locations of gridlines
 ##
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
-                         Ds=NULL, 
+                         Ds=NULL, Ss=NULL,
                          n=500,
                          report=print,
                          plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
