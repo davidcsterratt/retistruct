@@ -352,12 +352,12 @@ stitch.outline <- function(P, gf, gb, T, i0=NA) {
     ## readline("Press <Enter> to continue")
       
     ## Go along backward path
-    for (i in setdiff(TBset[[j]], c(A[j], VB[j]))) {
-      sb <- path.length(A[j], i, gb, hb, P)
+    for (i in setdiff(TBset[[j]], c(V0[j], VB[j]))) {
+      sb <- path.length(V0[j], i, gb, hb, P)
       ## print(paste("i", i, "sb", sb/Sb))
       ## print(TFset[[j]])
       for (k in TFset[[j]]) {
-        sf <- path.length(A[j], k, gf, hf, P)
+        sf <- path.length(V0[j], k, gf, hf, P)
         ## print(paste("k", k, "; sf/Sf", sf/Sf))
         if (sf/Sf > sb/Sb) {
           break;
