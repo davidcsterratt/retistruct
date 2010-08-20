@@ -64,7 +64,9 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
   ## is removed from the list of segments
   P  <<- Ss[[which.max(l)]]
   Ss <<- Ss[-which.max(l)]
-  names(Ss) <<- 1:length(Ss)
+  if (length(Ss) > 0) {
+    names(Ss) <<- 1:length(Ss)
+  }
 
   ## Create forward and backward pointers
   t <- triangulate.outline(P, n=NA)

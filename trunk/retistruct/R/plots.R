@@ -151,8 +151,10 @@ plot.datapoints.flat <- function(Ds, ...) {
 ## Ss     - list of segments
 ##
 plot.landmarks.flat <- function(Ss, ...) {
-  for(i in 1:length(Ss)) {
-    lines(Ss[[i]][,1], Ss[[i]][,2], ...)
+  if (length(Ss) > 0) {
+    for(i in 1:length(Ss)) {
+      lines(Ss[[i]][,1], Ss[[i]][,2], ...)
+    }
   }
 }
 
@@ -403,12 +405,14 @@ plot.datapoints.polar <- function(Dss, pch=".", ...) {
 ##           with columns "phi" and "lambda"
 ##
 plot.landmarks.polar <- function(Sss, ...) {
-  for (i in 1:length(Sss)) {
-    phi    <- Sss[[i]][,"phi"]
-    lambda <- Sss[[i]][,"lambda"]
-    x <- cos(lambda) * ((phi * 180/pi) + 90)
-    y <- sin(lambda) * ((phi * 180/pi) + 90)
-    lines(x, y, ...)
+  if (length(Sss) > 0) {
+    for (i in 1:length(Sss)) {
+      phi    <- Sss[[i]][,"phi"]
+      lambda <- Sss[[i]][,"lambda"]
+      x <- cos(lambda) * ((phi * 180/pi) + 90)
+      y <- sin(lambda) * ((phi * 180/pi) + 90)
+      lines(x, y, ...)
+    }
   }
 }
 
