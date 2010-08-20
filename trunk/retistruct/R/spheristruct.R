@@ -147,7 +147,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   ## orientation of the first row of the segment matrix determines the
   ## orientation of all the other rows.
 
-  ## We therefore find triangle which contains the first segment
+  ## We therefore find the triangle which contains the first segment
   S <- out$S
   T1 <- which(apply(T, 1, function(x) {all(S[1,] %in% x)}))
 
@@ -420,27 +420,26 @@ segments2pointers <- function(S) {
   j <- 1                                # Row of S
   k <- 1                                # Column of S
   while(nrow(S) > 0) {
-    i <- S[j,3-k]
-    g[S[j,k]] <- i
-    S <- S[-j,,drop=FALSE]
+    i <- S[j,3-k]                       # i is index of the next point
+    g[S[j,k]] <- i                      # Set the pointer to i
+    S <- S[-j,,drop=FALSE]              # We have used this row of S
     if (nrow(S) == 0) {
       return(g)
     }
-    j <- which(S[,1] == i)
+    j <- which(S[,1] == i)            # Is i in the first column of S?
     if (length(j) > 1) {
       stop("The segment list is not valid as it contains an element more than twice.")
     }
-    if (length(j)) {
+    if (length(j)) {              # If so, set the current column to 1
       k <- 1
     } else {
-      j <- which(S[,2] == i)
+      j <- which(S[,2] == i) # Otherwise, look for i in the second column
       k <- 2
       if (!length(j)) {
-        stop("No matching index.")
+        stop(paste("No matching index for point", i, "in S."))
         return(NULL)
       }
     }
-        
   }
   return(g)
 }
@@ -814,6 +813,21 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1,
            dE.E.dlambdai[-i0]    + E0.A * dE.A.dlambda[-i0]))
 }
 
+## flipped.triangles - Determine indicies of triangles that are flipped
+flipped.triangles <- function(phi, lambda, Tt, R) {
+  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+  ## Plot any flipped triangles
+  ## First find verticies and find centres and normals of the triangles
+  P1 <- P[Tt[,1],]
+  P2 <- P[Tt[,2],]
+  P3 <- P[Tt[,3],]
+  cents <- (P1 + P2 + P3)/3
+  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
+  areas <- apply(normals^2, 1, sum)
+  flipped <- (-dot(cents, normals) < 0)
+  return(list(flipped=flipped, cents=cents))
+}
+  
 ## Grand optimisation function
 optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {

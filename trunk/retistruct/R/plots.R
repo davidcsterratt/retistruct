@@ -216,19 +216,11 @@ plot.sphere.spherical <- function(phi, lambda, R, Tt, Rsett) {
               color="white", alpha=1)
 
   ## Plot any flipped triangles
-  ## First find verticies and find centres and normals of the triangles
-  P1 <- P[Tt[,1],]
-  P2 <- P[Tt[,2],]
-  P3 <- P[Tt[,3],]
-  cents <- (P1 + P2 + P3)/3
-  normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
-  areas <- apply(normals^2, 1, sum)
-  ##  print(cents)
-  ##  print(areas)
-  flipped <- (-dot(cents, normals) < 0)
-  print(paste(sum(flipped), "flipped triangles:"))
-  print(which(flipped))
-  points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3], col="blue", size=5)
+  ft <- flipped.triangles(phi, lambda, Tt, R)
+  print(paste(sum(ft$flipped), "flipped triangles:"))
+  print(which(ft$flipped))
+  with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
+                    col="blue", size=5))
 }
 
 ## Function to plot outline in 3D
