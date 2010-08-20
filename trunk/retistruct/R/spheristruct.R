@@ -991,7 +991,16 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   }
 
   report("Optimising mapping...")
+  ## This pass is experimental - ideally it wouldn't be here, but until
+  ## we can fix problems with fixed triangles, it must stay.
+  o <- optimise.mapping(r, E0.A=exp(1), k.A=2,
+                        plot.3d=plot.3d,
+                        dev.grid=dev.grid, dev.polar=dev.polar)
+  r <- merge.lists(r, o)
+
+  ## This pass is original
   o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
+                        plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
   r <- merge.lists(r, o)
   
