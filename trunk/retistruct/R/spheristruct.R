@@ -132,10 +132,11 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
     S <- pointers2segments(g)
   }
   ## Make initial triangulation to determine area
-  out <- triangulate(P, S, Y=TRUE)
+  out <- triangulate(P, S, Y=TRUE, j=TRUE, Q=TRUE)
   A <- sum(with(out, tri.area(P, T)))
   if (!is.na(n)) {
-    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner)
+    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner, j=TRUE,
+                       Q=TRUE)
   }
   P <- out$P
   T <- out$T
@@ -559,30 +560,6 @@ merge.points.edges <- function(t) {
               Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht))
 }
 
-solve.C <- function(Cu, L, i.fix, P.fix) {
-  N <- max(Cu)
-  M <- length(L)
-  C <- matrix(0, 2*N, 2*N)
-  for (i in 1:M) {
-    C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
-    C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
-  }
-
-
-  ind = as.vector(rbind(2*i.fix-1, 2*i.fix))
-  A <- C[-ind, -ind]
-  B <- C[-ind,  ind]
-  P <- matrix(t(P.fix), ncol(B), 1)
-  D <- diag(apply(cbind(A, 2*B), 1, sum))
-
-  Q <- 2 * solve(D - A) %*% B %*% P
-  Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
-  R <- matrix(0, nrow(Q) + length(i.fix), 2)
-  R[i.fix,] <- P.fix
-  R[-i.fix,] <- Q
-  return(R)
-}
-
 ## Stretch the mesh in the flat retina to a circular outline
 ##
 ## Arguments:
@@ -601,18 +578,31 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
     C[2*Cu[i,1]-1:0,2*Cu[i,2]-1:0] <- diag(2) / L[i]
     C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
   }
-  ## solve.C <- function(C, P, i.fix, P.fix) 
+
+  ## FIXME: This debugging output should probably go once the "Lapack
+  ## routine dgesv: system is exactly singular" bug has been
+  ## vanquished
+  print(det(C))
+  dupC <- duplicated(C)
+  if (any(dupC)) {
+    i <- which(dupC)
+    Ci <- C[i,]
+    dups <- which(apply(C, 1, function(x) {identical(x, Ci)}))
+    print(dups)
+    print(Ci)
+    for (d in dups) {
+      print(d)
+      print(which(C[d,]==1))
+    }
+  }
+  
   ind <- as.vector(rbind(2*i.fix-1, 2*i.fix))
-  ##print(ind)
   A <- C[-ind, -ind]
-  ##  print(dim(A))
+  print(det(A))
   B <- C[-ind,  ind]
-  ## print(dim(B))
   P <- matrix(t(P.fix), ncol(B), 1)
-  ## print(P[1:10,1])
   D <- diag(apply(cbind(A, 2*B), 1, sum))
-  ## print(dim(D))
-  ## print(dim(P))
+  print(det(D))
 
   Q <- 2 * solve(D - A) %*% B %*% P
   Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
