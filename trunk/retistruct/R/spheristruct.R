@@ -860,7 +860,10 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
     print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
             E0.A=E0.A, k.A=k.A, N=Nt,
             Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
-
+    ft <- flipped.triangles(phi, lambda, Tt, R)
+    print(paste(sum(ft$flipped), "flipped triangles:"))
+    print(which(ft$flipped))
+    
     ## Decode p vector
     phi          <- rep(phi0, Nt)
     phi[-Rsett]  <- opt$p[1:Nphi]
@@ -887,7 +890,7 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
       plot.outline.polar(r)
     }
   }
-  return(list(phi=phi, lambda=lambda, opt=opt))
+  return(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped)))
 }
 
 ## Function to plot the fractional change in length of connections 
@@ -1027,6 +1030,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                            Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                            Ssb=Ssb, Ssc=Ssc, Sss=Sss))
   
-  report(paste("Mapping optimised. Error:", r$opt$value))
+  report(paste("Mapping optimised. Error:", format(r$opt$value,5),
+               ";", r$nflip, "flipped triangles."))
   return(r)
 }

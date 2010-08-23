@@ -217,8 +217,6 @@ plot.sphere.spherical <- function(phi, lambda, R, Tt, Rsett) {
 
   ## Plot any flipped triangles
   ft <- flipped.triangles(phi, lambda, Tt, R)
-  print(paste(sum(ft$flipped), "flipped triangles:"))
-  print(which(ft$flipped))
   with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
                     col="blue", size=5))
 }
