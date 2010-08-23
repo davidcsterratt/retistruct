@@ -62,7 +62,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
 
   ## The outline (P) is the longest connected segment and the outline
   ## is removed from the list of segments
-  P  <<- Ss[[which.max(l)]]
+  P  <- Ss[[which.max(l)]]
   Ss <<- Ss[-which.max(l)]
   if (length(Ss) > 0) {
     names(Ss) <<- 1:length(Ss)
@@ -70,6 +70,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
 
   ## Create forward and backward pointers
   t <- triangulate.outline(P, n=NA)
+  P <<- t$P
   gf <<- t$gf
   gb <<- t$gb
 }
