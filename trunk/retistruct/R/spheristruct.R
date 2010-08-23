@@ -852,6 +852,11 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
+
+  print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+          E0.A=E0.A, k.A=k.A, N=Nt,
+          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
+
   while (opt$conv) {
     ## Optimise
     opt <- optim(opt$p, E, gr=dE,
@@ -993,10 +998,10 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   report("Optimising mapping...")
   ## This pass is experimental - ideally it wouldn't be here, but until
   ## we can fix problems with fixed triangles, it must stay.
-  o <- optimise.mapping(r, E0.A=exp(1), k.A=2,
-                        plot.3d=plot.3d,
-                        dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- merge.lists(r, o)
+  ##o <- optimise.mapping(r, E0.A=exp(1), k.A=2,
+  ##                        plot.3d=plot.3d,
+  ## dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- merge.lists(r, o)
 
   ## This pass is original
   o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
@@ -1032,6 +1037,6 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                            Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                            Ssb=Ssb, Ssc=Ssc, Sss=Sss))
   
-  report("Mapping optimised.")
+  report(paste("Mapping optimised. Error:", r$opt$value))
   return(r)
 }
