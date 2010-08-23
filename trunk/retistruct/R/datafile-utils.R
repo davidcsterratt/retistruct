@@ -172,9 +172,10 @@ segment.length <- function(S) {
 }
 
 ## Function to plot the "map", i.e. the outline of the retina
-plot.map <- function(map, seginfo=FALSE) {
+plot.map <- function(map, seginfo=FALSE,
+                     xlim=lim(map[,1]), ylim=lim(map[,2])) {
   par(mar=c(2,2,1.5,0.5))
-  plot(NA, NA, xlim=lim(map[,1]), ylim=lim(map[,2]), xlab="", ylab="")
+  plot(NA, NA, xlim=xlim, ylim=ylim, xlab="", ylab="")
   segs <- map.to.segments(map)
   for (i in 1:length(segs)) {
     seg <- segs[[i]]
