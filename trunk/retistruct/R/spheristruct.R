@@ -892,7 +892,7 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
       plot.outline.polar(r)
     }
   }
-  return(list(phi=phi, lambda=lambda))
+  return(list(phi=phi, lambda=lambda, opt=opt))
 }
 
 ## Function to plot the fractional change in length of connections 
