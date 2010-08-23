@@ -26,7 +26,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir) {
 
     if (inherits(is.data.dir, "try-error")) {
       ret <- 1
-      Result <- is.data.dir
+      Result <- geterrmessage()
     } else {
       if (!is.data.dir) {
         next
@@ -36,17 +36,20 @@ retistruct.batch <- function(tldir='.', outputdir=tldir) {
                        input=paste("library(retistruct)
 retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
                        intern=FALSE, wait=TRUE)
-        stdout <- read.csv(logfile)
+        print(ret)
+        out <<- read.csv(logfile)
+        Result <<- out[nrow(out),1]
+        print(as.vector(Result))
       }
     }
     logdat <- rbind(logdat, data.frame(Dataset=dataset,
                                        Return=ret,
-                                       Result=stdout[nrow(stdout),1]))
+                                       Result=Result))
     write.csv(logdat, paste(outputdir, "/retistruct-batch.csv", sep=""))
   }
 }
 
-## retistruct.bactch() - Recurse through a directory tree, determining
+## retistruct.batch() - Recurse through a directory tree, determining
 ## whether the directory contains valid derived data and
 ## plotting graphs if it does.
 ##
