@@ -115,18 +115,20 @@ connect.segments <- function(segs, merge.rad=10) {
   n <- c()                              # Initialisation
   d <- matrix(NA, 2*N, 2*N)
   for (i in 1:(2*N)) {
-    d[i,] <- norm(t(P[,i] - P))             # Distances of P_i from all other points
-    d[i,i] <- NA                          # Ignore distance to self
-    n[i] <- which.min(d[i,])                # Find index of closest point
+    d[i,] <- norm(t(P[,i] - P)) # Distances of P_i from all other points
+    d[i,i] <- NA                # Ignore distance to self
+    n[i] <- which.min(d[i,])    # Find index of closest point
   }
 
   ## Now create matrix T in which to store the sorted points,
   ## one per row
-  i <- 1                                # Initial index
+  i <- 1                                # Initial segment index
   Ts <- list()                          # New segment list
   T <- matrix(0, 0, 2)                  # Initialisation
+  added <- rep(FALSE, 2*N)              # Which points have been used
   while(1) {
-    j <- mod1(i + N, 2*N)           # Index at end of segment
+    j <- mod1(i + N, 2*N)       # Index into P of other end of segment i
+    ## Add the segement to T
     if (i<=N) {
       T <- rbind(T, segs[[i]])
       print(paste("Adding old segment", i))
@@ -137,19 +139,21 @@ connect.segments <- function(segs, merge.rad=10) {
     
     k <- n[j]                       # Closest index in another segment
     
-    n[i] <- NA                   # Ignore these indicies in the future
-    n[j] <- NA                   # Ignore these indicies in the future
+    added[i] <- TRUE             # Ignore these indicies in the future
+    added[j] <- TRUE             # Ignore these indicies in the future
     
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
-    if (is.na(k)) {
+    if (added[k]) {
       Ts <- c(Ts, list(remove.intersections(unique(T))))
       print(paste("Storing new segment", length(Ts)))
       T <- matrix(0, 0, 2)
-      rem <- which(!is.na(n))
+      rem <- which(!added)
+      print(rem)
       ## Find a new starting index
       if (length(rem) > 0) {
-        i <- n[rem[1]]
+        i <- rem[1]
+        print(i)
       } else {
         break
       }
