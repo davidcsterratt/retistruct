@@ -20,25 +20,27 @@ retistruct.batch <- function(tldir='.', outputdir=tldir) {
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
   for (dataset in datasets) {
+    Result <- ""
+    ret <- -1
     logfile <- paste(dataset, "/retistruct.log", sep="")
     print(dataset)
     is.data.dir <- try(check.datadir(dataset))
 
     if (inherits(is.data.dir, "try-error")) {
       ret <- 1
-      Result <- geterrmessage()
+      Result <- gsub("\n$", "", geterrmessage())
     } else {
       if (!is.data.dir) {
         next
       }
       if (is.data.dir) {
-        ret <<- system(paste("R --vanilla >", logfile, "2>&1"),
+        ret <- system(paste("R --vanilla >", logfile, "2>&1"),
                        input=paste("library(retistruct)
 retistruct.cli(\"", dataset, "\", 600, \"", outputdir, "\")", sep=""),
                        intern=FALSE, wait=TRUE)
         print(ret)
-        out <<- read.csv(logfile)
-        Result <<- out[nrow(out),1]
+        out <- read.csv(logfile)
+        Result <- out[nrow(out),1]
         print(as.vector(Result))
       }
     }
