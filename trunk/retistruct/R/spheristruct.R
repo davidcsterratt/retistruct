@@ -131,9 +131,25 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   if (!is.null(g)) {
     S <- pointers2segments(g)
   }
-  ## Make initial triangulation to determine area
+  ## Make initial triangulation
   out <- triangulate(P, S, Y=TRUE, j=TRUE, Q=TRUE)
+
+  ## Sometimes a point exists which only belongs to one segment. The
+  ## point to which it is connected, is itself connected by three
+  ## segments. We want to get rid of these points, and the easiest way
+  ## is to triangulate without the naughty points.
+  i.bad <- which(table(out$S)==1)
+  if (length(i.bad) > 0) {
+    print("Naughty points")
+    print(i.bad)
+    out <- triangulate(P[-i.bad,], S, Y=TRUE, j=TRUE, Q=TRUE)
+    P <- out$P
+  }
+
+  ## Now determine the area
   A <- sum(with(out, tri.area(P, T)))
+
+  ## Produce refined triangulation
   if (!is.na(n)) {
     out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
