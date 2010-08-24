@@ -78,7 +78,7 @@ h.move <- function(h, ...) {
                             identify.abort.text())
   id <- identify(P[,1], P[,2], n=1, plot=FALSE)
 
-  ## Locate tear in which th point occurs
+  ## Locate tear in which the point occurs
   T <- cbind(V0, VF, VB)                 # Tear matrix
   tid <- which(apply(id==T, 1, any))[1]
   pid <- which(id==T[tid,])[1]

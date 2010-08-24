@@ -79,7 +79,7 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=500) {
   if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
     plot.map(map, TRUE)
     points(P[c(1,nrow(P)),], col="black")
-    stop("Unable to find a closed segment to be the outline.")
+    stop("Unable to find a closed outline.")
   }
 }
 
@@ -140,10 +140,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ct <- check.tears(cbind(V0, VF, VB), gf, gb, P)
   if (length(ct)) {
-    stop(paste("Invalid tears marked up. Somehow tears",
-                   toString(ct),
-                   "got messed up.  The red lines should always point in the clockwise direction and the orange ones in the anticlockwise direction. To fix, select \"Move Point\", and double click on tear",
-                   toString(ct), "."))
+    stop(paste("Invalid tears", toString(ct), "marked up. Fix using \"Move Point\"."))
   }
   i0 <- 0
   lambda0 <<- 0
