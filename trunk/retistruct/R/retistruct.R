@@ -36,7 +36,7 @@ retistruct.report <- function(message, title="",...) {
 ##
 ## The function can throw various errors
 ##
-retistruct.read.dataset <- function(mess=retistruct.mess) {
+retistruct.read.dataset <- function(mess=retistruct.mess, d.close=200) {
   ## Initialise global variables
   retistruct.initialise.userdata()
 
@@ -68,6 +68,11 @@ retistruct.read.dataset <- function(mess=retistruct.mess) {
     names(Ss) <<- 1:length(Ss)
   }
 
+  ## Check that P is more-or-less closed
+  if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
+    stop("Unable to find a closed segment to be the outline.")
+  }
+  
   ## Create forward and backward pointers
   t <- triangulate.outline(P, n=NA)
   P <<- t$P

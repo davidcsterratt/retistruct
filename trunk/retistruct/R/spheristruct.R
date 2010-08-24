@@ -217,7 +217,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   a <- abs(a.signed)
     
   ## Find lengths of connections
-  L <- norm(P[Cu[,1],] - P[Cu[,2],])
+  L <- vecnorm(P[Cu[,1],] - P[Cu[,2],])
 
   ## Check there are no zero-length lines
   if (any(L==0)) {

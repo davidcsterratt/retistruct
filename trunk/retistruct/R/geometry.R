@@ -8,7 +8,7 @@ dot <- function(x, y) {
 }
 
 ## Distance norm
-norm <- function(X) {
+vecnorm <- function(X) {
   if (is.vector(X)) {
     return(sqrt(sum(X^2)))
   } else {
