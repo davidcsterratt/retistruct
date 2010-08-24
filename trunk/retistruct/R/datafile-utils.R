@@ -112,13 +112,9 @@ connect.segments <- function(segs, merge.rad=10) {
   ## Now create vector of neighbours of points n
   ## Each element is the index of the closest point
   ## (apart from the point itself) 
-  n <- c()                              # Initialisation
-  d <- matrix(NA, 2*N, 2*N)
-  for (i in 1:(2*N)) {
-    d[i,] <- norm(t(P[,i] - P)) # Distances of P_i from all other points
-    d[i,i] <- NA                # Ignore distance to self
-    n[i] <- which.min(d[i,])    # Find index of closest point
-  }
+  d <- as.matrix(dist(t(P), diag=TRUE))
+  diag(d) <- NA
+  n <- apply(d, 1, which.min)           # Find index of closest point
 
   ## Create a list Ts, to contain new segments
   Ts <- list()                          # New segment list
@@ -179,7 +175,6 @@ plot.map <- function(map, seginfo=FALSE,
     col <- "black"
     if (seginfo) {
       col <- rainbow(10)[i]
-      print(col)
       text(seg[1,1], seg[1,2] + 100, labels=i, col=col)
     }
     lines(seg[, 1], seg[, 2], lwd=2, col=col)    
