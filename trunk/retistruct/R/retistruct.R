@@ -36,7 +36,7 @@ retistruct.report <- function(message, title="",...) {
 ##
 ## The function can throw various errors
 ##
-retistruct.read.dataset <- function(mess=retistruct.mess, d.close=200) {
+retistruct.read.dataset <- function(mess=retistruct.mess, d.close=500) {
   ## Initialise global variables
   retistruct.initialise.userdata()
 
@@ -67,17 +67,20 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=200) {
   if (length(Ss) > 0) {
     names(Ss) <<- 1:length(Ss)
   }
-
-  ## Check that P is more-or-less closed
-  if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
-    stop("Unable to find a closed segment to be the outline.")
-  }
   
   ## Create forward and backward pointers
   t <- triangulate.outline(P, n=NA)
   P <<- t$P
   gf <<- t$gf
   gb <<- t$gb
+
+  
+  ## Check that P is more-or-less closed
+  if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
+    plot.map(map, TRUE)
+    points(P[c(1,nrow(P)),], col="black")
+    stop("Unable to find a closed segment to be the outline.")
+  }
 }
 
 ## retistruct.read.markup - read the markup data, if it exists

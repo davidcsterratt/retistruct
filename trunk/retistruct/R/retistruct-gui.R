@@ -186,19 +186,22 @@ h.open <- function(h, ...) {
   setwd(curdir)
 
   ## Read the raw data
-  retistruct.read.dataset(mess=gmessage)
-
-  ## Read the markup
-  try(retistruct.read.markup(mess))
+  out <- try(retistruct.read.dataset(mess=gmessage))
+  if (inherits(out, "try-error")) {
+    gmessage(out, title="Error", icon="error")
+  } else{
+    ## Read the markup
+    try(retistruct.read.markup(mess))
   
-  ## Read the reconstruction data
-  try(retistruct.read.recdata(mess))
+    ## Read the reconstruction data
+    try(retistruct.read.recdata(mess))
 
-  svalue(g.dataset) <- dataset 
-  svalue(g.phi0)    <- phi0
+    svalue(g.dataset) <- dataset 
+    svalue(g.phi0)    <- phi0
   
-  unsaved.data(FALSE)
-  enable.widgets(TRUE)
+    unsaved.data(FALSE)
+    enable.widgets(TRUE)
+  }
   dev.set(d2)
   plot.new()
   do.plot()
