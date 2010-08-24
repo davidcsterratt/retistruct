@@ -62,7 +62,6 @@ remove.intersections <- function(P) {
     fi <- find.intersection(P[i,],            P[mod1(i+1, N),],
                             P[mod1(i+2, N),], P[mod1(i+3, N),])
     if (is.list(fi)) {
-      print(fi)
       P[mod1(i+1, N),] <- fi$R
       P <- P[-mod1(i+2, N),] 
       return(remove.intersections(P))
