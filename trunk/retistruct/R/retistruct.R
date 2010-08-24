@@ -36,7 +36,7 @@ retistruct.report <- function(message, title="",...) {
 ##
 ## The function can throw various errors
 ##
-retistruct.read.dataset <- function(mess=retistruct.mess, d.close=500) {
+retistruct.read.dataset <- function(mess=retistruct.mess, d.close=1000) {
   ## Initialise global variables
   retistruct.initialise.userdata()
 
