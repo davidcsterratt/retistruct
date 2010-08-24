@@ -120,47 +120,40 @@ connect.segments <- function(segs, merge.rad=10) {
     n[i] <- which.min(d[i,])    # Find index of closest point
   }
 
-  ## Now create matrix T in which to store the sorted points,
-  ## one per row
-  i <- 1                                # Initial segment index
+  ## Create a list Ts, to contain new segments
   Ts <- list()                          # New segment list
-  T <- matrix(0, 0, 2)                  # Initialisation
   added <- rep(FALSE, 2*N)              # Which points have been used
-  while(1) {
-    j <- mod1(i + N, 2*N)       # Index into P of other end of segment i
-    ## Add the segement to T
-    if (i<=N) {
-      T <- rbind(T, segs[[i]])
-      print(paste("Adding old segment", i))
-    } else {
-      T <- rbind(T, flipud(segs[[j]]))
-      print(paste("Adding old segment", j))
+  while(any(!added)) {
+    ## Find points remaning to be added, and select the first as the
+    ## initial segment index
+    rem <- which(!added)
+    i <- rem[1]
+    ## Now create matrix T in which to store the sorted points,
+    ## one per row
+    T <- matrix(0, 0, 2)
+
+    ## If segment with i at one end hasn't been added, add it
+    while(!added[i]) {
+      j <- mod1(i + N, 2*N)       # Index into P of other end of segment i
+      ## Add the segement to T
+      if (i<=N) {
+        T <- rbind(T, segs[[i]])
+        print(paste("Adding old segment", i))
+      } else {
+        T <- rbind(T, flipud(segs[[j]]))
+        print(paste("Adding old segment", j))
+      }
+      
+      added[i] <- TRUE             # Ignore these indicies in the future
+      added[j] <- TRUE             # Ignore these indicies in the future
+
+      i <- n[j]                     # Closest index in another segment
     }
-    
-    k <- n[j]                       # Closest index in another segment
-    
-    added[i] <- TRUE             # Ignore these indicies in the future
-    added[j] <- TRUE             # Ignore these indicies in the future
-    
+      
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
-    if (added[k]) {
-      Ts <- c(Ts, list(remove.intersections(unique(T))))
-      print(paste("Storing new segment", length(Ts)))
-      T <- matrix(0, 0, 2)
-      rem <- which(!added)
-      print(rem)
-      ## Find a new starting index
-      if (length(rem) > 0) {
-        i <- rem[1]
-        print(i)
-      } else {
-        break
-      }
-    } else {
-      ## Otherwise, continue
-      i <- k
-    }
+    Ts <- c(Ts, list(remove.intersections(unique(T))))
+    print(paste("Storing new segment", length(Ts)))
   }
   return(Ts)
 }
