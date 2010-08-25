@@ -15,6 +15,9 @@ path <- function(i, j, g, h) {
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
 path.length <- function(i, j, g, h, P) {
+  if (any(is.na(c(i, j, g, h, P)))) {
+    stop("An input contains NA")
+  }
   if (i == j) {
     return(0)
   } else {
