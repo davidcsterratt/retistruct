@@ -149,7 +149,8 @@ h.phi0 <- function(h, ...) {
 
 ## Handler for saving state
 h.save <- function(h, ...) {
-  retistruct.save()
+  retistruct.save.markup()
+  retistruct.save.recdata()
   unsaved.data(FALSE)
 }
 
@@ -194,7 +195,7 @@ h.open <- function(h, ...) {
     try(retistruct.read.markup(mess))
   
     ## Read the reconstruction data
-    try(retistruct.read.recdata(mess))
+    try(retistruct.read.recdata(mess=gmessage))
 
     svalue(g.dataset) <- dataset 
     svalue(g.phi0)    <- phi0

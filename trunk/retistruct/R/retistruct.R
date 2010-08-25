@@ -158,8 +158,8 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
                      plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
 }
 
-## retistruct.save() - save markup and state
-retistruct.save <- function() {
+## retistruct.save.markup() - save markup
+retistruct.save.markup <- function() {
   if (!is.null(dataset)) {
     ## Save the tear information and the outline
     write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
@@ -168,7 +168,12 @@ retistruct.save <- function() {
     ## Save the dorsal and nasal locations and phi0 to markup.csv
     markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
     write.csv(markup, file.path(dataset, "markup.csv"))
+  }
+}
 
+## retistruct.save.recdata() - save reconstruction data
+retistruct.save.recdata <- function() {
+  if (!is.null(dataset)) {
     ## Save the derived data
     r$version <- recfile.version        # Datafile version
     if (!is.null(r)) {
@@ -176,3 +181,4 @@ retistruct.save <- function() {
     }
   }
 }
+

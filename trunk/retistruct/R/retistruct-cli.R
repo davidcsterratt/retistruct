@@ -16,10 +16,13 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA) {
 }
 
 retistruct.cli.process <- function(outputdir=NA) {
+  ## Processing
   retistruct.read.dataset()
   retistruct.read.markup()
   retistruct.reconstruct()
-  retistruct.save()
+
+  ## Output
+  retistruct.save.recdata()
   if (!is.na(outputdir)) {
     retistruct.cli.figure(outputdir)
   }
