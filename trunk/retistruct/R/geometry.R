@@ -55,6 +55,20 @@ find.intersection <- function(P1, Q1, P2, Q2) {
   return(FALSE)
 }
 
+## Remove identical consecutive rows from a matrix
+##
+## This is simlar to unique(), but spares rows which are duplicated, but 
+## at different points in the matrix
+##
+remove.identical.consecutive.rows <- function(P) {
+  for (i in 2:nrow(P)) {
+    if (identical(P[i-1,], P[i,])) {
+      return(remove.identical.consecutive.rows(P[-i,]))
+    }
+  }
+  return(P)
+}
+
 ## Remove intersections between adjacent segements in a circular path
 ##
 ## Suppose segments AB and CD intersect.  Point B is replaced by the
@@ -107,7 +121,6 @@ remove.intersections <- function(P, d=50) {
       print(P[mod1(i+1, N),])
       print(P[mod1(i+2, N),])
       print(P[mod1(i+3, N),])
-      return(remove.intersections(P))
     }
   }
   return(P)

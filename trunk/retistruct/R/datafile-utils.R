@@ -147,7 +147,7 @@ connect.segments <- function(segs, merge.rad=10) {
       
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
-    Ts <- c(Ts, list(remove.intersections(T)))
+    Ts <- c(Ts, list(remove.intersections(remove.identical.consecutive.rows(T))))
     print(paste("Storing new segment", length(Ts)))
   }
   return(Ts)
