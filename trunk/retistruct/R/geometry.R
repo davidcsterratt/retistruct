@@ -56,14 +56,57 @@ find.intersection <- function(P1, Q1, P2, Q2) {
 }
 
 ## Remove intersections between adjacent segements in a circular path
-remove.intersections <- function(P) {
+##
+## Suppose segments AB and CD intersect.  Point B is replaced by the
+## intersection point, defined B'.  Point C is replaced by a point C'
+## on the line B'D. The maxium distance of B'C' is given by the
+## parameter d. If the distance l B'D is less than 2d, the distance
+## B'C' is l/2.
+## 
+## Arguments:
+## P   - The points, as a 2-column matrix
+## d   - Criterion for maximum distance when points are inser
+##
+remove.intersections <- function(P, d=50) {
   N <- nrow(P)
-  for(i in 1:N) {
+  for (i in 1:N) {
+    R <- NULL
     fi <- find.intersection(P[i,],            P[mod1(i+1, N),],
                             P[mod1(i+2, N),], P[mod1(i+3, N),])
     if (is.list(fi)) {
-      P[mod1(i+1, N),] <- fi$R
-      P <- P[-mod1(i+2, N),] 
+      R <- fi$R
+    }
+    if (identical(P[mod1(i+1, N),], P[mod1(i+2, N),])) {
+      R <- P[mod1(i+1, N),]
+    }
+    if (!is.null(R)) {
+      print("Intersection found. Old points:")
+      print(P[i,])
+      print(P[mod1(i+1, N),])
+      print(P[mod1(i+2, N),])
+      print(P[mod1(i+3, N),])
+
+      P[mod1(i+1, N),] <- R
+      print("Point i+1 has been changed:")
+      print(P[i,])
+      print(P[mod1(i+1, N),])
+      print(P[mod1(i+2, N),])
+      print(P[mod1(i+3, N),])
+
+      l <- vecnorm(P[mod1(i+1, N),] - P[mod1(i+3, N),])
+      if (l > 2*d) {
+        a <- d/l
+      } else {
+        a <- 0.5
+      }
+      print(paste("a=", a))
+      print(paste("l=", l))
+      P[mod1(i+2, N),] <- a*P[mod1(i+1, N),] + (1-a)*P[mod1(i+3, N),]
+      print("New points:")
+      print(P[i,])
+      print(P[mod1(i+1, N),])
+      print(P[mod1(i+2, N),])
+      print(P[mod1(i+3, N),])
       return(remove.intersections(P))
     }
   }

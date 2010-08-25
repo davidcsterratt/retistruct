@@ -142,13 +142,12 @@ connect.segments <- function(segs, merge.rad=10) {
       
       added[i] <- TRUE             # Ignore these indicies in the future
       added[j] <- TRUE             # Ignore these indicies in the future
-
-      i <- n[j]                     # Closest index in another segment
+      i <- n[j]                    # Closest index in another segment
     }
       
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
-    Ts <- c(Ts, list(remove.intersections(unique(T))))
+    Ts <- c(Ts, list(remove.intersections(T)))
     print(paste("Storing new segment", length(Ts)))
   }
   return(Ts)
