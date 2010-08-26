@@ -28,6 +28,14 @@ retistruct.cli.process <- function(outputdir=NA) {
   }
 }
 
+## retistruct.cli.basepath - generate a path based on the elided directory name
+##
+retistruct.cli.basepath <- function(dataset) {
+  basepath <- gsub("\\./", "", dataset)
+  basepath <- gsub("/", "_", basepath)
+  return(basepath)
+}
+
 ## retistruct.cli.figure - Print a figure to file
 ##
 ## It requires the global variable dataset to be set
@@ -35,8 +43,7 @@ retistruct.cli.figure <- function(outputdir) {
   retistruct.read.recdata()
   if (!is.null(r)) {
     ## Determine the name of a figure
-    basepath <- gsub("\\./", "", dataset)
-    basepath <- gsub("/", "_", basepath)
+    basepath <- retistruct.cli.basepath(dataset)
     
     ## Flat plot
     pdf(file=file.path(outputdir, paste(basepath, "-flat.pdf", sep="")),
