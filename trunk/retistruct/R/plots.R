@@ -158,26 +158,42 @@ plot.landmarks.flat <- function(Ss, ...) {
   }
 }
 
+## Generate colours for strain plots
+strain.colours <- function(x) {
+  palette(rainbow(100)) ## Green is about 35; dark blue about 70
+  col <- x/log(0.75)*35 + 35
+  col[col<1] <- 1
+  col[col>70] <- 70
+  return(col)
+}
+
 ## Function to plot the fractional change in length of connections 
 plot.strain.flat <- function(r) {
   o <- compute.strain(r)
-  palette(rainbow(100)) ## Green is about 35; dark blue about 70
+  cols <- strain.colours(log(o$strain))
   with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
-                P[Cu[,2],1], P[Cu[,2],2], col=o$logstrainnorm * 30 + 35))
+                P[Cu[,2],1], P[Cu[,2],2], col=cols))
 }
 
 ## Function to plot the fractional change in length of connections 
 plot.l.vs.L <- function(r) {
   o <- compute.strain(r)
-  palette(rainbow(100)) ## Green is about 35; dark blue about 70
   op <- par()["mar"]
   par(mar=c(4.5, 4.5, 0.5,0.5))
-  with(o, plot(L, l, col=o$logstrainnorm* 30 + 35, pch='.', cex=5,
+  palette(rainbow(100)) ## Green is about 35; dark blue about 70
+  cols <- strain.colours(log(o$strain))
+  with(o, plot(L, l, col=cols, pch='.', cex=5,
                xlab="Length on flattened object",
                ylab="Length on reconstructed object",))
   par(xpd=FALSE)
   abline(0, 1)
+  abline(0, 0.75, col="blue")
+  abline(0, 1.25, col="red")
+  with(o, text(0.25*max(L), 0.25*max(L)*0.75, "25% compressed", col="blue",
+               pos=4))
+  with(o, text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
+               pos=2))
   par(op)
 }
 
