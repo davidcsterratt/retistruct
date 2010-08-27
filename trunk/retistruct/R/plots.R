@@ -185,7 +185,7 @@ plot.l.vs.L <- function(r) {
   cols <- strain.colours(log(o$strain))
   with(o, plot(L, l, col=cols, pch='.', cex=5,
                xlab="Length on flattened object",
-               ylab="Length on reconstructed object",))
+               ylab="Length on reconstructed object", asp=1))
   par(xpd=FALSE)
   abline(0, 1)
   abline(0, 0.75, col="blue")
