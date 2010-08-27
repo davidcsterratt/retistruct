@@ -83,15 +83,40 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=1000) {
   }
 }
 
+## Return index in P of closest point to x
+retistruct.closest <- function(P, x) {
+  if (any(is.na(x))) {
+    return(NA)
+  }
+  return(which.min(vecnorm(t(t(P) - x))))
+}
+
+retistruct.convert.markup <- function(M.old, P.old, P) {
+  M.old <- as.matrix(M.old)
+  M <- matrix(sapply(M.old, function(i) {retistruct.closest(P, P.old[i,])}),
+                ncol=ncol(M.old))
+  colnames(M) <- colnames(M.old)
+  return(M)
+}
+
 ## retistruct.read.markup - read the markup data, if it exists
 ##
 ## Relies on global variable dataset
 ## 
 retistruct.read.markup <- function(mess=retistruct.mess) {
+  ## Read in the old P data
+  Pfile <- file.path(dataset, "P.csv")
+  if (file.exists(Pfile)) {
+    P.old <- as.matrix(read.csv(Pfile))
+  } else {
+    P.old <- P
+  }
+  
   ## Read in tearfile
   tearfile <- file.path(dataset, "T.csv")
   if (file.exists(tearfile)) {
-    T <- read.csv(tearfile)
+    T.old <- read.csv(tearfile)
+    T <- retistruct.convert.markup(T.old, P.old, P)
     V0 <<- T[,1]                            # apicies of tears
     VB <<- T[,2]                           # forward verticies
     VF <<- T[,3]                           # backward verticies
@@ -100,7 +125,8 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
   }
   markupfile <- file.path(dataset, "markup.csv")
   if (file.exists(markupfile)) {
-    M <<- read.csv(markupfile)
+    M.old <<- read.csv(markupfile)
+    M <- retistruct.convert.markup(M.old, P.old, P)
     iD <<- M[1, "iD"]
     iN <<- M[1, "iN"]
     phi0 <<- M[1, "phi0"]
@@ -152,11 +178,16 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     i0 <- iN
     lambda0 <<- 0
   }
+  r <<- NULL
   r <<- fold.outline(P, cbind(V0, VB, VF), phi0, i0=i0, lambda0=lambda0,
                      report=report,
                      plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
-  r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
-                                             report=report)
+  if (!is.null(r)) {
+    r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
+                                               report=report)
+    report(paste("Mapping optimised. Error:", format(r$opt$value,5),
+                 ";", r$nflip, "flipped triangles."))
+  }
 }
 
 ## retistruct.save.markup() - save markup
