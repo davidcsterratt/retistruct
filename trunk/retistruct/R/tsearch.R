@@ -27,14 +27,13 @@
 ## @end deftypefn
 
 tsearchn <- function(x, t, xi) {
-##  if (nargin != 3)
-##    print_usage ();
-##  endif
-
   nt <- dim(t)[1]
   m <- dim(x)[1]
   n <- dim(x)[2]
   mi <- dim(xi)[1]
+  if (mi==0) {
+    return(list(idx=c(), p=matrix(0, 0, 3)))
+  }
   idx <- rep(NA, mi)
   p <- matrix(NA, mi, n + 1)
 
