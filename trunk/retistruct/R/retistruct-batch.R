@@ -61,10 +61,11 @@ retistruct.cli(\"", dataset, "\",", cpu.time.limit, ",\"", outputdir, "\")", sep
 ## outputdir - directory in which to dump a log file and images
 ##
 retistruct.batch.figures <- function(tldir=".", outputdir=tldir) {
+  retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
   for (d in datasets) {
     print(d)
     dataset <<- d
-    retistruct.cli.figure(outputdir)
+    try(retistruct.cli.figure(outputdir))
   }
 }
