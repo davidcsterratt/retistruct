@@ -147,7 +147,10 @@ connect.segments <- function(segs, merge.rad=10) {
       
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
-    Ts <- c(Ts, list(remove.intersections(remove.identical.consecutive.rows(T))))
+    T <- remove.identical.consecutive.rows(T)
+    T <- remove.intersections(T)
+    T <- remove.backtracks(T)
+    Ts <- c(Ts, list(T))
     print(paste("Storing new segment", length(Ts)))
   }
   return(Ts)
@@ -173,7 +176,7 @@ plot.map <- function(map, seginfo=FALSE,
     seg <- segs[[i]]
     col <- "black"
     if (seginfo) {
-      col <- rainbow(10)[i]
+      col <- rainbow(10)[mod1(i,10)]
       text(seg[1,1], seg[1,2] + 100, labels=i, col=col)
     }
     lines(seg[, 1], seg[, 2], lwd=2, col=col)    
@@ -208,6 +211,48 @@ plot.sys.map <- function(sys, map) {
 points.sys <- function(sys) {
   points(sys[,'XGREEN'], sys[,'YGREEN'], col="green", pch=20,cex=0.5)
   points(sys[,'XRED'], sys[,'YRED'], col="red", pch=20,cex=0.5)
+}
+
+## Remove backtracks to the same point in a path
+remove.backtracks <- function(P) {
+  N <- nrow(P)
+  ## Loop through P
+  for (i in 2:N) {
+    ## Find if we have already been here
+    j <- which(apply(P[1:(i-1),,drop=FALSE], 1, function(x) {identical(x, P[i,])}))
+    ## If so, remove all of P between there and here
+    if (length(j)) {
+      print(paste("Already been to ", j, "; Removing:"))
+      ind <- j:(i-1)
+      print(ind)
+      return(remove.backtracks(P[-ind,]))
+    }
+  }
+  return(P)
+}
+
+
+## Convert segment to pointers
+## FIXME: At present this is not used. However, it might form part of a
+## fix for Issue #178: error in segments2pointers()
+segment.to.pointers <- function(P) {
+  ## uniquify P
+  N <- nrow(P)
+  U <- unique(P)
+  id <- 1:N
+  for (i in 1:N) {
+    id[i] <- which(apply(U, 1, function(x) {identical(x, P[i,])}))
+  }
+  M <- nrow(U)
+  gf <- rep(NA, M)
+  for (i in 1:(N-1)) {
+    gf[id[i]] <- id[i+1]
+  }
+  gb <- rep(NA, M)
+  for (i in N:2) {
+    gb[id[i]] <- id[i-1]
+  }
+  return(list(id=id, P=U, gf=gf, gb=gb))
 }
 
 
