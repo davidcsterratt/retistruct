@@ -168,14 +168,24 @@ sphere.spherical.to.sphere.cart <- function(phi, lambda, R) {
 ## R      - radius of sphere
 ## Tt     - triagulation
 ## cb     - object returned by tsearch containing information on the
+##          triangle in which a point occurs and the barycentric coordinates
+##          within that triangle
+##
 bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
-  ## Find 3D coordinates of mesh points
-  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
-  
-  ## Now find locations cc of datapoints in Cartesian coordinates
+  ## Initialise output
   cc <- matrix(0, 0, 3)
   colnames(cc) <- c("X", "Y", "Z")
-  for(i in 1:(dim(cb$p)[1])) {
+
+  ## If there are no points, exit
+  if (nrow(cb$p) == 0) {
+    return(cc)
+  }
+
+  ## Find 3D coordinates of mesh points
+  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+
+  ## Now find locations cc of datapoints in Cartesian coordinates  
+  for(i in 1:nrow(cb$p)) {
     cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
   }
   return(cc)
