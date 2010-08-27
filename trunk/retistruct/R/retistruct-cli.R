@@ -52,6 +52,7 @@ retistruct.cli.figure <- function(outputdir) {
     with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
     plot.datapoints.flat(r$Ds)
     plot.landmarks.flat(r$Ss, col="orange")
+    plot.stitch.flat(r, add=TRUE)
     title(dataset)
     dev.off()
 
@@ -67,6 +68,19 @@ retistruct.cli.figure <- function(outputdir) {
       plot.landmarks.polar(r$Sss, col="orange")
     }
     title(dataset)
+    dev.off()
+
+    ## Strain plot
+    pdf(file=file.path(outputdir, paste(basepath, "-strain.pdf", sep="")),
+        width=6, height=6)
+    plot.outline.flat(r$P, r$gb, axt="s")
+    plot.strain.flat(r)
+    dev.off()
+
+    ## l.vs.L plot
+    pdf(file=file.path(outputdir, paste(basepath, "-strain-lvsL.pdf", sep="")),
+        width=6, height=6)
+    plot.l.vs.L(r)
     dev.off()
   }
 }
