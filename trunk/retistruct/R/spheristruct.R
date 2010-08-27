@@ -937,23 +937,18 @@ compute.strain <- function(r) {
 ## phi0      - lattitude of rim of partial sphere
 ## i0        - index of the landmark on the rim
 ## lambda0   - longitude of landmark on rim
-## Ds        - list of sets of datapoints to plot
 ## n         - number of points in triangulation
 ## report    - function used to report
-## dev.grid    - device to plot grid onto. Value of NA (default)
+## plot.3d   - Whether to show 3D picture during optimisation
+## dev.grid  - device to plot grid onto. Value of NA (default)
 ##             means no plotting
-## dev.polar   - device to plot polar plot onto. Value of NA (default)
+## dev.polar - device to plot polar plot onto. Value of NA (default)
 ##             means no plotting
 ## 
 ## Returns list containing:
-## t         - triangulation information
-## s         - stitching information
-## m         - information about merged points and edges
-## p         - information about projection onto sphere
-## r         - information about locations of gridlines
+## 
 ##
 fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
-                         Ds=NULL, Ss=NULL,
                          n=500,
                          report=print,
                          plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
@@ -1021,6 +1016,29 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
                         dev.grid=dev.grid, dev.polar=dev.polar)
   r <- merge.lists(r, o)
   
+  report(paste("Mapping optimised. Error:", format(r$opt$value,5),
+               ";", r$nflip, "flipped triangles."))
+  return(r)
+}
+
+## Infer coordinates of datapoints
+## Arguments:
+## r    - object returned by fold.outline
+## Ds   - list of sets of datapoints to plot
+## Ss   - list of sets of landmarks to plot
+##
+## Returns:
+## New object r, with new objects attached:
+## 
+## Dsb  - Datapoints in barycentric coordinates
+## Dsc  - Datapoints on reconstructed sphere in cartesian coordinates
+## Dss  - Datapoints on reconstructed sphere in spherical coordinates
+## Ssb  - Landmarks in barycentric coordinates
+## Ssc  - Landmarks on reconstructed sphere in cartesian coordinates
+## Sss  - Landmarks on reconstructed sphere in spherical coordinates
+##
+infer.datapoint.landmark.coordinates <- function(r, Ds=NULL, Ss=NULL,
+                                                 report=print) {
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
   Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
@@ -1028,7 +1046,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   if (!is.null(Ds)) {
     for (name in names(Ds)) {
       Dsb[[name]] <- with(r, tsearchn(P, T, Ds[[name]]))
-      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]]) 
+      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
   }
@@ -1040,7 +1058,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   if (!is.null(Ss)) {
     for (name in names(Ss)) {
       Ssb[[name]] <- with(r, tsearchn(P, T, Ss[[name]]))
-      Ssc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[name]]) 
+      Ssc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[name]])
       Sss[[name]] <- sphere.cart.to.sphere.spherical(Ssc[[name]], r$R)
     }
   }
@@ -1048,8 +1066,4 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   r <- merge.lists(r, list(Ds=Ds, Ss=Ss,
                            Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                            Ssb=Ssb, Ssc=Ssc, Sss=Sss))
-  
-  report(paste("Mapping optimised. Error:", format(r$opt$value,5),
-               ";", r$nflip, "flipped triangles."))
-  return(r)
 }

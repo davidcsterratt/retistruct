@@ -153,9 +153,10 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     lambda0 <<- 0
   }
   r <<- fold.outline(P, cbind(V0, VB, VF), phi0, i0=i0, lambda0=lambda0,
-                     Ds=Ds, Ss=Ss,
                      report=report,
                      plot.3d=plot.3d, dev.grid=dev.grid, dev.polar=dev.polar)
+  r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
+                                             report=report)
 }
 
 ## retistruct.save.markup() - save markup
