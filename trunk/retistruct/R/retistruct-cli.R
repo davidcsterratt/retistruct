@@ -59,7 +59,7 @@ retistruct.cli.figure <- function(outputdir) {
     ## Polar plot
     pdf(file=file.path(outputdir, paste(basepath, "-polar.pdf", sep="")),
         width=6, height=6)
-    plot.polar(phi0)
+    plot.polar(r$phi0*180/pi)
     if (!is.null(r$Dss)) {
       plot.outline.polar(r)
       plot.datapoints.polar(r$Dss, cex=5)
