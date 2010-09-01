@@ -708,7 +708,8 @@ compute.areas <- function(phi, lambda, T, R) {
 }
 
 ## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
+              E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
@@ -752,7 +753,8 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1, 
 }
 
 ## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, E0.A=0.1, k.A=1, N, verbose=FALSE) {
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
+               E0.A=0.1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
@@ -862,10 +864,31 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
 
-  print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+  iE <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
           E0.A=E0.A, k.A=k.A, N=Nt,
-          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
+          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
 
+  idE <- dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+          E0.A=E0.A, k.A=k.A, N=Nt,
+          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+  idE2 <- dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+          E0.A=E0.A, k.A=k.A, N=Nt,
+          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi, verbose=TRUE)
+
+  idE2c <- dE2c(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+          E0.A=E0.A, k.A=k.A, N=Nt,
+          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+  print(iE)
+  
+  print(idE[1:10])
+  print("R dE2")
+  print(idE2[1:10])
+  print("C dE2")
+  print(idE2c[1:10])
+  print("Ratio")
+  print(idE2c/idE2)
+  
+  
   while (opt$conv) {
     ## Optimise
     opt <- optim(opt$p, E, gr=dE,
@@ -882,6 +905,15 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
     ft <- flipped.triangles(phi, lambda, Tt, R)
     print(paste(sum(ft$flipped), "flipped triangles:"))
     print(which(ft$flipped))
+
+    #print(dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+ #         E0.A=E0.A, k.A=k.A, N=Nt,
+  #        Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
+
+#print(dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+   #       E0.A=E0.A, k.A=k.A, N=Nt,
+    #      Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
+
     
     ## Decode p vector
     phi          <- rep(phi0, Nt)
