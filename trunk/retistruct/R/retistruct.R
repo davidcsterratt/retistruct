@@ -199,7 +199,7 @@ retistruct.save.markup <- function() {
 
     ## Save the dorsal and nasal locations and phi0 to markup.csv
     markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
-    write.csv(markup, file.path(dataset, "markup.csv"))
+    write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
   }
 }
 
