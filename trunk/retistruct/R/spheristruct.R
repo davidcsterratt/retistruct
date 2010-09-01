@@ -707,9 +707,37 @@ compute.areas <- function(phi, lambda, T, R) {
   return(areas)
 }
 
+f <- function(x, x0=0.01, k=1) {
+  y <- x
+
+  c1 <- x <= 0
+  c2 <- (0 < x) & (x < x0)
+  c3 <- x0 <= x
+
+  y[c1] <- -k*(x[c1] - x0/2)
+  y[c2] <- k/2/x0*(x0 - x[c2])^2
+  y[c3] <- 0
+
+  return(y)
+}
+
+fp <- function(x, x0=0.01, k=1) {
+  y <- x
+
+  c1 <- x <= 0
+  c2 <- (0 < x) & (x < x0)
+  c3 <- x0 <= x
+
+  y[c1] <- -k
+  y[c2] <- -k/x0*(x0 - x[c2])
+  y[c3] <- 0
+
+  return(y)
+}
+
 ## Now for the dreaded elastic error function....
 E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
-              E0.A=0.1, k.A=1, N, verbose=FALSE) {
+              E0.A=1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
@@ -746,7 +774,8 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
     ## Find areas of all triangles
     areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
     ##E.A <- 0.5 * sum((areas - A)^2/A)
-    E.A <- sum(exp(-k.A*areas/A))
+    ## E.A <- sum(exp(-k.A*areas/A))
+    E.A <- sum(f(areas/A))
   }
   
   return(E.E + E0.A*E.A)
@@ -754,7 +783,7 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
 
 ## ... and the even more dreaded gradient of the elastic error
 dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
-               E0.A=0.1, k.A=1, N, verbose=FALSE) {
+               E0.A=1, k.A=1, N, verbose=FALSE) {
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
@@ -802,7 +831,8 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
     areas <- dot(P[T[,1],], dAdPt1)
 
 ##     dEdPt1 <- (areas - A)/A * dAdPt1
-    dEdPt1 <- -k.A/A*exp(-k.A*areas/A) * dAdPt1
+##    dEdPt1 <- -k.A/A*exp(-k.A*areas/A) * dAdPt1
+    dEdPt1 <- fp(areas/A)/A * dAdPt1
     
     Pt1topi <- matrix(0, length(phi), nrow(T))
     for(m in 1:nrow(T)) {
@@ -903,9 +933,13 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
             E0.A=E0.A, k.A=k.A, N=Nt,
             Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
     ft <- flipped.triangles(phi, lambda, Tt, R)
-    print(paste(sum(ft$flipped), "flipped triangles:"))
+    nflip=sum(ft$flipped)
+    print(paste(nflip, "flipped triangles:"))
     print(which(ft$flipped))
-
+    if (nflip > 0) {
+      E0.A <- E0.A*2
+    }
+    
     #print(dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
  #         E0.A=E0.A, k.A=k.A, N=Nt,
   #        Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
@@ -1043,9 +1077,9 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## r <- merge.lists(r, o)
 
   ## This pass is original
-  o <- optimise.mapping(r, E0.A=exp(10), k.A=20,
-                        plot.3d=plot.3d,
-                        dev.grid=dev.grid, dev.polar=dev.polar)
+  o <- optimise.mapping(r, E0.A=10, k.A=20,
+                          plot.3d=plot.3d,
+                          dev.grid=dev.grid, dev.polar=dev.polar)
   r <- merge.lists(r, o)
   
   report(paste("Mapping optimised. Error:", format(r$opt$value,5),
