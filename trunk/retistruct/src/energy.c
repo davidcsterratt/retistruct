@@ -115,3 +115,72 @@ SEXP spheristruct_E(SEXP p, SEXP Cu, SEXP C, SEXP L, SEXP B, SEXP T,
   
   return(ans);
 }
+
+SEXP spheristruct_E2(SEXP sphi, SEXP slambda, SEXP sCu, SEXP sL, SEXP sR) {
+  int i, j, k;
+  double dx, dy, dz, l, dll;
+  double dlidpj, dlidpk, dlidlj, dlidlk;
+  static double    x[10000],    y[10000],    z[10000];
+  static double dxdp[10000], dydp[10000], dzdp[10000];
+  static double dxdl[10000], dydl[10000];
+  static int frun = 0;
+  SEXP dE;
+  double *xdE;
+
+  double *xp =  REAL(sphi);
+  double *xl =  REAL(slambda);
+  double  R  = *REAL(sR);
+  double *L  =  REAL(sL);
+  int    *C  =  INTEGER(sCu);
+  int     N  =  LENGTH(slambda);
+  int     M  =  LENGTH(sCu)/2;
+
+  PROTECT(dE   = allocVector(REALSXP, 2*N));
+  xdE   = REAL(dE);
+
+  for (i=0; i<N; i++) { 
+    x[i]    =  R*cos(xp[i])*cos(xl[i]);
+    y[i]    =  R*cos(xp[i])*sin(xl[i]);
+    z[i]    =  R*sin(xp[i]);
+    if((i == 9) && !frun) {
+      printf("x=%f y=%f z=%f\n", x[i], y[i], z[i]);
+    }
+
+    dxdp[i] = -R*sin(xp[i])*cos(xl[i]);
+    dydp[i] = -R*sin(xp[i])*sin(xl[i]);
+    dzdp[i] =  R*cos(xp[i]);
+    
+    dxdl[i] = -R*cos(xp[i])*sin(xl[i]);
+    dydl[i] =  R*cos(xp[i])*cos(xl[i]);
+    /* dzdl =  rep(0, N) */
+    
+    xdE[i]   = 0;
+    xdE[i+N] = 0;
+  }
+  
+  for (i=0; i<M; i++) {
+    j = C[i]-1;
+    k = C[i+M]-1;
+
+    dx = x[j]-x[k];
+    dy = y[j]-y[k];
+    dz = z[j]-z[k];
+    
+    l = sqrt(dx*dx + dy*dy + dz*dz);
+    
+    dlidpj =  1.0/l*(dx*dxdp[j] + dy*dydp[j] + dz*dzdp[j]);
+    dlidpk = -1.0/l*(dx*dxdp[k] + dy*dydp[k] + dz*dzdp[k]);
+    dlidlj =  1.0/l*(dx*dxdl[j] + dy*dydl[j]);
+    dlidlk = -1.0/l*(dx*dxdl[k] + dy*dydl[k]);
+
+    dll = (l - L[i])/L[i];
+      
+    xdE[j]   = xdE[j] +   dlidpj*dll;
+    xdE[k]   = xdE[k] +   dlidpk*dll;
+    xdE[j+N] = xdE[j+N] + dlidlj*dll;
+    xdE[k+N] = xdE[k+N] + dlidlk*dll;
+  }
+  UNPROTECT(1);
+  frun = 1;
+  return(dE);
+}

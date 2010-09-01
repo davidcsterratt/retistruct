@@ -59,6 +59,8 @@ dE2 <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
 
   dEdp <- rep(0, N)
   dEdl <- rep(0, N)
+
+  if (verbose) print(paste(x[10], y[10], z[10]))
   
   for (i in 1:nrow(Cu)) {
     j <- Cu[i,1]
@@ -102,4 +104,23 @@ dE2 <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
   
   return(c(dEdp[-Rset]  + E0.A * dEAdp[-Rset],
            dEdl[-i0]    + E0.A * dEAdl[-i0]))
+  ## return(c(dEdp, dEdl))
+}
+
+## Alternative, sequential version of the gradient
+dE2c <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
+                E0.A=0.1, k.A=1, N, verbose=FALSE) {
+  phi <- rep(phi0, N)
+  phi[-Rset] <- p[1:Nphi]
+  lambda <- rep(lambda0, N)
+  lambda[-i0] <- p[Nphi+1:(N-1)]
+
+  dE <- .Call("spheristruct_E2",
+              phi, lambda, Cu, L, R)
+
+  dEdp <- dE[1:N]
+  dEdl <- dE[N+(1:N)]
+  return(c(dEdp[-Rset], dEdl[-i0]))
+  #return(dE[-c(Rset, i0+Nphi)])
+  ## return(dE)
 }
