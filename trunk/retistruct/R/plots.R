@@ -270,49 +270,46 @@ plot.outline.spherical <- function(phi, lambda, R, gb, h, ...) {
 ## phi    - lattitude of points
 ## lambda - longitude of points
 ## R      - radius of sphere
-## Tt     - triagulation
-## cb     - object returned by tsearch containing information on the
-##          triangle in which a cell body is found and its location
-##          within that triangle in barycentric coordinates
+## Dsc    - structure containing locations of datapoints in spherical
+##          cartesian coordinates
 ## size   - size of the points to plot
-## color  - colour of the points to plot
-plot.datapoints.spherical <- function(phi, lambda, R, Tt, cb, size=R/10, color="red") {
-  ## Obtain Cartesian coordinates of points
-  cc <- datapoints.sphere.cart(phi, lambda, R, Tt, cb)
-  
-  ## Plot
-  ## shade3d( translate3d( cube3d(col=color), cc[,1], cc[,2], cc[,3]))
-  ## rgl.spheres(cc[,1], cc[,2], cc[,3], radius, color=color)
-  ## points3d(cc[,1], cc[,2], cc[,3], size=size, color=color)
-  ## cc <- cc * 1.01
-  ## points3d(cc[,1], cc[,2], cc[,3], size=size, color=color)
+plot.datapoints.spherical <- function(phi, lambda, R, Dsc, size=R/10) {
+  for(col in names(Dsc)) {
+    Dc <- Dsc[[col]]                      # Cartesian coordinates of points
 
-  ## Custom code required to plot triangles
-  ax1 <- 1/sqrt(apply(cc[,1:2]^2, 1, sum)) * cbind(-cc[,2], cc[,1], 0)
-  ## print(ax1)
-  
-  ax2 <- extprod3d(cc, ax1)
-  ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
-  ##print(ax2)
+    ## Code required to plot triangles
 
-  ##  print(dot(ax1, ax2))
-  
-  v1 <- cc + size *  ax1/2
-  v2 <- cc + size * (-ax1/4 + sqrt(3)/4*ax2)
-  v3 <- cc + size * (-ax1/4 - sqrt(3)/4*ax2)
+    ## Find two axes that are orthogonal to line from the origin to
+    ## the datapoint
+    
+    ## Find axis in z=0 plane that is orthogonal to projection of
+    ## datapoint onto that plane
+    ax1 <- 1/sqrt(apply(Dc[,1:2]^2, 1, sum)) * cbind(-Dc[,2], Dc[,1], 0)
 
-  inmag <- 0.99
-  outmag <- 1.02
-  
-  x <- rbind(v2[,1], v1[,1], v3[,1])
-  y <- rbind(v2[,2], v1[,2], v3[,2])
-  z <- rbind(v2[,3], v1[,3], v3[,3])
-  triangles3d(inmag*x, inmag*y, inmag*z, color=color)
+    ## Find axis that is orthogonal to the plane of axis 1 and the
+    ## datapoint
+    ax2 <- extprod3d(Dc, ax1)
+    ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
 
-  x <- rbind(v1[,1], v2[,1], v3[,1])
-  y <- rbind(v1[,2], v2[,2], v3[,2])
-  z <- rbind(v1[,3], v2[,3], v3[,3])
-  triangles3d(outmag*x, outmag*y, outmag*z, color=color)
+    ## Create the verticies of an equillateral triangle to plot
+    v1 <- Dc + size *  ax1/2
+    v2 <- Dc + size * (-ax1/4 + sqrt(3)/4*ax2)
+    v3 <- Dc + size * (-ax1/4 - sqrt(3)/4*ax2)
+
+    ## Plot the triangle inside and outside the sphere
+    inmag <- 0.99
+    outmag <- 1.02
+  
+    x <- rbind(v2[,1], v1[,1], v3[,1])
+    y <- rbind(v2[,2], v1[,2], v3[,2])
+    z <- rbind(v2[,3], v1[,3], v3[,3])
+    triangles3d(inmag*x, inmag*y, inmag*z, color=col)
+
+    x <- rbind(v1[,1], v2[,1], v3[,1])
+    y <- rbind(v1[,2], v2[,2], v3[,2])
+    z <- rbind(v1[,3], v2[,3], v3[,3])
+    triangles3d(outmag*x, outmag*y, outmag*z, color=col)
+  }
 }
 
 ##
