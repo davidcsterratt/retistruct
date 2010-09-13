@@ -199,70 +199,6 @@ fem.solve.euler <- function(P, T, Tt, Q.init,
   text(P[1,], P[2,], 1:ncol(P))
 }
 
-## fem.fn.sphere() - requires the following global variables:
-##
-## P       - locations of points on plane
-## T       - triangulation on plane
-## Tt      - triangulation on sphere
-## K       - stiffness matrix on plane
-## R       - radius of sphere
-## phi0    - lattitude of rim in radians
-## lambda0 - longitude of fixed point in radians
-## Nt      - number of points on sphere
-## Nphi    - number of points on rim
-## Rsett   - indicies of points sliding on rim
-## i0t     - index of fixed point on rim
-##
-fem.fn.sphere <- function(p) {
-  ## Extract fixed and non-fixed values of phi and lambda from
-  ## variable parameters p
-  phi          <- rep(phi0, Nt)
-  phi[-Rsett]  <- p[1:Nphi]
-  lambda       <- rep(lambda0, Nt)
-  lambda[-i0t] <- p[Nphi+1:(Nt-1)]
-
-  ## Find cartesian coordinates of verticies on sphere
-  Q[1,] <- R*cos(phi)*cos(lambda)
-  Q[2,] <- R*cos(phi)*sin(lambda)
-  Q[3,] <- R*sin(phi)
-
-  ## Find the energy
-  o <- fem.gradient(P, T, K, Q, Tt)
-  return(o$E)
-}
-
-fem.gr.sphere <- function(p) {
-  ## Extract fixed and non-fixed values of phi and lambda from
-  ## variable parameters p
-  phi          <- rep(phi0, Nt)
-  phi[-Rsett]  <- p[1:Nphi]
-  lambda       <- rep(lambda0, Nt)
-  lambda[-i0t] <- p[Nphi+1:(Nt-1)]
-
-  ## Find cartesian coordinates of verticies on sphere
-  Q[1,] <- R*cos(phi)*cos(lambda)
-  Q[2,] <- R*cos(phi)*sin(lambda)
-  Q[3,] <- R*sin(phi)
-
-  ## Find the gradient, with respect to x, y and z
-  o <- fem.gradient(P, T, K, Q, Tt)
-  dEdQ <- o$g
-
-  ## Use the chain rule to compute gradient with respect to phi and lambda
-  dQdphi   <- R * cbind(-sin(phi)*cos(lambda),
-                        -sin(phi)*sin(lambda),
-                         cos(phi))
-  dQlambda <- R * cbind(-cos(phi)*sin(lambda),
-                         cos(phi)*cos(lambda),
-                         0)
-  dEdphi <-    rowSums(dEdQ %*%  dQdphi)
-  dEdlambda <- rowSums(dEdQ %*%  dQdlambda)
-
-  ## Return only the variable parts of this
-  return(c(dEdphi[-Rsett], dEdlambda[-i0t]))
-}
-
-
 ##  Optimisation function when output points are constrained to be on a sphere
 fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
@@ -275,6 +211,7 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
   Tt      <- r$Tt
   Rsett   <- r$Rsett
   i0t     <- r$i0t
+  P       <- t(r$P)
   Pt      <- r$Pt
   Nt      <- nrow(Pt)  
   Nphi    <- Nt - length(Rsett)
@@ -292,6 +229,69 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
   ## Construct elasticity and stiffness matricies
   D <- fem.D()
   K <- fem.K(P, T, D)
+
+  ## fem.fn.sphere() - requires the following global variables:
+  ##
+  ## P       - locations of points on plane
+  ## T       - triangulation on plane
+  ## Tt      - triangulation on sphere
+  ## K       - stiffness matrix on plane
+  ## R       - radius of sphere
+  ## phi0    - lattitude of rim in radians
+  ## lambda0 - longitude of fixed point in radians
+  ## Nt      - number of points on sphere
+  ## Nphi    - number of points on rim
+  ## Rsett   - indicies of points sliding on rim
+  ## i0t     - index of fixed point on rim
+  ##
+  fem.fn.sphere <- function(p) {
+    ## Extract fixed and non-fixed values of phi and lambda from
+    ## variable parameters p
+    phi          <- rep(phi0, Nt)
+    phi[-Rsett]  <- p[1:Nphi]
+    lambda       <- rep(lambda0, Nt)
+    lambda[-i0t] <- p[Nphi+1:(Nt-1)]
+
+    ## Find cartesian coordinates of verticies on sphere
+    Q[1,] <- R*cos(phi)*cos(lambda)
+    Q[2,] <- R*cos(phi)*sin(lambda)
+    Q[3,] <- R*sin(phi)
+
+    ## Find the energy
+    o <- fem.gradient(P, T, K, Q, Tt)
+    return(o$E)
+  }
+
+  fem.gr.sphere <- function(p) {
+    ## Extract fixed and non-fixed values of phi and lambda from
+    ## variable parameters p
+    phi          <- rep(phi0, Nt)
+    phi[-Rsett]  <- p[1:Nphi]
+    lambda       <- rep(lambda0, Nt)
+    lambda[-i0t] <- p[Nphi+1:(Nt-1)]
+
+    ## Find cartesian coordinates of verticies on sphere
+    Q[1,] <- R*cos(phi)*cos(lambda)
+    Q[2,] <- R*cos(phi)*sin(lambda)
+    Q[3,] <- R*sin(phi)
+
+    ## Find the gradient, with respect to x, y and z
+    o <- fem.gradient(P, T, K, Q, Tt)
+    dEdQ <- o$g
+    
+    ## Use the chain rule to compute gradient with respect to phi and lambda
+    dQdphi   <- R * rbind(-sin(phi)*cos(lambda),
+                          -sin(phi)*sin(lambda),
+                          cos(phi))
+    dQdlambda <- R * rbind(-cos(phi)*sin(lambda),
+                          cos(phi)*cos(lambda),
+                          0)
+    dEdphi <-    colSums(dQdphi    * dEdQ)
+    dEdlambda <- colSums(dQdlambda * dEdQ)
+    
+    ## Return only the variable parts of this
+    return(c(dEdphi[-Rsett], dEdlambda[-i0t]))
+  }
   
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
@@ -299,8 +299,8 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
 
   while (opt$conv) {
     ## Optimise
-    opt <- optim(opt$p, fn=fem.fn.sphere, gr=fem.fn.sphere,
-                 method=method, verbose=FALSE)
+    opt <- optim(opt$p, fn=fem.fn.sphere, gr=fem.gr.sphere,
+                 method=method)
 
     ## Report
     print(fem.fn.sphere(opt$p))
