@@ -150,11 +150,12 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   }
 
   ## Now determine the area
-  A <- sum(with(out, tri.area(P, T)))
+  A.tot <- sum(with(out, tri.area(P, T)))
 
   ## Produce refined triangulation
   if (!is.na(n)) {
-    out <- triangulate(P, S, a=A/n, q=20, Y=suppress.external.steiner, j=TRUE,
+    out <- triangulate(P, S, a=A.tot/n, q=20,
+                       Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
   P <- out$P
@@ -231,9 +232,9 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
   }
 
   ## Swap orientation of triangles which have clockwise orientation
-  a.signed <- tri.area.signed(P, T)
-  T[a.signed<0,c(2,3)] <- T[a.signed<0,c(3,2)]
-  a <- abs(a.signed)
+  A.signed <- tri.area.signed(P, T)
+  T[A.signed<0,c(2,3)] <- T[A.signed<0,c(3,2)]
+  A <- abs(A.signed)
     
   ## Find lengths of connections
   L <- vecnorm(P[Cu[,1],] - P[Cu[,2],])
@@ -243,7 +244,8 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
     print("WARNING: zero-length lines")
   }
 
-  return(list(P=P, T=T, Cu=Cu, h=h, a=a, A=A, L=L,
+  return(list(P=P, T=T, Cu=Cu, h=h,  A=A, L=L,
+              A.signed=A.signed, A.tot=A.tot,
               gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
 }
 
@@ -639,7 +641,7 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ## The information includes:
 ## Pt     - the mesh point coordinates
 ## Rsett  - the set of points on the rim
-## A      - the area of the flat outline
+## A.tot  - the area of the flat outline
 ##
 ## The function returns a list with the following members:
 ## phi    - lattitude of mesh points
@@ -650,7 +652,7 @@ project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
   Pt <- r$Pt
   Rsett <- r$Rsett
   i0t <- r$i0t
-  A <- r$A
+  A.tot <- r$A.tot
   Cut <- r$Cut
   Lt <- r$Lt
   
@@ -660,7 +662,7 @@ project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
   ## From this we can infer what the radius should be from the formula
   ## for the area of a sphere which is cut off at a lattitude of phi0
   ## area = 2 * PI * R^2 * (sin(phi0)+1)
-  R <- sqrt(A/(2*pi*(sin(phi0)+1)))
+  R <- sqrt(A.tot/(2*pi*(sin(phi0)+1)))
   
   ## Stretch mesh points to circle
   Ps <- stretch.mesh(Cut, Lt, Rsett, circle(length(Rsett)))
@@ -772,10 +774,10 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
                    sin(phi))
 
     ## Find areas of all triangles
-    areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
     ##E.A <- 0.5 * sum((areas - A)^2/A)
     ## E.A <- sum(exp(-k.A*areas/A))
-    E.A <- sum(f(areas/A))
+    E.A <- sum(sqrt(A)*f(a/A))
   }
   
   return(E.E + E0.A*E.A)
@@ -828,11 +830,11 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
     dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
 
     ## Find areas of all triangles
-    areas <- dot(P[T[,1],], dAdPt1)
+    a <- dot(P[T[,1],], dAdPt1)
 
 ##     dEdPt1 <- (areas - A)/A * dAdPt1
 ##    dEdPt1 <- -k.A/A*exp(-k.A*areas/A) * dAdPt1
-    dEdPt1 <- fp(areas/A)/A * dAdPt1
+    dEdPt1 <- fp(a/A)/sqrt(A) * dAdPt1
     
     Pt1topi <- matrix(0, length(phi), nrow(T))
     for(m in 1:nrow(T)) {
@@ -850,7 +852,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
     dE.A.dlambda <- rowSums(dEdpi * dpidlambda)
   }
   
-  return(c(dE.E.phii[-Rset]           + E0.A * dE.A.dphi[-Rset],
+  return(c(dE.E.phii[-Rset]      + E0.A * dE.A.dphi[-Rset],
            dE.E.dlambdai[-i0]    + E0.A * dE.A.dlambda[-i0]))
 }
 
@@ -864,13 +866,16 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
   P3 <- P[Tt[,3],]
   cents <- (P1 + P2 + P3)/3
   normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
-  areas <- apply(normals^2, 1, sum)
+
+  areas <- -0.5/R * dot(P1, extprod3d(P2, P3))
+  print(length(areas))
+  
   flipped <- (-dot(cents, normals) < 0)
-  return(list(flipped=flipped, cents=cents))
+  return(list(flipped=flipped, cents=cents, areas=areas))
 }
   
 ## Grand optimisation function
-optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
+optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
@@ -878,7 +883,7 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
   phi0 <- r$phi0
   lambda0 <- r$lambda0
   Tt <- r$Tt
-  a <- r$a
+  A <- r$A
   Cut <- r$Cut
   Ct <- r$Ct
   Pt <- r$Pt
@@ -894,18 +899,18 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
 
-  iE <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+  iE <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
           E0.A=E0.A, k.A=k.A, N=Nt,
           Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
 
-  idE <- dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+  idE <- dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
           E0.A=E0.A, k.A=k.A, N=Nt,
           Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-  idE2 <- dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+  idE2 <- dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
           E0.A=E0.A, k.A=k.A, N=Nt,
           Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi, verbose=TRUE)
 
-  idE2c <- dE2c(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+  idE2c <- dE2c(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
           E0.A=E0.A, k.A=k.A, N=Nt,
           Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
   print(iE)
@@ -923,31 +928,23 @@ optimise.mapping <- function(r, E0.A=1, k.A=1, method="BFGS",
     ## Optimise
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
-                 T=Tt, A=a, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                 T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                  E0.A=E0.A, k.A=k.A, N=Nt, 
                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
                  verbose=FALSE)
 
     ## Report
-    print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
+    print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
             E0.A=E0.A, k.A=k.A, N=Nt,
             Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
     ft <- flipped.triangles(phi, lambda, Tt, R)
-    nflip=sum(ft$flipped)
+    nflip <- sum(ft$flipped)
     print(paste(nflip, "flipped triangles:"))
     print(which(ft$flipped))
-    if (nflip > 0) {
-      E0.A <- E0.A*2
-    }
-    
-    #print(dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
- #         E0.A=E0.A, k.A=k.A, N=Nt,
-  #        Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
-
-#print(dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=a,
-   #       E0.A=E0.A, k.A=k.A, N=Nt,
-    #      Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
-
+    print("Areas")
+    print(ft$areas[ft$flipped])
+    print(A[ft$flipped])
+    print(length(A))
     
     ## Decode p vector
     phi          <- rep(phi0, Nt)
@@ -1077,10 +1074,15 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   ## r <- merge.lists(r, o)
 
   ## This pass is original
-  o <- optimise.mapping(r, E0.A=10, k.A=20,
+  o <- list(nflip=1)
+  E0.A <- 32
+  ##while(o$nflip>0) {
+    o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
                           plot.3d=plot.3d,
                           dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- merge.lists(r, o)
+    r <- merge.lists(r, o)
+  ##  E0.A <- E0.A * 2;
+  ##  }
   
   report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                ";", r$nflip, "flipped triangles."))
