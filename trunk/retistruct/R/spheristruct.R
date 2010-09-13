@@ -296,7 +296,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   TBset <- list()
   
   ## Iterate through the tears to create tear sets and rim set
-  for (j in 1:nrow(T)) {
+  for (j in 1:length(V0)) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
     ##print(paste("Forward tear", j))
@@ -318,7 +318,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   }
   
   ## Iterate through tears to insert new points
-  for (j in 1:nrow(T)) {
+  for (j in 1:length(V0)) {
     ## Compute the total path length along each side of the tear
     Sf <- path.length(V0[j], VF[j], gf, hf, P)
     Sb <- path.length(V0[j], VB[j], gb, hb, P)
