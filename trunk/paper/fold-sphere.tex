@@ -486,7 +486,7 @@ to as $\vec{h}$.
 % that
 
 
-\subsection{Projection onto hemisphere}
+\subsection{Initial projection onto hemisphere}
 \label{fold-sphere:sec:proj-onto-hemisph}
 
 When the points are projected onto the hemisphere, the points which
@@ -535,36 +535,41 @@ and determine correspondences between edges which have been merged.
   $k=1\dots \tilde M$.
 \end{itemize}
 
-The total area $A$ of the retina is computed by summing the areas of
+The total area $a_\mathrm{tot}$ of the retina is computed by summing the areas of
 individual triangles:
 \begin{displaymath}
-  A = \sum_{i=1}^M a_i
+  a_\mathrm{tot} = \sum_{i=1}^M a_i
 \end{displaymath}
 where $a_i = | a_i^\mathrm{sign}|$.  It is supposed that this grid is
 to be projected onto a sphere with a radius appropriate for the area
 $A$ of the flattened retina. The radius is
 \begin{equation}
   \label{fold-sphere:eq:1}
-  R = \sqrt{\frac{A}{2\pi\sin\phi_0+1}}
+  R = \sqrt{\frac{a_\mathrm{tot}}{2\pi\sin\phi_0+1}}
 \end{equation}
 where $\phi_0$ is the latitude at which the rim of the intact retina
 would be expected.
 
+
+\subsection{Optimisation of the mapping}
+\label{fold-sphere:sec:energy-function}
+
 The aim now is to infer the latitude $\phi_i$ and longitude
 $\lambda_i$ on the sphere to which each grid point $i$ on the
 flattened retina is projected.  It is proposed to achieve this aim by
-minimising an energy function which depends on three components, an
+minimising an energy function which depends on two components, an
 elastic component $E_\mathrm{E}$ and an area-preserving component
 $E_\mathrm{A}$:
 \begin{equation}
   \begin{split}
   E(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) = & \\
   E_\mathrm{E}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
-  & + E_\mathrm{A}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
+  & + \alpha E_\mathrm{A}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
   \end{split}
 \end{equation}
 
-\subsection{The elastic energy}
+
+\subsubsection{The elastic energy}
 \label{fold-sphere:sec:elastic-force}
 
 This component of the energy corresponds to the energy contained in
@@ -585,9 +590,10 @@ the sphere and is given by the formula for the central angle:
   \label{fold-sphere:eq:2}
   \tilde l_k = R\cos^{-1}(\cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) + \sin\phi_i\sin\phi_j)
 \end{equation}
-where $i=\tilde C_{k1}$ and $j=\tilde C_{k2}$.  Minimising this energy function
-should lead to the distances between neighbouring points on the sphere
-being similar to the corresponding distances on the flattened retina.
+where $i=\tilde C_{k1}$ and $j=\tilde C_{k2}$.  Minimising this energy
+function should lead to the distances between neighbouring points on
+the sphere being similar to the corresponding distances on the
+flattened retina.
 
 In order to minimise the function efficiently, the derivatives with
 respect to $\phi_i$ and $\lambda_i$ are found:
@@ -609,12 +615,84 @@ A quasi-Newton-Raphson method is then used in R to achieve this
 optimisation, and the resulting grid on the sphere is plotted in 3D
 (Figure~\ref{fold-sphere:fig:test2}).
 
+
+\subsection{The elastic energy (2)}
+\label{fold-sphere:sec:elastic-energy-2}
+
+\begin{displaymath}
+  E_\mathrm{E} = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
+\end{displaymath}
+Where $L_i$ and $l_i$ are lengths of corresponding connections
+$i\in\mathcal{C}$ in flattened and spherical retina.
+\begin{displaymath}
+  l_i = |\vec{p}_{C_{i1}} - \vec{p}_{C_{i2}}|
+\end{displaymath}
+
+\begin{displaymath}
+  l_i = \sqrt{(\vec{p}_{C_{i1}} - \vec{p}_{C_{i2}})^2}
+\end{displaymath}
+
+\begin{displaymath}
+  l_i = \sqrt{(\mathbf{C}^i\vec{p})^2}
+\end{displaymath}
+
+\begin{displaymath}
+  l_i = \sqrt{(\mathbf{C}^i\vec{x})^2 + 
+    (\mathbf{C}^i\vec{y})^2 + 
+    (\mathbf{C}^i\vec{z})^2}
+\end{displaymath}
+
+\begin{displaymath}
+  l_i = \sqrt{(\sum_jC_{ij}x_j)^2 + 
+    (\sum_jC_{ij}y_j)^2 +
+    (\sum_jC_{ij}z_j)^2}
+\end{displaymath}
+
+
+\begin{displaymath}
+  x_i = \cos(\phi_i)\cos(\lambda_i) \quad 
+  y_i = \cos(\phi_i)\sin(\lambda_i) \quad
+  z_i = \sin(\phi_i)
+\end{displaymath}
+
+\begin{displaymath}
+  \frac{\partial E_\mathrm{E}}{\partial \phi_j} 
+  = \sum_{i=1}^{\tilde M} \frac{\partial l_i}{\partial \phi_j}
+  \frac{(l_i - L_i)}{L_i}  
+\end{displaymath}
+
+\begin{displaymath}
+  \frac{\partial l_i}{\partial x_k} = C_{ik}\frac{\sum_jC_{ij}x_j}{l_i}
+\end{displaymath}
+
+\begin{displaymath}
+  \frac{\partial l_i}{\partial \phi_j} = \frac{1}{l_i}
+    C_{ij}\left(
+      \sum_k(C_{ik}x_k)\frac{\partial x_j}{\partial \phi_j} +
+      \sum_k(C_{ik}y_k)\frac{\partial y_j}{\partial \phi_j} +
+      \sum_k(C_{ik}z_k)\frac{\partial z_j}{\partial \phi_j} 
+    \right)
+\end{displaymath}
+
 \subsection{The area-preserving energy}
 \label{fold-sphere:sec:area-pres-energy}
 
+\begin{displaymath}
+  \sum_{j\in\mathcal{T}} \exp\left(-k\frac{a_j}{A_j}\right)
+\end{displaymath}
+\begin{itemize}
+\item $A_j$ and $a_j$ are signed areas of corresponding triangles
+  $j\in\mathcal{T}$ in flattened and spherical retina
+\item Signed area is positive for triangles in correct orientation,
+  but negative for flipped triangles
+\item Parameter $k$ should be large so that only triangles with
+  negative or near-zero area ratios are penalised. Parameter $\alpha$
+  scaled according to number of connections.
+\end{itemize}
 
 \bibliographystyle{apalike}
 \bibliography{nmf_morph}
+
 
 \end{document}
 
