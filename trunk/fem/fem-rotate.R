@@ -84,16 +84,19 @@ shear <- function(k) {
 D <- construct.D()
 
 ## Construct original set of points
-p1 <- c(0,   0)
-p2 <- c(1,   0)
-p3 <- c(0.5, 1)
-p4 <- c(1,   1)
-P <- cbind(p1, p2, p3, p4)
+P <- cbind(c(0,   0),
+           c(1,   0),
+           c(0.5, 1),
+           c(1,   1),
+           c(0,   1))
 
 ## Triangle matrix
-T <- rbind(c(1, 2, 3),
-           c(2, 4, 3))
-Tt <- T
+T  <- rbind(c(1, 2, 3),
+            c(2, 4, 3),
+            c(1, 3, 5))
+Tt <- rbind(c(1, 2, 3),
+            c(2, 4, 3),
+            c(1, 3, 4))
 
 ## Construct B and K matricies
 K <- construct.K(P, T, D)
@@ -204,3 +207,4 @@ for (i in 1:50) {
   }
 }
 trimesh(T, t(P))
+text(P[1,], P[2,], 1:ncol(P))
