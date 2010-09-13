@@ -118,6 +118,8 @@ Q <- cbind(q1, q2, q3, q4)
 compute.force <- function(P, T, K, Q, Tt) {
   ## Initialise the force vector
   g <- matrix(0, nrow(Q), ncol(Q))
+  ## Initialise energy
+  E <- 0
   ## Go through each triangle in turn
   for (i in 1:nrow(T)) {
     ## Find the directions of corresponding sides of the triangle in
@@ -175,8 +177,29 @@ compute.force <- function(P, T, K, Q, Tt) {
     g2 <- R %*% f[3:4]
     g3 <- R %*% f[5:6]
     g[,Tt[i,]] <- g[,Tt[i,]] + cbind(g1, g2, g3)
+
+    ## Update energy
+    E <- E - 0.5*sum(a*f)
   }
-  return(g)
+  return(list(g=g, E=E))
+}
+
+fn <- function(p) {
+  Q <- matrix(p, nrow=3)
+  o <- compute.force(P, T, K, Q, Tt)
+  return(o$E)
+}
+
+gr <- function(p) {
+  Q <- matrix(p, nrow=3)
+  o <- compute.force(P, T, K, Q, Tt)
+  return(-o$g)
+}
+
+optimise.mapping <- function(Q.init) {
+  opt <- optim(as.vector(Q.init), fn, gr, method="BFGS")
+  print(opt)
+  return(matrix(opt$p, nrow=3))
 }
 
 plot.3d <- function(Q, T) {
@@ -189,10 +212,12 @@ plot.3d <- function(Q, T) {
 
 Q.init <- Q
 graphical <- TRUE
-for (i in 1:50) {
+for (i in 1:500) {
 
-  g <- compute.force(P, T, K, Q, Tt)
-
+  o <- compute.force(P, T, K, Q, Tt)
+  g <- o$g
+  print(o$E)
+  
   Q <- Q + 0.01*g
 
   ## print(Q)
@@ -208,3 +233,4 @@ for (i in 1:50) {
 }
 trimesh(T, t(P))
 text(P[1,], P[2,], 1:ncol(P))
+
