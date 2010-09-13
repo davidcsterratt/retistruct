@@ -36,6 +36,7 @@ construct.B <- function(x, y) {
   B <- cbind(B1, B2, B3)
 }
 
+## 
 construct.D <- function(E=1, nu=0) {
   D <- E * (1-nu^2) * rbind(c(1 , nu, 0       ),
                             c(nu,  1, 0       ),
@@ -43,6 +44,10 @@ construct.D <- function(E=1, nu=0) {
   return(D)
 }
 
+## Construct the stiffness matrix K for a set of triangles defined by
+## as set of points P, a triangluation T of those points and the
+## elasticity matrix D
+##
 construct.K <- function(P, T, D) {
   N <- ncol(P)
   M <- nrow(T)
@@ -63,11 +68,13 @@ construct.K <- function(P, T, D) {
   return(K)
 }
 
+## 2D rotation transformation
 rotate <- function(theta) {
   return(rbind(c(cos(theta), -sin(theta)),
                c(sin(theta),  cos(theta))))
 }
 
+## 2D shear transformation
 shear <- function(k) {
   return(rbind(c(1, k),
                c(0, 1)))
@@ -86,6 +93,7 @@ P <- cbind(p1, p2, p3, p4)
 ## Triangle matrix
 T <- rbind(c(1, 2, 3),
            c(2, 4, 3))
+Tt <- T
 
 ## Construct B and K matricies
 K <- construct.K(P, T, D)
@@ -97,11 +105,22 @@ q3 <- c(0.5, 0.2, 2)
 q4 <- c(2,   2, 2)
 Q <- cbind(q1, q2, q3, q4)
 
-compute.force <- function(T, P, Q, K) {
+## Compute the force on each vertex in the 3D frame of reference.
+##
+## P  - points in 2D frame
+## T  - triangulation in 2D frame
+## K  - stiffness matrix in 2D frame
+## Q  - points in 3D frame
+## Tt - triangulation in 3D frame
+compute.force <- function(P, T, K, Q, Tt) {
+  ## Initialise the force vector
   g <- matrix(0, nrow(Q), ncol(Q))
+  ## Go through each triangle in turn
   for (i in 1:nrow(T)) {
-    P0 <- P[,T[i,2:3]] - P[,T[i,1]]
-    Q0 <- Q[,T[i,2:3]] - Q[,T[i,1]]
+    ## Find the directions of corresponding sides of the triangle in
+    ## the flat frame and the 3D frame
+    P0 <- P[,T [i,2:3]] - P[,T [i,1]]
+    Q0 <- Q[,Tt[i,2:3]] - Q[,Tt[i,1]]
 
     ## Find transformation M linking two
     ## This means find M in
@@ -110,8 +129,24 @@ compute.force <- function(T, P, Q, K) {
     ## M %*% P = Q
     M <- t(solve(t(P0), t(Q0)))
 
-    ## Find the rotation matrix R and unitary matrix M such that
-    ## M = R %*% U
+    ## Find the unitary rotation matrix R and a positive semidefinite
+    ## Hermitian matrix A such that
+    ##
+    ## M = R %*% A
+    ##
+    ## To do this, use the svd function, which, for an argument M,
+    ## returns a list comprising u, d, v, such that:
+    ##
+    ## M = U %*% diag(D) %*% t(V)
+    ##
+    ## The unitary rotation matrix is then given by:
+    ##
+    ## R = U %*% t(V)
+    ##
+    ## and the Hermitian matrix is:
+    ##
+    ## A = V %*% diag(D) %*% t(V)
+    ##
     s <- svd(M)
     U <- s$v %*% diag(s$d) %*% t(s$v)
     R <- s$u %*% t(s$v)
@@ -125,13 +160,6 @@ compute.force <- function(T, P, Q, K) {
     A <- P0p - P0
     a <- c(0, 0, as.vector(A))
 
-    ##     The SVD decomposition of the matrix as computed by LAPACK/LINPACK,
-    ##
-    ##                                 X = U D V',                            
-    ## According to wikipedia
-    ##
-    ## R = V D V'
-
     ## Force in frame of oringinal triangle
     inds <- c(2*T[i,1]-1:0,
               2*T[i,2]-1:0,
@@ -143,7 +171,7 @@ compute.force <- function(T, P, Q, K) {
     g1 <- R %*% f[1:2]
     g2 <- R %*% f[3:4]
     g3 <- R %*% f[5:6]
-    g[,T[i,]] <- g[,T[i,]] + cbind(g1, g2, g3)
+    g[,Tt[i,]] <- g[,Tt[i,]] + cbind(g1, g2, g3)
   }
   return(g)
 }
@@ -155,18 +183,19 @@ plot.3d <- function(Q, T) {
                 matrix(Q[3,t(T)], nrow=3),
                 color="darkgrey")
 }
+
 Q.init <- Q
 graphical <- TRUE
 for (i in 1:50) {
 
-  g <- compute.force(T, P, Q, K)
+  g <- compute.force(P, T, K, Q, Tt)
 
   Q <- Q + 0.01*g
 
   ## print(Q)
   
   if (graphical) {
-    plot.3d(Q, T)
+    plot.3d(Q, Tt)
     ## plot.default(x=NA, y=NA,
     ##              xlim=c(min(c(P0[1,],P0p[1,],0)), max(c(P0[1,],P0p[1,],0))),
     ##              ylim=c(min(c(P0[2,],P0p[2,],0)), max(c(P0[2,],P0p[2,],0))))
@@ -174,4 +203,4 @@ for (i in 1:50) {
     ## trimesh(T, rbind(0, t(P0p)), add=TRUE, col="red")
   }
 }
-trimesh(T, rbind(0, t(P)))
+trimesh(T, t(P))
