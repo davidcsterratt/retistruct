@@ -255,7 +255,9 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 ## P     - the coordinates of points in a mesh, including those the outline
 ## gf    - the forward pointer list
 ## gb    - the backward pointer list
-## T     - the tear matrix
+## V0    - indicies of the apex of each tear
+## VF    - indicies of the forward vertex of each tear
+## VB    - indicies of the backward vertex of each tear
 ## i0    - the index of the landmark; this needs to be in the rim
 ##
 ## The function returns a list contatining:
@@ -275,12 +277,7 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 ## hb    - correspondence mapping in backward direction for
 ##         points on boundary
 ##
-stitch.outline <- function(P, gf, gb, T, i0=NA) {
-  ## Extract information from tear matrix
-  V0 <- T[,1]                            # apicies of tears
-  VB <- T[,2]                           # forward verticies
-  VF <- T[,3]                           # backward verticies
-
+stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   ## Create initial sets of correspondances
   N <- nrow(P)                          # Number of points
   hf <- 1:N
@@ -996,7 +993,9 @@ compute.strain <- function(r) {
 ##
 ## Input arguments:
 ## P         - outline points as N-by-2 matrix
-## tearmat   - tear matrix
+## V0    - indicies of the apex of each tear
+## VF    - indicies of the forward vertex of each tear
+## VB    - indicies of the backward vertex of each tear
 ## phi0      - lattitude of rim of partial sphere
 ## i0        - index of the landmark on the rim
 ## lambda0   - longitude of landmark on rim
@@ -1011,7 +1010,7 @@ compute.strain <- function(r) {
 ## Returns list containing:
 ## 
 ##
-fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
+fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
                          n=500,
                          report=print,
                          plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
@@ -1029,7 +1028,7 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   }
     
   report("Stitching...")
-  s <- stitch.outline(t$P, t$gf, t$gb, tearmat, i0)
+  s <- stitch.outline(t$P, t$gf, t$gb, V0, VB, VF, i0)
   if (is.null(s)) {
     report("ERROR: Fixed point is not on the rim")
     return(NULL)
@@ -1077,10 +1076,14 @@ fold.outline <- function(P, tearmat, phi0=50, i0=NA, lambda0=0,
   o <- list(nflip=1)
   E0.A <- 32
   ##while(o$nflip>0) {
-    o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
-                          plot.3d=plot.3d,
-                          dev.grid=dev.grid, dev.polar=dev.polar)
-    r <- merge.lists(r, o)
+  ## o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
+  ##                       plot.3d=plot.3d,
+  ##                       dev.grid=dev.grid, dev.polar=dev.polar)
+  o <- fem.optimise.mapping(r, E0.A=E0.A, k.A=20,
+                            plot.3d=plot.3d,
+                            dev.grid=dev.grid, dev.polar=dev.polar)
+
+  r <- merge.lists(r, o)
   ##  E0.A <- E0.A * 2;
   ##  }
   
