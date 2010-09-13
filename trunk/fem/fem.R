@@ -1,48 +1,58 @@
+
+## Construct B matrix for a triangle
+construct.B <- function(x, y) {
+  ## Area of triangle
+  Delta <- 0.5 * det(cbind(1, x, y))
+
+  ## Construct B matrix
+  a <- c()
+  b <- c()
+  c <- c()
+
+  a[1] <- x[2]*y[3] - y[2]*x[3]
+  a[2] <- x[3]*y[1] - y[3]*x[1]
+  a[3] <- x[1]*y[2] - y[1]*x[2]
+  b[1] <- y[2] - y[3]
+  b[2] <- y[3] - y[1]
+  b[3] <- y[1] - y[2]
+  c[1] <- x[3] - x[2]
+  c[2] <- x[1] - x[3]
+  c[3] <- x[2] - x[1]
+
+  B1 <- 1/(2*Delta) * rbind(c(b[1], 0),
+                            c(0,    c[1]),
+                            c(c[1], b[1]))
+  B2 <- 1/(2*Delta) * rbind(c(b[2], 0),
+                            c(0,    c[2]),
+                            c(c[2], b[2]))
+  B3 <- 1/(2*Delta) * rbind(c(b[3], 0),
+                            c(0,    c[3]),
+                            c(c[3], b[3]))
+
+  B <- cbind(B1, B2, B3)
+}
+
+construct.D <- function(E=1, nu=0) {
+  D <- E * (1-nu^2) * rbind(c(1 , nu, 0       ),
+                            c(nu,  1, 0       ),
+                            c(0 ,  0, (1-nu)/2))
+  return(D)
+}
+
 ## E <- 1                                  # Modulus
 ## nu <- 0                 # Poission's ratio - can be in range (0, 0.5)
-construct.K <- function(P, T, E=1, nu=0) {
+construct.K <- function(P, T, D) {
   N <- nrow(P)
   M <- nrow(T)
   K <- matrix(0, 2*N, 2*N)
   ## Elasticity matrix for plane stress in an isotropic material
-  D <- E * (1-nu^2) * rbind(c(1 , nu, 0       ),
-                            c(nu,  1, 0       ),
-                            c(0 ,  0, (1-nu)/2))
   for (i in 1:M) {
     ## Start of with one triangle
     x <- P[T[i,], 1]
     y <- P[T[i,], 2]
 
-    ## Area of triangle
-    Delta <- 0.5 * det(cbind(1, x, y))
-
-    ## Construct B matrix
-    a <- c()
-    b <- c()
-    c <- c()
-
-    a[1] <- x[2]*y[3] - y[2]*x[3]
-    a[2] <- x[3]*y[1] - y[3]*x[1]
-    a[3] <- x[1]*y[2] - y[1]*x[2]
-    b[1] <- y[2] - y[3]
-    b[2] <- y[3] - y[1]
-    b[3] <- y[1] - y[2]
-    c[1] <- x[3] - x[2]
-    c[2] <- x[1] - x[3]
-    c[3] <- x[2] - x[1]
-
-    B1 <- 1/(2*Delta) * rbind(c(b[1], 0),
-                              c(0,    c[1]),
-                              c(c[1], b[1]))
-    B2 <- 1/(2*Delta) * rbind(c(b[2], 0),
-                              c(0,    c[2]),
-                              c(c[2], b[2]))
-    B3 <- 1/(2*Delta) * rbind(c(b[3], 0),
-                              c(0,    c[3]),
-                              c(c[3], b[3]))
-
-    B <- cbind(B1, B2, B3)
-
+    B <- construct.B(x, y)
+    
     inds <- c(2*T[i,1]-1:0,
               2*T[i,2]-1:0,
               2*T[i,3]-1:0)
@@ -151,7 +161,9 @@ T <- matrix(c(1, 2, 3), 1, 3)
 ## Original position
 v <- matrix(t(P), nrow(P)*2, 1)
 
-K <- construct.K(P, T)
+B <- construct.B(P[T[1,],1], P[T[1,],2])
+D <- construct.D(E=1, nu=0)
+K <- construct.K(P, T, D)
 
 ## Translation
 u <- v + 1
@@ -160,7 +172,10 @@ a <- u - v                              # Displacement
 print("Forces")
 print(K %*% a)
 print("Strain")
-##print(B %*% a)
+e <- B %*% a
+print(e)
+print("Strain energy")
+print(t(e) %*% D %*% e)
 
 ## Expansion
 print("Expansion")
@@ -171,18 +186,25 @@ lines(v[c(1,3,5,1)], v[c(2,4,6,2)])
 print("Forces")
 print(K %*% a)
 print("Strain")
-##print(B %*% a)
+e <- B %*% a
+print(e)
+print("Strain energy")
+print(t(e) %*% D %*% e)
 
 ## Rotation
 print("Rotation")
-u <- rotate3(pi/2) %*% v
+R <- rotate3(pi/2)
+u <- R %*% v
 a <- u - v
 plot( u[c(1,3,5,1)], u[c(2,4,6,2)], type='l', col="red", xlim=c(-1, 1), ylim=c(0,2))
 lines(v[c(1,3,5,1)], v[c(2,4,6,2)])
 print("Forces")
 print(K %*% a)
 print("Strain")
-##print(B %*% a)
+e <- B %*% a
+print(e)
+print("Strain energy")
+print(t(e) %*% D %*% e)
 
 ## Shear
 print("Shear")
@@ -193,4 +215,7 @@ lines(v[c(1,3,5,1)], v[c(2,4,6,2)])
 print("Forces")
 print(K %*% a)
 print("Strain")
-##print(B %*% a)
+e <- B %*% a
+print(e)
+print("Strain energy")
+print(t(e) %*% D %*% e)
