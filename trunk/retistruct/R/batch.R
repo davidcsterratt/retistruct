@@ -1,3 +1,7 @@
+batch.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 259$"))))
+}
+
 ##source("spheristruct.R")
 ##source("common.R")
 ##source("datafile-utils.R")

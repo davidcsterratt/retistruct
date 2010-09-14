@@ -2,6 +2,10 @@
 ## Geometry functions
 ## 
 
+geometry.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 388$"))))
+}
+
 ## scalar product of two column matricies
 dot <- function(x, y) {
   return(rowSums(x * y))

@@ -1,3 +1,7 @@
+tsearch.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 387$"))))
+}
+
 ## Copyright (C) 2007 David Bateman
 ##
 ## This file is part of Octave.

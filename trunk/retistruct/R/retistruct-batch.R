@@ -1,3 +1,7 @@
+retistruct.batch.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 395$"))))
+}
+
 list.dirs <- function(path='.') {
   files <- list.files(path, recursive=FALSE, full.name=TRUE)
   fi <- file.info(files)

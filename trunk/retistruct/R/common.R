@@ -1,3 +1,7 @@
+common.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 293$"))))
+}
+
 ## We need a structure in which to store paths, such as the rim, which
 ## may have gaps in them. The structure should have one row for each
 ## point. Each row should contain:

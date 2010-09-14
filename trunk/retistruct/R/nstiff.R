@@ -1,3 +1,7 @@
+nstiff.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 128$"))))
+}
+
 ## NSTIFF - numerical integration of system with constraints
 ##
 ## Based on NSTIFF algorithm presented in Negrut, Jay & Khude

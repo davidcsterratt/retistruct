@@ -1,3 +1,7 @@
+triangle.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 362$"))))
+}
+
 ##if (is.loaded("R_triangulate")) dyn.unload("R_triangle.so")
 ##dyn.load("R_triangle.so")
 

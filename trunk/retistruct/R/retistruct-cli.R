@@ -1,3 +1,7 @@
+retistruct.cli.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 396$"))))
+}
+
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA) {
   setTimeLimit(cpu=cpu.time.limit)
   dataset <<- dataset

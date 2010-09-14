@@ -1,3 +1,7 @@
+retistruct.gui.revision <- function() {
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 379$"))))
+}
+
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
   for (w in widgets) {
