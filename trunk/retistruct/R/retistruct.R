@@ -3,6 +3,8 @@ retistruct.revision <- function() {
   return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 399$"))))
 }
 
+$Rev: 399$
+
 retistruct.global.revision <- function() {
   return(max(batch.revision(),
              common.revision(),
