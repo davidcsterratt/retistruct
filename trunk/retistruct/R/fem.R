@@ -204,7 +204,7 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi     <- r$phi
   lambda  <- r$lambda
-  R       <- 2*r$R
+  R       <- r$R
   phi0    <- r$phi0
   lambda0 <- r$lambda0
   T       <- r$T
