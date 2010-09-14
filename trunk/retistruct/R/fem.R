@@ -204,7 +204,7 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi     <- r$phi
   lambda  <- r$lambda
-  R       <- r$R
+  R       <- 2*r$R
   phi0    <- r$phi0
   lambda0 <- r$lambda0
   T       <- r$T
@@ -292,12 +292,28 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
     ## Return only the variable parts of this
     return(c(dEdphi[-Rsett], dEdlambda[-i0t]))
   }
+
+  fem.report <- function() {
+    ## Report
+    print(paste("Strain energy:", fem.fn.sphere(opt$p)))
+
+    ## Report on flipped triangles
+    ft <- flipped.triangles(phi, lambda, Tt, R)
+    nflip <- sum(ft$flipped)
+    print(paste(nflip, "flipped triangles:"))
+    print(which(ft$flipped))
+    print("Areas")
+    print(ft$areas[ft$flipped])
+    print(A[ft$flipped])
+    print(length(A))
+  }
   
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
 
-  print(paste("Strain energy:", fem.fn.sphere(opt$p)))
+  ## Report
+  fem.report()
   
   while (opt$conv) {
     ## Optimise
@@ -311,17 +327,7 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
     lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
     ## Report
-    print(paste("Strain energy:", fem.fn.sphere(opt$p)))
-
-    ## Report on flipped triangles
-    ft <- flipped.triangles(phi, lambda, Tt, R)
-    nflip <- sum(ft$flipped)
-    print(paste(nflip, "flipped triangles:"))
-    print(which(ft$flipped))
-    print("Areas")
-    print(ft$areas[ft$flipped])
-    print(A[ft$flipped])
-    print(length(A))
+    fem.report()
     
     ## Plot
     if (plot.3d) {
@@ -343,5 +349,6 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
       plot.outline.polar(r)
     }
   }
+  ft <- flipped.triangles(phi, lambda, Tt, R)
   return(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped)))
 }
