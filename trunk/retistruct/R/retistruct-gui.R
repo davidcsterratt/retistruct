@@ -1,5 +1,5 @@
 retistruct.gui.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 379$"))))
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
 ## Convenience functions for handlers

@@ -1,5 +1,5 @@
 misc.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 277$"))))
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
 ## mod1(i, N)

@@ -1,5 +1,5 @@
 batch.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 259$"))))
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
 ##source("spheristruct.R")
