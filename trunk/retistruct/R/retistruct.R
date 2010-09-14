@@ -1,6 +1,6 @@
 ## Return version information
 retistruct.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev: 399$"))))
+  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
 $Rev$
