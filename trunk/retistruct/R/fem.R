@@ -200,7 +200,7 @@ fem.solve.euler <- function(P, T, Tt, Q.init,
 }
 
 ##  Optimisation function when output points are constrained to be on a sphere
-fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
+fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi     <- r$phi
   lambda  <- r$lambda
@@ -227,7 +227,7 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
   Q <- matrix(0, 3, Nt)
 
   ## Construct elasticity and stiffness matricies
-  D <- fem.D()
+  D <- fem.D(nu=nu)
   K <- fem.K(P, T, D)
 
   ## fem.fn.sphere() - requires the following global variables:
@@ -280,13 +280,13 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
     dEdQ <- o$g
     
     ## Use the chain rule to compute gradient with respect to phi and lambda
-    dQdphi   <- R * rbind(-sin(phi)*cos(lambda),
-                          -sin(phi)*sin(lambda),
-                          cos(phi))
-    dQdlambda <- R * rbind(-cos(phi)*sin(lambda),
-                          cos(phi)*cos(lambda),
-                          0)
-    dEdphi <-    colSums(dQdphi    * dEdQ)
+    dQdphi    <- R*rbind(-sin(phi)*cos(lambda),
+                         -sin(phi)*sin(lambda),
+                         cos(phi))
+    dQdlambda <- R*rbind(-cos(phi)*sin(lambda),
+                         cos(phi)*cos(lambda),
+                         0)
+    dEdphi    <- colSums(dQdphi    * dEdQ)
     dEdlambda <- colSums(dQdlambda * dEdQ)
     
     ## Return only the variable parts of this
@@ -297,14 +297,23 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
 
+  print(paste("Strain energy:", fem.fn.sphere(opt$p)))
+  
   while (opt$conv) {
     ## Optimise
     opt <- optim(opt$p, fn=fem.fn.sphere, gr=fem.gr.sphere,
                  method=method)
+    
+    ## Decode p vector
+    phi          <- rep(phi0, Nt)
+    phi[-Rsett]  <- opt$p[1:Nphi]
+    lambda       <- rep(lambda0, Nt)
+    lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
     ## Report
-    print(fem.fn.sphere(opt$p))
-    
+    print(paste("Strain energy:", fem.fn.sphere(opt$p)))
+
+    ## Report on flipped triangles
     ft <- flipped.triangles(phi, lambda, Tt, R)
     nflip <- sum(ft$flipped)
     print(paste(nflip, "flipped triangles:"))
@@ -314,12 +323,6 @@ fem.optimise.mapping <- function(r, E0.A=10, k.A=1, method="BFGS",
     print(A[ft$flipped])
     print(length(A))
     
-    ## Decode p vector
-    phi          <- rep(phi0, Nt)
-    phi[-Rsett]  <- opt$p[1:Nphi]
-    lambda       <- rep(lambda0, Nt)
-    lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
-
     ## Plot
     if (plot.3d) {
       plot.sphere.spherical(phi, lambda, R, Tt, Rsett)

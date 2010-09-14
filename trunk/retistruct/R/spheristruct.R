@@ -1058,7 +1058,11 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   r <- merge.lists(r, p)
   
   if (!is.na(dev.grid)) {
+    ## Plot of initial gridlines
     dev.set(dev.grid)
+    with(r, plot.outline.flat(P, gb))
+    with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
+    
     ## Initial plot in 3D space
     plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
     plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
@@ -1079,7 +1083,7 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   ## o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
   ##                       plot.3d=plot.3d,
   ##                       dev.grid=dev.grid, dev.polar=dev.polar)
-  o <- fem.optimise.mapping(r, E0.A=E0.A, k.A=20,
+  o <- fem.optimise.mapping(r, nu=0.45,
                             plot.3d=plot.3d,
                             dev.grid=dev.grid, dev.polar=dev.polar)
 
