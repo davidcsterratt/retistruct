@@ -3,8 +3,6 @@ retistruct.revision <- function() {
   return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
-$Rev$
-
 retistruct.global.revision <- function() {
   return(max(batch.revision(),
              common.revision(),
@@ -22,7 +20,7 @@ retistruct.global.revision <- function() {
              spheristruct.revision(),
              triangle.revision(),
              tsearch.revision(),
-             zzz.revision())
+             zzz.revision()))
 }
 
 ## Return initialised userdata list
