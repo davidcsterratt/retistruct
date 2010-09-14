@@ -16,7 +16,7 @@ retistruct.global.revision <- function() {
              retistruct.cli.revision(),
              retistruct.gui.revision(),
              retistruct.revision(),
-             spheristruct-energy.revision(),
+             spheristruct.energy.revision(),
              spheristruct.revision(),
              triangle.revision(),
              tsearch.revision(),
