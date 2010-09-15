@@ -1084,12 +1084,12 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   o <- list(nflip=1)
   E0.A <- 32
   ##while(o$nflip>0) {
-  ## o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
-  ##                       plot.3d=plot.3d,
-  ##                       dev.grid=dev.grid, dev.polar=dev.polar)
-  o <- fem.optimise.mapping(r, nu=0.45,
-                            plot.3d=plot.3d,
-                            dev.grid=dev.grid, dev.polar=dev.polar)
+  o <- optimise.mapping(r, E0.A=E0.A, k.A=20,
+                        plot.3d=plot.3d,
+                        dev.grid=dev.grid, dev.polar=dev.polar)
+  ## o <- fem.optimise.mapping(r, nu=0.45,
+  ##                           plot.3d=plot.3d,
+  ##                           dev.grid=dev.grid, dev.polar=dev.polar)
 
   r <- merge.lists(r, o)
   ##  E0.A <- E0.A * 2;
