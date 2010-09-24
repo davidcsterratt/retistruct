@@ -11,57 +11,216 @@
 \section{The problem}
 \label{fem:sec:problem}
 
-Suppose we have a triangle whose verticies are at points
+Suppose we have a triangle in a 2D object whose verticies are at
+points
 \begin{displaymath}
   \vec{p}_i,\quad
   \vec{p}_j,\quad
   \vec{p}_k
 \end{displaymath}
-and these are moved to 
+and these are moved to points 
 \begin{displaymath}
   \vec{q}_i=\vec{p}_i+\vec{a}_i,\quad
   \vec{q}_j=\vec{p}_j+\vec{a}_j,\quad
   \vec{q}_k=\vec{p}_k+\vec{a}_k
 \end{displaymath}
-Assuming that the triangle is isotropic with Young's modulus $E$ and a
-Poisson's ratio $\nu$, we wish to compute the strain energy of the
-deformed triangle as a function of $\vec{p}_i, \vec{p}_j, \vec{p}_k,
-\vec{q}_i, \vec{q}_j$ and $\vec{q}_k$. This will then be differentiated
-with respect to $\vec{q}_i, \vec{q}_j$ and $\vec{q}_k$ in order to
-determine the force on each node.
+in 3D space.  Assuming that the triangle is isotropic with Young's
+modulus $E$ and a Poisson's ratio $\nu$, we wish to compute the strain
+energy of the deformed triangle as a function of $\vec{p}_i,
+\vec{p}_j, \vec{p}_k, \vec{q}_i, \vec{q}_j$ and $\vec{q}_k$. This will
+then be differentiated with respect to $\vec{q}_i, \vec{q}_j$ and
+$\vec{q}_k$ in order to determine the force on each node.
 
-\section{Workings so far}
+\section{The FEM method}
+\label{fem2:sec:fem-method}
+
+The properties of the material are described by the elasticity matrix
+$\vec{D}$. For plane, isotropic stress, the elasticity matrix is:
+\begin{displaymath}
+  \vec{D} = \frac{E}{1-\nu^2}
+  \begin{pmatrix}
+    1 & \nu & 0 \\
+    \nu & 1 & 0 \\
+    0   & 0 & (1-\nu)/2
+  \end{pmatrix}
+\end{displaymath}
+The Poisson ratio $\nu$ is dimensionless and Young's modulus $E$ has
+units of pressure (Force per unit area).
+
+The energy due to a displacment $\vec{a}$ of an element depends on the
+material properties and the shape of the element. More quantitatively,
+the energy is given by:
+\begin{displaymath}
+  \frac{1}{2}\vec{a^T}\vec{K}\vec{a}
+\end{displaymath}
+where $\vec{K}$ is the stiffness matrix (to be defined). The force
+corresponding to the displacment vector is
+\begin{displaymath}
+  \vec{f} = \vec{K}\vec{a}  
+\end{displaymath}
+
+The stiffness matrix depends
+on the elasticity matrix $\vec{D}$ (defined above) and a matrix
+$\vec{B}$ that depends on the shape of the element:
+\begin{displaymath}
+  \vec{K} = \vec{B^T}\vec{D}\vec{B}
+\end{displaymath}
+For a triangle with verticies at $(x_1, y_1)$, $(x_2, y_2)$ and $(x_3,
+y_3)$ the shape matrix $\vec{B}$ is
+\begin{displaymath}
+  \vec{B} = \frac{1}{2\Delta}\vec{B_0}
+\end{displaymath}
+where
+\begin{displaymath}
+  \vec{B_0} = \frac{1}{2\Delta}
+  \begin{pmatrix}
+    b_1 & 0  & b_2 & 0 & b_3 & 0 \\
+    0  & c_1 & 0  & c_2 & 0 & c_3 \\
+    c_1 & b_1 & c_2 & b_2 & c_3 & b_3
+  \end{pmatrix}
+\end{displaymath}
+where
+\begin{displaymath}
+  2\Delta =
+  \begin{vmatrix}
+    1 & x_1 & y_1 \\
+    1 & x_2 & y_2 \\
+    1 & x_3 & y_3 \\
+  \end{vmatrix}
+\end{displaymath}
+where
+\begin{displaymath}
+  \begin{array}{lll}
+    a_1 = x_2y_3 - y_2x_3 &
+    b_1 = y_2 - y_3 &
+    c_1 = x_3 - x_2 \\
+    a_2 = x_3y_1 - y_3x_1 &
+    b_2 = y_3 - y_1 &
+    c_2 = x_1 - x_3 \\
+    a_3 = x_1y_2 - y_1x_2 &
+    b_3 = y_1 - y_2 &
+    c_3 = x_2 - x_1 
+  \end{array}
+\end{displaymath}
+
+\section{Change of frame of reference}
 \label{fem:sec:workings-so-far}
+
+The transformation of a triangle between the 2D and 3D frames of
+reference can be decomposed into a rotation, and stretching and
+shearing. The energy function given by the FEM is not
+rotation-invariant, so this rotation needs to be factored out. This
+section describes how this is done.
 
 Define the matricies:
 \begin{displaymath}
-  \vec{P} = \left(\vec{p}_i, \vec{p}_j, \vec{p}_k\right) \quad
-  \vec{Q} = \left(\vec{q}_i, \vec{q}_j, \vec{q}_k\right)    
+  \vec{P_0} = \left(\vec{p}_j-\vec{p}_i, \vec{p}_k-\vec{p}_i\right) \quad
+  \vec{Q_0} = \left(\vec{q}_j-\vec{q}_i, \vec{q}_k-\vec{q}_i\right)    
 \end{displaymath}
-Determine the transformation $\vec{M}$ undergone by the triagle:
+$\vec{P_0}$ is a 2-by-2 matrix, and $\vec{Q_0}$ is a 3-by-2
+matrix. The columns of these matricies are the coordinates of two of
+the verticies of the triangle, assuming the first vertex is at the
+origin.
+
+Determine the 3-by-2 matrix $\vec{M}$ representing the transformation
+of the triagle in the 2D frame of reference to the 3D frame of
+reference:
 \begin{displaymath}
-  \vec{Q} = \vec{M}\vec{P} \quad \mbox{hence} \quad
-  \vec{M} = \vec{Q}\vec{P^{-1}}
+  \vec{Q_0} = \vec{M}\vec{P_0} \quad \mbox{hence} \quad
+  \vec{M} = \vec{Q_0}\vec{P_0}^{-1}
 \end{displaymath}
-Using polar decomposition, factorise $\vec{M}$ into a rotation
-$\vec{R}$ and a unitary matrix $\vec{U}$:
+Using polar decomposition, factorise $\vec{M}$ into a 3-by-2 unitary
+rotation matrix $\vec{R}$ and a 2-by-2 positive semidefinite Hermitian
+matrix $\vec{H}$:
 \begin{displaymath}
-  \vec{M} = \vec{R}\vec{U}
+  \vec{M} = \vec{R}\vec{H}
 \end{displaymath}
+
+We wish to find the locations of the points in the 3D frame if they
+are rotated back into the 2D frame of reference. 
 Compute the displacements in the original frame of reference
 \begin{displaymath}
-  \vec{A} = \vec{R^{-1}}\vec{Q} - \vec{P}
+  \vec{P'_0} = \vec{R^{-1}}\vec{Q_0} 
 \end{displaymath}
-Convert the displancements matrix $\vec{A}$ into a column vector
-$\vec{a}$. Find the forces $\vec{f}$ in the original frame using:
+The elements of $\vec{P'_0}$ and $\vec{P_0}$ are identified as:
 \begin{displaymath}
-  \vec{f} = \vec{B^T}\vec{D}\vec{B}\vec{a}
+  \vec{P_0} =  
+  \begin{pmatrix} 
+    x_2 & x_3 \\
+    y_2 & y_3 \\
+  \end{pmatrix}
+  \quad
+  \vec{P'_0} =  
+  \begin{pmatrix} 
+    x'_2 & x'_3 \\
+    y'_2 & y'_3 \\
+  \end{pmatrix}
 \end{displaymath}
-Separate forces back into individual forces, and convert to new fram
-of reference:
+
+
+
+\section{The forward FEM method}
+\label{fem2:sec:forward-fem-method}
+
+Using this idendification, the displacement vector 
+$\vec{a}$ is constructed as follows:
 \begin{displaymath}
-  \vec{G} = \vec{R}\vec{F}
+  \vec{a} = (0, 0, x'_2-x_2, y'_2-y_2, x'_3-x_3, y'_3-y_3)
 \end{displaymath}
+The stiffness matrix $\vec{K}$ is derived from the coordinates of the
+triangle in the 2D frame: $(0,0)$, $(x_2, y_2)$ and  $(x_3, y_3)$.
+
+Find the forces $\vec{f'}$ in the original frame using:
+\begin{displaymath}
+  \vec{f'} = \vec{K}\vec{a}
+\end{displaymath}
+Separate forces back into individual forces, and convert to the 3D
+frame of reference:
+\begin{displaymath}
+  \vec{F} = \vec{R}\vec{F'}
+\end{displaymath}
+
+\section{The reverse FEM method}
+\label{fem2:sec:reverse-fem-method}
+
+First we need to find the stiffness $\vec{K'}$ of the triangle from
+the 3D frame of reference, which has been transformed into the 2D
+frame. We use the coordinates $(0,0)$, $(x'_2, y'_2)$ and $(x'_3,
+y'_3)$. The displacement vector 
+$\vec{a'}$ is constructed as follows:
+\begin{displaymath}
+  \vec{a'} = (0, 0, x_2-x'_2, y_2-y'_2, x_3-x'_3, y_3-y'_3)
+\end{displaymath}
+The energy is
+\begin{displaymath}
+  \vec{a'^T}\vec{K'}\vec{a'} = \frac{1}{(2\Delta')^2}
+  \vec{a'^T}\vec{B_0'^T}\vec{D}\vec{B_0'}\vec{a'}
+\end{displaymath}
+To obtain the force in each direction, this needs to be differentiated
+by $x'_1, x'_2\dots$. This can be done by parts.
+
+\subsection{Differentiation by $x_1$}
+\label{fem2:sec:differentiation-x_1}
+
+\begin{displaymath}
+  2\frac{\partial \Delta'}{\partial x'_1} = y'_2 - y'_3
+\end{displaymath}
+Hence 
+\begin{displaymath}
+  \frac{\partial}{\partial x'_1}\left(\frac{1}{(2\Delta')^2}\right) = 
+  -2\frac{y'_2 - y'_3}{(2\Delta')^3}
+\end{displaymath}
+\begin{displaymath}
+  \frac{\partial \vec{B'_0}}{\partial x'_1} = 
+  \begin{pmatrix}
+    0 & 0 & 0 & 0 & 0  & 0 \\
+    0 & 0 & 0 & 1 & 0  & -1 \\
+    0 & 0 & 1 & 0 & -1 & 0
+  \end{pmatrix}
+\end{displaymath}
+
+\section{Old stuff}
+\label{fem2:sec:old-stuff}
 
 The original coordinates of a point in the triangle and its
 displacement are defined as:
@@ -104,17 +263,6 @@ related to the strain by the elasticity matrix D:
   = 
   \vec{D}\vec{\epsilon}
 \end{displaymath}
-For plane, isotropic stress, the elasticity matrix is:
-\begin{displaymath}
-  \vec{D} = \frac{E}{1-\nu^2}
-  \begin{pmatrix}
-    1 & \nu & 0 \\
-    \nu & 1 & 0 \\
-    0   & 0 & (1-\nu)/2
-  \end{pmatrix}
-\end{displaymath}
-The Poisson ratio $\nu$ is dimensionless and Young's modulus $E$ has
-units of pressure (Force per unit area).
 
 The strain energy density is
 \begin{displaymath}
