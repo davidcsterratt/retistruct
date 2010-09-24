@@ -1,0 +1,126 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+
+\title{Computing the strain energy of a triangle}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\renewcommand{\epsilon}{\varepsilon}
+
+\begin{document}
+
+\section{The problem}
+\label{fem:sec:problem}
+
+Suppose we have a triangle whose verticies are at points
+\begin{displaymath}
+  \vec{p}_i,\quad
+  \vec{p}_j,\quad
+  \vec{p}_k
+\end{displaymath}
+and these are moved to 
+\begin{displaymath}
+  \vec{q}_i=\vec{p}_i+\vec{a}_i,\quad
+  \vec{q}_j=\vec{p}_j+\vec{a}_j,\quad
+  \vec{q}_k=\vec{p}_k+\vec{a}_k
+\end{displaymath}
+Assuming that the triangle is isotropic with Young's modulus $E$ and a
+Poisson's ratio $\nu$, we wish to compute the strain energy of the
+deformed triangle as a function of $\vec{p}_i, \vec{p}_j, \vec{p}_k,
+\vec{q}_i, \vec{q}_j$ and $\vec{q}_k$. This will then be differentiated
+with respect to $\vec{q}_i, \vec{q}_j$ and $\vec{q}_k$ in order to
+determine the force on each node.
+
+\section{Workings so far}
+\label{fem:sec:workings-so-far}
+
+Define the matricies:
+\begin{displaymath}
+  \vec{P} = \left(\vec{p}_i, \vec{p}_j, \vec{p}_k\right) \quad
+  \vec{Q} = \left(\vec{q}_i, \vec{q}_j, \vec{q}_k\right)    
+\end{displaymath}
+Determine the transformation $\vec{M}$ undergone by the triagle:
+\begin{displaymath}
+  \vec{Q} = \vec{M}\vec{P} \quad \mbox{hence} \quad
+  \vec{M} = \vec{Q}\vec{P^{-1}}
+\end{displaymath}
+Using polar decomposition, factorise $\vec{M}$ into a rotation
+$\vec{R}$ and a unitary matrix $\vec{U}$:
+\begin{displaymath}
+  \vec{M} = \vec{R}\vec{U}
+\end{displaymath}
+Compute the displacements in the original frame of reference
+\begin{displaymath}
+  \vec{A} = \vec{R^{-1}}\vec{Q} - \vec{P}
+\end{displaymath}
+Convert the displancements matrix $\vec{A}$ into a column vector
+$\vec{a}$. Find the forces $\vec{f}$ in the original frame using:
+\begin{displaymath}
+  \vec{f} = \vec{B^T}\vec{D}\vec{B}\vec{a}
+\end{displaymath}
+Separate forces back into individual forces, and convert to new fram
+of reference:
+\begin{displaymath}
+  \vec{G} = \vec{R}\vec{F}
+\end{displaymath}
+
+The original coordinates of a point in the triangle and its
+displacement are defined as:
+\begin{displaymath}
+  \vec{p}= \begin{pmatrix}
+    x \\
+    y
+  \end{pmatrix}
+\quad\mbox{and}\quad
+\vec{u}= \begin{pmatrix} 
+  u \\
+  v
+\end{pmatrix}
+\end{displaymath}
+respectively.
+
+The strain associated with that point is defined as:
+\begin{displaymath}
+  \vec{\epsilon} =
+  \begin{pmatrix}
+    \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+  \end{pmatrix}
+  = 
+  \begin{pmatrix}
+    \frac{\partial u}{\partial x} \\
+    \frac{\partial v}{\partial y} \\
+    \frac{\partial u}{\partial y} +
+    \frac{\partial v}{\partial u} 
+  \end{pmatrix}
+\end{displaymath}
+The strain is dimensionless.
+
+The stress causing that strain is denoted $\vec{\sigma}$, and is
+related to the strain by the elasticity matrix D:
+\begin{displaymath}
+  \vec{\sigma} =
+  \begin{pmatrix}
+    \sigma_x \\ \sigma_y \\ \tau_{xy}
+  \end{pmatrix}
+  = 
+  \vec{D}\vec{\epsilon}
+\end{displaymath}
+For plane, isotropic stress, the elasticity matrix is:
+\begin{displaymath}
+  \vec{D} = \frac{E}{1-\nu^2}
+  \begin{pmatrix}
+    1 & \nu & 0 \\
+    \nu & 1 & 0 \\
+    0   & 0 & (1-\nu)/2
+  \end{pmatrix}
+\end{displaymath}
+The Poisson ratio $\nu$ is dimensionless and Young's modulus $E$ has
+units of pressure (Force per unit area).
+
+The strain energy density is
+\begin{displaymath}
+  \frac{1}{2}\vec{\sigma}^T\vec{\epsilon} = 
+  \frac{1}{2}\vec{\epsilon}^T\vec{D}\vec{\epsilon}
+\end{displaymath}
+
+
+\end{document}
