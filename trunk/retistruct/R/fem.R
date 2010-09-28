@@ -95,9 +95,9 @@ fem.gradient <- function(P, T, K, Q, Tt) {
     M <- t(solve(t(P0), t(Q0)))
 
     ## Find the unitary rotation matrix R and a positive semidefinite
-    ## Hermitian matrix A such that
+    ## Hermitian matrix H such that
     ##
-    ## M = R %*% A
+    ## M = R %*% H
     ##
     ## To do this, use the svd function, which, for an argument M,
     ## returns a list comprising u, d, v, such that:
