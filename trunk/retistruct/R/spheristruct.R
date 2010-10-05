@@ -349,6 +349,8 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       ## corresponding point, Create new point
       if (hb[i] == i) {
         f <- (sf/Sf*Sb-sb0)/(sb-sb0)
+        print(f)
+##        browser(expr=is.infinite(f))
         p <- (1-f) * P[k0,] + f * P[k,]
         P <- rbind(P, p)
 
@@ -395,6 +397,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       ## corresponding point, Create new point
       if (hf[i] == i) {
         f <- (sb/Sb*Sf-sf0)/(sf-sf0)
+        print(f)
         p <- (1-f) * P[k0,] + f * P[k,]
         P <- rbind(P, p)
         
