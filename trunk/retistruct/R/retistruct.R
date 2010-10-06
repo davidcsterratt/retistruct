@@ -161,6 +161,9 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
     iD <<- M[1, "iD"]
     iN <<- M[1, "iN"]
     phi0 <<- M[1, "phi0"]
+    if ("iOD" %in% colnames(M)) {
+      iOD <<- M[1, "iOD"]
+    }
   } else {
     stop("Markup file M.csv doesn't exist.")
   }
@@ -209,6 +212,10 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     i0 <- iN
     lambda0 <<- 0
   }
+  if (!is.na(iOD)) {
+    Ds[["blue"]] <<- matrix(colMeans(Ss[[iOD]]), 1, 2)
+  }
+  
   r <<- NULL
   r <<- fold.outline(P, V0, VB, VF, phi0, i0=i0, lambda0=lambda0,
                      report=report,
@@ -216,8 +223,13 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
   if (!is.null(r)) {
     r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
                                                report=report)
+    if (!is.na(iOD)) {
+      r$EOD <- 90 + r$Dss[["blue"]][1,"phi"] * 180/pi
+    }
     report(paste("Mapping optimised. Error:", format(r$opt$value,5),
-                 ";", r$nflip, "flipped triangles."))
+                 ";", r$nflip, "flipped triangles. OD displacement:",
+                 format(r$EOD, 2),
+                 "degrees."))
   }
 }
 
@@ -229,7 +241,7 @@ retistruct.save.markup <- function() {
     write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
 
     ## Save the dorsal and nasal locations and phi0 to markup.csv
-    markup <- data.frame(iD=iD, iN=iN, phi0=phi0)    
+    markup <- data.frame(iD=iD, iN=iN, phi0=phi0, iOD=iOD)    
     write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
   }
 }
