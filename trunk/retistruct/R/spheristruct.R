@@ -1127,7 +1127,7 @@ infer.datapoint.landmark.coordinates <- function(r, Ds=NULL, Ss=NULL,
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(Ds)) {
     for (name in names(Ds)) {
-      Dsb[[name]] <- with(r, tsearchn(P, T, Ds[[name]]))
+      Dsb[[name]] <- tsearchn(r$P, r$T, Ds[[name]])
       Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
