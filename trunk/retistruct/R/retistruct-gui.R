@@ -11,8 +11,11 @@ enable.group <- function(widgets, state=TRUE) {
 
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
-                 g.mark.n, g.mark.d,
+                 g.mark.n, g.mark.d, 
                  g.phi0, g.show), state)
+  if (retistruct.potential.od()) {
+    enable.group(c(g.mark.od), state)
+  }
   if (is.na(iD) && is.na(iN)) {
     enable.group(c(g.reconstruct), FALSE)
   }
@@ -133,6 +136,32 @@ h.mark.d <- function(h, ...) {
   id <- identify(P[,1], P[,2], n=1)
   iD <<- id
   iN <<- NA
+  do.plot()
+  svalue(g.status) <- ""
+  enable.widgets(TRUE)
+}
+
+## Handler for marking optic disc
+h.mark.od <- function(h, ...) {
+  unsaved.data(TRUE)
+  enable.widgets(FALSE)
+  svalue(g.status) <- paste("Click on a point on the optic disc.",
+                            identify.abort.text())
+  dev.set(d1)
+  ## Convert list of segments to a matrix
+  Sm <- NULL
+  
+  for (S in Ss) {
+    Sm <- rbind(Sm, S)
+  }
+  id <- identify(Sm[,1], Sm[,2], n=1)
+  N <- 0
+  i <- 1
+  while (id <= N && i<=length(Ss)) {
+    N <- N + nrow(Ss[i])
+    i <- i + 1
+  }
+  iOD <<- i
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -270,7 +299,12 @@ do.plot <- function() {
       }
     }
     if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
-      plot.landmarks.polar(r$Sss, col="orange")
+      if (is.na(iOD)) {
+         plot.landmarks.polar(r$Sss, col="orange")
+      } else {
+        plot.landmarks.polar(r$Sss[-iOD], col="orange")
+        plot.landmarks.polar(r$Sss[iOD], col="blue")
+      }
     }
     dev.set(d1)
   }
@@ -305,7 +339,12 @@ do.plot <- function() {
   }
 
   if ("Landmarks" %in% svalue(g.show)) {
-    plot.landmarks.flat(Ss, col="orange")
+    if (is.na(iOD)) {
+      plot.landmarks.flat(Ss, col="orange")
+    } else {
+      plot.landmarks.flat(Ss[-iOD], col="orange")
+      plot.landmarks.flat(Ss[iOD], col="blue")
+    }
   }
 }
 
@@ -351,12 +390,12 @@ retistruct <- function() {
   ## Tear editor down left side
   g.editor <<- ggroup(horizontal = FALSE, container=g.body)
 
-  g.add  <<-   gbutton("Add tear",    handler=h.add,    container=g.editor)
-  g.move <<-   gbutton("Move Point",  handler=h.move,   container=g.editor)
-  g.remove <<- gbutton("Remove tear", handler=h.remove, container=g.editor)
-  g.mark.n <<- gbutton("Mark nasal",  handler=h.mark.n, container=g.editor)
-  g.mark.d <<- gbutton("Mark dorsal", handler=h.mark.d, container=g.editor)
-
+  g.add     <<- gbutton("Add tear",    handler=h.add,     container=g.editor)
+  g.move    <<- gbutton("Move Point",  handler=h.move,    container=g.editor)
+  g.remove  <<- gbutton("Remove tear", handler=h.remove,  container=g.editor)
+  g.mark.n  <<- gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
+  g.mark.d  <<- gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
+  g.mark.od <<- gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
   ## Editing of phi0
   g.phi0.frame <<- gframe("Phi0", container=g.editor)
   g.phi0 <<- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,

@@ -32,6 +32,7 @@ retistruct.initialise.userdata <- function() {
   r <<- NULL         # Reconstruction object
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
+  iOD <<- NA         # Index of segment which is Optic Disc
   recfile.version <<- 2   # Version of reconstruction file data format
 }
 
@@ -106,6 +107,11 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=1000) {
     points(P[c(1,nrow(P)),], col="black")
     stop("Unable to find a closed outline.")
   }
+}
+
+## Return logical value if optic disc may be present
+retistruct.potential.od <- function() {
+  return(exists("Ss") && is.list(Ss) && (length(Ss) > 0))
 }
 
 ## Return index in P of closest point to x
