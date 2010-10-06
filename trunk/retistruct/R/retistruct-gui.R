@@ -11,10 +11,10 @@ enable.group <- function(widgets, state=TRUE) {
 
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
-                 g.mark.n, g.mark.d, 
+                 g.mark.n, g.mark.d, g.mark.od,
                  g.phi0, g.show), state)
-  if (retistruct.potential.od()) {
-    enable.group(c(g.mark.od), state)
+  if (!retistruct.potential.od()) {
+    enable.group(c(g.mark.od), FALSE)
   }
   if (is.na(iD) && is.na(iN)) {
     enable.group(c(g.reconstruct), FALSE)
