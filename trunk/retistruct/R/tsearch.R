@@ -31,6 +31,11 @@ tsearch.revision <- function() {
 ## @end deftypefn
 
 tsearchn <- function(x, t, xi) {
+  ## Check input
+  if (!is.matrix(x))  {stop(paste(deparse(substitute(x)), "is not a matrix"))}
+  if (!is.matrix(t))  {stop(paste(deparse(substitute(t)), "is not a matrix"))}
+  if (!is.matrix(xi)) {stop(paste(deparse(substitute(xi)), "is not a matrix"))}
+
   nt <- dim(t)[1]
   m <- dim(x)[1]
   n <- dim(x)[2]
