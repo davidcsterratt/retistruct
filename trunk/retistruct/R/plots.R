@@ -433,6 +433,11 @@ plot.segments.polar <- function(phi0, lambda0, phi1, lambda1, ...) {
   segments(x0, y0, x1, y1, ...)
 }
 
+## Put text on the polar plot
+text.polar <- function(text) {
+  mtext(text, 1, adj=1, line=-0.1)
+}
+
 ## 
 ## Polar area plots
 ##

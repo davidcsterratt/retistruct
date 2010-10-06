@@ -306,6 +306,9 @@ do.plot <- function() {
         plot.landmarks.polar(r$Sss[iOD], col="blue")
       }
     }
+    if (!is.null(r$EOD)) {
+      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+    }
     dev.set(d1)
   }
   
