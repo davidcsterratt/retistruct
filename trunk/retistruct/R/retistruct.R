@@ -224,7 +224,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
                                                report=report)
     if (!is.na(iOD)) {
-      r$EOD <- 90 + r$Dss[["blue"]][1,"phi"] * 180/pi
+      r$EOD <<- 90 + r$Dss[["blue"]][1,"phi"] * 180/pi
     }
     report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                  ";", r$nflip, "flipped triangles. OD displacement:",
