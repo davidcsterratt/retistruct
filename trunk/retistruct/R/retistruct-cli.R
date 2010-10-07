@@ -44,8 +44,14 @@ retistruct.cli.basepath <- function(dataset) {
 ## retistruct.cli.figure - Print a figure to file
 ##
 ## It requires the global variable dataset to be set
-retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6, ...) {
+retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6,
+                                  res=100, ...) {
   retistruct.read.recdata()
+  units <- NULL
+  if (deparse(substitute(device))=="png") {
+    height <- height*res
+    width  <- width*res
+  }
   suffix <- paste(".", deparse(substitute(device)), sep="")
   if (!is.null(r)) {
     ## Determine the name of a figure
