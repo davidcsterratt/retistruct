@@ -64,12 +64,12 @@ retistruct.cli(\"", dataset, "\",", cpu.time.limit, ",\"", outputdir, "\")", sep
 ## tldir     - the top level of the tree through which to recurse
 ## outputdir - directory in which to dump a log file and images
 ##
-retistruct.batch.figures <- function(tldir=".", outputdir=tldir) {
+retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
   retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
   for (d in datasets) {
     print(d)
     dataset <<- d
-    try(retistruct.cli.figure(outputdir))
+    try(retistruct.cli.figure(outputdir, ...))
   }
 }

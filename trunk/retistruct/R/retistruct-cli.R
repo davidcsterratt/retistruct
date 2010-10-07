@@ -43,15 +43,16 @@ retistruct.cli.basepath <- function(dataset) {
 ## retistruct.cli.figure - Print a figure to file
 ##
 ## It requires the global variable dataset to be set
-retistruct.cli.figure <- function(outputdir) {
+retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6, ...) {
   retistruct.read.recdata()
+  suffix <- paste(".", deparse(substitute(device)), sep="")
   if (!is.null(r)) {
     ## Determine the name of a figure
     basepath <- retistruct.cli.basepath(dataset)
     
     ## Flat plot
-    pdf(file=file.path(outputdir, paste(basepath, "-flat.pdf", sep="")),
-        width=6, height=6)
+    device(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
+           width=width, height=height)
     plot.outline.flat(r$P, r$gb, axt="s")
     with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
     plot.datapoints.flat(r$Ds)
@@ -61,8 +62,8 @@ retistruct.cli.figure <- function(outputdir) {
     dev.off()
 
     ## Polar plot
-    pdf(file=file.path(outputdir, paste(basepath, "-polar.pdf", sep="")),
-        width=6, height=6)
+    device(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
+           width=width, height=height)
     plot.polar(r$phi0*180/pi)
     if (!is.null(r$Dss)) {
       plot.outline.polar(r)
@@ -72,18 +73,21 @@ retistruct.cli.figure <- function(outputdir) {
       plot.landmarks.polar(r$Sss, col="orange")
     }
     title(dataset)
+    if (!is.null(r$EOD)) {
+      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+    }
     dev.off()
 
     ## Strain plot
-    pdf(file=file.path(outputdir, paste(basepath, "-strain.pdf", sep="")),
-        width=6, height=6)
+    device(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
+           width=width, height=height)
     plot.outline.flat(r$P, r$gb, axt="s")
     plot.strain.flat(r)
     dev.off()
 
     ## l.vs.L plot
-    pdf(file=file.path(outputdir, paste(basepath, "-strain-lvsL.pdf", sep="")),
-        width=6, height=6)
+    device(file=file.path(outputdir, paste(basepath, "-strain-lvsL", suffix, sep="")),
+           width=width, height=height)
     plot.l.vs.L(r)
     dev.off()
   }
