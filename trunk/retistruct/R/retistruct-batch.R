@@ -46,7 +46,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
 retistruct.cli(\"",
                          dataset, "\",",
                          cpu.time.limit, ",\"",
-                         outputdir, "\",",
+                         outputdir, "\", device=",
                          deparse(substitute(device)),")",
                          sep=""),
                        intern=FALSE, wait=TRUE)
