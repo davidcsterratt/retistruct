@@ -56,10 +56,10 @@ retistruct.cli(\"",
         print(as.vector(Result))
       }
     }
+    EOD <- NA
+    nflip <- NA
+    E <- NA
     if (ret==0) {
-      EOD <- NA
-      nflip <- NA
-      E <- NA
       retistruct.read.recdata()
       if (!is.null(r)) {
         EOD <- r$EOD
