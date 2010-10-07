@@ -2,10 +2,11 @@ retistruct.cli.revision <- function() {
   return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
 }
 
-retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA) {
+retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
+                           device=pdf) {
   setTimeLimit(cpu=cpu.time.limit)
   dataset <<- dataset
-  out <- try(retistruct.cli.process(outputdir=outputdir))
+  out <- try(retistruct.cli.process(outputdir=outputdir, device=device))
   mess <- geterrmessage()
   if (inherits(out, "try-error")) {
     if (grepl("reached CPU time limit", mess)) {
@@ -19,7 +20,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA) {
   quit(status=0)
 }
 
-retistruct.cli.process <- function(outputdir=NA) {
+retistruct.cli.process <- function(outputdir=NA, device=pdf) {
   ## Processing
   retistruct.read.dataset()
   retistruct.read.markup()
@@ -28,7 +29,7 @@ retistruct.cli.process <- function(outputdir=NA) {
   ## Output
   retistruct.save.recdata()
   if (!is.na(outputdir)) {
-    retistruct.cli.figure(outputdir)
+    retistruct.cli.figure(outputdir, device=device)
   }
 }
 

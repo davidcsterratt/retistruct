@@ -19,7 +19,8 @@ list.dirs <- function(path='.') {
 ## tldir     - the top level of the tree through which to recurse
 ## outputdir - directory in which to dump a log file and images
 ##
-retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800) {
+retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
+                             device=pdf) {
   print(outputdir)
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
@@ -42,7 +43,12 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800) {
       if (is.data.dir) {
         ret <- system(paste("R --vanilla >", logfile, "2>&1"),
                        input=paste("library(retistruct)
-retistruct.cli(\"", dataset, "\",", cpu.time.limit, ",\"", outputdir, "\")", sep=""),
+retistruct.cli(\"",
+                         dataset, "\",",
+                         cpu.time.limit, ",\"",
+                         outputdir, "\,",
+                         deparse(substitute(device)),")",
+                         sep=""),
                        intern=FALSE, wait=TRUE)
         print(ret)
         out <- read.csv(logfile)
