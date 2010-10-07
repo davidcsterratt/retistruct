@@ -23,7 +23,7 @@ retistruct.global.revision <- function() {
              zzz.revision()))
 }
 
-## Return initialised userdata list
+## Set initialised userdata in environment
 retistruct.initialise.userdata <- function() {
   V0 <<- c()          # Indices of apices of tears
   VB <<- c()         # Indices of forward verticies of tears
@@ -33,6 +33,10 @@ retistruct.initialise.userdata <- function() {
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
   iOD <<- NA         # Index of segment which is Optic Disc
+}
+
+## Set constants in environment
+retistruct.initialise.consts <- function() {
   recfile.version <<- 2   # Version of reconstruction file data format
 }
 
@@ -174,6 +178,7 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
 ## Relies on global variable dataset
 ##
 retistruct.read.recdata <- function(mess=retistruct.mess) {
+  retistruct.initialise.consts()
   ## The format in f.Rdata is deprecated
   foldfile <- file.path(dataset, "f.Rdata")
   if (file.exists(foldfile)) {
@@ -248,6 +253,7 @@ retistruct.save.markup <- function() {
 
 ## retistruct.save.recdata() - save reconstruction data
 retistruct.save.recdata <- function() {
+  retistruct.initialise.consts()
   if (!is.null(dataset)) {
     ## Save the derived data
     r$version <- recfile.version        # Datafile version
