@@ -3,7 +3,7 @@ retistruct.cli.revision <- function() {
 }
 
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
-                           device=pdf) {
+                           device="pdf") {
   setTimeLimit(cpu=cpu.time.limit)
   dataset <<- dataset
   out <- try(retistruct.cli.process(outputdir=outputdir, device=device))
@@ -20,7 +20,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
   quit(status=0)
 }
 
-retistruct.cli.process <- function(outputdir=NA, device=pdf) {
+retistruct.cli.process <- function(outputdir=NA, device="pdf") {
   ## Processing
   retistruct.read.dataset()
   retistruct.read.markup()
@@ -44,21 +44,29 @@ retistruct.cli.basepath <- function(dataset) {
 ## retistruct.cli.figure - Print a figure to file
 ##
 ## It requires the global variable dataset to be set
-retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6,
-                                  res=100, ...) {
+retistruct.cli.figure <- function(outputdir, device="pdf", width=6, height=6,
+                                  res=100) {
   retistruct.read.recdata()
   units <- NULL
-  if (deparse(substitute(device))=="png") {
+  if (device!="pdf") {
     height <- height*res
     width  <- width*res
   }
-  suffix <- paste(".", deparse(substitute(device)), sep="")
+  suffix <- paste(".", device, sep="")
+  dev <- switch(device,
+                pdf=pdf,
+                png=png,
+                jpeg=jpeg,
+                tiff=tiff)
+  if (is.null(dev)) {
+    stop(paste("Device", device, "is not supported"))
+  }
   if (!is.null(r)) {
     ## Determine the name of a figure
     basepath <- retistruct.cli.basepath(dataset)
     
     ## Flat plot
-    device(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
+    dev(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
            width=width, height=height)
     plot.outline.flat(r$P, r$gb, axt="s")
     with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
@@ -69,7 +77,7 @@ retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6,
     dev.off()
 
     ## Polar plot
-    device(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
+    dev(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
            width=width, height=height)
     plot.polar(r$phi0*180/pi)
     if (!is.null(r$Dss)) {
@@ -86,14 +94,14 @@ retistruct.cli.figure <- function(outputdir, device=pdf, width=6, height=6,
     dev.off()
 
     ## Strain plot
-    device(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
+    dev(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
            width=width, height=height)
     plot.outline.flat(r$P, r$gb, axt="s")
     plot.strain.flat(r)
     dev.off()
 
     ## l.vs.L plot
-    device(file=file.path(outputdir, paste(basepath, "-strain-lvsL", suffix, sep="")),
+    dev(file=file.path(outputdir, paste(basepath, "-strain-lvsL", suffix, sep="")),
            width=width, height=height)
     plot.l.vs.L(r)
     dev.off()

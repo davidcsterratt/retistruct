@@ -20,7 +20,7 @@ list.dirs <- function(path='.') {
 ## outputdir - directory in which to dump a log file and images
 ##
 retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
-                             device=pdf) {
+                             device="pdf") {
   print(outputdir)
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
@@ -46,8 +46,8 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
 retistruct.cli(\"",
                          dataset, "\",",
                          cpu.time.limit, ",\"",
-                         outputdir, "\", device=",
-                         deparse(substitute(device)),")",
+                         outputdir, "\"",
+                         device, "\")",
                          sep=""),
                        intern=FALSE, wait=TRUE)
         print(ret)
