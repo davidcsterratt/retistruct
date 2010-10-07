@@ -24,7 +24,8 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
   print(outputdir)
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
-  for (dataset in datasets) {
+  for (d in datasets) {
+    dataset <<- d
     Result <- ""
     ret <- -1
     logfile <- file.path(outputdir,
@@ -32,7 +33,10 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
                                ".log", sep=""))
     print(dataset)
     is.data.dir <- try(check.datadir(dataset))
-
+    EOD <- NA
+    nflip <- NA
+    E <- NA
+    
     if (inherits(is.data.dir, "try-error")) {
       ret <- 1
       Result <- gsub("\n$", "", geterrmessage())
@@ -42,29 +46,26 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
       }
       if (is.data.dir) {
         ret <- system(paste("R --vanilla >", logfile, "2>&1"),
-                       input=paste("library(retistruct)
+                      input=paste("library(retistruct)
 retistruct.cli(\"",
-                         dataset, "\",",
-                         cpu.time.limit, ",\"",
-                         outputdir, "\", \"",
-                         device, "\")",
-                         sep=""),
-                       intern=FALSE, wait=TRUE)
+                        dataset, "\",",
+                        cpu.time.limit, ",\"",
+                        outputdir, "\", \"",
+                        device, "\")",
+                        sep=""),
+                      intern=FALSE, wait=TRUE)
+        if (ret==0) {
+          retistruct.read.recdata()
+          if (!is.null(r)) {
+            EOD <- r$EOD
+            nflip <- r$nflip
+            E <- r$opt$value
+          }
+        }
         print(ret)
         out <- read.csv(logfile)
         Result <- out[nrow(out),1]
         print(as.vector(Result))
-      }
-    }
-    EOD <- NA
-    nflip <- NA
-    E <- NA
-    if (ret==0) {
-      retistruct.read.recdata()
-      if (!is.null(r)) {
-        EOD <- r$EOD
-        nflip <- r$nflip
-        E <- r$opt$value
       }
     }
     logdat <- rbind(logdat, data.frame(Dataset=dataset,
