@@ -50,9 +50,23 @@ retistruct.cli(\"", dataset, "\",", cpu.time.limit, ",\"", outputdir, "\")", sep
         print(as.vector(Result))
       }
     }
+    if (ret==0) {
+      EOD <- NA
+      nflip <- NA
+      E <- NA
+      retistruct.read.recdata()
+      if (!is.null(r)) {
+        EOD <- r$EOD
+        nflip <- r$nflip
+        E <- r$opt$value
+      }
+    }
     logdat <- rbind(logdat, data.frame(Dataset=dataset,
                                        Return=ret,
-                                       Result=Result))
+                                       Result=Result,
+                                       E=E,
+                                       nflip=nflip,
+                                       EOD=EOD))
     write.csv(logdat, file.path(outputdir, "retistruct-batch.csv"))
   }
 }
