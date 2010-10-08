@@ -943,7 +943,7 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
     E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
                E0.A=0, k.A=k.A, N=Nt, x0=x0,
                Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-    print(paste("Total error:", E.tot, "; Length error:", E.l))
+    print(paste("Total error:", E.tot, opt$value, "; Length error:", E.l))
     ft <- flipped.triangles(phi, lambda, Tt, R)
     nflip <- sum(ft$flipped)
     print(paste(nflip, "flipped triangles:"))
