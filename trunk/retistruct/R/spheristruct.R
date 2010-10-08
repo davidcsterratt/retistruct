@@ -879,7 +879,7 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 }
   
 ## Grand optimisation function
-optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.1, method="BFGS",
+optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
@@ -937,9 +937,13 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.1, method="BFGS",
                  verbose=FALSE)
 
     ## Report
-    print(E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-            E0.A=E0.A, k.A=k.A, N=Nt, x0=x0,
-            Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi))
+    E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+               E0.A=E0.A, k.A=k.A, N=Nt, x0=x0,
+               Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+    E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+               E0.A=0, k.A=k.A, N=Nt, x0=x0,
+               Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+    print(paste("Total error:", E.tot, "; Length error:", E.l))
     ft <- flipped.triangles(phi, lambda, Tt, R)
     nflip <- sum(ft$flipped)
     print(paste(nflip, "flipped triangles:"))
@@ -975,7 +979,8 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.1, method="BFGS",
       plot.outline.polar(r)
     }
   }
-  return(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped)))
+  return(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
+              E.tot=E.tot, E.l=E.l))
 }
 
 ## Function to plot the fractional change in length of connections 
