@@ -36,6 +36,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
     EOD <- NA
     nflip <- NA
     E <- NA
+    El <- NA
     
     if (inherits(is.data.dir, "try-error")) {
       ret <- 1
@@ -57,9 +58,10 @@ retistruct.cli(\"",
         if (ret==0) {
           retistruct.read.recdata()
           if (!is.null(r)) {
-            if (!is.null(r$EOD))       { EOD <- r$EOD     }
-            if (!is.null(r$nflip))     { nflip <- r$nflip }
-            if (!is.null(r$opt$value)) { E <- r$opt$value }
+            if (!is.null(r$EOD))       { EOD <- r$EOD      }
+            if (!is.null(r$nflip))     { nflip <- r$nflip  }
+            if (!is.null(r$opt$value)) { E  <- r$opt$value }
+            if (!is.null(r$E.l))       { El <- r$E.l       }
           }
         }
         print(ret)
@@ -72,6 +74,7 @@ retistruct.cli(\"",
                                        Return=ret,
                                        Result=Result,
                                        E=E,
+                                       El=El,
                                        nflip=nflip,
                                        EOD=EOD))
     write.csv(logdat, file.path(outputdir, "retistruct-batch.csv"))
