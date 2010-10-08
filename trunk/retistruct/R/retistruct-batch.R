@@ -57,9 +57,9 @@ retistruct.cli(\"",
         if (ret==0) {
           retistruct.read.recdata()
           if (!is.null(r)) {
-            EOD <- r$EOD
-            nflip <- r$nflip
-            E <- r$opt$value
+            if (!is.null(r$EOD))       { EOD <- r$EOD     }
+            if (!is.null(r$nflip))     { nflip <- r$nflip }
+            if (!is.null(r$opt$value)) { E <- r$opt$value }
           }
         }
         print(ret)
