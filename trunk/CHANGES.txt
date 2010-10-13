@@ -1,4 +1,4 @@
-Changes in version 0.2 (r459)
+Changes in version 0.2 (r462)
 =============================
 
 User-facing changes
