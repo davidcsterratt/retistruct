@@ -1,5 +1,38 @@
-Changes in version 0.1
-======================
+Changes in version 0.2 (r459)
+=============================
+
+User-facing changes
+-------------------
+
+* Almost all bugs preventing marking up retinae and optimisation fixed
+  (There are some retinae in which there is an error in segments2pointers())
+
+* Batch mode command which writes a log file in CSV format and produces images
+
+* It is now possible to mark the optic disc, and the distance in
+  degrees of the inferred retinal pole from the OD is reported
+
+* Command line version of retistruct
+
+* Revised manual
+
+Algorithm changes
+-----------------
+
+* New way of initialising points prior to optimisation
+
+* New  piecewise, error function, which ensures that optimisation
+  never crashes due to numbers out of range
+
+* Experimental FEM code written, but not used at present
+
+Internal changes
+----------------
+
+* Various simplifications and improvements to the code
+
+Changes in version 0.1 (r317)
+=============================
 
 * New, hopefully easier installation method
 
