@@ -8,12 +8,200 @@
 
 \usepackage[british]{babel}
 
-\title{The retinal mapping data and the nmf\_morph toolkit}
+\title{\textsc{Retistruct} manual}
 
 \begin{document}
 
 \maketitle
 \thispagestyle{myheadings}
+
+\section{Installation}
+\label{manual:sec:installation}
+
+\subsection{Install the necessary system packages}
+
+\subsubsection{Fedora Linux }
+
+As root,
+
+\begin{verbatim}
+yum install R-core
+yum install R-devel
+yum install gtk2
+yum install gtk2-devel
+yum install mesa-libGL-devel
+yum install mesa-libGLU-devel
+yum install subversion # Only required if getting code with svn
+\end{verbatim}
+
+\subsubsection{Ubuntu Linux}
+At the command line, enter:
+
+\begin{verbatim}
+sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cran-rgl
+\end{verbatim}
+
+\subsection{Install the retistruct package}
+
+\begin{enumerate}
+\item Start \textsc{R}, in a directory containing the \texttt{install.R} and
+   \texttt{retistruct\_0.x.tar.gz} files
+ \item  Type:
+\begin{verbatim}
+   source("install.R")
+\end{verbatim}
+   The first time this runs, it should create a personal directory for
+   R packages, and it will take a few minutes to install some required
+   packages.
+\end{enumerate}
+
+\section{Running \textsc{Retistruct}}
+\label{manual:sec:running}
+
+To start the program, start \textsc{R}. At the \textsc{R} prompt type:
+
+\begin{verbatim}
+> library(retistruct)
+> retistruct()
+\end{verbatim}
+A window should appear.
+
+\subsection{Opening the files for a retina}
+\label{manual:sec:opening-files-retina}
+
+At present \textsc{Retistruct} can read files in the format used in
+Ian Thompson's lab (see Appendix~\ref{manual:sec:reading-data}). These
+files are contained in a directory. To open the files corresponding to
+a retina, click on the open file icon, and navigate to the directory
+containing the \texttt{SYS} and \texttt{MAP} files. On opening this
+directory, the retinal outline should appear in the
+\textsc{Retistruct} window.
+
+\subsection{The retinal display}
+\label{manual:sec:retinal-display}
+
+In the ``Show'' section at the bottom left of the screen there are
+checkboxes that allow you to show various types of information:
+\begin{description}
+\item[Markup] Locations of tears and the dorsal or nasal pole
+\item[Stitch] Locations of how the algorithm has stitched tears (only
+  visible after the reconstruction step)
+\item[Grid] Lines of latitude and longitude projected back onto the
+  flattened retina (only visible after the reconstruction step)
+\item[Datapoints] Locations of data points, such as the locations of
+  beads of dye
+\item[Landmarks] Landmarks such as the optic disc
+\item[Strain] This shows information about how the retina has been
+  reconstructed, after the reconstruction step has taken place.
+\end{description}
+
+\subsection{Marking up the retina}
+\label{manual:sec:opening-files-retina}
+
+\begin{description}
+\item[Add tear] To add a tear, click on this button, then click on
+  three points in turn which define a tear. The order in which the
+  points are added does not matter. Tears contained within a tear can
+  be marked up, but tears cannot cross over one another.
+\item[Move Point] To move one of the points defining a tear, click on
+  this button, then click on the point which you desire to move, then
+  click on the point to which it should be moved.
+\item[Remove tear] To remove a tear, click on this button, then click
+  on the apex of the tear (marked in cyan on the plot)
+\item[Mark nasal] To mark the nasal pole, click on this button, then
+  click on the point which is the nasal pole.  If the nasal or
+  dorsal pole has already been marked, the marker is removed from
+  the existing location. The nasal pole should not be in a tear. If
+  the nasal tear is placed within a tear, no error is reported at this
+  stage, but it will be reported later.
+\item[Mark dorsal] As above, except for the dorsal pole.
+\item[Mark OD] To mark the optic disc, click on the structure marked
+  in orange which you think is the OD. Once clicked on, the structure
+  should become blue.
+\item[Phi0] This determines the lattitude of the rim of the
+  reconstructed hemisphere. It depends on the age of the animal.
+\end{description}
+
+\subsection{Saving the markup}
+\label{manual:sec:saving-markup}
+
+To save the markup, click on the ``Save'' button in the toolbar. This
+saves various markup files to the directory containing the
+data files. This saved data can be used to reconstruct the retina using
+a batch process (Section~\ref{manual:sec:runn-batch-reconstr}).
+
+\subsection{Reconstructing the retina}
+\label{manual:sec:reconstr-retina}
+
+To reconstruct the retina, click on the ``Reconstruct retina''
+button. This causes a (lengthy) sequence of operations to be performed:
+\begin{description}
+\item[Stitching] Links between corresponding points on parts of the retinal
+  outline  contained in tears are made.
+\item[Triangulation] A triangular mesh is placed over the flattened retina
+\item[Initial projection to sphere ] The mesh is projected roughly
+  onto a sphere
+\item[Optimisation] The locations of the mesh points on the hemisphere
+  is adjusted so as to minimise a weighted sum of the squared
+  differences between the lengths of links in the mesh on the
+  hemisphere and on the flattened retina, whilst ensuring that as few
+  triangles as possible are flipped.
+\end{description}
+
+At the end of the reconstruction process, a polar plot appears next to
+the flattened retina. When ``Landmarks'' are shown, the location of
+the cuts and tears in the polar coordinates can be seen.
+
+When ``Strain'' is shown, the polar plot is replaced by a scatter plot of the
+length of links in the reconstructed object versus the length on the
+flattened object. The colours of the points indicate the degree of
+expansion or compression from the flattened object to the
+reconstructed object.
+
+\subsection{Saving the reconstruction}
+\label{manual:sec:saving-reconstr}
+
+To save the markup, click on the ``Save'' button in the toolbar. This
+saves various markup files to the directory containing the data files.
+
+\subsection{Running a batch of reconstructions}
+\label{manual:sec:runn-batch-reconstr}
+
+The \textsc{Retistruct} library can be used to reconstruct a batch of
+retinae which have been marked up. Suppose that the directory
+\texttt{retinae} contains a directory tree in which there are data
+directories containing \texttt{SYS} and \texttt{MAP} files and the
+saved markup files. In order to perform the reconstructions, we create
+a new directory \texttt{retinae/reconstructions}, and run the
+following sequence of commands in R:
+\begin{verbatim}
+R
+> library(retistruct)
+> retistruct.batch(tldir='retinae', outputdir='retinae/reconstructions')
+\end{verbatim}
+This command will go through the \texttt{retinae} directory, looking
+for valid data directories. If it finds one, it sets about trying to
+reconstruct the retina. As it reconstructing each retina, it writes to
+log file in \texttt{retinae/reconstructions}. Once the reconstruction
+is complete, it saves a number of plots in this directory in PDF
+format. It also adds a line to a summary log file in
+\texttt{retinae/reconstructions} called
+\texttt{retistruct-batch.csv}. This file contains a number of columns:
+\begin{description}
+\item[\texttt{Dataset}] The directory of the dataset
+\item[\texttt{Return}] The return value from the process
+\item[\texttt{Result}] A summary of the result, including if any
+  errors were returned
+\item[\texttt{E}] The total error  of the optimised reconstruction
+\item[\texttt{El}] The error due to purely to the lengths of links in
+  the optimised reconstruction
+\item[\texttt{nflip}] The number of flipped triangles
+\item[\texttt{EOD}] The distance of the Optic Disc from the inferred
+  centre of the retina, in degrees. If the OD has not been marked up,
+  this is \texttt{NA}.
+\end{description}
+
+\appendix
 
 \section{Data format}
 \label{manual:sec:reading-data}
@@ -80,21 +268,21 @@ each directory there are two files:
   coordinates of a vertex of the map outline.
 \end{description}
 
-\section{Reading in and displaying data}
-\label{manual:sec:datafile-utils}
+% \section{Reading in and displaying data}
+% \label{manual:sec:datafile-utils}
 
-All code is to be found in the \texttt{trunk/src} directory. The R
-program should be started from this directory in the following examples.
+% All code is to be found in the \texttt{trunk/src} directory. The R
+% program should be started from this directory in the following examples.
 
-To read in data use the functions in \texttt{datafile-utils.R}. Here
-is code to read in the data from a directory containing the
-\texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
-\begin{verbatim}
-source("datafile-utils.R")
-sys <- read.sys("/data/path/gm257-1-P8-C57BL6/")
-map <- read.map("/data/path/gm257-1-P8-C57BL6/")
-plot.sys.map(sys, map)
-\end{verbatim}
+% To read in data use the functions in \texttt{datafile-utils.R}. Here
+% is code to read in the data from a directory containing the
+% \texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
+% \begin{verbatim}
+% source("datafile-utils.R")
+% sys <- read.sys("/data/path/gm257-1-P8-C57BL6/")
+% map <- read.map("/data/path/gm257-1-P8-C57BL6/")
+% plot.sys.map(sys, map)
+% \end{verbatim}
 
 
 \end{document}
@@ -106,4 +294,5 @@ plot.sys.map(sys, map)
 % LocalWords:  MAPNUM MINLAT MAXLAT MINLON MAXLON LABLAT LABLON XRED YRED XGRID
 % LocalWords:  XGREEN YGREEN XDOUBLE labeled YGRID PERIM GRIDX GRIDY XGRIDCOO
 % LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
-% LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils
+% LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
+% LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
