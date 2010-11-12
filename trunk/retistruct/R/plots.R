@@ -73,6 +73,11 @@ plot.stitch.flat <- function(s, add=FALSE, ...) {
         lines(P[c(j, hf[j]),], col="green", ...)
       }
     }
+    for (j in 1:length(hb)) {
+      if (hb[j] != j) {
+        lines(P[c(j, hb[j]),], col="green", ...)
+      }
+    }
   })
 }
 
