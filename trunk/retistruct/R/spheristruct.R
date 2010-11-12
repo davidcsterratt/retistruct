@@ -284,11 +284,14 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
 stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   ## Create initial sets of correspondances
   N <- nrow(P)                          # Number of points
-  hf <- 1:N
-  hb <- 1:N
-  hf[VB] <- VF
-  hb[VF] <- VB
-  h <- hf
+  h <- 1:N                              # Initial correspondences
+  hf <- h
+  hb <- h
+  M <- length(V0)                       # Number of tears
+  i.parent <- rep(0, M)                 # Index of parent tear.
+                                        # Is 0 if root otherwise
+                                        # index of tear if in forward side
+                                        # or negative index if in backward side 
 
   ## Initialise the set of points in the rim
   ## We don't assume that P is the entire set of points; instead
@@ -300,15 +303,47 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   TBset <- list()
   
   ## Iterate through the tears to create tear sets and rim set
-  for (j in 1:length(V0)) {
+  for (j in 1:M) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
-    ##print(paste("Forward tear", j))
-    TFset[[j]] <- mod1(path(V0[j], VF[j], gf, hf), N)
-    ##print(paste("Backward tear", j))
-    TBset[[j]] <- mod1(path(V0[j], VB[j], gb, hb), N)
+    ##retistruct.report(paste("Forward tear", j))
+    TFset[[j]] <- mod1(path(V0[j], VF[j], gf, h), N)
+    TBset[[j]] <- mod1(path(V0[j], VB[j], gb, h), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
     Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
+  }
+
+  ## Search for parent tears
+  ## Go through all tears
+  for (j in 1:M) {
+    for (k in setdiff(1:M, j)) {
+      ## If this tear is contained in a forward tear
+      if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
+        i.parent[j] <- k
+        retistruct.report(paste("Tear", j, "child of forward side of tear", k))
+        ## Set the forward pointer
+        hf[VB[j]] <- VF[j]
+        ## Remove the child tear points from the parent
+        TFset[[k]] <- setdiff(TFset[[k]],
+                              setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
+        print(TFset[[k]])
+      }
+      ## If this tear is contained in a backward tear
+      if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
+        i.parent[j] <- -k
+        retistruct.report(paste("Tear", j, "child of backward side of tear", k))
+        ## Set the forward pointer
+        hb[VF[j]] <- VB[j]
+        ## Remove the child tear points from the parent
+        TBset[[k]] <- setdiff(TBset[[k]],
+                              setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
+      }
+    }
+    if (i.parent[j] == 0) {
+      retistruct.report(paste("Tear", j, "child of rim"))
+      hf[VB[j]] <- VF[j]
+      hb[VF[j]] <- VB[j]
+    }
   }
 
   ## If not set, set the landmark marker index. Otherwise
@@ -320,24 +355,66 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       return(NULL)
     }
   }
+
+  ## Insert points on the backward tears corresponding to points on
+  ## the forward tears
+  sF <-      stitch.insert.points(P, V0, VF, VB, TFset, TBset,
+                                  gf, gb, hf, hb, h,
+                                  "Forwards")
+
+  ## Insert points on the forward tears corresponding to points on
+  ## the backward tears
+  sB <- with(sF,
+             stitch.insert.points(P, V0, VB, VF, TBset, TFset,
+                                  gb, gf, hb, hf, h,
+                                  "Backwards"))
+  ## Extract data from object
+  P <- sB$P
+  gf <- sB$gb
+  gb <- sB$gf
+  hf <- sB$hb
+  hb <- sB$hf
+  h <- sB$h
+
+  ## Link up points on rim
+  h[Rset] <- hf[Rset]
   
+  ## Make sure that there are no chains of correspondences
+  while (!all(h==h[h])) {
+   h <- h[h]
+  }
+  
+  return(list(Rset=Rset, i0=i0,
+              VF=VF, VB=VB, V0=V0,
+              TFset=TFset, TBset=TBset,
+              P=P, h=h, hf=hf, hb=hb,
+              gf=gf, gb=gb))
+}
+
+## Inner function responsible for inserting the points
+stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
+                                 dir) {
+  M <- length(V0)                       # Number of tears
   ## Iterate through tears to insert new points
-  for (j in 1:length(V0)) {
+  for (j in 1:M) {
     ## Compute the total path length along each side of the tear
     Sf <- path.length(V0[j], VF[j], gf, hf, P)
     Sb <- path.length(V0[j], VB[j], gb, hb, P)
-    ## print(paste("Sf", Sf))
-    ## print(paste("Sb", Sb))
+    retistruct.report(paste("Tear", j, ": Sf =", Sf, "; Sb =", Sb))
 
     ## For each point in the forward path, create one in the backwards
     ## path at the same fractional location
+    retistruct.report(paste("   ", dir, " path", sep=""))
     for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
       sf <- path.length(V0[j], i, gf, hf, P)
-      ## print(paste("sf", sf/Sf))
-      ## print(TBset[[j]])
+      retistruct.report(paste("    i =", i,
+                              "; sf/Sf =", sf/Sf,
+                              "; sf =", sf))
       for (k in TBset[[j]]) {
         sb <- path.length(V0[j], k, gb, hb, P)
-        ## print(paste("k", k, "; sb/Sb", sb/Sb))
+        retistruct.report(paste("      k =", format(k, width=4),
+                                "; sb/Sb =", sb/Sb,
+                                "; sb =", sb))
         if (sb/Sb > sf/Sf) {
           break;
         }
@@ -345,17 +422,17 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
         sb0 <- sb
       }
 
-      ## If a new point hasn't already been created for a
-      ## corresponding point, Create new point
-      if ((hb[i] == i) && (hf[i] != VF[j])) {
+      ## If this point does not point to another, create a new point
+      if ((hf[i] == i)) {
         f <- (sf/Sf*Sb-sb0)/(sb-sb0)
-        print(f)
-##        browser(expr=is.infinite(f))
+        retistruct.report(paste("      Creating new point: f =", f))
+        browser(expr=is.infinite(f))
         p <- (1-f) * P[k0,] + f * P[k,]
+        browser(expr=any(is.nan(p)))
         P <- rbind(P, p)
 
         ## Update forward and backward pointers
-        n <- nrow(P)
+        n <- nrow(P)                    # Index of new point
         gb[n]     <- k
         gf[n]     <- gf[k]
         gb[gf[k]] <- n
@@ -365,78 +442,14 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
         hf[n] <- n
         hb[n] <- n
         h[i] <- n
+        h[n] <- n
       } else {
-        h[i] <- h[hb[i]]
+        ## If not creating a point, set the point to point to the forward pointer 
+        h[i] <- hf[i]
       }
-      
-      ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
-      ##            "; gf[", n, "] =", gf[n], "; gb[", n,  "] =", gb[n],
-      ##             "; gf[", k, "] =", gf[k], "; gb[", k0, "] =", gb[k0]))
-    }
-
-    ## plot.outline.flat(P, gb)
-    ## print(paste("Forwards", j))
-    ## readline("Press <Enter> to continue")
-      
-    ## Go along backward path
-    for (i in setdiff(TBset[[j]], c(V0[j], VB[j]))) {
-      sb <- path.length(V0[j], i, gb, hb, P)
-      ## print(paste("i", i, "sb", sb/Sb))
-      ## print(TFset[[j]])
-      for (k in TFset[[j]]) {
-        sf <- path.length(V0[j], k, gf, hf, P)
-        ## print(paste("k", k, "; sf/Sf", sf/Sf))
-        if (sf/Sf > sb/Sb) {
-          break;
-        }
-        k0 <- k
-        sf0 <- sf
-      }
-
-      ## If a new point hasn't already been created for a
-      ## corresponding point, Create new point
-      if ((hf[i] == i) && (hb[i] != VB[j])) {
-        f <- (sb/Sb*Sf-sf0)/(sf-sf0)
-        print(f)
-        p <- (1-f) * P[k0,] + f * P[k,]
-        P <- rbind(P, p)
-        
-        ## Update forward and backward pointers
-        n <- nrow(P)
-        gf[n]  <- k
-        gb[n]  <- gb[k]
-        gf[gb[k]] <- n
-        gb[k]  <- n
-        
-        ## Update correspondences
-        hf[n] <- n
-        hb[n] <- n
-        h[i] <- n
-      } else {
-        h[i] <- h[hf[i]]
-      }
-      
-      ## print(paste("n =", n, "; k =", k, "; k0 =", k0,
-      ##            "; gf[", n,  "] =", gf[n], "; gb[", n,  "] =", gb[n],
-      ##            "; gf[", k0, "] =", gf[k0], "; gb[", k, "] =", gb[k]))
-    }
-    
-    ## plot.outline(P, gb)
-    ## print(paste("Backwards", j))
-    ## readline("Press <Enter> to continue")
+     } 
   }
-
-  ## Make sure that there are no chains of correspondences
-  h <- c(h, (length(h)+1):nrow(P))
-  while (!all(h==h[h])) {
-    h <- h[h]
-  }
-  
-  return(list(Rset=Rset, i0=i0,
-              VF=VF, VB=VB, V0=V0,
-              TFset=TFset, TBset=TBset,
-              P=P, h=h, hf=hf, hb=hb,
-              gf=gf, gb=gb))
+  return(list(P=P, hf=hf, hb=hb, gf=gf, gb=gb, h=h))
 }
 
 ## Convert a matrix containing on each line the indicies of the points
