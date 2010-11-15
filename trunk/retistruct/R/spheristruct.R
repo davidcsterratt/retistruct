@@ -407,47 +407,57 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
     retistruct.report(paste("   ", dir, " path", sep=""))
     for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
       sf <- path.length(V0[j], i, gf, hf, P)
-      retistruct.report(paste("    i =", i,
-                              "; sf/Sf =", sf/Sf,
-                              "; sf =", sf))
-      for (k in TBset[[j]]) {
-        sb <- path.length(V0[j], k, gb, hb, P)
-        retistruct.report(paste("      k =", format(k, width=4),
-                                "; sb/Sb =", sb/Sb,
-                                "; sb =", sb))
-        if (sb/Sb > sf/Sf) {
-          break;
+      ## If the point isn't at the apex, insert a point
+      if (sf > 0) {
+        retistruct.report(paste("    i =", i,
+                                "; sf/Sf =", sf/Sf,
+                                "; sf =", sf))
+        for (k in TBset[[j]]) {
+          sb <- path.length(V0[j], k, gb, hb, P)
+          retistruct.report(paste("      k =", format(k, width=4),
+                                  "; sb/Sb =", sb/Sb,
+                                  "; sb =", sb))
+          if (sb/Sb > sf/Sf) {
+            break;
+          }
+          k0 <- k
+          sb0 <- sb
         }
-        k0 <- k
-        sb0 <- sb
+
+        ## If this point does not point to another, create a new point
+        if ((hf[i] == i)) {
+          f <- (sf/Sf*Sb-sb0)/(sb-sb0)
+          retistruct.report(paste("      Creating new point: f =", f))
+          browser(expr=is.infinite(f))
+          p <- (1-f) * P[k0,] + f * P[k,]
+          browser(expr=any(is.nan(p)))
+
+          ## Find the index of any row of P that matches p
+          n <- anyDuplicated(rbind(P, p), fromLast=TRUE) 
+          if (n == 0) {
+            ## If the point p doesn't exist
+            P <- rbind(P, p)
+            ## Update forward and backward pointers
+            n <- nrow(P)                    # Index of new point
+            gb[n]     <- k
+            gf[n]     <- gf[k]
+            gb[gf[k]] <- n
+            gf[k]     <- n
+
+            ## Update correspondences
+            hf[n] <- n
+            hb[n] <- n
+            h[i] <- n
+            h[n] <- n
+          } else {
+            warning(paste("Point", n, "already exists"))
+          }
+        } else {
+          ## If not creating a point, set the point to point to the forward pointer 
+          h[i] <- hf[i]
+        }
       }
-
-      ## If this point does not point to another, create a new point
-      if ((hf[i] == i)) {
-        f <- (sf/Sf*Sb-sb0)/(sb-sb0)
-        retistruct.report(paste("      Creating new point: f =", f))
-        browser(expr=is.infinite(f))
-        p <- (1-f) * P[k0,] + f * P[k,]
-        browser(expr=any(is.nan(p)))
-        P <- rbind(P, p)
-
-        ## Update forward and backward pointers
-        n <- nrow(P)                    # Index of new point
-        gb[n]     <- k
-        gf[n]     <- gf[k]
-        gb[gf[k]] <- n
-        gf[k]     <- n
-
-        ## Update correspondences
-        hf[n] <- n
-        hb[n] <- n
-        h[i] <- n
-        h[n] <- n
-      } else {
-        ## If not creating a point, set the point to point to the forward pointer 
-        h[i] <- hf[i]
-      }
-     } 
+    } 
   }
   return(list(P=P, hf=hf, hb=hb, gf=gf, gb=gb, h=h))
 }
