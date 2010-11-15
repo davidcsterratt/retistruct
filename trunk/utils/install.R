@@ -15,7 +15,7 @@ if (!require("cairoDevice"))   install.packages("cairoDevice")
 if (!require("rgl"))           install.packages("rgl")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistruct_0.2.tar.gz")
+install.packages("retistruct_0.2.1.tar.gz")
 
 library(retistruct)
 retistruct()
