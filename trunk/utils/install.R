@@ -13,6 +13,7 @@ if (!require("gWidgets"))      install.packages("gWidgets")
 if (!require("gWidgetsRGtk2")) install.packages("gWidgetsRGtk2")
 if (!require("cairoDevice"))   install.packages("cairoDevice")
 if (!require("rgl"))           install.packages("rgl")
+if (!require("hdf5"))          install.packages("hdf5")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
 install.packages("retistruct_0.2.1.tar.gz")

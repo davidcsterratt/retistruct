@@ -81,8 +81,8 @@ retistruct.cli(\"",
   }
 }
 
-## retistruct.batch() - Recurse through a directory tree, determining
-## whether the directory contains valid derived data and
+## retistruct.batch.figures() - Recurse through a directory tree,
+## determining whether the directory contains valid derived data and
 ## plotting graphs if it does.
 ##
 ## tldir     - the top level of the tree through which to recurse
@@ -95,5 +95,26 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
     print(d)
     dataset <<- d
     try(retistruct.cli.figure(outputdir, ...))
+  }
+}
+
+## retistruct.batch.rdata2hdf() - Recurse through a directory tree,
+## determining whether the directory contains valid derived data and
+## converting r.rData files to r.h5
+##
+## tldir     - the top level of the tree through which to recurse
+## outputdir - directory in which to dump a log file and images
+##
+retistruct.batch.rdata2hdf <- function(tldir=".", outputdir=tldir, ...) {
+  retistruct.initialise.userdata()
+  datasets <- list.dirs(tldir)
+  for (d in datasets) {
+    print(d)
+    dataset <<- d
+    r <<- NULL
+    retistruct.read.recdata()
+    if (!is.null(r)) {
+      hdf5save(file.path(dataset, "r.h5"), "r")
+    }
   }
 }
