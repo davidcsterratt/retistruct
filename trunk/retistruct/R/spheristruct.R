@@ -1176,3 +1176,26 @@ infer.datapoint.landmark.coordinates <- function(r, Ds=NULL, Ss=NULL,
                            Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                            Ssb=Ssb, Ssc=Ssc, Sss=Sss))
 }
+
+## Infer coordinates of tears
+## Arguments:
+## r    - object returned by fold.outline
+##
+## Returns:
+## New object r, with new object attached:
+## 
+## Tss  - Tear coordinates on reconstructed sphere in spherical coordinates
+##
+infer.tear.coordinates <- function(r,
+                                   report=print) {
+  report("Inferring coordinates of tears")
+  Tss <- list() # Landmarks on reconstructed sphere in spherical coordinates
+  if (!is.null(r$TFset)) {
+    for (TF in r$TFset) {
+      ## Convert indicies to the spherical frame of reference
+      j <- r$ht[TF]
+      Tss <- c(Tss, list(cbind(lambda=r$lambda[j], phi=r$phi[j])))
+    }
+  }
+  r <- merge.lists(r, list(Tss=Tss))
+}
