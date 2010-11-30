@@ -35,3 +35,25 @@ merge.lists <- function(l, m) {
   }
   return(l)
 }
+
+## Return standard names for lists containing any un-named elements
+stdnames <- function(l) {
+  nl <- names(l)
+  if (length(l) >= 1) {
+    ll <- paste("n", 1:length(l), sep="")
+    named <- which(nl!="" & is.na(strtoi(nl)))
+    ll[named] <- nl[named]
+  } else {
+    ll <- nl
+  }
+  return(ll)
+}
+
+## Return a new version of the list in which any un-named elements
+## have been given standardised names
+name.list <- function(l) {
+  if (is.list(l)) {
+    names(l) <- stdnames(l)
+  }
+  return(l)
+}
