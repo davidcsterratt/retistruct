@@ -105,7 +105,7 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
 ## tldir     - the top level of the tree through which to recurse
 ## outputdir - directory in which to dump a log file and images
 ##
-retistruct.batch.rdata2hdf <- function(tldir=".", outputdir=tldir, ...) {
+retistruct.batch.rdata2mat <- function(tldir=".") {
   retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
   for (d in datasets) {
@@ -114,7 +114,58 @@ retistruct.batch.rdata2hdf <- function(tldir=".", outputdir=tldir, ...) {
     r <<- NULL
     retistruct.read.recdata()
     if (!is.null(r)) {
-      hdf5save(file.path(dataset, "r.h5"), "r")
+      r <<- infer.tear.coordinates(r)
+      f <- file.path(dataset, "r.mat")
+      print(paste("Saving", f))
+      writeMat(f, phi0=phi0, Dss=r$Dss, Sss=name.list(r$Sss), Tss=name.list(r$Tss))
     }
   }
+}
+
+## retistruct.batch.rdata2hdf() - Recurse through a directory tree,
+## determining whether the directory contains valid derived data and
+## converting r.rData files to r.h5
+##
+## tldir     - the top level of the tree through which to recurse
+## outputdir - directory in which to dump a log file and images
+##
+retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
+  retistruct.initialise.userdata()
+  datasets <- list.dirs(tldir)
+  for (d in datasets) {
+    print(d)
+    dataset <<- d
+    r <<- NULL
+    retistruct.read.recdata()
+    if (!is.null(r)) {
+      f <- file.path(dataset, "r.h5")
+      print(paste("Saving", f))
+      hdf5save(f, "r")
+      print(paste("Trying to load", f))
+      try(hdf5load(f))
+    }
+  }
+}
+
+retistruct.batch.testhdf <- function(tldir=".", ...) {
+  retistruct.initialise.userdata()
+  datasets <- list.dirs(tldir)
+  failures <- c()
+  successes <- c()
+  for (d in datasets) {
+    print(d)
+    dataset <<- d
+    f <- file.path(dataset, "r.h5")
+    if (file.exists(f)) {
+      print(paste(f, "exists"))
+      e <- try(hdf5load(f, verbosity=0))
+      if (inherits(e, "try-error")) {
+        failures <- c(failures, f)
+      } else {
+        successes <- c(successes, f)
+      }
+    }
+  }
+  print(failures)
+  print(successes)
 }
