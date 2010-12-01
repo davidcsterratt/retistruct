@@ -7,6 +7,7 @@
 \usepackage[a4paper,left=1in,right=1in,top=1in,bottom=1in,head=1in]{geometry}
 
 \usepackage[british]{babel}
+\usepackage{tabularx}
 
 \title{\textsc{Retistruct} manual}
 
@@ -118,7 +119,7 @@ checkboxes that allow you to show various types of information:
 \item[Mark OD] To mark the optic disc, click on the structure marked
   in orange which you think is the OD. Once clicked on, the structure
   should become blue.
-\item[Phi0] This determines the lattitude of the rim of the
+\item[Phi0] This determines the latitude of the rim of the
   reconstructed hemisphere. It depends on the age of the animal.
 \end{description}
 
@@ -200,6 +201,71 @@ format. It also adds a line to a summary log file in
   centre of the retina, in degrees. If the OD has not been marked up,
   this is \texttt{NA}.
 \end{description}
+
+\subsection{Exporting reconstruction data to \textsc{Matlab}}
+\label{retistruct-manual:sec:export-reconstr-data}
+
+To export the reconstruction data in a directory hierarchy in which
+\texttt{retistruct.batch()} has been run, run the following sequence
+of commands in R:
+\begin{verbatim}
+R
+> library(retistruct)
+> retistruct.batch.export.matlab(tldir='retinae')
+\end{verbatim}
+This creates a file called \texttt{r.mat} in each directory in which
+there has been a successful reconstruction. To import this data into
+\textsc{Matlab}, cd into that directory, and type:
+\begin{verbatim}
+clear
+load r.mat
+\end{verbatim}
+This puts a number of variables into the workspace, as shown in
+Table~\ref{tab:matlab-export}.
+
+To produce a polar plot of data points, try the following code:
+\begin{verbatim}
+polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
+hold on
+polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
+hold off
+\end{verbatim}
+The radial axis indicates the latitude in degrees measured from the
+retinal pole.
+
+In the \texttt{matlab} subdirectory of the distribution, there are
+some scripts to produce polar polar plots, including the locations of
+tears and landmarks. To create PDF plots of all the retinae in a
+directory, try:
+\begin{verbatim}
+makefigures('retinae', 'output_directory')
+\end{verbatim}
+
+There are also some embryonic scripts to create polar plots:
+\texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
+
+\begin{table}
+  \begin{tabularx}{\linewidth}{lX}
+    \hline \texttt{phi0} & The latitude of the rim, expressed in
+    radians
+    \\
+    \texttt{Dss.green} & Locations of green-labelled cell bodies in
+    spherical coordinates. The first column contains the latitude of
+    each point, measured in radians. The second column contains the
+    longitude of each point, measured in radians. \\
+    \texttt{Dss.red}   & Locations of red-labelled cell
+    bodies. Columns have same meaning as \texttt{Dss.green}. \\
+    \texttt{Tss}       & A structure in which each element contains
+    spherical coordinates (in the same latitude-longitude format as
+    above) of a tear. \\
+    \texttt{Sss}       & A structure in which each element contains
+    spherical coordinates (in the same latitude-longitude format as
+    above) of a landmark. \\
+    \hline
+  \end{tabularx}
+  \caption{Variables exported in the \texttt{r.mat} file.}
+  \label{tab:matlab-export}
+\end{table}
 
 \appendix
 
@@ -296,3 +362,4 @@ each directory there are two files:
 % LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
 % LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
 % LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
+% LocalWords:  Matlab cd matlab lX Dss Tss Sss
