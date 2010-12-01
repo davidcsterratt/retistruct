@@ -98,14 +98,13 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
   }
 }
 
-## retistruct.batch.rdata2hdf() - Recurse through a directory tree,
+## retistruct.batch.export.matlab() - Recurse through a directory tree,
 ## determining whether the directory contains valid derived data and
-## converting r.rData files to r.h5
+## converting r.rData files to files in matlab format named r.mat
 ##
 ## tldir     - the top level of the tree through which to recurse
-## outputdir - directory in which to dump a log file and images
 ##
-retistruct.batch.rdata2mat <- function(tldir=".") {
+retistruct.batch.export.matlab <- function(tldir=".") {
   retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
   for (d in datasets) {
@@ -127,7 +126,6 @@ retistruct.batch.rdata2mat <- function(tldir=".") {
 ## converting r.rData files to r.h5
 ##
 ## tldir     - the top level of the tree through which to recurse
-## outputdir - directory in which to dump a log file and images
 ##
 retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
   retistruct.initialise.userdata()
