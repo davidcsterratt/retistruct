@@ -1194,7 +1194,7 @@ infer.tear.coordinates <- function(r,
     for (TF in r$TFset) {
       ## Convert indicies to the spherical frame of reference
       j <- r$ht[TF]
-      Tss <- c(Tss, list(cbind(lambda=r$lambda[j], phi=r$phi[j])))
+      Tss <- c(Tss, list(cbind(phi=r$phi[j], lambda=r$lambda[j])))
     }
   }
   r <- merge.lists(r, list(Tss=Tss))
