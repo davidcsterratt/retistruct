@@ -41,7 +41,10 @@ stdnames <- function(l) {
   nl <- names(l)
   if (length(l) >= 1) {
     ll <- paste("n", 1:length(l), sep="")
-    named <- which(nl!="" & is.na(strtoi(nl)))
+    ## Need to identify which elements are already named, i.e.
+    ## elements which are not empty, and which contain one alphabetic
+    ## character
+    named <- which(nl!="" & grepl("[[:alpha:]]", nl))
     ll[named] <- nl[named]
   } else {
     ll <- nl
