@@ -184,6 +184,7 @@ h.phi0 <- function(h, ...) {
 h.save <- function(h, ...) {
   retistruct.save.markup()
   retistruct.save.recdata()
+  retistruct.export.matlab()
   unsaved.data(FALSE)
 }
 

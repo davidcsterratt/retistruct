@@ -112,12 +112,7 @@ retistruct.batch.export.matlab <- function(tldir=".") {
     dataset <<- d
     r <<- NULL
     retistruct.read.recdata()
-    if (!is.null(r)) {
-      r <<- infer.tear.coordinates(r)
-      f <- file.path(dataset, "r.mat")
-      print(paste("Saving", f))
-      writeMat(f, phi0=phi0, Dss=r$Dss, Sss=name.list(r$Sss), Tss=name.list(r$Tss))
-    }
+    retistruct.export.matlab()
   }
 }
 

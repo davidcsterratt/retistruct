@@ -263,3 +263,17 @@ retistruct.save.recdata <- function() {
   }
 }
 
+## retistruct.export.matlab() - save selected reconstruction data to matlab
+retistruct.export.matlab <- function() {
+  if (!is.null(dataset)) {
+    if (!is.null(r)) {
+      r <<- infer.tear.coordinates(r)
+      f <- file.path(dataset, "r.mat")
+      print(paste("Saving", f))
+      writeMat(f, phi0=r$phi0, Dss=r$Dss, Sss=name.list(r$Sss), Tss=name.list(r$Tss))
+
+      save(r, file=file.path(dataset, "r.Rdata"))
+    }
+  }
+}
+
