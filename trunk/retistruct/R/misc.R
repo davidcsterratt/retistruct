@@ -52,8 +52,14 @@ stdnames <- function(l) {
   return(ll)
 }
 
-## Return a new version of the list in which any un-named elements
-## have been given standardised names
+##' <description>
+##' Return a new version of the list in which any un-named elements
+##  have been given standardised names
+##' <details>
+##' @title bla
+##' @param l 
+##' @return l
+##' @author David Sterratt
 name.list <- function(l) {
   if (is.list(l)) {
     names(l) <- stdnames(l)
