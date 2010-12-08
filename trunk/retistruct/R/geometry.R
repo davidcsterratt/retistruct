@@ -59,29 +59,33 @@ find.intersection <- function(P1, Q1, P2, Q2) {
   return(FALSE)
 }
 
+##' Determine the intersection of two lines L1 and L2 in two dimensions,
+##' using the formula described by Weisstein.
+##' 
+##' @title Determine intersection between two lines 
+##' @usage P <- line.line.intersection(P1, P2, P3, P4)
+##' @param P1 vector containing x,y coordinates of one end of L1
+##' @param P2 vector containing x,y coordinates of other end of L1
+##' @param P3 vector containing x,y coordinates of one end of L2
+##' @param P4 vector containing x,y coordinates of other end of L2
+##' @return Vector containing x,y coordinates of intersection of L1 and L2.
+##' If L1 and L2 are parallel, this is infinite-valued.
+##' @source Weisstein, Eric W. "Line-Line Intersection."
+##' From MathWorld--A Wolfram Web Resource.
+##' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
+##' @author David Sterratt
+##' @examples
+##' ## Intersection of two intersecting lines
+##' line.line.intersection(c(0, 0), c(1, 1), c(0, 1), c(1, 0))
+##'
+##' ## Two lines that don't intersect
+##' line.line.intersection(c(0, 0), c(0, 1), c(1, 0), c(1, 1))
 line.line.intersection <- function(P1, P2, P3, P4) {
   P1 <- as.vector(P1)
   P2 <- as.vector(P2)
   P3 <- as.vector(P3)
   P4 <- as.vector(P4)
 
-  D1 <- det(rbind(P1, P2))
-  D2 <- det(rbind(P3, P4))
-  DX1 <- det(rbind(c(P1[1], 1),
-                   c(P2[1], 1)))
-  DX2 <- det(rbind(c(P3[1], 1),
-                   c(P4[1], 1)))
-  DY1 <- det(rbind(c(P1[2], 1),
-                   c(P2[2], 1)))
-  DY2 <- det(rbind(c(P3[2], 1),
-                   c(P4[2], 1)))
-
-  x <- det(rbind(c(D1, DX1),
-                  c(D2, DX2)))/
-                    det(rbind(c(DX1, DY1),
-                              c(DX2, DY2)))
-
-  ## Determine whether lines intersect
   dx1 <- P1[1] - P2[1]
   dx2 <- P3[1] - P4[1]
   dy1 <- P1[2] - P2[2]
@@ -90,14 +94,16 @@ line.line.intersection <- function(P1, P2, P3, P4) {
   D <- det(rbind(c(dx1, dy1),
                  c(dx2, dy2)))
   if (D==0) {
-    return(FALSE)
-  } else {
-    X <- det(rbind(c(D1, dx1),
-                 c(D2, dx2)))/D
-    Y <- det(rbind(c(D1, dy1),
-                 c(D2, dy2)))/D
+    return(c(Inf, Inf))
   }
-  return(list(X=X, Y=Y))
+  D1 <- det(rbind(P1, P2))
+  D2 <- det(rbind(P3, P4))
+  
+  X <- det(rbind(c(D1, dx1),
+                 c(D2, dx2)))/D
+  Y <- det(rbind(c(D1, dy1),
+                 c(D2, dy2)))/D
+  return(c(X, Y))
 }
 
 ## Remove identical consecutive rows from a matrix
