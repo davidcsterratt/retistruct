@@ -59,6 +59,47 @@ find.intersection <- function(P1, Q1, P2, Q2) {
   return(FALSE)
 }
 
+line.line.intersection <- function(P1, P2, P3, P4) {
+  P1 <- as.vector(P1)
+  P2 <- as.vector(P2)
+  P3 <- as.vector(P3)
+  P4 <- as.vector(P4)
+
+  D1 <- det(rbind(P1, P2))
+  D2 <- det(rbind(P3, P4))
+  DX1 <- det(rbind(c(P1[1], 1),
+                   c(P2[1], 1)))
+  DX2 <- det(rbind(c(P3[1], 1),
+                   c(P4[1], 1)))
+  DY1 <- det(rbind(c(P1[2], 1),
+                   c(P2[2], 1)))
+  DY2 <- det(rbind(c(P3[2], 1),
+                   c(P4[2], 1)))
+
+  x <- det(rbind(c(D1, DX1),
+                  c(D2, DX2)))/
+                    det(rbind(c(DX1, DY1),
+                              c(DX2, DY2)))
+
+  ## Determine whether lines intersect
+  dx1 <- P1[1] - P2[1]
+  dx2 <- P3[1] - P4[1]
+  dy1 <- P1[2] - P2[2]
+  dy2 <- P3[2] - P4[2]
+
+  D <- det(rbind(c(dx1, dy1),
+                 c(dx2, dy2)))
+  if (D==0) {
+    return(FALSE)
+  } else {
+    X <- det(rbind(c(D1, dx1),
+                 c(D2, dx2)))/D
+    Y <- det(rbind(c(D1, dy1),
+                 c(D2, dy2)))/D
+  }
+  return(list(X=X, Y=Y))
+}
+
 ## Remove identical consecutive rows from a matrix
 ##
 ## This is simlar to unique(), but spares rows which are duplicated, but 
