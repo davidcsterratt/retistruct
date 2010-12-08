@@ -41,24 +41,6 @@ tri.area <- function(P, Pt) {
   return(abs(tri.area.signed(P, Pt)))
 }
 
-## Check whether line from P1 to Q1 and from P2 to Q2 intersect
-find.intersection <- function(P1, Q1, P2, Q2) {
-  if ((max(P1[1], Q1[1]) < min(P2[1], Q2[1])) ||
-      (min(P1[1], Q1[1]) > max(P2[1], Q2[1])) ||
-      (max(P1[2], Q1[2]) < min(P2[2], Q2[2])) ||
-      (min(P1[2], Q1[2]) > max(P2[2], Q2[2]))) {
-    return(FALSE)
-  }
-  M <- cbind(Q1-P1, -Q2+P2)
-  if (!(det(M) == 0)) {
-    lambda <- solve(M) %*% (P2-P1)
-    if (all((lambda<1) & (lambda>0))) {
-      return(list(lambda=lambda, R=(1-lambda[1])*P1 + lambda[1]*Q1))
-    }
-  }
-  return(FALSE)
-}
-
 ##' Determine the intersection of two lines L1 and L2 in two dimensions,
 ##' using the formula described by Weisstein.
 ##' 
@@ -135,16 +117,12 @@ remove.identical.consecutive.rows <- function(P) {
 remove.intersections <- function(P, d=50) {
   N <- nrow(P)
   for (i in 1:N) {
-    R <- NULL
-    fi <- find.intersection(P[i,],            P[mod1(i+1, N),],
+    R <- line.line.intersection(P[i,],            P[mod1(i+1, N),],
                             P[mod1(i+2, N),], P[mod1(i+3, N),])
-    if (is.list(fi)) {
-      R <- fi$R
-    }
     if (identical(P[mod1(i+1, N),], P[mod1(i+2, N),])) {
       R <- P[mod1(i+1, N),]
     }
-    if (!is.null(R)) {
+    if (is.finite(R[1])) {
       print("Intersection found. Old points:")
       print(P[i,])
       print(P[mod1(i+1, N),])
