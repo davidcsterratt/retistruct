@@ -45,13 +45,18 @@ tri.area <- function(P, Pt) {
 ##' using the formula described by Weisstein.
 ##' 
 ##' @title Determine intersection between two lines 
-##' @usage P <- line.line.intersection(P1, P2, P3, P4)
+##' @usage P <- line.line.intersection(P1, P2, P3, P4, interior.only=TRUE)
 ##' @param P1 vector containing x,y coordinates of one end of L1
 ##' @param P2 vector containing x,y coordinates of other end of L1
 ##' @param P3 vector containing x,y coordinates of one end of L2
 ##' @param P4 vector containing x,y coordinates of other end of L2
-##' @return Vector containing x,y coordinates of intersection of L1 and L2.
-##' If L1 and L2 are parallel, this is infinite-valued.
+##' @param interior.only boolean flag indicating whether only
+##' intersections inside L1 and L2 should be returned.
+##' @return Vector containing x,y coordinates of intersection of L1
+##' and L2.  If L1 and L2 are parallel, this is infinite-valued.  If
+##' \code{interior.only} is \code{TRUE}, then when the intersection
+##' does not occur between P1 and P2 and P3 and P4, a vector
+##' containing \code{NA}s is returned.
 ##' @source Weisstein, Eric W. "Line-Line Intersection."
 ##' From MathWorld--A Wolfram Web Resource.
 ##' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
@@ -62,7 +67,7 @@ tri.area <- function(P, Pt) {
 ##'
 ##' ## Two lines that don't intersect
 ##' line.line.intersection(c(0, 0), c(0, 1), c(1, 0), c(1, 1))
-line.line.intersection <- function(P1, P2, P3, P4) {
+line.line.intersection <- function(P1, P2, P3, P4, interior.only=FALSE) {
   P1 <- as.vector(P1)
   P2 <- as.vector(P2)
   P3 <- as.vector(P3)
@@ -85,6 +90,17 @@ line.line.intersection <- function(P1, P2, P3, P4) {
                  c(D2, dx2)))/D
   Y <- det(rbind(c(D1, dy1),
                  c(D2, dy2)))/D
+  
+  if (interior.only) {
+    ## Compute the fractions of L1 and L2 at which the intersection
+    ## occurs
+    lambda1 <- -((X-P1[1])*dx1 + (Y-P1[2])*dy1)/(dx1^2 + dy1^2)
+    lambda2 <- -((X-P3[1])*dx2 + (Y-P3[2])*dy2)/(dx2^2 + dy2^2)
+    if (!((lambda1>0) & (lambda1<1) &
+          (lambda2>0) & (lambda2<1))) {
+      return(c(NA, NA))
+    }
+  }
   return(c(X, Y))
 }
 
@@ -118,7 +134,8 @@ remove.intersections <- function(P, d=50) {
   N <- nrow(P)
   for (i in 1:N) {
     R <- line.line.intersection(P[i,],            P[mod1(i+1, N),],
-                            P[mod1(i+2, N),], P[mod1(i+3, N),])
+                                P[mod1(i+2, N),], P[mod1(i+3, N),],
+                                interior.only=TRUE)
     if (identical(P[mod1(i+1, N),], P[mod1(i+2, N),])) {
       R <- P[mod1(i+1, N),]
     }
