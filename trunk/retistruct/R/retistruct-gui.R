@@ -372,7 +372,10 @@ retistruct <- function() {
   ##
   ## GUI Layout
   ## 
-  g.win <<- gwindow(paste("Retistruct. Revision", retistruct.global.revision()))
+  g.win <<- gwindow(paste("Retistruct ",
+                          packageDescription("retistruct", fields="Version"),
+                          " (Revision", retistruct.global.revision(), ")",
+                          sep=""))
 
   g.rows <<- ggroup(horizontal=FALSE, container=g.win)
   ## Toolbar in row 1
