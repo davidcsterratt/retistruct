@@ -12,13 +12,17 @@ list.dirs <- function(path='.') {
   return(dirs)
 }
 
-## retistruct.bactch() - Recurse through a directory tree, determining
-## whether the directory contains valid raw data and markup, and
-## performing the reconstruction if it does
-##
-## tldir     - the top level of the tree through which to recurse
-## outputdir - directory in which to dump a log file and images
-##
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid raw data and markup, and performing the
+##' reconstruction if it does
+##'
+##' @title Retistruct batch operation 
+##' @param tldir the top level of the tree through which to recurse
+##' @param outputdir directory in which to dump a log file and images
+##' @param cpu.time.limit amount of CPU after which to terminate the process
+##' @param device string indicating what type of graphics output required. Options are "pdf" and "png" 
+##' @return 
+##' @author David Sterratt
 retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
                              device="pdf") {
   print(outputdir)
