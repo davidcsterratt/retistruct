@@ -173,6 +173,20 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
   }
 }
 
+##' Check that all markup is present
+##'
+##' Check that markup such as tears and the nasal or dorsal points are present
+##' @title Retistruct check markup
+##' @param  
+##' @return If all markup is present, return TRUE. Otherwise return an error string 
+##' @author David Sterratt
+retistruct.check.markup <- function() {
+  if (is.na(iD) && is.na(iN)) {
+    return(FALSE)
+  }
+  return(TRUE)
+}
+
 ## retistruct.read.recdata - read the reconstruction data, if it exists
 ##
 ## Relies on global variable dataset
@@ -203,6 +217,9 @@ retistruct.read.recdata <- function(mess=retistruct.mess) {
 retistruct.reconstruct <- function(mess=retistruct.mess,
                                    report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
+  if (!retistruct.check.markup()) {
+    stop("Neither dorsal nor nasal pole specified")
+  }
   ct <- check.tears(cbind(V0, VF, VB), gf, gb, P)
   if (length(ct)) {
     stop(paste("Invalid tears", toString(ct), "marked up. Fix using \"Move Point\"."))

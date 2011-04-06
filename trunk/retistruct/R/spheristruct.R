@@ -428,9 +428,9 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
         if ((hf[i] == i)) {
           f <- (sf/Sf*Sb-sb0)/(sb-sb0)
           retistruct.report(paste("      Creating new point: f =", f))
-          browser(expr=is.infinite(f))
+          ## browser(expr=is.infinite(f))
           p <- (1-f) * P[k0,] + f * P[k,]
-          browser(expr=any(is.nan(p)))
+          ## browser(expr=any(is.nan(p)))
 
           ## Find the index of any row of P that matches p
           n <- anyDuplicated(rbind(P, p), fromLast=TRUE) 

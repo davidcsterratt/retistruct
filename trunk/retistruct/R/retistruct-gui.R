@@ -16,7 +16,7 @@ enable.widgets <- function(state) {
   if (!retistruct.potential.od()) {
     enable.group(c(g.mark.od), FALSE)
   }
-  if (is.na(iD) && is.na(iN)) {
+  if (!retistruct.check.markup()) {
     enable.group(c(g.reconstruct), FALSE)
   }
 }
@@ -360,8 +360,8 @@ h.error <- function() {
   gmessage(geterrmessage(), title="Error", icon="error")
 }
 
-retistruct <- function() {
-  options(guiToolkit = "RGtk2")
+retistruct <- function(guiToolkit="RGtk2") {
+  options(guiToolkit=guiToolkit)
 
   ## Global variables
   dataset <<- NULL                         # Directory of dataset
