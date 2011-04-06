@@ -1064,8 +1064,7 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   report("Stitching...")
   s <- stitch.outline(t$P, t$gf, t$gb, V0, VB, VF, i0)
   if (is.null(s)) {
-    report("ERROR: Fixed point is not on the rim")
-    return(NULL)
+    stop("Fixed point is not on the rim")
   }
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
