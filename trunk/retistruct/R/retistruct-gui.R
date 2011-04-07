@@ -40,6 +40,23 @@ identify.abort.text <- function() {
   }
 }
 
+## Check poles are on rim and move if required
+fix.pole.position <- function() {
+  s <- stitch.outline(P, gf, gb, V0, VB, VF)
+  if (!is.na(iN)) {
+    if (!(iN %in% s$Rset)) {
+      gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
+      iN <<- s$Rset[which.min(abs(s$Rset - iN))]
+    }
+  }
+  if (!is.na(iD)) {
+    if (!(iD %in% s$Rset)) {
+      gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
+      iD <<- s$Rset[which.min(abs(s$Rset - iD))]
+    }
+  }
+}
+
 ## Editting handlers
 h.add <- function(h, ...) {
   unsaved.data(TRUE)
@@ -49,9 +66,11 @@ h.add <- function(h, ...) {
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=3)
   M <- markers.to.apex.vertices(id, gf, gb, P)
-  V0 <<- c(V0, M["V0"])
-  VF <<- c(VF, M["VF"])
-  VB <<- c(VB, M["VB"])
+  V0 <- c(V0, M["V0"])
+  VF <- c(VF, M["VF"])
+  VB <- c(VB, M["VB"])
+
+  fix.pole.position()
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -105,6 +124,8 @@ h.move <- function(h, ...) {
     VB[tid] <<- M["VB"]
   }
 
+  ## Make sure pole is not in tear
+  fix.pole.position()
   ## Display and cleanup
   do.plot()
   svalue(g.status) <- ""
@@ -121,6 +142,7 @@ h.mark.n <- function(h, ...) {
   id <- identify(P[,1], P[,2], n=1)
   iN <<- id
   iD <<- NA
+  fix.pole.position()
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -136,6 +158,7 @@ h.mark.d <- function(h, ...) {
   id <- identify(P[,1], P[,2], n=1)
   iD <<- id
   iN <<- NA
+  fix.pole.position()
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
