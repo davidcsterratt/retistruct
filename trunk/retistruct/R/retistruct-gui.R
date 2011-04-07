@@ -65,7 +65,7 @@ h.add <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- identify(P[,1], P[,2], n=3)
-  M <- markers.to.apex.vertices(id, gf, gb, P)
+  M <- label.tear.points(id, gf, gb, P)
   V0 <- c(V0, M["V0"])
   VF <- c(VF, M["VF"])
   VB <- c(VB, M["VB"])
@@ -118,7 +118,7 @@ h.move <- function(h, ...) {
     if (length(id)) T[tid,pid] <- id
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
-    M <- markers.to.apex.vertices(T[tid,], gf, gb, P)
+    M <- label.tear.points(T[tid,], gf, gb, P)
     V0[tid] <<- M["V0"]
     VF[tid] <<- M["VF"]
     VB[tid] <<- M["VB"]

@@ -33,21 +33,18 @@ path.length <- function(i, j, g, h, P) {
   }
 }
 
-## markers.to.apex.verties(m, gf, gb, P)
-##
-## Label a set of three unlabelled points supposed to refer to the
-## apex and vertcies of a cut and tear with the V0 (Apex), VF (forward
-## vertex) and VB (backward vertex) labels.
-##
-## Arguments:
-##   m  - the vector of three indicies
-##   gf - the forward pointer vector
-##   gb - the backward pointer vector
-##
-## Output:
-##   Vector of indicies labelled with V0, VF and VB
-##
-markers.to.apex.vertices <- function(m, gf, gb, P) {
+##' Label a set of three unlabelled points supposed to refer to the
+##' apex and vertcies of a cut and tear with the V0 (Apex), VF
+##' (forward vertex) and VB (backward vertex) labels.
+##'
+##' @title Label three outline point indicies as apicies and vertices of tear  
+##' @param m the vector of three indicies
+##' @param gf the forward pointer vector
+##' @param gb the backward pointer vector
+##' @param P the outline points arranged as a N-by-2 matrix
+##' @return Vector of indicies labelled with V0, VF and VB
+##' @author David Sterratt
+label.tear.points <- function(m, gf, gb, P) {
   ## Each row of this matrix is a permutation of the markers
   p <- rbind(c(1, 2, 3),
              c(1, 3, 2),
@@ -95,7 +92,7 @@ check.tears <- function(T, gf, gb, P) {
     for (i in 1:nrow(T)) {
       ## Extract the markers for this row
       m <- T[i, c("V0", "VF", "VB")]
-      M <- markers.to.apex.vertices(m, gf, gb, P)
+      M <- label.tear.points(m, gf, gb, P)
       if (!all(M == m)) {
         out <- c(out, i)
       }
