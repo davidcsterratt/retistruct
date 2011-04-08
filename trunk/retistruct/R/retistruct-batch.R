@@ -17,7 +17,6 @@ list.dirs <- function(path='.') {
 ##' @param outputdir directory in which to dump a log file and images
 ##' @param cpu.time.limit amount of CPU after which to terminate the process
 ##' @param device string indicating what type of graphics output required. Options are "pdf" and "png" 
-##' @return 
 ##' @author David Sterratt
 retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
                              device="pdf") {
