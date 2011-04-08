@@ -72,7 +72,7 @@ retistruct.cli.figure <- function(outputdir, device="pdf", width=6, height=6,
            width=width, height=height)
     plot.outline.flat(r$P, r$gb, axt="s")
     with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
-    plot.datapoints.flat(r$Ds)
+    plot.datapoints.flat(r$Ds, r$D.cols)
     plot.landmarks.flat(r$Ss, col="orange")
     plot.stitch.flat(r, add=TRUE)
     title(dataset)
@@ -84,7 +84,7 @@ retistruct.cli.figure <- function(outputdir, device="pdf", width=6, height=6,
     plot.polar(r$phi0*180/pi)
     if (!is.null(r$Dss)) {
       plot.outline.polar(r)
-      plot.datapoints.polar(r$Dss, cex=5)
+      plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
     }
     if (!is.null(r$Sss)) {
       plot.landmarks.polar(r$Sss, col="orange")

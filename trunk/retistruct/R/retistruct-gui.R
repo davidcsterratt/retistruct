@@ -302,7 +302,7 @@ do.plot <- function() {
   plot.outline.flat(P, gb, axt="s")
   
   if ("Datapoints" %in% svalue(g.show)) {
-    plot.datapoints.flat(Ds)
+    plot.datapoints.flat(Ds, D.cols)
   }
   
   if ("Strain" %in% svalue(g.show)) {   # Strain plot
@@ -319,7 +319,7 @@ do.plot <- function() {
     if (!is.null(r$Dss)) {
       plot.outline.polar(r)
       if ("Datapoints" %in% svalue(g.show)) {
-        plot.datapoints.polar(r$Dss, cex=5)
+        plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
       }
     }
     if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {

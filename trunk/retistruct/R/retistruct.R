@@ -75,9 +75,17 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=1000) {
   sys <<- read.sys(dataset)
 
   ## Extract datapoints
-  Ds <<- list(green=cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
-              red  =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])))
-
+  ##
+  ## At present, for the plotting functions to work, the name of each
+  ## group has to be a valid colour.
+  Ds <<- list(green =cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
+              red   =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])),
+              double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
+  D.cols <<- list(green="green",
+                  red="red",
+                  double="yellow",
+                  od="blue")
+    
   ## Extract line data
   segs <- map.to.segments(map)
 
@@ -235,7 +243,7 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
     lambda0 <<- 0
   }
   if (!is.na(iOD)) {
-    Ds[["blue"]] <<- matrix(colMeans(Ss[[iOD]]), 1, 2)
+    Ds[["od"]] <<- matrix(colMeans(Ss[[iOD]]), 1, 2)
   }
   
   r <<- NULL
@@ -245,8 +253,9 @@ retistruct.reconstruct <- function(mess=retistruct.mess,
   if (!is.null(r)) {
     r <<- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
                                                report=report)
+    r <<- merge.lists(r, list(D.cols=D.cols))
     if (!is.na(iOD)) {
-      r$EOD <<- 90 + r$Dss[["blue"]][1,"phi"] * 180/pi
+      r$EOD <<- 90 + r$Dss[["od"]][1,"phi"] * 180/pi
     }
     report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                  ";", r$nflip, "flipped triangles. OD displacement:",

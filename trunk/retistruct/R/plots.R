@@ -148,9 +148,9 @@ plot.gridlines.flat <- function(P, T, phi, lambda, Tt, phi0,
 ## Ds     - list of sets of datapoints, in which name of each set
 ##          is the colour in which to plot
 ##
-plot.datapoints.flat <- function(Ds, ...) {
+plot.datapoints.flat <- function(Ds, D.cols, ...) {
   for(col in names(Ds)) {
-    points(Ds[[col]][,1], Ds[[col]][,2], col=col, pch=20,cex=0.5, ...)
+    points(Ds[[col]][,1], Ds[[col]][,2], col=D.cols[[col]], pch=20,cex=0.5, ...)
   }
 }
 
@@ -282,7 +282,7 @@ plot.outline.spherical <- function(phi, lambda, R, gb, h, ...) {
 ## Dsc    - structure containing locations of datapoints in spherical
 ##          cartesian coordinates
 ## size   - size of the points to plot
-plot.datapoints.spherical <- function(phi, lambda, R, Dsc, size=R/10) {
+plot.datapoints.spherical <- function(phi, lambda, R, Dsc, D.cols, size=R/10) {
   for(col in names(Dsc)) {
     Dc <- Dsc[[col]]                      # Cartesian coordinates of points
 
@@ -312,12 +312,12 @@ plot.datapoints.spherical <- function(phi, lambda, R, Dsc, size=R/10) {
     x <- rbind(v2[,1], v1[,1], v3[,1])
     y <- rbind(v2[,2], v1[,2], v3[,2])
     z <- rbind(v2[,3], v1[,3], v3[,3])
-    triangles3d(inmag*x, inmag*y, inmag*z, color=col)
+    triangles3d(inmag*x, inmag*y, inmag*z, color=D.cols[[col]])
 
     x <- rbind(v1[,1], v2[,1], v3[,1])
     y <- rbind(v1[,2], v2[,2], v3[,2])
     z <- rbind(v1[,3], v2[,3], v3[,3])
-    triangles3d(outmag*x, outmag*y, outmag*z, color=col)
+    triangles3d(outmag*x, outmag*y, outmag*z, color=D.cols[[col]])
   }
 }
 
@@ -401,13 +401,13 @@ plot.outline.polar <- function(r, ...) {
 ##           The name of each element in the list is the colour in which the
 ##           datapoints in each set are plotted.
 ##
-plot.datapoints.polar <- function(Dss, pch=".", ...) {
+plot.datapoints.polar <- function(Dss, D.cols, pch=".", ...) {
   for (i in 1:length(Dss)) {
     phis    <- Dss[[i]][,"phi"]
     lambdas <- Dss[[i]][,"lambda"]
     xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
     ypos <- sin(lambdas) * ((phis * 180/pi) + 90)      
-    points(xpos, ypos, col=names(Dss)[i], pch=pch, ...)
+    points(xpos, ypos, col=D.cols[[names(Dss)[i]]], pch=pch, ...)
   }
 }
 
@@ -457,20 +457,21 @@ text.polar <- function(text) {
 ##          within that triangle in barycentric coordinates
 ## phi0   - lattitude of the rim in radians
 ## cols   - colour of points to plot for each object in cbs
-plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0, cols="red",
-                                   pch=".", ...) {
+plot.datapoints.polararea <- function(phi, lambda, R, Tt, cbs, phi0,
+                                      D.cols, cols="red",
+                                      pch=".", ...) {
   plot(NA, NA, xlim=c(-2,2), ylim=c(-2, 2))
   for (i in 1:length(cbs)) {
     cs <- datapoints.sphere.spherical(phi, lambda, R, Tt, cbs[[i]])
     ## Turn into polar coordinates, shifting round by 90 degress for plotting
     lambdas <- cs$lambda+pi/2
     p <- polar.to.cart(spherical.to.polar.area(cs$phi), lambdas)
-    points(p[,"x"], p[,"y"], pch=pch, col=cols[i], ...)
+    points(p[,"x"], p[,"y"], pch=pch, col=D.cols[[cols[i]]], ...)
 
     ## Compute mean and plot
     m <- sphere.mean.sphere(cs$phi, lambdas)
     p <- polar.to.cart(spherical.to.polar.area(m[1]), m[2])
-    points(p[,"x"], p[,"y"], col=cols[i], pch="+", ...)
+    points(p[,"x"], p[,"y"], col=D.cols[[cols[i]]], pch="+", ...)
   }
   ## Draw circular grid
   dl <- 2*pi/90
