@@ -79,7 +79,9 @@ retistruct.read.dataset <- function(mess=retistruct.mess, d.close=1000) {
   ## At present, for the plotting functions to work, the name of each
   ## group has to be a valid colour.
   Ds <<- list(green =cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
-              red   =cbind(na.omit(sys[,'XRED'])  , na.omit(sys[,'YRED'])),
+              red   =cbind(
+                na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
+                na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
               double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
   D.cols <<- list(green="green",
                   red="red",
