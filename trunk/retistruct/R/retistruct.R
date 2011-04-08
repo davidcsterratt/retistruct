@@ -1,4 +1,4 @@
-retistruct.global.revision <- 508
+retistruct.global.revision <- 513 
 
 ## Set initialised userdata in environment
 retistruct.initialise.userdata <- function() {
