@@ -1,7 +1,3 @@
-spheristruct.energy.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ## Now for the dreaded elastic error function....
 E2 <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
               E0.A=0.1, k.A=1, N, verbose=FALSE) {

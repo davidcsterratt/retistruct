@@ -1,6 +1,3 @@
-fem.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
 ## fem.R - FEM method with rotation 
 
 ## Construct B matrix for a triangle

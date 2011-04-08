@@ -16,7 +16,7 @@ if (!require("rgl"))           install.packages("rgl")
 if (!require("R.matlab"))      install.packages("R.matlab")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistruct_0.2.3.tar.gz")
+install.packages("retistruct_0.2.4.tar.gz")
 
 library(retistruct)
 retistruct()

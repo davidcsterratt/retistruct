@@ -1,7 +1,3 @@
-spheristruct.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
 path <- function(i, j, g, h) {

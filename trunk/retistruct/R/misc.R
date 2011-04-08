@@ -1,7 +1,3 @@
-misc.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ## mod1(i, N)
 ##
 ## A modulus function that returns numbers in the

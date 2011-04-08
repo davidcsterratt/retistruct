@@ -1,27 +1,4 @@
-## Return version information
-retistruct.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
-retistruct.global.revision <- function() {
-  return(max(batch.revision(),
-             common.revision(),
-             datafile.utils.revision(),
-             fem.revision(),
-             geometry.revision(),
-             misc.revision(),
-             nstiff.revision(),
-             plots.revision(),
-             retistruct.batch.revision(),
-             retistruct.cli.revision(),
-             retistruct.gui.revision(),
-             retistruct.revision(),
-             spheristruct.energy.revision(),
-             spheristruct.revision(),
-             triangle.revision(),
-             tsearch.revision(),
-             zzz.revision()))
-}
+retistruct.global.revision <- 506
 
 ## Set initialised userdata in environment
 retistruct.initialise.userdata <- function() {

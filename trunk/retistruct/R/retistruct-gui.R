@@ -1,7 +1,3 @@
-retistruct.gui.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
   for (w in widgets) {
@@ -397,7 +393,7 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## 
   g.win <<- gwindow(paste("Retistruct ",
                           packageDescription("retistruct", fields="Version"),
-                          " (Revision", retistruct.global.revision(), ")",
+                          " (Revision ", retistruct.global.revision, ")",
                           sep=""))
 
   g.rows <<- ggroup(horizontal=FALSE, container=g.win)

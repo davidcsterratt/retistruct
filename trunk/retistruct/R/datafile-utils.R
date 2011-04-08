@@ -1,7 +1,3 @@
-datafile.utils.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ## Function to return minimum and maximum values of vector x
 lim <- function(x) {
   return(c(min(x), max(x)))

@@ -1,7 +1,3 @@
-plots.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 ##
 ## Plotting functions
 ## 

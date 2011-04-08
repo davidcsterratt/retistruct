@@ -1,7 +1,3 @@
-triangle.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 triangle.check.na.nan <- function(x) {
   if (!is.null(x)) {
     if (any(is.nan(x))) {

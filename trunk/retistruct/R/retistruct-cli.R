@@ -1,7 +1,3 @@
-retistruct.cli.revision <- function() {
-  return(as.integer(gsub("Rev: ", "" ,gsub("\\$", "", "$Rev$"))))
-}
-
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
                            device="pdf") {
   setTimeLimit(cpu=cpu.time.limit)
