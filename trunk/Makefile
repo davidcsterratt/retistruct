@@ -2,18 +2,20 @@ RETISTRUCT_VERSION=$(shell grep Version retistruct/DESCRIPTION | perl -p -e "s/V
 RETISTRUCT_SVN_REVISION=$(shell svn info -R | grep "Revision:" | perl -p -e 's/Revision: //;' | sort -n -r | head -1)
 PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
 
-
-
 dist: package
 	rm -f retistruct.zip
 	zip -r retistruct.zip $(PACKAGE) matlab  doc/retistruct-manual.pdf install.R -x '*/*.svn/*'
 
-package:
-	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION)/;" retistruct/R/retistruct.R
+roxygen:
 	R CMD roxygen retistruct retistruct
+
+fix-revision:
+	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION)/;" retistruct/R/retistruct.R
+
+package: fix-revision roxygen 
 	R CMD build retistruct
 
-install:package
+install: package
 	R CMD INSTALL $(PACKAGE)
 
 revision:
