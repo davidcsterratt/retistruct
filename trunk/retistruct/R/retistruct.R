@@ -1,4 +1,4 @@
-retistruct.global.revision <- 507
+retistruct.global.revision <- 508
 
 ## Set initialised userdata in environment
 retistruct.initialise.userdata <- function() {
@@ -164,7 +164,6 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
 ##'
 ##' Check that markup such as tears and the nasal or dorsal points are present
 ##' @title Retistruct check markup
-##' @param  
 ##' @return If all markup is present, return TRUE. Otherwise return an error string 
 ##' @author David Sterratt
 retistruct.check.markup <- function() {
