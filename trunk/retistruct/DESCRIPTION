@@ -10,8 +10,7 @@ Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
 License: file LICENSE
 URL: http://www.neuralmapformation.org
-Collate: 'common.R' 'datafile-utils.R'
-    'geometry.R' 'misc.R'
-    'plots.R' 'retistruct-batch.R' 'retistruct-cli.R'
-    'retistruct-gui.R' 'retistruct.R' 'spheristruct-energy.R'
-    'spheristruct.R' 'triangle.R' 'tsearch.R' 'zzz.R'
+Collate: 'common.R' 'datafile-utils.R' 'geometry.R' 'misc.R' 'plots.R'
+    'retistruct-batch.R' 'retistruct-cli.R' 'retistruct-gui.R'
+    'retistruct.R' 'spheristruct-energy.R' 'spheristruct.R'
+    'triangle.R' 'tsearch.R' 'zzz.R'
