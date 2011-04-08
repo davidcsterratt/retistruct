@@ -384,7 +384,7 @@ retistruct <- function(guiToolkit="RGtk2") {
 
   ## Global variables
   dataset <<- NULL                         # Directory of dataset
-  initial.dir <<- "/afs/inf.ed.ac.uk/user/s/sterratt/projects/rettect/data/Anatomy/marked-up-retinae-2010-03-24/"
+  initial.dir <<- "."
 
   retistruct.initialise.userdata()
 
