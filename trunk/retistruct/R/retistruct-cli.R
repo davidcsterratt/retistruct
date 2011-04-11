@@ -20,14 +20,12 @@ retistruct.cli.process <- function(outputdir=NA, device="pdf") {
   ## Processing
   retistruct.read.dataset()
   retistruct.read.markup()
-  out <- try(retistruct.reconstruct())
+  retistruct.reconstruct()
 
   ## Output
-  if (!inherits(out, "try-error")) {
-    retistruct.save.recdata()
-    if (!is.na(outputdir)) {
-      retistruct.cli.figure(outputdir, device=device)
-    }
+  retistruct.save.recdata()
+  if (!is.na(outputdir)) {
+    retistruct.cli.figure(outputdir, device=device)
   }
 }
 
