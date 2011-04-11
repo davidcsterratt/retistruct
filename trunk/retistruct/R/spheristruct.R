@@ -155,6 +155,9 @@ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
+  if (any(P != out$P[1:nrow(P),])) {
+    stop("Points changed in triangulation")
+  }
   P <- out$P
   T <- out$T
 
