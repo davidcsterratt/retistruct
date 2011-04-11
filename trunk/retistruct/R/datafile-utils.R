@@ -1,8 +1,3 @@
-## Function to return minimum and maximum values of vector x
-lim <- function(x) {
-  return(c(min(x), max(x)))
-}
-
 ## Function to check the wether the directory in question is a data
 ## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
 ## error if the directory appears to be corrupt.
@@ -168,7 +163,7 @@ segment.length <- function(S) {
 
 ## Function to plot the "map", i.e. the outline of the retina
 plot.map <- function(map, seginfo=FALSE,
-                     xlim=lim(map[,1]), ylim=lim(map[,2])) {
+                     xlim=range(map[,1]), ylim=range(map[,2])) {
   par(mar=c(2,2,1.5,0.5))
   plot(NA, NA, xlim=xlim, ylim=ylim, xlab="", ylab="")
   segs <- map.to.segments(map)
