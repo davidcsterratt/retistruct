@@ -188,14 +188,18 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
                (d - P[T[,1],] %*% n)/((P[T[,2],] - P[T[,1],]) %*% n)))
 }
 
-## Function to convert locations of points on sphere in spherical
-## coordinates to points in 3D cartesian space
-##
-## Arguemnts:
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-sphere.spherical.to.sphere.cart <- function(phi, lambda, R) {
+
+##' Convert locations of points on sphere in spherical coordinates to
+##' points in 3D cartesian space
+##'
+##' <details>
+##' @title Convert from spherical to Cartesian coordinates
+##' @param phi vector of lattitudes of N points
+##' @param lambda vector of longitudes of N points
+##' @param R radius of sphere 
+##' @return An N-by-3 matrix in which each row is the cartesian (X, Y, Z) coordinates of each point
+##' @author David Sterratt
+sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
   P <- cbind(R*cos(phi)*cos(lambda),
              R*cos(phi)*sin(lambda),
              R*sin(phi))
@@ -233,19 +237,18 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
   return(cc)
 }
 
-## Function to convert locations on the surface of a sphere in cartesian
-## (X, Y, Z) coordinates to spherical (phi, lambda) coordinates
-##
-## Arguments:
-## Dsc    - locations of points on sphere
-## R      - radius of sphere
-##
-## Returns:
-## Matrix wtih columns ("phi" and "lambda") of new locations
-##
-sphere.cart.to.sphere.spherical <- function(Dsc, R) {
-  return(cbind(phi   =asin(Dsc[,"Z"]/R),
-               lambda=atan2(Dsc[,"Y"], Dsc[,"X"])))
+##' Convert locations on the surface of a sphere in cartesian
+##' (X, Y, Z) coordinates to spherical (phi, lambda) coordinates. 
+##'
+##' It is assumed that all points are lying on the surface of a sphere of radius R.
+##' @title Convert from Cartesian to spherical coordinates
+##' @param P locations of points on sphere as N-by-3 matrix with labelled columns "X", "Y" and "Z"
+##' @param R radius of sphere 
+##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of locations of points in spherical coordinates 
+##' @author David Sterratt
+sphere.cart.to.sphere.spherical <- function(P, R=1) {
+  return(cbind(phi   =asin(P[,"Z"]/R),
+               lambda=atan2(P[,"Y"], P[,"X"])))
 }
 
 ## Convert elevation in spherical coordinates into radius in polar
