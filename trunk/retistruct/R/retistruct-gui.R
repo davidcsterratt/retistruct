@@ -8,7 +8,7 @@ enable.group <- function(widgets, state=TRUE) {
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d, g.mark.od,
-                 g.phi0, g.show), state)
+                 g.phi0, g.show, g.data, g.eye), state)
   if (!retistruct.potential.od()) {
     enable.group(c(g.mark.od), FALSE)
   }
@@ -292,6 +292,21 @@ h.show <- function(h, ...) {
   do.plot()
 }
 
+## Handler for dealing with data
+h.data <- function(h, ...) {
+  retistruct.read.dataset()
+  DVflip <<- ("Flip DV" %in% svalue(g.data))
+  retistruct.read.markup()
+  do.plot()
+}
+
+## Handler for dealing with data
+h.eye <- function(h, ...) {
+  eye <<- svalue(g.eye)
+  do.plot()
+}
+
+
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
@@ -422,6 +437,17 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.mark.n  <<- gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
   g.mark.d  <<- gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
   g.mark.od <<- gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
+
+  ## Editting of data
+  g.data.frame <<- gframe("Data", container=g.editor, horizontal=FALSE)
+  g.data <<- gcheckboxgroup(c("Flip DV"),
+                            checked=c(FALSE),
+                            handler=h.data, container=g.data.frame)
+  g.eye.frame <<- gframe("Eye", container=g.editor, horizontal=FALSE)
+  g.eye <<- gradio(c("Right", "Left"),
+                            checked=c(FALSE),
+                            handler=h.data, container=g.eye.frame)
+  
   ## Editing of phi0
   g.phi0.frame <<- gframe("Phi0", container=g.editor)
   g.phi0 <<- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,

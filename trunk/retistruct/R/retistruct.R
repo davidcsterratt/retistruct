@@ -1,4 +1,4 @@
-retistruct.global.revision <- 513 
+retistruct.global.revision <- 520 
 
 ## Set initialised userdata in environment
 retistruct.initialise.userdata <- function() {
@@ -10,6 +10,7 @@ retistruct.initialise.userdata <- function() {
   iN <<- NA          # Index of nasal point
   iD <<- NA          # Index of dorsal point
   iOD <<- NA         # Index of segment which is Optic Disc
+  DVflip <<- FALSE   # Wether to flip the dorsoventral axis
 }
 
 ## Set constants in environment
@@ -155,8 +156,24 @@ retistruct.read.markup <- function(mess=retistruct.mess) {
     if ("iOD" %in% colnames(M)) {
       iOD <<- M[1, "iOD"]
     }
+    if ("DVflip" %in% colnames(M)) {
+      DVflip <<- M[1, "DVflip"]
+    }
   } else {
     stop("Markup file M.csv doesn't exist.")
+  }
+
+  ## Flip the data if the image was upside down
+  if (DVflip) {
+    P <<- cbind(P[,1], -P[,2])
+    Ds <<- lapply(Ds, function(P) {cbind(P[,1], -P[,2])})
+    Ss <<- lapply(Ss, function(P) {cbind(P[,1], -P[,2])})
+    gf.old <- gf
+    gf <<- gb
+    gb <<- gf.old
+    VF.old <- VF
+    VF <<- VB
+    VB <<- VF.old
   }
 }
 
@@ -250,7 +267,7 @@ retistruct.save.markup <- function() {
     write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
 
     ## Save the dorsal and nasal locations and phi0 to markup.csv
-    markup <- data.frame(iD=iD, iN=iN, phi0=phi0, iOD=iOD)    
+    markup <- data.frame(iD=iD, iN=iN, phi0=phi0, iOD=iOD, DVflip=DVflip)    
     write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
   }
 }
