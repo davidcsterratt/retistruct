@@ -5,7 +5,7 @@ Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Depends: R (>= 2.9.0), geometry, foreign, gWidgets, gWidgetsRGtk2,
-    cairoDevice, rgl, R.matlab
+    cairoDevice, rgl, R.matlab, ttutils
 Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
 License: file LICENSE
