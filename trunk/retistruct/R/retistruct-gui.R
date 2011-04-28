@@ -8,11 +8,9 @@ enable.group <- function(widgets, state=TRUE) {
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d, g.mark.od,
-                 g.phi0, g.show, g.data, g.eye), state)
-  if (!retistruct.potential.od()) {
-    enable.group(c(g.mark.od), FALSE)
-  }
-  if (!retistruct.check.markup()) {
+                 g.phi0d, g.show, g.data, g.eye), state)
+  enable.group(c(g.mark.od), retistruct.potential.od(r))
+  if (!retistruct.check.markup(r)) {
     enable.group(c(g.reconstruct), FALSE)
   }
 }
@@ -186,24 +184,25 @@ h.mark.od <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
-## Handler for setting phi0
-h.phi0 <- function(h, ...) {
+## Handler for setting phi0d
+h.phi0d <- function(h, ...) {
   unsaved.data(TRUE)
-  v <- svalue(g.phi0)
+  v <- svalue(g.phi0d)
   if (v < -80) {
     v <- -89
   }
   if (v > 89) {
     v <- 89
   }
-  phi0 <<- v
+  phi0d <<- v
+  r$phi0 <<- phi0d*pi/180
 }
 
 ## Handler for saving state
 h.save <- function(h, ...) {
-  retistruct.save.markup()
-  retistruct.save.recdata()
-  retistruct.export.matlab()
+  retistruct.save.markup(r)
+  retistruct.save.recdata(r)
+  retistruct.export.matlab(r)
   unsaved.data(FALSE)
 }
 
@@ -224,38 +223,42 @@ h.save <- function(h, ...) {
 ## 
 h.open <- function(h, ...) {
   curdir <- getwd()
-  if (is.null(dataset)) {
+  if (is.null(r$dataset)) {
     info = file.info(initial.dir)
     if (!is.na(info$isdir)) {
       setwd(initial.dir)
     }
   } else {
-    setwd(dataset)
+    setwd(r$dataset)
     setwd("..")
   } 
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
-          dataset <<- h$file
+          r$dataset <<- h$file
         })
   setwd(curdir)
 
   ## Read the raw data
-  out <- try(retistruct.read.dataset(mess=gmessage))
-  if (inherits(out, "try-error")) {
-    gmessage(out, title="Error", icon="error")
-  } else{
-    ## Read the markup
-    try(retistruct.read.markup(mess))
+  tryCatch({
+    r <<- retistruct.read.dataset(r$dataset)
+  }, warning=h.warning, error=h.error)
   
-    ## Read the reconstruction data
-    try(retistruct.read.recdata(mess=gmessage))
+  ## Read the markup
+  tryCatch({
+    r <<- retistruct.read.markup(r)
+  }, warning=h.warning, error=h.error)
+  
+  ## Read the reconstruction data
+  tryCatch({
+    r <<- retistruct.read.recdata(r)
+  }, warning=h.warning, error=h.error)
 
-    svalue(g.dataset) <- dataset 
-    svalue(g.phi0)    <- phi0
+  svalue(g.dataset) <- r$dataset 
+  svalue(g.phi0d)   <- r$phi0*180/pi
   
-    unsaved.data(FALSE)
-    enable.widgets(TRUE)
-  }
+  unsaved.data(FALSE)
+  enable.widgets(TRUE)
+
   dev.set(d2)
   plot.new()
   do.plot()
@@ -265,26 +268,12 @@ h.open <- function(h, ...) {
 h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  out <- try(retistruct.reconstruct(mess=gmessage, report=set.status,
-                        plot.3d=TRUE, dev.grid=d1, dev.polar=d2))
-  if (inherits(out, "try-error")) {
-    gmessage(out, title="Error", icon="error")
-  }
+  tryCatch({
+    r <<- retistruct.reconstruct(r, report=set.status,
+                                 plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
+  }, warning=h.warning, error=h.error)  
   enable.widgets(TRUE)
   do.plot()
-}
-
-## Unused handlers
-h.stitch.outline <- function(h, ...) {
-  s <- stitch.outline(P, cbind(V0, VB, VF))
-  dev.set(d2)
-  plot.stitch.flat(s)
-}
-
-h.triangulate.retina <- function(h, ...) {
-  out <- triangulate.outline(P, n=400)
-  dev.set(d2)
-  with(out, trimesh(T, P))
 }
 
 ## Handler for showing data
@@ -294,9 +283,9 @@ h.show <- function(h, ...) {
 
 ## Handler for dealing with data
 h.data <- function(h, ...) {
-  retistruct.read.dataset()
-  DVflip <<- ("Flip DV" %in% svalue(g.data))
-  retistruct.read.markup()
+  r <<- retistruct.read.dataset(r)
+  r$DVflip <<- ("Flip DV" %in% svalue(g.data))
+  r <<- retistruct.read.markup(r)
   do.plot()
 }
 
@@ -306,92 +295,98 @@ h.eye <- function(h, ...) {
   do.plot()
 }
 
-
 ## Plot in edit pane
 do.plot <- function() {
-  dev.set(d1)
-  plot.outline.flat(P, gb, axt="s")
-  
-  if ("Datapoints" %in% svalue(g.show)) {
-    plot.datapoints.flat(Ds, D.cols)
-  }
-  
-  if ("Strain" %in% svalue(g.show)) {   # Strain plot
-    if (!is.null(r)) {
-      dev.set(d1)
-      plot.strain.flat(r)
-      dev.set(d2)
-      plot.l.vs.L(r)
-      dev.set(d1)
-    }
-  } else {                              # Polar plot
-    dev.set(d2)
-    plot.polar(phi0)
-    if (!is.null(r$Dss)) {
-      plot.outline.polar(r)
-      if ("Datapoints" %in% svalue(g.show)) {
-        plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
-      }
-    }
-    if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
-      if (is.na(iOD)) {
-         plot.landmarks.polar(r$Sss, col="orange")
-      } else {
-        plot.landmarks.polar(r$Sss[-iOD], col="orange")
-        plot.landmarks.polar(r$Sss[iOD], col="blue")
-      }
-    }
-    if (!is.null(r$EOD)) {
-      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
-    }
+  with(r, {
     dev.set(d1)
-  }
-  
-  if ("Markup" %in% svalue(g.show)) {
-    if (length(V0) > 0) {
-      points(P[VF,,drop=FALSE], col="red", pch="+")
-      segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
-      points(P[VB,,drop=FALSE], col="orange", pch="+")
-      segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
-      points(P[V0,,drop=FALSE], col="cyan", pch="+")
-      text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
+    plot.outline.flat(P, gb, axt="s")
+    
+    if ("Datapoints" %in% svalue(g.show)) {
+      plot.datapoints.flat(Ds, D.cols)
     }
-    if (!is.na(iD)) {
-      text(P[iD,1], P[iD,2], "D")
+    
+    if ("Strain" %in% svalue(g.show)) {   # Strain plot
+      if (!is.null(r)) {
+        dev.set(d1)
+        plot.strain.flat(r)
+        dev.set(d2)
+        plot.l.vs.L(r)
+        dev.set(d1)
+      }
+    } else {                              # Polar plot
+      dev.set(d2)
+      plot.polar(phi0)
+      if (!is.null(r$Dss)) {
+        plot.outline.polar(r)
+        if ("Datapoints" %in% svalue(g.show)) {
+          plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
+        }
+      }
+      if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
+        if (is.na(r$iOD)) {
+          plot.landmarks.polar(r$Sss, col="orange")
+        } else {
+          plot.landmarks.polar(r$Sss[-iOD], col="orange")
+          plot.landmarks.polar(r$Sss[iOD], col="blue")
+        }
+      }
+      if (!is.null(r$EOD)) {
+        text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+      }
+      dev.set(d1)
     }
-    if (!is.na(iN)) {
-      text(P[iN,1], P[iN,2], "N")
+    
+    if ("Markup" %in% svalue(g.show)) {
+      if (length(V0) > 0) {
+        points(P[VF,,drop=FALSE], col="red", pch="+")
+        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
+        points(P[VB,,drop=FALSE], col="orange", pch="+")
+        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
+        points(P[V0,,drop=FALSE], col="cyan", pch="+")
+        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
+      }
+      if (!is.na(iD)) {
+        text(P[iD,1], P[iD,2], "D")
+      }
+      if (!is.na(iN)) {
+        text(P[iN,1], P[iN,2], "N")
+      }
     }
-  }
 
-  if ("Stitch" %in% svalue(g.show)) {
-    if (!is.null(r$gb)) {
-      plot.stitch.flat(r, add=TRUE)
-    }  
-  }
-
-  if ("Grid" %in% svalue(g.show)) {
-    if (!is.null(r$phi)) {
-      with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
+    if ("Stitch" %in% svalue(g.show)) {
+      if (!is.null(r$gb) && !is.null(r$TFset)) {
+        plot.stitch.flat(r, add=TRUE)
+      }  
     }
-  }
 
-  if ("Landmarks" %in% svalue(g.show)) {
-    if (is.na(iOD)) {
-      plot.landmarks.flat(Ss, col="orange")
-    } else {
-      plot.landmarks.flat(Ss[-iOD], col="orange")
-      plot.landmarks.flat(Ss[iOD], col="blue")
+    if ("Grid" %in% svalue(g.show)) {
+      if (!is.null(r$phi)) {
+        with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
+      }
     }
-  }
+
+    if ("Landmarks" %in% svalue(g.show)) {
+      if (is.na(iOD)) {
+        plot.landmarks.flat(Ss, col="orange")
+      } else {
+        plot.landmarks.flat(Ss[-iOD], col="orange")
+        plot.landmarks.flat(Ss[iOD], col="blue")
+      }
+    }
+  })
 }
 
 ## It would be nice to have error messages displayed graphically.
 ## This function should work, but has the problem that it always gives an
 ## "Error in get(\"toolkit\", inherits = TRUE) : object 'toolkit' not found\n"
 ## error itself.
-h.error <- function() {
-  gmessage(geterrmessage(), title="Error", icon="error")
+h.error <- function(e) {
+  gmessage(e, title="Error", icon="error")
+  stop(e)
+}
+
+h.warning <- function(e) {
+  gmessage(e, title="Warning", icon="warning")
 }
 
 retistruct <- function(guiToolkit="RGtk2") {
@@ -401,7 +396,9 @@ retistruct <- function(guiToolkit="RGtk2") {
   dataset <<- NULL                         # Directory of dataset
   initial.dir <<- "."
 
-  retistruct.initialise.userdata()
+  r <<- NULL
+  
+  # retistruct.initialise.userdata()
 
   ##
   ## GUI Layout
@@ -449,9 +446,9 @@ retistruct <- function(guiToolkit="RGtk2") {
                             handler=h.data, container=g.eye.frame)
   
   ## Editing of phi0
-  g.phi0.frame <<- gframe("Phi0", container=g.editor)
-  g.phi0 <<- gedit(phi0, handler=h.phi0, width=5, coerce.with=as.numeric,
-                   container=g.phi0.frame)
+  g.phi0d.frame <<- gframe("Phi0", container=g.editor)
+  g.phi0d <<- gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
+                   container=g.phi0d.frame)
 
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)

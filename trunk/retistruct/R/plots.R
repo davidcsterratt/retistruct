@@ -333,8 +333,9 @@ plot.polar <- function(phi0=40,
                        show.grid=TRUE, grid.col="gray", grid.bg="transparent",
                        grid.int.minor=15, grid.int.major=45,
                        radial.labels.major=c("N", "", "D", "", "T", "", "V", "")) {
+  phi0d <- phi0*180/pi
   par(mar=c(1, 1, 1, 1))
-  grid.pos <- c(seq(-90, phi0, by=grid.int.minor), phi0)
+  grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
   maxlength <- diff(range(grid.pos))
   plot(c(-maxlength, maxlength), c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
@@ -365,7 +366,7 @@ plot.polar <- function(phi0=40,
   segments(xpos, ypos, -xpos, -ypos, col=col)
 
   ## Tangential Labels
-  labels <- c(seq(-90, phi0, by=grid.int.major), phi0)
+  labels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
   label.pos <- labels - min(grid.pos)
   text(label.pos, -maxlength/15, labels)
 
