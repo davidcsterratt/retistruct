@@ -12,13 +12,13 @@ roxygen:
 	R CMD roxygen -d retistruct
 
 fix-revision:
-	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" retistruct/R/retistruct.R
+	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" retistruct/R/revision.R
 
 package: fix-revision roxygen 
 	R CMD build retistruct
 
 install: package
-	R CMD INSTALL $(PACKAGE)
+	R CMD INSTALL --latex $(PACKAGE) 
 
 revision:
 	@echo $(RETISTRUCT_SVN_REVISION)
