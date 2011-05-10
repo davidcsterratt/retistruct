@@ -127,7 +127,8 @@ check.tears <- function(T, gf, gb, P) {
  ##
  triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
                                 suppress.external.steiner=FALSE) {
-   S <- NA
+   ## By default, segments are outline of points in order
+   S <- cbind(1:nrow(P), c(2:nrow(P), 1))
    if (!is.null(g)) {
      S <- pointers2segments(g)
    }
