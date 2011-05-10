@@ -87,78 +87,78 @@ check.tears <- function(T, gf, gb, P) {
   if (is.matrix(T)) {
     for (i in 1:nrow(T)) {
       ## Extract the markers for this row
-      m <- T[i, c("V0", "VF", "VB")]
-      M <- label.tear.points(m, gf, gb, P)
-      if (!all(M == m)) {
-        out <- c(out, i)
-      }
-    }
-  }
-  return(out)
-}
+       m <- T[i, c("V0", "VF", "VB")]
+       M <- label.tear.points(m, gf, gb, P)
+       if (!all(M == m)) {
+         out <- c(out, i)
+       }
+     }
+   }
+   return(out)
+ }
 
-## order.Rset(Rset, gf, hf)
-##
-## It is nice to create Rset as an ordered set
-order.Rset <- function(Rset, gf, hf) {
-  ## To to this, join the path from the first two members of the set.
-  R12 <- path(Rset[1], Rset[2], gf, hf)
-  R21 <- path(Rset[2], Rset[1], gf, hf)
-  Rset <- c(R12[-1], R21[-1])
-  return(Rset)
-}
+ ## order.Rset(Rset, gf, hf)
+ ##
+ ## It is nice to create Rset as an ordered set
+ order.Rset <- function(Rset, gf, hf) {
+   ## To to this, join the path from the first two members of the set.
+   R12 <- path(Rset[1], Rset[2], gf, hf)
+   R21 <- path(Rset[2], Rset[1], gf, hf)
+   Rset <- c(R12[-1], R21[-1])
+   return(Rset)
+ }
 
-## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
-##
-## Create a triangulation of the outline defined by the points P,
-## which are represented as N*2 matrix.  If the pointer list
-## g is supplied, it is used to define the outline. There should be at least n
-## triangles in the triangulation. Correspondences for any new points added
-## are added to the h argument
-## 
-## Returns a list comprising:
-## P   - The set of new points, with the existing points at the start
-## T   - The triangulation
-## a   - Array containing area of each triangle
-## A   - Total area of outline
-## Cu  - Unique set of M connections, as M*2 matrix
-## L   - Length of each connection
-## h   - Correspondances mapping
-##
-triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
-                               suppress.external.steiner=FALSE) {
-  S <- NULL
-  if (!is.null(g)) {
-    S <- pointers2segments(g)
-  }
-  ## Make initial triangulation
-  out <- triangulate(P, S, Y=TRUE, j=TRUE, Q=TRUE)
+ ## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
+ ##
+ ## Create a triangulation of the outline defined by the points P,
+ ## which are represented as N*2 matrix.  If the pointer list
+ ## g is supplied, it is used to define the outline. There should be at least n
+ ## triangles in the triangulation. Correspondences for any new points added
+ ## are added to the h argument
+ ## 
+ ## Returns a list comprising:
+ ## P   - The set of new points, with the existing points at the start
+ ## T   - The triangulation
+ ## a   - Array containing area of each triangle
+ ## A   - Total area of outline
+ ## Cu  - Unique set of M connections, as M*2 matrix
+ ## L   - Length of each connection
+ ## h   - Correspondances mapping
+ ##
+ triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
+                                suppress.external.steiner=FALSE) {
+   S <- NA
+   if (!is.null(g)) {
+     S <- pointers2segments(g)
+   }
+   ## Make initial triangulation
+   out <- triangulate(pslg(V=P, S=S), Y=TRUE, j=TRUE, Q=TRUE)
 
-  ## Sometimes a point exists which only belongs to one segment. The
-  ## point to which it is connected, is itself connected by three
-  ## segments. We want to get rid of these points, and the easiest way
-  ## is to triangulate without the naughty points.
-  i.bad <- which(table(out$S)==1)
-  if (length(i.bad) > 0) {
-    print("Naughty points")
-    print(i.bad)
-    out <- triangulate(P[-i.bad,], S, Y=TRUE, j=TRUE, Q=TRUE)
-    P <- out$P
-  }
+   ## Sometimes a point exists which only belongs to one segment. The
+   ## point to which it is connected, is itself connected by three
+   ## segments. We want to get rid of these points, and the easiest way
+   ## is to triangulate without the naughty points.
+   i.bad <- which(table(out$S)==1)
+   if (length(i.bad) > 0) {
+     print("Naughty points")
+     print(i.bad)
+     out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
+     P <- out$V
+   }
 
-  ## Now determine the area
-  A.tot <- sum(with(out, tri.area(P, T)))
+   ## Now determine the area
+   A.tot <- sum(with(out, tri.area(P, T)))
 
-  ## Produce refined triangulation
-  if (!is.na(n)) {
-    out <- triangulate(P, S, a=A.tot/n, q=20,
+   ## Produce refined triangulation
+   if (!is.na(n)) {
+     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
   if (any(P != out$P[1:nrow(P),])) {
     stop("Points changed in triangulation")
   }
-  P <- out$P
+  P <- out$V
   T <- out$T
 
   ## Create pointers from segments

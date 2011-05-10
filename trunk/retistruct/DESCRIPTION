@@ -5,7 +5,7 @@ Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Depends: R (>= 2.9.0), geometry, foreign, gWidgets, gWidgetsRGtk2,
-    cairoDevice, rgl, R.matlab, ttutils
+    cairoDevice, rgl, R.matlab, ttutils, Triangle
 Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
 License: file LICENSE
@@ -13,4 +13,4 @@ URL: http://www.neuralmapformation.org
 Collate: 'common.R' 'datafile-utils.R' 'geometry.R' 'misc.R' 'plots.R'
     'retistruct-batch.R' 'retistruct-cli.R' 'retistruct-gui.R'
     'retistruct.R' 'revision.R' 'spheristruct-energy.R'
-    'spheristruct.R' 'triangle.R' 'tsearch.R' 'zzz.R'
+    'spheristruct.R' 'tsearch.R' 'zzz.R'

@@ -15,6 +15,7 @@ if (!require("cairoDevice"))   install.packages("cairoDevice")
 if (!require("rgl"))           install.packages("rgl")
 if (!require("R.matlab"))      install.packages("R.matlab")
 if (!require("ttutils"))       install.packages("ttutils")
+if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
 install.packages("retistruct_0.2.4.tar.gz")
