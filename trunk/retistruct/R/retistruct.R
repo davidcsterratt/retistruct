@@ -1,11 +1,6 @@
 ## Global variables
 recfile.version <- 2      # Version of reconstruction file data format
 
-## Test message function, with similar arguments to gmessage
-retistruct.mess <- function(message, title="",...) {
-  cat(paste(title, ":", message, sep=""))
-}
-
 ## Report function, with similar arguments to print
 retistruct.report <- function(message, title="",...) {
   cat(paste(message, "\n", sep=""))
