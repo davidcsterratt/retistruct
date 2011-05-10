@@ -1,19 +1,6 @@
 ## Global variables
 recfile.version <- 2      # Version of reconstruction file data format
 
-## Set initialised userdata in environment
-retistruct.initialise.userdata <- function() {
-  V0 <<- c()          # Indices of apices of tears
-  VB <<- c()         # Indices of forward verticies of tears
-  VF <<- c()         # Indices of backward verticies of tears
-  phi0 <<- 50        # Height of rim of retina in degrees
-  r <<- NULL         # Reconstruction object
-  iN <<- NA          # Index of nasal point
-  iD <<- NA          # Index of dorsal point
-  iOD <<- NA         # Index of segment which is Optic Disc
-  DVflip <<- FALSE   # Wether to flip the dorsoventral axis
-}
-
 ## Test message function, with similar arguments to gmessage
 retistruct.mess <- function(message, title="",...) {
   cat(paste(title, ":", message, sep=""))
@@ -207,6 +194,8 @@ retistruct.read.markup <- function(o) {
     o$phi0 <- M[1, "phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
       o$iOD <- M[1, "iOD"]
+    } else {
+      o$iOD <- NA
     }
     if ("DVflip" %in% colnames(M)) {
       o$DVflip <- M[1, "DVflip"]
@@ -309,10 +298,9 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                          plot.3d=plot.3d, dev.grid=dev.grid,
                          dev.polar=dev.polar))
   if (!is.null(r)) {
-    r <- infer.datapoint.landmark.coordinates(r, Ds=Ds, Ss=Ss,
-                                               report=report)
+    r <- infer.datapoint.landmark.coordinates(r, report=report)
     if (!is.na(r$iOD)) {
-      r$EOD <<- 90 + r$Dss[["od"]][1,"phi"] * 180/pi
+      r$EOD <- 90 + r$Dss[["od"]][1,"phi"] * 180/pi
     }
     report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                  ";", r$nflip, "flipped triangles. OD displacement:",
