@@ -1142,15 +1142,14 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
 ## Ssc  - Landmarks on reconstructed sphere in cartesian coordinates
 ## Sss  - Landmarks on reconstructed sphere in spherical coordinates
 ##
-infer.datapoint.landmark.coordinates <- function(r, Ds=NULL, Ss=NULL,
-                                                 report=print) {
+infer.datapoint.landmark.coordinates <- function(r, report=print) {
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
   Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
-  if (!is.null(Ds)) {
-    for (name in names(Ds)) {
-      Dsb[[name]] <- tsearchn(r$P, r$T, Ds[[name]])
+  if (!is.null(r$Ds)) {
+    for (name in names(r$Ds)) {
+      Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
       Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
@@ -1160,16 +1159,15 @@ infer.datapoint.landmark.coordinates <- function(r, Ds=NULL, Ss=NULL,
   Ssb <- list() # Landmarks in barycentric coordinates
   Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
   Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
-  if (!is.null(Ss)) {
-    for (name in names(Ss)) {
-      Ssb[[name]] <- with(r, tsearchn(P, T, Ss[[name]]))
+  if (!is.null(r$Ss)) {
+    for (name in names(r$Ss)) {
+      Ssb[[name]] <- with(r, tsearchn(P, T, r$Ss[[name]]))
       Ssc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[name]])
       Sss[[name]] <- sphere.cart.to.sphere.spherical(Ssc[[name]], r$R)
     }
   }
 
-  r <- merge.lists(r, list(Ds=Ds, Ss=Ss,
-                           Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+  r <- merge.lists(r, list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                            Ssb=Ssb, Ssc=Ssc, Sss=Sss))
 }
 
