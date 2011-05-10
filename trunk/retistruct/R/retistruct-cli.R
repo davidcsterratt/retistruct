@@ -1,8 +1,8 @@
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
                            device="pdf") {
   setTimeLimit(cpu=cpu.time.limit)
-  dataset <<- dataset
-  out <- try(retistruct.cli.process(outputdir=outputdir, device=device))
+  out <- try(retistruct.cli.process(dataset,
+                                    outputdir=outputdir, device=device))
   mess <- geterrmessage()
   if (inherits(out, "try-error")) {
     if (grepl("reached CPU time limit", mess)) {
@@ -16,16 +16,16 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
   quit(status=0)
 }
 
-retistruct.cli.process <- function(outputdir=NA, device="pdf") {
+retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
   ## Processing
-  retistruct.read.dataset()
-  retistruct.read.markup()
-  retistruct.reconstruct()
+  r <- retistruct.read.dataset(dataset)
+  r <- retistruct.read.markup(r)
+  r <- retistruct.reconstruct(r)
 
   ## Output
-  retistruct.save.recdata()
+  retistruct.save.recdata(r)
   if (!is.na(outputdir)) {
-    retistruct.cli.figure(outputdir, device=device)
+    retistruct.cli.figure(r, outputdir, device=device)
   }
 }
 
@@ -40,9 +40,10 @@ retistruct.cli.basepath <- function(dataset) {
 ## retistruct.cli.figure - Print a figure to file
 ##
 ## It requires the global variable dataset to be set
-retistruct.cli.figure <- function(outputdir, device="pdf", width=6, height=6,
+retistruct.cli.figure <- function(dataset,
+                                  outputdir, device="pdf", width=6, height=6,
                                   res=100) {
-  retistruct.read.recdata()
+  r <- retistruct.read.recdata(list(dataset=dataset))
   units <- NULL
   if (device!="pdf") {
     height <- height*res

@@ -397,8 +397,6 @@ retistruct <- function(guiToolkit="RGtk2") {
   initial.dir <<- "."
 
   r <<- NULL
-  
-  # retistruct.initialise.userdata()
 
   ##
   ## GUI Layout

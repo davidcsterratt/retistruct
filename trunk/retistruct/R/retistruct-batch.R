@@ -16,15 +16,15 @@ list.dirs <- function(path='.') {
 ##' @param tldir the top level of the tree through which to recurse
 ##' @param outputdir directory in which to dump a log file and images
 ##' @param cpu.time.limit amount of CPU after which to terminate the process
-##' @param device string indicating what type of graphics output required. Options are "pdf" and "png" 
+##' @param device string indicating what type of graphics output
+##' required. Options are "pdf" and "png".
 ##' @author David Sterratt
 retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
                              device="pdf") {
   print(outputdir)
   datasets <- list.dirs(tldir)
   logdat <- data.frame()
-  for (d in datasets) {
-    dataset <<- d
+  for (dataset in datasets) {
     Result <- ""
     ret <- -1
     logfile <- file.path(outputdir,
@@ -55,7 +55,7 @@ retistruct.cli(\"",
                         sep=""),
                       intern=FALSE, wait=TRUE)
         if (ret==0) {
-          retistruct.read.recdata()
+          r <- retistruct.read.recdata(list(dataset=dataset))
           if (!is.null(r)) {
             if (!is.null(r$EOD))       { EOD <- r$EOD      }
             if (!is.null(r$nflip))     { nflip <- r$nflip  }
@@ -88,12 +88,10 @@ retistruct.cli(\"",
 ## outputdir - directory in which to dump a log file and images
 ##
 retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
-  retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
-  for (d in datasets) {
-    print(d)
-    dataset <<- d
-    try(retistruct.cli.figure(outputdir, ...))
+  for (dataset in datasets) {
+    print(dataset)
+    try(retistruct.cli.figure(dataset, outputdir, ...))
   }
 }
 
@@ -104,14 +102,11 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
 ## tldir     - the top level of the tree through which to recurse
 ##
 retistruct.batch.export.matlab <- function(tldir=".") {
-  retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
-  for (d in datasets) {
-    print(d)
-    dataset <<- d
-    r <<- NULL
-    retistruct.read.recdata()
-    retistruct.export.matlab()
+  for (dataset in datasets) {
+    print(dataset)
+    r <- retistruct.read.recdata(list(dataset=dataset))
+    retistruct.export.matlab(r)
   }
 }
 
@@ -122,13 +117,10 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ## tldir     - the top level of the tree through which to recurse
 ##
 retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
-  retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
-  for (d in datasets) {
-    print(d)
-    dataset <<- d
-    r <<- NULL
-    retistruct.read.recdata()
+  for (dataset in datasets) {
+    print(dataset)
+    r <- retistruct.read.recdata(list(dataset=dataset))
     if (!is.null(r)) {
       f <- file.path(dataset, "r.h5")
       print(paste("Saving", f))
@@ -140,13 +132,11 @@ retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
 }
 
 retistruct.batch.testhdf <- function(tldir=".", ...) {
-  retistruct.initialise.userdata()
   datasets <- list.dirs(tldir)
   failures <- c()
   successes <- c()
-  for (d in datasets) {
-    print(d)
-    dataset <<- d
+  for (dataset in datasets) {
+    print(dataset)
     f <- file.path(dataset, "r.h5")
     if (file.exists(f)) {
       print(paste(f, "exists"))
