@@ -287,11 +287,10 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
 
   ## Now do folding itself
   r <- NULL
-  r <- with(o,
-            fold.outline(P, V0, VB, VF, phi0, i0=i0, lambda0=lambda0,
-                         report=report,
-                         plot.3d=plot.3d, dev.grid=dev.grid,
-                         dev.polar=dev.polar))
+  r <- fold.outline(o,
+                    report=report,
+                    plot.3d=plot.3d, dev.grid=dev.grid,
+                    dev.polar=dev.polar)
   if (!is.null(r)) {
     r <- infer.datapoint.landmark.coordinates(r, report=report)
     if (!is.na(r$iOD)) {

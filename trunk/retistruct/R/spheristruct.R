@@ -1020,46 +1020,79 @@ compute.strain <- function(r) {
   return(data.frame(L=L, l=l, strain=strain, logstrainnorm=logstrainnorm))
 }
 
-## Folding routine
-##
-## Input arguments:
-## P         - outline points as N-by-2 matrix
-## V0    - indicies of the apex of each tear
-## VF    - indicies of the forward vertex of each tear
-## VB    - indicies of the backward vertex of each tear
-## phi0      - lattitude of rim of partial sphere
-## i0        - index of the landmark on the rim
-## lambda0   - longitude of landmark on rim
-## n         - number of points in triangulation
-## report    - function used to report
-## plot.3d   - Whether to show 3D picture during optimisation
-## dev.grid  - device to plot grid onto. Value of NA (default)
-##             means no plotting
-## dev.polar - device to plot polar plot onto. Value of NA (default)
-##             means no plotting
-## 
-## Returns list containing:
-## 
-##
-fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
+##' Fold outline onto surface of sphere. Folding proceeds in a number
+##' of stages:
+##'
+##' \enumerate{
+##' 
+##' \item The flat object is triangulated with at least \code{n}
+##' triangles. This can introduce new vertices in the rim. 
+##'
+##' \item The triangulated object is stitched.
+##'
+##' \item The stitched object is triangulated again, but this time it
+##' is not permitted to add extra vertices to the rim.
+##'
+##' \item The corresponding points determined by the stitching process
+##' are merged to form a new set of merged points and a new
+##' triangulation.
+##'
+##' \item The merged points are projected roughly to a sphere.
+##'
+##' \item The locations of the points on the sphere are moved so as to
+##' minimise the energy function.
+##' }
+##'
+##' @title Fold outline onto surface of sphere
+##' @param o Outline list, containing the following information:\describe{
+##' \item{\code{P}}{outline points as N-by-2 matrix}
+##' \item{\code{V0}}{indicies of the apex of each tear}
+##' \item{\code{VF}}{indicies of the forward vertex of each tear}
+##' \item{\code{VB}}{indicies of the backward vertex of each tear}
+##' \item{\code{i0}}{index of the landmark on the rim}
+##' \item{\code{phi0}}{lattitude of rim of partial sphere}
+##' \item{\code{lambda0}}{longitude of landmark on rim}
+##' }
+##' @param n Number of points in triangulation.
+##' @param report Function used to report progress.
+##' @param plot.3d Whether to show 3D picture during optimisation.
+##' @param dev.grid Device to plot grid onto. Value of \code{NA} (default)
+##' means no plotting.
+##' @param dev.polar Device to plot polar plot onto. Value of NA
+##' (default) means no plotting.
+##' @return Reconstruction object containing the input information and
+##' the following modified and extra information:
+##' 
+##' \describe{
+##' \item{\code{P}}{New set of points in flattened object}
+##' \item{\code{gf}}{New set of forward pointers in flattened object}
+##' \item{\code{gb}}{New set of backward pointers in flattened object}
+##' \item{\code{phi}}{lattitude of new points on sphere}
+##' \item{\code{lambda}}{longitude of new points on sphere}
+##' \item{\code{Tt}}{New triangulation}
+##' }
+##' @author David Sterratt
+fold.outline <- function(o, 
                          n=500,
                          report=print,
                          plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
   if (!is.na(dev.polar)) {
     dev.set(dev.polar)
-    plot.polar(phi0)
+    plot.polar(o$phi0)
   }
   
   report("Triangulating...")
-  t <- triangulate.outline(P, h=1:nrow(P), n=n)
+  t <- with(o, triangulate.outline(P, h=1:nrow(P), n=n))
+  t <- merge(t, o)
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
     with(t, trimesh(T, P, col="black"))
   }
     
   report("Stitching...")
-  s <- stitch.outline(t$P, t$gf, t$gb, V0, VB, VF, i0)
+  s <- with(t, stitch.outline(P, gf, gb, V0, VB, VF, i0))
+  s <- merge(s, t)
   if (is.null(s)) {
     stop("Fixed point is not on the rim")
   }
@@ -1071,21 +1104,21 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   report("Triangulating...")  
   t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=n,
                            suppress.external.steiner=TRUE)
+  r <- merge(t, s)
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
-    plot.stitch.flat(s)
-    with(t, trimesh(T, P, col="grey", add=TRUE))
+    plot.stitch.flat(r)
+    with(r, trimesh(T, P, col="grey", add=TRUE))
   }
-  r <- merge.lists(s, t)
   r$Rset <- order.Rset(r$Rset, r$gf, r$hf)
 
   report("Merging points...")
   m <- merge.points.edges(r)
-  r <- merge.lists(r, m)
+  r <- merge(m, r)
 
   report("Projecting to sphere...")
-  p <- project.to.sphere(r, phi0=phi0*pi/180, lambda0=lambda0*pi/180)
-  r <- merge.lists(r, p)
+  p <- project.to.sphere(r, phi0=r$phi0*pi/180, lambda0=r$lambda0*pi/180)
+  r <- merge(p, r)
   
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
@@ -1113,7 +1146,7 @@ fold.outline <- function(P, V0, VB, VF, phi0=50, i0=NA, lambda0=0,
   o <- optimise.mapping(r, E0.A=E0.A,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- merge.lists(r, o)
+  r <- merge(o, r)
   ## o <- fem.optimise.mapping(r, nu=0.45,
   ##                           plot.3d=plot.3d,
   ##                           dev.grid=dev.grid, dev.polar=dev.polar)
@@ -1167,8 +1200,8 @@ infer.datapoint.landmark.coordinates <- function(r, report=print) {
     }
   }
 
-  r <- merge.lists(r, list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
-                           Ssb=Ssb, Ssc=Ssc, Sss=Sss))
+  r <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+                  Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
 }
 
 ## Infer coordinates of tears
@@ -1191,5 +1224,5 @@ infer.tear.coordinates <- function(r,
       Tss <- c(Tss, list(cbind(phi=r$phi[j], lambda=r$lambda[j])))
     }
   }
-  r <- merge.lists(r, list(Tss=Tss))
+  r <- merge(list(Tss=Tss), r)
 }
