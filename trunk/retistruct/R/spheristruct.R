@@ -1062,15 +1062,12 @@ compute.strain <- function(r) {
 ##' (default) means no plotting.
 ##' @return Reconstruction object containing the input information and
 ##' the following modified and extra information:
-##' 
-##' \describe{
 ##' \item{\code{P}}{New set of points in flattened object}
 ##' \item{\code{gf}}{New set of forward pointers in flattened object}
 ##' \item{\code{gb}}{New set of backward pointers in flattened object}
 ##' \item{\code{phi}}{lattitude of new points on sphere}
 ##' \item{\code{lambda}}{longitude of new points on sphere}
 ##' \item{\code{Tt}}{New triangulation}
-##' }
 ##' @author David Sterratt
 fold.outline <- function(o, 
                          n=500,
