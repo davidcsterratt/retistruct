@@ -20,6 +20,13 @@ package: fix-revision roxygen
 install: package
 	R CMD INSTALL --latex $(PACKAGE) 
 
+doc: package
+	rm -f retistruct.pdf
+	R CMD Rd2dvi --pdf retistruct
+
+check:
+	R CMD check $(PACKAGE)
+
 revision:
 	@echo $(RETISTRUCT_SVN_REVISION)
 	@echo $(RETISTRUCT_SVN_REVISION1)
