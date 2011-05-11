@@ -227,9 +227,6 @@ retistruct.read.markup <- function(o) {
 ##' return \code{FALSE}.
 ##' @author David Sterratt
 retistruct.check.markup <- function(o) {
-  if (!inherits(o, "outline")) {
-    return(FALSE)
-  }
   if (is.na(o$iD) && is.na(o$iN)) {
     return(FALSE)
   }
