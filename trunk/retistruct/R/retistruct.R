@@ -34,7 +34,10 @@ retistruct.report <- function(message, title="",...) {
 ##' \item{Ss}{List of landmark lines}
 ##' }
 ##' @author David Sterratt
-retistruct.read.dataset <- function(dataset, d.close=1000) {
+retistruct.read.dataset <- function(dataset, d.close=1500) {
+  ## Check to see if dataset is valid
+  check.datadir(dataset)
+  
   ## Read the raw data
   map <- read.map(dataset)
   sys <- read.sys(dataset)
