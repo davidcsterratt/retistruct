@@ -143,19 +143,20 @@ check.tears <- function(T, gf, gb, P) {
    if (length(i.bad) > 0) {
      warning(paste("Bad points:", paste(i.bad, collapse=" ")))
      out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
-     P <- out$V
    }
 
    ## Now determine the area
-   A.tot <- sum(with(out, tri.area(P, T)))
+   A.tot <- sum(with(out, tri.area(V, T)))
 
    ## Produce refined triangulation
+   P <- out$V
+   S <- out$S
    if (!is.na(n)) {
      out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
-  if (any(P != out$P[1:nrow(P),])) {
+  if (any(P != out$V[1:nrow(P),])) {
     stop("Points changed in triangulation")
   }
   P <- out$V
