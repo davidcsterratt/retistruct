@@ -135,6 +135,12 @@ check.tears <- function(T, gf, gb, P) {
    ## Make initial triangulation
    out <- triangulate(pslg(V=P, S=S), Y=TRUE, j=TRUE, Q=TRUE)
 
+   ## It can be that there are crossovers in the segments. The
+   ## triangulate() routine will reveal this as segments that are not
+   ## on a boundary. We get rid of these segments by re-triangulating,
+   ## only using boundary segments
+   out <- triangulate(pslg(V=out$V, S=out$S[out$SB==1,]), Y=TRUE, j=TRUE, Q=TRUE)
+   
    ## Sometimes a point exists which only belongs to one segment. The
    ## point to which it is connected, is itself connected by three
    ## segments. We want to get rid of these points, and the easiest way
