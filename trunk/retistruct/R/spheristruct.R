@@ -141,8 +141,7 @@ check.tears <- function(T, gf, gb, P) {
    ## is to triangulate without the naughty points.
    i.bad <- which(table(out$S)==1)
    if (length(i.bad) > 0) {
-     print("Naughty points")
-     print(i.bad)
+     warning(paste("Bad points", paste(i.bad, collapse=" ")))
      out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
      P <- out$V
    }
@@ -152,7 +151,7 @@ check.tears <- function(T, gf, gb, P) {
 
    ## Produce refined triangulation
    if (!is.na(n)) {
-     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
+     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,q
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
