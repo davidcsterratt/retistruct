@@ -302,7 +302,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   for (j in 1:M) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
-    ##retistruct.report(paste("Forward tear", j))
+    ##message(paste("Forward tear", j))
     TFset[[j]] <- mod1(path(V0[j], VF[j], gf, h), N)
     TBset[[j]] <- mod1(path(V0[j], VB[j], gb, h), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
@@ -316,7 +316,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       ## If this tear is contained in a forward tear
       if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
         i.parent[j] <- k
-        retistruct.report(paste("Tear", j, "child of forward side of tear", k))
+        message(paste("Tear", j, "child of forward side of tear", k))
         ## Set the forward pointer
         hf[VB[j]] <- VF[j]
         ## Remove the child tear points from the parent
@@ -327,7 +327,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       ## If this tear is contained in a backward tear
       if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
         i.parent[j] <- -k
-        retistruct.report(paste("Tear", j, "child of backward side of tear", k))
+        message(paste("Tear", j, "child of backward side of tear", k))
         ## Set the forward pointer
         hb[VF[j]] <- VB[j]
         ## Remove the child tear points from the parent
@@ -336,7 +336,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
       }
     }
     if (i.parent[j] == 0) {
-      retistruct.report(paste("Tear", j, "child of rim"))
+      message(paste("Tear", j, "child of rim"))
       hf[VB[j]] <- VF[j]
       hb[VF[j]] <- VB[j]
     }
@@ -396,21 +396,21 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
     ## Compute the total path length along each side of the tear
     Sf <- path.length(V0[j], VF[j], gf, hf, P)
     Sb <- path.length(V0[j], VB[j], gb, hb, P)
-    retistruct.report(paste("Tear", j, ": Sf =", Sf, "; Sb =", Sb))
+    message(paste("Tear", j, ": Sf =", Sf, "; Sb =", Sb))
 
     ## For each point in the forward path, create one in the backwards
     ## path at the same fractional location
-    retistruct.report(paste("   ", dir, " path", sep=""))
+    message(paste("   ", dir, " path", sep=""))
     for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
       sf <- path.length(V0[j], i, gf, hf, P)
       ## If the point isn't at the apex, insert a point
       if (sf > 0) {
-        retistruct.report(paste("    i =", i,
+        message(paste("    i =", i,
                                 "; sf/Sf =", sf/Sf,
                                 "; sf =", sf))
         for (k in TBset[[j]]) {
           sb <- path.length(V0[j], k, gb, hb, P)
-          retistruct.report(paste("      k =", format(k, width=4),
+          message(paste("      k =", format(k, width=4),
                                   "; sb/Sb =", sb/Sb,
                                   "; sb =", sb))
           if (sb/Sb > sf/Sf) {
@@ -423,7 +423,7 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
         ## If this point does not point to another, create a new point
         if ((hf[i] == i)) {
           f <- (sf/Sf*Sb-sb0)/(sb-sb0)
-          retistruct.report(paste("      Creating new point: f =", f))
+          message(paste("      Creating new point: f =", f))
           ## browser(expr=is.infinite(f))
           p <- (1-f) * P[k0,] + f * P[k,]
           ## browser(expr=any(is.nan(p)))
