@@ -246,7 +246,7 @@ h.open <- function(h, ...) {
   ## Read the markup
   tryCatch({
     r <<- retistruct.read.markup(r)
-  }, warning=h.warning, error=h.error)
+  }, warning=h.warning, error=h.warning)
   
   ## Read the reconstruction data
   tryCatch({
