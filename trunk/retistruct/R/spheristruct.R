@@ -151,7 +151,7 @@ check.tears <- function(T, gf, gb, P) {
 
    ## Produce refined triangulation
    if (!is.na(n)) {
-     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,q
+     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
@@ -302,7 +302,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
   for (j in 1:M) {
     ## Create sets of points for each tear and remove these points from
     ## the rim set
-    ##message(paste("Forward tear", j))
+    ## message(paste("Forward tear", j))
     TFset[[j]] <- mod1(path(V0[j], VF[j], gf, h), N)
     TBset[[j]] <- mod1(path(V0[j], VB[j], gb, h), N)
     Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
@@ -322,7 +322,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
         ## Remove the child tear points from the parent
         TFset[[k]] <- setdiff(TFset[[k]],
                               setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
-        print(TFset[[k]])
+        ## message(TFset[[k]])
       }
       ## If this tear is contained in a backward tear
       if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
@@ -400,7 +400,7 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
 
     ## For each point in the forward path, create one in the backwards
     ## path at the same fractional location
-    message(paste("   ", dir, " path", sep=""))
+    message(paste("  ", dir, " path", sep=""))
     for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
       sf <- path.length(V0[j], i, gf, hf, P)
       ## If the point isn't at the apex, insert a point
@@ -424,9 +424,7 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
         if ((hf[i] == i)) {
           f <- (sf/Sf*Sb-sb0)/(sb-sb0)
           message(paste("      Creating new point: f =", f))
-          ## browser(expr=is.infinite(f))
           p <- (1-f) * P[k0,] + f * P[k,]
-          ## browser(expr=any(is.nan(p)))
 
           ## Find the index of any row of P that matches p
           n <- anyDuplicated(rbind(P, p), fromLast=TRUE) 
@@ -446,7 +444,9 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
             h[i] <- n
             h[n] <- n
           } else {
-            warning(paste("Point", n, "already exists"))
+            message(paste("      Point", n, "already exists"))
+            h[i] <- n
+            h[n] <- n
           }
         } else {
           ## If not creating a point, set the point to point to the forward pointer 
