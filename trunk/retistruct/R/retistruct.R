@@ -83,11 +83,13 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   gb <- t$gb
   
   ## Check that P is more-or-less closed
-  if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
-    plot.map(map, TRUE)
-    points(P[c(1,nrow(P)),], col="black")
-    stop("Unable to find a closed outline.")
-  }
+  ## FIXME: not sure if this check is needed any more,
+  ## now that triangulate.outline gets rid of crossings.
+  ## if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
+  ##   plot.map(map, TRUE)
+  ##   points(P[c(1,nrow(P)),], col="black")
+  ##   stop("Unable to find a closed outline.")
+  ## }
   o <- list(dataset=dataset,
               raw=list(map=map, sys=sys),
               P=P,
@@ -227,7 +229,8 @@ retistruct.read.markup <- function(o) {
 ##' return \code{FALSE}.
 ##' @author David Sterratt
 retistruct.check.markup <- function(o) {
-  if (is.na(o$iD) && is.na(o$iN)) {
+  if ((is.null(o$iD) ||is.na(o$iD)) &&
+      (is.null(o$iN) || is.na(o$iN))) {
     return(FALSE)
   }
   return(TRUE)
@@ -263,7 +266,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
     stop("Neither dorsal nor nasal pole specified")
   }
 
-  ## Check tears are valide
+  ## Check tears are valid
   ct <- with(o, check.tears(cbind(V0, VF, VB), gf, gb, P))
   if (length(ct)) {
     stop(paste("Invalid tears", toString(ct), "marked up. Fix using \"Move Point\"."))
