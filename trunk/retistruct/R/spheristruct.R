@@ -141,7 +141,7 @@ check.tears <- function(T, gf, gb, P) {
    ## is to triangulate without the naughty points.
    i.bad <- which(table(out$S)==1)
    if (length(i.bad) > 0) {
-     warning(paste("Bad points", paste(i.bad, collapse=" ")))
+     warning(paste("Bad points:", paste(i.bad, collapse=" ")))
      out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
      P <- out$V
    }
