@@ -1,9 +1,9 @@
-AnnotatedOutline <- function(o, V0, VB, VF, phi0){
+AnnotatedOutline <- function(o){
   a <- o
   class(a) <- c("annotatedOutline", class(o))
-  a$V0 <- V0
-  a$VB <- VB
-  a$VF <- VF
-  a$phi0 <- phi0
+  a$V0 <- c()
+  a$VB <- c()
+  a$VF <- c()
+  a$phi0 <- 0
   return(a)
 }

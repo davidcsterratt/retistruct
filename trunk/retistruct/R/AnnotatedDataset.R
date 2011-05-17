@@ -1,10 +1,10 @@
-AnnotatedDataset <- function(a, iN, iD, iOD, DVflip, side){
+AnnotatedDataset <- function(a){
   class(a) <- c("annotatedDataset", class(a))
-  a$iN <- iN
-  a$iD <- iD
-  a$iOD <- iOD
-  a$DVflip <- DVflip
-  a$side <- side
+  a$iN <- NA
+  a$iD <- NA
+  a$iOD <- NA
+  a$DVflip <- FALSE
+  a$side <- "right"
   return(a)
 }
 

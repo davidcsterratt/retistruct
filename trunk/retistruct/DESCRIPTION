@@ -13,4 +13,8 @@ URL: http://www.neuralmapformation.org
 Collate: 'common.R' 'datafile-utils.R' 'geometry.R' 'misc.R' 'plots.R'
     'retistruct-batch.R' 'retistruct-cli.R' 'retistruct-gui.R'
     'retistruct.R' 'revision.R' 'spheristruct-energy.R'
-    'spheristruct.R' 'tsearch.R' 'zzz.R'
+    'spheristruct.R' 'tsearch.R' 'zzz.R' 'AnnotatedDataset.R'
+  'AnnotatedOutline.R' 'Dataset.R' 'Outline.R' 'generics.R'
+
+
+

@@ -128,6 +128,7 @@ retistruct.potential.od <- function(o) {
 ##' swapping of \code{gf}  and \code{gb} and \code{VF} and \code{VB}.
 ##' @title Read the markup data
 ##' @param o Outline object, containing \code{dataset} path
+##' @param error Function to run on error, by default \code{stop()}
 ##' @return o Outline object
 ##' \item{V0}{Indicies in \code{P} of apicies of tears}
 ##' \item{VB}{Indicies in \code{P} of backward verticies of tears}
@@ -138,7 +139,7 @@ retistruct.potential.od <- function(o) {
 ##' \item{phi0}{Angle of rim in degrees}
 ##' \item{DVflip}{Boolean variable indicating if DV axis has been flipped}
 ##' @author David Sterratt
-retistruct.read.markup <- function(o) {
+retistruct.read.markup <- function(o, error=stop) {
   ## Return index in P of closest point to x
   closest <- function(P, x) {
     if (any(is.na(x))) {
@@ -156,6 +157,9 @@ retistruct.read.markup <- function(o) {
     colnames(M) <- colnames(M.old)
     return(M)
   }
+
+  a <- AnnotatedOutline(o)
+  a <- AnnotatedDataset(a)
   
   ## Read in the old P data
   Pfile <- file.path(o$dataset, "P.csv")
@@ -170,41 +174,31 @@ retistruct.read.markup <- function(o) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     T <- convert.markup(T.old, P.old, o$P)
-    V0 <- T[,1]                       # apicies of tears
-    VB <- T[,2]                       # backward verticies
-    VF <- T[,3]                       # forward verticies
+    a$V0 <- T[,1]                       # apicies of tears
+    a$VB <- T[,2]                       # backward verticies
+    a$VF <- T[,3]                       # forward verticies
   } else {
-    stop("Tear file T.csv doesn't exist.")
+    error("Tear file T.csv doesn't exist.")
   }
   markupfile <- file.path(o$dataset, "markup.csv")
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
     M <- convert.markup(M.old, P.old, o$P)
-    iD <- M[1, "iD"]
-    iN <- M[1, "iN"]
-    phi0 <- M[1, "phi0"]*pi/180
+    a$iD <- M[1, "iD"]
+    a$iN <- M[1, "iN"]
+    a$phi0 <- M[1, "phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
-      iOD <- M[1, "iOD"]
-    } else {
-      iOD <- NA
+      a$iOD <- M[1, "iOD"]
     }
     if ("DVflip" %in% colnames(M)) {
-      DVflip <- M[1, "DVflip"]
-    } else {
-      DVflip <- FALSE
+      a$DVflip <- M[1, "DVflip"]
+      if ("side" %in% colnames(M)) {
+        a$side <- M[1, "side"]
+      }
     }
-    if ("side" %in% colnames(M)) {
-      side <- M[1, "side"]
-    } else {
-      side <- "right"
-    }
-
   } else {
-    stop("Markup file M.csv doesn't exist.")
+    error("Markup file M.csv doesn't exist.")
   }
-
-  a <- AnnotatedOutline(o, V0, VB, VF, phi0)
-  a <- AnnotatedDataset(a, iN, iD, iOD, DVflip, side)
   
   ## Flip the data if the image was upside down
   ## if (o$DVflip) {
