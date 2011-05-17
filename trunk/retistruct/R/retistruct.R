@@ -127,9 +127,9 @@ retistruct.potential.od <- function(o) {
 ##' flipped in the \eqn{y}-direction. This operation also requires the
 ##' swapping of \code{gf}  and \code{gb} and \code{VF} and \code{VB}.
 ##' @title Read the markup data
-##' @param o Outline object, containing \code{dataset} path
+##' @param o Dataset object, containing \code{dataset} path
 ##' @param error Function to run on error, by default \code{stop()}
-##' @return o Outline object
+##' @return o AnnotatedDataset object
 ##' \item{V0}{Indicies in \code{P} of apicies of tears}
 ##' \item{VB}{Indicies in \code{P} of backward verticies of tears}
 ##' \item{VF}{Indicies in \code{P} of backward verticies of tears}

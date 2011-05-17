@@ -245,7 +245,7 @@ h.open <- function(h, ...) {
   
   ## Read the markup
   tryCatch({
-    r <<- retistruct.read.markup(r, mess=message)
+    r <<- retistruct.read.markup(r, error=message)
   }, warning=h.warning, error=h.warning)
   
   ## Read the reconstruction data
@@ -308,7 +308,9 @@ h.eye <- function(h, ...) {
 ## Plot in edit pane
 do.plot <- function() {
   dev.set(d1)
-  plot.flat(r, axt="s", datapoints=("Datapoints" %in% svalue(g.show)) )
+  plot.flat(r, axt="s",
+            datapoints=("Datapoints" %in% svalue(g.show)),
+            landmarks=("Landmarks" %in% svalue(g.show)))
   with(r, {
     
     if ("Strain" %in% svalue(g.show)) {   # Strain plot
