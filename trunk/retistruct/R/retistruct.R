@@ -247,6 +247,9 @@ retistruct.read.recdata <- function(o) {
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
       r <- merge(r, o)
+      ## FIXME: Temporary measure to get plotting working
+      ## class(r) <- c("reconstructedDataset", "reconstructedOutline", "annotatedDataset", "annotatedOutline", "dataset", "outline") 
+
     }
   }
   return(r)
@@ -284,7 +287,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
 
   ## Now do folding itself
   r <- NULL
-  r <- fold.outline(o,
+  r <- ReconstructedOutline(o,
                     report=report,
                     plot.3d=plot.3d, dev.grid=dev.grid,
                     dev.polar=dev.polar)

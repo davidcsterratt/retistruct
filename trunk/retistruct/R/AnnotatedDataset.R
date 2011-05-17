@@ -4,7 +4,7 @@ AnnotatedDataset <- function(a){
   a$iD <- NA
   a$iOD <- NA
   a$DVflip <- FALSE
-  a$side <- "right"
+  a$side <- "Right"
   return(a)
 }
 

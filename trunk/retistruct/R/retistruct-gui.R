@@ -301,7 +301,7 @@ h.flipdv <- function(h, ...) {
 
 ## Handler for dealing with data
 h.eye <- function(h, ...) {
-  eye <<- svalue(g.eye)
+  r$side <<- svalue(g.eye)
   do.plot()
 }
 
@@ -323,21 +323,21 @@ do.plot <- function() {
       }
     } else {                              # Polar plot
       dev.set(d2)
-      plot.polar(phi0)
-      if (!is.null(r$Dss)) {
-        plot.outline.polar(r)
-        if ("Datapoints" %in% svalue(g.show)) {
-          plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
-        }
-      }
-      if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
-        if (is.na(r$iOD)) {
-          plot.landmarks.polar(r$Sss, col="orange")
-        } else {
-          plot.landmarks.polar(r$Sss[-iOD], col="orange")
-          plot.landmarks.polar(r$Sss[iOD], col="blue")
-        }
-      }
+      plot.polar(r, cex=5)
+      ## if (!is.null(r$Dss)) {
+      ##   plot.outline.polar(r)
+      ##   if ("Datapoints" %in% svalue(g.show)) {
+      ##     plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
+      ##   }
+      ## }
+      ## if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
+      ##   if (is.na(r$iOD)) {
+      ##     plot.landmarks.polar(r$Sss, col="orange")
+      ##   } else {
+      ##     plot.landmarks.polar(r$Sss[-iOD], col="orange")
+      ##     plot.landmarks.polar(r$Sss[iOD], col="blue")
+      ##   }
+      ## }
       if (!is.null(r$EOD)) {
         text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
       }

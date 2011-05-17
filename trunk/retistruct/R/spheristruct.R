@@ -1026,8 +1026,8 @@ compute.strain <- function(r) {
   return(data.frame(L=L, l=l, strain=strain, logstrainnorm=logstrainnorm))
 }
 
-##' Fold outline onto surface of sphere. Folding proceeds in a number
-##' of stages:
+##' Reconstruct outline into spherical surface. Reconstruction
+##' proceeds in a number of stages:
 ##'
 ##' \enumerate{
 ##' 
@@ -1049,7 +1049,7 @@ compute.strain <- function(r) {
 ##' minimise the energy function.
 ##' }
 ##'
-##' @title Fold outline onto surface of sphere
+##' @title Reconstruct outline into spherical surface
 ##' @param o Outline list, containing the following information:\describe{
 ##' \item{\code{P}}{outline points as N-by-2 matrix}
 ##' \item{\code{V0}}{indicies of the apex of each tear}
@@ -1075,7 +1075,7 @@ compute.strain <- function(r) {
 ##' \item{\code{lambda}}{longitude of new points on sphere}
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
-fold.outline <- function(o, 
+ReconstructedOutline <- function(o, 
                          n=500,
                          report=print,
                          plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
@@ -1159,6 +1159,7 @@ fold.outline <- function(o,
   
   report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                ";", r$nflip, "flipped triangles."))
+  class(r) <- c("reconstructedDataset", class(r))
   return(r)
 }
 
