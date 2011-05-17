@@ -245,7 +245,7 @@ h.open <- function(h, ...) {
   
   ## Read the markup
   tryCatch({
-    r <<- retistruct.read.markup(r)
+    r <<- retistruct.read.markup(r, mess=message)
   }, warning=h.warning, error=h.warning)
   
   ## Read the reconstruction data
@@ -284,8 +284,18 @@ h.show <- function(h, ...) {
 ## Handler for dealing with data
 h.data <- function(h, ...) {
   r <<- retistruct.read.dataset(r)
-  r$DVflip <<- ("Flip DV" %in% svalue(g.data))
   r <<- retistruct.read.markup(r)
+  if (inherits(r, "annotatedDataset")) {
+    svalue(g.data) <- ifelse(r$DVflip, "Flip DV", "")
+  } else {
+    r$DVflip <<- svalue(g.data)
+  }
+  svalue(g.eye) <- r$side
+  do.plot()
+}
+
+h.flipdv <- function(h, ...) {
+  r$DVflip <<- ("Flip DV" %in% svalue(g.data))
   do.plot()
 }
 
@@ -297,13 +307,9 @@ h.eye <- function(h, ...) {
 
 ## Plot in edit pane
 do.plot <- function() {
+  dev.set(d1)
+  plot.flat(r, axt="s", datapoints=("Datapoints" %in% svalue(g.show)) )
   with(r, {
-    dev.set(d1)
-    plot.outline.flat(P, gb, axt="s")
-    
-    if ("Datapoints" %in% svalue(g.show)) {
-      plot.datapoints.flat(Ds, D.cols)
-    }
     
     if ("Strain" %in% svalue(g.show)) {   # Strain plot
       if (!is.null(r)) {
@@ -437,7 +443,7 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.data.frame <<- gframe("Data", container=g.editor, horizontal=FALSE)
   g.data <<- gcheckboxgroup(c("Flip DV"),
                             checked=c(FALSE),
-                            handler=h.data, container=g.data.frame)
+                            handler=h.flipdv, container=g.data.frame)
   g.eye.frame <<- gframe("Eye", container=g.editor, horizontal=FALSE)
   g.eye <<- gradio(c("Right", "Left"),
                             checked=c(FALSE),
