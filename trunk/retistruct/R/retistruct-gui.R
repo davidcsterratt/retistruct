@@ -35,20 +35,22 @@ identify.abort.text <- function() {
 }
 
 ## Check poles are on rim and move if required
-fix.pole.position <- function() {
-  s <- stitch.outline(P, gf, gb, V0, VB, VF)
-  if (!is.na(iN)) {
-    if (!(iN %in% s$Rset)) {
-      gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
-      iN <<- s$Rset[which.min(abs(s$Rset - iN))]
+fix.pole.position <- function(r) {
+  with(r, {
+    s <- stitch.outline(P, gf, gb, V0, VB, VF)
+    if (!is.na(iN)) {
+      if (!(iN %in% s$Rset)) {
+        gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
+        iN <<- s$Rset[which.min(abs(s$Rset - iN))]
+      }
     }
-  }
-  if (!is.na(iD)) {
-    if (!(iD %in% s$Rset)) {
-      gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
-      iD <<- s$Rset[which.min(abs(s$Rset - iD))]
+    if (!is.na(iD)) {
+      if (!(iD %in% s$Rset)) {
+        gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
+        iD <<- s$Rset[which.min(abs(s$Rset - iD))]
+      }
     }
-  }
+  })
 }
 
 ## Editting handlers
@@ -96,10 +98,11 @@ h.move <- function(h, ...) {
   ## Find the intial point
   svalue(g.status) <- paste("Click on apex or vertex to move.",
                             identify.abort.text())
-  id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-
+  id <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
+  print(id)
+  
   ## Locate tear in which the point occurs
-  T <- cbind(V0, VF, VB)                 # Tear matrix
+  T <- with(r, cbind(V0, VF, VB))       # Tear matrix
   tid <- which(apply(id==T, 1, any))[1]
   pid <- which(id==T[tid,])[1]
 
@@ -107,19 +110,20 @@ h.move <- function(h, ...) {
   if (length(tid)) {
     svalue(g.status) <- paste("Click on point to move it to.",
                             identify.abort.text())
-    points(P[T[tid,pid],1], P[T[tid,pid],2], col="yellow")
-    id <- identify(P[,1], P[,2], n=1)
+    points(r$P[T[tid,pid],1], r$P[T[tid,pid],2], col="yellow")
+    id <- with(r, identify(P[,1], P[,2], n=1))
+    print(id)
     if (length(id)) T[tid,pid] <- id
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
-    M <- label.tear.points(T[tid,], gf, gb, P)
-    V0[tid] <<- M["V0"]
-    VF[tid] <<- M["VF"]
-    VB[tid] <<- M["VB"]
+    M <- with(r, label.tear.points(T[tid,], gf, gb, P))
+    r$V0[tid] <<- M["V0"]
+    r$VF[tid] <<- M["VF"]
+    r$VB[tid] <<- M["VB"]
   }
 
   ## Make sure pole is not in tear
-  fix.pole.position()
+  fix.pole.position(r)
   ## Display and cleanup
   do.plot()
   svalue(g.status) <- ""
