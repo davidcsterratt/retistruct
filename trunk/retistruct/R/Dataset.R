@@ -12,15 +12,13 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
 plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
-  args$datapoints <- NULL
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
-  args$landmarks <- NULL
 
-  plot.flat.outline(d, axt=axt, ylim=ylim, ...=as.pairlist(args))
+  plot.flat.outline(d, axt=axt, ylim=ylim, ...)
   if (plot.datapoints) {
     with(d, {
       for(col in names(Ds)) {
-        points(Ds[[col]][,1], Ds[[col]][,2], col=cols[[col]], pch=20,cex=0.5, ...=as.pairlist(args))
+        suppressWarnings(points(Ds[[col]][,1], Ds[[col]][,2], col=cols[[col]], pch=20,cex=0.5, ...))
       }
     })
   }
@@ -28,7 +26,7 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
     with(d, {
       if (length(Ss) > 0) {
         for(i in 1:length(Ss)) {
-          lines(Ss[[i]][,1], Ss[[i]][,2], ...)
+          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2], ...))
         }
       }
     })

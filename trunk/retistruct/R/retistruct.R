@@ -1,5 +1,5 @@
 ## Global variables
-recfile.version <- 2      # Version of reconstruction file data format
+recfile.version <- 3      # Version of reconstruction file data format
 
 ## Report function, with similar arguments to print
 retistruct.report <- function(message, title="",...) {
