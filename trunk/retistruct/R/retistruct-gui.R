@@ -36,21 +36,19 @@ identify.abort.text <- function() {
 
 ## Check poles are on rim and move if required
 fix.pole.position <- function(r) {
-  with(r, {
-    s <- stitch.outline(P, gf, gb, V0, VB, VF)
-    if (!is.na(iN)) {
-      if (!(iN %in% s$Rset)) {
-        gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
-        iN <<- s$Rset[which.min(abs(s$Rset - iN))]
-      }
+  s <- with(r, stitch.outline(P, gf, gb, V0, VB, VF))
+  if (!is.na(r$iN)) {
+    if (!(r$iN %in% s$Rset)) {
+      gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
+      r$iN <<- s$Rset[which.min(abs(s$Rset - iN))]
     }
-    if (!is.na(iD)) {
-      if (!(iD %in% s$Rset)) {
-        gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
-        iD <<- s$Rset[which.min(abs(s$Rset - iD))]
-      }
+  }
+  if (!is.na(r$iD)) {
+    if (!(r$iD %in% s$Rset)) {
+      gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
+      r$iD <<- s$Rset[which.min(abs(s$Rset - iD))]
     }
-  })
+  }
 }
 
 ## Editting handlers
@@ -60,13 +58,9 @@ h.add <- function(h, ...) {
   svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                             identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=3)
-  M <- label.tear.points(id, gf, gb, P)
-  V0 <- c(V0, M["V0"])
-  VF <- c(VF, M["VF"])
-  VB <- c(VB, M["VB"])
-
-  fix.pole.position()
+  id <- with(r, identify(P[,1], P[,2], n=3))
+  r <<- addTear(r, id)
+  fix.pole.position(r)
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
