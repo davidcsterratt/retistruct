@@ -77,10 +77,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   }
   
   ## Create forward and backward pointers
-  t <- triangulate.outline(P, n=NA)
-  P <- t$P
-  gf <- t$gf
-  gb <- t$gb
+  o <- Outline(P)
   
   ## Check that P is more-or-less closed
   ## FIXME: not sure if this check is needed any more,
@@ -90,15 +87,9 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   ##   points(P[c(1,nrow(P)),], col="black")
   ##   stop("Unable to find a closed outline.")
   ## }
-  o <- list(dataset=dataset,
-              raw=list(map=map, sys=sys),
-              P=P,
-              gf=gf,
-              gb=gb,
-              Ds=Ds,
-              Ss=Ss)
-  class(o) <- c("outline", "list")
-  return(o)
+
+  d <- Dataset(o, dataset, Ds, Ss, cols=D.cols, raw)
+  return(d)
 }
 
 ##' Test the oputline object \code{o} for the prescense of
@@ -179,9 +170,9 @@ retistruct.read.markup <- function(o) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     T <- convert.markup(T.old, P.old, o$P)
-    o$V0 <- T[,1]                       # apicies of tears
-    o$VB <- T[,2]                       # backward verticies
-    o$VF <- T[,3]                       # forward verticies
+    V0 <- T[,1]                       # apicies of tears
+    VB <- T[,2]                       # backward verticies
+    VF <- T[,3]                       # forward verticies
   } else {
     stop("Tear file T.csv doesn't exist.")
   }
@@ -189,36 +180,45 @@ retistruct.read.markup <- function(o) {
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
     M <- convert.markup(M.old, P.old, o$P)
-    o$iD <- M[1, "iD"]
-    o$iN <- M[1, "iN"]
-    o$phi0 <- M[1, "phi0"]*pi/180
+    iD <- M[1, "iD"]
+    iN <- M[1, "iN"]
+    phi0 <- M[1, "phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
-      o$iOD <- M[1, "iOD"]
+      iOD <- M[1, "iOD"]
     } else {
-      o$iOD <- NA
+      iOD <- NA
     }
     if ("DVflip" %in% colnames(M)) {
-      o$DVflip <- M[1, "DVflip"]
+      DVflip <- M[1, "DVflip"]
     } else {
-      o$DVflip <- FALSE
+      DVflip <- FALSE
     }
+    if ("side" %in% colnames(M)) {
+      side <- M[1, "side"]
+    } else {
+      side <- "right"
+    }
+
   } else {
     stop("Markup file M.csv doesn't exist.")
   }
 
+  a <- AnnotatedOutline(o, V0, VB, VF, phi0)
+  a <- AnnotatedDataset(a, iN, iD, iOD, DVflip, side)
+  
   ## Flip the data if the image was upside down
-  if (o$DVflip) {
-    o$P    <- cbind(o$P[,1], -o$P[,2])
-    o$Ds   <- lapply(o$Ds, function(P) {cbind(P[,1], -P[,2])})
-    o$Ss   <- lapply(o$Ss, function(P) {cbind(P[,1], -P[,2])})
-    gf.old <- o$gf
-    o$gf   <- o$gb
-    o$gb   <- gf.old
-    VF.old <- o$VF
-    o$VF   <- o$VB
-    o$VB   <- VF.old
-  }
-  return(o)
+  ## if (o$DVflip) {
+  ##   o$P    <- cbind(o$P[,1], -o$P[,2])
+  ##   o$Ds   <- lapply(o$Ds, function(P) {cbind(P[,1], -P[,2])})
+  ##   o$Ss   <- lapply(o$Ss, function(P) {cbind(P[,1], -P[,2])})
+  ##   gf.old <- o$gf
+  ##   o$gf   <- o$gb
+  ##   o$gb   <- gf.old
+  ##   VF.old <- o$VF
+  ##   o$VF   <- o$VB
+  ##   o$VB   <- VF.old
+  ## }
+  return(a)
 }
 
 ##' Check that markup such as tears and the nasal or dorsal points are present.
