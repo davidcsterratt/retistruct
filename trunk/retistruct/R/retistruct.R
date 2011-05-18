@@ -262,9 +262,9 @@ retistruct.read.recdata <- function(o) {
 retistruct.reconstruct <- function(o, report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Check that markup is there
-  if (!retistruct.check.markup(o)) {
-    stop("Neither dorsal nor nasal pole specified")
-  }
+  ## if (!retistruct.check.markup(o)) {
+  ##   stop("Neither dorsal nor nasal pole specified")
+  ## }
 
   ## Check tears are valid
   ct <- checkTears(o)
@@ -273,15 +273,12 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   }
 
   ## Set up fixed point 
-  o$i0 <- 0
   o$lambda0 <- 0
   ## Case of dorsal point specified...
-  if (!is.na(o$iD)) {
-    o$i0 <- o$iD
+  if (names(o$i0)[1]=="Dorsal") {
     o$lambda0 <- 90
   }
-  if (!is.na(o$iN)) {
-    o$i0 <- o$iN
+  if (names(o$i0)[1]=="Nasal") {
     o$lambda0 <- 0
   }
   if (!is.na(o$iOD)) {
