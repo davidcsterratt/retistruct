@@ -216,89 +216,36 @@ path.length <- function(i, j, g, h, P) {
 ## hb    - correspondence mapping in backward direction for
 ##         points on boundary
 ##
-stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
-  ## FIXME: Much of the first part of this function should be replaced
-  ## with computeTearRelationships()
+stitch.outline <- function(a) {
   
-  ## Create initial sets of correspondances
-  N <- nrow(P)                          # Number of points
-  h <- 1:N                              # Initial correspondences
-  hf <- h
-  hb <- h
-  M <- length(V0)                       # Number of tears
-  i.parent <- rep(0, M)                 # Index of parent tear.
-                                        # Is 0 if root otherwise
-                                        # index of tear if in forward side
-                                        # or negative index if in backward side 
-
-  ## Initialise the set of points in the rim
-  ## We don't assume that P is the entire set of points; instead
-  ## get this information from the pointer list.
-  Rset <- na.omit(gf)
-  
-  ## Create lists of forward and backward tears
-  TFset <- list()
-  TBset <- list()
-  
-  ## Iterate through the tears to create tear sets and rim set
-  for (j in 1:M) {
-    ## Create sets of points for each tear and remove these points from
-    ## the rim set
-    ## message(paste("Forward tear", j))
-    TFset[[j]] <- mod1(path(V0[j], VF[j], gf, h), N)
-    TBset[[j]] <- mod1(path(V0[j], VB[j], gb, h), N)
-    Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
-    Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
-  }
-
-  ## Search for parent tears
-  ## Go through all tears
-  for (j in 1:M) {
-    for (k in setdiff(1:M, j)) {
-      ## If this tear is contained in a forward tear
-      if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
-        i.parent[j] <- k
-        message(paste("Tear", j, "child of forward side of tear", k))
-        ## Set the forward pointer
-        hf[VB[j]] <- VF[j]
-        ## Remove the child tear points from the parent
-        TFset[[k]] <- setdiff(TFset[[k]],
-                              setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
-        ## message(TFset[[k]])
-      }
-      ## If this tear is contained in a backward tear
-      if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
-        i.parent[j] <- -k
-        message(paste("Tear", j, "child of backward side of tear", k))
-        ## Set the forward pointer
-        hb[VF[j]] <- VB[j]
-        ## Remove the child tear points from the parent
-        TBset[[k]] <- setdiff(TBset[[k]],
-                              setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
-      }
-    }
-    if (i.parent[j] == 0) {
-      message(paste("Tear", j, "child of rim"))
-      hf[VB[j]] <- VF[j]
-      hb[VF[j]] <- VB[j]
-    }
-  }
+  r <- computeTearRelationships(a, a$V0, a$VB, a$VF)
 
   ## If not set, set the landmark marker index. Otherwise
   ## check it
-  if (is.na(i0)) {
-    i0 <- Rset[1]
-  } else {
-    if (!(i0 %in% Rset)) {
-      return(NULL)
-    }
+  Rset <- r$Rset
+  if (!(a$i0 %in% Rset)) {
+    print(a$i0)
+    print(Rset)
+    stop("Fixed Point is not in rim")
   }
 
+  P <- a$P
+  V0 <- a$V0
+  VF <- a$VF
+  VB <- a$VB
+  TFset <- r$TFset
+  TBset <- r$TBset
+  gf <- a$gf
+  gb <- a$gb
+  hf <- r$hf
+  hb <- r$hb
+  h <- r$h
+  
   ## Insert points on the backward tears corresponding to points on
   ## the forward tears
   sF <-      stitch.insert.points(P, V0, VF, VB, TFset, TBset,
-                                  gf, gb, hf, hb, h,
-                                  "Forwards")
+                                               gf, gb, hf, hb, h,
+                                               "Forwards")
 
   ## Insert points on the forward tears corresponding to points on
   ## the backward tears
@@ -322,7 +269,7 @@ stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
    h <- h[h]
   }
   
-  return(list(Rset=Rset, i0=i0,
+  return(list(Rset=Rset, i0=a$i0,
               VF=VF, VB=VB, V0=V0,
               TFset=TFset, TBset=TBset,
               P=P, h=h, hf=hf, hb=hb,
@@ -1029,11 +976,8 @@ ReconstructedOutline <- function(o,
   }
     
   report("Stitching...")
-  s <- with(t, stitch.outline(P, gf, gb, V0, VB, VF, i0))
+  s <- stitch.outline(t)
   s <- merge(s, t)
-  if (is.null(s)) {
-    stop("Fixed point is not on the rim")
-  }
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
     plot.stitch.flat(s)
