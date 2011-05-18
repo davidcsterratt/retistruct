@@ -217,6 +217,9 @@ path.length <- function(i, j, g, h, P) {
 ##         points on boundary
 ##
 stitch.outline <- function(P, gf, gb, V0, VB, VF, i0=NA) {
+  ## FIXME: Much of the first part of this function should be replaced
+  ## with computeTearRelationships()
+  
   ## Create initial sets of correspondances
   N <- nrow(P)                          # Number of points
   h <- 1:N                              # Initial correspondences

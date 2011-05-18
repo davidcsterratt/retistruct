@@ -59,7 +59,9 @@ h.add <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   pids <- with(r, identify(P[,1], P[,2], n=3))
-  r <<- addTear(r, pids)
+  tryCatch({
+    r <<- addTear(r, pids)
+  }, warning=h.warning, error=h.warning)
   fix.pole.position(r)
   do.plot()
   svalue(g.status) <- ""
