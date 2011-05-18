@@ -34,23 +34,6 @@ identify.abort.text <- function() {
   }
 }
 
-## Check poles are on rim and move if required
-fix.pole.position <- function(r) {
-  s <- with(r, stitch.outline(P, gf, gb, V0, VB, VF))
-  if (!is.na(r$iN)) {
-    if (!(r$iN %in% s$Rset)) {
-      gmessage("Nasal pole has been moved to be in the rim", title="Warning", icon="warning")
-      r$iN <<- s$Rset[which.min(abs(s$Rset - iN))]
-    }
-  }
-  if (!is.na(r$iD)) {
-    if (!(r$iD %in% s$Rset)) {
-      gmessage("Dorsal pole has been moved to be in the rim", title="Warning", icon="warning")
-      r$iD <<- s$Rset[which.min(abs(s$Rset - iD))]
-    }
-  }
-}
-
 ## Editting handlers
 h.add <- function(h, ...) {
   unsaved.data(TRUE)
@@ -67,6 +50,7 @@ h.add <- function(h, ...) {
   enable.widgets(TRUE)
 }
 
+## Handler for removing points
 h.remove <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
@@ -194,8 +178,7 @@ h.phi0d <- function(h, ...) {
   if (v > 89) {
     v <- 89
   }
-  phi0d <<- v
-  r$phi0 <<- phi0d*pi/180
+  r$phi0 <<- v*pi/180
 }
 
 ## Handler for saving state
@@ -207,17 +190,8 @@ h.save <- function(h, ...) {
 }
 
 ## Handler for brining up a file dialogue to open a dataset
-## 
-## Changes the following global variables:
-##   dataset - directory in which data is contained
-##   map     - the map data
-##   Ds      - list of datapoints
-##   P       - the outline
-##   gf      - forward pointers
-##   gb      - backward pointers
-##   V0      - tear apices
-##   VF      - tear forward verticies
-##   VB      - tear backward verticies
+##
+## Changes the global objec r
 ##
 ## Produces a plot of the retina in device d1
 ## 
@@ -281,19 +255,7 @@ h.show <- function(h, ...) {
   do.plot()
 }
 
-## Handler for dealing with data
-h.data <- function(h, ...) {
-  r <<- retistruct.read.dataset(r)
-  r <<- retistruct.read.markup(r)
-  if (inherits(r, "annotatedDataset")) {
-    svalue(g.data) <- ifelse(r$DVflip, "Flip DV", "")
-  } else {
-    r$DVflip <<- svalue(g.data)
-  }
-  svalue(g.eye) <- r$side
-  do.plot()
-}
-
+## Handler for flipping DV axis
 h.flipdv <- function(h, ...) {
   r$DVflip <<- ("Flip DV" %in% svalue(g.data))
   do.plot()
@@ -313,7 +275,6 @@ do.plot <- function() {
             landmarks=("Landmarks" %in% svalue(g.show)),
             markup=("Markup" %in% svalue(g.show)))
   with(r, {
-    
     if ("Strain" %in% svalue(g.show)) {   # Strain plot
       if (!is.null(r)) {
         dev.set(d1)
@@ -368,10 +329,12 @@ h.error <- function(e) {
   stop(e)
 }
 
+## Warning message
 h.warning <- function(e) {
   gmessage(e, title="Warning", icon="warning")
 }
 
+## The GUI itself
 retistruct <- function(guiToolkit="RGtk2") {
   options(guiToolkit=guiToolkit)
 
@@ -424,7 +387,7 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.eye.frame <<- gframe("Eye", container=g.editor, horizontal=FALSE)
   g.eye <<- gradio(c("Right", "Left"),
                             checked=c(FALSE),
-                            handler=h.data, container=g.eye.frame)
+                            handler=h.eye, container=g.eye.frame)
   
   ## Editing of phi0
   g.phi0d.frame <<- gframe("Phi0", container=g.editor)
