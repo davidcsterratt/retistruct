@@ -264,7 +264,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   }
 
   ## Check tears are valid
-  ct <- with(o, check.tears(cbind(V0, VF, VB), gf, gb, P))
+  ct <- checkTears(o)
   if (length(ct)) {
     stop(paste("Invalid tears", toString(ct), "marked up. Fix using \"Move Point\"."))
   }

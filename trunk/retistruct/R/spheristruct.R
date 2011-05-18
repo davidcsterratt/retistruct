@@ -29,30 +29,6 @@ path.length <- function(i, j, g, h, P) {
   }
 }
 
-## Check that tears are all in the correct direction
-##
-## Given a tear matrix T with columns "V0", "VF", and "VB", check that
-## all tears are correct.
-##
-## Output:
-##   If all is OK, returns empty vector
-##   If not, returns indicies of problematic tears
-##
-check.tears <- function(T, gf, gb, P) {
-  out <- c()
-  if (is.matrix(T)) {
-    for (i in 1:nrow(T)) {
-      ## Extract the markers for this row
-       m <- T[i, c("V0", "VF", "VB")]
-       M <- label.tear.points(m, gf, gb, P)
-       if (!all(M == m)) {
-         out <- c(out, i)
-       }
-     }
-   }
-   return(out)
- }
-
  ## order.Rset(Rset, gf, hf)
  ##
  ## It is nice to create Rset as an ordered set

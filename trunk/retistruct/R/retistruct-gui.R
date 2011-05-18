@@ -58,8 +58,8 @@ h.add <- function(h, ...) {
   svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                             identify.abort.text())
   dev.set(d1)
-  id <- with(r, identify(P[,1], P[,2], n=3))
-  r <<- addTear(r, id)
+  pids <- with(r, identify(P[,1], P[,2], n=3))
+  r <<- addTear(r, pids)
   fix.pole.position(r)
   do.plot()
   svalue(g.status) <- ""
@@ -72,13 +72,8 @@ h.remove <- function(h, ...) {
   svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                             identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-  tid <- which(id==V0)
-  if (length(tid) == 1) {
-    V0 <<- V0[-tid]
-    VF <<- VF[-tid]
-    VB <<- VB[-tid]
-  }
+  id <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
+  r <<- removeTear(r, whichTear(r, id))
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -92,28 +87,33 @@ h.move <- function(h, ...) {
   ## Find the intial point
   svalue(g.status) <- paste("Click on apex or vertex to move.",
                             identify.abort.text())
-  id <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
-  print(id)
+  id1 <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
   
-  ## Locate tear in which the point occurs
-  T <- with(r, cbind(V0, VF, VB))       # Tear matrix
-  tid <- which(apply(id==T, 1, any))[1]
-  pid <- which(id==T[tid,])[1]
+  ## Locate tear ID in which the point occurs
+  tid <- whichTear(r, id1)
 
   ## If there is a tear in which it occurs, select a point to move it to
-  if (length(tid)) {
+  if (!is.na(tid)) {
     svalue(g.status) <- paste("Click on point to move it to.",
                             identify.abort.text())
-    points(r$P[T[tid,pid],1], r$P[T[tid,pid],2], col="yellow")
-    id <- with(r, identify(P[,1], P[,2], n=1))
-    print(id)
-    if (length(id)) T[tid,pid] <- id
+
+    ## Label first point
+    with(r, points(P[id1,1], P[id1,2], col="yellow"))
+
+    ## Select second point
+    id2 <- with(r, identify(P[,1], P[,2], n=1))
+
+    ## Get point ids of exsiting tear
+    pids <- getTear(r, tid)
+
+    ## Replace old point with desired new point
+    if (length(id2)) pids[pids==id1] <- id2
+
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
-    M <- with(r, label.tear.points(T[tid,], gf, gb, P))
-    r$V0[tid] <<- M["V0"]
-    r$VF[tid] <<- M["VF"]
-    r$VB[tid] <<- M["VB"]
+    pids <- labelTearPoints(r, pids)
+    r <<- removeTear(r, tid)
+    r <<- addTear(r, pids)
   }
 
   ## Make sure pole is not in tear
