@@ -9,6 +9,13 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
   return(d)
 }
 
+nameLandmark <- function(d, i, name) {
+  new.names <- rep("", length(d$Ss))
+  new.names[i] <- name
+  names(d$Ss) <- new.names
+  return(d)
+}
+
 plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
@@ -18,7 +25,7 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   ## plot.flat.outline(d, axt=axt, ylim=ylim, ...)
   if (plot.datapoints) {
     with(d, {
-      for(col in names(Ds)) {
+      for (col in names(Ds)) {
         suppressWarnings(points(Ds[[col]][,1], Ds[[col]][,2], col=cols[[col]], pch=20,cex=0.5, ...))
       }
     })
@@ -26,10 +33,14 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   if (plot.landmarks) {
     with(d, {
       if (length(Ss) > 0) {
-        for(i in 1:length(Ss)) {
-          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2], ...))
+        for (i in 1:length(Ss)) {
+          name <- names(Ss)[i]
+          col <- ifelse(name=="", "default", name)
+          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2], col=cols[[col]], ...))
         }
       }
     })
   }
 }
+
+

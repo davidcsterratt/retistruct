@@ -162,20 +162,23 @@ h.mark.od <- function(h, ...) {
   svalue(g.status) <- paste("Click on a point on the optic disc.",
                             identify.abort.text())
   dev.set(d1)
-  ## Convert list of segments to a matrix
+  ## Convert list of segments to a matrix of points
   Sm <- NULL
-  
-  for (S in Ss) {
+  for (S in r$Ss) {
     Sm <- rbind(Sm, S)
   }
+
+  ## Identify a point
   id <- identify(Sm[,1], Sm[,2], n=1)
+
+  ## 
   N <- 0
   i <- 1
   while (id <= N && i<=length(Ss)) {
-    N <- N + nrow(Ss[i])
+    N <- N + nrow(r$Ss[i])
     i <- i + 1
   }
-  iOD <<- i
+  r <<- nameLandmark(r, i, "OD")
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -351,15 +354,6 @@ do.plot <- function() {
     if ("Grid" %in% svalue(g.show)) {
       if (!is.null(r$phi)) {
         with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
-      }
-    }
-
-    if ("Landmarks" %in% svalue(g.show)) {
-      if (is.na(iOD)) {
-        plot.landmarks.flat(Ss, col="orange")
-      } else {
-        plot.landmarks.flat(Ss[-iOD], col="orange")
-        plot.landmarks.flat(Ss[iOD], col="blue")
       }
     }
   })

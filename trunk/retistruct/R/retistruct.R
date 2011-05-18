@@ -51,10 +51,11 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
                na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
                na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
              double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
-  D.cols <- list(green="green",
-                 red="red",
-                 double="yellow",
-                 od="blue")
+  cols <- list(green="green",
+               red="red",
+               double="yellow",
+               OD="blue",
+               default="orange")
   
   ## Extract line data
   segs <- map.to.segments(map)
@@ -72,9 +73,9 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   ## is removed from the list of segments
   P  <- Ss[[which.max(l)]]
   Ss <- Ss[-which.max(l)]
-  if (length(Ss) > 0) {
-    names(Ss) <- 1:length(Ss)
-  }
+  ## if (length(Ss) > 0) {
+  ##   names(Ss) <- 1:length(Ss)
+  ## }
   
   ## Create forward and backward pointers
   o <- Outline(P)
@@ -88,7 +89,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   ##   stop("Unable to find a closed outline.")
   ## }
 
-  d <- Dataset(o, dataset, Ds, Ss, cols=D.cols, raw)
+  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw)
   return(d)
 }
 
@@ -101,8 +102,8 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
 ##' @return \code{TRUE} if an optic disc may be present; \code{FALSE} otherwise
 ##' @author David Sterratt
 retistruct.potential.od <- function(o) {
-  if (inherits(o, "outline")) {
-    with(o, return(exists("Ss") && is.list(Ss) && (length(Ss) > 0)))
+  if (inherits(o, "dataset")) {
+    return(with(o, exists("Ss")) && is.list(r$Ss) && (length(r$Ss) > 0))
   }
   return(FALSE)
 }
@@ -190,7 +191,7 @@ retistruct.read.markup <- function(o, error=stop) {
       a <- setFixedPoint(a, M[1, "iN"], "Nasal")
     a$phi0 <- M[1, "phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
-      a$iOD <- M[1, "iOD"]
+      a <- nameLandmark(a, M[1, "iOD"], "OD")
     }
     if ("DVflip" %in% colnames(M)) {
       a$DVflip <- M[1, "DVflip"]
