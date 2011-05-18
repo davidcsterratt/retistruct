@@ -62,7 +62,6 @@ h.add <- function(h, ...) {
   tryCatch({
     r <<- addTear(r, pids)
   }, warning=h.warning, error=h.warning)
-  fix.pole.position(r)
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -118,8 +117,6 @@ h.move <- function(h, ...) {
     r <<- addTear(r, pids)
   }
 
-  ## Make sure pole is not in tear
-  fix.pole.position(r)
   ## Display and cleanup
   do.plot()
   svalue(g.status) <- ""
@@ -133,10 +130,10 @@ h.mark.n <- function(h, ...) {
   svalue(g.status) <- paste("Click on nasal point.",
                             identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1)
-  iN <<- id
-  iD <<- NA
-  fix.pole.position()
+  id <- with(r, identify(P[,1], P[,2], n=1))
+  tryCatch({
+    r <<- setFixedPoint(r, id, "Nasal")
+  }, warning=h.warning, error=h.warning)
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -149,10 +146,10 @@ h.mark.d <- function(h, ...) {
   svalue(g.status) <- paste("Click on dorsal point.",
                             identify.abort.text())
   dev.set(d1)
-  id <- identify(P[,1], P[,2], n=1)
-  iD <<- id
-  iN <<- NA
-  fix.pole.position()
+  id <- with(r, identify(P[,1], P[,2], n=1))
+  tryCatch({
+    r <<- setFixedPoint(r, id, "Dorsal")
+  }, warning=h.warning, error=h.warning)
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -310,7 +307,8 @@ do.plot <- function() {
   dev.set(d1)
   plot.flat(r, axt="s",
             datapoints=("Datapoints" %in% svalue(g.show)),
-            landmarks=("Landmarks" %in% svalue(g.show)))
+            landmarks=("Landmarks" %in% svalue(g.show)),
+            markup=("Markup" %in% svalue(g.show)))
   with(r, {
     
     if ("Strain" %in% svalue(g.show)) {   # Strain plot
@@ -342,23 +340,6 @@ do.plot <- function() {
         text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
       }
       dev.set(d1)
-    }
-    
-    if ("Markup" %in% svalue(g.show)) {
-      if (length(V0) > 0) {
-        points(P[VF,,drop=FALSE], col="red", pch="+")
-        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
-        points(P[VB,,drop=FALSE], col="orange", pch="+")
-        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
-        points(P[V0,,drop=FALSE], col="cyan", pch="+")
-        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
-      }
-      if (!is.na(iD)) {
-        text(P[iD,1], P[iD,2], "D")
-      }
-      if (!is.na(iN)) {
-        text(P[iN,1], P[iN,2], "N")
-      }
     }
 
     if ("Stitch" %in% svalue(g.show)) {

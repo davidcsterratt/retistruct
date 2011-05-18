@@ -14,7 +14,8 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
 
-  plot.flat.outline(d, axt=axt, ylim=ylim, ...)
+  NextMethod()
+  ## plot.flat.outline(d, axt=axt, ylim=ylim, ...)
   if (plot.datapoints) {
     with(d, {
       for(col in names(Ds)) {

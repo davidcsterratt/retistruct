@@ -3,8 +3,8 @@
 ##' @title Constructor for AnnotatedOutline object
 ##' @param o \code{Outline} object
 ##' @return AnnotatedOutline object, with extra fields for tears
-##' (\code{V0}, \code{VF} and \code{VB}) and lattitude of rim
-##' (\code{phi0}).
+##' (\code{V0}, \code{VF} and \code{VB}), lattitude of rim \code{phi0}
+##' and index of fixed point \code{i0}.
 ##' @author David Sterratt
 AnnotatedOutline <- function(o){
   a <- o
@@ -13,6 +13,7 @@ AnnotatedOutline <- function(o){
   a$VB <- c()
   a$VF <- c()
   a$phi0 <- 0
+  a$i0 <- 1
   return(a)
 }
 
@@ -89,7 +90,7 @@ getTear <- function(o, tid) {
 
 ##' Compute the parent relationships for a potential set of tears on
 ##' an \code{AnnotatedOutline}. The function throws an error if tears
-##' overlap
+##' overlap.
 ##'
 ##' @title Compute the parent relationships for a set of tears
 ##' @param o \code{AnnotatedOutline} object
@@ -97,14 +98,14 @@ getTear <- function(o, tid) {
 ##' @param VB Backward vertices of tears
 ##' @param VF Forward vertices of tears
 ##' @return List
-##' \item{\code{Rset}} the set of points on the rim
-##' \item{\code{TFset}} list containing indicies of points in each foward tear
-##' \item{\code{TBset}} list containing indicies of points in each backward tear
-##' \item{\code{h}} correspondence mapping
-##' \item{\code{hf}} correspondence mapping in forward direction for
-##'         points on boundary
-##' \item{\code{hb}} correspondence mapping in backward direction for
-##'         points on boundary
+##' \item{\code{Rset}}{the set of points on the rim}
+##' \item{\code{TFset}}{list containing indicies of points in each foward tear}
+##' \item{\code{TBset}}{list containing indicies of points in each backward tear}
+##' \item{\code{h}}{correspondence mapping}
+##' \item{\code{hf}}{correspondence mapping in forward direction for
+##'         points on boundary}
+##' \item{\code{hb}}{correspondence mapping in backward direction for
+##'         points on boundary}
 ##' @author David Sterratt
 computeTearRelationships <- function(o, V0, VB, VF) {
   ## Initialise the set of points in the rim
@@ -195,10 +196,11 @@ addTear <- function(o, pids) {
   VF <- c(o$VF, M["VF"])
   VB <- c(o$VB, M["VB"])
   ## This call will throw an error if tears are not valid
-  computeTearRelationships(o, V0, VB, VF)
+  suppressMessages(computeTearRelationships(o, V0, VB, VF))
   o$V0 <- V0
   o$VF <- VF
   o$VB <- VB
+  o <- ensureFixedPointInRim(o)
   return(o)
 }
 
@@ -241,3 +243,38 @@ checkTears <- function(o) {
   return(out)
 }
 
+setFixedPoint <- function(o, i0, name) {
+  o$i0 <- i0
+  names(o$i0) <- name
+  o <- ensureFixedPointInRim(o)
+  return(o)
+}
+
+ensureFixedPointInRim <- function(o) {
+  suppressMessages(r <- computeTearRelationships(o, o$V0, o$VB, o$VF))
+  if (!(o$i0 %in% r$Rset)) {
+    warning(paste(names(o$i0)[1], "point has been moved to be in the rim"))
+    o$i0 <- r$Rset[which.min(abs(r$Rset - i0))]
+  }
+  return(o)
+}
+
+plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
+  NextMethod()
+  args <- list(...)
+  plot.markup <- is.null(args$markup) || args$markup
+
+  if (plot.markup) {
+    with(a, {
+      if (length(V0) > 0) {
+        points(P[VF,,drop=FALSE], col="red", pch="+")
+        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
+        points(P[VB,,drop=FALSE], col="orange", pch="+")
+        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
+        points(P[V0,,drop=FALSE], col="cyan", pch="+")
+        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
+      }
+      text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))
+    })
+  }
+}

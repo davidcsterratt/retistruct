@@ -16,5 +16,6 @@ plot.flat.annotatedDataset <- function(a, axt="n", ylim=NULL, ...) {
       ylim <- sort(ylim, TRUE)
     }
   }
-  plot.flat.dataset(a, axt=axt, ylim=ylim, ...)
+  NextMethod()
+  ## plot.flat.dataset(a, axt=axt, ylim=ylim, ...)
 }

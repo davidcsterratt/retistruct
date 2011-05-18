@@ -174,9 +174,9 @@ retistruct.read.markup <- function(o, error=stop) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     T <- convert.markup(T.old, P.old, o$P)
-    a$V0 <- T[,1]                       # apicies of tears
-    a$VB <- T[,2]                       # backward verticies
-    a$VF <- T[,3]                       # forward verticies
+    for (i in 1:nrow(T)) {
+      a <- addTear(a, T[i,])
+    }
   } else {
     error("Tear file T.csv doesn't exist.")
   }
@@ -184,8 +184,10 @@ retistruct.read.markup <- function(o, error=stop) {
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
     M <- convert.markup(M.old, P.old, o$P)
-    a$iD <- M[1, "iD"]
-    a$iN <- M[1, "iN"]
+    if (!is.na(M[1, "iD"]))
+      a <- setFixedPoint(a, M[1, "iD"], "Dorsal")
+    if (!is.na(M[1, "iN"]))
+      a <- setFixedPoint(a, M[1, "iN"], "Nasal")
     a$phi0 <- M[1, "phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
       a$iOD <- M[1, "iOD"]
