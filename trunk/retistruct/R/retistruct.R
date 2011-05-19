@@ -274,7 +274,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   o$lambda0 <- 0
   ## Case of dorsal point specified...
   if (names(o$i0)[1]=="Dorsal") {
-    o$lambda0 <- 90
+    o$lambda0 <- 90 * pi/180
   }
   if (names(o$i0)[1]=="Nasal") {
     o$lambda0 <- 0

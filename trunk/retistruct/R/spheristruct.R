@@ -40,313 +40,6 @@ path.length <- function(i, j, g, h, P) {
    return(Rset)
  }
 
- ## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
- ##
- ## Create a triangulation of the outline defined by the points P,
- ## which are represented as N*2 matrix.  If the pointer list
- ## g is supplied, it is used to define the outline. There should be at least n
- ## triangles in the triangulation. Correspondences for any new points added
- ## are added to the h argument
- ## 
- ## Returns a list comprising:
- ## P   - The set of new points, with the existing points at the start
- ## T   - The triangulation
- ## a   - Array containing area of each triangle
- ## A   - Total area of outline
- ## Cu  - Unique set of M connections, as M*2 matrix
- ## L   - Length of each connection
- ## h   - Correspondances mapping
- ##
- triangulate.outline <- function(P, g=NULL, n=200, h=1:nrow(P),
-                                suppress.external.steiner=FALSE) {
-   ## By default, segments are outline of points in order
-   S <- cbind(1:nrow(P), c(2:nrow(P), 1))
-   if (!is.null(g)) {
-     S <- pointers2segments(g)
-   }
-   ## Make initial triangulation
-   out <- triangulate(pslg(V=P, S=S), Y=TRUE, j=TRUE, Q=TRUE)
-
-   ## It can be that there are crossovers in the segments. The
-   ## triangulate() routine will reveal this as segments that are not
-   ## on a boundary. We get rid of these segments by re-triangulating,
-   ## only using boundary segments
-   out <- triangulate(pslg(V=out$V, S=out$S[out$SB==1,]), Y=TRUE, j=TRUE, Q=TRUE)
-   
-   ## Sometimes a point exists which only belongs to one segment. The
-   ## point to which it is connected, is itself connected by three
-   ## segments. We want to get rid of these points, and the easiest way
-   ## is to triangulate without the naughty points.
-   i.bad <- which(table(out$S)==1)
-   if (length(i.bad) > 0) {
-     warning(paste("Bad points:", paste(i.bad, collapse=" ")))
-     out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
-   }
-
-   ## Now determine the area
-   A.tot <- sum(with(out, tri.area(V, T)))
-
-   ## Produce refined triangulation
-   P <- out$V
-   S <- out$S
-   if (!is.na(n)) {
-     out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
-                       Y=suppress.external.steiner, j=TRUE,
-                       Q=TRUE)
-  }
-  if (any(P != out$V[1:nrow(P),])) {
-    stop("Points changed in triangulation")
-  }
-  P <- out$V
-  T <- out$T
-
-  ## Create pointers from segments
-
-  ## To ensure the correct orientaion, we use the fact that the
-  ## triangles are all anticlockwise in orinentation, and that the
-  ## orientation of the first row of the segment matrix determines the
-  ## orientation of all the other rows.
-
-  ## We therefore find the triangle which contains the first segment
-  S <- out$S
-  T1 <- which(apply(T, 1, function(x) {all(S[1,] %in% x)}))
-
-  ## Then find out which of the vertices in the triangle is not the
-  ## one we need
-  i <- which((T[T1,] %in% S[1,]) == FALSE)
-  if (i == 3) S[1,] <- T[T1,c(1,2)]
-  if (i == 2) S[1,] <- T[T1,c(3,1)]
-  if (i == 1) S[1,] <- T[T1,c(2,3)]
-
-  ## Now create the pointers from the segments
-  gf <- segments2pointers(S)
-  gb <- gf
-  gb[na.omit(gf)] <- which(!is.na(gf))
-  Rset <- na.omit(gf)
-  
-  ## Derive edge matrix from triangulation
-  Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-  Cu <- Unique(Cu, TRUE)
-
-  ## If we are in the business of refining triangles (i.e. specifying
-  ## n), remove lines which join non-ajancent parts of the outline
-  if (!is.na(n)) {
-    for (i in 1:nrow(Cu)) {
-      C1 <- Cu[i,1]
-      C2 <- Cu[i,2]
-      if (all(Cu[i,] %in% Rset)) {
-        if (!((C1 == gf[C2]) ||
-              (C2 == gf[C1]))) {
-          ## Find triangles containing the line
-          ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-          Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
-          print(paste("Non-adjacent points in rim connected by line:", C1, C2))
-          print(paste("In triangle:", Tind))
-          ## Find points T1 & T2 in the two triangles which are not common
-          ## with the edge
-          T1 <- setdiff(T[Tind[1],], Cu[i,])
-          T2 <- setdiff(T[Tind[2],], Cu[i,])
-          print(paste("Other points in triangles:", T1, T2))
-          ## Create a new point at the centroid of the four verticies
-          ## C1, C2, T1, T2
-          p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
-          P <- rbind(P, p)
-          n <- nrow(P)
-          ## Remove the two old triangles, and create the four new ones
-          T[Tind[1],] <- c(n, C1, T1)
-          T[Tind[2],] <- c(n, C1, T2)
-          T <- rbind(T,
-                     c(n, C2, T1),
-                     c(n, C2, T2))
-        }
-      }
-    }
-
-    ## Add the new points to the correspondances vector
-    h <- c(h, (length(h)+1):nrow(P))
-
-    ## Create the edge matrix from the triangulation
-    Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
-    Cu <- Unique(Cu, TRUE)
-  }
-
-  ## Swap orientation of triangles which have clockwise orientation
-  A.signed <- tri.area.signed(P, T)
-  T[A.signed<0,c(2,3)] <- T[A.signed<0,c(3,2)]
-  A <- abs(A.signed)
-    
-  ## Find lengths of connections
-  L <- vecnorm(P[Cu[,1],] - P[Cu[,2],])
-
-  ## Check there are no zero-length lines
-  if (any(L==0)) {
-    print("WARNING: zero-length lines")
-  }
-
-  return(list(P=P, T=T, Cu=Cu, h=h,  A=A, L=L,
-              A.signed=A.signed, A.tot=A.tot,
-              gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB))
-}
-
-## Stitch together tears in an outline
-##
-## Input arguments:
-## P     - the coordinates of points in a mesh, including those the outline
-## gf    - the forward pointer list
-## gb    - the backward pointer list
-## V0    - indicies of the apex of each tear
-## VF    - indicies of the forward vertex of each tear
-## VB    - indicies of the backward vertex of each tear
-## i0    - the index of the landmark; this needs to be in the rim
-##
-## The function returns a list contatining:
-## Rset  - the set of points on the rim
-## i0    - the index of the landmark
-## P     - a new set of meshpoints
-## V0    - indicies of the apex of each tear
-## VF    - indicies of the forward vertex of each tear
-## VB    - indicies of the backward vertex of each tear
-## TFset - list containing indicies of points in each foward tear
-## TBset - list containing indicies of points in each backward tear
-## gf    - new forward pointer list
-## gb    - new backward pointer list
-## h     - correspondence mapping
-## hf    - correspondence mapping in forward direction for
-##         points on boundary
-## hb    - correspondence mapping in backward direction for
-##         points on boundary
-##
-stitch.outline <- function(a) {
-  
-  r <- computeTearRelationships(a, a$V0, a$VB, a$VF)
-
-  ## If not set, set the landmark marker index. Otherwise
-  ## check it
-  Rset <- r$Rset
-  if (!(a$i0 %in% Rset)) {
-    print(a$i0)
-    print(Rset)
-    stop("Fixed Point is not in rim")
-  }
-
-  P <- a$P
-  V0 <- a$V0
-  VF <- a$VF
-  VB <- a$VB
-  TFset <- r$TFset
-  TBset <- r$TBset
-  gf <- a$gf
-  gb <- a$gb
-  hf <- r$hf
-  hb <- r$hb
-  h <- r$h
-  
-  ## Insert points on the backward tears corresponding to points on
-  ## the forward tears
-  sF <-      stitch.insert.points(P, V0, VF, VB, TFset, TBset,
-                                               gf, gb, hf, hb, h,
-                                               "Forwards")
-
-  ## Insert points on the forward tears corresponding to points on
-  ## the backward tears
-  sB <- with(sF,
-             stitch.insert.points(P, V0, VB, VF, TBset, TFset,
-                                  gb, gf, hb, hf, h,
-                                  "Backwards"))
-  ## Extract data from object
-  P <- sB$P
-  gf <- sB$gb
-  gb <- sB$gf
-  hf <- sB$hb
-  hb <- sB$hf
-  h <- sB$h
-
-  ## Link up points on rim
-  h[Rset] <- hf[Rset]
-  
-  ## Make sure that there are no chains of correspondences
-  while (!all(h==h[h])) {
-   h <- h[h]
-  }
-  
-  return(list(Rset=Rset, i0=a$i0,
-              VF=VF, VB=VB, V0=V0,
-              TFset=TFset, TBset=TBset,
-              P=P, h=h, hf=hf, hb=hb,
-              gf=gf, gb=gb))
-}
-
-## Inner function responsible for inserting the points
-stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
-                                 dir) {
-  M <- length(V0)                       # Number of tears
-  ## Iterate through tears to insert new points
-  for (j in 1:M) {
-    ## Compute the total path length along each side of the tear
-    Sf <- path.length(V0[j], VF[j], gf, hf, P)
-    Sb <- path.length(V0[j], VB[j], gb, hb, P)
-    message(paste("Tear", j, ": Sf =", Sf, "; Sb =", Sb))
-
-    ## For each point in the forward path, create one in the backwards
-    ## path at the same fractional location
-    message(paste("  ", dir, " path", sep=""))
-    for (i in setdiff(TFset[[j]], c(V0[j], VF[j]))) {
-      sf <- path.length(V0[j], i, gf, hf, P)
-      ## If the point isn't at the apex, insert a point
-      if (sf > 0) {
-        message(paste("    i =", i,
-                                "; sf/Sf =", sf/Sf,
-                                "; sf =", sf))
-        for (k in TBset[[j]]) {
-          sb <- path.length(V0[j], k, gb, hb, P)
-          message(paste("      k =", format(k, width=4),
-                                  "; sb/Sb =", sb/Sb,
-                                  "; sb =", sb))
-          if (sb/Sb > sf/Sf) {
-            break;
-          }
-          k0 <- k
-          sb0 <- sb
-        }
-
-        ## If this point does not point to another, create a new point
-        if ((hf[i] == i)) {
-          f <- (sf/Sf*Sb-sb0)/(sb-sb0)
-          message(paste("      Creating new point: f =", f))
-          p <- (1-f) * P[k0,] + f * P[k,]
-
-          ## Find the index of any row of P that matches p
-          n <- anyDuplicated(rbind(P, p), fromLast=TRUE) 
-          if (n == 0) {
-            ## If the point p doesn't exist
-            P <- rbind(P, p)
-            ## Update forward and backward pointers
-            n <- nrow(P)                    # Index of new point
-            gb[n]     <- k
-            gf[n]     <- gf[k]
-            gb[gf[k]] <- n
-            gf[k]     <- n
-
-            ## Update correspondences
-            hf[n] <- n
-            hb[n] <- n
-            h[i] <- n
-            h[n] <- n
-          } else {
-            message(paste("      Point", n, "already exists"))
-            h[i] <- n
-            h[n] <- n
-          }
-        } else {
-          ## If not creating a point, set the point to point to the forward pointer 
-          h[i] <- hf[i]
-        }
-      }
-    } 
-  }
-  return(list(P=P, hf=hf, hb=hb, gf=gf, gb=gb, h=h))
-}
-
 ## Convert a matrix containing on each line the indicies of the points
 ## forming a segment, and convert this to two sets of ordered pointers
 segments2pointers <- function(S) {
@@ -560,14 +253,16 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ## lambda - longitude of mesh points
 ## R      - radius of sphere
 ## phi0   - lattitude at which sphere is cut off (from input)
-project.to.sphere <- function(r, phi0=50*pi/180, lambda0=lambda0) {
+project.to.sphere <- function(r) {
   Pt <- r$Pt
   Rsett <- r$Rsett
   i0t <- r$i0t
   A.tot <- r$A.tot
   Cut <- r$Cut
   Lt <- r$Lt
-  
+  phi0 <- r$phi0
+  lambda0 <- r$lambda0
+    
   Nt <- nrow(Pt)
   Nphi <- Nt - length(Rsett)
 
@@ -948,8 +643,8 @@ compute.strain <- function(r) {
 ##' means no plotting.
 ##' @param dev.polar Device to plot polar plot onto. Value of NA
 ##' (default) means no plotting.
-##' @return Reconstruction object containing the input information and
-##' the following modified and extra information:
+##' @return \code{reconstructedOutline} object containing the input
+##' information and the following modified and extra information:
 ##' \item{\code{P}}{New set of points in flattened object}
 ##' \item{\code{gf}}{New set of forward pointers in flattened object}
 ##' \item{\code{gb}}{New set of backward pointers in flattened object}
@@ -968,29 +663,25 @@ ReconstructedOutline <- function(o,
   }
   
   report("Triangulating...")
-  t <- with(o, triangulate.outline(P, h=1:nrow(P), n=n))
-  t <- merge(t, o)
+  t <- triangulate.outline(o, n=n)
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
-    with(t, trimesh(T, P, col="black"))
+    plot.flat(t)
   }
     
   report("Stitching...")
   s <- stitch.outline(t)
-  s <- merge(s, t)
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
-    plot.stitch.flat(s)
+    plot.flat(s, datapoints=FALSE)
   }
 
   report("Triangulating...")  
-  t <- triangulate.outline(s$P, h=s$h, g=s$gf, n=n,
+  r <- triangulate.outline(s, n=n,
                            suppress.external.steiner=TRUE)
-  r <- merge(t, s)
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
-    plot.stitch.flat(r)
-    with(r, trimesh(T, P, col="grey", add=TRUE))
+    plot.flat(r, datapoints=FALSE)
   }
   r$Rset <- order.Rset(r$Rset, r$gf, r$hf)
 
@@ -999,8 +690,8 @@ ReconstructedOutline <- function(o,
   r <- merge(m, r)
 
   report("Projecting to sphere...")
-  p <- project.to.sphere(r, phi0=r$phi0*pi/180, lambda0=r$lambda0*pi/180)
-  r <- merge(p, r)
+  p <- project.to.sphere(r)
+
   
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
@@ -1038,7 +729,7 @@ ReconstructedOutline <- function(o,
   
   report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                ";", r$nflip, "flipped triangles."))
-  class(r) <- c("reconstructedDataset", class(r))
+  class(r) <- c("reconstructedOutline", class(r))
   return(r)
 }
 
