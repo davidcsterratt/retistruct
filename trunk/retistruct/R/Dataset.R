@@ -35,7 +35,7 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
       if (length(Ss) > 0) {
         for (i in 1:length(Ss)) {
           name <- names(Ss)[i]
-          col <- ifelse(name=="", "default", name)
+          col <- ifelse(is.null(name) || (name==""), "default", name)
           suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2], col=cols[[col]], ...))
         }
       }
