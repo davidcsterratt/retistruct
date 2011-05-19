@@ -1,3 +1,72 @@
+## plot.gridline.flat(P, T, phi, lambda, Tt, n, d)
+##
+## Plot a gridline from the spherical retina (described by points phi,
+## lambda and triangulation Tt) onto a flattened retina (described by
+## points P and triangulation T). The gridline is described by a
+## normal n to a plane and a distance to the plane. The intersection of
+## the plane and the spehere is the gridline.
+plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
+  mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
+
+  ## Take out rows that are not intersections
+  tri.int <- (rowSums((mu >=0) & (mu <=1)) == 2)
+
+  if (any(tri.int)) {
+    T  <- T[tri.int,,drop=FALSE]
+    mu <- mu[tri.int,,drop=FALSE]
+
+    line.int <- (mu >=0) & (mu <=1)
+    
+    ## Order rows so that the false indicator is in the third column
+    T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
+    mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
+    T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
+    mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
+
+    P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
+    P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
+    suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
+  }
+}
+
+## plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
+##
+## Plot a mesh of gridlines from the spherical retina (described by
+## points phi, lambda and triangulation Tt and cutoff point phi0) onto
+## a flattened retina (described by points P and triangulation T).
+plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
+  NextMethod()
+
+  Phis=(-8:9)*pi/18
+  Lambdas=(0:17)*pi/18,
+  grid.int.minor=15
+  grid.int.major=45,
+  grid.col="gray"
+
+  phi0d <- r$phi0 * 180/pi
+  
+  Phis <- seq(-90, phi0d, by=grid.int.minor)
+  Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
+  for (Phi in Phis) {
+    if ((!(Phi %% grid.int.major) || Phi == phi0)) {
+      col <- "black"
+    } else {
+      col <- grid.col
+    }
+    with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...))
+  }
+  for (Lambda in Lambdas) {
+    if (!(Lambda %% grid.int.major)) {
+      col <- "black"
+    } else {
+      col <- grid.col
+    }
+    Lambda <- Lambda * pi/180
+    with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
+  }
+}
+
+
 plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
