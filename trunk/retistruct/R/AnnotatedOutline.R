@@ -82,7 +82,7 @@ whichTear <- function(o, pid) {
 ##' @param o \code{AnnotatedOutline} object
 ##' @param tid Tear ID, which can be returned from \code{whichTear()}
 ##' @return Vector of three point IDs, labelled with \code{V0},
-##' \code{VF} and \ccode{VB}
+##' \code{VF} and \code{VB}
 ##' @author David Sterratt
 getTear <- function(o, tid) {
   return(with(o, c(V0=V0[tid], VB=VB[tid], VF=VF[tid])))
@@ -266,7 +266,7 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
 
   if (plot.markup) {
     with(a, {
-      if (length(V0) > 0) {
+      if (!is.null(a$V0)) {
         points(P[VF,,drop=FALSE], col="red", pch="+")
         segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
         points(P[VB,,drop=FALSE], col="orange", pch="+")
@@ -274,7 +274,9 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
         points(P[V0,,drop=FALSE], col="cyan", pch="+")
         text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
       }
-      text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))
+      if (!is.null(names(i0))) {
+        text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))
+      }
     })
   }
 }
