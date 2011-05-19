@@ -250,12 +250,23 @@ setFixedPoint <- function(o, i0, name) {
   return(o)
 }
 
+##' Ensure that the fixed point \code{i0} is in the rim, not a tear.
+##'
+##' @title Ensure that the fixed point is in the rim, not a tear
+##' @param o \code{annotatedOutline} object
+##' @return o \code{annotatedOutline} object in which \code{i0} may
+##' have been changed. 
+##' @author David Sterratt
 ensureFixedPointInRim <- function(o) {
-  suppressMessages(r <- computeTearRelationships(o, o$V0, o$VB, o$VF))
-  if (!(o$i0 %in% r$Rset)) {
+  suppressMessages(t <- computeTearRelationships(o, o$V0, o$VB, o$VF))
+  Rset <- t$Rset
+  i0 <- o$i0
+  if (!(i0 %in% Rset)) {
     warning(paste(names(o$i0)[1], "point has been moved to be in the rim"))
-    o$i0 <- r$Rset[which.min(abs(r$Rset - i0))]
+    o$i0 <- with(o, Rset[which.min(abs(Rset - i0))])
+    names(o$i0) <- names(i0)
   }
+  
   return(o)
 }
 
