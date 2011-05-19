@@ -142,7 +142,7 @@ retistruct.potential.od <- function(o) {
 ##' \item{phi0}{Angle of rim in degrees}
 ##' \item{DVflip}{Boolean variable indicating if DV axis has been flipped}
 ##' @author David Sterratt
-retistruct.read.markup <- function(o, error=stop) {
+retistruct.read.markup <- function(a, error=stop) {
   ## Return index in P of closest point to x
   closest <- function(P, x) {
     if (any(is.na(x))) {
@@ -160,30 +160,12 @@ retistruct.read.markup <- function(o, error=stop) {
     colnames(M) <- colnames(M.old)
     return(M)
   }
-  
-  ## Read in the old P data
-  Pfile <- file.path(o$dataset, "P.csv")
-  if (file.exists(Pfile)) {
-    P.old <- as.matrix(read.csv(Pfile))
-  } else {
-    P.old <- o$P
-  }
-  
-  ## Read in tearfile
-  tearfile <- file.path(o$dataset, "T.csv")
-  if (file.exists(tearfile)) {
-    T.old <- read.csv(tearfile)
-    T <- convert.markup(T.old, P.old, o$P)
-    for (i in 1:nrow(T)) {
-      a <- addTear(a, T[i,])
-    }
-  } else {
-    error("Tear file T.csv doesn't exist.")
-  }
-  markupfile <- file.path(o$dataset, "markup.csv")
+
+  ## Read in markup file
+  markupfile <- file.path(a$dataset, "markup.csv")
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
-    M <- convert.markup(M.old, P.old, o$P)
+    M <- convert.markup(M.old, P.old, a$P)
     if (!is.na(M[1, "iD"]))
       a <- setFixedPoint(a, M[1, "iD"], "Dorsal")
     if (!is.na(M[1, "iN"]))
@@ -202,18 +184,25 @@ retistruct.read.markup <- function(o, error=stop) {
     error("Markup file M.csv doesn't exist.")
   }
   
-  ## Flip the data if the image was upside down
-  ## if (o$DVflip) {
-  ##   o$P    <- cbind(o$P[,1], -o$P[,2])
-  ##   o$Ds   <- lapply(o$Ds, function(P) {cbind(P[,1], -P[,2])})
-  ##   o$Ss   <- lapply(o$Ss, function(P) {cbind(P[,1], -P[,2])})
-  ##   gf.old <- o$gf
-  ##   o$gf   <- o$gb
-  ##   o$gb   <- gf.old
-  ##   VF.old <- o$VF
-  ##   o$VF   <- o$VB
-  ##   o$VB   <- VF.old
-  ## }
+  ## Read in the old P data
+  Pfile <- file.path(a$dataset, "P.csv")
+  if (file.exists(Pfile)) {
+    P.old <- as.matrix(read.csv(Pfile))
+  } else {
+    P.old <- a$P
+  }
+  
+  ## Read in tearfile
+  tearfile <- file.path(a$dataset, "T.csv")
+  if (file.exists(tearfile)) {
+    T.old <- read.csv(tearfile)
+    T <- convert.markup(T.old, P.old, a$P)
+    for (i in 1:nrow(T)) {
+      a <- addTear(a, T[i,])
+    }
+  } else {
+    error("Tear file T.csv doesn't exist.")
+  }
   return(a)
 }
 
@@ -225,11 +214,7 @@ retistruct.read.markup <- function(o, error=stop) {
 ##' return \code{FALSE}.
 ##' @author David Sterratt
 retistruct.check.markup <- function(o) {
-  if ((is.null(o$iD) ||is.na(o$iD)) &&
-      (is.null(o$iN) || is.na(o$iN))) {
-    return(FALSE)
-  }
-  return(TRUE)
+  return(!is.null(names(o$i0)))
 }
 
 ##' Given an outline object with a \code{dataset} field,  read the
