@@ -274,7 +274,10 @@ do.plot <- function() {
   plot.flat(r, axt="s",
             datapoints=("Datapoints" %in% svalue(g.show)),
             landmarks=("Landmarks" %in% svalue(g.show)),
-            markup=("Markup" %in% svalue(g.show)))
+            markup=("Markup" %in% svalue(g.show)),
+            stitch=("Stitch" %in% svalue(g.show)),
+            grid=("Grid" %in% svalue(g.show)),
+            mesh=FALSE)
   with(r, {
     if ("Strain" %in% svalue(g.show)) {   # Strain plot
       if (!is.null(r)) {
@@ -307,17 +310,6 @@ do.plot <- function() {
       dev.set(d1)
     }
 
-    if ("Stitch" %in% svalue(g.show)) {
-      if (!is.null(r$gb) && !is.null(r$TFset)) {
-        plot.stitch.flat(r, add=TRUE)
-      }  
-    }
-
-    if ("Grid" %in% svalue(g.show)) {
-      if (!is.null(r$phi)) {
-        with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
-      }
-    }
   })
 }
 

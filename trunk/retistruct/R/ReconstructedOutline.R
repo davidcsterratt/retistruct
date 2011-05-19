@@ -37,32 +37,37 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
 plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   NextMethod()
 
-  Phis=(-8:9)*pi/18
-  Lambdas=(0:17)*pi/18,
-  grid.int.minor=15
-  grid.int.major=45,
-  grid.col="gray"
+  args <- list(...)
+  plot.grid <- is.null(args$grid) || args$grid
 
-  phi0d <- r$phi0 * 180/pi
-  
-  Phis <- seq(-90, phi0d, by=grid.int.minor)
-  Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
-  for (Phi in Phis) {
-    if ((!(Phi %% grid.int.major) || Phi == phi0)) {
-      col <- "black"
-    } else {
-      col <- grid.col
+  if (plot.grid) {
+    Phis=(-8:9)*pi/18
+    Lambdas=(0:17)*pi/18
+    grid.int.minor=15
+    grid.int.major=45
+    grid.col="gray"
+
+    phi0d <- r$phi0 * 180/pi
+    
+    Phis <- seq(-90, phi0d, by=grid.int.minor)
+    Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
+    for (Phi in Phis) {
+      if ((!(Phi %% grid.int.major) || Phi == phi0d)) {
+        col <- "black"
+      } else {
+        col <- grid.col
+      }
+      with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...))
     }
-    with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...))
-  }
-  for (Lambda in Lambdas) {
-    if (!(Lambda %% grid.int.major)) {
-      col <- "black"
-    } else {
-      col <- grid.col
+    for (Lambda in Lambdas) {
+      if (!(Lambda %% grid.int.major)) {
+        col <- "black"
+      } else {
+        col <- grid.col
+      }
+      Lambda <- Lambda * pi/180
+      with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
     }
-    Lambda <- Lambda * pi/180
-    with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
   }
 }
 
