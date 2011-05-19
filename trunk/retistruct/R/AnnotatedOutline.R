@@ -125,54 +125,56 @@ computeTearRelationships <- function(o, V0, VB, VF) {
   ## Create lists of forward and backward tears
   TFset <- list()
   TBset <- list()
-  
-  ## Iterate through the tears to create tear sets and rim set
-  for (j in 1:M) {
-    ## Create sets of points for each tear and remove these points from
-    ## the rim set
-    ## message(paste("Forward tear", j))
-    TFset[[j]] <- mod1(path(V0[j], VF[j], o$gf, h), N)
-    TBset[[j]] <- mod1(path(V0[j], VB[j], o$gb, h), N)
-    Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
-    Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
-  }
-  
-  ## Search for parent tears
-  ## Go through all tears
-  for (j in 1:M) {
-    for (k in setdiff(1:M, j)) {
-      ## If this tear is contained in a forward tear
-      if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
-        i.parent[j] <- k
-        message(paste("Tear", j, "child of forward side of tear", k))
-        ## Set the forward pointer
-        hf[VB[j]] <- VF[j]
-        ## Remove the child tear points from the parent
-        TFset[[k]] <- setdiff(TFset[[k]],
-                              setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
-        ## message(TFset[[k]])
-      } else {
-        ## If this tear is contained in a backward tear
-        if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
-          i.parent[j] <- -k
-          message(paste("Tear", j, "child of backward side of tear", k))
+
+  if (M > 0) {
+    ## Iterate through the tears to create tear sets and rim set
+    for (j in 1:M) {
+      ## Create sets of points for each tear and remove these points from
+      ## the rim set
+      ## message(paste("Forward tear", j))
+      TFset[[j]] <- mod1(path(V0[j], VF[j], o$gf, h), N)
+      TBset[[j]] <- mod1(path(V0[j], VB[j], o$gb, h), N)
+      Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
+      Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
+    }
+    
+    ## Search for parent tears
+    ## Go through all tears
+    for (j in 1:M) {
+      for (k in setdiff(1:M, j)) {
+        ## If this tear is contained in a forward tear
+        if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
+          i.parent[j] <- k
+          message(paste("Tear", j, "child of forward side of tear", k))
           ## Set the forward pointer
-          hb[VF[j]] <- VB[j]
+          hf[VB[j]] <- VF[j]
           ## Remove the child tear points from the parent
-          TBset[[k]] <- setdiff(TBset[[k]],
+          TFset[[k]] <- setdiff(TFset[[k]],
                                 setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
+          ## message(TFset[[k]])
         } else {
-          if (any(c(V0[j], VF[j], VB[j]) %in%
-                  setdiff(union(TFset[[k]], TBset[[k]]), c(VF[k], VB[k])))) {
-            stop(paste("Tear", j, "overlaps with tear", k))
+          ## If this tear is contained in a backward tear
+          if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
+            i.parent[j] <- -k
+            message(paste("Tear", j, "child of backward side of tear", k))
+            ## Set the forward pointer
+            hb[VF[j]] <- VB[j]
+            ## Remove the child tear points from the parent
+            TBset[[k]] <- setdiff(TBset[[k]],
+                                  setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
+          } else {
+            if (any(c(V0[j], VF[j], VB[j]) %in%
+                    setdiff(union(TFset[[k]], TBset[[k]]), c(VF[k], VB[k])))) {
+              stop(paste("Tear", j, "overlaps with tear", k))
+            }
           }
         }
       }
-    }
-    if (i.parent[j] == 0) {
-      message(paste("Tear", j, "child of rim"))
-      hf[VB[j]] <- VF[j]
-      hb[VF[j]] <- VB[j]
+      if (i.parent[j] == 0) {
+        message(paste("Tear", j, "child of rim"))
+        hf[VB[j]] <- VF[j]
+        hb[VF[j]] <- VB[j]
+      }
     }
   }
   return(list(Rset=Rset,
