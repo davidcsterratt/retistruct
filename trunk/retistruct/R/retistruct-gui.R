@@ -10,9 +10,9 @@ enable.widgets <- function(state) {
                  g.mark.n, g.mark.d, g.mark.od,
                  g.phi0d, g.show, g.data, g.eye), state)
   enable.group(c(g.mark.od), retistruct.potential.od(r))
-  ## if (!retistruct.check.markup(r)) {
-  ##   enable.group(c(g.reconstruct), FALSE)
-  ## }
+  if (!retistruct.check.markup(r)) {
+    enable.group(c(g.reconstruct), FALSE)
+  }
 }
 
 unsaved.data <- function(state) {
