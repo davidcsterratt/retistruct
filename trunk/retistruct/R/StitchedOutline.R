@@ -9,25 +9,25 @@ plot.flat.stitchedOutline <- function(s, axt="n", ylim=NULL, ...) {
       points(P[VB,], col="orange", pch="+")
       points(P[V0,], col="cyan", pch="+")
       for (TF in TFset) {
-        lines(P[TF,], col="red", ...)
+        suppressWarnings(lines(P[TF,], col="red", ...))
       }
       for (TB in TBset) {
-        lines(P[TB,], col="orange", ...)
+        suppressWarnings(lines(P[TB,], col="orange", ...))
       }
       for (j in 1:length(h)) {
         if (h[j] != j) {
-          lines(P[c(j, h[j]),], col="blue", ...)
+          suppressWarnings(lines(P[c(j, h[j]),], col="blue", ...))
         }
       }
       
       for (j in 1:length(hf)) {
         if (hf[j] != j) {
-          lines(P[c(j, hf[j]),], col="green", ...)
+          suppressWarnings(lines(P[c(j, hf[j]),], col="green", ...))
         }
       }
       for (j in 1:length(hb)) {
         if (hb[j] != j) {
-          lines(P[c(j, hb[j]),], col="green", ...)
+          suppressWarnings(lines(P[c(j, hb[j]),], col="green", ...))
         }
       }
     })
