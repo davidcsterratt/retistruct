@@ -90,7 +90,9 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   ## }
 
   d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw)
-  return(d)
+  a <- AnnotatedOutline(d)
+  a <- AnnotatedDataset(a)
+  return(a)
 }
 
 ##' Test the oputline object \code{o} for the prescense of
@@ -158,9 +160,6 @@ retistruct.read.markup <- function(o, error=stop) {
     colnames(M) <- colnames(M.old)
     return(M)
   }
-
-  a <- AnnotatedOutline(o)
-  a <- AnnotatedDataset(a)
   
   ## Read in the old P data
   Pfile <- file.path(o$dataset, "P.csv")
