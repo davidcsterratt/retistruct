@@ -227,14 +227,13 @@ retistruct.check.markup <- function(o) {
 ##' @author David Sterratt
 retistruct.read.recdata <- function(o) {
   recfile <- file.path(o$dataset, "r.Rdata")
-  r <- o
   if (file.exists(recfile)) {
     load(recfile)                       # This puts r in the environment
     if (is.null(r$version) || (r$version != recfile.version)) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
-      r <- merge(r, o)
+      o <- r
     }
   }
   return(r)
@@ -287,15 +286,23 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
 }
 
 ## retistruct.save.markup() - save markup
-retistruct.save.markup <- function() {
-  if (!is.null(dataset)) {
-    ## Save the tear information and the outline
-    write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),  row.names=FALSE)
-    write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
-
-    ## Save the dorsal and nasal locations and phi0 to markup.csv
-    markup <- data.frame(iD=iD, iN=iN, phi0=phi0, iOD=iOD, DVflip=DVflip)    
-    write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
+retistruct.save.markup <- function(a) {
+  if (inherits(a, "annotatedDataset")) {
+    with(a, {
+      ## Save the tear information and the outline
+      write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),
+                row.names=FALSE)
+      write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
+      
+      ## Save the dorsal and nasal locations and phi0 to markup.csv
+      iD <- ifelse(names(i0) == "Dorsal", i0, NA)
+      iN <- ifelse(names(i0) == "Nasal" , i0, NA)
+      iOD <- which(names(Ss)=="OD")
+      if (length(iOD)==0)
+        iOD <- NA
+      markup <- data.frame(iD=iD, iN=iN, phi0=phi0*180/pi, iOD=iOD, DVflip=DVflip, side=side)     
+      write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
+    })
   }
 }
 
