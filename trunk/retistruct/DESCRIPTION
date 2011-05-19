@@ -15,7 +15,7 @@ Collate: 'common.R' 'datafile-utils.R' 'geometry.R' 'misc.R' 'plots.R'
     'retistruct.R' 'revision.R' 'spheristruct-energy.R'
     'spheristruct.R' 'tsearch.R' 'zzz.R' 'AnnotatedDataset.R'
   'AnnotatedOutline.R' 'Dataset.R' 'Outline.R' 'generics.R'
-  'ReconstructedDataset.R' 'ReconstructedOutline.R' 
+  'ReconstructedDataset.R' 'ReconstructedOutline.R' 'TriangulatedOutline.R' 'StitchedOutline.R'
 
 
 

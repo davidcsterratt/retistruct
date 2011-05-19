@@ -181,9 +181,11 @@ merge.points.edges <- function(t) {
   for (i in 1:nrow(Ct)) {
     Bt[Ct[i,1],i] <- 1
   }
-  
-  return(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
-              Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht))
+
+  m <- merge(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
+              Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht), t)
+  class(m) <- class(t)
+  return(m)
 }
 
 ## Stretch the mesh in the flat retina to a circular outline
@@ -280,7 +282,11 @@ project.to.sphere <- function(r) {
   lambda <- atan2(y, x)
   lambda <- lambda - lambda[i0t] + lambda0
 
-  return(list(phi=phi, lambda=lambda, R=R, phi0=phi0, lambda0=lambda0, Ps=Ps))
+  p <- merge(list(phi=phi, lambda=lambda, R=R,
+                  phi0=phi0, lambda0=lambda0, Ps=Ps),
+             r)
+  class(p) <- c("reconstructedOutline", class(r))
+  return(p)
 }
 
 ##
@@ -582,8 +588,11 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
       plot.outline.polar(r)
     }
   }
-  return(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
-              E.tot=E.tot, E.l=E.l))
+  o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
+                  E.tot=E.tot, E.l=E.l),
+             r)
+  class(o) <- class(r)
+  return(o)
 }
 
 ## Function to plot the fractional change in length of connections 
@@ -679,6 +688,7 @@ ReconstructedOutline <- function(o,
   report("Triangulating...")  
   r <- triangulate.outline(s, n=n,
                            suppress.external.steiner=TRUE)
+  
   if (!is.na(dev.grid)) {
     dev.set(dev.grid)
     plot.flat(r, datapoints=FALSE)
@@ -686,12 +696,10 @@ ReconstructedOutline <- function(o,
   r$Rset <- order.Rset(r$Rset, r$gf, r$hf)
 
   report("Merging points...")
-  m <- merge.points.edges(r)
-  r <- merge(m, r)
-
+  r <- merge.points.edges(r)
+  
   report("Projecting to sphere...")
-  p <- project.to.sphere(r)
-  r <- merge(p, r)
+  r <- project.to.sphere(r)
   
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
@@ -716,10 +724,9 @@ ReconstructedOutline <- function(o,
   ## o <- list(nflip=1)
   E0.A <- 32
   ##while(o$nflip>0) {
-  o <- optimise.mapping(r, E0.A=E0.A,
+  r <- optimise.mapping(r, E0.A=E0.A,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- merge(o, r)
   ## o <- fem.optimise.mapping(r, nu=0.45,
   ##                           plot.3d=plot.3d,
   ##                           dev.grid=dev.grid, dev.polar=dev.polar)
@@ -774,8 +781,10 @@ infer.datapoint.landmark.coordinates <- function(r, report=print) {
     }
   }
 
-  r <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+  d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                   Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
+  class(d) <- c("reconstructedOutline", class(r))
+  return(d)
 }
 
 ## Infer coordinates of tears
