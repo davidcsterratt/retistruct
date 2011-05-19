@@ -247,12 +247,10 @@ retistruct.read.recdata <- function(o) {
   if (file.exists(recfile)) {
     load(recfile)                       # This puts r in the environment
     if (is.null(r$version) || (r$version != recfile.version)) {
+      unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
       r <- merge(r, o)
-      ## FIXME: Temporary measure to get plotting working
-      ## class(r) <- c("reconstructedDataset", "reconstructedOutline", "annotatedDataset", "annotatedOutline", "dataset", "outline") 
-
     }
   }
   return(r)
