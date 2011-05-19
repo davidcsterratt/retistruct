@@ -161,6 +161,14 @@ retistruct.read.markup <- function(a, error=stop) {
     return(M)
   }
 
+  ## Read in the old P data
+  Pfile <- file.path(a$dataset, "P.csv")
+  if (file.exists(Pfile)) {
+    P.old <- as.matrix(read.csv(Pfile))
+  } else {
+    P.old <- a$P
+  }
+  
   ## Read in markup file
   markupfile <- file.path(a$dataset, "markup.csv")
   if (file.exists(markupfile)) {
@@ -182,14 +190,6 @@ retistruct.read.markup <- function(a, error=stop) {
     }
   } else {
     error("Markup file M.csv doesn't exist.")
-  }
-  
-  ## Read in the old P data
-  Pfile <- file.path(a$dataset, "P.csv")
-  if (file.exists(Pfile)) {
-    P.old <- as.matrix(read.csv(Pfile))
-  } else {
-    P.old <- a$P
   }
   
   ## Read in tearfile
@@ -283,7 +283,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                  format(r$EOD, 2),
                  "degrees."))
   }
-  return(merge(r, o))
+  return(r)
 }
 
 ## retistruct.save.markup() - save markup
