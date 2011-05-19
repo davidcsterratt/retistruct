@@ -289,7 +289,9 @@ do.plot <- function() {
       }
     } else {                              # Polar plot
       dev.set(d2)
-      plot.polar(r, cex=5)
+      plot.polar(r, cex=5,
+                 datapoints=("Datapoints" %in% svalue(g.show)),
+                 landmarks=("Landmarks" %in% svalue(g.show)))
       ## if (!is.null(r$Dss)) {
       ##   plot.outline.polar(r)
       ##   if ("Datapoints" %in% svalue(g.show)) {

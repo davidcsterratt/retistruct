@@ -3,8 +3,11 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45, ...) {
-  plot.polar.reconstructedOutline(r, show.grid, grid.col, grid.bg,
-                                  grid.int.minor, grid.int.major, ...)
+  NextMethod()
+
+  args <- list(...)
+  plot.datapoints <- is.null(args$datapoints) || args$datapoints
+  plot.landmarks <- is.null(args$landmarks) || args$landmarks
 
   phi0d <- r$phi0*180/pi
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
@@ -21,32 +24,38 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   }
 
   ## Datapoints
-  with(r, {
-    for (i in 1:length(Dss)) {
-      phis    <- Dss[[i]][,"phi"]
-      lambdas <- Dss[[i]][,"lambda"]
-      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-      if (r$DVflip)
+  if (plot.datapoints) {
+    with(r, {
+      for (i in 1:length(Dss)) {
+        phis    <- Dss[[i]][,"phi"]
+        lambdas <- Dss[[i]][,"lambda"]
+        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+        if (r$DVflip)
           ypos <- -ypos
-      points(xpos, ypos, col=cols[[names(Dss)[i]]], pch='.', ...)
-    }
-  })
+        suppressWarnings(points(xpos, ypos, col=cols[[names(Dss)[i]]], pch='.', ...))
+      }
+    })
+  }
 
   ## Landmarks
-  with(r, {
-    if (length(Sss) > 0) {
-      for (i in 1:length(Sss)) {
-        phi    <- Sss[[i]][,"phi"]
-        lambda <- Sss[[i]][,"lambda"]
-        x <- cos(lambda) * ((phi * 180/pi) + 90)
-        y <- sin(lambda) * ((phi * 180/pi) + 90)
-        if (r$DVflip)
-          y <- -y
-        lines(x, y, ...)
+  if (plot.landmarks) {
+    with(r, {
+      if (length(Sss) > 0) {
+        for (i in 1:length(Sss)) {
+          name <- names(Ss)[i]
+          col <- ifelse(is.null(name) || (name==""), "default", name)
+          phi    <- Sss[[i]][,"phi"]
+          lambda <- Sss[[i]][,"lambda"]
+          x <- cos(lambda) * ((phi * 180/pi) + 90)
+          y <- sin(lambda) * ((phi * 180/pi) + 90)
+          if (r$DVflip)
+            y <- -y
+          suppressWarnings(lines(x, y, col=cols[[col]], ...))
+        }
       }
-    }
-  })
+    })
+  }
 
   ## Outline
   with(r, {
@@ -58,7 +67,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       y <- with(r, sin(lambda[j]) * ((phi[j] * 180/pi) + 90))
       if (r$DVflip)
           y <- -y
-      lines(x, y, ...)
+      suppressWarnings(lines(x, y, ...))
     }
   })
 }
