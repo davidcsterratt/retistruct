@@ -783,7 +783,7 @@ infer.datapoint.landmark.coordinates <- function(r, report=print) {
 
   d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                   Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
-  class(d) <- c("reconstructedOutline", class(r))
+  class(d) <- c("reconstructedDataset", class(r))
   return(d)
 }
 
