@@ -691,7 +691,7 @@ ReconstructedOutline <- function(o,
 
   report("Projecting to sphere...")
   p <- project.to.sphere(r)
-
+  r <- merge(p, r)
   
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
