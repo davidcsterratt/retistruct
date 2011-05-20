@@ -188,22 +188,22 @@ computeTearRelationships <- function(o, V0, VB, VF) {
 ##' Add tear to an AnnotatedOutline
 ##'
 ##' @title Add tear to an AnnotatedOutline
-##' @param o \code{AnnotatedOutline} object
+##' @param a \code{AnnotatedOutline} object
 ##' @param pids Vector of three point IDs to be added
 ##' @return \code{AnnotatedOutline} object
 ##' @author David Sterratt
-addTear <- function(o, pids) {
-  M <- labelTearPoints(r, pids)
-  V0 <- c(o$V0, M["V0"])
-  VF <- c(o$VF, M["VF"])
-  VB <- c(o$VB, M["VB"])
+addTear <- function(a, pids) {
+  M <- labelTearPoints(a, pids)
+  V0 <- c(a$V0, M["V0"])
+  VF <- c(a$VF, M["VF"])
+  VB <- c(a$VB, M["VB"])
   ## This call will throw an error if tears are not valid
-  suppressMessages(computeTearRelationships(o, V0, VB, VF))
-  o$V0 <- V0
-  o$VF <- VF
-  o$VB <- VB
-  o <- ensureFixedPointInRim(o)
-  return(o)
+  suppressMessages(computeTearRelationships(a, V0, VB, VF))
+  a$V0 <- V0
+  a$VF <- VF
+  a$VB <- VB
+  a <- ensureFixedPointInRim(a)
+  return(a)
 }
 
 ##' Remove tear from an AnnotatedOutline
