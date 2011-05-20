@@ -270,49 +270,38 @@ h.eye <- function(h, ...) {
 
 ## Plot in edit pane
 do.plot <- function() {
-  dev.set(d1)
-  plot.flat(r, axt="s",
-            datapoints=("Datapoints" %in% svalue(g.show)),
-            landmarks=("Landmarks" %in% svalue(g.show)),
-            markup=("Markup" %in% svalue(g.show)),
-            stitch=("Stitch" %in% svalue(g.show)),
-            grid=("Grid" %in% svalue(g.show)),
-            mesh=FALSE)
-  with(r, {
-    if ("Strain" %in% svalue(g.show)) {   # Strain plot
-      if (!is.null(r)) {
-        dev.set(d1)
-        plot.strain.flat(r)
-        dev.set(d2)
-        plot.l.vs.L(r)
-        dev.set(d1)
-      }
-    } else {                              # Polar plot
-      dev.set(d2)
-      plot.polar(r, cex=5,
-                 datapoints=("Datapoints" %in% svalue(g.show)),
-                 landmarks=("Landmarks" %in% svalue(g.show)))
-      ## if (!is.null(r$Dss)) {
-      ##   plot.outline.polar(r)
-      ##   if ("Datapoints" %in% svalue(g.show)) {
-      ##     plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
-      ##   }
-      ## }
-      ## if (!is.null(r$Sss) && ("Landmarks" %in% svalue(g.show))) {
-      ##   if (is.na(r$iOD)) {
-      ##     plot.landmarks.polar(r$Sss, col="orange")
-      ##   } else {
-      ##     plot.landmarks.polar(r$Sss[-iOD], col="orange")
-      ##     plot.landmarks.polar(r$Sss[iOD], col="blue")
-      ##   }
-      ## }
-      if (!is.null(r$EOD)) {
-        text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
-      }
-      dev.set(d1)
+  if ("Strain" %in% svalue(g.show)) {   # Strain plot
+    dev.set(d1)
+    plot.flat(r, axt="s",
+              datapoints=FALSE,
+              landmarks=FALSE,
+              markup=FALSE,
+              stitch=FALSE,
+              grid=FALSE,
+              mesh=FALSE,
+              strain=TRUE)
+    dev.set(d2)
+    plot.l.vs.L(r)
+  } else {
+    dev.set(d1)
+    plot.flat(r, axt="s",
+              datapoints=("Datapoints" %in% svalue(g.show)),
+              landmarks=("Landmarks" %in% svalue(g.show)),
+              markup=("Markup" %in% svalue(g.show)),
+              stitch=("Stitch" %in% svalue(g.show)),
+              grid=("Grid" %in% svalue(g.show)),
+              mesh=FALSE)
+    dev.set(d2)
+    plot.polar(r, cex=5,
+               datapoints=("Datapoints" %in% svalue(g.show)),
+               landmarks=("Landmarks" %in% svalue(g.show)))
+    ## FIXME: EOD not computed
+    if (!is.null(r$EOD)) {
+      text.polar(paste("OD displacement:",
+                       format(r$EOD, digits=3, nsmall=2), "deg"))
     }
-
-  })
+  }
+  dev.set(d1)
 }
 
 ## It would be nice to have error messages displayed graphically.

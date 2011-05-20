@@ -38,7 +38,8 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   NextMethod()
 
   args <- list(...)
-  plot.grid <- is.null(args$grid) || args$grid
+  plot.grid <-   is.null(args$grid) || args$grid
+  plot.strain <- !is.null(args$strain) && args$strain
 
   if (plot.grid) {
     Phis=(-8:9)*pi/18
@@ -68,6 +69,14 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
       Lambda <- Lambda * pi/180
       with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
     }
+  }
+  if (plot.strain) {
+    o <- compute.strain(r)
+    palette(rainbow(100))
+    scols <- strain.colours(log(o$strain))
+    with(r, 
+         segments(P[Cu[,1],1], P[Cu[,1],2],
+                  P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
   }
 }
 
