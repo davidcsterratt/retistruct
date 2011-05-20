@@ -188,7 +188,13 @@ h.phi0d <- function(h, ...) {
 ## Handler for saving state
 h.save <- function(h, ...) {
   retistruct.save.markup(a)
-  retistruct.save.recdata(r)
+  ## If the reconstruction doesn't exist, remove the reconstruction
+  ## file to ensure consistency
+  if (is.null(r)) {
+    unlink(file.path(a$dataset, "r.Rdata"))
+  } else {
+    retistruct.save.recdata(r)
+  }
   retistruct.export.matlab(r)
   unsaved.data(FALSE)
 }
@@ -257,17 +263,15 @@ h.show <- function(h, ...) {
 
 ## Handler for flipping DV axis
 h.flipdv <- function(h, ...) {
+  unsaved.data(TRUE)
   a$DVflip <<- ("Flip DV" %in% svalue(g.data))
-  if (!is.null(r))
-    r$DVflip <<- a$DVflip
   do.plot()
 }
 
 ## Handler for dealing with data
 h.eye <- function(h, ...) {
+  unsaved.data(TRUE)
   a$side <<- svalue(g.eye)
-  if (!is.null(r))
-    r$side <<- a$side
   do.plot()
 }
 
