@@ -17,7 +17,9 @@ enable.widgets <- function(state) {
 }
 
 unsaved.data <- function(state) {
-  r <<- NULL
+  if (state) {
+    r <<- NULL
+  }
   enable.group(c(g.save), state)
 }
 
@@ -223,20 +225,16 @@ h.open <- function(h, ...) {
   tryCatch({
     a <<- retistruct.read.markup(a, error=message)
   }, warning=h.warning, error=h.warning)
+  svalue(g.dataset) <- a$dataset 
+  svalue(g.phi0d)   <- a$phi0*180/pi
   
   ## Read the reconstruction data
   tryCatch({
     r <<- retistruct.read.recdata(a)
   }, warning=h.warning, error=h.error)
 
-  svalue(g.dataset) <- a$dataset 
-  svalue(g.phi0d)   <- a$phi0*180/pi
-  
   unsaved.data(FALSE)
   enable.widgets(TRUE)
-
-  dev.set(d2)
-  plot.new()
   do.plot()
 }
 
@@ -260,12 +258,16 @@ h.show <- function(h, ...) {
 ## Handler for flipping DV axis
 h.flipdv <- function(h, ...) {
   a$DVflip <<- ("Flip DV" %in% svalue(g.data))
+  if (!is.null(r))
+    r$DVflip <<- a$DVflip
   do.plot()
 }
 
 ## Handler for dealing with data
 h.eye <- function(h, ...) {
   a$side <<- svalue(g.eye)
+  if (!is.null(r))
+    r$side <<- a$side
   do.plot()
 }
 
@@ -333,6 +335,9 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## Annotation object
   a <<- NULL
 
+  ## Reconstruction object
+  r <<- NULL
+  
   ##
   ## GUI Layout
   ## 
