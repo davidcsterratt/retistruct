@@ -154,10 +154,9 @@ retistruct.read.markup <- function(a, error=stop) {
   ## Function to map old tears (M.old) and old points (P.old) onto new
   ## points (P). It returns a new matrix of indicies (M).
   convert.markup <- function(M.old, P.old, P) {
-    M.old <- as.matrix(M.old)
-    M <- matrix(sapply(M.old, function(i) {closest(P, P.old[i,])}),
-                ncol=ncol(M.old))
-    colnames(M) <- colnames(M.old)
+    M <- sapply(M.old, function(i) {
+      ifelse(is.numeric(i), closest(P, P.old[i,]), i)
+    })
     return(M)
   }
 
@@ -174,18 +173,18 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
     M <- convert.markup(M.old, P.old, a$P)
-    if (!is.na(M[1, "iD"]))
-      a <- setFixedPoint(a, M[1, "iD"], "Dorsal")
-    if (!is.na(M[1, "iN"]))
-      a <- setFixedPoint(a, M[1, "iN"], "Nasal")
-    a$phi0 <- M[1, "phi0"]*pi/180
+    if (!is.na(M["iD"]))
+      a <- setFixedPoint(a, M["iD"], "Dorsal")
+    if (!is.na(M["iN"]))
+      a <- setFixedPoint(a, M["iN"], "Nasal")
+    a$phi0 <- M["phi0"]*pi/180
     if ("iOD" %in% colnames(M)) {
-      a <- nameLandmark(a, M[1, "iOD"], "OD")
+      a <- nameLandmark(a, M["iOD"], "OD")
     }
     if ("DVflip" %in% colnames(M)) {
-      a$DVflip <- M[1, "DVflip"]
+      a$DVflip <- M["DVflip"]
       if ("side" %in% colnames(M)) {
-        a$side <- M[1, "side"]
+        a$side <- M["side"]
       }
     }
   } else {
@@ -196,7 +195,9 @@ retistruct.read.markup <- function(a, error=stop) {
   tearfile <- file.path(a$dataset, "T.csv")
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
-    T <- convert.markup(T.old, P.old, a$P)
+    cn <- colnames(T.old)
+    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$P), ncol=3)
+    colnames(T) <- cn
     for (i in 1:nrow(T)) {
       a <- addTear(a, T[i,])
     }
@@ -262,8 +263,8 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   if (names(o$i0)[1]=="Nasal") {
     o$lambda0 <- 0
   }
-  if (!is.na(o$iOD)) {
-    o$Ds[["od"]] <- with(o, matrix(colMeans(Ss[[iOD]]), 1, 2))
+  if (!is.na(getLandmarkID(o, "OD"))) {
+    o$Ds[["OD"]] <- with(o, matrix(colMeans(Ss[[getLandmarkID(o, "OD")]]), 1, 2))
   }
 
   ## Now do folding itself
@@ -274,8 +275,8 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                     dev.polar=dev.polar)
   if (!is.null(r)) {
     r <- infer.datapoint.landmark.coordinates(r, report=report)
-    if (!is.na(r$iOD)) {
-      r$EOD <- 90 + r$Dss[["od"]][1,"phi"] * 180/pi
+    if (!is.na(getLandmarkID(r, "OD"))) {
+      r$EOD <- 90 + r$Dss[["OD"]][1,"phi"] * 180/pi
     }
     report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                  ";", r$nflip, "flipped triangles. OD displacement:",
