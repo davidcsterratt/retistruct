@@ -10,13 +10,14 @@ enable.widgets <- function(state) {
                  g.mark.n, g.mark.d, g.mark.od,
                  g.phi0d, g.show, g.data, g.eye), state)
   if (state) 
-    enable.group(c(g.mark.od), retistruct.potential.od(r))
-  if (!retistruct.check.markup(r)) {
+    enable.group(c(g.mark.od), retistruct.potential.od(a))
+  if (!retistruct.check.markup(a)) {
     enable.group(c(g.reconstruct), FALSE)
   }
 }
 
 unsaved.data <- function(state) {
+  r <<- NULL
   enable.group(c(g.save), state)
 }
 
@@ -42,9 +43,9 @@ h.add <- function(h, ...) {
   svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                             identify.abort.text())
   dev.set(d1)
-  pids <- with(r, identify(P[,1], P[,2], n=3))
+  pids <- with(a, identify(P[,1], P[,2], n=3))
   tryCatch({
-    r <<- addTear(r, pids)
+    a <<- addTear(a, pids)
   }, warning=h.warning, error=h.warning)
   do.plot()
   svalue(g.status) <- ""
@@ -58,8 +59,8 @@ h.remove <- function(h, ...) {
   svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                             identify.abort.text())
   dev.set(d1)
-  id <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
-  r <<- removeTear(r, whichTear(r, id))
+  id <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
+  a <<- removeTear(a, whichTear(a, id))
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -73,10 +74,10 @@ h.move <- function(h, ...) {
   ## Find the intial point
   svalue(g.status) <- paste("Click on apex or vertex to move.",
                             identify.abort.text())
-  id1 <- with(r, identify(P[,1], P[,2], n=1, plot=FALSE))
+  id1 <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
   
   ## Locate tear ID in which the point occurs
-  tid <- whichTear(r, id1)
+  tid <- whichTear(a, id1)
 
   ## If there is a tear in which it occurs, select a point to move it to
   if (!is.na(tid)) {
@@ -84,22 +85,22 @@ h.move <- function(h, ...) {
                             identify.abort.text())
 
     ## Label first point
-    with(r, points(P[id1,1], P[id1,2], col="yellow"))
+    with(a, points(P[id1,1], P[id1,2], col="yellow"))
 
     ## Select second point
-    id2 <- with(r, identify(P[,1], P[,2], n=1))
+    id2 <- with(a, identify(P[,1], P[,2], n=1))
 
     ## Get point ids of exsiting tear
-    pids <- getTear(r, tid)
+    pids <- getTear(a, tid)
 
     ## Replace old point with desired new point
     if (length(id2)) pids[pids==id1] <- id2
 
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
-    pids <- labelTearPoints(r, pids)
-    r <<- removeTear(r, tid)
-    r <<- addTear(r, pids)
+    pids <- labelTearPoints(a, pids)
+    a <<- removeTear(a, tid)
+    a <<- addTear(a, pids)
   }
 
   ## Display and cleanup
@@ -115,9 +116,9 @@ h.mark.n <- function(h, ...) {
   svalue(g.status) <- paste("Click on nasal point.",
                             identify.abort.text())
   dev.set(d1)
-  id <- with(r, identify(P[,1], P[,2], n=1))
+  id <- with(a, identify(P[,1], P[,2], n=1))
   tryCatch({
-    r <<- setFixedPoint(r, id, "Nasal")
+    a <<- setFixedPoint(a, id, "Nasal")
   }, warning=h.warning, error=h.warning)
   do.plot()
   svalue(g.status) <- ""
@@ -131,9 +132,9 @@ h.mark.d <- function(h, ...) {
   svalue(g.status) <- paste("Click on dorsal point.",
                             identify.abort.text())
   dev.set(d1)
-  id <- with(r, identify(P[,1], P[,2], n=1))
+  id <- with(a, identify(P[,1], P[,2], n=1))
   tryCatch({
-    r <<- setFixedPoint(r, id, "Dorsal")
+    a <<- setFixedPoint(a, id, "Dorsal")
   }, warning=h.warning, error=h.warning)
   do.plot()
   svalue(g.status) <- ""
@@ -149,7 +150,7 @@ h.mark.od <- function(h, ...) {
   dev.set(d1)
   ## Convert list of segments to a matrix of points
   Sm <- NULL
-  for (S in r$Ss) {
+  for (S in a$Ss) {
     Sm <- rbind(Sm, S)
   }
 
@@ -160,10 +161,10 @@ h.mark.od <- function(h, ...) {
   N <- 0
   i <- 1
   while (id <= N && i<=length(Ss)) {
-    N <- N + nrow(r$Ss[i])
+    N <- N + nrow(a$Ss[i])
     i <- i + 1
   }
-  r <<- nameLandmark(r, i, "OD")
+  a <<- nameLandmark(a, i, "OD")
   do.plot()
   svalue(g.status) <- ""
   enable.widgets(TRUE)
@@ -179,12 +180,12 @@ h.phi0d <- function(h, ...) {
   if (v > 89) {
     v <- 89
   }
-  r$phi0 <<- v*pi/180
+  a$phi0 <<- v*pi/180
 }
 
 ## Handler for saving state
 h.save <- function(h, ...) {
-  retistruct.save.markup(r)
+  retistruct.save.markup(a)
   retistruct.save.recdata(r)
   retistruct.export.matlab(r)
   unsaved.data(FALSE)
@@ -198,38 +199,38 @@ h.save <- function(h, ...) {
 ## 
 h.open <- function(h, ...) {
   curdir <- getwd()
-  if (is.null(r$dataset)) {
+  if (is.null(a$dataset)) {
     info = file.info(initial.dir)
     if (!is.na(info$isdir)) {
       setwd(initial.dir)
     }
   } else {
-    setwd(r$dataset)
+    setwd(a$dataset)
     setwd("..")
   } 
   gfile(type="selectdir", text="Select a directory...",
         handler = function(h, ...) {
-          r$dataset <<- h$file
+          a$dataset <<- h$file
         })
   setwd(curdir)
 
   ## Read the raw data
   tryCatch({
-    r <<- retistruct.read.dataset(r$dataset)
+    a <<- retistruct.read.dataset(a$dataset)
   }, warning=h.warning, error=h.error)
   
   ## Read the markup
   tryCatch({
-    r <<- retistruct.read.markup(r, error=message)
+    a <<- retistruct.read.markup(a, error=message)
   }, warning=h.warning, error=h.warning)
   
   ## Read the reconstruction data
   tryCatch({
-    r <<- retistruct.read.recdata(r)
+    r <<- retistruct.read.recdata(a)
   }, warning=h.warning, error=h.error)
 
-  svalue(g.dataset) <- r$dataset 
-  svalue(g.phi0d)   <- r$phi0*180/pi
+  svalue(g.dataset) <- a$dataset 
+  svalue(g.phi0d)   <- a$phi0*180/pi
   
   unsaved.data(FALSE)
   enable.widgets(TRUE)
@@ -244,7 +245,7 @@ h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
   tryCatch({
-    r <<- retistruct.reconstruct(r, report=set.status,
+    r <<- retistruct.reconstruct(a, report=set.status,
                                  plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
   }, warning=h.warning, error=h.error)  
   enable.widgets(TRUE)
@@ -258,18 +259,21 @@ h.show <- function(h, ...) {
 
 ## Handler for flipping DV axis
 h.flipdv <- function(h, ...) {
-  r$DVflip <<- ("Flip DV" %in% svalue(g.data))
+  a$DVflip <<- ("Flip DV" %in% svalue(g.data))
   do.plot()
 }
 
 ## Handler for dealing with data
 h.eye <- function(h, ...) {
-  r$side <<- svalue(g.eye)
+  a$side <<- svalue(g.eye)
   do.plot()
 }
 
 ## Plot in edit pane
 do.plot <- function() {
+  if (is.null(r)) {
+    r <- a
+  }
   if ("Strain" %in% svalue(g.show)) {   # Strain plot
     dev.set(d1)
     plot.flat(r, axt="s",
@@ -326,7 +330,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   dataset <<- NULL                         # Directory of dataset
   initial.dir <<- "."
 
-  r <<- NULL
+  ## Annotation object
+  a <<- NULL
 
   ##
   ## GUI Layout
