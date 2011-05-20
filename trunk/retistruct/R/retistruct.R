@@ -234,10 +234,10 @@ retistruct.read.recdata <- function(o) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
-      o <- r
+      return(r)
     }
   }
-  return(r)
+  return(NULL)
 }
 
 ##  Reconstructing the retina
