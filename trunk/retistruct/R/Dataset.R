@@ -16,6 +16,15 @@ nameLandmark <- function(d, i, name) {
   return(d)
 }
 
+getLandmarkID <- function(d, name) {
+  id <- which(names(d$Ss) == name)
+  if (length(id) == 1) {
+    return(id)
+  } else {
+    return(NA)
+  }
+}
+
 plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
