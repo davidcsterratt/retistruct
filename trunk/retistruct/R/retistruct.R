@@ -178,12 +178,12 @@ retistruct.read.markup <- function(a, error=stop) {
     if (!is.na(M["iN"]))
       a <- setFixedPoint(a, M["iN"], "Nasal")
     a$phi0 <- M["phi0"]*pi/180
-    if ("iOD" %in% colnames(M)) {
+    if ("iOD" %in% names(M)) {
       a <- nameLandmark(a, M["iOD"], "OD")
     }
-    if ("DVflip" %in% colnames(M)) {
+    if ("DVflip" %in% names(M)) {
       a$DVflip <- M["DVflip"]
-      if ("side" %in% colnames(M)) {
+      if ("side" %in% names(M)) {
         a$side <- M["side"]
       }
     }
