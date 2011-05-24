@@ -33,7 +33,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
         ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
         if (r$DVflip)
           ypos <- -ypos
-        suppressWarnings(points(xpos, ypos, col=cols[[names(Dss)[i]]], pch='.', ...))
+        suppressWarnings(points(xpos, ypos, col=cols[[names(Dss)[i]]],
+                                pch=20, ...))
       }
     })
   }

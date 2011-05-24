@@ -90,7 +90,7 @@ retistruct.cli(\"",
 retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
   datasets <- list.dirs(tldir)
   for (dataset in datasets) {
-    print(dataset)
+    message(paste("Attempting to produce figures from", dataset))
     try(retistruct.cli.figure(dataset, outputdir, ...))
   }
 }

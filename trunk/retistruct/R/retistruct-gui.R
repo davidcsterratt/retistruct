@@ -302,7 +302,7 @@ do.plot <- function() {
               grid=("Grid" %in% svalue(g.show)),
               mesh=FALSE)
     dev.set(d2)
-    plot.polar(r, cex=5,
+    plot.polar(r,
                datapoints=("Datapoints" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)))
     ## FIXME: EOD not computed

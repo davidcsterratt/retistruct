@@ -188,7 +188,7 @@ plot.l.vs.L <- function(r) {
   par(mar=c(4.5, 4.5, 0.5,0.5))
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   cols <- strain.colours(log(o$strain))
-  with(o, plot(L, l, col=cols, pch='.', cex=5,
+  with(o, plot(L, l, col=cols, pch=20,
                xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
                xlab="Length on flattened object",
                ylab="Length on reconstructed object", asp=1))

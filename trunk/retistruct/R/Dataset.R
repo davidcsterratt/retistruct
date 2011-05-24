@@ -35,7 +35,8 @@ plot.flat.dataset <- function(d, axt="n", ylim=NULL, ...) {
   if (plot.datapoints) {
     with(d, {
       for (col in names(Ds)) {
-        suppressWarnings(points(Ds[[col]][,1], Ds[[col]][,2], col=cols[[col]], pch=20,cex=0.5, ...))
+        suppressWarnings(points(Ds[[col]][,1], Ds[[col]][,2],
+                                col=cols[[col]], pch=20, ...))
       }
     })
   }
