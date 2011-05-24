@@ -25,7 +25,7 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
   ## Output
   retistruct.save.recdata(r)
   if (!is.na(outputdir)) {
-    retistruct.cli.figure(r, outputdir, device=device)
+    retistruct.cli.figure(dataset, outputdir, device=device)
   }
 }
 
@@ -65,25 +65,21 @@ retistruct.cli.figure <- function(dataset,
     ## Flat plot
     dev(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
            width=width, height=height)
-    plot.outline.flat(r$P, r$gb, axt="s")
-    with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
-    plot.datapoints.flat(r$Ds, r$D.cols)
-    plot.landmarks.flat(r$Ss, col="orange")
-    plot.stitch.flat(r, add=TRUE)
+    plot.flat(r, axt="s",
+              datapoints=TRUE,
+              landmarks=TRUE,
+              markup=FALSE,
+              stitch=TRUE,
+              grid=TRUE,
+              mesh=FALSE,
+              strain=FALSE)
     title(dataset)
     dev.off()
 
     ## Polar plot
     dev(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
            width=width, height=height)
-    plot.polar(r$phi0*180/pi)
-    if (!is.null(r$Dss)) {
-      plot.outline.polar(r)
-      plot.datapoints.polar(r$Dss, r$D.cols, cex=5)
-    }
-    if (!is.null(r$Sss)) {
-      plot.landmarks.polar(r$Sss, col="orange")
-    }
+    plot.polar(r)
     title(dataset)
     if (!is.null(r$EOD)) {
       text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
@@ -93,8 +89,14 @@ retistruct.cli.figure <- function(dataset,
     ## Strain plot
     dev(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
            width=width, height=height)
-    plot.outline.flat(r$P, r$gb, axt="s")
-    plot.strain.flat(r)
+    plot.flat(r, axt="s",
+              datapoints=FALSE,
+              landmarks=FALSE,
+              markup=FALSE,
+              stitch=FALSE,
+              grid=FALSE,
+              mesh=FALSE,
+              strain=TRUE)
     dev.off()
 
     ## l.vs.L plot
