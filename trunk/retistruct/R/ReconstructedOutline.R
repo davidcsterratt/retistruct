@@ -29,8 +29,6 @@ plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
   }
 }
 
-## plot.gridlines.flat(P, T, phi, lambda, Tt, phi0)
-##
 ## Plot a mesh of gridlines from the spherical retina (described by
 ## points phi, lambda and triangulation Tt and cutoff point phi0) onto
 ## a flattened retina (described by points P and triangulation T).

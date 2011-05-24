@@ -576,16 +576,15 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
 
     if (!is.na(dev.grid)) {
       dev.set(dev.grid)
-      with(r, plot.outline.flat(P, gb))
-      plot.gridlines.flat(r$P, r$T, phi, lambda, Tt, phi0*180/pi)
+      plot.flat(r, grid=TRUE, 
+                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 
     if (!is.na(dev.polar)) {
       dev.set(dev.polar)
-      plot.polar(phi0 * 180/pi)
       r$phi <- phi
       r$lambda <- lambda
-      plot.outline.polar(r)
+      plot.polar(r)
     }
   }
   o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
@@ -704,8 +703,8 @@ ReconstructedOutline <- function(o,
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
     dev.set(dev.grid)
-    with(r, plot.outline.flat(P, gb))
-    with(r, plot.gridlines.flat(P, T, phi, lambda, Tt, phi0*180/pi))
+      plot.flat(r, grid=TRUE, 
+                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
     ## Initial plot in 3D space
     plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
