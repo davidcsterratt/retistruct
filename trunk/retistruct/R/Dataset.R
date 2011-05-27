@@ -10,9 +10,11 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
 }
 
 nameLandmark <- function(d, i, name) {
-  new.names <- rep("", length(d$Ss))
-  new.names[i] <- name
-  names(d$Ss) <- new.names
+  if (!is.na(i)) {
+    new.names <- rep("", length(d$Ss))
+    new.names[i] <- name
+    names(d$Ss) <- new.names
+  }
   return(d)
 }
 
