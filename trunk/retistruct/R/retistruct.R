@@ -172,7 +172,8 @@ retistruct.read.markup <- function(a, error=stop) {
   markupfile <- file.path(a$dataset, "markup.csv")
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
-    M <- M.old
+    ## Convert to vector
+    M <- sapply(M.old, function(x) x)
     if (!is.na(M["iD"])) {
       a <- setFixedPoint(a, M["iD"], "Dorsal")
       M["iD"] <- convert.markup(M["iD"], P.old, a$P)
