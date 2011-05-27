@@ -155,6 +155,7 @@ retistruct.read.markup <- function(a, error=stop) {
   ## points (P). It returns a new matrix of indicies (M).
   convert.markup <- function(M.old, P.old, P) {
     M <- sapply(M.old, function(i) {
+      print(i)
       ifelse(is.numeric(i), closest(P, P.old[i,]), i)
     })
     return(M)
@@ -172,11 +173,15 @@ retistruct.read.markup <- function(a, error=stop) {
   markupfile <- file.path(a$dataset, "markup.csv")
   if (file.exists(markupfile)) {
     M.old <- read.csv(markupfile)
-    M <- convert.markup(M.old, P.old, a$P)
-    if (!is.na(M["iD"]))
+    M <- M.old
+    if (!is.na(M["iD"])) {
       a <- setFixedPoint(a, M["iD"], "Dorsal")
-    if (!is.na(M["iN"]))
+      M["iD"] <- convert.markup(M["iD"], P.old, a$P)
+    }
+    if (!is.na(M["iN"])) {
       a <- setFixedPoint(a, M["iN"], "Nasal")
+      M["iN"] <- convert.markup(M["iN"], P.old, a$P)
+    }
     a$phi0 <- M["phi0"]*pi/180
     if ("iOD" %in% names(M)) {
       a <- nameLandmark(a, M["iOD"], "OD")
