@@ -155,7 +155,6 @@ retistruct.read.markup <- function(a, error=stop) {
   ## points (P). It returns a new matrix of indicies (M).
   convert.markup <- function(M.old, P.old, P) {
     M <- sapply(M.old, function(i) {
-      print(i)
       ifelse(is.numeric(i), closest(P, P.old[i,]), i)
     })
     return(M)
