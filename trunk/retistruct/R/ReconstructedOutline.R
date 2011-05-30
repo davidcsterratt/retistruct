@@ -8,15 +8,24 @@
 plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
   mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
 
-  ## Take out rows that are not intersections
-  tri.int <- (rowSums((mu >=0) & (mu <=1)) == 2)
+  ## Take out rows that are not intersections Triangles in which one
+  ## line is in the plane have mu values 0, 1 and NaN; we want to
+  ## include these
+  tri.int <- ((rowSums((mu >=0) & (mu <=1)) == 2) |
+              apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
 
   if (any(tri.int)) {
     T  <- T[tri.int,,drop=FALSE]
     mu <- mu[tri.int,,drop=FALSE]
 
+    ## Create a logical matrix of which points are involved in lines
+    ## that interscect the plane.
     line.int <- (mu >=0) & (mu <=1)
-    
+    ## If any element of mu contained a NaN, due to a line being in
+    ## the plane, this should be set to false as the point opposite
+    ## the NaN is not in the plane
+    line.int[is.na(line.int)] <- FALSE
+
     ## Order rows so that the false indicator is in the third column
     T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
     mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
