@@ -174,11 +174,25 @@ circle <- function(n) {
   return(cbind(cos((1:n)/n*2*pi), sin((1:n)/n*2*pi)))
 }
 
-## compute.intersections.sphere(phi, lambda, T, n, d)
-##
-## Find the interections of the plane defined by the normal n and the
-## distance d expressed as a fractional distance along the side of
-## each triangle.
+##' Find the interections of the plane defined by the normal \code{n} and the
+##' distance \code{d} expressed as a fractional distance along the side of
+##' each triangle.
+##'
+##' @title Find the intersection of a plane with triangles on a sphere
+##' @param phi Lattitude of grid points on sphere centred on origin.
+##' @param lambda Longitude of grid points on sphere centred on origin.
+##' @param T Triangulation
+##' @param n Normal of plane
+##' @param d Distance of plane along normal from origin.
+##' @return Matrix with same dimensions as \code{T}. Each row gives
+##' the intersection of the plane  with the corresponding triangle in
+##' \code{T}. Column 1 gives the fractional distance from vertex 2 to
+##' vertex 3. Column 2 gives the fractional distance from vertex 3 to
+##' vertex 1. Column 2 gives the fractional distance from vertex 1 to
+##' vertex 2. A value of \code{NaN} indicates that the corresponding
+##' side lies in the plane. A value of \code{Inf} indicates that the
+##' side lies parallel to the plane but outside it.
+##' @author David Sterratt
 compute.intersections.sphere <- function(phi, lambda, T, n, d) {
   P <- cbind(cos(phi)*cos(lambda),
              cos(phi)*sin(lambda),
@@ -197,7 +211,8 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ##' @param phi vector of lattitudes of N points
 ##' @param lambda vector of longitudes of N points
 ##' @param R radius of sphere 
-##' @return An N-by-3 matrix in which each row is the cartesian (X, Y, Z) coordinates of each point
+##' @return An N-by-3 matrix in which each row is the cartesian (X, Y,
+##' Z) coordinates of each point
 ##' @author David Sterratt
 sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
   P <- cbind(R*cos(phi)*cos(lambda),
