@@ -285,7 +285,7 @@ project.to.sphere <- function(r) {
   p <- merge(list(phi=phi, lambda=lambda, R=R,
                   phi0=phi0, lambda0=lambda0, Ps=Ps),
              r)
-  class(p) <- c("reconstructedOutline", class(r))
+  class(p) <- unique(c("reconstructedOutline", class(r)))
   return(p)
 }
 
@@ -735,7 +735,7 @@ ReconstructedOutline <- function(o,
   
   report(paste("Mapping optimised. Error:", format(r$opt$value,5),
                ";", r$nflip, "flipped triangles."))
-  class(r) <- c("reconstructedOutline", class(r))
+  class(r) <- unique(c("reconstructedOutline", class(r)))
   return(r)
 }
 
@@ -782,7 +782,7 @@ infer.datapoint.landmark.coordinates <- function(r, report=print) {
 
   d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                   Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
-  class(d) <- c("reconstructedDataset", class(r))
+  class(d) <- unique(c("reconstructedDataset", class(r)))
   return(d)
 }
 
