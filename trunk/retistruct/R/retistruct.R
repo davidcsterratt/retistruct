@@ -89,7 +89,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   ##   stop("Unable to find a closed outline.")
   ## }
 
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw)
+  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
   a <- AnnotatedOutline(d)
   a <- AnnotatedDataset(a)
   return(a)
