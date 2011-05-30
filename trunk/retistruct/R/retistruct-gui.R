@@ -251,7 +251,7 @@ h.reconstruct <- function(h, ...) {
   tryCatch({
     r <<- retistruct.reconstruct(a, report=set.status,
                                  plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
-  }, warning=h.warning, error=h.error)  
+  }, warning=h.warning, error=h.warning)  
   enable.widgets(TRUE)
   do.plot()
 }
