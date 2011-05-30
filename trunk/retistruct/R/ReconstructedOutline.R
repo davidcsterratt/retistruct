@@ -25,10 +25,13 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
     mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
 
-    ## Take out rows that are not intersections Triangles in which one
-    ## line is in the plane have mu values 0, 1 and NaN; we want to
-    ## include these
-    tri.int <- ((rowSums((mu >=0) & (mu <=1)) == 2) |
+    ## Take out rows that are not intersections. If a plane intersects
+    ## one side of a triangle and the opposing vertex, in the row
+    ## corresponding to the triangle, there will be a 0, a 1 and a
+    ## value between 0 and 1. We get rid of the 1 in the
+    ## following. Triangles in which one line is in the plane have mu
+    ## values 0, 1 and NaN; we want to include these.
+    tri.int <- ((rowSums((mu >= 0) & (mu < 1)) == 2) |
                 apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
 
     if (any(tri.int)) {
@@ -37,7 +40,7 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
 
       ## Create a logical matrix of which points are involved in lines
       ## that interscect the plane.
-      line.int <- (mu >=0) & (mu <=1)
+      line.int <- (mu >= 0) & (mu < 1)
       ## If any element of mu contained a NaN, due to a line being in
       ## the plane, this should be set to false as the point opposite
       ## the NaN is not in the plane
