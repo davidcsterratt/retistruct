@@ -1,46 +1,15 @@
-## plot.gridline.flat(P, T, phi, lambda, Tt, n, d)
-##
-## Plot a gridline from the spherical retina (described by points phi,
-## lambda and triangulation Tt) onto a flattened retina (described by
-## points P and triangulation T). The gridline is described by a
-## normal n to a plane and a distance to the plane. The intersection of
-## the plane and the spehere is the gridline.
-plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
-  mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
-
-  ## Take out rows that are not intersections Triangles in which one
-  ## line is in the plane have mu values 0, 1 and NaN; we want to
-  ## include these
-  tri.int <- ((rowSums((mu >=0) & (mu <=1)) == 2) |
-              apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
-
-  if (any(tri.int)) {
-    T  <- T[tri.int,,drop=FALSE]
-    mu <- mu[tri.int,,drop=FALSE]
-
-    ## Create a logical matrix of which points are involved in lines
-    ## that interscect the plane.
-    line.int <- (mu >=0) & (mu <=1)
-    ## If any element of mu contained a NaN, due to a line being in
-    ## the plane, this should be set to false as the point opposite
-    ## the NaN is not in the plane
-    line.int[is.na(line.int)] <- FALSE
-
-    ## Order rows so that the false indicator is in the third column
-    T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
-    mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
-    T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
-    mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
-
-    P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
-    P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
-    suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
-  }
-}
-
-## Plot a mesh of gridlines from the spherical retina (described by
-## points phi, lambda and triangulation Tt and cutoff point phi0) onto
-## a flattened retina (described by points P and triangulation T).
+##' Plot a mesh of gridlines from the spherical retina (described by
+##' points \code{phi}, \code{lambda} and triangulation \code{Tt} and
+##' cutoff point \code{phi0}) onto a flattened retina (described by
+##' points \code{P} and triangulation \code{T}).
+##'
+##' @title Flat plot of reconstructed outline
+##' @param r \code{reconstructedOutline} object
+##' @param axt whether to plot axes
+##' @param ylim y-limits
+##' @param ... 
+##' @method plot.flat reconstructedOutline
+##' @author David Sterratt
 plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   NextMethod()
 
@@ -48,12 +17,48 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   plot.grid <-   is.null(args$grid) || args$grid
   plot.strain <- !is.null(args$strain) && args$strain
 
+  ## Plot a gridline from the spherical retina (described by points phi,
+  ## lambda and triangulation Tt) onto a flattened retina (described by
+  ## points P and triangulation T). The gridline is described by a
+  ## normal n to a plane and a distance to the plane. The intersection of
+  ## the plane and the spehere is the gridline.
+  plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
+    mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
+
+    ## Take out rows that are not intersections Triangles in which one
+    ## line is in the plane have mu values 0, 1 and NaN; we want to
+    ## include these
+    tri.int <- ((rowSums((mu >=0) & (mu <=1)) == 2) |
+                apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
+
+    if (any(tri.int)) {
+      T  <- T[tri.int,,drop=FALSE]
+      mu <- mu[tri.int,,drop=FALSE]
+
+      ## Create a logical matrix of which points are involved in lines
+      ## that interscect the plane.
+      line.int <- (mu >=0) & (mu <=1)
+      ## If any element of mu contained a NaN, due to a line being in
+      ## the plane, this should be set to false as the point opposite
+      ## the NaN is not in the plane
+      line.int[is.na(line.int)] <- FALSE
+
+      ## Order rows so that the false indicator is in the third column
+      T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
+      mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
+      T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
+      mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
+
+      P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
+      P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
+      suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
+    }
+  }
+  
   if (plot.grid) {
-    Phis=(-8:9)*pi/18
-    Lambdas=(0:17)*pi/18
-    grid.int.minor=15
-    grid.int.major=45
-    grid.col="gray"
+    grid.int.minor <- 15
+    grid.int.major <- 45
+    grid.col <- "gray"
 
     phi0d <- r$phi0 * 180/pi
     
