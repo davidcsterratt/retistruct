@@ -9,9 +9,10 @@
 AnnotatedOutline <- function(o){
   a <- o
   class(a) <- c("annotatedOutline", class(o))
-  a$V0 <- c()
-  a$VB <- c()
-  a$VF <- c()
+  ## Trick to make V0, VB and VF "named numeric" of length 0
+  a$V0 <- c(x=0)[0]
+  a$VB <- c(x=0)[0]
+  a$VF <- c(x=0)[0]
   a$phi0 <- 0
   a$i0 <- 1
   return(a)
@@ -264,11 +265,14 @@ ensureFixedPointInRim <- function(o) {
   Rset <- t$Rset
   i0 <- o$i0
   if (!(i0 %in% Rset)) {
-    warning(paste(names(o$i0)[1], "point has been moved to be in the rim"))
     o$i0 <- with(o, Rset[which.min(abs(Rset - i0))])
-    names(o$i0) <- names(i0)
+    if (!is.null(names(o$i0))) {
+      warning(paste(names(o$i0)[1], "point has been moved to be in the rim"))
+      names(o$i0) <- names(i0)
+    } else {
+      message("Fixed point has been moved to be in the rim")
+    }
   }
-  
   return(o)
 }
 
@@ -279,7 +283,7 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
 
   if (plot.markup) {
     with(a, {
-      if (!is.null(a$V0)) {
+      if (length(V0) > 0) {
         points(P[VF,,drop=FALSE], col="red", pch="+")
         segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
         points(P[VB,,drop=FALSE], col="orange", pch="+")
