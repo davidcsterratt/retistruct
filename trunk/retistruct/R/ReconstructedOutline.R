@@ -95,7 +95,19 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   }
 }
 
-
+##' Draw a polar plot of reconstructed outline. This method just sets
+##' up the grid lines and the angular labels.
+##'
+##' @title Polar plot of reconstructed outline
+##' @param r \code{reconstructedOutline} object
+##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param ... Other graphics parameters -- not used at present
+##' @method plot.polar reconstructedOutline
+##' @author David Sterratt
 plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
