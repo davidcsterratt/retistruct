@@ -30,3 +30,6 @@ check:
 revision:
 	@echo $(RETISTRUCT_SVN_REVISION)
 	@echo $(RETISTRUCT_SVN_REVISION1)
+
+clean:
+	rm -f retistruct/R/*~
