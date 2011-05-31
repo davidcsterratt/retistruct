@@ -328,11 +328,11 @@ retistruct.export.matlab <- function(r) {
   if (!is.null(r$dataset)) {
     if (!is.null(r)) {
       r <- infer.tear.coordinates(r)
-      f <- file.path(dataset, "r.mat")
+      f <- file.path(r$dataset, "r.mat")
       print(paste("Saving", f))
-      writeMat(f, phi0=r$phi0, Dss=r$Dss, Sss=name.list(r$Sss), Tss=name.list(r$Tss))
+      writeMat(f, phi0=r$phi0*180/pi, Dss=r$Dss, Sss=name.list(r$Sss), Tss=name.list(r$Tss))
 
-      save(r, file=file.path(dataset, "r.Rdata"))
+      save(r, file=file.path(r$dataset, "r.Rdata"))
     }
   }
 }
