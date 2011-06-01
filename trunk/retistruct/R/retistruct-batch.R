@@ -19,7 +19,7 @@ list.dirs <- function(path='.') {
 ##' @param device string indicating what type of graphics output
 ##' required. Options are "pdf" and "png".
 ##' @author David Sterratt
-retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=1800,
+retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
                              device="pdf") {
   print(outputdir)
   datasets <- list.dirs(tldir)
