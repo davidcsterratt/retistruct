@@ -176,12 +176,12 @@ retistruct.read.markup <- function(a, error=stop) {
     ## Convert to vector
     M <- sapply(M.old, function(x) x)
     if (!is.na(M["iD"])) {
-      a <- setFixedPoint(a, M["iD"], "Dorsal")
       M["iD"] <- convert.markup(M["iD"], P.old, a$P)
+      a <- setFixedPoint(a, M["iD"], "Dorsal")
     }
     if (!is.na(M["iN"])) {
-      a <- setFixedPoint(a, M["iN"], "Nasal")
       M["iN"] <- convert.markup(M["iN"], P.old, a$P)
+      a <- setFixedPoint(a, M["iN"], "Nasal")
     }
     a$phi0 <- M["phi0"]*pi/180
     if ("iOD" %in% names(M)) {
