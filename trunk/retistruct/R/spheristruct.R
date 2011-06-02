@@ -772,11 +772,14 @@ infer.datapoint.landmark.coordinates <- function(r, report=print) {
   Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
   Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
   if (!is.null(r$Ss)) {
-    for (name in names(r$Ss)) {
-      Ssb[[name]] <- with(r, tsearchn(P, T, r$Ss[[name]]))
-      Ssc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[name]])
-      Sss[[name]] <- sphere.cart.to.sphere.spherical(Ssc[[name]], r$R)
+    for (i in 1:length(r$Ss)) {
+      Ssb[[i]] <- with(r, tsearchn(P, T, r$Ss[[i]]))
+      Ssc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[i]])
+      Sss[[i]] <- sphere.cart.to.sphere.spherical(Ssc[[i]], r$R)
     }
+    names(Ssb) <- names(r$Ss)
+    names(Ssc) <- names(r$Ss)
+    names(Sss) <- names(r$Ss)
   }
 
   d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
