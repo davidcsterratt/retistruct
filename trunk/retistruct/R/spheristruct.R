@@ -210,28 +210,27 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
   ## FIXME: This debugging output should probably go once the "Lapack
   ## routine dgesv: system is exactly singular" bug has been
   ## vanquished
-  print(det(C))
+  message(paste("det(C) =", det(C)))
   dupC <- duplicated(C)
   if (any(dupC)) {
     i <- which(dupC)
     Ci <- C[i,]
     dups <- which(apply(C, 1, function(x) {identical(x, Ci)}))
-    print(dups)
-    print(Ci)
+    message(paste("dups", dups))
+    message(paste("Ci", Ci))
     for (d in dups) {
-      print(d)
-      print(which(C[d,]==1))
+      message(paste("d", d, ":", which(C[d,]==1)))
     }
   }
   
   ind <- as.vector(rbind(2*i.fix-1, 2*i.fix))
   A <- C[-ind, -ind]
-  print(det(A))
+  message(paste("det(A) =", det(A)))
   B <- C[-ind,  ind]
   P <- matrix(t(P.fix), ncol(B), 1)
   D <- diag(apply(cbind(A, 2*B), 1, sum))
-  print(det(D))
-
+  message(paste("det(D) =", det(D)))
+  if (is.infinite(det(D))) stop ("det(D) is infinite")
   Q <- 2 * solve(D - A) %*% B %*% P
   Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
   R <- matrix(0, nrow(Q) + length(i.fix), 2)
