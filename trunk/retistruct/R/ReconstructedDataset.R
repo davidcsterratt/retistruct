@@ -23,6 +23,18 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     text(xpos, ypos, c("T", "D", "N", "V"))
   }
 
+  ## FIXME: need to think about how we do this plotting, depending on
+  ## what we decide about whether the spherical coordinates ought to
+  ## be flipped
+  ## ylim <- range(ypos)
+  ## if (r$DVflip) {
+  ##   if (is.null(ylim)) {
+  ##     ylim <- range(ypos)
+  ##   }
+  ##   ylim <- sort(ylim, TRUE)
+  ## }
+  ## NextMethod(ylim=ylim)
+  
   ## Datapoints
   if (plot.datapoints) {
     with(r, {
