@@ -79,6 +79,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   
   ## Create forward and backward pointers
   o <- Outline(P)
+  o <- simplify.outline(o)
   
   ## Check that P is more-or-less closed
   ## FIXME: not sure if this check is needed any more,

@@ -180,3 +180,58 @@ triangulate.outline <- function(o, n=200,
   class(t) <- c("triangulatedOutline", class(o))
   return(t)
 }
+
+##' Simplify an outline object by removing verticies bordering short
+##' edges while not encroaching on any of the outline. At present,
+##' this is done by finding concave vertices. It is safe to remove
+##' these, at the expense of increasing the area a bit.
+##'
+##' @title Simplify an outline object by removing short edges
+##' @param o \code{outline} object to simplify
+##' @param min.frac.length the minumum length as a fraction of the
+##' total length of the outline. 
+##' @param plot whether to display plotting or not during simplification
+##' @return Simlified \code{outline} object
+##' @author David Sterratt
+simplify.outline <- function(o, min.frac.length=0.005, plot=FALSE) {
+  P <- o$P
+  N <- nrow(P)                        # Number of vertices
+  Q <- rbind(P, P[1,])                # Convenience variable
+  v <- diff(Q)                         # Vector of each edge
+  l <- vecnorm(v)                     # Length of each edge
+  ## Compute outer products at each vertex
+  e <- extprod3d(cbind(v[c(N, 1:(N-1)),], 0), cbind(v, 0))[,3]
+  
+  ## Find short edges
+  S <- l/sum(l) < min.frac.length
+
+  ## Find indicies of points that can be removed.
+  ## They have to be concave or colinear (e<=0). And they need to border short edges
+  i.rem <- which((e <= 0) & (S | (S[c(N, 1:(N-1))])))
+
+  if (plot) {
+    ## Plot short edges...
+    plot(P, col="white")
+    if (any(S)) {
+      segments(P[S,1], P[S,2], P[S,1]+v[S,1], P[S,2] + v[S,2], col="red")
+    }
+    ## and longer ones.
+    if (any(!S)) {
+      segments(P[!S,1], P[!S,2], P[!S,1]+v[!S,1], P[!S,2] + v[!S,2], col="black")
+    }
+    ## Plot colinear, convex and concave points
+    points(P[e>0,1], P[e>0, 2], col="green")
+    points(P[e==0,1], P[e==0, 2], col="orange")
+    points(P[e<0,1], P[e<0, 2], col="blue")
+    ## Plot points to remove
+    points(P[i.rem,1], P[i.rem, 2], pch="X", col="brown")
+  }
+
+  ## If there are any points to remove, remove the first one
+  if (length(i.rem) > 0) {
+    message(paste("simplify.outline: Removing vertex", i.rem[1]))
+    return(simplify.outline(list(P=P[-i.rem[1],])))
+  } else {
+    return(Outline(P))
+  }
+}
