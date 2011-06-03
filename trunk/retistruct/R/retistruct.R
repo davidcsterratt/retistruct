@@ -106,7 +106,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
 ##' @author David Sterratt
 retistruct.potential.od <- function(o) {
   if (inherits(o, "dataset")) {
-    return(with(o, exists("Ss")) && is.list(r$Ss) && (length(r$Ss) > 0))
+    return(with(o, exists("Ss")) && is.list(o$Ss) && (length(o$Ss) > 0))
   }
   return(FALSE)
 }
