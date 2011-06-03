@@ -13,8 +13,31 @@ plot.polar <- function(r, show.grid=TRUE,
 
 plot.polar.default <- function(r, show.grid=TRUE,
                                grid.col="gray", grid.bg="transparent", 
-                               grid.int.minor=15, grid.int.major=45, ...) {
+                               grid.int.minor=15, grid.int.major=45,
+                               flip.horiz=FALSE, ...) {
   plot.new()
 }
 
+getDss <- function(x) {
+  UseMethod("getDss")
+}
 
+getDss.default <- function(x) {
+  return(NULL)
+}
+
+getSss <- function(x) {
+  UseMethod("getSss")
+}
+
+getSss.default <- function(x) {
+  return(NULL)
+}
+
+getTss <- function(x) {
+  UseMethod("getTss")
+}
+
+getTss.default <- function(x) {
+  return(NULL)
+}

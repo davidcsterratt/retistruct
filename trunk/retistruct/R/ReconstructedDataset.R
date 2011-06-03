@@ -47,12 +47,36 @@ ReconstructedDataset <- function(r, report=message) {
   return(d)
 }
 
+##' Get spherical coordinates of datapoints.
+##'
+##' @title Get transformed spherical coordinates of datapoints
+##' @param r \code{reonstructedDataset} object.
+##' @return \code{Dss}
+##' @method getDss reconstructedDataset
+##' @author David Sterratt
+getDss.reconstructedDataset <- function(r) {
+  return(r$Dss)
+}
+
+##' Get spherical coordinates of landmarks.
+##'
+##' @title Get transformed spherical coordinates of landmarks.
+##' @param r \code{reonstructedDataset} object.
+##' @return \code{Sss}
+##' @method getSss reconstructedDataset
+##' @author David Sterratt
+getSss.reconstructedDataset <- function(r) {
+  return(r$Sss)
+}
+
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
-                                            grid.int.major=45, ...) {
-  NextMethod()
+                                            grid.int.major=45,
+                                            flip.horiz=FALSE,
+                                            labels=c(0, 90, 180, 270), ...) {
+  NextMethod(r)
 
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
@@ -63,13 +87,11 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   maxlength <- diff(range(grid.pos))
 
   ## Radial Labels
-  angles <- c(0, 90, 180, 270)*pi/180
-  xpos <- cos(angles) * maxlength * 1.05
-  ypos <- sin(angles) * maxlength * 1.05
-  if (r$side=="Right") {
-    text(xpos, ypos, c("N", "D", "T", "V"))
-  } else {
-    text(xpos, ypos, c("T", "D", "N", "V"))
+  if (!is.null(labels)) {
+    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
+    xpos <- cos(angles) * maxlength * 1.05
+    ypos <- sin(angles) * maxlength * 1.05
+    text(xpos, ypos, labels)
   }
 
   ## FIXME: need to think about how we do this plotting, depending on
@@ -86,50 +108,31 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   
   ## Datapoints
   if (plot.datapoints) {
-    with(r, {
-      for (i in 1:length(Dss)) {
-        phis    <- Dss[[i]][,"phi"]
-        lambdas <- Dss[[i]][,"lambda"]
-        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-        if (r$DVflip)
-          ypos <- -ypos
-        suppressWarnings(points(xpos, ypos, col=cols[[names(Dss)[i]]],
-                                pch=20, ...))
-      }
-    })
+    Dss <- getDss(r)
+    for (i in 1:length(Dss)) {
+      phis    <- Dss[[i]][,"phi"]
+      lambdas <- Dss[[i]][,"lambda"]
+      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+      suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
+                              pch=20, ...))
+    }
   }
-
+  
   ## Landmarks
   if (plot.landmarks) {
-    with(r, {
-      if (length(Sss) > 0) {
-        for (i in 1:length(Sss)) {
-          name <- names(Ss)[i]
-          col <- ifelse(is.null(name) || (name==""), "default", name)
-          phi    <- Sss[[i]][,"phi"]
-          lambda <- Sss[[i]][,"lambda"]
-          x <- cos(lambda) * ((phi * 180/pi) + 90)
-          y <- sin(lambda) * ((phi * 180/pi) + 90)
-          if (r$DVflip)
-            y <- -y
-          suppressWarnings(lines(x, y, col=cols[[col]], ...))
-        }
+    Sss <- getSss(r)
+    if (length(Sss) > 0) {
+      for (i in 1:length(Sss)) {
+        name <- names(Sss)[i]
+        col <- ifelse(is.null(name) || (name==""), "default", name)
+        phi    <- Sss[[i]][,"phi"]
+        lambda <- Sss[[i]][,"lambda"]
+        x <- cos(lambda) * ((phi * 180/pi) + 90)
+        y <- sin(lambda) * ((phi * 180/pi) + 90)
+        suppressWarnings(lines(x, y, col=r$cols[[col]], ...))
       }
-    })
+    }
   }
 
-  ## Outline
-  with(r, {
-    for (TF in r$TFset) {
-      ## Convert indicies to the spherical frame of reference
-      j <- r$ht[TF]
-      ## Plot
-      x <- with(r, cos(lambda[j]) * ((phi[j] * 180/pi) + 90))
-      y <- with(r, sin(lambda[j]) * ((phi[j] * 180/pi) + 90))
-      if (r$DVflip)
-          y <- -y
-      suppressWarnings(lines(x, y, ...))
-    }
-  })
 }

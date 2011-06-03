@@ -1,3 +1,20 @@
+##' Get spherical coordinates of tears.
+##'
+##' @title Get spherical coordinates of tears.
+##' @param r \code{reconstructedOutline} object.
+##' @return \code{Tss}
+##' @method getTss reconstructedOutline
+##' @author David Sterratt
+getTss.reconstructedOutline <- function(r) {
+  Tss <- list()
+  for (TF in r$TFset) {
+    ## Convert indicies to the spherical frame of reference
+    j <- r$ht[TF]
+    Tss <- with(r, c(Tss, list(cbind(phi=phi[j], lambda=lambda[j]))))
+  }
+  return(Tss)
+}
+
 ##' Plot a mesh of gridlines from the spherical retina (described by
 ##' points \code{phi}, \code{lambda} and triangulation \code{Tt} and
 ##' cutoff point \code{phi0}) onto a flattened retina (described by
@@ -112,13 +129,19 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
-                                            grid.int.major=45, ...) {
+                                            grid.int.major=45,
+                                            flip.horiz=FALSE, ...) {
 
   phi0d <- r$phi0*180/pi
   par(mar=c(1, 1, 1, 1))
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
   maxlength <- diff(range(grid.pos))
-  plot(c(-maxlength, maxlength), c(-maxlength, maxlength), 
+  if (flip.horiz) {
+    xlim <- c(maxlength, -maxlength)
+  } else {
+    xlim <- c(-maxlength, maxlength)
+  }
+  plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
 
   ## Plot the grid
@@ -150,4 +173,13 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   labels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
   label.pos <- labels - min(grid.pos)
   text(label.pos, -maxlength/15, labels)
+
+  ## Plot outline
+  Tss <- getTss(r)
+  for (Ts in Tss) {
+    ## Plot
+    x <- with(r, cos(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
+    y <- with(r, sin(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
+    suppressWarnings(lines(x, y, ...))
+  }
 }
