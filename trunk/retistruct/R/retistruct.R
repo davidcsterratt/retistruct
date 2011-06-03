@@ -288,6 +288,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                  ";", r$nflip, "flipped triangles. OD displacement:",
                  format(r$EOD, 2),
                  "degrees."))
+    r <- RetinalReconstructedDataset(r)
   }
   return(r)
 }
