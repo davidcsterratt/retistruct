@@ -92,7 +92,7 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
 
   d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
   a <- AnnotatedOutline(d)
-  a <- AnnotatedDataset(a)
+  a <- RetinalDataset(a)
   return(a)
 }
 
@@ -133,7 +133,7 @@ retistruct.potential.od <- function(o) {
 ##' @title Read the markup data
 ##' @param o Dataset object, containing \code{dataset} path
 ##' @param error Function to run on error, by default \code{stop()}
-##' @return o AnnotatedDataset object
+##' @return o \code{RetinalDataset} object
 ##' \item{V0}{Indicies in \code{P} of apicies of tears}
 ##' \item{VB}{Indicies in \code{P} of backward verticies of tears}
 ##' \item{VF}{Indicies in \code{P} of backward verticies of tears}
@@ -294,7 +294,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
 
 ## retistruct.save.markup() - save markup
 retistruct.save.markup <- function(a) {
-  if (inherits(a, "annotatedDataset")) {
+  if (inherits(a, "retinalDataset")) {
     with(a, {
       ## Save the tear information and the outline
       write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),
