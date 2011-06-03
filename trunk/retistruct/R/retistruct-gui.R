@@ -158,14 +158,15 @@ h.mark.od <- function(h, ...) {
 
   ## Identify a point
   id <- identify(Sm[,1], Sm[,2], n=1)
-
-  ## 
+  
+  ## Idendify segment in which point appears
+  i <- 0
   N <- 0
-  i <- 1
-  while (id <= N && i<=length(Ss)) {
-    N <- N + nrow(a$Ss[i])
+  while (id > N && i < length(a$Ss)) {
     i <- i + 1
+    N <- N +  nrow(a$Ss[[i]])
   }
+  ## Set "OD" landmark
   a <<- nameLandmark(a, i, "OD")
   do.plot()
   svalue(g.status) <- ""
