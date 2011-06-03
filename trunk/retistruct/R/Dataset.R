@@ -29,8 +29,8 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
 }
 
 ##' Name a landmark in a \code{dataset}. The name of element \code{i}
-##' of \code{Ss} is set to \code{name} and all other elements are
-##' unaltered.
+##' of \code{Ss} is set to \code{name}, the name of any element that
+##' bore the name is set to "" and all other elements are unaltered.
 ##'
 ##' @title Name a landmark in a Dataset
 ##' @param d \code{dataset} object
@@ -41,6 +41,11 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
 nameLandmark <- function(d, i, name) {
   if (!is.na(i)) {
     new.names <- names(d$Ss)
+    ## If this name already exists, replace it with ""
+    j <- getLandmarkID(d, name)
+    if (!is.na(j)) {
+      new.names[j] <- ""
+    }
     new.names[i] <- name
     names(d$Ss) <- new.names
   }
