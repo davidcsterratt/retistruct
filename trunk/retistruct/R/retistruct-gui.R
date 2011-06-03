@@ -239,6 +239,11 @@ h.open <- function(h, ...) {
   tryCatch({
     r <<- retistruct.read.recdata(a)
   }, warning=h.warning, error=h.error)
+  ## If there is no reconstruction data, show the markup so that we
+  ## don't think there is no markup.
+  if (is.null(r)) {
+    svalue(g.show) <- unique(c("Markup", svalue(g.show)))
+  }
 
   unsaved.data(FALSE)
   enable.widgets(TRUE)
