@@ -738,56 +738,6 @@ ReconstructedOutline <- function(o,
   return(r)
 }
 
-## Infer coordinates of datapoints
-## Arguments:
-## r    - object returned by fold.outline
-## Ds   - list of sets of datapoints to plot
-## Ss   - list of sets of landmarks to plot
-##
-## Returns:
-## New object r, with new objects attached:
-## 
-## Dsb  - Datapoints in barycentric coordinates
-## Dsc  - Datapoints on reconstructed sphere in cartesian coordinates
-## Dss  - Datapoints on reconstructed sphere in spherical coordinates
-## Ssb  - Landmarks in barycentric coordinates
-## Ssc  - Landmarks on reconstructed sphere in cartesian coordinates
-## Sss  - Landmarks on reconstructed sphere in spherical coordinates
-##
-infer.datapoint.landmark.coordinates <- function(r, report=print) {
-  report("Inferring coordinates of datapoints")
-  Dsb <- list() # Datapoints in barycentric coordinates
-  Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
-  Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
-  if (!is.null(r$Ds)) {
-    for (name in names(r$Ds)) {
-      Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
-      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
-      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
-    }
-  }
-
-  report("Inferring coordinates of landmarks")
-  Ssb <- list() # Landmarks in barycentric coordinates
-  Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
-  Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
-  if (!is.null(r$Ss)) {
-    for (i in 1:length(r$Ss)) {
-      Ssb[[i]] <- with(r, tsearchn(P, T, r$Ss[[i]]))
-      Ssc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[i]])
-      Sss[[i]] <- sphere.cart.to.sphere.spherical(Ssc[[i]], r$R)
-    }
-    names(Ssb) <- names(r$Ss)
-    names(Ssc) <- names(r$Ss)
-    names(Sss) <- names(r$Ss)
-  }
-
-  d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
-                  Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
-  class(d) <- unique(c("reconstructedDataset", class(r)))
-  return(d)
-}
-
 ## Infer coordinates of tears
 ## Arguments:
 ## r    - object returned by fold.outline

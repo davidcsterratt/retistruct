@@ -1,3 +1,52 @@
+##' This function infers the coordinates of datapoints \code{Ds }and
+##' landmarks \code{Ss} in  spherical coordinates.
+##'
+##' @title Constructor for RecontructedDataset object
+##' @param r Object that of clases \code{reconstructedOutline} and \code{dataset}.
+##' @param report Function used to report progress.
+##' @return \code{reconstructedDataset} object containing the input
+##' information and the following modified and extra information:
+##' \item{\code{Dsb}} Datapoints in barycentric coordinates
+##' \item{\code{Dsc}} Datapoints on reconstructed sphere in cartesian coordinates
+##' \item{\code{Dss}} Datapoints on reconstructed sphere in spherical coordinates
+##' \item{\code{Ssb}} Landmarks in barycentric coordinates
+##' \item{\code{Ssc}} Landmarks on reconstructed sphere in cartesian coordinates
+##' \item{\code{Sss}} Landmarks on reconstructed sphere in spherical coordinates
+##' @author David Sterratt
+ReconstructedDataset <- function(r, report=message) {
+  report("Inferring coordinates of datapoints")
+  Dsb <- list() # Datapoints in barycentric coordinates
+  Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
+  Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
+  if (!is.null(r$Ds)) {
+    for (name in names(r$Ds)) {
+      Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
+      Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
+      Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
+    }
+  }
+
+  report("Inferring coordinates of landmarks")
+  Ssb <- list() # Landmarks in barycentric coordinates
+  Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
+  Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
+  if (!is.null(r$Ss)) {
+    for (i in 1:length(r$Ss)) {
+      Ssb[[i]] <- with(r, tsearchn(P, T, r$Ss[[i]]))
+      Ssc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[i]])
+      Sss[[i]] <- sphere.cart.to.sphere.spherical(Ssc[[i]], r$R)
+    }
+    names(Ssb) <- names(r$Ss)
+    names(Ssc) <- names(r$Ss)
+    names(Sss) <- names(r$Ss)
+  }
+
+  d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
+                  Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
+  class(d) <- unique(c("reconstructedDataset", class(r)))
+  return(d)
+}
+
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 

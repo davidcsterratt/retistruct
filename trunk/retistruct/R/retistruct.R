@@ -280,7 +280,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                     plot.3d=plot.3d, dev.grid=dev.grid,
                     dev.polar=dev.polar)
   if (!is.null(r)) {
-    r <- infer.datapoint.landmark.coordinates(r, report=report)
+    r <- ReconstructedDataset(r, report=report)
     if (!is.na(getLandmarkID(r, "OD"))) {
       r$EOD <- 90 + r$Dss[["OD"]][1,"phi"] * 180/pi
     }
