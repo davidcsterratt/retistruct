@@ -130,7 +130,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45,
-                                            flip.horiz=FALSE, ...) {
+                                            flip.horiz=FALSE,
+                                            labels=c(0, 90, 180, 270), ...) {
 
   phi0d <- r$phi0*180/pi
   par(mar=c(1, 1, 1, 1))
@@ -170,10 +171,18 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   segments(xpos, ypos, -xpos, -ypos, col=col)
 
   ## Radial Labels
-  labels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
-  label.pos <- labels - min(grid.pos)
-  text(label.pos, -maxlength/15, labels)
+  rlabels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
+  label.pos <- rlabels - min(grid.pos)
+  text(label.pos, -maxlength/15, rlabels)
 
+  ## Tangential Labels
+  if (!is.null(labels)) {
+    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
+    xpos <- cos(angles) * maxlength * 1.05
+    ypos <- sin(angles) * maxlength * 1.05
+    text(xpos, ypos, labels)
+  }
+  
   ## Plot outline
   Tss <- getTss(r)
   for (Ts in Tss) {

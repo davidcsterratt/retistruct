@@ -76,35 +76,11 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.int.major=45,
                                             flip.horiz=FALSE,
                                             labels=c(0, 90, 180, 270), ...) {
-  NextMethod(r)
+  NextMethod()
 
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
-
-  phi0d <- r$phi0*180/pi
-  grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
-  maxlength <- diff(range(grid.pos))
-
-  ## Radial Labels
-  if (!is.null(labels)) {
-    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
-    xpos <- cos(angles) * maxlength * 1.05
-    ypos <- sin(angles) * maxlength * 1.05
-    text(xpos, ypos, labels)
-  }
-
-  ## FIXME: need to think about how we do this plotting, depending on
-  ## what we decide about whether the spherical coordinates ought to
-  ## be flipped
-  ## ylim <- range(ypos)
-  ## if (r$DVflip) {
-  ##   if (is.null(ylim)) {
-  ##     ylim <- range(ypos)
-  ##   }
-  ##   ylim <- sort(ylim, TRUE)
-  ## }
-  ## NextMethod(ylim=ylim)
   
   ## Datapoints
   if (plot.datapoints) {
