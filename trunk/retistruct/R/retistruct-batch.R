@@ -28,9 +28,9 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
     Result <- ""
     ret <- -1
     logfile <- file.path(outputdir,
-                         paste(retistruct.cli.basepath(dataset),
+                         gsub(" ", "_", paste(retistruct.cli.basepath(dataset)),
                                ".log", sep=""))
-    print(dataset)
+    message(paste("Trying to open", dataset, "..."))
     is.data.dir <- try(check.datadir(dataset))
     EOD <- NA
     nflip <- NA
@@ -42,9 +42,11 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
       Result <- gsub("\n$", "", geterrmessage())
     } else {
       if (!is.data.dir) {
+        message("... not a data directory.")
         next
       }
       if (is.data.dir) {
+        message(paste("... reconstructing. Logging to", logfile))
         ret <- system(paste("R --vanilla >", logfile, "2>&1"),
                       input=paste("library(retistruct)
 retistruct.cli(\"",
@@ -63,7 +65,7 @@ retistruct.cli(\"",
             if (!is.null(r$E.l))       { El <- r$E.l       }
           }
         }
-        print(ret)
+        message(paste("Return value", ret, ". Result:"))
         out <- read.csv(logfile)
         Result <- out[nrow(out),1]
         print(as.vector(Result))
