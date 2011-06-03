@@ -193,7 +193,7 @@ triangulate.outline <- function(o, n=200,
 ##' @param plot whether to display plotting or not during simplification
 ##' @return Simlified \code{outline} object
 ##' @author David Sterratt
-simplify.outline <- function(o, min.frac.length=0.005, plot=FALSE) {
+simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
   P <- o$P
   N <- nrow(P)                        # Number of vertices
   Q <- rbind(P, P[1,])                # Convenience variable
