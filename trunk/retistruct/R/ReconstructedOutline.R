@@ -7,7 +7,7 @@
 ##' @param r \code{reconstructedOutline} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
-##' @param ... 
+##' @param ... Other plotting parameters
 ##' @method plot.flat reconstructedOutline
 ##' @author David Sterratt
 plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
