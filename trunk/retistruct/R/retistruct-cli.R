@@ -34,6 +34,7 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
 retistruct.cli.basepath <- function(dataset) {
   basepath <- gsub("\\./", "", dataset)
   basepath <- gsub("/", "_", basepath)
+  basepath <- gsub(" ", "_", basepath)
   return(basepath)
 }
 

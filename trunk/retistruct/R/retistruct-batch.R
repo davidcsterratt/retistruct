@@ -28,7 +28,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
     Result <- ""
     ret <- -1
     logfile <- file.path(outputdir,
-                         gsub(" ", "_", paste(retistruct.cli.basepath(dataset)),
+                         paste(retistruct.cli.basepath(dataset),
                                ".log", sep=""))
     message(paste("Trying to open", dataset, "..."))
     is.data.dir <- try(check.datadir(dataset))
