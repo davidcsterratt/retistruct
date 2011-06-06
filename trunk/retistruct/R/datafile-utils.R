@@ -71,12 +71,19 @@ map.to.segments <- function(map) {
   colnames(map) <- c("X", "Y")
   segs <- list()                        # Initialise list of segments
   i <- 1                                # Current line of map
-  while(i < dim(map)[1]) {
-    ## Read current line of map; this tells us how many points
-    ## belong to this stroke
+  while(i < nrow(map)) {
+    ## Read current line of map; this tells us the chunk index and how
+    ## many points belong to this stroke
+    j <- map[i, 1]
+    if (j != (length(segs) + 1)) {
+      stop(paste("Corrupt MAP file? Line", i, "says to read in chunk", j, "but", length(segs), "chunks have been read so far."))
+    }
     n <- map[i, 2]
     ## Add the points to the list of segments
     inds <- (i+1):(i+n)
+    if (max(inds) > nrow(map)) {
+      stop(paste("Corrupt MAP file? Line", i, "says to read", n, "lines into chunk", j,"but there are only", nrow(map)-i, "lines remaining."))
+    }
     segs <- c(segs, list(map[inds,]))
     ## Update the current position
     i <- i + n + 1
