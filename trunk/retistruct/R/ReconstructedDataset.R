@@ -18,7 +18,7 @@ ReconstructedDataset <- function(r, report=message) {
   Dsb <- list() # Datapoints in barycentric coordinates
   Dsc <- list() # Datapoints on reconstructed sphere in cartesian coordinates
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
-  if (!is.null(r$Ds)) {
+  if (!is.null(r$Ds) & (length(r$Ds) > 0)) {
     for (name in names(r$Ds)) {
       Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
       Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
@@ -30,7 +30,7 @@ ReconstructedDataset <- function(r, report=message) {
   Ssb <- list() # Landmarks in barycentric coordinates
   Ssc <- list() # Landmarks on reconstructed sphere in cartesian coordinates
   Sss <- list() # Landmarks on reconstructed sphere in spherical coordinates
-  if (!is.null(r$Ss)) {
+  if (!is.null(r$Ss) & (length(r$Ss) > 0)) {
     for (i in 1:length(r$Ss)) {
       Ssb[[i]] <- with(r, tsearchn(P, T, r$Ss[[i]]))
       Ssc[[i]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Ssb[[i]])
