@@ -4,8 +4,7 @@ Date: 2011-04-08
 Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
-Depends: R (>= 2.9.0), geometry, foreign, gWidgets, gWidgetsRGtk2,
-    cairoDevice, rgl, R.matlab, ttutils, Triangle
+Depends: R (>= 2.9.0), geometry, foreign, R.matlab, ttutils, Triangle
 Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
 License: file LICENSE
@@ -14,7 +13,6 @@ Collate: 'AnnotatedOutline.R' 'datafile-utils.R' 'Dataset.R'
     'generics.R' 'geometry.R' 'misc.R' 'Outline.R' 'plots.R'
     'ReconstructedDataset.R' 'ReconstructedOutline.R'
     'RetinalDataset.R' 'RetinalReconstructedDataset.R'
-    'retistruct-batch.R' 'retistruct-cli.R' 'retistruct-gui.R'
-    'retistruct.R' 'revision.R' 'spheristruct-energy.R'
-    'spheristruct.R' 'StitchedOutline.R' 'TriangulatedOutline.R'
-    'tsearch.R' 'zzz.R'
+    'retistruct-batch.R' 'retistruct-cli.R' 'retistruct.R' 'revision.R'
+    'spheristruct-energy.R' 'spheristruct.R' 'StitchedOutline.R'
+    'TriangulatedOutline.R' 'tsearch.R' 'zzz.R'
