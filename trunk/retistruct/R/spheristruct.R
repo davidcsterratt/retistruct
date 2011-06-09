@@ -292,11 +292,6 @@ project.to.sphere <- function(r) {
 ## Energy/error functions
 ## 
 
-## Formula for central angle
-central.angle <- function(phi1, lambda1, phi2, lambda2) {
-  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
-}
-
 ## Calculate lengths of connections on sphere
 compute.lengths <- function(phi, lambda, Cu, R) {
   ## Use the upper triagular part of the connectivity matrix Cu

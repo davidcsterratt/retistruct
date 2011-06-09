@@ -58,6 +58,24 @@ getDss.reconstructedDataset <- function(r) {
   return(r$Dss)
 }
 
+##' Get Karcher mean of datapoints in spherical coordinates.
+##'
+##' @title Karcher mean of datapoints in spherical coordinates
+##' @param r \code{reonstructedDataset} object.
+##' @return \code{Dss.mean}
+##' @method getDss.mean reconstructedDataset
+##' @author David Sterratt
+getDss.mean.reconstructedDataset <- function(r) {
+  Dss.mean <- list()
+  if (length(r$Dss)) {
+    for (i in 1:length(r$Dss)) {
+      Dss.mean[[i]] <- karcher.mean.sphere(r$Dss[[i]], na.rm=TRUE)
+    }
+  }
+  names(Dss.mean) <- names(r$Dss)
+  return(Dss.mean)
+}
+
 ##' Get spherical coordinates of landmarks.
 ##'
 ##' @title Get transformed spherical coordinates of landmarks.
@@ -80,6 +98,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
 
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
+  plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   
   ## Datapoints
@@ -92,6 +111,19 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
       suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
                               pch=20, ...))
+    }
+  }
+
+  ## Mean datapoints
+  if (plot.datapoint.means) {
+    Dss.mean <- getDss.mean(r)
+    for (i in 1:length(Dss.mean)) {
+      phis    <- Dss.mean[[i]]["phi"]
+      lambdas <- Dss.mean[[i]]["lambda"]
+      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+      suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss.mean)[i]]],
+                              pch="+", cex=3, ...))
     }
   }
   

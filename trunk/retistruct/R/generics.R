@@ -26,6 +26,14 @@ getDss.default <- function(x) {
   return(NULL)
 }
 
+getDss.mean <- function(x) {
+  UseMethod("getDss.mean")
+}
+
+getDss.mean.default <- function(x) {
+  return(NULL)
+}
+
 getSss <- function(x) {
   UseMethod("getSss")
 }

@@ -690,6 +690,30 @@ $i\in\mathcal{C}$ in flattened and spherical retina.
   scaled according to number of connections.
 \end{itemize}
 
+\subsection{Mean location of points on sphere}
+\label{fold-sphere:sec:mean-location-points}
+
+The Karcher mean of a set of points on the sphere
+\citep{Karc77riem,HeoSmal06form} is defined as the point
+$(\overline{\phi}, \overline{\lambda})$ that has a minimal sum of
+squared distances to the set of points $(\phi_i, \lambda_i)$:
+%% See also BergWerm06
+\begin{equation}
+  \label{fold-sphere:eq:6}
+  (\overline{\phi}, \overline{\lambda}) = \mbox{arg min}_{(\phi,
+    \lambda)} \sum_{i=1}^N d^2(\phi, \lambda, \phi_i, \lambda_i)
+\end{equation}
+where (central angle)
+\begin{equation}
+  \label{fold-sphere:eq:7}
+  d(\phi_i, \lambda_i, \phi_j, \lambda_j) = \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) + \sin\phi_i\sin\phi_j  
+\end{equation}
+The generalised variance is
+\begin{equation}
+  \label{fold-sphere:eq:8}
+  \sigma^2 = \frac{1}{N} \sum_{i=1}^N d^2(\overline{\phi}, \overline{\lambda}, \phi_i, \lambda_i)
+\end{equation}
+
 \bibliographystyle{apalike}
 \bibliography{nmf_morph}
 

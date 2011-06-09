@@ -255,7 +255,8 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 ##' Convert locations on the surface of a sphere in cartesian
 ##' (X, Y, Z) coordinates to spherical (phi, lambda) coordinates. 
 ##'
-##' It is assumed that all points are lying on the surface of a sphere of radius R.
+##' It is assumed that all points are lying on the surface of a sphere
+##' of radius R.
 ##' @title Convert from Cartesian to spherical coordinates
 ##' @param P locations of points on sphere as N-by-3 matrix with labelled columns "X", "Y" and "Z"
 ##' @param R radius of sphere 
@@ -276,17 +277,69 @@ polar.to.cart <- function(r, theta) {
   return(cbind(x=r*cos(theta), y=r*sin(theta)))   
 }
 
-## Compute mean on sphere
-sphere.mean.sphere <- function(phi, lambda) {
-  ## First estimate of mean
-  P <- rbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi))
-  P.mean <- apply(P, 1, mean)
+##' On a sphere the central angle between two points is defined as the
+##' angle whose vertex is the centre of the sphere and that subtends
+##' the arc formed by the great circle between the points. This
+##' function computes the central angle for two points \eqn{(\phi_1,
+##' \lambda_1)}{(phi1, lambda1)} and \eqn{(\phi_2,\lambda_2)}{(phi2,
+##' lambda2)}.
+##'
+##' @title Central angle between two points on a sphere
+##' @param phi1 Lattitude of first point
+##' @param lambda1 Longitude of first point
+##' @param phi2 Lattitude of second point
+##' @param lambda2 Longitude of secone point
+##' @return Central angle
+##' @source Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
+##' @author David Sterratt
+central.angle <- function(phi1, lambda1, phi2, lambda2) {
+  return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
+}
+
+##' The Karcher mean of a set of points on a manifold is defined as
+##' the point whose sum of squared Riemmann distances to the points is
+##' minimal. On a sphere using sphereical coordinates this distance
+##' can be computed using the formula for central angle.
+##'
+##' @title Karcher mean on the sphere
+##' @param x Matrix of points on sphere as N-by-2 matrix with labelled
+##' columns \\code{phi} (lattitude) and \code{lambda} (longitude)
+##' @param a logical value indicating whether \code{NA} values should
+##' be stripped before the computation proceeds.
+##' @return Vector of means with components named \code{phi} and
+##' \code{lambda}.
+##' @references Heo, G. and Small, C. G. (2006). Form representations
+##' and means for landmarks: A survey and comparative
+##' study. \emph{Computer Vision and Image Understanding},
+##' 102:188-203.
+##' @seealso \code{\link{central.angle}}
+##' @author David Sterratt
+karcher.mean.sphere <- function(x, na.rm=FALSE) {
+  if (na.rm) {
+    x <- na.omit(x)
+  }
+  if (nrow(x) == 0) {
+    return(x)
+  }
+  ## Compute first estimate of mean by computing centroid in 3D and
+  ## then finding angle to this
+  P <- cbind(cos(x[,"phi"])*cos(x[,"lambda"]),
+             cos(x[,"phi"])*sin(x[,"lambda"]),
+             sin(x[,"phi"]))
+  P.mean <- apply(P, 2, mean)
   phi.mean <-    asin(P.mean[3])
   lambda.mean <- atan2(P.mean[2], P.mean[1])
 
-  print(c(phi.mean, lambda.mean))
-  opt <- optim(c(phi.mean, lambda.mean),
-        function(p) { sum((central.angle(phi, lambda, p[1], p[2]))^2) })
-  return(opt$par)
-  ## return(c(phi.mean, lambda.mean))
+  ## Now minimise sum of squared distances
+  if (all(!is.nan(c(phi.mean, lambda.mean)))) {
+    opt <- optim(c(phi.mean, lambda.mean),
+                 function(p) { sum((central.angle(x[,"phi"], x[,"lambda"], p[1], p[2]))^2) })
+    X <- opt$par
+    names(X) <- c("phi", "lambda")
+    return(X)
+  } else {
+    return(cbind(phi=NaN, lambda=NaN))
+  }
 }
+
+## karcher.variance.sphere <- function()

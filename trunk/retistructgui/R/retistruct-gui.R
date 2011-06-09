@@ -310,6 +310,7 @@ do.plot <- function() {
     dev.set(d2)
     plot.polar(r,
                datapoints=("Datapoints" %in% svalue(g.show)),
+               datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)))
     ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
@@ -400,9 +401,9 @@ retistruct <- function(guiToolkit="RGtk2") {
 
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)
-  g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints",
+  g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints", "Means",
                               "Landmarks", "Strain"),
-                            checked=c(TRUE, FALSE, FALSE, FALSE),
+                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
   ## Graphs at right
