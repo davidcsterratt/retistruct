@@ -24,9 +24,13 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
 
   ## Output
   retistruct.save.recdata(r)
+  
   if (!is.na(outputdir)) {
     retistruct.cli.figure(dataset, outputdir, device=device)
   }
+
+  ## Export to matlab
+  retistruct.export.matlab(r)
 }
 
 ## retistruct.cli.basepath - generate a path based on the elided directory name
