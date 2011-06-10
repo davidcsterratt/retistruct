@@ -249,9 +249,9 @@ retistruct.read.recdata <- function(o) {
 retistruct.reconstruct <- function(o, report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Check that markup is there
-  ## if (!retistruct.check.markup(o)) {
-  ##   stop("Neither dorsal nor nasal pole specified")
-  ## }
+  if (!retistruct.check.markup(o)) {
+    stop("Neither dorsal nor nasal pole specified")
+  }
 
   ## Check tears are valid
   ct <- checkTears(o)
