@@ -732,26 +732,3 @@ ReconstructedOutline <- function(o,
   class(r) <- unique(c("reconstructedOutline", class(r)))
   return(r)
 }
-
-## Infer coordinates of tears
-## Arguments:
-## r    - object returned by fold.outline
-##
-## Returns:
-## New object r, with new object attached:
-## 
-## Tss  - Tear coordinates on reconstructed sphere in spherical coordinates
-##
-infer.tear.coordinates <- function(r,
-                                   report=print) {
-  report("Inferring coordinates of tears")
-  Tss <- list() # Landmarks on reconstructed sphere in spherical coordinates
-  if (!is.null(r$TFset)) {
-    for (TF in r$TFset) {
-      ## Convert indicies to the spherical frame of reference
-      j <- r$ht[TF]
-      Tss <- c(Tss, list(cbind(phi=r$phi[j], lambda=r$lambda[j])))
-    }
-  }
-  r <- merge(list(Tss=Tss), r)
-}
