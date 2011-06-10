@@ -20,7 +20,8 @@ retistruct.report <- function(message, title="",...) {
 ##' @title Read one of the Thompson lab's retinal datasets
 ##' @param dataset Path to directory containing as SYS and MAP file
 ##' @param d.close Maximum distance between points for them to count
-##' as the same point
+##' as the same point. This is expressed as a fraction of the width of
+##' the outline.
 ##' @return 
 ##' \item{dataset}{The path to the directory given as an argument}
 ##' \item{raw}{List containing\describe{
@@ -34,7 +35,7 @@ retistruct.report <- function(message, title="",...) {
 ##' \item{Ss}{List of landmark lines}
 ##' }
 ##' @author David Sterratt
-retistruct.read.dataset <- function(dataset, d.close=1500) {
+retistruct.read.dataset <- function(dataset, d.close=0.25) {
   ## Check to see if dataset is valid
   check.datadir(dataset)
   
@@ -82,13 +83,11 @@ retistruct.read.dataset <- function(dataset, d.close=1500) {
   o <- simplify.outline(o)
   
   ## Check that P is more-or-less closed
-  ## FIXME: not sure if this check is needed any more,
-  ## now that triangulate.outline gets rid of crossings.
-  ## if (vecnorm(P[1,] - P[nrow(P),]) > d.close) {
-  ##   plot.map(map, TRUE)
-  ##   points(P[c(1,nrow(P)),], col="black")
-  ##   stop("Unable to find a closed outline.")
-  ## }
+  if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
+     plot.map(map, TRUE)
+     points(P[c(1,nrow(P)),], col="black")
+     stop("Unable to find a closed outline.")
+  }
 
   d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
   a <- AnnotatedOutline(d)
