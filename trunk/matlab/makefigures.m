@@ -6,7 +6,7 @@ for n = 1:size(datasets, 2)
     f = [d, '/r.mat'];
     if exist(f)
         disp(['Loading ', f])
-        clear Dss Sss phi0 Tss
+        clear Dss Sss phi0 Tss DssMean
         load(f)
         clf
         plot_datapoints_polar(Dss)

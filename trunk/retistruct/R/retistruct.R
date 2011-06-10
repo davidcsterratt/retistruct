@@ -333,7 +333,7 @@ retistruct.export.matlab <- function(r) {
       writeMat(f,
                phi0=r$phi0*180/pi,
                Dss=getDss(r),
-               DssMeans=getDss.mean(r),
+               DssMean=getDss.mean(r),
                Sss=name.list(getSss(r)),
                Tss=name.list(getTss(r)),
                side=r$side, DVflip=r$DVflip)
