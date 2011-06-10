@@ -62,7 +62,7 @@ sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cr
 To start the program, start \textsc{R}. At the \textsc{R} prompt type:
 
 \begin{verbatim}
-> library(retistruct)
+> library(retistructgui)
 > retistruct()
 \end{verbatim}
 A window should appear.
@@ -123,7 +123,17 @@ checkboxes that allow you to show various types of information:
   reconstructed hemisphere. It depends on the age of the animal.
 \end{description}
 
-\subsection{Saving the markup}
+\subsection{Metadata}
+\label{retistruct-manual:sec:metadata}
+
+\begin{description}
+\item[Data/Flip DV] Flip the DV axis to compensate for microscope
+  orientation. Affects display of retinae.
+\item[Eye] Specify whether the eye is Right or Left.  Affects display
+  of retinae.
+\end{description}
+
+\subsection{Saving the markup and metadata}
 \label{manual:sec:saving-markup}
 
 To save the markup, click on the ``Save'' button in the toolbar. This
@@ -253,12 +263,19 @@ There are also some embryonic scripts to create polar plots:
     spherical coordinates. The first column contains the latitude of
     each point, measured in radians. The second column contains the
     longitude of each point, measured in radians. \\
-    \texttt{Dss.red}   & Locations of red-labelled cell
+    \texttt{Dss.red} & Locations of red-labelled cell
     bodies. Columns have same meaning as \texttt{Dss.green}. \\
-    \texttt{Tss}       & A structure in which each element contains
+    \texttt{DssMean.green} & Location of Karcher mean of
+    green-labelled cell bodies in spherical coordinates. The first
+    column contains the latitude of each point, measured in
+    radians. The second column contains the
+    longitude of each point, measured in radians. \\
+    \texttt{DssMean.red} & Location of Karcher mean of red-labelled
+    cell bodies. Columns have same meaning as \texttt{DssMean.green}. \\
+    \texttt{Tss} & A structure in which each element contains
     spherical coordinates (in the same latitude-longitude format as
     above) of a tear. \\
-    \texttt{Sss}       & A structure in which each element contains
+    \texttt{Sss} & A structure in which each element contains
     spherical coordinates (in the same latitude-longitude format as
     above) of a landmark. \\
     \hline
