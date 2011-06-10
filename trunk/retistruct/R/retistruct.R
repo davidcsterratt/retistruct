@@ -328,7 +328,6 @@ retistruct.save.recdata <- function(r) {
 retistruct.export.matlab <- function(r) {
   if (!is.null(r$dataset)) {
     if (!is.null(r)) {
-      r <- infer.tear.coordinates(r)
       f <- file.path(r$dataset, "r.mat")
       message(paste("Saving", f))
       writeMat(f,
@@ -338,8 +337,6 @@ retistruct.export.matlab <- function(r) {
                Sss=name.list(getSss(r)),
                Tss=name.list(getTss(r)),
                side=r$side, DVflip=r$DVflip)
-
-      save(r, file=file.path(r$dataset, "r.Rdata"))
     }
   }
 }
