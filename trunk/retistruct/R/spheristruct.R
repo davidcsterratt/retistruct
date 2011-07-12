@@ -171,7 +171,7 @@ merge.points.edges <- function(t) {
 
   ## Transform the rim set
   Rset <- order.Rset(t$Rset, t$gf, t$hf)
-  Rsett <- unique(ht[t$Rset])
+  Rsett <- unique(ht[Rset])
   i0t <- ht[t$i0]
 
   ## Create the symmetric connection set
@@ -184,7 +184,7 @@ merge.points.edges <- function(t) {
   }
 
   m <- merge(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
-              Rset=Rset, Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht), t)
+                  Rset=Rset, Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht), t)
   class(m) <- class(t)
   return(m)
 }
