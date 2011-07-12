@@ -122,8 +122,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       lambdas <- Dss.mean[[i]]["lambda"]
       xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
       ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-      suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss.mean)[i]]],
-                              pch="+", cex=3, ...))
+      suppressWarnings(points(xpos, ypos,
+                              bg=r$cols[[names(Dss.mean)[i]]], col="black",
+                              pch=23, cex=1.5, ...))
     }
   }
   
