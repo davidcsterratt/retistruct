@@ -134,7 +134,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             labels=c(0, 90, 180, 270), ...) {
 
   phi0d <- r$phi0*180/pi
-  par(mar=c(1, 1, 1, 1))
+  par(mar=c(0.5, 0.5, 0.5, 0.5))
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
   maxlength <- diff(range(grid.pos))
   if (flip.horiz) {
@@ -178,9 +178,9 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   ## Tangential Labels
   if (!is.null(labels)) {
     angles <- seq(0, by=2*pi/length(labels), len=length(labels))
-    xpos <- cos(angles) * maxlength * 1.05
-    ypos <- sin(angles) * maxlength * 1.05
-    text(xpos, ypos, labels)
+    xpos <- cos(angles) * maxlength * 1.1
+    ypos <- sin(angles) * maxlength * 1.1
+    text(xpos, ypos, labels, xpd=TRUE)
   }
   
   ## Plot outline
