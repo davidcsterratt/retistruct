@@ -59,6 +59,9 @@
 %% ** EDIT HERE **
 %% PLEASE INCLUDE ALL MACROS BELOW
 
+%% FIXME: MUST REMOVE BEFORE SUBMITTING TO PLOS
+\usepackage{todo}
+
 %% END MACROS SECTION
 
 \begin{document}
@@ -66,25 +69,46 @@
 % Title must be 150 characters or less
 \begin{flushleft}
 {\Large
-\textbf{Title}
+\textbf{Reconstruction of flattened retinae}
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
-Author1$^{1}$, 
-Author2$^{2}$, 
-Author3$^{3,\ast}$
+David C. Sterratt$^{1,\ast}$, Daniel L. Nedergaard$^{2}$, Ian
+D. Thompson$^{2}$
 \\
-\bf{1} Author1 Dept/Program/Center, Institution Name, City, State, Country
+\bf{1} Institute for Adaptive and Neural Computation, School of
+Informatics, University of Edinburgh, Edinburgh, Scotland, UK
 \\
-\bf{2} Author2 Dept/Program/Center, Institution Name, City, State, Country
+\bf{2} MRC Centre for Developmental Neurobiology, King's College
+London, London, UK
 \\
-\bf{3} Author3 Dept/Program/Center, Institution Name, City, State, Country
-\\
-$\ast$ E-mail: Corresponding author@institute.edu
+$\ast$ E-mail: david.c.sterratt@ed.ac.uk
 \end{flushleft}
 
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
+
+  In retrograde tracing experiments to determine the mapping of
+  connections from the retina to the superior colliculus in mice, a
+  small blob of dye is injected in the superior colliculus and allowed
+  to diffuse retrogradely down the axons of retinal ganglion cells to
+  their cell bodies in the retina. The retina is dissected and
+  flattened, and the pattern of dye in cell bodies can be seen in the
+  flattened retina.  In the process of flattening the retina, a number
+  incisions are made, and the pattern of dye can cut across incisions,
+  complicating analysis.  One way of simplifying the analysis would be
+  to infer the position of the cell bodies in the spherical coordinate
+  system of the intact retina.  
+
+  We present a method to achieve this approximately by minimisation of
+  an energy function. A triangular grid is laid over the flattened
+  retina. The coordinates of the grid are then transformed so that
+  they lie on a partial sphere with the correct dimensions for the
+  intact retina, and the transformation is then adjusted so as to
+  minimise the sum of the squared differences between the lengths
+  between corresponding pairs of adjacent points on the flattened and
+  intact retinae.  The method is able to produce a transformation
+  which is sufficiently good for visualisation.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLoS ONE authors please skip this step. 
@@ -106,6 +130,99 @@ $\ast$ E-mail: Corresponding author@institute.edu
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
 % authors may use "Analysis" 
 \section*{Materials and Methods}
+\label{retistruct_plos:sec:materials-methods}
+
+\subsection*{Retinae}
+\label{retistruct_plos:sec:retinae}
+
+\todo{Some information about the preparation of the retinae.}
+
+\subsection*{Reconstruction algorithm}
+\label{retistruct_plos:sec:reconstr-algor}
+
+The reconstruction algorithm described here has been implemented in R
+(http://www.r-project.org) and can be downloaded as an R package from
+http://www.neuralmapformation.org/code/retistruct. It has been tested
+under a GNU/Linux platform but should also work in MacOS or Windows
+environments.
+
+The steps of the reconstruction algorithm are illustrated in
+Figure~\ref{fold-sphere:fig:method}. The raw data
+(Figure~\ref{fold-sphere:fig:method}A) consists of the sequence of
+points making up the outline, sets of data points and sequences of
+connected points defining landmarks, such as the optic disk. The
+reconstruction process then proceeds as follows:
+\begin{enumerate}
+\item The location of one of the poles and incisions and tears in the
+  outline are marked up by an expert
+  (Figure~\ref{fold-sphere:fig:method}B). Each tear is defined by a
+  central point, referred to as the apex, and two outer points,
+  referred to as vertices.  Tears within tears or incisions (for
+  example tear 2 in Figure~\ref{fold-sphere:fig:method}B) can be
+  marked up. The Retistruct package contains a graphical user
+  interface to allow incisions and tears to be marked up quickly.
+\item The retinal outline is triangulated using the conforming
+  Delaunay triangulation algorithm provided by the Triangle package
+  \cite{shewchuk96b} such that there are at least 500 triangles in
+  the outline (grey lines in Figure~\ref{fold-sphere:fig:method}C).
+\item The tears and incisions are stitched automatically (blue and
+  green lines in Figure~\ref{fold-sphere:fig:method}D). To do this,
+  the length of each side of every tear is computed. The fractional
+  distance of each point in each tear is then defined as the distance
+  along the tear of that point from the apex divided by the total
+  length of that side of the tear. For each point on one side of a
+  tear a point is inserted at the same fractional distance along the
+  opposing side. Tears within tears are dealt with by excluding the
+  child tear when computing the fractional distance. At the end of the
+  procedure there is a set of correspondences between two or, in the
+  case of the vertices of a child tear, three points.
+\item There is then an extra round of triangulation to incorporate the
+  points that have been inserted into incisions and tears.
+\item The points within each set of correspondences are merged and
+  allocated positions on the 2D surface.
+\item The triangulation points are then projected roughly onto a
+  sphere curtailed at latitude of $\phi_0$
+  (Figure~\ref{fold-sphere:fig:method}D). The latitude is estimated
+  on the basis of measurements from intact retinae of animals of the
+  same age as the retina under reconstruction. The radius of the
+  sphere determined by area of the flattened retina and $\phi_0$.
+  Points on the rim of flattened retina are fixed to the rim of the
+  curtailed sphere. 
+\item The optimal projection onto sphere is inferred by changing
+  location of vertices on sphere so as to minimise the sum of
+  normalised squared differences between lengths of corresponding
+  connections in flattened and spherical retina whilst maintaining the
+  correct orientation of triangles
+  (Figure~\ref{fold-sphere:fig:method}E).
+  \begin{equation}
+    E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
+      L_i)^2}{L_i}  + \alpha\sum_{j\in\mathcal{T}} \exp\left(-k\frac{a_j}{A_j}\right)
+  \end{equation}
+  where $L_i$ and $l_i$ are lengths of corresponding connections
+  $i\in\mathcal{C}$ in flattened and spherical retina and $A_j$ and
+  $a_j$ are signed areas of corresponding triangles $j\in\mathcal{T}$
+  in flattened and spherical retina.  The signed area is positive for
+  triangles in correct orientation, but negative for flipped
+  triangles.  Parameter $k$ should be large so that only triangles
+  with negative or near-zero area ratios are penalised. Parameter
+  $\alpha$ scaled according to number of connections.
+\item The locations of datapoints and landmarks on the sphere are
+  determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
+  each datapoint the its barycentric coordinates within its containing
+  triangle in the flat representation are determined.  The location of
+  the point on the sphere is then found by projecting the point to the
+  same set of barycentric coordinates in the corresponding triangle on
+  the sphere. From this location in Cartesian 3D space, the spherical
+  coordinates of the point are determined by projection of a line from
+  the centre of the sphere through the point to the line's
+  intersection with the sphere. This allows plotting of points in a
+  polar representation. The procedure can be used in reverse to infer
+  the locations of lines of lattitude and longitude in the flat
+  retina.
+\end{enumerate}
+
+The procedure of reconstructing a retina takes a few minutes on a
+modern desktop computer.
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
@@ -113,7 +230,8 @@ $\ast$ E-mail: Corresponding author@institute.edu
 
 %\section*{References}
 % The bibtex filename
-\bibliography{template}
+\bibliography{nmf_morph}
+%\bibliography{template}
 
 \section*{Figure Legends}
 %\begin{figure}[!ht]
@@ -127,6 +245,45 @@ $\ast$ E-mail: Corresponding author@institute.edu
 %}
 %\label{Figure_label}
 %\end{figure}
+
+\begin{figure}[!ht]
+  % Example. e.g. GM114-4/R-CONTRA (One subtear + gap)
+  % GM184-5/R-CONTRA (One subtear, butter gap)
+  % GM263-1/R-CONTRA (perfect!)
+  \includegraphics{retistruct-method}
+  
+  \vspace*{-4.54in}
+
+  \mbox{\hspace{2.27in}{
+      \includegraphics[width=2.27in]{final-projection}
+      \includegraphics[width=2.27in]{initial-projection}
+    }}
+
+  \vspace*{2.27in}
+
+  \caption{\textbf{Overview of the method.} \textbf{(A)} The raw data:
+    a retinal outline (black), three types of data point (red, green
+    and yellow circles) and a landmark (blue line). \textbf{(B)}
+    Retinal outline with nasal pole (N) and tears marked up. Each
+    pair of red and orange lines indcate the vertices and apex of the
+    five tears. Note that tear 2 is a subtear of tear 1. \textbf{(C)}
+    The outline after triangluation (shown by grey lines) and
+    stitching, indicated bby blue lines between corresponding points
+    on the tears. Green lines indicate connections beteween tear
+    vertices.  \textbf{(D)} The initial projection of the triangulated
+    and stitched outline onto a hemisphere. Tears are show in
+    white. Below is a representation of lines of lattitude and
+    longitude on the flat outline. \textbf{(E)} The projection of the
+    flat retina onto the sphere and the lines of lattitude and
+    longitde after optimisation of the mapping. \textbf{(F)} The data
+    reprsented on a polar plot of the reconstrcted retina. Mean
+    locations of the different types of datapoints are indicated by
+    filled diamonds. The nasal (N), dorsal (D), temporal (T) and
+    ventral (V) poles are indicated. For reference, data is plotted on
+    the flat reresentation below. }
+  \label{fold-sphere:fig:method}
+\end{figure}
+
 
 
 \section*{Tables}
@@ -143,3 +300,5 @@ $\ast$ E-mail: Corresponding author@institute.edu
 
 \end{document}
 
+
+% LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct
