@@ -184,31 +184,59 @@ reconstruction process then proceeds as follows:
   sphere curtailed at latitude of $\phi_0$
   (Figure~\ref{fold-sphere:fig:method}D). The latitude is estimated
   on the basis of measurements from intact retinae of animals of the
-  same age as the retina under reconstruction. The radius of the
+ same age as the retina under reconstruction. The radius $R$ of the
   sphere determined by area of the flattened retina and $\phi_0$.
   Points on the rim of flattened retina are fixed to the rim of the
   curtailed sphere. 
-\item The optimal projection onto sphere is inferred by changing
-  location of vertices on sphere so as to minimise the sum of
-  normalised squared differences between lengths of corresponding
-  connections in flattened and spherical retina whilst maintaining the
-  correct orientation of triangles
-  (Figure~\ref{fold-sphere:fig:method}E).
+\item The optimal projection onto sphere
+  (Figure~\ref{fold-sphere:fig:method}E) is inferred by changing
+  location of vertices on sphere so as to minimise an error
+  measure. This measure, $E$, comprises the sum of normalised squared
+  differences between lengths of corresponding connections in
+  flattened and spherical retina and a penalty term that prevents the
+  triangles from flipping over:
   \begin{equation}
-    E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i -
-      L_i)^2}{L_i}  + \alpha\sum_{j\in\mathcal{T}} \exp\left(-k\frac{a_j}{A_j}\right)
+    E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
+    + \alpha\sum_{j\in\mathcal{T}} f(a_j/A_j)
   \end{equation}
   where $L_i$ and $l_i$ are lengths of corresponding connections
-  $i\in\mathcal{C}$ in flattened and spherical retina and $A_j$ and
-  $a_j$ are signed areas of corresponding triangles $j\in\mathcal{T}$
-  in flattened and spherical retina.  The signed area is positive for
-  triangles in correct orientation, but negative for flipped
-  triangles.  Parameter $k$ should be large so that only triangles
-  with negative or near-zero area ratios are penalised. Parameter
-  $\alpha$ scaled according to number of connections.
-\item The locations of datapoints and landmarks on the sphere are
+  $i\in\mathcal{C}$ in the flattened and spherical retina
+  respectively, $\alpha$ is a constant, $f$ is a penalty function to
+  be defined below and $A_j$ and $a_j$ are signed areas of
+  corresponding triangles $j\in\mathcal{T}$ in the flattened and
+  spherical retina.  The signed area $a_i$ is positive for triangles in
+  correct orientation, but negative for flipped triangles. The penalty
+  function $f$ is a piecewise, smooth function that increases steeply
+  with negative arguments:
+  \begin{equation}
+    \label{retistruct_plos:eq:1}
+    f(x) = \left\{
+        \begin{array}{ll}
+          -(x - x_0/2) & x < 0 \\
+          \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\
+          0 & x \ge x_0
+          \end{array} \right.
+  \end{equation}
+  The parameter $x_0$ is set at 0.1. There is thus no penalty unless
+  triangles have been squashed to less than 10\% of their size in the
+  flattened retina.  The parameter $\alpha$ is set to be large enough
+  to prevent flipped triangles without causing numerical problems with
+  the optimisation. The length of each edge $l_i$ is computed from the
+  formula for the central angle between its vertices:
+  \begin{equation}
+    \label{retistruct_plos:eq:2}
+    l(\phi_1, \lambda_1, \phi_2, \lambda_2) =
+    R\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
+    \sin\phi_1\sin\phi_2   
+  \end{equation}
+  where $\phi_1$ and $\phi_2$ are the latitudes of the vertices and
+  $\lambda_1$ and $\lambda_2)$ are the longitudes.  The derivatives of
+  $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and the
+  BFGS quasi-Newton method implemented in the R optim function is used
+  to minimise $E$.
+\item The locations of data points and landmarks on the sphere are
   determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
-  each datapoint the its barycentric coordinates within its containing
+  each data point the its barycentric coordinates within its containing
   triangle in the flat representation are determined.  The location of
   the point on the sphere is then found by projecting the point to the
   same set of barycentric coordinates in the corresponding triangle on
@@ -217,8 +245,21 @@ reconstruction process then proceeds as follows:
   the centre of the sphere through the point to the line's
   intersection with the sphere. This allows plotting of points in a
   polar representation. The procedure can be used in reverse to infer
-  the locations of lines of lattitude and longitude in the flat
+  the locations of lines of latitude and longitude in the flat
   retina.
+\item The Karcher mean of each set of points is determined
+  (Figure~\ref{fold-sphere:fig:method}F). The Karcher mean of a set of
+  points on the sphere \cite{Karc77riem,HeoSmal06form} is defined as
+  the point $(\overline{\phi}, \overline{\lambda})$ that has a minimal
+  sum of squared distances to the set of points $(\phi_i, \lambda_i)$:
+  %% See also BergWerm06
+  \begin{equation}
+    \label{retistruct_plos:eq:3}
+    (\overline{\phi}, \overline{\lambda}) = \mbox{arg min}_{(\phi,
+      \lambda)} \sum_{i=1}^N l^2(\phi, \lambda, \phi_i, \lambda_i)
+  \end{equation}
+  where the function $l$ is defined in
+  Equation~(\ref{retistruct_plos:eq:2}).
 \end{enumerate}
 
 The procedure of reconstructing a retina takes a few minutes on a
@@ -265,22 +306,22 @@ modern desktop computer.
     a retinal outline (black), three types of data point (red, green
     and yellow circles) and a landmark (blue line). \textbf{(B)}
     Retinal outline with nasal pole (N) and tears marked up. Each
-    pair of red and orange lines indcate the vertices and apex of the
-    five tears. Note that tear 2 is a subtear of tear 1. \textbf{(C)}
-    The outline after triangluation (shown by grey lines) and
-    stitching, indicated bby blue lines between corresponding points
-    on the tears. Green lines indicate connections beteween tear
+    pair of red and orange lines indicate the vertices and apex of the
+    five tears. Note that tear 2 is a child tear of tear 1. \textbf{(C)}
+    The outline after triangulation (shown by grey lines) and
+    stitching, indicated by blue lines between corresponding points
+    on the tears. Green lines indicate connections between tear
     vertices.  \textbf{(D)} The initial projection of the triangulated
     and stitched outline onto a hemisphere. Tears are show in
-    white. Below is a representation of lines of lattitude and
+    white. Below is a representation of lines of latitude and
     longitude on the flat outline. \textbf{(E)} The projection of the
-    flat retina onto the sphere and the lines of lattitude and
-    longitde after optimisation of the mapping. \textbf{(F)} The data
-    reprsented on a polar plot of the reconstrcted retina. Mean
-    locations of the different types of datapoints are indicated by
+    flat retina onto the sphere and the lines of latitude and
+    longitude after optimisation of the mapping. \textbf{(F)} The data
+    represented on a polar plot of the reconstructed retina. Mean
+    locations of the different types of data points are indicated by
     filled diamonds. The nasal (N), dorsal (D), temporal (T) and
     ventral (V) poles are indicated. For reference, data is plotted on
-    the flat reresentation below. }
+    the flat representation below. }
   \label{fold-sphere:fig:method}
 \end{figure}
 
@@ -301,4 +342,5 @@ modern desktop computer.
 \end{document}
 
 
-% LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct
+% LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
+% LocalWords:  Acknowledgments nmf
