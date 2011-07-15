@@ -88,27 +88,37 @@ $\ast$ E-mail: david.c.sterratt@ed.ac.uk
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
 
-  In retrograde tracing experiments to determine the mapping of
-  connections from the retina to the superior colliculus in mice, a
-  small blob of dye is injected in the superior colliculus and allowed
-  to diffuse retrogradely down the axons of retinal ganglion cells to
-  their cell bodies in the retina. The retina is dissected and
-  flattened, and the pattern of dye in cell bodies can be seen in the
-  flattened retina.  In the process of flattening the retina, a number
-  incisions are made, and the pattern of dye can cut across incisions,
-  complicating analysis.  One way of simplifying the analysis would be
-  to infer the position of the cell bodies in the spherical coordinate
-  system of the intact retina.  
+% In retrograde tracing experiments to determine the mapping of
+%   connections from the retina to the superior colliculus in mice, a
+%   small blob of dye is injected in the superior colliculus and allowed
+%   to diffuse retrogradely down the axons of retinal ganglion cells to
+%   their cell bodies in the retina. 
 
-  We present a method to achieve this approximately by minimisation of
-  an energy function. A triangular grid is laid over the flattened
-  retina. The coordinates of the grid are then transformed so that
-  they lie on a partial sphere with the correct dimensions for the
-  intact retina, and the transformation is then adjusted so as to
-  minimise the sum of the squared differences between the lengths
-  between corresponding pairs of adjacent points on the flattened and
-  intact retinae.  The method is able to produce a transformation
-  which is sufficiently good for visualisation.
+In the course of studying the function and development of the visual
+system cells in the retina are often labelled, for example to
+determine the distribution of particular categories of cell in the
+retina, to assess the location of retrograde tracer or to measure the
+distribution of a guidance molecule.  Following labelling the retina
+is dissected and flattened, and the distribution of labels is measured
+in the flattened retina.  In the process of flattening the retina, a
+number incisions are made, complicating analysis as some cells that
+were close neigbours are now separated by the incisions.  
+
+We present a computational method that overcomes this problem by
+inferring where the labels were in the intact retina before
+flattening. The input to the algorithm is the line segments of the
+flattened retinal outline with incisions and tears marked up by an
+expert. The retinal outline is split into triangular elements whose
+positions are then transformed so that they lie on a partial sphere
+with the expected dimensions of the intact retina.  The transformation
+is adjusted so as to minimise the change in the dimensions of each
+triangle from the flattened outline.
+
+The algorithm is able to produce a transformation which is
+sufficiently good for visualisation. \todo{More about validation} 
+
+We demonstrate the application of the method in a number of
+situations. \todo{More about applications here.}
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLoS ONE authors please skip this step. 
