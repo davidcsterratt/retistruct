@@ -102,7 +102,7 @@ distribution of a guidance molecule.  Following labelling the retina
 is dissected and flattened, and the distribution of labels is measured
 in the flattened retina.  In the process of flattening the retina, a
 number incisions are made, complicating analysis as some cells that
-were close neigbours are now separated by the incisions.  
+were close neighbours are now separated by the incisions.  
 
 We present a computational method that overcomes this problem by
 inferring where the labels were in the intact retina before
@@ -126,6 +126,82 @@ situations. \todo{More about applications here.}
 \section*{Author Summary}
 
 \section*{Introduction}
+
+The function and development of the retina and the mapping of retinal
+ganglion cells has been studied extensively in recent years. In this
+field a common experimental procedure is to label cells in the retina
+\emph{in vivo} and then dissect and flatten the retina to produce a
+whole-mount in which the distribution of labels can be measured. In
+order to flatten the retina, a number incisions have to be made, and
+tearing can occur within the rim of the retina or the incisions.
+
+Labelled retinal whole-mounts have been used to determine the
+distribution of mosaics of particular categories of cell in the
+retina \cite{WassBoyc91func,RaveEtal03dete}.  Nearest neighbour
+analyses are often used to quantify the regularity of mosaics, but
+these are susceptible to boundaries \cite{Cook96spat}, both of the rim
+of the retina and those introduced by the incision required during
+dissection. These extra boundaries reduce the effective number of
+cells that can be analysed, which could be significant in low density
+mosaics. 
+
+In the study of topographic mapping, the locations of retrograde
+tracers injected in the superior colliculus have been measured in
+retinal whole mounts \cite{RebeEtal04rela,RashEtal05oppo}. The
+distribution of tracer can be split across incisions and tears,
+complicating nearest-neighbour analyses and in some cases making it
+impossible to determine a mean location that lies with in the outline
+of the flattened retina.
+
+Also in the field of topographic mapping, retinal whole-mounts
+labelled with markers for the EphA receptor \cite{ChenEtal95comp} have
+been produced. The principal axis of variation in the flat mount
+appears to be the naso-temporal axis.  Whole-mounts stained for EphB
+receptors have also been produced \cite{BirgEtal00kina} and here the
+principal axis is appears to be the dorso-ventral axis. In both cases,
+the pixel intensity has been quantified along along the apparent
+principal axis but not throughout the rest of the retina.  Together
+with the finding that the mapping from a flat screen to the superior
+colliculus is approximately Cartesian \cite{DragHube76topo} this
+apparent alignment of EphA and EphB gradients along the naso-temporal
+and dorso-ventral axes of the retina has lead to the mapping from the
+retina to the colliculus being described as Cartesian
+\cite{BeviEtal11gene}. However, this cannot be the case as the surface
+of the intact retina is by no means a Cartesian surface that can be
+described using rectilinear coordinates.  Rather it needs to be
+described using curvilinear coordinates. Being able to describe the
+density of marker as a function of location in the intact retina would
+force a deeper understanding of how the mapping process occurs.
+
+% The locations of the labels are measured in the two-dimensional
+% Euclidean space defined by the slide, but this coordinate system is
+% not entirely satisfactory for at least two reasons. Firstly, the
+% incisions and tears may splits clusters of labelled cells which were
+% centred around the same point in the intact retina. The mean location
+% of such a split cluster in the Euclidean plane may lie outside the
+% retinal outline. Secondly, it is difficult to infer the location with
+% respect to the retinal pole and the nasal, temporal, ventral and
+% dorsal poles with any degree of accuracy.
+
+Therefore the aim of the method presented in this paper is to infer
+the coordinates in intact retinal space of points on a flattened
+retina. At present, the retina is approximated as a partial sphere,
+and the coordinate system can be thought of as lines of latitude and
+longitude on the globe. However, it would be possible to generalise
+the method to deal with a retina modelled by any shape with axial
+symmetry. The method requires that an expert mark up the cuts and
+tears, and also that they indicate the position of at least one
+landmark on the rim of the eye. The method has been implemented as a
+program written in R, and can reconstruct a retina within a few
+minutes on a desktop machine. The accuracy of the method is estimated
+to be \todo{produce estimate for accuracy of method}.
+
+% The algorithm is able to produce a transformation which is
+% sufficiently good for visualisation. \todo{More about validation} 
+
+We demonstrate the application of the method in a number of
+situations. \todo{More about applications here.}
+
 
 % Results and Discussion can be combined.
 \section*{Results}
@@ -173,7 +249,7 @@ reconstruction process then proceeds as follows:
   interface to allow incisions and tears to be marked up quickly.
 \item The retinal outline is triangulated using the conforming
   Delaunay triangulation algorithm provided by the Triangle package
-  \cite{shewchuk96b} such that there are at least 500 triangles in
+  \cite{Shew96tria} such that there are at least 500 triangles in
   the outline (grey lines in Figure~\ref{fold-sphere:fig:method}C).
 \item The tears and incisions are stitched automatically (blue and
   green lines in Figure~\ref{fold-sphere:fig:method}D). To do this,
@@ -281,6 +357,7 @@ modern desktop computer.
 
 %\section*{References}
 % The bibtex filename
+\newcommand{\myshortjournaltitles}{}
 \bibliography{nmf_morph}
 %\bibliography{template}
 
@@ -353,4 +430,4 @@ modern desktop computer.
 
 
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
-% LocalWords:  Acknowledgments nmf
+% LocalWords:  Acknowledgments nmf naso EphB dorso
