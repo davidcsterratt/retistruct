@@ -209,9 +209,23 @@ situations. \todo{More about applications here.}
 % Results and Discussion can be combined.
 \section*{Results}
 
-\subsection*{Subsection 1}
+\subsection*{Examples of the method in action}
 
-\subsection*{Subsection 2}
+\todo{Perhaps present two reconstructed retinae, one ``good'' and one
+  ``bad''. Present the strain map and also the measure of goodness.}
+
+\subsection*{Application: retrograde tracing}
+
+\todo{Need to discuss this with Dan and Ian}
+
+\subsection*{Application: mosaic properties?}
+
+\todo{Could discuss this with Stephen}
+
+\subsection*{Application: marker distribution in spherical coordinates}
+
+\todo{This would need some decent whole-mount images of EphA or EphB
+  and some more work.}
 
 \section*{Discussion}
 
@@ -225,14 +239,14 @@ retinae has never been described before. However, the problem of
 mapping 2D between and 3D surfaces appears in other situations, such
 as in clothes design and computer animation
 \cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf}. 3D surfaces are
-mapped to 2D surfaces by first triangulateing the 3D surface, then
+mapped to 2D surfaces by first triangulating the 3D surface, then
 projecting the points to the 2D plane, and then moving the locations
-of nodes of the triangulation on the plance so as to minimise an
+of nodes of the triangulation on the plane so as to minimise an
 energy function based on the differences between the lengths of edges
-in the 3D configureation and in the 2D configuration. A penalty term
+in the 3D configuration and in the 2D configuration. A penalty term
 to the error function can be added to prevent nodes crossing over
 edges \cite{WangEtal02surf}. In the mapping from 2D surface to 3D
-surfaces, the effects of foruces due to sewing together edges of cloth
+surfaces, the effects of forces due to sewing together edges of cloth
 and of gravity may be incorporated \cite{FanEtal98spri}.
 
 The basic physical model of the material as a mesh of masses connected
@@ -280,7 +294,7 @@ number of options were evaluated:
 
 In principle, we could use the FEM, along with data (or assumptions)
 about the material properties of retinal tissue to model directly the
-action of the retinal being flattend following the disection
+action of the retinal being flattened following the dissection
 cuts. This would lead to a prediction of how a retina cut in a
 particular set of loci would look when flattened. Unfortunately, we do
 not have precise knowledge of where the cuts were made in the intact
@@ -300,13 +314,13 @@ how to match up the edges of the actual and model flattened
 retinae. It is also difficult to envision an algorithm for inferring
 the locations of the tears and cuts that would be efficient. For these
 reasons, we rejected an iterative forward-backward modelling approach
-in which the tear lactions on the intact retina were inferred.
+in which the tear locations on the intact retina were inferred.
 
 In the simple backward approach undertaken in this paper, the stresses
 and strains in the flattened retina are all assumed to be zero. In the
-mappeing onto the intact retina, the elements of the mesh become
+mapping onto the intact retina, the elements of the mesh become
 strained. This is clearly unphysical, but may be a reasonable
-approximation to the actual Physics beacause:
+approximation to the actual Physics because:
 \begin{enumerate}
 \item For small stresses and strains, if the nodes are mapped back
   onto the flattened retina, the locations shouldn't change much
@@ -331,7 +345,7 @@ Weighed against this, is the fact that it is not possible to apply the
 finite element method simply to the problem of mapping the flattened
 retina onto the intact retina, as this would require knowledge of the
 stresses and strains in the flattened retina, whereas the only
-information available is the outline of the retina and the lcoation of
+information available is the outline of the retina and the location of
 the optic disk. 
 
 Nevertheless, it would be possible to attempt to try applying the
@@ -343,7 +357,7 @@ assuming that each element was unstressed on the intact retina. The
 deformation of this structure when flattened could then be estimated
 by fixing the locations around the rim and edges, and solving for the
 unknown positions. This would lead to each element being strained, and
-thsese strains could then be used to initialise a second mapping back
+these strains could then be used to initialise a second mapping back
 on to the intact retina, which would hopefully give rise to a more
 accurate estimation of the nodal positions. 
 
