@@ -55,6 +55,9 @@
 \pagestyle{myheadings}
 %% ** EDIT HERE **
 
+% FIXME: Remove
+\newcommand{\svninfo}{$ $Rev$ $, $ $Date$ $}
+\markboth{\svninfo}{\svninfo}
 
 %% ** EDIT HERE **
 %% PLEASE INCLUDE ALL MACROS BELOW
@@ -211,6 +214,174 @@ situations. \todo{More about applications here.}
 \subsection*{Subsection 2}
 
 \section*{Discussion}
+
+\todo{This is all at brain dump stage.}
+
+\subsection*{Approaches to similar problems in the literature}
+\label{fold-sphere:sec:appr-simil-probl}
+
+As far as we are aware, a computational algorithm for reconstructing
+retinae has never been described before. However, the problem of
+mapping 2D between and 3D surfaces appears in other situations, such
+as in clothes design and computer animation
+\cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf}. 3D surfaces are
+mapped to 2D surfaces by first triangulateing the 3D surface, then
+projecting the points to the 2D plane, and then moving the locations
+of nodes of the triangulation on the plance so as to minimise an
+energy function based on the differences between the lengths of edges
+in the 3D configureation and in the 2D configuration. A penalty term
+to the error function can be added to prevent nodes crossing over
+edges \cite{WangEtal02surf}. In the mapping from 2D surface to 3D
+surfaces, the effects of foruces due to sewing together edges of cloth
+and of gravity may be incorporated \cite{FanEtal98spri}.
+
+The basic physical model of the material as a mesh of masses connected
+by springs. This model should ensure that neighbourhood relations are
+preserved -- nodes close in the 2D structure should still be close in
+the 3D structure -- and incorporates the notion of an elastic
+material. However, a more physically-principled method of modelling
+deformation of objects is offered by the finite element method (FEM)
+in which the stress and strain of each element in the mesh is derived
+as a function of the deformation of the points of the element
+\cite{ZienTayl00fini}.
+
+The FEM is used widely to describe properties of soft tissue in
+simulations of surgery \cite{CartEtal05appl}. The soft tissue is
+often described as a linear-elastic medium, in which the stress
+depends linearly of the strain, but it can also be modelled as a
+viscoelastic medium, in which the stress depends on the history of the
+strain in the material. 
+
+% \subsection*{Potential problems with the method}
+% \label{fold-sphere:sec:appr-simil-probl}
+
+% The bulk viscoelastic properties of bovine retinal tissue have been
+% measured.  The Young's modulus of rabbit retina in varying stages of
+% development, under the assumption that the retina had linear
+% elasticity and a Poission ratio of 0.5 \cite{ReicEtal91deve}.  The
+% Poission's ratio is an index of how much a material shrinks in the two
+% dimentions perpendicular to an expansion. A perfectly incopressible
+% matierial has an Poission's ratio of 0.5. They found that the modulus
+% increased threefold between P2 and P15. They also found that the
+% stiffness of the retinal tissue depended on its location within the
+% retina. The centre of the retina was stiffer than the periphery. This
+% was due to the thickness of the tissue, which was greater in the
+% centre than in the periphery.  The elastic properties of bovine
+% retinal tissue dominate over the viscous properties, and that the
+% material has a Poisson's ratio of around 0.45 \cite{LuEtal06visc}.
+
+\subsection*{Alternative methods}
+\label{fold-sphere:sec:alternative-methods}
+
+In the process of developing the solution presented in this paper, a
+number of options were evaluated:
+
+\paragraph{Forward or backward model:} 
+
+In principle, we could use the FEM, along with data (or assumptions)
+about the material properties of retinal tissue to model directly the
+action of the retinal being flattend following the disection
+cuts. This would lead to a prediction of how a retina cut in a
+particular set of loci would look when flattened. Unfortunately, we do
+not have precise knowledge of where the cuts were made in the intact
+retina or how tears developed.
+
+It is conceivable that the result of a forward model could be compared
+to the flattened outline in question, and the difference between the
+two used to modify the locations of tears and cuts on the intact model
+retina and that this procedure could be iterated until the patterns of
+cuts and tears on the intact retina converged.
+
+However, because it is highly likely that the model is a
+simplification of material properties of the real retina, it would be
+very unlikely that the outline of flattened model retinal would match
+the actual flattened retina, and we would be left with the problem of
+how to match up the edges of the actual and model flattened
+retinae. It is also difficult to envision an algorithm for inferring
+the locations of the tears and cuts that would be efficient. For these
+reasons, we rejected an iterative forward-backward modelling approach
+in which the tear lactions on the intact retina were inferred.
+
+In the simple backward approach undertaken in this paper, the stresses
+and strains in the flattened retina are all assumed to be zero. In the
+mappeing onto the intact retina, the elements of the mesh become
+strained. This is clearly unphysical, but may be a reasonable
+approximation to the actual Physics beacause:
+\begin{enumerate}
+\item For small stresses and strains, if the nodes are mapped back
+  onto the flattened retina, the locations shouldn't change much
+  (evidence?).
+\end{enumerate}
+
+\paragraph{Finite element versus spring-mass}
+\label{fold-sphere:sec:finite-elem-vers}
+
+The algorithm presented in this paper models the retinal tissue as a
+mesh of masses connected by springs. While this model is used in
+modelling deformable surfaces in computer graphics and has been used
+in models of tissue, the finite element method is based more strongly
+on the physics of materials and is regarded as superior
+\cite{CartEtal05appl}. In principle the finite element method allows
+parameters of the material to be measured and incorporated in the
+model in a straightforward way. Given enough data about
+the material properties of retinal tissue, the model could be made
+more realistic. 
+
+Weighed against this, is the fact that it is not possible to apply the
+finite element method simply to the problem of mapping the flattened
+retina onto the intact retina, as this would require knowledge of the
+stresses and strains in the flattened retina, whereas the only
+information available is the outline of the retina and the lcoation of
+the optic disk. 
+
+Nevertheless, it would be possible to attempt to try applying the
+finite element, initialised with unstressed elements, to the backward
+transformation. This would give an estimate of the positions of the
+locations of nodes on the intact retina. These nodal positions could
+then be used to estimate the stiffness matrix for each element,
+assuming that each element was unstressed on the intact retina. The
+deformation of this structure when flattened could then be estimated
+by fixing the locations around the rim and edges, and solving for the
+unknown positions. This would lead to each element being strained, and
+thsese strains could then be used to initialise a second mapping back
+on to the intact retina, which would hopefully give rise to a more
+accurate estimation of the nodal positions. 
+
+This method would have the advantages of greater physical plausibility,
+and would afford the opportunity to incorporate elastic properties
+which vary with distance from the centre of the retina. However, this
+would come at the cost of some increase in complexity.
+
+\paragraph{Supervised versus unsupervised cut and tear detection}
+\label{fold-sphere:sec:superv-vers-unsup}
+
+\begin{itemize}
+\item Unsupervised reconstruction, with edge binding.  I envisage that
+  it would be possible to put in a component of the energy function
+  that provides for short range repulsion between vertices on the edge
+  of the flattened retina and edges of the flattened retina. The
+  energy function might have longer range attraction. One possible
+  parametrisation would be the Lennard-Jones potential which is used
+  to model short range repulsion and longer range attraction between
+  molecules:
+  \begin{equation}
+    \label{fold-sphere:eq:4}
+    E(r) = 4\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-
+      \left(\frac{\sigma}{r}\right)^{6}\right)
+  \end{equation}
+  where $r$ is the distance between molecules, $\epsilon$ defines the
+  depth of the potential well and $\sigma$ is the distance at which the
+  potential is zero.
+
+  Were this approach to work, additional refinements might be possible,
+  such as adding a component of the energy function that draws together
+  points on either side of a rip which are correspond to each other with
+  high probability. Another possibility would be to allow the radius of
+  the sphere $R$ to vary within realistic bounds, to optimise the fit
+  further.
+\item Automated stitching.
+\end{itemize}
+
 
 % You may title this section "Methods" or "Models". 
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
