@@ -313,137 +313,213 @@ compute.areas <- function(phi, lambda, T, R) {
 
   ## Find areas of all triangles
   areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
-
+  
   return(areas)
 }
 
-f <- function(x, x0=0.1, k=1) {
+##' Piecewise, smooth function that increases linearly with negative arguments. 
+##' \deqn{    f(x) = \left\{
+##'        \begin{array}{ll}
+##'          -(x - x_0/2) & x < 0 \\
+##'          \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\
+##'          0 & x \ge x_0
+##'          \end{array} \right.
+##' }
+##'
+##' @title Piecewise smooth function used in area penalty
+##' @param x Main argument
+##' @param x0 The cutoff parameter. Above this value the function is zero.
+##' @return The value of the function.
+##' @author David Sterratt
+f <- function(x, x0) {
   y <- x
 
   c1 <- x <= 0
   c2 <- (0 < x) & (x < x0)
   c3 <- x0 <= x
 
-  y[c1] <- -k*(x[c1] - x0/2)
-  y[c2] <- k/2/x0*(x0 - x[c2])^2
+  y[c1] <- -(x[c1] - x0/2)
+  y[c2] <- 1/2/x0*(x0 - x[c2])^2
   y[c3] <- 0
 
   return(y)
 }
 
-fp <- function(x, x0=0.1, k=1) {
+##' Derivative of \code{\link{f}}
+##'
+##' @title Piecewise smooth function used in area penalty
+##' @param x Main argument
+##' @param x0 The cutoff parameter. Above this value the function is zero.
+##' @return The value of the function.
+##' @author David Sterratt
+fp <- function(x, x0) {
   y <- x
 
   c1 <- x <= 0
   c2 <- (0 < x) & (x < x0)
   c3 <- x0 <= x
 
-  y[c1] <- -k
-  y[c2] <- -k/x0*(x0 - x[c2])
+  y[c1] <- -1
+  y[c2] <- -1/x0*(x0 - x[c2])
   y[c3] <- 0
 
   return(y)
 }
 
-## Now for the dreaded elastic error function....
-E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
-              E0.A=1, k.A=1, x0=0.1, N, verbose=FALSE) {
+##' The function that computes the energy (or error) of the
+##' deformation of the mesh from the flat outline to the sphere. This
+##' depends on the locations of the points given in spherical
+##' coordinates. The function is designed to take these as a vector
+##' that is received from the \code{optim} function.
+##'
+##' @title The deformation energy function
+##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param Cu The upper part of the connectivity matrix
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param B Connectivity matrix
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of the sphere
+##' @param Rset Indicies of points on the rim
+##' @param i0 Index of fixed point on rim
+##' @param phi0 Lattitude at which sphere curtailed
+##' @param lambda0 Longitude of fixed points
+##' @param Nphi Number of free values of \code{phi}
+##' @param N Number of points in sphere
+##' @param alpha Area scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param verbose How much information to report
+##' @return A single value, representing the energy of this particular
+##' configuration
+##' @author David Sterratt
+E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
+              alpha=1, x0, verbose=FALSE) {
+  ## Extract phis and lambdas from parameter vector
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
   lambda[-i0] <- p[Nphi+1:(N-1)]
 
-  ##
-  ## Compute derivative of elastic energy
-  ##
-  ## Use the upper triagular part of the connectivity matrix Cu
+  ## Compute elastic energy
+
+  ## using the upper triagular part of the
+  ## connectivity matrix Cu to extract coordinates of end-points of
+  ## each edge
   phi1    <- phi[Cu[,1]]
   lambda1 <- lambda[Cu[,1]]
   phi2    <- phi[Cu[,2]]
   lambda2 <- lambda[Cu[,2]]
-  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
-  if (verbose==2) {
-    print(l)
-  }
-  E.E <- 0.5 * sum((l - L)^2/L)
-  ## E.E <- 0.5 * sum((l - L)^2)
-  ## E.E <- 0.5*sum((l)^2/L)
-  if (verbose>=1) {
-    print(E.E)
-  }
 
+  ## Compute lengths of edges
+  l <- R*central.angle(phi1, lambda1, phi2, lambda2)
+  if (verbose==2) { print(l) }
+
+  ## Compute spring energy
+  E.E <- 0.5/sum(L)*sum((l - L)^2/L)
+  if (verbose>=1) { print(E.E) }
+
+  ## Compute areal penalty term if alpha is nonzero
   E.A <- 0
-  if (E0.A) {
-    ##
-    ## Compute areas
-    ##
+  if (alpha) {
+    ## Compute areas by first finding cartesian coordinates of points
     P <- R * cbind(cos(phi)*cos(lambda),
                    cos(phi)*sin(lambda),
                    sin(phi))
 
-    ## Find areas of all triangles
+    ## Find signed areas of all triangles
     a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
-    ##E.A <- 0.5 * sum((areas - A)^2/A)
-    ## E.A <- sum(exp(-k.A*areas/A))
-    E.A <- sum(sqrt(A)*f(a/A, x0=x0))
+
+    ## Now compute area energy
+    E.A <- sum(f(a/A, x0=x0))
   }
   
-  return(E.E + E0.A*E.A)
+  return(E.E + alpha*E.A)
 }
 
-## ... and the even more dreaded gradient of the elastic error
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
-               E0.A=1, k.A=1, x0=0.1, N, verbose=FALSE) {
+##' The function that computes the gradient of the  energy (or error)
+##' of the deformation of the mesh from the flat outline to the
+##' sphere. This depends on the locations of the points given in
+##' spherical coordinates. The function is designed to take these as a
+##' vector that is received from the \code{optim} function.
+##'
+##' @title The deformation energy gradient function
+##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param Cu The upper part of the connectivity matrix
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param B Connectivity matrix
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of the sphere
+##' @param Rset Indicies of points on the rim
+##' @param i0 Index of fixed point on rim
+##' @param phi0 Lattitude at which sphere curtailed
+##' @param lambda0 Longitude of fixed points
+##' @param Nphi Number of free values of \code{phi}
+##' @param N Number of points in sphere
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param verbose How much information to report
+##' @return A vector representing the derivative of the energy of this
+##' particular configuration with respect to the parameter vector
+##' @author David Sterratt
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
+               alpha=1, x0, verbose=FALSE) {
+  ## Extract phis and lambdas from parameter vector
   phi <- rep(phi0, N)
   phi[-Rset] <- p[1:Nphi]
   lambda <- rep(lambda0, N)
   lambda[-i0] <- p[Nphi+1:(N-1)]
 
-  ##
   ## Compute derivative of elastic energy
-  ##
   phii   <- phi[C[,1]]
   lambdai <- lambda[C[,1]]
   phij    <- phi[C[,2]]
   lambdaj <- lambda[C[,2]]
+
   ## x is the argument of the acos in the central angle
   u <- sin(phii)*sin(phij) + cos(phii)*cos(phij)*cos(lambdai-lambdaj)
   ## the central angle
   l <- R * acos(u)
-  if (verbose==2) {
-    print(l)
-  }
-  fac <- R * (l - c(L, L))/(c(L, L) * sqrt(1-u^2))
-  ## fac <- R * (l - c(L, L))/(sqrt(1-u^2))
-  ## fac <- R * (l)/(c(L, L) * sqrt(1-u^2))
+  if (verbose==2) { print(l) }
+
+  ## Compute general scaling factor
+  fac <- 1/sum(L)*R*(l - c(L, L))/(c(L, L)*sqrt(1 - u^2))
+
+  ## Now compute the derivatives using the B matrix
   dE.E.phii     <- B %*% (fac * (sin(phii)*cos(phij)*cos(lambdai-lambdaj)
                                - cos(phii)*sin(phij)))
   dE.E.dlambdai <- B %*% (fac * cos(phii)*cos(phij)*sin(lambdai-lambdaj))
 
+  ## Compute the derivative of the area component if alpha is nonzero
   dE.A.dphi <- rep(0, N)
   dE.A.dlambda <- 0
-  if (E0.A) {
-    ##
-    ## Compute derivative of areas
-    ##
+
+  if (alpha) {
+    ## Find cartesian coordinates of points
     P <- R * cbind(cos(phi)*cos(lambda),
                    cos(phi)*sin(lambda),
                    sin(phi))
 
-    ## expand triangulation
+    ## Here follows computation of the derivative - it's a bit
+    ## complicated!
+    
+    ## Expand triangulation so that every point is the first point
+    ## once. The number of points is effectively tripled.
     T <- rbind(T, T[,c(2,3,1)], T[,c(3,1,2)])
     A  <- c(A, A, A)
 
-    ## Slow way of computing gradient
+    ## Compute the derivative of area with respect to the first points
     dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
 
     ## Find areas of all triangles
     a <- dot(P[T[,1],], dAdPt1)
-
-##     dEdPt1 <- (areas - A)/A * dAdPt1
-##    dEdPt1 <- -k.A/A*exp(-k.A*areas/A) * dAdPt1
-    dEdPt1 <- fp(a/A, x0=x0)/sqrt(A) * dAdPt1
     
+    ## Now convert area derivative to energy derivative
+    dEdPt1 <- fp(a/A, x0=x0)/A * dAdPt1
+
+    ## Now map back onto phis and lambdas
     Pt1topi <- matrix(0, length(phi), nrow(T))
     for(m in 1:nrow(T)) {
       Pt1topi[T[m,1],m] <- 1
@@ -460,11 +536,26 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi,
     dE.A.dlambda <- rowSums(dEdpi * dpidlambda)
   }
   
-  return(c(dE.E.phii[-Rset]      + E0.A * dE.A.dphi[-Rset],
-           dE.E.dlambdai[-i0]    + E0.A * dE.A.dlambda[-i0]))
+  return(c(dE.E.phii[-Rset]      + alpha * dE.A.dphi[-Rset],
+           dE.E.dlambdai[-i0]    + alpha * dE.A.dlambda[-i0]))
 }
 
-## flipped.triangles - Determine indicies of triangles that are flipped
+##' In the projection of points onto the sphere, some triangles maybe
+##' flipped, i.e. in the wrong orientation.  This functions determines
+##' which triangles are flipped by computing the vector pointing to
+##' the centre of each triangle and comparing this direction to vector
+##' product of two sides of the triangle.
+##'
+##' @title Determine indicies of triangles that are flipped
+##' @param phi Vector of lattitudes of points
+##' @param lambda Vector of longitudes of points
+##' @param Tt Triangulation of points
+##' @param R Radius of sphere
+##' @return List containing:
+##' \item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+##' \item{\code{cents}}{Vectors of centres.}
+##' \item{\code{areas}}{Areas of triangles.}
+##' @author David Sterratt
 flipped.triangles <- function(phi, lambda, Tt, R) {
   P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
   ## Plot any flipped triangles
@@ -476,14 +567,24 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
   normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
 
   areas <- -0.5/R * dot(P1, extprod3d(P2, P3))
-  print(length(areas))
   
   flipped <- (-dot(cents, normals) < 0)
   return(list(flipped=flipped, cents=cents, areas=areas))
 }
   
-## Grand optimisation function
-optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
+##' Optimise the mapping from the flat outline to the sphere
+##'
+##' @title Optimise mapping
+##' @param r Reconstruction object
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param method Method to pass to \code{optim}
+##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+##' @param dev.grid Device handle for plotting grid to
+##' @param dev.polar Device handle for plotting ploar plot to
+##' @return Reconstruction object
+##' @author David Sterratt
+optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda
@@ -506,56 +607,32 @@ optimise.mapping <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
-
-  ## iE <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-  ##         E0.A=E0.A, k.A=k.A, N=Nt,
-  ##         Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-
-  ## idE <- dE(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-  ##         E0.A=E0.A, k.A=k.A, N=Nt,
-  ##         Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-  ## idE2 <- dE2(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-  ##         E0.A=E0.A, k.A=k.A, N=Nt,
-  ##         Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi, verbose=TRUE)
-
-  ## idE2c <- dE2c(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-  ##         E0.A=E0.A, k.A=k.A, N=Nt,
-  ##         Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-  ## print(iE)
-  
-  ## print(idE[1:10])
-  ## print("R dE2")
-  ## print(idE2[1:10])
-  ## print("C dE2")
-  ## print(idE2c[1:10])
-  ## print("Ratio")
-  ## print(idE2c/idE2)
   
   while (opt$conv) {
     ## Optimise
     opt <- optim(opt$p, E, gr=dE,
                  method=method,
                  T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                 E0.A=E0.A, k.A=k.A, N=Nt, x0=x0,
+                 alpha=alpha,  N=Nt, x0=x0,
                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
                  verbose=FALSE)
 
     ## Report
     E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-               E0.A=E0.A, k.A=k.A, N=Nt, x0=x0,
+               alpha=alpha,  N=Nt, x0=x0,
                Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
     E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-               E0.A=0, k.A=k.A, N=Nt, x0=x0,
+               alpha=0,  N=Nt, x0=x0,
                Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-    print(paste("Total error:", E.tot, opt$value, "; Length error:", E.l))
+
     ft <- flipped.triangles(phi, lambda, Tt, R)
     nflip <- sum(ft$flipped)
-    print(paste(nflip, "flipped triangles:"))
-    print(which(ft$flipped))
-    print("Areas")
-    print(ft$areas[ft$flipped])
-    print(A[ft$flipped])
-    print(length(A))
+    message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+    if (nflip) {
+      print(data.frame(rbind(id=which(ft$flipped),
+                             A=A[ft$flipped],
+                             a=ft$areas[ft$flipped])))
+    }
     
     ## Decode p vector
     phi          <- rep(phi0, Nt)
@@ -640,6 +717,8 @@ compute.strain <- function(r) {
 ##' \item{\code{lambda0}}{longitude of landmark on rim}
 ##' }
 ##' @param n Number of points in triangulation.
+##' @param alpha Area scaling coefficient
+##' @param x0 Area cutoff coefficient
 ##' @param report Function used to report progress.
 ##' @param plot.3d Whether to show 3D picture during optimisation.
 ##' @param dev.grid Device to plot grid onto. Value of \code{NA} (default)
@@ -656,9 +735,9 @@ compute.strain <- function(r) {
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
 ReconstructedOutline <- function(o, 
-                         n=500,
-                         report=print,
-                         plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
+                                 n=500, alpha=4, x0=0.5,
+                                 report=print,
+                                 plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
   if (!is.na(dev.polar)) {
     dev.set(dev.polar)
@@ -706,28 +785,11 @@ ReconstructedOutline <- function(o,
   }
 
   report("Optimising mapping...")
-  ## This pass is experimental - ideally it wouldn't be here, but until
-  ## we can fix problems with fixed triangles, it must stay.
-  ##o <- optimise.mapping(r, E0.A=exp(1), k.A=2,
-  ##                        plot.3d=plot.3d,
-  ## dev.grid=dev.grid, dev.polar=dev.polar)
-  ## r <- merge.lists(r, o)
-
-  ## This pass is original
-  ## o <- list(nflip=1)
-  E0.A <- 32
-  ##while(o$nflip>0) {
-  r <- optimise.mapping(r, E0.A=E0.A,
+  r <- optimise.mapping(r, alpha=alpha, x0=x0,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
-  ## o <- fem.optimise.mapping(r, nu=0.45,
-  ##                           plot.3d=plot.3d,
-  ##                           dev.grid=dev.grid, dev.polar=dev.polar)
-  ## r <- merge.lists(r, o)
-  ##  E0.A <- E0.A * 2;
-  ##  }
   
-  report(paste("Mapping optimised. Error:", format(r$opt$value,5),
+  report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
                ";", r$nflip, "flipped triangles."))
   class(r) <- unique(c("reconstructedOutline", class(r)))
   return(r)

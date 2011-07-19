@@ -55,7 +55,7 @@ plot.flat(m, grid=TRUE,
 
 ## Plot the intial projection in 3D
 par(mfg=c(2, 3))
-plot(NA, NA, bty="n")
+plot.new()
 mtext("D", adj=0, font=2, line=-0.2)
 
 plot.sphere.spherical(m$phi, m$lambda, m$R, m$Tt, m$Rsett)
@@ -63,14 +63,12 @@ plot.outline.spherical(m$phi, m$lambda, m$R, m$gb, m$ht)
 rgl.viewpoint(zoom=0.7)
 rgl.postscript("initial-projection.pdf", "pdf")
 
-
 ## Optimise mapping - this takes a few minutes
-E0.A <- 32
-r <- optimise.mapping(m, E0.A=E0.A, plot.3d=FALSE)
+r <- optimise.mapping(m, plot.3d=FALSE)
 
 ## Plot the final projection in 3D and on the grid
 par(mfg=c(2, 2))
-plot(NA, NA, bty="n")
+plot.new()
 mtext("E", adj=0, font=2, line=-0.2)
 
 rgl.postscript("final-projection.pdf", "pdf")

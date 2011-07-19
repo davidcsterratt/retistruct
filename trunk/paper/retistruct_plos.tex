@@ -467,18 +467,19 @@ reconstruction process then proceeds as follows:
   flattened and spherical retina and a penalty term that prevents the
   triangles from flipping over:
   \begin{equation}
-    E = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
+    E = \frac{1}{2|\mathcal{C}|\overline{L}} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
     + \alpha\sum_{j\in\mathcal{T}} f(a_j/A_j)
   \end{equation}
-  where $L_i$ and $l_i$ are lengths of corresponding connections
+  where $L_i$ and $l_i$ are lengths of corresponding edges
   $i\in\mathcal{C}$ in the flattened and spherical retina
-  respectively, $\alpha$ is a constant, $f$ is a penalty function to
-  be defined below and $A_j$ and $a_j$ are signed areas of
-  corresponding triangles $j\in\mathcal{T}$ in the flattened and
-  spherical retina.  The signed area $a_i$ is positive for triangles in
-  correct orientation, but negative for flipped triangles. The penalty
-  function $f$ is a piecewise, smooth function that increases steeply
-  with negative arguments:
+  respectively, $\overline{L}$ is the mean length of an edge,
+  $|\mathcal{C}|$ is the number of edges, $\alpha$ is a constant, $f$
+  is a penalty function to be defined below, and $A_j$ and $a_j$ are
+  signed areas of corresponding triangles $j\in\mathcal{T}$ in the
+  flattened and spherical retina.  The signed area $a_i$ is positive
+  for triangles in correct orientation, but negative for flipped
+  triangles. The penalty function $f$ is a piecewise, smooth function
+  that increases steeply with negative arguments:
   \begin{equation}
     \label{retistruct_plos:eq:1}
     f(x) = \left\{
@@ -497,11 +498,11 @@ reconstruction process then proceeds as follows:
   \begin{equation}
     \label{retistruct_plos:eq:2}
     l(\phi_1, \lambda_1, \phi_2, \lambda_2) =
-    R\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
-    \sin\phi_1\sin\phi_2   
+    R(\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
+    \sin\phi_1\sin\phi_2)
   \end{equation}
   where $\phi_1$ and $\phi_2$ are the latitudes of the vertices and
-  $\lambda_1$ and $\lambda_2)$ are the longitudes.  The derivatives of
+  $\lambda_1$ and $\lambda_2$ are the longitudes.  The derivatives of
   $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and the
   BFGS quasi-Newton method implemented in the R optim function is used
   to minimise $E$.
@@ -539,6 +540,7 @@ modern desktop computer.
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
 
+David Willshaw and Stephen Eglen (Perhaps should go on the author list?).
 
 %\section*{References}
 % The bibtex filename
