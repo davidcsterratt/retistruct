@@ -189,16 +189,15 @@ merge.points.edges <- function(t) {
   return(m)
 }
 
-## Stretch the mesh in the flat retina to a circular outline
-##
-## Arguments:
-## Cu - connection matrix
-## L  - lengths
-## i.fix - indicies of fixed points
-## P.fix - coordinates of fixed points
-##
-## Returns:
-## New matrix of point locations
+##' Stretch the mesh in the flat retina to a circular outline
+##'
+##' @title Stretch mesh
+##' @param Cu Edge matrix
+##' @param L Lengths in flat outline
+##' @param i.fix Indicies of fixed points
+##' @param P.fix Coordinates of fixed points
+##' @return New matrix of 2D point locations
+##' @author David Sterratt
 stretch.mesh <- function(Cu, L, i.fix, P.fix) {
   N <- max(Cu)
   M <- length(L)
@@ -208,10 +207,6 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
     C[2*Cu[i,2]-1:0,2*Cu[i,1]-1:0] <- diag(2) / L[i]
   }
 
-  ## FIXME: This debugging output should probably go once the "Lapack
-  ## routine dgesv: system is exactly singular" bug has been
-  ## vanquished
-  message(paste("det(C) =", det(C)))
   dupC <- duplicated(C)
   if (any(dupC)) {
     i <- which(dupC)
@@ -226,11 +221,9 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
   
   ind <- as.vector(rbind(2*i.fix-1, 2*i.fix))
   A <- C[-ind, -ind]
-  message(paste("det(A) =", det(A)))
   B <- C[-ind,  ind]
   P <- matrix(t(P.fix), ncol(B), 1)
   D <- diag(apply(cbind(A, 2*B), 1, sum))
-  message(paste("det(D) =", det(D)))
   if (is.infinite(det(D))) stop ("det(D) is infinite")
   Q <- 2 * solve(D - A) %*% B %*% P
   Q <- matrix(Q, nrow(Q)/2, 2, byrow=TRUE)
@@ -575,14 +568,14 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' Optimise the mapping from the flat outline to the sphere
 ##'
 ##' @title Optimise mapping
-##' @param r Reconstruction object
+##' @param r reconstructedOutline object
 ##' @param alpha Area penalty scaling coefficient
 ##' @param x0 Area penalty cutoff coefficient
 ##' @param method Method to pass to \code{optim}
 ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
 ##' @param dev.grid Device handle for plotting grid to
 ##' @param dev.polar Device handle for plotting ploar plot to
-##' @return Reconstruction object
+##' @return reconstructedOutline object
 ##' @author David Sterratt
 optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
@@ -659,28 +652,41 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
       plot.polar(r)
     }
   }
+
   o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
                   E.tot=E.tot, E.l=E.l),
              r)
+  o$mean.strain <- mean(abs(getStrains(o))$strain)
   class(o) <- class(r)
   return(o)
 }
 
-## Function to plot the fractional change in length of connections 
-compute.strain <- function(r) {
+##' This function returns information about how edges on the sphere
+##' have been deformed from their flat state.
+##'
+##' @title Return strains edges are under in spherical retina
+##' @param r A \code{\link{reconstructedOutline}} object
+##' @return A data frame containing for each edge in the flat outline
+##' \item{\code{L}}{Length of the edge in the flat outline }
+##' \item{\code{l}}{Length of the corresponding edge on the sphere}
+##' \item{\code{strain}}{The strain of each connection}
+##' \item{\code{logstrain}}{The logarithmic strain of each connection}
+##' @author David Sterratt
+getStrains <- function(r) {
   ## Original lengths in flattened outline is a vector with
   ## M elements, the number of rows of Cu
   L <- r$L
-  ## New lenghts in reconstructed object is a vector wtih Mt < M
+  ## New lengths in reconstructed object is a vector wtih Mt < M
   ## elements, the number of rows of Cut
   ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
   ## For each connection in the flattened object, we want the length of
   ## the corresponding connection in the reconstructed object
   ## The mapping Ht achieves this@
   l <- ls[r$Ht]
-  strain <- l/L
-  logstrainnorm <- -log(strain)/max(abs(log(strain)))
-  return(data.frame(L=L, l=l, strain=strain, logstrainnorm=logstrainnorm))
+  stretch <- l/L
+  strain <- stretch - 1
+  logstrain <- log(stretch)
+  return(data.frame(L=L, l=l, strain=strain, logstrain=logstrain))
 }
 
 ##' Reconstruct outline into spherical surface. Reconstruction
@@ -707,7 +713,7 @@ compute.strain <- function(r) {
 ##' }
 ##'
 ##' @title Reconstruct outline into spherical surface
-##' @param o Outline list, containing the following information:\describe{
+##' @param o \code{\link{Outline}} object, containing the following information:\describe{
 ##' \item{\code{P}}{outline points as N-by-2 matrix}
 ##' \item{\code{V0}}{indicies of the apex of each tear}
 ##' \item{\code{VF}}{indicies of the forward vertex of each tear}

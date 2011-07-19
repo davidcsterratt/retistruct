@@ -39,8 +39,8 @@ strain.colours <- function(x) {
 
 ## Function to plot the fractional change in length of connections 
 plot.strain.flat <- function(r) {
-  o <- compute.strain(r)
-  cols <- strain.colours(log(o$strain))
+  o <- getStrains(r)
+  cols <- strain.colours(o$logstrain)
   with(r, 
        segments(P[Cu[,1],1], P[Cu[,1],2],
                 P[Cu[,2],1], P[Cu[,2],2], col=cols))
@@ -48,11 +48,11 @@ plot.strain.flat <- function(r) {
 
 ## Function to plot the fractional change in length of connections 
 plot.l.vs.L <- function(r) {
-  o <- compute.strain(r)
+  o <- getStrains(r)
   op <- par()["mar"]
   par(mar=c(4.5, 4.5, 0.5,0.5))
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
-  cols <- strain.colours(log(o$strain))
+  cols <- strain.colours(o$logstrain)
   with(o, plot(L, l, col=cols, pch=20,
                xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
                xlab="Length on flattened object",
