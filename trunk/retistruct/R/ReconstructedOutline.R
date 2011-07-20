@@ -103,7 +103,7 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
     }
   }
   if (plot.strain) {
-    o <- getStrain(r)
+    o <- getStrains(r)
     palette(rainbow(100))
     scols <- strain.colours(o$logstrain)
     with(r, 
