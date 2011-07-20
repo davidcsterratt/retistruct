@@ -656,7 +656,8 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
   o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
                   E.tot=E.tot, E.l=E.l),
              r)
-  o$mean.strain <- mean(abs(getStrains(o))$strain)
+  o$mean.strain    <- mean(abs(getStrains(o))$strain)
+  o$mean.logstrain <- mean(abs(getStrains(o))$logstrain)
   class(o) <- class(r)
   return(o)
 }

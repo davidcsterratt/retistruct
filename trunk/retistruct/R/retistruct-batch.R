@@ -36,6 +36,9 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
     nflip <- NA
     E <- NA
     El <- NA
+    sqrt.El <- NA
+    mean.strain <- NA
+    mean.logstrain <- NA
     
     if (inherits(is.data.dir, "try-error")) {
       ret <- 1
@@ -59,10 +62,13 @@ retistruct.cli(\"",
         if (ret==0) {
           r <- retistruct.read.recdata(list(dataset=dataset))
           if (!is.null(r)) {
-            if (!is.null(r$EOD))       { EOD <- r$EOD      }
-            if (!is.null(r$nflip))     { nflip <- r$nflip  }
-            if (!is.null(r$opt$value)) { E  <- r$opt$value }
-            if (!is.null(r$E.l))       { El <- r$E.l       }
+            if (!is.null(r$EOD))         { EOD <- r$EOD      }
+            if (!is.null(r$nflip))       { nflip <- r$nflip  }
+            if (!is.null(r$opt$value))   { E  <- r$opt$value }
+            if (!is.null(r$E.l))         { El <- r$E.l
+                                           sqrt.El <- sqrt(r$E.l) }
+            if (!is.null(r$mean.strain)) { mean.strain <- r$mean.strain }
+            if (!is.null(r$mean.logstrain)) { mean.logstrain <- r$mean.logstrain }
           }
         }
         message(paste("Return value", ret, ". Result:"))
@@ -77,7 +83,10 @@ retistruct.cli(\"",
                                        E=E,
                                        El=El,
                                        nflip=nflip,
-                                       EOD=EOD))
+                                       EOD=EOD,
+                                       sqrt.E=sqrt.E,
+                                       mean.strain=mean.strain,
+                                       mean.logstrain=mean.logstrain))
     write.csv(logdat, file.path(outputdir, "retistruct-batch.csv"))
   }
 }
