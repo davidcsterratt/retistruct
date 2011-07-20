@@ -19,8 +19,8 @@ if (!require("multicore"))     install.packages("multicore")
 if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistruct_0.3.1.tar.gz")
-install.packages("retistructgui_0.3.1.tar.gz")
+install.packages("retistruct_0.4.0.tar.gz")
+install.packages("retistructgui_0.4.0.tar.gz")
 
 library(retistruct)
 retistruct()
