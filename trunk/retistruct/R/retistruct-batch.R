@@ -11,10 +11,9 @@ list.dirs <- function(path='.') {
 ##' List valid datasets underneath a directory. This reports all
 ##' directories that appear to be valid.
 ##'
-##' <details>
 ##' @title List datasets underneath a directory
-##' @param path 
-##' @return 
+##' @param path Directory path to start searching from
+##' @return A vector of directories containing datasets
 ##' @author David Sterratt
 list.datasets <- function(path='.') {
   datasets <- c()
