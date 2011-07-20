@@ -52,11 +52,12 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
         message(paste("... reconstructing. Logging to", logfile))
         ret <- system(paste("R --vanilla >", logfile, "2>&1"),
                       input=paste("library(retistruct)
-retistruct.cli(\"",
+status = retistruct.cli(\"",
                         dataset, "\",",
                         cpu.time.limit, ",\"",
                         outputdir, "\", \"",
-                        device, "\")",
+                        device, "\")
+quit(status=status)",
                         sep=""),
                       intern=FALSE, wait=TRUE)
         if (ret==0) {
@@ -90,6 +91,8 @@ retistruct.cli(\"",
     write.csv(logdat, file.path(outputdir, "retistruct-batch.csv"))
   }
 }
+
+
 
 ## retistruct.batch.figures() - Recurse through a directory tree,
 ## determining whether the directory contains valid derived data and
@@ -161,4 +164,57 @@ retistruct.batch.testhdf <- function(tldir=".", ...) {
   }
   print(failures)
   print(successes)
+}
+
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid raw data and markup, and performing the
+##' reconstruction if it does
+##'
+##' @title Retistruct batch operation using multicore
+##' @param tldir the top level of the tree through which to recurse
+##' @param outputdir directory in which to dump a log file and images
+##' @param cpu.time.limit amount of CPU after which to terminate the process
+##' @param device string indicating what type of graphics output
+##' required. Options are "pdf" and "png".
+##' @author David Sterratt
+retistruct.multicore <- function(tldir='.', outputdir=tldir,
+                                 cpu.time.limit=3600, device="pdf") {
+  datasets <- list.dirs(tldir)
+  logdat <- data.frame()
+
+  valid.datasets <- c()
+  ## Try opening all the datasets to produce a list of datasets
+  for (dataset in datasets) {
+    ## Determine if directory is a valid data directory. If it's a
+    ## faulty one, we will let it pass to be picked up later on
+    
+    message(paste("Trying to open", dataset, "..."))
+    id.data.dir <- TRUE
+
+    ## Case of faulty directory
+    tryCatch({
+      is.data.dir <- check.datadir(dataset)
+    }, error=function(e) {})
+
+    if (!is.data.dir) {
+      message("... not a data directory.")
+      next
+    }
+    valid.datasets <- c(valid.datasets, dataset)
+    message(paste("... adding to list to reconstruct"))
+  }
+
+  multicore.call <- function(dataset) {
+    logfile <- file.path(outputdir,
+                         paste(retistruct.cli.basepath(dataset),
+                               ".log", sep=""))
+    message(paste("Reconstructing. Logging to", logfile))
+    flog <- file(logfile, open="wt")
+    sink(flog)
+    sink(flog, type="message")
+    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device))
+  }
+
+  ret <- mclapply(valid.datasets, multicore.call, mc.preschedule=FALSE)
+  return(data.frame(dataset=valid.datasets, ret=ret))
 }

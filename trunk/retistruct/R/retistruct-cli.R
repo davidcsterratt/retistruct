@@ -6,14 +6,14 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
   mess <- geterrmessage()
   if (inherits(out, "try-error")) {
     if (grepl("reached CPU time limit", mess)) {
-      quit(status=1)
+      return(1)
     } else {
       ## Unknown error
-      quit(status=2)
+      return(2)
     }
   }
   ## Success
-  quit(status=0)
+  return(0)
 }
 
 retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
