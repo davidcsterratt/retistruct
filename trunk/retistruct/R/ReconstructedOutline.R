@@ -103,9 +103,9 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
     }
   }
   if (plot.strain) {
-    o <- compute.strain(r)
+    o <- getStrain(r)
     palette(rainbow(100))
-    scols <- strain.colours(log(o$strain))
+    scols <- strain.colours(o$logstrain)
     with(r, 
          segments(P[Cu[,1],1], P[Cu[,1],2],
                   P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
