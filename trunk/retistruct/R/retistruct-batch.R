@@ -8,6 +8,42 @@ list.dirs <- function(path='.') {
   return(dirs)
 }
 
+##' List valid datasets underneath a directory. This reports all
+##' directories that appear to be valid.
+##'
+##' <details>
+##' @title List datasets underneath a directory
+##' @param path 
+##' @return 
+##' @author David Sterratt
+list.datasets <- function(path='.') {
+  datasets <- c()
+
+  ## Try opening all the datasets to produce a list of datasets
+  files <- list.files(path, recursive=FALSE, full.name=TRUE)
+  fi <- file.info(files)
+  dirs <- row.names(fi[fi$isdir,])
+
+  for (d in dirs) {
+    ## Determine if directory is a valid data directory. If it's a
+    ## faulty one, we will let it pass to be picked up later on
+    
+    id.data.dir <- TRUE
+    ## Case of faulty directory
+    tryCatch({
+      is.data.dir <- check.datadir(d)
+    }, error=function(e) {})
+
+    if (!is.data.dir) {
+      message(paste(d, "is not a data directory."))
+      next
+    }
+    datasets <- c(datasets, d)
+    message(paste(d, "is a data directory."))
+  }
+  return(datasets)
+}
+
 ##' Recurse through a directory tree, determining whether the
 ##' directory contains valid raw data and markup, and performing the
 ##' reconstruction if it does
@@ -216,5 +252,6 @@ retistruct.multicore <- function(tldir='.', outputdir=tldir,
   }
 
   ret <- mclapply(valid.datasets, multicore.call, mc.preschedule=FALSE)
-  return(data.frame(dataset=valid.datasets, ret=ret))
+  return(data.frame(cbind(dataset=valid.datasets, ret=ret)))
 }
+
