@@ -742,7 +742,7 @@ getStrains <- function(r) {
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
 ReconstructedOutline <- function(o, 
-                                 n=500, alpha=8, x0=0.5,
+                                 n=500, alpha=16, x0=0.5,
                                  report=print,
                                  plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
