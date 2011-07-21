@@ -129,41 +129,6 @@ quit(status=status)",
   }
 }
 
-##' Recurse through a directory tree, determining whether the
-##' directory contains valid derived data and plotting graphs if it
-##' does.
-##'
-##' @title Plot figures for a batch of reconstructions
-##' @param tldir The top level directory of the tree through which to
-##' recurse.
-##' @param outputdir Directory in which to dump a log file and images
-##' @param ... Parameters passed to plotting functions
-##' @author David Sterratt
-retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
-  datasets <- list.datasets(tldir)
-  for (dataset in datasets) {
-    message(paste("Attempting to produce figures from", dataset))
-    try(retistruct.cli.figure(dataset, outputdir, ...))
-  }
-}
-
-##' Recurse through a directory tree, determining whether the
-##' directory contains valid derived data and converting r.rData files
-##' to files in matlab format named r.mat
-##'
-##' @title Export data from reconstruction data files to matlab
-##' @param tldir The top level of the directory tree through which to
-##' recurse
-##' @author David Sterratt
-retistruct.batch.export.matlab <- function(tldir=".") {
-  datasets <- list.datasets(tldir)
-  for (dataset in datasets) {
-    print(dataset)
-    r <- retistruct.read.recdata(list(dataset=dataset))
-    retistruct.export.matlab(r)
-  }
-}
-
 ##' This function reconstructs a number of  datasets, using the R
 ##' \code{multicore} package to distribute the reconstruction of
 ##' multiple datasets across CPUs. If \code{datasets} is not specified
@@ -203,5 +168,75 @@ retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
 
   ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE)
   return(data.frame(cbind(dataset=datasets, ret=ret)))
+}
+
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid derived data and extracting summary data
+##' if it does.
+##'
+##' @title Plot figures for a batch of reconstructions
+##' @param tldir The top level directory of the tree through which to
+##' recurse.
+##' @return Data frame containing summary data
+##' @author David Sterratt
+retistruct.batch.summary <- function(tldir=".") {
+  datasets <- list.datasets(tldir)
+  logdat <- data.frame()
+
+  ## Function to replace NULL with NA - needed for creating data frames
+  n <- function(x) {
+    return(ifelse(is.null(x), NA, x))
+  }
+
+  ## Go through datasets
+  for (dataset in datasets) {
+    r <- retistruct.read.recdata(list(dataset=dataset))
+    if (!is.null(r)) {
+      logdat <- rbind(logdat, data.frame(dataset=dataset,
+                                         E=n(r$opt$value),
+                                         El=n(r$E.l),
+                                         nflip=n(r$nflip),
+                                         EOD=n(r$EOD),
+                                         sqrt.E=n(sqrt(r$E.l)),
+                                         mean.strain=n(r$mean.strain),
+                                         mean.logstrain=n(r$mean.logstrain)))
+    }
+  }
+  return(logdat)
+}
+
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid derived data and plotting graphs if it
+##' does.
+##'
+##' @title Plot figures for a batch of reconstructions
+##' @param tldir The top level directory of the tree through which to
+##' recurse.
+##' @param outputdir Directory in which to dump a log file and images
+##' @param ... Parameters passed to plotting functions
+##' @author David Sterratt
+retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
+  datasets <- list.datasets(tldir)
+  for (dataset in datasets) {
+    message(paste("Attempting to produce figures from", dataset))
+    try(retistruct.cli.figure(dataset, outputdir, ...))
+  }
+}
+
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid derived data and converting r.rData files
+##' to files in matlab format named r.mat
+##'
+##' @title Export data from reconstruction data files to matlab
+##' @param tldir The top level of the directory tree through which to
+##' recurse
+##' @author David Sterratt
+retistruct.batch.export.matlab <- function(tldir=".") {
+  datasets <- list.datasets(tldir)
+  for (dataset in datasets) {
+    print(dataset)
+    r <- retistruct.read.recdata(list(dataset=dataset))
+    retistruct.export.matlab(r)
+  }
 }
 
