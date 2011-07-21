@@ -166,8 +166,26 @@ retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
     return(retistruct.cli(dataset, cpu.time.limit, outputdir, device))
   }
 
+  ## Run the reconstructions
   ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE)
-  return(data.frame(cbind(dataset=datasets, ret=ret)))
+
+  ## Extract data from the return structures
+  ## Function to replace NULL with NA - needed for creating data frames
+  n <- function(x) {
+    return(ifelse(is.null(x), NA, x))
+  }
+
+  dat <- data.frame(cbind(dataset=datasets,
+                          status=sapply(ret, function(x) {return(n(x$status))}),
+                          mess=sapply(ret, function(x) {return(x$mess)}),
+                          time=sapply(ret, function(x) {return(x$time)})))
+  print(dat)
+
+  summ <- retistruct.batch.summary(tldir)
+  print(summ)
+  dat <- merge(summ, dat, by="dataset", all=TRUE)
+  write.csv(dat, file.path(outputdir, "retistruct-batch.csv"))
+  return(dat)
 }
 
 ##' Recurse through a directory tree, determining whether the

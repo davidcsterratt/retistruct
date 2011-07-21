@@ -1,19 +1,21 @@
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
                            device="pdf") {
+  ## Return code
+  status <- 0
   setTimeLimit(cpu=cpu.time.limit)
-  out <- try(retistruct.cli.process(dataset,
-                                    outputdir=outputdir, device=device))
+  syst <- system.time(out <-try(retistruct.cli.process(dataset,
+                                                       outputdir=outputdir, device=device)))
   mess <- geterrmessage()
   if (inherits(out, "try-error")) {
     if (grepl("reached CPU time limit", mess)) {
-      return(1)
+      status <- 1
     } else {
       ## Unknown error
-      return(2)
+      status <- 2
     }
   }
   ## Success
-  return(0)
+  return(list(status=status, time=syst["user.self"], mess=mess))
 }
 
 retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
