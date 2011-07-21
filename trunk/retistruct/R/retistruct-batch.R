@@ -1,28 +1,30 @@
-list.dirs <- function(path='.') {
-  files <- list.files(path, recursive=FALSE, full.name=TRUE)
-  fi <- file.info(files)
-  dirs <- row.names(fi[fi$isdir,])
-  for (d in dirs) {
-    dirs <- c(dirs,list.dirs(d))
-  }
-  return(dirs)
-}
-
 ##' List valid datasets underneath a directory. This reports all
 ##' directories that appear to be valid.
 ##'
 ##' @title List datasets underneath a directory
 ##' @param path Directory path to start searching from
+##' @param verbose If \code{TRUE} report on progress
 ##' @return A vector of directories containing datasets
 ##' @author David Sterratt
-list.datasets <- function(path='.') {
+list.datasets <- function(path='.', verbose=FALSE) {
+  ## We have to define a function to do directory listings as
+  ## (a) list.files doesn't work recursively on all platforms and (b)
+  ## in any case, it doesn't list directories when running recursively
+  list.dirs <- function(path='.') {
+    files <- list.files(path, recursive=FALSE, full.name=TRUE)
+    fi <- file.info(files)
+    dirs <- row.names(fi[fi$isdir,])
+    for (d in dirs) {
+      dirs <- c(dirs,list.dirs(d))
+    }
+    return(dirs)
+  }
+
+  ## Now get the directories
+  dirs <- list.dirs(path)
+
+  ## Go through directories determining if datasets are valid
   datasets <- c()
-
-  ## Try opening all the datasets to produce a list of datasets
-  files <- list.files(path, recursive=FALSE, full.name=TRUE)
-  fi <- file.info(files)
-  dirs <- row.names(fi[fi$isdir,])
-
   for (d in dirs) {
     ## Determine if directory is a valid data directory. If it's a
     ## faulty one, we will let it pass to be picked up later on
@@ -34,11 +36,11 @@ list.datasets <- function(path='.') {
     }, error=function(e) {})
 
     if (!is.data.dir) {
-      message(paste(d, "is not a data directory."))
+      if (verbose) message(paste(d, "is not a data directory."))
       next
     }
     datasets <- c(datasets, d)
-    message(paste(d, "is a data directory."))
+    if (verbose) message(paste(d, "is a data directory."))
   }
   return(datasets)
 }
@@ -57,7 +59,7 @@ list.datasets <- function(path='.') {
 retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
                              device="pdf") {
   print(outputdir)
-  datasets <- list.dirs(tldir)
+  datasets <- list.datasets(tldir)
   logdat <- data.frame()
   for (dataset in datasets) {
     Result <- ""
@@ -127,31 +129,34 @@ quit(status=status)",
   }
 }
 
-
-
-## retistruct.batch.figures() - Recurse through a directory tree,
-## determining whether the directory contains valid derived data and
-## plotting graphs if it does.
-##
-## tldir     - the top level of the tree through which to recurse
-## outputdir - directory in which to dump a log file and images
-##
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid derived data and plotting graphs if it
+##' does.
+##'
+##' @title Plot figures for a batch of reconstructions
+##' @param tldir The top level directory of the tree through which to
+##' recurse.
+##' @param outputdir Directory in which to dump a log file and images
+##' @param ... Parameters passed to plotting functions
+##' @author David Sterratt
 retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
-  datasets <- list.dirs(tldir)
+  datasets <- list.datasets(tldir)
   for (dataset in datasets) {
     message(paste("Attempting to produce figures from", dataset))
     try(retistruct.cli.figure(dataset, outputdir, ...))
   }
 }
 
-## retistruct.batch.export.matlab() - Recurse through a directory tree,
-## determining whether the directory contains valid derived data and
-## converting r.rData files to files in matlab format named r.mat
-##
-## tldir     - the top level of the tree through which to recurse
-##
+##' Recurse through a directory tree, determining whether the
+##' directory contains valid derived data and converting r.rData files
+##' to files in matlab format named r.mat
+##'
+##' @title Export data from reconstruction data files to matlab
+##' @param tldir The top level of the directory tree through which to
+##' recurse
+##' @author David Sterratt
 retistruct.batch.export.matlab <- function(tldir=".") {
-  datasets <- list.dirs(tldir)
+  datasets <- list.datasets(tldir)
   for (dataset in datasets) {
     print(dataset)
     r <- retistruct.read.recdata(list(dataset=dataset))
@@ -166,7 +171,7 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ## tldir     - the top level of the tree through which to recurse
 ##
 retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
-  datasets <- list.dirs(tldir)
+  datasets <- list.datasets(tldir)
   for (dataset in datasets) {
     print(dataset)
     r <- retistruct.read.recdata(list(dataset=dataset))
@@ -181,7 +186,7 @@ retistruct.batch.rdata2hdf <- function(tldir=".", ...) {
 }
 
 retistruct.batch.testhdf <- function(tldir=".", ...) {
-  datasets <- list.dirs(tldir)
+  datasets <- list.datasets(tldir)
   failures <- c()
   successes <- c()
   for (dataset in datasets) {
@@ -201,44 +206,32 @@ retistruct.batch.testhdf <- function(tldir=".", ...) {
   print(successes)
 }
 
-##' Recurse through a directory tree, determining whether the
-##' directory contains valid raw data and markup, and performing the
-##' reconstruction if it does
+##' This function reconstructs a number of  datasets, using the R
+##' \code{multicore} package to distribute the reconstruction of
+##' multiple datasets across CPUs. If \code{datasets} is not specified
+##' the function recurses through a directory tree starting at
+##' \code{tldir}, determining whether the directory contains valid raw
+##' data and markup, and performing the reconstruction if it does.
 ##'
-##' @title Retistruct batch operation using multicore
-##' @param tldir the top level of the tree through which to recurse
+##' @title Batch operation using multicore
+##' @param datasets Vector of dataset directories to reconstruct.
+##' @param tldir If datasets is not specified, the top level of the
+##' directory tree through which to recurse in order to find datasets.
 ##' @param outputdir directory in which to dump a log file and images
-##' @param cpu.time.limit amount of CPU after which to terminate the process
 ##' @param device string indicating what type of graphics output
 ##' required. Options are "pdf" and "png".
+##' @param cpu.time.limit amount of CPU after which to terminate the process
 ##' @author David Sterratt
-retistruct.multicore <- function(tldir='.', outputdir=tldir,
-                                 cpu.time.limit=3600, device="pdf") {
-  datasets <- list.dirs(tldir)
-  logdat <- data.frame()
-
-  valid.datasets <- c()
-  ## Try opening all the datasets to produce a list of datasets
-  for (dataset in datasets) {
-    ## Determine if directory is a valid data directory. If it's a
-    ## faulty one, we will let it pass to be picked up later on
-    
-    message(paste("Trying to open", dataset, "..."))
-    id.data.dir <- TRUE
-
-    ## Case of faulty directory
-    tryCatch({
-      is.data.dir <- check.datadir(dataset)
-    }, error=function(e) {})
-
-    if (!is.data.dir) {
-      message("... not a data directory.")
-      next
-    }
-    valid.datasets <- c(valid.datasets, dataset)
-    message(paste("... adding to list to reconstruct"))
+retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
+                                 device="pdf",
+                                 cpu.time.limit=3600) {
+  ## Get datasets
+  if (is.null(datasets)) {
+    datasets <- list.datasets(tldir)
   }
+  message(paste("About to reconstruct", length(datasets), "datasets."))
 
+  ## Function to pass to mclapply
   multicore.call <- function(dataset) {
     logfile <- file.path(outputdir,
                          paste(retistruct.cli.basepath(dataset),
@@ -250,7 +243,7 @@ retistruct.multicore <- function(tldir='.', outputdir=tldir,
     return(retistruct.cli(dataset, cpu.time.limit, outputdir, device))
   }
 
-  ret <- mclapply(valid.datasets, multicore.call, mc.preschedule=FALSE)
-  return(data.frame(cbind(dataset=valid.datasets, ret=ret)))
+  ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE)
+  return(data.frame(cbind(dataset=datasets, ret=ret)))
 }
 
