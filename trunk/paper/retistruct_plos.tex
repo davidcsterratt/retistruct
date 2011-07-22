@@ -63,7 +63,9 @@
 %% PLEASE INCLUDE ALL MACROS BELOW
 
 %% FIXME: MUST REMOVE BEFORE SUBMITTING TO PLOS
-\usepackage{todo}
+%\usepackage{todo}
+\usepackage{color}
+\newcommand{\todo}[1]{{\color{red}[#1]}}
 
 %% END MACROS SECTION
 
@@ -110,7 +112,7 @@ marked up by an expert. The retinal outline is split into triangular
 elements whose positions are then transformed so that they lie on a
 partial sphere with the expected dimensions of the intact retina.  The
 transformation is adjusted so as to minimise a physically-inspired
-deformation energy funtion.
+deformation energy function.
 
 % change in the dimensions of each triangle from the flattened outline.
 
@@ -211,10 +213,83 @@ situations. \todo{More about applications here.}
 % Results and Discussion can be combined.
 \section*{Results}
 
-\subsection*{Examples of the method in action}
+\subsection*{The reconstruction algorithm}
 
-\todo{Perhaps present two reconstructed retinae, one ``good'' and one
-  ``bad''. Present the strain map and also the measure of goodness.}
+The reconstruction algorithm is illustrated in
+Figure~\ref{fold-sphere:fig:method} and we present a more detailed
+description in the Methods. In brief, the starting point of the
+algorithm is the retinal outline
+(Figure~\ref{fold-sphere:fig:method}A), in this example with some
+labelled points (red, green and yellow circles) and an example of a
+landmark (blue line), in this case the optic disk.  The first step is
+for an expert to mark the locations of incisions and tears in the
+outline and to mark the location of one of the poles
+(Figure~\ref{fold-sphere:fig:method}B). The algorithm then
+triangulates the outline and stitches together the incisions and tears
+(Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
+onto a spherical surface, with the points on the rim all lying at the
+same latitude (Figure~\ref{fold-sphere:fig:method}Di). Each edge in
+the mesh is treated as a spring whose natural length is the length of
+the corresponding edge in the flat mesh.  In the initial mapping onto
+the spherical surface, the springs are compressed or expanded; in the
+next step the springs are allowed to relax so as to minimise the total
+potential energy contained in all the springs. This gives the
+spherical mesh shown in
+Figure~\ref{fold-sphere:fig:method}Ei. Finally, the locations of data
+points and landmarks in the flat retina can be projected onto the
+reconstructed retina, which can be represented using a polar plot
+(Figure~\ref{fold-sphere:fig:method}Fi). The mean locations of groups
+of data points on the sphere is computed using the Karcher mean (see
+Methods).
+
+An alternative representation is shown in
+Figures~\ref{fold-sphere:fig:method}Dii, Eii and Fii, where lines of
+latitude and longitude on the spherical retina have been projected
+onto the flat structure. In particular the jump between Dii and Eii
+illustrates the improvement in the appearance of the mapping achieved
+using the energy minimisation.
+
+To assess the amount of residual deformation at the end of the energy
+minimisation procedure, we plotted the length of the edge in the
+spherical mesh versus the length of the edge in the flat mesh
+(Figure~\ref{retistruct_plos:fig:examples}Ai). We visualised the
+deformation by representing the log strain as coloured edge in the
+flat mesh (Figure~\ref{retistruct_plos:fig:examples}Aii). The log
+strain is defined as $\ln(l/L)$ where $l$ is the length of the edge in
+the spherical representation and $L$ is the length of the edge in the
+flat representation. For a spring at its natural length it is zero
+(represented by green), for a compressed spring it is negative (blue)
+and for an expanded one positive (red).
+
+A measure of the overall goodness of reconstruction is the square root
+of the length energy function:
+\begin{equation} 
+  \sqrt{E_\mathrm{L}} = \sqrt{\frac{1}{2|\mathcal{C}|\overline{L}}
+  \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}}
+\end{equation} 
+where $L_i$ is the length of the $i$th edge in the flat mesh, $l_i$
+the length of the corresponding edge in the spherical mesh, and the
+summation is over, $\mathcal{C}$, the set of edges. The mean length of
+an edge in the flat mesh is $\overline{L}$ and the number of edges is
+$|\mathcal{C}|$. This measure is constructed so as to be of a similar
+order to the mean log strain, which in turn is of the same order as
+the mean fractional deformation.  We used our algorithm to reconstruct
+226 retina. The distribution of the goodness measure is shown in
+Figure~\ref{retistruct_plos:fig:summary}. It can be seen that there
+are a number of outliers for which reconstruction failed totally and
+then a log-normal
+distribution. Figure~\ref{retistruct_plos:fig:examples}A shows an
+example of a good reconstruction with an energy measure
+$\sqrt{E_\mathrm{L}}=0.039$ and
+Figure~\ref{retistruct_plos:fig:examples}B an example of a bad one
+with $\sqrt{E_\mathrm{L}}=0.278$.
+\todo{Note that I am currently playing with the parameters of the
+  algorithm having made a subtle change to the error measure, so I
+  think there is some room for improvement.}
+
+\subsection*{Validation of the reconstruction algorithm}
+
+\todo{Comparison of MRI images and reconstructed retinae.}
 
 \subsection*{Application: retrograde tracing}
 
@@ -233,41 +308,88 @@ situations. \todo{More about applications here.}
 
 \todo{This is all at brain dump stage.}
 
-\subsection*{Approaches to similar problems in the literature}
-\label{fold-sphere:sec:appr-simil-probl}
+\subsection*{Insights gained from the method}
+
+\todo{What we have learnt by using the method}
+
+\subsection*{Accuracy of the method}
+
+\subsection*{Validity of the physical model}
 
 As far as we are aware, a computational algorithm for reconstructing
-retinae has never been described before.
-\footnote{\todo{DW: But what about optometry?}} However, the problem
-of mapping between 2D and 3D surfaces appears in other situations,
-such as in clothes design and computer animation
-\cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf}. 3D surfaces are
-mapped to 2D surfaces by first triangulating the 3D surface, then
-projecting the points to the 2D plane, and then moving the locations
-of nodes of the triangulation on the plane so as to minimise an energy
-function based on the differences between the lengths of edges in the
-3D configuration and in the 2D configuration. A penalty term to the
-error function can be added to prevent nodes crossing over edges
-\cite{WangEtal02surf}. In the mapping from 2D surface to 3D surfaces,
-the effects of forces due to sewing together edges of cloth and of
-gravity may be incorporated \cite{FanEtal98spri}.
+retinae has never been described
+before.\footnote{\todo{DW: But what about optometry?}} The algorithm
+presented here models the retinal tissue as a mesh of masses connected
+by springs. This basic model is used in modelling deformable surfaces
+in computer animation and clothes design
+\cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf} and has been used
+in models of tissue \todo{REF}.  This model should ensure that
+neighbourhood relations are preserved -- nodes close in the 2D
+structure should still be close in the 3D structure -- and
+incorporates the notion of an elastic material. However, it does not
+incorporate an explicitly representation of tensile and shear forces.
 
-The basic physical model of the material as a mesh of masses connected
-by springs. This model should ensure that neighbourhood relations are
-preserved -- nodes close in the 2D structure should still be close in
-the 3D structure -- and incorporates the notion of an elastic
-material. However, a more physically-principled method of modelling
-deformation of objects is offered by the finite element method (FEM)
-in which the stress and strain of each element in the mesh is derived
-as a function of the deformation of the points of the element
-\cite{ZienTayl00fini}.
-
+A more physically-principled method of modelling deformation of
+objects is offered by the finite element method (FEM), in which the
+stress and strain of each triangular element in the mesh is derived as
+a function of the deformation of the points of the element
+\cite{ZienTayl00fini}. The stress and strain matrices represent
+shearing with in the material and materials with varying degrees of
+compressibility (as quantified by Poisson's ratio) can be modelled.
 The FEM is used widely to describe properties of soft tissue in
-simulations of surgery \cite{CartEtal05appl}. The soft tissue is
-often described as a linear-elastic medium, in which the stress
-depends linearly of the strain, but it can also be modelled as a
-viscoelastic medium, in which the stress depends on the history of the
-strain in the material. 
+simulations of surgery \cite{CartEtal05appl}. The soft tissue is often
+described as a linear-elastic medium, in which the stress depends
+linearly of the strain, but it can also be modelled as a viscoelastic
+medium, in which the stress depends on the history of the strain in
+the material.
+
+% the finite element method is based more strongly on the physics of
+% materials and is regarded as superior \cite{CartEtal05appl}.
+
+In principle the FEM allows parameters of the material to be measured
+and incorporated in the model in a straightforward way. Given enough
+data about the material properties of retinal tissue, the model could
+be more realistic that the spring-mass model used here.  Weighed
+against this, is the fact that it is not possible to apply the finite
+element method simply to the problem of mapping the flattened retina
+onto the intact retina, as this would require knowledge of the
+stresses and strains in the flattened retina, whereas the only
+information available is the outline of the retina and the location of
+the optic disk. Also, the standard FEM does not allow for the rotation
+of elements, only their translation or expansion and shearing.
+
+Nevertheless, it would be possible to use a modified version of the
+FEM, along with data (or assumptions) about the material properties of
+retinal tissue to model directly the action of the retinal being
+flattened following the dissection cuts. This would lead to a
+prediction of how a retina cut in a particular set of loci would look
+when flattened. Unfortunately, we do not have precise knowledge of
+where the cuts were made in the intact retina or how tears developed,
+so some sort of complex iterative approach would have to be taken.
+
+% However, the problem of mapping between 2D and 3D surfaces appears in
+% other situations, such as in clothes design and computer animation
+% . Workers in this field have taken a similar approach to the one taken
+% here and their work has informed the algorithm presented here.
+% % Surfaces are
+% % triangulated and the edges in the triangulation are treated as springs
+% % within the elastic limit.
+% The basic physical model of the material as a mesh of masses connected
+% by springs. 
+
+% 3D surfaces are mapped to 2D surfaces by first triangulating the 3D
+% surface, then projecting the points to the 2D plane, and then moving
+% the locations of nodes of the triangulation on the plane so as to
+% minimise an energy function based on the differences between the
+% lengths of edges in the 3D configuration and in the 2D
+% configuration. A penalty term to the error function can be added to
+% prevent nodes crossing over edges \cite{WangEtal02surf}. In the
+% mapping from 2D surface to 3D surfaces, the effects of forces due to
+% sewing together edges of cloth and of gravity may be incorporated
+% \cite{FanEtal98spri}.
+
+
+
 
 % \subsection*{Potential problems with the method}
 % \label{fold-sphere:sec:appr-simil-probl}
@@ -287,118 +409,63 @@ strain in the material.
 % retinal tissue dominate over the viscous properties, and that the
 % material has a Poisson's ratio of around 0.45 \cite{LuEtal06visc}.
 
-\subsection*{Alternative methods}
-\label{fold-sphere:sec:alternative-methods}
+% \subsection*{Alternative methods}
+% \label{fold-sphere:sec:alternative-methods}
 
-In the process of developing the solution presented in this paper, a
-number of options were evaluated:
+% In the process of developing the solution presented in this paper, a
+% number of options were evaluated:
 
-\paragraph{Forward or backward model:} 
+% \paragraph{Forward or backward model:} 
 
-In principle, we could use the FEM, along with data (or assumptions)
-about the material properties of retinal tissue to model directly the
-action of the retinal being flattened following the dissection
-cuts. This would lead to a prediction of how a retina cut in a
-particular set of loci would look when flattened. Unfortunately, we do
-not have precise knowledge of where the cuts were made in the intact
-retina or how tears developed.
 
-It is conceivable that the result of a forward model could be compared
-to the flattened outline in question, and the difference between the
-two used to modify the locations of tears and cuts on the intact model
-retina and that this procedure could be iterated until the patterns of
-cuts and tears on the intact retina converged.
+% It is conceivable that the result of a forward model could be compared
+% to the flattened outline in question, and the difference between the
+% two used to modify the locations of tears and cuts on the intact model
+% retina and that this procedure could be iterated until the patterns of
+% cuts and tears on the intact retina converged.
 
-However, because it is highly likely that the model is a
-simplification of material properties of the real retina, it would be
-very unlikely that the outline of flattened model retinal would match
-the actual flattened retina, and we would be left with the problem of
-how to match up the edges of the actual and model flattened
-retinae. It is also difficult to envision an algorithm for inferring
-the locations of the tears and cuts that would be efficient. For these
-reasons, we rejected an iterative forward-backward modelling approach
-in which the tear locations on the intact retina were inferred.
+% However, because it is highly likely that the model is a
+% simplification of material properties of the real retina, it would be
+% very unlikely that the outline of flattened model retinal would match
+% the actual flattened retina, and we would be left with the problem of
+% how to match up the edges of the actual and model flattened
+% retinae. It is also difficult to envision an algorithm for inferring
+% the locations of the tears and cuts that would be efficient. For these
+% reasons, we rejected an iterative forward-backward modelling approach
+% in which the tear locations on the intact retina were inferred.
 
-In the simple backward approach undertaken in this paper, the stresses
-and strains in the flattened retina are all assumed to be zero. In the
-mapping onto the intact retina, the elements of the mesh become
-strained. This is clearly unphysical, but may be a reasonable
-approximation to the actual Physics because:
-\begin{enumerate}
-\item For small stresses and strains, if the nodes are mapped back
-  onto the flattened retina, the locations shouldn't change much
-  (evidence?).
-\end{enumerate}
+% In the simple backward approach undertaken in this paper, the stresses
+% and strains in the flattened retina are all assumed to be zero. In the
+% mapping onto the intact retina, the elements of the mesh become
+% strained. This is clearly unphysical, but may be a reasonable
+% approximation to the actual Physics because:
+% \begin{enumerate}
+% \item For small stresses and strains, if the nodes are mapped back
+%   onto the flattened retina, the locations shouldn't change much
+%   (evidence?).
+% \end{enumerate}
 
-\paragraph{Finite element versus spring-mass}
-\label{fold-sphere:sec:finite-elem-vers}
+% \paragraph{Finite element versus spring-mass}
+% \label{fold-sphere:sec:finite-elem-vers}
 
-The algorithm presented in this paper models the retinal tissue as a
-mesh of masses connected by springs. While this model is used in
-modelling deformable surfaces in computer graphics and has been used
-in models of tissue, the finite element method is based more strongly
-on the physics of materials and is regarded as superior
-\cite{CartEtal05appl}. In principle the finite element method allows
-parameters of the material to be measured and incorporated in the
-model in a straightforward way. Given enough data about
-the material properties of retinal tissue, the model could be made
-more realistic. 
 
-Weighed against this, is the fact that it is not possible to apply the
-finite element method simply to the problem of mapping the flattened
-retina onto the intact retina, as this would require knowledge of the
-stresses and strains in the flattened retina, whereas the only
-information available is the outline of the retina and the location of
-the optic disk. 
+% Nevertheless, it would be possible to attempt to try applying the
+% finite element, initialised with unstressed elements, to the backward
+% transformation. This would give an estimate of the positions of the
+% locations of nodes on the intact retina. These nodal positions could
+% then be used to estimate the stiffness matrix for each element,
+% assuming that each element was unstressed on the intact retina. The
+% deformation of this structure when flattened could then be estimated
+% by fixing the locations around the rim and edges, and solving for the
+% unknown positions. This would lead to each element being strained, and
+% these strains could then be used to initialise a second mapping back
+% on to the intact retina, which would hopefully give rise to a more
+% accurate estimation of the nodal positions. 
 
-Nevertheless, it would be possible to attempt to try applying the
-finite element, initialised with unstressed elements, to the backward
-transformation. This would give an estimate of the positions of the
-locations of nodes on the intact retina. These nodal positions could
-then be used to estimate the stiffness matrix for each element,
-assuming that each element was unstressed on the intact retina. The
-deformation of this structure when flattened could then be estimated
-by fixing the locations around the rim and edges, and solving for the
-unknown positions. This would lead to each element being strained, and
-these strains could then be used to initialise a second mapping back
-on to the intact retina, which would hopefully give rise to a more
-accurate estimation of the nodal positions. 
-
-This method would have the advantages of greater physical plausibility,
-and would afford the opportunity to incorporate elastic properties
-which vary with distance from the centre of the retina. However, this
-would come at the cost of some increase in complexity.
-
-\paragraph{Supervised versus unsupervised cut and tear detection}
-\label{fold-sphere:sec:superv-vers-unsup}
-
-\begin{itemize}
-\item Unsupervised reconstruction, with edge binding.  I envisage that
-  it would be possible to put in a component of the energy function
-  that provides for short range repulsion between vertices on the edge
-  of the flattened retina and edges of the flattened retina. The
-  energy function might have longer range attraction. One possible
-  parametrisation would be the Lennard-Jones potential which is used
-  to model short range repulsion and longer range attraction between
-  molecules:
-  \begin{equation}
-    \label{fold-sphere:eq:4}
-    E(r) = 4\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-
-      \left(\frac{\sigma}{r}\right)^{6}\right)
-  \end{equation}
-  where $r$ is the distance between molecules, $\epsilon$ defines the
-  depth of the potential well and $\sigma$ is the distance at which the
-  potential is zero.
-
-  Were this approach to work, additional refinements might be possible,
-  such as adding a component of the energy function that draws together
-  points on either side of a rip which are correspond to each other with
-  high probability. Another possibility would be to allow the radius of
-  the sphere $R$ to vary within realistic bounds, to optimise the fit
-  further.
-\item Automated stitching.
-\end{itemize}
-
+% This method would have the advantages of greater physical plausibility,
+% and would afford the opportunity to incorporate elastic properties
+% which vary with distance from the centre of the retina. However, this
+% would come at the cost of some increase in complexity.
 
 % You may title this section "Methods" or "Models". 
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
@@ -542,8 +609,7 @@ modern desktop computer.
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
 
-David Willshaw, Stephen Eglen (Perhaps should go on the author list?)
-and Michael Herrmann.
+David Willshaw, Stephen Eglen and Michael Herrmann.
 
 %\section*{References}
 % The bibtex filename
@@ -599,7 +665,7 @@ and Michael Herrmann.
     dorsal (D), temporal (T) and ventral (V) poles are indicated. For
     reference, data is plotted on the flat representation
     below.
-    \todo{Figures under D, E and F need to be grouped. The sperical
+    \todo{Figures under D, E and F need to be grouped. The spherical
       representation should be as an open mesh, i.e. grey edges, white
       surfaces and the cuts in orange or red. Arrows from
       A$\rightarrow$B$\rightarrow$C$\rightarrow$D$\rightarrow$E$\rightarrow$F
@@ -607,7 +673,57 @@ and Michael Herrmann.
   \label{fold-sphere:fig:method}
 \end{figure}
 
+\begin{figure}[!ht]
+  \centering
+  \begin{tabular}{llll}
+    Ai & Aii & Bi & Bii  \\
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-strain-lvsL}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-strain}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-strain-lvsL}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-strain}
+  \\
+  Aiii & Aiv & Biii & Biv  \\
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-flat}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-polar}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-flat}
+  &
+  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-polar}
+  \end{tabular}
 
+  \caption{\textbf{Examples of reconstructed retinae.} \textbf{(A)}~An
+    example of a good reconstruction.  \textbf{(Ai)}~Plot of length of
+    edge on the sphere versus length of edge on the flat retina. Red
+    indicates an edge that has expanded and blue a link that has been
+    compressed.  \textbf{(Aii)}~The log strain indicated using the
+    same colour scheme on the flat retina. \textbf{(Aiii)}~The flat
+    representation of lines of latitude and longitude with data
+    points. \textbf{(Aiv)}~The polar representation with data
+    points. \textbf{(B)}~An example of a bad reconstruction. Meaning of
+    \textbf{(Bi--iv)} same as for \textbf{(A)}. \todo{These figures are
+    not necessarily the final ones. Labels need to be increased in
+    size. Hopefully the bad retina will get better -- I am
+    experimenting with values of $\alpha$ and $x_0$.}.
+  }
+  \label{retistruct_plos:fig:examples}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics{summ16}
+  \caption{\textbf{Histogram of reconstruction errors.}  Successful
+    reconstructions of 226 retinae were made and the energy
+    recorded. The energy at the end of each reconstruction was
+    recorded and the histogram of the square root of this energy is
+    displayed here. For lower values the value of
+    $\sqrt{E_\mathrm{L}}$ is similar to the mean percentage
+    deformation.}
+  \label{retistruct_plos:fig:summary}
+\end{figure}
 
 \section*{Tables}
 %\begin{table}[!ht]
@@ -625,4 +741,5 @@ and Michael Herrmann.
 
 
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
-% LocalWords:  Acknowledgments nmf naso EphB dorso
+% LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
+% LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th
