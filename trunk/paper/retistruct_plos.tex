@@ -91,31 +91,28 @@ $\ast$ E-mail: david.c.sterratt@ed.ac.uk
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
 
-% In retrograde tracing experiments to determine the mapping of
-%   connections from the retina to the superior colliculus in mice, a
-%   small blob of dye is injected in the superior colliculus and allowed
-%   to diffuse retrogradely down the axons of retinal ganglion cells to
-%   their cell bodies in the retina. 
-
 In the course of studying the function and development of the visual
-system cells in the retina are often labelled, for example to
-determine the distribution of particular categories of cell in the
-retina, to assess the location of retrograde tracer or to measure the
+system, cells in the retina are often labelled; for example, to
+determine the distribution of various types of cell in the retina, to
+assess the location of retrograde tracer or to measure the
 distribution of a guidance molecule.  Following labelling the retina
 is dissected and flattened, and the distribution of labels is measured
-in the flattened retina.  In the process of flattening the retina, a
-number incisions are made, complicating analysis as some cells that
-were close neighbours are now separated by the incisions.  
+in the flattened retina.  The dissection requires a number of
+incisions to be made and tears in the rim and incisions can
+develop. This complicates analysis as some cells that were close
+neighbours are now separated by the incisions.
 
 We present a computational method that overcomes this problem by
-inferring where the labels were in the intact retina before
-flattening. The input to the algorithm is the line segments of the
-flattened retinal outline with incisions and tears marked up by an
-expert. The retinal outline is split into triangular elements whose
-positions are then transformed so that they lie on a partial sphere
-with the expected dimensions of the intact retina.  The transformation
-is adjusted so as to minimise the change in the dimensions of each
-triangle from the flattened outline.
+reconstructing the 3D shape so that the positions of the labels in the
+intact retina can be inferred. The input to the algorithm is the line
+segments of the flattened retinal outline, with incisions and tears
+marked up by an expert. The retinal outline is split into triangular
+elements whose positions are then transformed so that they lie on a
+partial sphere with the expected dimensions of the intact retina.  The
+transformation is adjusted so as to minimise a physically-inspired
+deformation energy funtion.
+
+% change in the dimensions of each triangle from the flattened outline.
 
 The algorithm is able to produce a transformation which is
 sufficiently good for visualisation. \todo{More about validation} 
@@ -130,51 +127,55 @@ situations. \todo{More about applications here.}
 
 \section*{Introduction}
 
-The function and development of the retina and the mapping of retinal
-ganglion cells has been studied extensively in recent years. In this
+There has been extensive study of the function and development of the
+retina and the mapping of retinal ganglion cells to target regions
+such as the superior colliculus or lateral geniculate nucleus. In this
 field a common experimental procedure is to label cells in the retina
 \emph{in vivo} and then dissect and flatten the retina to produce a
-whole-mount in which the distribution of labels can be measured. In
-order to flatten the retina, a number incisions have to be made, and
-tearing can occur within the rim of the retina or the incisions.
+flat-mount in which the distribution of labels can be measured. In
+order to flatten the retina, a number of incisions have to be made,
+and tearing can occur within the rim of the retina or the incisions.
+Flat-mounted retinae have been used in a variety of
+applications. However their use does have problems.
 
-Labelled retinal whole-mounts have been used to determine the
-distribution of mosaics of particular categories of cell in the
-retina \cite{WassBoyc91func,RaveEtal03dete}.  Nearest neighbour
-analyses are often used to quantify the regularity of mosaics, but
-these are susceptible to boundaries \cite{Cook96spat}, both of the rim
-of the retina and those introduced by the incision required during
-dissection. These extra boundaries reduce the effective number of
-cells that can be analysed, which could be significant in low density
-mosaics. 
+For example, the distribution of mosaics of various cell types has
+been recorded in flat-mounted retinae
+\cite{WassBoyc91func,RaveEtal03dete}.  Nearest neighbour analyses are
+often used to quantify the regularity of mosaics, but these are
+susceptible to the existence of boundaries \cite{Cook96spat}, both at
+the rim of the retina and those introduced by the incision required
+during dissection. These extra boundaries reduce the effective number
+of cells that can be analysed, which could be significant in low
+density mosaics.
 
 In the study of topographic mapping, the locations of retrograde
 tracers injected in the superior colliculus have been measured in
-retinal whole mounts \cite{RebeEtal04rela,RashEtal05oppo}. The
+retinal flat mounts \cite{RebeEtal04rela,RashEtal05oppo}. The
 distribution of tracer can be split across incisions and tears,
 complicating nearest-neighbour analyses and in some cases making it
-impossible to determine a mean location that lies with in the outline
+impossible to determine a mean location that lies within the outline
 of the flattened retina.
 
-Also in the field of topographic mapping, retinal whole-mounts
-labelled with markers for the EphA receptor \cite{ChenEtal95comp} have
-been produced. The principal axis of variation in the flat mount
-appears to be the naso-temporal axis.  Whole-mounts stained for EphB
-receptors have also been produced \cite{BirgEtal00kina} and here the
-principal axis is appears to be the dorso-ventral axis. In both cases,
-the pixel intensity has been quantified along along the apparent
-principal axis but not throughout the rest of the retina.  Together
-with the finding that the mapping from a flat screen to the superior
-colliculus is approximately Cartesian \cite{DragHube76topo} this
-apparent alignment of EphA and EphB gradients along the naso-temporal
-and dorso-ventral axes of the retina has lead to the mapping from the
-retina to the colliculus being described as Cartesian
-\cite{BeviEtal11gene}. However, this cannot be the case as the surface
-of the intact retina is by no means a Cartesian surface that can be
-described using rectilinear coordinates.  Rather it needs to be
-described using curvilinear coordinates. Being able to describe the
-density of marker as a function of location in the intact retina would
-force a deeper understanding of how the mapping process occurs.
+To understand the mechanisms underlying topographic mapping, retinal
+flat-mounts labelled with markers for the EphA receptor
+\cite{ChenEtal95comp} have been produced. The principal axis of
+variation in the flat mount appears to be the naso-temporal axis.
+Flat-mounts stained for EphB receptors have also been produced
+\cite{BirgEtal00kina} and here the principal axis is appears to be the
+dorso-ventral axis. In both cases, the pixel intensity has been
+quantified along the principal axis but not throughout the rest of the
+retina.  Together with the finding that the mapping from a flat screen
+to the superior colliculus is approximately Cartesian
+\cite{DragHube76topo} this apparent alignment of EphA and EphB
+gradients along the naso-temporal and dorso-ventral axes of the retina
+has led to the mapping from the retina to the colliculus being
+described as Cartesian \cite{BeviEtal11gene}. However, this cannot be
+the case as the surface of the intact retina is by no means a
+Cartesian surface, which can be described using rectilinear
+coordinates.  Rather it needs to be described using curvilinear
+coordinates. Being able to describe the density of marker as a
+function of location in the intact retina would force a deeper
+understanding of how the mapping process occurs.
 
 % The locations of the labels are measured in the two-dimensional
 % Euclidean space defined by the slide, but this coordinate system is
@@ -186,18 +187,19 @@ force a deeper understanding of how the mapping process occurs.
 % respect to the retinal pole and the nasal, temporal, ventral and
 % dorsal poles with any degree of accuracy.
 
-Therefore the aim of the method presented in this paper is to infer
-the coordinates in intact retinal space of points on a flattened
-retina. At present, the retina is approximated as a partial sphere,
-and the coordinate system can be thought of as lines of latitude and
-longitude on the globe. However, it would be possible to generalise
-the method to deal with a retina modelled by any shape with axial
-symmetry. The method requires that an expert mark up the cuts and
+The aim of the method presented in this paper is to infer the
+coordinates in intact retinal space of points on a flattened
+retina. The retina is approximated as a partial sphere, and the
+coordinate system can be thought of as lines of latitude and longitude
+on the globe.  The method requires that an expert mark up the cuts and
 tears, and also that they indicate the position of at least one
 landmark on the rim of the eye. The method has been implemented as a
 program written in R, and can reconstruct a retina within a few
 minutes on a desktop machine. The accuracy of the method is estimated
 to be \todo{produce estimate for accuracy of method}.
+
+It would be possible to generalise the method to deal with a retina
+modelled by any shape with axial symmetry.
 
 % The algorithm is able to produce a transformation which is
 % sufficiently good for visualisation. \todo{More about validation} 
@@ -224,7 +226,7 @@ situations. \todo{More about applications here.}
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
-\todo{This would need some decent whole-mount images of EphA or EphB
+\todo{This would need some decent flat-mount images of EphA or EphB
   and some more work.}
 
 \section*{Discussion}
@@ -235,19 +237,20 @@ situations. \todo{More about applications here.}
 \label{fold-sphere:sec:appr-simil-probl}
 
 As far as we are aware, a computational algorithm for reconstructing
-retinae has never been described before. However, the problem of
-mapping 2D between and 3D surfaces appears in other situations, such
-as in clothes design and computer animation
+retinae has never been described before.
+\footnote{\todo{DW: But what about optometry?}} However, the problem
+of mapping between 2D and 3D surfaces appears in other situations,
+such as in clothes design and computer animation
 \cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf}. 3D surfaces are
 mapped to 2D surfaces by first triangulating the 3D surface, then
 projecting the points to the 2D plane, and then moving the locations
-of nodes of the triangulation on the plane so as to minimise an
-energy function based on the differences between the lengths of edges
-in the 3D configuration and in the 2D configuration. A penalty term
-to the error function can be added to prevent nodes crossing over
-edges \cite{WangEtal02surf}. In the mapping from 2D surface to 3D
-surfaces, the effects of forces due to sewing together edges of cloth
-and of gravity may be incorporated \cite{FanEtal98spri}.
+of nodes of the triangulation on the plane so as to minimise an energy
+function based on the differences between the lengths of edges in the
+3D configuration and in the 2D configuration. A penalty term to the
+error function can be added to prevent nodes crossing over edges
+\cite{WangEtal02surf}. In the mapping from 2D surface to 3D surfaces,
+the effects of forces due to sewing together edges of cloth and of
+gravity may be incorporated \cite{FanEtal98spri}.
 
 The basic physical model of the material as a mesh of masses connected
 by springs. This model should ensure that neighbourhood relations are
@@ -424,8 +427,8 @@ points making up the outline, sets of data points and sequences of
 connected points defining landmarks, such as the optic disk. The
 reconstruction process then proceeds as follows:
 \begin{enumerate}
-\item The location of one of the poles and incisions and tears in the
-  outline are marked up by an expert
+\item The location of one of the poles and all the incisions and tears
+  in the outline are marked up by an expert
   (Figure~\ref{fold-sphere:fig:method}B). Each tear is defined by a
   central point, referred to as the apex, and two outer points,
   referred to as vertices.  Tears within tears or incisions (for
@@ -451,19 +454,19 @@ reconstruction process then proceeds as follows:
   points that have been inserted into incisions and tears.
 \item The points within each set of correspondences are merged and
   allocated positions on the 2D surface.
-\item The triangulation points are then projected roughly onto a
-  sphere curtailed at latitude of $\phi_0$
-  (Figure~\ref{fold-sphere:fig:method}D). The latitude is estimated
-  on the basis of measurements from intact retinae of animals of the
- same age as the retina under reconstruction. The radius $R$ of the
-  sphere determined by area of the flattened retina and $\phi_0$.
+\item The triangulation points are then projected onto a sphere
+  curtailed at latitude of $\phi_0$
+  (Figure~\ref{fold-sphere:fig:method}D). The latitude is estimated on
+  the basis of measurements from intact retinae of animals of the same
+  age as the retina under reconstruction. The radius $R$ of the sphere
+  is determined by the area of the flattened retina and $\phi_0$.
   Points on the rim of flattened retina are fixed to the rim of the
-  curtailed sphere. 
+  curtailed sphere.
 \item The optimal projection onto sphere
-  (Figure~\ref{fold-sphere:fig:method}E) is inferred by changing
-  location of vertices on sphere so as to minimise an error
-  measure. This measure, $E$, comprises the sum of normalised squared
-  differences between lengths of corresponding connections in
+  (Figure~\ref{fold-sphere:fig:method}E) is inferred by shifting the
+  locations of the vertices on the spherical surface so as to minimise
+  an error measure. This measure, $E$, comprises the sum of normalised
+  squared differences between lengths of corresponding connections in
   flattened and spherical retina and a penalty term that prevents the
   triangles from flipping over:
   \begin{equation}
@@ -508,7 +511,7 @@ reconstruction process then proceeds as follows:
   to minimise $E$.
 \item The locations of data points and landmarks on the sphere are
   determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
-  each data point the its barycentric coordinates within its containing
+  each data point the barycentric coordinates within its containing
   triangle in the flat representation are determined.  The location of
   the point on the sphere is then found by projecting the point to the
   same set of barycentric coordinates in the corresponding triangle on
@@ -517,8 +520,7 @@ reconstruction process then proceeds as follows:
   the centre of the sphere through the point to the line's
   intersection with the sphere. This allows plotting of points in a
   polar representation. The procedure can be used in reverse to infer
-  the locations of lines of latitude and longitude in the flat
-  retina.
+  the locations of lines of latitude and longitude in the flat retina.
 \item The Karcher mean of each set of points is determined
   (Figure~\ref{fold-sphere:fig:method}F). The Karcher mean of a set of
   points on the sphere \cite{Karc77riem,HeoSmal06form} is defined as
@@ -540,7 +542,8 @@ modern desktop computer.
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
 
-David Willshaw and Stephen Eglen (Perhaps should go on the author list?).
+David Willshaw, Stephen Eglen (Perhaps should go on the author list?)
+and Michael Herrmann.
 
 %\section*{References}
 % The bibtex filename
@@ -579,23 +582,28 @@ David Willshaw and Stephen Eglen (Perhaps should go on the author list?).
   \caption{\textbf{Overview of the method.} \textbf{(A)} The raw data:
     a retinal outline (black), three types of data point (red, green
     and yellow circles) and a landmark (blue line). \textbf{(B)}
-    Retinal outline with nasal pole (N) and tears marked up. Each
-    pair of red and orange lines indicate the vertices and apex of the
-    five tears. Note that tear 2 is a child tear of tear 1. \textbf{(C)}
+    Retinal outline with nasal pole (N) and tears marked up. Each pair
+    of red and orange lines indicate the vertices and apex of the five
+    tears. Note that tear 2 is a child tear of tear 1. \textbf{(C)}
     The outline after triangulation (shown by grey lines) and
-    stitching, indicated by blue lines between corresponding points
-    on the tears. Green lines indicate connections between tear
-    vertices.  \textbf{(D)} The initial projection of the triangulated
-    and stitched outline onto a hemisphere. Tears are show in
-    white. Below is a representation of lines of latitude and
-    longitude on the flat outline. \textbf{(E)} The projection of the
-    flat retina onto the sphere and the lines of latitude and
-    longitude after optimisation of the mapping. \textbf{(F)} The data
-    represented on a polar plot of the reconstructed retina. Mean
-    locations of the different types of data points are indicated by
-    filled diamonds. The nasal (N), dorsal (D), temporal (T) and
-    ventral (V) poles are indicated. For reference, data is plotted on
-    the flat representation below. }
+    stitching, indicated by blue lines between corresponding points on
+    the tears. Green lines indicate connections between tear vertices.
+    \textbf{(D)} The initial projection of the triangulated and
+    stitched outline onto a hemisphere. Tears are show in white. Below
+    is a representation of lines of latitude and longitude on the flat
+    outline. \textbf{(E)} The projection of the flat retina onto the
+    sphere and the lines of latitude and longitude after optimisation
+    of the mapping. \textbf{(F)} The data represented on a polar plot
+    of the reconstructed retina. Mean locations of the different types
+    of data points are indicated by filled diamonds. The nasal (N),
+    dorsal (D), temporal (T) and ventral (V) poles are indicated. For
+    reference, data is plotted on the flat representation
+    below.
+    \todo{Figures under D, E and F need to be grouped. The sperical
+      representation should be as an open mesh, i.e. grey edges, white
+      surfaces and the cuts in orange or red. Arrows from
+      A$\rightarrow$B$\rightarrow$C$\rightarrow$D$\rightarrow$E$\rightarrow$F
+      would indicate the progression.}}
   \label{fold-sphere:fig:method}
 \end{figure}
 
