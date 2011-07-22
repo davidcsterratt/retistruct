@@ -147,7 +147,8 @@ quit(status=status)",
 ##' @author David Sterratt
 retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
                                  device="pdf",
-                                 cpu.time.limit=3600) {
+                                 cpu.time.limit=3600,
+                                 mc.cores=getOption("cores")) {
   ## Get datasets
   if (is.null(datasets)) {
     datasets <- list.datasets(tldir)
@@ -167,7 +168,8 @@ retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
   }
 
   ## Run the reconstructions
-  ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE)
+  ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE,
+                  mc.cores=mc.cores)
 
   ## Extract data from the return structures
   ## Function to replace NULL with NA - needed for creating data frames
