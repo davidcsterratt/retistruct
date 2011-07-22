@@ -177,12 +177,10 @@ retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
 
   dat <- data.frame(cbind(dataset=datasets,
                           status=sapply(ret, function(x) {return(n(x$status))}),
-                          mess=sapply(ret, function(x) {return(x$mess)}),
-                          time=sapply(ret, function(x) {return(x$time)})))
-  print(dat)
+                          mess=as.character(sapply(ret, function(x) {return(x$mess)})),
+                          time=sapply(ret, function(x) {return(n(x$time))})))
 
   summ <- retistruct.batch.summary(tldir)
-  print(summ)
   dat <- merge(summ, dat, by="dataset", all=TRUE)
   write.csv(dat, file.path(outputdir, "retistruct-batch.csv"))
   return(dat)
