@@ -192,3 +192,33 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     suppressWarnings(lines(x, y, ...))
   }
 }
+
+##' Draw a spherical plot of reconstructed outline. This method just
+##' draws the mesh.
+##'
+##' @title Spherical plot of reconstructed outline
+##' @param r \code{reconstructedOutline} object
+##' @param ... Other graphics parameters -- not used at present
+##' @method plot.spherical reconstructedOutline
+##' @author David Sterratt
+plot.spherical.reconstructedOutline <- function(r, ...) {
+  ## FIXME: This needs to be looked at with a view to replacing
+  ## functions in plots.R
+  with(r, {
+    ## Obtain Cartesian coordinates of points
+    Pc <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+
+    ## Shrink so that they appear inside the hemisphere
+    P <- Pc*0.99
+    rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+              ...)
+    
+    P <- Pc*1.001
+    rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
+              rbind(P[h[gb[gb]],2], P[h[gb],2]),
+              rbind(P[h[gb[gb]],3], P[h[gb],3]),
+              ...)
+  })
+}
