@@ -533,6 +533,159 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
            dE.E.dlambdai[-i0]    + alpha * dE.A.dlambda[-i0]))
 }
 
+##' The function that computes the energy (or error) of the
+##' deformation of the mesh from the flat outline to the sphere. This
+##' depends on the locations of the points given in spherical
+##' coordinates. The function is designed to take these as a vector
+##' that is received from the \code{optim} function.
+##'
+##' @title The deformation energy function
+##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param Cu The upper part of the connectivity matrix
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param B Connectivity matrix
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of the sphere
+##' @param Rset Indicies of points on the rim
+##' @param i0 Index of fixed point on rim
+##' @param phi0 Lattitude at which sphere curtailed
+##' @param lambda0 Longitude of fixed points
+##' @param Nphi Number of free values of \code{phi}
+##' @param N Number of points in sphere
+##' @param alpha Area scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param verbose How much information to report
+##' @return A single value, representing the energy of this particular
+##' configuration
+##' @author David Sterratt
+Ecart <- function(P, Cu, L, T, A, R,
+                  alpha=1, x0, verbose=FALSE) {
+  ## Compute elastic energy
+
+  ## using the upper triagular part of the
+  ## connectivity matrix Cu to extract coordinates of end-points of
+  ## each edge
+  P1    <- P[Cu[,1],]
+  P2    <- P[Cu[,2],]
+
+  ## Compute lengths of edges
+  l <- vecnorm(P2 - P1)
+  if (verbose==2) { print(l) }
+
+  ## Compute spring energy
+  E.E <- 0.5/sum(L)*sum((l - L)^2/L)
+  if (verbose>=1) { print(E.E) }
+
+  ## Compute areal penalty term if alpha is nonzero
+  E.A <- 0
+  if (alpha) {
+    ## Find signed areas of all triangles
+    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+
+    ## Now compute area energy
+    E.A <- sum(f(a/A, x0=x0))
+  }
+  return(E.E + alpha*E.A)
+}
+
+##' The function that computes the gradient of the  energy (or error)
+##' of the deformation of the mesh from the flat outline to the
+##' sphere. This depends on the locations of the points given in
+##' spherical coordinates. The function is designed to take these as a
+##' vector that is received from the \code{optim} function.
+##'
+##' @title The deformation energy gradient function
+##' @param P N-by-3 matrix of point coordinates
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param verbose How much information to report
+##' @return A vector representing the derivative of the energy of this
+##' particular configuration with respect to the parameter vector
+##' @author David Sterratt
+Fcart <- function(P, C, L, B, T, A, R, alpha=1, x0, verbose=FALSE) {
+  ## Compute derivative of elastic energy
+  P1 <- P[C[,1],]
+  P2 <- P[C[,2],]
+
+  ## Lengths of springs
+  dP <- P2 - P1
+  l <- vecnorm(dP)
+  if (verbose==2) { print(l) }
+
+  ## Compute general scaling factor
+  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)
+
+  ## Now compute the derivatives
+  F.E <- B %*% (fac * dP)
+
+  ## Compute the derivative of the area component if alpha is nonzero
+  if (alpha) {
+    ## Here follows computation of the derivative - it's a bit
+    ## complicated!
+    
+    ## Expand triangulation so that every point is the first point
+    ## once. The number of points is effectively tripled.
+    T <- rbind(T, T[,c(2,3,1)], T[,c(3,1,2)])
+    A <- c(A, A, A)
+
+    ## Compute the derivative of area with respect to the first points
+    dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
+    
+    ## Find areas of all triangles
+    a <- dot(P[T[,1],], dAdPt1)
+    
+    ## Now convert area derivative to energy derivative
+    dEdPt1 <- -fp(a/A, x0=x0)/A*dAdPt1
+
+    ## Now map back onto coordinates
+    ## Create an N-by-M matrix
+    TtoN <- matrix(0, nrow(P), nrow(T))
+    for(m in 1:nrow(T)) {
+      TtoN[T[m,1],m] <- 1
+    }
+    dEdpi <- -TtoN %*% dEdPt1
+
+  }
+  return(F.E - alpha*dEdpi)
+}
+
+##' Restore points to spherical manifold after an update of the
+##' Lagrange integration rule
+##'
+##' @title Restore points to spherical manifold
+##' @param P Point positions as N-by-3 matrix
+##' @param R Radius of sphere
+##' @param Rset Indicies of points on rim
+##' @param i0 Index of fixed point
+##' @param phi0 Cutoff of curtailed sphere in radians
+##' @param lambda0 Longitude of fixed point on rim
+##' @return Points projected back onto sphere
+##' @author David Sterratt
+Rcart <- function(P, R, Rset, i0, phi0, lambda0) {
+  
+  ## Now ensure that Lagrange constraint is obeyed
+
+  ## Points on rim
+  P[Rset,1:2] <- R*cos(phi0)*P[Rset,1:2]/vecnorm(P[Rset,1:2])
+  P[Rset,3]   <- R*sin(phi0)
+  
+  ## All points lie on sphere
+  P[-Rset,] <- R*P[-Rset,]/vecnorm(P[-Rset,])
+
+  ## Fixed point is set
+  P[i0,] <- R*c(cos(phi0)*cos(lambda0),
+                cos(phi0)*sin(lambda0),
+                sin(phi0))
+
+  return(P)
+}
+
 ##' In the projection of points onto the sphere, some triangles maybe
 ##' flipped, i.e. in the wrong orientation.  This functions determines
 ##' which triangles are flipped by computing the vector pointing to
@@ -578,7 +731,8 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
 optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
-                             plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
+                             plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
+                             control=list()) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
@@ -600,16 +754,27 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
   opt <- list()
   opt$p <- c(phi[-Rsett], lambda[-i0t])
   opt$conv <- 1
-  
+  count <- 0
   while (opt$conv) {
     ## Optimise
-    opt <- optim(opt$p, E, gr=dE,
-                 method=method,
-                 T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                 alpha=alpha,  N=Nt, x0=x0,
-                 Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
-                 verbose=FALSE)
-
+    ## opt <- optim(opt$p, E, gr=dE,
+    ##              method=method,
+    ##              T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+    ##              alpha=alpha,  N=Nt, x0=x0,
+    ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+    ##              verbose=FALSE, control=control)
+    opt <- solve.lagrange(opt$p, f=function(p, ...) {-dE(p, ...)},
+                          T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                          alpha=alpha,  N=Nt, x0=x0,
+                          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+                          Tmax=10, dt=0.1, gamma=2)
+    count <- count+1
+    opt$p <- opt$x[nrow(opt$x),]
+    opt$conv <- 1
+    if (count==100) {
+      opt$conv <- 0
+    } 
+    
     ## Report
     E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
                alpha=alpha,  N=Nt, x0=x0,
@@ -661,6 +826,109 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
   class(o) <- class(r)
   return(o)
 }
+
+##' Optimise the mapping from the flat outline to the sphere
+##'
+##' @title Optimise mapping
+##' @param r reconstructedOutline object
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param method Method to pass to \code{optim}
+##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+##' @param dev.grid Device handle for plotting grid to
+##' @param dev.polar Device handle for plotting ploar plot to
+##' @return reconstructedOutline object
+##' @author David Sterratt
+solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
+                               plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
+                               control=list()) {
+  phi <- r$phi
+  lambda <- r$lambda
+  R <- r$R
+  phi0 <- r$phi0
+  lambda0 <- r$lambda0
+  Tt <- r$Tt
+  A <- r$A
+  Cut <- r$Cut
+  Ct <- r$Ct
+  Pt <- r$Pt
+  Lt <- r$Lt
+  Bt <- r$Bt
+  Rsett <- r$Rsett
+  i0t <- r$i0t
+  Nt <- nrow(Pt)  
+  Nphi <- Nt - length(Rsett)
+  
+  ## Optimisation and plotting 
+  opt <- list()
+  opt$x <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+  opt$conv <- 1
+  count <- 0
+  while (opt$conv) {
+    ## Optimise
+    ## opt <- optim(opt$p, E, gr=dE,
+    ##              method=method,
+    ##              T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+    ##              alpha=alpha,  N=Nt, x0=x0,
+    ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+    ##              verbose=FALSE, control=control)
+    opt <- solve.lagrange(opt$x,
+                          force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
+                          restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
+                          Tmax=200, dt=1, gamma=1)
+    count <- count+1
+    opt$conv <- 1
+    if (count==100) {
+      opt$conv <- 0
+    } 
+    
+    ## Report
+    E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+                   alpha=alpha, x0=x0)
+    E.l <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+                 alpha=0, x0=x0)
+
+    s <- sphere.cart.to.sphere.spherical(opt$x, R)
+    phi <-    s[,"phi"]
+    lambda <- s[,"lambda"]
+    ft <- flipped.triangles(phi, lambda, Tt, R)
+    nflip <- sum(ft$flipped)
+    message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+    if (nflip) {
+      print(data.frame(rbind(id=which(ft$flipped),
+                             A=A[ft$flipped],
+                             a=ft$areas[ft$flipped])))
+    }
+
+    ## Plot
+    if (plot.3d) {
+      plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
+      plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
+    }
+
+    if (!is.na(dev.grid)) {
+      dev.set(dev.grid)
+      plot.flat(r, grid=TRUE, 
+                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
+    }
+
+    if (!is.na(dev.polar)) {
+      dev.set(dev.polar)
+      r$phi <- phi
+      r$lambda <- lambda
+      plot.polar(r)
+    }
+  }
+
+  o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
+                  E.tot=E.tot, E.l=E.l),
+             r)
+  o$mean.strain    <- mean(abs(getStrains(o))$strain)
+  o$mean.logstrain <- mean(abs(getStrains(o))$logstrain)
+  class(o) <- class(r)
+  return(o)
+}
+
 
 ##' This function returns information about how edges on the sphere
 ##' have been deformed from their flat state.
@@ -792,7 +1060,11 @@ ReconstructedOutline <- function(o,
   }
 
   report("Optimising mapping...")
-  r <- optimise.mapping(r, alpha=alpha, x0=x0,
+##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
+##                        plot.3d=plot.3d,
+##                        dev.grid=dev.grid, dev.polar=dev.polar)
+
+  r <- solve.mapping.cart(r, alpha=alpha, x0=x0,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
   
