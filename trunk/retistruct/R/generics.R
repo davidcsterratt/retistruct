@@ -18,6 +18,13 @@ plot.polar.default <- function(r, show.grid=TRUE,
   plot.new()
 }
 
+plot.spherical <- function(r, ...) {
+  UseMethod("plot.spherical")
+}
+
+plot.spherical.default <- function(r, ...) {
+}
+
 getDss <- function(x) {
   UseMethod("getDss")
 }
