@@ -48,6 +48,23 @@ To start the program, start R. At the R prompt type:
 
 A window should appear.
 
+Troubleshooting
+===============
+
+If you get an error like this:
+
+  Error in asCairoDevice() : Graphics API version mismatch
+
+in Ubuntu, then try the following at the command line:
+
+1) At the bash prompt:
+sudo apt-get install build-essential libgtk2.0-dev
+
+2) At the R prompt:
+install.packages("cairoDevice")
+
+(See https://bugs.launchpad.net/ubuntu/+source/cairodevice/+bug/778804)
+
 Advanced installation: Subversion access
 ========================================
 
