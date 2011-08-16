@@ -247,7 +247,8 @@ retistruct.read.recdata <- function(o) {
 
 ##  Reconstructing the retina
 retistruct.reconstruct <- function(o, report=retistruct.report,
-                                   plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
+                                   plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
+                                   ...) {
   ## Check that markup is there
   if (!retistruct.check.markup(o)) {
     stop("Neither dorsal nor nasal pole specified")
@@ -275,9 +276,10 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   ## Now do folding itself
   r <- NULL
   r <- ReconstructedOutline(o,
-                    report=report,
-                    plot.3d=plot.3d, dev.grid=dev.grid,
-                    dev.polar=dev.polar)
+                            report=report,
+                            plot.3d=plot.3d, dev.grid=dev.grid,
+                            dev.polar=dev.polar,
+                            ...)
   if (!is.null(r)) {
     r <- ReconstructedDataset(r, report=report)
     if (!is.na(getLandmarkID(r, "OD"))) {
