@@ -22,5 +22,5 @@ update.packages(Sys.getenv("R_LIBS_USER"))
 install.packages("retistruct_0.4.0.tar.gz")
 install.packages("retistructgui_0.4.0.tar.gz")
 
-library(retistruct)
+library(retistructgui)
 retistruct()
