@@ -624,6 +624,7 @@ Fcart <- function(P, C, L, B, T, A, R, alpha=1, x0, verbose=FALSE) {
   ## Now compute the derivatives
   F.E <- B %*% (fac * dP)
 
+  dEdpi <- 0
   ## Compute the derivative of the area component if alpha is nonzero
   if (alpha) {
     ## Here follows computation of the derivative - it's a bit
@@ -872,10 +873,12 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
     ##              alpha=alpha,  N=Nt, x0=x0,
     ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
     ##              verbose=FALSE, control=control)
-    opt <- solve.lagrange(opt$x,
-                          force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
-                          restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
-                          Tmax=200, dt=1, gamma=1)
+    opt <- solve.lagrange.adaptive(opt$x,
+                                   force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
+                                   restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
+                   ##                Tmax=200,
+                                   dt=1, gamma=0.01,
+                                   nstep=1000, Delta=R*1e-7)
     count <- count+1
     opt$conv <- 1
     if (count==100) {
@@ -1064,6 +1067,9 @@ ReconstructedOutline <- function(o,
 ##                        plot.3d=plot.3d,
 ##                        dev.grid=dev.grid, dev.polar=dev.polar)
 
+  ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
+  ##                       plot.3d=plot.3d,
+  ##                       dev.grid=dev.grid, dev.polar=dev.polar)
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)

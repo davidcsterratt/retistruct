@@ -48,6 +48,70 @@ solve.lagrange <- function(x, force, restraint, mu=1, gamma=0, dt, Tmax,
   return(out)
 }
 
+solve.lagrange.adaptive <- function(x, force, restraint, mu=1, gamma=0, dt,
+                                    Delta0=1e-3, nstep) {
+  ## Initial conditions
+  x0  <- x
+  xm  <- x
+  xm2 <- x
+  t <- 0
+
+  for (i in 1:nstep) {
+    ## Convenience constant
+    epsilon <- gamma/mu/2*dt
+
+    ## Compute acceleration
+    a <- force(x)/mu
+    
+    ## Assess accuracy
+
+    ## Take two single steps 
+    xp <- 1/(1 +   epsilon)*(a*dt^2     + 2*x  - (1 -   epsilon)*xm )
+    xp <- restraint(xp)
+    
+    x2 <- 1/(1 +   epsilon)*(a*dt^2     + 2*xp - (1 -   epsilon)*x  )
+    x2 <- restraint(x2)
+    
+    ## Take one double step
+    x1 <- 1/(1 + 2*epsilon)*(a*(2*dt)^2 + 2*x  - (1 - 2*epsilon)*xm2)
+    x1 <- restraint(x1)
+
+    ## Compute error estimate
+    Delta <- max(abs(x2 - x1))
+
+    ## Compute optimal dt
+    dt0 <- ((Delta0/Delta)^0.25)*dt
+
+    ## If dt0 is at least twice the size of dt, we double dt
+    if (dt0 > 2*dt) {
+      dt <- 2*dt
+      xm <- x
+      ## xm2 <- xm2
+      x <- x1
+      t <- t + dt
+      message(paste("Doubling time step to ", dt))
+    } else {  
+      ## If dt0 is less than dt, we half dt
+      if (dt0 < dt) {
+        dt <- dt/2
+        xm2 <- xm
+        xm <- 0.5*(x + xm) - a*dt^2
+        message(paste("Halving time step to ", dt))
+      } else {
+        ## Keep going
+        xm2 <- xm
+        xm <- x
+        x <- xp
+        t <- t + dt
+      }
+    }
+  }
+
+  out <- list(x=x)
+  return(out)
+}
+
+
 spring <- function(x) {
   L <- 1
   d <- sqrt((x[1]-x[2])^2)
