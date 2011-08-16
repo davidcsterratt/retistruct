@@ -7,7 +7,11 @@ dot <- function(x, y) {
   return(rowSums(x * y))
 }
 
-## Distance norm
+##' @title Vector norm
+##' @param X Vector or matrix. 
+##' @return If a vector, returns the 2-norm  of the
+##' vector. If a matrix, returns the 2-norm of each row of the matrix
+##' @author David Sterratt
 vecnorm <- function(X) {
   if (is.vector(X)) {
     return(sqrt(sum(X^2)))
@@ -206,7 +210,6 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ##' Convert locations of points on sphere in spherical coordinates to
 ##' points in 3D cartesian space
 ##'
-##' <details>
 ##' @title Convert from spherical to Cartesian coordinates
 ##' @param phi vector of lattitudes of N points
 ##' @param lambda vector of longitudes of N points
