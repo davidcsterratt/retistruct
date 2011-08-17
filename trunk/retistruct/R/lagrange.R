@@ -96,6 +96,8 @@ solve.lagrange.adaptive <- function(x, force, restraint, mu=1, gamma=0, dt,
         dt <- dt/2
         xm2 <- xm
         xm <- 0.5*(x + xm) - a*dt^2
+        xm <- restraint(xm)
+        ## x <- x
         message(paste("Halving time step to ", dt))
       } else {
         ## Keep going
@@ -103,6 +105,7 @@ solve.lagrange.adaptive <- function(x, force, restraint, mu=1, gamma=0, dt,
         xm <- x
         x <- xp
         t <- t + dt
+        ## message(paste("Carrying on"))
       }
     }
   }
