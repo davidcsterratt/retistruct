@@ -865,6 +865,15 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
   opt$x <- sphere.spherical.to.sphere.cart(phi, lambda, R)
   opt$conv <- 1
   count <- 0
+
+  ## Compute "mass" for each node
+  m <- rep(0, nrow(Pt))
+  for (i in 1:nrow(Cut)) {
+    m[Cut[i,1]] <- max(m[Cut[i,1]], 1/Lt[i])
+    m[Cut[i,2]] <- max(m[Cut[i,2]], 1/Lt[i])
+  }
+  m <- m/mean(m)
+  
   while (opt$conv) {
     ## Optimise
     ## opt <- optim(opt$p, E, gr=dE,
@@ -873,12 +882,13 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
     ##              alpha=alpha,  N=Nt, x0=x0,
     ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
     ##              verbose=FALSE, control=control)
-    opt <- solve.lagrange.adaptive(opt$x,
+    opt <- fire(opt$x,
                                    force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
                                    restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                    ##                Tmax=200,
-                                   dt=1, gamma=0.01,
-                                   nstep=1000, Delta=R*1e-7)
+                                   dt=1,# gamma=1,
+                                   nstep=100,
+                m=m) # Delta=R*1e-6)
     count <- count+1
     opt$conv <- 1
     if (count==100) {
