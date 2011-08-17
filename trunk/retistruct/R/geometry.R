@@ -172,10 +172,25 @@ remove.intersections <- function(P, d=50) {
   return(P)
 }
 
-## Create n uniformly spaced points on the unit circle in an anti-clockwise
-## direction
-circle <- function(n) {
-  return(cbind(cos((1:n)/n*2*pi), sin((1:n)/n*2*pi)))
+
+##' Return points on the unit circle in an anti-clockwise
+##' direction. If \code{L} is not specified \code{n} points are
+##' returned. If \code{L} is specified, the same number of points are
+##' returned as there are elements in \code{L}, the interval between
+##' successive points being proportional to \code{L}.
+##'
+##' @title Return points on the unit circle
+##' @param n Number of points
+##' @param L Intervals between points
+##' @return The cartesian coordinates of the points
+##' @author David Sterratt
+circle <- function(n=12, L=NULL) {
+  if (is.null(L)) {
+    angles <- (0:(n-1))/n*2*pi
+  } else {
+    angles <- (cumsum(L)-L[1])/sum(L)*2*pi
+  }
+  return(cbind(cos(angles), sin(angles)))
 }
 
 ##' Find the interections of the plane defined by the normal \code{n} and the

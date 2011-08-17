@@ -233,21 +233,25 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
   return(R)
 }
 
-## Project mesh points in the flat outline onto a sphere
-##
-## The information to be merged is contained in the list r and the
-## lattitude at which the sphere is cut off is given in phi0
-##
-## The information includes:
-## Pt     - the mesh point coordinates
-## Rsett  - the set of points on the rim
-## A.tot  - the area of the flat outline
-##
-## The function returns a list with the following members:
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-## phi0   - lattitude at which sphere is cut off (from input)
+##' This takes the mesh points from the flat outline and maps them to
+##' the curtailed sphere. It uses the area of the flat outline and
+##' \code{phi0} to determine the radius \code{R} of the sphere. It
+##' tries to get a good first approximation by using the function
+##' \link{\code{strech.mesh}}.
+##'
+##' @title Project mesh points in the flat outline onto a sphere
+##' @param r \code{Outline} object to which the following information
+##' has been added with \link{\code{merge.points.edges()}}
+##' \list{
+##' \item{\code{Pt}}{The mesh point coordinates.}
+##' \item{\code{Rsett}}{The set of points on the rim.}
+##' \item{\code{A.tot}}{The area of the flat outline.}}
+##' @return \code{reconstructedOutline} object containing the
+##' following extra information
+##' \item{\code{phi}}{Lattitude of mesh points.}
+##' \item{\code{lmabda}}{Longitude of mesh points.}
+##' \item{\code{R}}{Radius of sphere.}
+##' @author David Sterratt
 project.to.sphere <- function(r) {
   Pt <- r$Pt
   Rsett <- r$Rsett
@@ -265,9 +269,19 @@ project.to.sphere <- function(r) {
   ## for the area of a sphere which is cut off at a lattitude of phi0
   ## area = 2 * PI * R^2 * (sin(phi0)+1)
   R <- sqrt(A.tot/(2*pi*(sin(phi0)+1)))
-  
+
+  ## Find lengths between successive points on rim
+  C <- matrix(NA, nrow(Pt), nrow(Pt))
+  for (i in 1:nrow(Cut)) {
+    C[Cut[i,1],Cut[i,2]] <- Lt[i]
+    C[Cut[i,2],Cut[i,1]] <- Lt[i]
+  }
+  L.Rsett <- rep(NA, length(Rsett))
+  for (i in 1:length(Rsett)) {
+    L.Rsett[i] <- C[Rsett[i],Rsett[mod1(i+1, length(Rsett))]]
+  }
   ## Stretch mesh points to circle
-  Ps <- stretch.mesh(Cut, Lt, Rsett, circle(length(Rsett)))
+  Ps <- stretch.mesh(Cut, Lt, Rsett, circle(L=L.Rsett))
   x <- Ps[,1]
   y <- Ps[,2]
   phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
