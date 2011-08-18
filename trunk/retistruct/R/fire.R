@@ -1,24 +1,29 @@
 fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=10,
                  Nmin=5, finc=1.1, fdec=0.5, astart=0.1, fa=0.99, a=0.1,
-                 nstep=100) {
-  Nsteps <- 0 
+                 nstep=100, tol=0.02, verbose=FALSE) {
+  Nsteps <- 0
+  conv <- 1
   # Initialise velocity
   v <- 0*r                              
 
   for (i in 1:nstep) {
     f <- force(r)/m
+    print(max(abs(f)))
+    if (max(abs(f))<tol) {
+      conv <- 0
+      break;
+    }
     vf <- sum(dot(f, v))
     if (vf > 0) {
       v <- (1 - a)*v + a*f/vecnorm(f)*vecnorm(v)
       if (Nsteps > Nmin) {
         dt <- min(dt*finc, dtmax)
-        if (dt==dtmax)
-          message("Hitting time limit")
+        if (verbose & dt==dtmax) message("Hitting time limit")
         a <- a*fa
       }
       Nsteps <- Nsteps + 1
     } else {
-      message("Stop")
+      if (verbose) message("Stop")
       v <- 0
       a <- astart
       dt <- dt*fdec
@@ -28,11 +33,11 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=10,
     dr <- dt*v
     normdr <- sqrt(sum(dr*dr))
     if (normdr > maxmove) {
-      message("Hitting maxmove limit")
+      if (verbose) message("Hitting maxmove limit")
       dr <- maxmove*dr/normdr
     }
     r <- r + dr
     r <- restraint(r)
   }
-  return(list(x=r))
+  return(list(x=r, conv=conv))
 }
