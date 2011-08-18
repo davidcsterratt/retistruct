@@ -599,6 +599,7 @@ Ecart <- function(P, Cu, L, T, A, R,
     a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
 
     ## Now compute area energy
+    ## E.A <- sum(sqrt(A/mean(A))*f(a/A, x0=x0))
     E.A <- sum(f(a/A, x0=x0))
   }
   return(E.E + alpha*E.A)
@@ -656,6 +657,7 @@ Fcart <- function(P, C, L, B, T, A, R, alpha=1, x0, verbose=FALSE) {
     a <- dot(P[T[,1],], dAdPt1)
     
     ## Now convert area derivative to energy derivative
+    ## dEdPt1 <- -sqrt(A/mean(A))*fp(a/A, x0=x0)/A*dAdPt1
     dEdPt1 <- -fp(a/A, x0=x0)/A*dAdPt1
 
     ## Now map back onto coordinates
@@ -878,7 +880,6 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
   opt <- list()
   opt$x <- sphere.spherical.to.sphere.cart(phi, lambda, R)
   opt$conv <- 1
-  count <- 0
 
   ## Compute "mass" for each node
   m <- rep(0, nrow(Pt))
@@ -897,18 +898,13 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
     ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
     ##              verbose=FALSE, control=control)
     opt <- fire(opt$x,
-                                   force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
-                                   restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
-                   ##                Tmax=200,
-                                   dt=1,# gamma=1,
-                                   nstep=100,
+                force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
+                restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
+                ##                Tmax=200,
+                dt=1,# gamma=1,
+                nstep=100,
                 m=m) # Delta=R*1e-6)
-    count <- count+1
-    opt$conv <- 1
-    if (count==100) {
-      opt$conv <- 0
-    } 
-    
+    print(opt$conv)
     ## Report
     E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
                    alpha=alpha, x0=x0)
@@ -1037,7 +1033,7 @@ getStrains <- function(r) {
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
 ReconstructedOutline <- function(o, 
-                                 n=500, alpha=32, x0=0.5,
+                                 n=500, alpha=32, x0=0.01,
                                  report=print,
                                  plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
@@ -1091,9 +1087,9 @@ ReconstructedOutline <- function(o,
 ##                        plot.3d=plot.3d,
 ##                        dev.grid=dev.grid, dev.polar=dev.polar)
 
-  ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
-  ##                       plot.3d=plot.3d,
-  ##                       dev.grid=dev.grid, dev.polar=dev.polar)
+  r <- solve.mapping.cart(r, alpha=0, x0=x0,
+                          plot.3d=plot.3d,
+                          dev.grid=dev.grid, dev.polar=dev.polar)
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0,
                         plot.3d=plot.3d,
                         dev.grid=dev.grid, dev.polar=dev.polar)
