@@ -237,11 +237,11 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##' the curtailed sphere. It uses the area of the flat outline and
 ##' \code{phi0} to determine the radius \code{R} of the sphere. It
 ##' tries to get a good first approximation by using the function
-##' \link{\code{strech.mesh}}.
+##' \code{\link{strech.mesh}}.
 ##'
 ##' @title Project mesh points in the flat outline onto a sphere
 ##' @param r \code{Outline} object to which the following information
-##' has been added with \link{\code{merge.points.edges()}}
+##' has been added with \code{\link{merge.points.edges}}
 ##' \list{
 ##' \item{\code{Pt}}{The mesh point coordinates.}
 ##' \item{\code{Rsett}}{The set of points on the rim.}
@@ -575,7 +575,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' configuration
 ##' @author David Sterratt
 Ecart <- function(P, Cu, L, T, A, R,
-                  alpha=1, x0, verbose=FALSE) {
+                  alpha=1, x0, nu=1, verbose=FALSE) {
   ## Compute elastic energy
 
   ## using the upper triagular part of the
@@ -599,8 +599,8 @@ Ecart <- function(P, Cu, L, T, A, R,
     a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
 
     ## Now compute area energy
-    ## E.A <- sum(sqrt(A/mean(A))*f(a/A, x0=x0))
-    E.A <- sum(f(a/A, x0=x0))
+    E.A <- sum((A/mean(A))^nu*f(a/A, x0=x0))
+    ## E.A <- sum(f(a/A, x0=x0))
   }
   return(E.E + alpha*E.A)
 }
@@ -623,7 +623,8 @@ Ecart <- function(P, Cu, L, T, A, R,
 ##' @return A vector representing the derivative of the energy of this
 ##' particular configuration with respect to the parameter vector
 ##' @author David Sterratt
-Fcart <- function(P, C, L, B, T, A, R, alpha=1, x0, verbose=FALSE) {
+Fcart <- function(P, C, L, B, T, A, R,
+                  alpha=1, x0, nu=1, verbose=FALSE) {
   ## Compute derivative of elastic energy
   P1 <- P[C[,1],]
   P2 <- P[C[,2],]
@@ -657,8 +658,8 @@ Fcart <- function(P, C, L, B, T, A, R, alpha=1, x0, verbose=FALSE) {
     a <- dot(P[T[,1],], dAdPt1)
     
     ## Now convert area derivative to energy derivative
-    ## dEdPt1 <- -sqrt(A/mean(A))*fp(a/A, x0=x0)/A*dAdPt1
-    dEdPt1 <- -fp(a/A, x0=x0)/A*dAdPt1
+    dEdPt1 <- -(A/mean(A))^nu*fp(a/A, x0=x0)/A*dAdPt1
+    ## dEdPt1 <- -fp(a/A, x0=x0)/A*dAdPt1
 
     ## Now map back onto coordinates
     ## Create an N-by-M matrix
@@ -856,9 +857,8 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
-solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
-                               plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
-                               control=list()) {
+solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
+                               plot.3d=FALSE, dev.grid=NA, dev.polar=NA, ...) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
@@ -882,11 +882,12 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
   opt$conv <- 1
 
   ## Compute "mass" for each node
-  m <- rep(0, nrow(Pt))
+  minL <- rep(Inf, nrow(Pt))
   for (i in 1:nrow(Cut)) {
-    m[Cut[i,1]] <- max(m[Cut[i,1]], 1/Lt[i])
-    m[Cut[i,2]] <- max(m[Cut[i,2]], 1/Lt[i])
+    minL[Cut[i,1]] <- min(minL[Cut[i,1]], Lt[i])
+    minL[Cut[i,2]] <- min(minL[Cut[i,2]], Lt[i])
   }
+  m <- 1/minL
   m <- m/mean(m)
   
   while (opt$conv) {
@@ -898,18 +899,18 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, method="BFGS",
     ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
     ##              verbose=FALSE, control=control)
     opt <- fire(opt$x,
-                force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0)},
+                force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0, nu)},
                 restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                 ##                Tmax=200,
                 dt=1,# gamma=1,
-                nstep=100,
-                m=m) # Delta=R*1e-6)
+                nstep=200,
+                m=m, mm=minL/10, verbose=TRUE, ...) # Delta=R*1e-6)
     print(opt$conv)
     ## Report
     E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
-                   alpha=alpha, x0=x0)
+                   alpha=alpha, x0=x0, nu=nu)
     E.l <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
-                 alpha=0, x0=x0)
+                 alpha=0, x0=x0, nu=0)
 
     s <- sphere.cart.to.sphere.spherical(opt$x, R)
     phi <-    s[,"phi"]
@@ -1033,7 +1034,7 @@ getStrains <- function(r) {
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
 ReconstructedOutline <- function(o, 
-                                 n=500, alpha=32, x0=0.01,
+                                 n=500, alpha=8, x0=0.5,
                                  report=print,
                                  plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
@@ -1087,12 +1088,53 @@ ReconstructedOutline <- function(o,
 ##                        plot.3d=plot.3d,
 ##                        dev.grid=dev.grid, dev.polar=dev.polar)
 
-  r <- solve.mapping.cart(r, alpha=0, x0=x0,
-                          plot.3d=plot.3d,
+  ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
+  ## plot.3d=plot.3d,
+  ## dev.grid=dev.grid, dev.polar=dev.polar)
+
+  ## SCREEN 3
+  ## r <- solve.mapping.cart(r, alpha=alpha, x0=0.1, nu=0, dtmax=0.001/alpha, tol=0.01,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+
+  ## SCREEN 3
+  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, dtmax=500, maxmove=1E3,
+                          plot.3d=plot.3d, tol=4e-5, nu=1,
                           dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- solve.mapping.cart(r, alpha=alpha, x0=x0,
-                        plot.3d=plot.3d,
-                        dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d, tol=5e-5,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1,
+  ##                         plot.3d=plot.3d, tol=1e-5,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+
+  
+  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+
+
+  
+  ## SCREEN 2
+  ## r <- solve.mapping.cart(r, alpha=0, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+
   
   report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
                ";", r$nflip, "flipped triangles."))
