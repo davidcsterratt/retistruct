@@ -1,6 +1,6 @@
 fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
                  Nmin=5, finc=1.1, fdec=0.5, astart=0.1, fa=0.99, a=0.1,
-                 nstep=100, tol=0.001, verbose=FALSE, mm=NULL) {
+                 nstep=100, tol=0.00001, verbose=FALSE, mm=NULL) {
   Nsteps <- 0
   conv <- 1
   # Initialise velocity
@@ -9,7 +9,12 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
 
   for (i in 1:nstep) {
     f <- force(r)
-    frms <- sqrt(sum(f^2))
+    frad <- dot(f, r/vecnorm(r))
+    ##print(frad)
+    ftan2 <- dot(f, f) - frad^2
+    ## print(ftan2)
+    frms <- sqrt(mean(f^2))
+    ftanrms <- sqrt(mean(ftan2))
     if (frms < tol) {
       conv <- 0
       break;
@@ -45,7 +50,7 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
     r <- r + dr
     r <- restraint(r)
   }
-  message("Frms =", frms)
+  message("Frms = ", frms, "; Ftanrms = ", ftanrms)
   return(list(x=r, conv=conv, frms=frms))
 }
 
