@@ -775,23 +775,12 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
   count <- 0
   while (opt$conv) {
     ## Optimise
-    ## opt <- optim(opt$p, E, gr=dE,
-    ##              method=method,
-    ##              T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-    ##              alpha=alpha,  N=Nt, x0=x0,
-    ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
-    ##              verbose=FALSE, control=control)
-    opt <- solve.lagrange(opt$p, f=function(p, ...) {-dE(p, ...)},
-                          T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                          alpha=alpha,  N=Nt, x0=x0,
-                          Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
-                          Tmax=10, dt=0.1, gamma=2)
-    count <- count+1
-    opt$p <- opt$x[nrow(opt$x),]
-    opt$conv <- 1
-    if (count==100) {
-      opt$conv <- 0
-    } 
+    opt <- optim(opt$p, E, gr=dE,
+                  method=method,
+                  T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                  alpha=alpha,  N=Nt, x0=x0,
+                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+                  verbose=FALSE, control=control)
     
     ## Report
     E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
@@ -889,8 +878,9 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   }
   m <- 1/minL
   m <- m/mean(m)
+  count <- 10
   
-  while (opt$conv) {
+  while (opt$conv && count) {
     ## Optimise
     ## opt <- optim(opt$p, E, gr=dE,
     ##              method=method,
@@ -905,6 +895,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                 dt=1,# gamma=1,
                 nstep=200,
                 m=m, mm=minL/10, verbose=TRUE, ...) # Delta=R*1e-6)
+    count <- count - 1
     print(opt$conv)
     ## Report
     E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
@@ -1101,6 +1092,9 @@ ReconstructedOutline <- function(o,
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0, dtmax=500, maxmove=1E3,
                           plot.3d=plot.3d, tol=4e-5, nu=1,
                           dev.grid=dev.grid, dev.polar=dev.polar)
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, 
+                        plot.3d=plot.3d, 
+                        dev.grid=dev.grid, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
   ##                         plot.3d=plot.3d, tol=5e-5,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
