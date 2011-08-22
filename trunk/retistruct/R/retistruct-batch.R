@@ -258,3 +258,37 @@ retistruct.batch.export.matlab <- function(tldir=".") {
   }
 }
 
+##' Extract statistics from the retistruct-batch.csv summary file
+##'
+##' @title Extract statistics from the retistruct-batch.csv summary file
+##' @param file The path to the retistruct-batch.csv
+##' @author David Sterratt
+retistruct.batch.analyse.summary <- function(file) {
+  dat <- read.csv(file)
+
+  ## Detailed output codes
+  etab <- sort(table(dat[,"mess"]), decreasing=TRUE)
+  message("OUPUT CODES")
+  message(rbind(format(etab, width=4), " ", paste(gsub("\n", "\n   ", gsub("\n$", "", names(etab))), "\n")))
+
+  ## Get successful reconstructions
+  sdat <- subset(dat, !is.na(sqrt.E))
+
+  message("\nSTATISTICS")
+  message("sqrt.E")
+  print(summary(sdat[,"sqrt.E"]))
+  message("mean.strain")
+  print(summary(sdat[,"mean.strain"]))
+  message("mean.logstrain")
+  print(summary(sdat[,"mean.logstrain"]))
+  message("time")
+  print(summary(sdat[,"time"]))
+  
+  hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
+       xlab=expression(sqrt(E[L])), main="")
+
+  message("\nOUTLIERS")
+  outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + sd(sqrt.E)))
+  outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
+  print(outliers)
+}
