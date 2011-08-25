@@ -859,7 +859,7 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
-optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
+optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
                              control=list()) {
   phi <- r$phi
@@ -889,16 +889,16 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, method="BFGS",
     opt <- optim(opt$p, E, gr=dE,
                   method=method,
                   T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                  alpha=alpha,  N=Nt, x0=x0,
+                  alpha=alpha,  N=Nt, x0=x0, nu=nu,
                   Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
                   verbose=FALSE, control=control)
     
     ## Report
     E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-               alpha=alpha,  N=Nt, x0=x0,
+               alpha=alpha,  N=Nt, x0=x0, nu=nu,
                Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
     E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
-               alpha=0,  N=Nt, x0=x0,
+               alpha=0,  N=Nt, x0=x0, nu=nu,
                Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
 
     ft <- flipped.triangles(phi, lambda, Tt, R)
