@@ -105,14 +105,14 @@ develop. This complicates analysis as some cells that were close
 neighbours are now separated by the incisions.
 
 We present a computational method that overcomes this problem by
-reconstructing the 3D shape so that the positions of the labels in the
-intact retina can be inferred. The input to the algorithm is the line
-segments of the flattened retinal outline, with incisions and tears
-marked up by an expert. The retinal outline is split into triangular
-elements whose positions are then transformed so that they lie on a
-partial sphere with the expected dimensions of the intact retina.  The
-transformation is adjusted so as to minimise a physically-inspired
-deformation energy function.
+reconstructing the 3D shape of the retina so that the positions of the
+labels in the intact retina can be inferred. The input to the
+algorithm is the line segments of the flattened retinal outline, with
+incisions and tears marked up by an expert. The retinal outline is
+split into triangular elements whose positions are then transformed so
+that they lie on a partial sphere with the expected dimensions of the
+intact retina.  The transformation is adjusted so as to minimise a
+physically-inspired deformation energy function.
 
 % change in the dimensions of each triangle from the flattened outline.
 
@@ -134,21 +134,23 @@ retina and the mapping of retinal ganglion cells to target regions
 such as the superior colliculus or lateral geniculate nucleus. In this
 field a common experimental procedure is to label cells in the retina
 \emph{in vivo} and then dissect and flatten the retina to produce a
-flat-mount in which the distribution of labels can be measured. In
+flatmount in which the distribution of labels can be measured. In
 order to flatten the retina, a number of incisions have to be made,
 and tearing can occur within the rim of the retina or the incisions.
-Flat-mounted retinae have been used in a variety of
-applications. However their use does have problems.
+flatmounted retinae have been used in a variety of
+applications. However, mounting the retina disturbs the retinal
+geometry significantly, which can be problematic in interpreting
+results obtainaed from flatmounted retinae.
 
 For example, the distribution of mosaics of various cell types has
-been recorded in flat-mounted retinae
-\cite{WassBoyc91func,RaveEtal03dete}.  Nearest neighbour analyses are
-often used to quantify the regularity of mosaics, but these are
-susceptible to the existence of boundaries \cite{Cook96spat}, both at
-the rim of the retina and those introduced by the incision required
-during dissection. These extra boundaries reduce the effective number
-of cells that can be analysed, which could be significant in low
-density mosaics.
+been recorded in flatmounted retinae
+\cite{WassBoyc91func,RaveEtal03dete}.  Various measures are used to
+quantify the regularity of mosaics, but these are susceptible to the
+existence of boundaries \cite{Cook96spat}, both at the rim of the
+retina and those introduced by the incisions required during
+dissection. These extra boundaries reduce the effective number of
+cells that can be analysed, which could be significant in low density
+mosaics.
 
 In the study of topographic mapping, the locations of retrograde
 tracers injected in the superior colliculus have been measured in
@@ -159,10 +161,10 @@ impossible to determine a mean location that lies within the outline
 of the flattened retina.
 
 To understand the mechanisms underlying topographic mapping, retinal
-flat-mounts labelled with markers for the EphA receptor
+flatmounts labelled with markers for the EphA receptor
 \cite{ChenEtal95comp} have been produced. The principal axis of
 variation in the flat mount appears to be the naso-temporal axis.
-Flat-mounts stained for EphB receptors have also been produced
+flatmounts stained for EphB receptors have also been produced
 \cite{BirgEtal00kina} and here the principal axis is appears to be the
 dorso-ventral axis. In both cases, the pixel intensity has been
 quantified along the principal axis but not throughout the rest of the
@@ -176,7 +178,7 @@ the case as the surface of the intact retina is by no means a
 Cartesian surface, which can be described using rectilinear
 coordinates.  Rather it needs to be described using curvilinear
 coordinates. Being able to describe the density of marker as a
-function of location in the intact retina would force a deeper
+function of location in the intact retina would foster a deeper
 understanding of how the mapping process occurs.
 
 % The locations of the labels are measured in the two-dimensional
@@ -196,9 +198,9 @@ coordinate system can be thought of as lines of latitude and longitude
 on the globe.  The method requires that an expert mark up the cuts and
 tears, and also that they indicate the position of at least one
 landmark on the rim of the eye. The method has been implemented as a
-program written in R, and can reconstruct a retina within a few
-minutes on a desktop machine. The accuracy of the method is estimated
-to be \todo{produce estimate for accuracy of method}.
+program written in R, available to download at \todo{download
+  location}. The accuracy of the method is estimated to be
+\todo{produce estimate for accuracy of method}.
 
 It would be possible to generalise the method to deal with a retina
 modelled by any shape with axial symmetry.
@@ -215,17 +217,16 @@ situations. \todo{More about applications here.}
 
 \subsection*{The reconstruction algorithm}
 
-The reconstruction algorithm is illustrated in
-Figure~\ref{fold-sphere:fig:method} and we present a more detailed
-description in the Methods. In brief, the starting point of the
-algorithm is the retinal outline
+In this section we give an overview of the reconstruction algorithm; a
+more detailed description is contained in the Methods. The starting
+point of the algorithm is the retinal outline
 (Figure~\ref{fold-sphere:fig:method}A), in this example with some
 labelled points (red, green and yellow circles) and an example of a
 landmark (blue line), in this case the optic disk.  The first step is
 for an expert to mark the locations of incisions and tears in the
 outline and to mark the location of one of the poles
-(Figure~\ref{fold-sphere:fig:method}B). The algorithm then
-triangulates the outline and stitches together the incisions and tears
+(Figure~\ref{fold-sphere:fig:method}B). The outline is then
+triangulated and the incisions and tears are stitched together
 (Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
 onto a spherical surface, with the points on the rim all lying at the
 same latitude (Figure~\ref{fold-sphere:fig:method}Di). Each edge in
@@ -239,27 +240,28 @@ Figure~\ref{fold-sphere:fig:method}Ei. Finally, the locations of data
 points and landmarks in the flat retina can be projected onto the
 reconstructed retina, which can be represented using a polar plot
 (Figure~\ref{fold-sphere:fig:method}Fi). The mean locations of groups
-of data points on the sphere is computed using the Karcher mean (see
+of data points on the sphere are computed using the Karcher mean (see
 Methods).
 
 An alternative representation is shown in
 Figures~\ref{fold-sphere:fig:method}Dii, Eii and Fii, where lines of
 latitude and longitude on the spherical retina have been projected
-onto the flat structure. In particular the jump between Dii and Eii
-illustrates the improvement in the appearance of the mapping achieved
-using the energy minimisation.
+onto the flat structure. The jump between Dii and Eii illustrates the
+improvement in the appearance of the mapping achieved using the energy
+minimisation.
 
 To assess the amount of residual deformation at the end of the energy
 minimisation procedure, we plotted the length of the edge in the
 spherical mesh versus the length of the edge in the flat mesh
-(Figure~\ref{retistruct_plos:fig:examples}Ai). We visualised the
+(Figure~\ref{retistruct_plos:fig:examples}Ai). We visualise the
 deformation by representing the log strain as coloured edge in the
 flat mesh (Figure~\ref{retistruct_plos:fig:examples}Aii). The log
-strain is defined as $\ln(l/L)$ where $l$ is the length of the edge in
-the spherical representation and $L$ is the length of the edge in the
-flat representation. For a spring at its natural length it is zero
-(represented by green), for a compressed spring it is negative (blue)
-and for an expanded one positive (red).
+strain is defined as $\ln(l/L)$ where $l$ is the length of an edge in
+the spherical representation and $L$ is the length of the
+corresponding edge in the flat representation. For a spring at its
+natural length the log strain is zero (represented by green), for a
+compressed spring it is negative (blue) and for an expanded one
+positive (red).
 
 A measure of the overall goodness of reconstruction is the square root
 of the length energy function:
@@ -267,20 +269,23 @@ of the length energy function:
   \sqrt{E_\mathrm{L}} = \sqrt{\frac{1}{2|\mathcal{C}|\overline{L}}
   \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}}
 \end{equation} 
-where $L_i$ is the length of the $i$th edge in the flat mesh, $l_i$
+where $L_i$ is the length of the $i$th edge in the flat mesh, $l_i$ is
 the length of the corresponding edge in the spherical mesh, and the
 summation is over, $\mathcal{C}$, the set of edges. The mean length of
 an edge in the flat mesh is $\overline{L}$ and the number of edges is
 $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
-the mean fractional deformation.  We used our algorithm to reconstruct
-226 retina. The distribution of the goodness measure is shown in
+the mean fractional deformation.  
+
+We used our algorithm to reconstruct 226 retinae. The distribution of
+the goodness measure is shown in
 Figure~\ref{retistruct_plos:fig:summary}. It can be seen that there
 are a number of outliers for which reconstruction failed totally and
-then a log-normal
-distribution. Figure~\ref{retistruct_plos:fig:examples}A shows an
-example of a good reconstruction with an energy measure
-$\sqrt{E_\mathrm{L}}=0.039$ and
+then an approximately log-normal distribution
+\todo{May need to be changed with new
+  results}.
+Figure~\ref{retistruct_plos:fig:examples}A shows an example of a good
+reconstruction with an energy measure $\sqrt{E_\mathrm{L}}=0.039$ and
 Figure~\ref{retistruct_plos:fig:examples}B an example of a bad one
 with $\sqrt{E_\mathrm{L}}=0.278$.
 \todo{Note that I am currently playing with the parameters of the
@@ -301,7 +306,7 @@ with $\sqrt{E_\mathrm{L}}=0.278$.
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
-\todo{This would need some decent flat-mount images of EphA or EphB
+\todo{This would need some decent flatmount images of EphA or EphB
   and some more work.}
 
 \section*{Discussion}
@@ -316,6 +321,9 @@ with $\sqrt{E_\mathrm{L}}=0.278$.
 
 \subsection*{Validity of the physical model}
 
+\todo{DW suggests that I ``doth protest too much'' in this section. I
+  probably do.}
+
 As far as we are aware, a computational algorithm for reconstructing
 retinae has never been described
 before.\footnote{\todo{DW: But what about optometry?}} The algorithm
@@ -323,18 +331,18 @@ presented here models the retinal tissue as a mesh of masses connected
 by springs. This basic model is used in modelling deformable surfaces
 in computer animation and clothes design
 \cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf} and has been used
-in models of tissue \todo{REF}.  This model should ensure that
-neighbourhood relations are preserved -- nodes close in the 2D
-structure should still be close in the 3D structure -- and
+in models of soft tissue \cite{SkriDunc99real}.  This model should
+ensure that neighbourhood relations are preserved -- nodes close in
+the 2D structure should still be close in the 3D structure -- and
 incorporates the notion of an elastic material. However, it does not
-incorporate an explicitly representation of tensile and shear forces.
+incorporate an explicit representation of tensile and shear forces.
 
 A more physically-principled method of modelling deformation of
 objects is offered by the finite element method (FEM), in which the
 stress and strain of each triangular element in the mesh is derived as
 a function of the deformation of the points of the element
 \cite{ZienTayl00fini}. The stress and strain matrices represent
-shearing with in the material and materials with varying degrees of
+shearing within the material, and materials with varying degrees of
 compressibility (as quantified by Poisson's ratio) can be modelled.
 The FEM is used widely to describe properties of soft tissue in
 simulations of surgery \cite{CartEtal05appl}. The soft tissue is often
@@ -346,17 +354,18 @@ the material.
 % the finite element method is based more strongly on the physics of
 % materials and is regarded as superior \cite{CartEtal05appl}.
 
-In principle the FEM allows parameters of the material to be measured
+In principle, the FEM allows parameters of the material to be measured
 and incorporated in the model in a straightforward way. Given enough
 data about the material properties of retinal tissue, the model could
-be more realistic that the spring-mass model used here.  Weighed
-against this, is the fact that it is not possible to apply the finite
-element method simply to the problem of mapping the flattened retina
-onto the intact retina, as this would require knowledge of the
-stresses and strains in the flattened retina, whereas the only
-information available is the outline of the retina and the location of
-the optic disk. Also, the standard FEM does not allow for the rotation
-of elements, only their translation or expansion and shearing.
+be more realistic than the spring-mass model used here.  Weighed
+against this, it is not possible to apply the finite element method
+simply to the problem of mapping the flattened retina onto the intact
+retina, because this would require knowledge of the stresses and
+strains in the flattened retina, whereas the only information
+available is the outline of the retina and the location of the optic
+disk. Also, the standard FEM does not allow for the rotation of
+elements, only their translation or expansion and shearing, though it
+would be possible to overcome this using singlar value decomposition.
 
 Nevertheless, it would be possible to use a modified version of the
 FEM, along with data (or assumptions) about the material properties of
@@ -501,7 +510,7 @@ reconstruction process then proceeds as follows:
   referred to as vertices.  Tears within tears or incisions (for
   example tear 2 in Figure~\ref{fold-sphere:fig:method}B) can be
   marked up. The Retistruct package contains a graphical user
-  interface to allow incisions and tears to be marked up quickly.
+  interface that allows incisions and tears to be marked up quickly.
 \item The retinal outline is triangulated using the conforming
   Delaunay triangulation algorithm provided by the Triangle package
   \cite{Shew96tria} such that there are at least 500 triangles in
@@ -512,11 +521,12 @@ reconstruction process then proceeds as follows:
   distance of each point in each tear is then defined as the distance
   along the tear of that point from the apex divided by the total
   length of that side of the tear. For each point on one side of a
-  tear a point is inserted at the same fractional distance along the
-  opposing side. Tears within tears are dealt with by excluding the
-  child tear when computing the fractional distance. At the end of the
-  procedure there is a set of correspondences between two or, in the
-  case of the vertices of a child tear, three points.
+  tear a corresponding point is inserted at the same fractional
+  distance along the opposing side. Tears within tears are dealt with
+  by excluding the child tear when computing the fractional
+  distance. At the end of the procedure there is a set of
+  correspondences between two or, in the case of the vertices of a
+  child tear, three points.
 \item There is then an extra round of triangulation to incorporate the
   points that have been inserted into incisions and tears.
 \item The points within each set of correspondences are merged and
@@ -529,12 +539,12 @@ reconstruction process then proceeds as follows:
   is determined by the area of the flattened retina and $\phi_0$.
   Points on the rim of flattened retina are fixed to the rim of the
   curtailed sphere.
-\item The optimal projection onto sphere
+\item The optimal projection onto the curtailed sphere
   (Figure~\ref{fold-sphere:fig:method}E) is inferred by shifting the
   locations of the vertices on the spherical surface so as to minimise
   an error measure. This measure, $E$, comprises the sum of normalised
   squared differences between lengths of corresponding connections in
-  flattened and spherical retina and a penalty term that prevents the
+  flattened and spherical retina, and a penalty term that prevents the
   triangles from flipping over:
   \begin{equation}
     E = \frac{1}{2|\mathcal{C}|\overline{L}} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
@@ -549,7 +559,7 @@ reconstruction process then proceeds as follows:
   flattened and spherical retina.  The signed area $a_i$ is positive
   for triangles in correct orientation, but negative for flipped
   triangles. The penalty function $f$ is a piecewise, smooth function
-  that increases steeply with negative arguments:
+  that increases with negative arguments:
   \begin{equation}
     \label{retistruct_plos:eq:1}
     f(x) = \left\{
@@ -575,7 +585,7 @@ reconstruction process then proceeds as follows:
   $\lambda_1$ and $\lambda_2$ are the longitudes.  The derivatives of
   $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and the
   BFGS quasi-Newton method implemented in the R optim function is used
-  to minimise $E$.
+  to minimise $E$.\todo{Check that we really do use this function}.
 \item The locations of data points and landmarks on the sphere are
   determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
   each data point the barycentric coordinates within its containing
@@ -651,10 +661,10 @@ Michael Herrmann.
     and yellow circles) and a landmark (blue line). \textbf{(B)}
     Retinal outline with nasal pole (N) and tears marked up. Each pair
     of red and orange lines indicate the vertices and apex of the five
-    tears. Note that tear 2 is a child tear of tear 1. \textbf{(C)}
-    The outline after triangulation (shown by grey lines) and
-    stitching, indicated by blue lines between corresponding points on
-    the tears. Green lines indicate connections between tear vertices.
+    tears. Note that tear 2 is a child of tear 1. \textbf{(C)} The
+    outline after triangulation (shown by grey lines) and stitching,
+    indicated by blue lines between corresponding points on the
+    tears. Green lines indicate connections between tear vertices.
     \textbf{(D)} The initial projection of the triangulated and
     stitched outline onto a hemisphere. Tears are show in white. Below
     is a representation of lines of latitude and longitude on the flat
@@ -664,13 +674,16 @@ Michael Herrmann.
     of the reconstructed retina. Mean locations of the different types
     of data points are indicated by filled diamonds. The nasal (N),
     dorsal (D), temporal (T) and ventral (V) poles are indicated. For
-    reference, data is plotted on the flat representation
-    below.
-    \todo{Figures under D, E and F need to be grouped. The spherical
-      representation should be as an open mesh, i.e. grey edges, white
-      surfaces and the cuts in orange or red. Arrows from
+    reference, data is plotted on the flat representation below.
+    \todo{Figures under D, E and F need to be grouped.}
+    \todo{The spherical representation should be as an open mesh,
+      i.e. grey edges, white surfaces and the cuts in orange or
+      red. Or perhaps with the strains shown to highlight the
+      difference between D and E.}
+    \todo{If we are going to have Di and Dii, we should label it.}
+    \todo{Arrows from
       A$\rightarrow$B$\rightarrow$C$\rightarrow$D$\rightarrow$E$\rightarrow$F
-      would indicate the progression.}}
+      would indicate the progression. }}
   \label{fold-sphere:fig:method}
 \end{figure}
 
