@@ -4,8 +4,8 @@ Date: 2011-06-10
 Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
-Depends: R (>= 2.9.0), geometry, foreign, R.matlab, ttutils, Triangle,
-    rgl, multicore
+Depends: R (>= 2.9.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
+    Triangle, rgl, multicore
 Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
 License: file LICENSE
