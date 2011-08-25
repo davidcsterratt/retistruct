@@ -3,10 +3,12 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
   ## Return code
   status <- 0
   setTimeLimit(cpu=cpu.time.limit)
-  syst <- system.time(out <-try(retistruct.cli.process(dataset,
-                                                       outputdir=outputdir, device=device)))
-  mess <- geterrmessage()
-  if (inherits(out, "try-error")) {
+  syst <- system.time(out <- tryCatch(retistruct.cli.process(dataset,
+                                                             outputdir=outputdir, device=device),
+                                      error=function(e) {return(e)}))
+  mess <- "Success"
+  if (inherits(out, "error")) {
+    mess <- as.character(out)
     if (grepl("reached CPU time limit", mess)) {
       status <- 1
     } else {
