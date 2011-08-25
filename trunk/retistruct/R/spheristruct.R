@@ -401,6 +401,117 @@ fp <- function(x, x0) {
 ##' configuration
 ##' @author David Sterratt
 E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
+              alpha=1, x0,  nu=1, verbose=FALSE) {
+  ## Extract phis and lambdas from parameter vector
+  phi <- rep(phi0, N)
+  phi[-Rset] <- p[1:Nphi]
+  lambda <- rep(lambda0, N)
+  lambda[-i0] <- p[Nphi+1:(N-1)]
+
+  ## Find cartesian coordinates of points
+  P <- R * cbind(cos(phi)*cos(lambda),
+                 cos(phi)*sin(lambda),
+                 sin(phi))
+
+  ## Compute elastic energy
+  return(Ecart(P, Cu, L, T, A, R,
+               alpha, x0, nu, verbose))
+
+}
+
+##' The function that computes the gradient of the  energy (or error)
+##' of the deformation of the mesh from the flat outline to the
+##' sphere. This depends on the locations of the points given in
+##' spherical coordinates. The function is designed to take these as a
+##' vector that is received from the \code{optim} function.
+##'
+##' @title The deformation energy gradient function
+##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param Cu The upper part of the connectivity matrix
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param B Connectivity matrix
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of the sphere
+##' @param Rset Indicies of points on the rim
+##' @param i0 Index of fixed point on rim
+##' @param phi0 Lattitude at which sphere curtailed
+##' @param lambda0 Longitude of fixed points
+##' @param Nphi Number of free values of \code{phi}
+##' @param N Number of points in sphere
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param verbose How much information to report
+##' @return A vector representing the derivative of the energy of this
+##' particular configuration with respect to the parameter vector
+##' @author David Sterratt
+dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
+               alpha=1, x0, nu=1, verbose=FALSE) {
+  ## Extract phis and lambdas from parameter vector
+  phi <- rep(phi0, N)
+  phi[-Rset] <- p[1:Nphi]
+  lambda <- rep(lambda0, N)
+  lambda[-i0] <- p[Nphi+1:(N-1)]
+
+  cosp <- cos(phi)
+  cosl <- cos(lambda)
+  sinl <- sin(lambda)
+  sinp <- sin(phi)
+  ## Find cartesian coordinates of points
+  P <- R * cbind(cosp*cosl,
+                 cosp*sinl,
+                 sinp)
+
+  ## Compute force in Cartesian coordinates
+  dE.dp <- -Fcart(P, C, L, B, T, A, R,
+                  alpha, x0, nu, verbose)
+
+  ## Convert to Spherical coordinates
+  dp.dphi <- R * cbind(-sinp * cosl,
+                       -sinp * sinl,
+                       cosp)
+  dp.dlambda <- R * cbind(-cosp * sinl,
+                          cosp * cosl,
+                          0)
+
+  dE.dphi    <- rowSums(dE.dp * dp.dphi)
+  dE.dlambda <- rowSums(dE.dp * dp.dlambda)
+
+  ## Return, omitting uncessary indicies
+  return(c(dE.dphi[-Rset], dE.dlambda[-i0]))
+}
+
+## FIXME: E.ca and dE.ca should go if next round of testing works.
+
+##' The function that computes the energy (or error) of the
+##' deformation of the mesh from the flat outline to the sphere. This
+##' depends on the locations of the points given in spherical
+##' coordinates. The function is designed to take these as a vector
+##' that is received from the \code{optim} function.
+##'
+##' @title The deformation energy function
+##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param Cu The upper part of the connectivity matrix
+##' @param C The connectivity matrix
+##' @param L Length of each edge in the flattened outline
+##' @param B Connectivity matrix
+##' @param T Triangulation in the flattened outline
+##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of the sphere
+##' @param Rset Indicies of points on the rim
+##' @param i0 Index of fixed point on rim
+##' @param phi0 Lattitude at which sphere curtailed
+##' @param lambda0 Longitude of fixed points
+##' @param Nphi Number of free values of \code{phi}
+##' @param N Number of points in sphere
+##' @param alpha Area scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param verbose How much information to report
+##' @return A single value, representing the energy of this particular
+##' configuration
+##' @author David Sterratt
+E.ca <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
               alpha=1, x0, verbose=FALSE) {
   ## Extract phis and lambdas from parameter vector
   phi <- rep(phi0, N)
@@ -471,7 +582,7 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' @return A vector representing the derivative of the energy of this
 ##' particular configuration with respect to the parameter vector
 ##' @author David Sterratt
-dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
+dE.ca <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
                alpha=1, x0, verbose=FALSE) {
   ## Extract phis and lambdas from parameter vector
   phi <- rep(phi0, N)
@@ -1089,10 +1200,10 @@ ReconstructedOutline <- function(o,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
 
   ## SCREEN 3
-  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, dtmax=500, maxmove=1E3,
-                          plot.3d=plot.3d, tol=4e-5, nu=1,
+  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=0, dtmax=500, maxmove=1E3,
+                          plot.3d=plot.3d, tol=4e-5,
                           dev.grid=dev.grid, dev.polar=dev.polar)
-  r <- optimise.mapping(r, alpha=alpha, x0=x0, 
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0,
                         plot.3d=plot.3d, 
                         dev.grid=dev.grid, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
