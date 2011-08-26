@@ -59,14 +59,13 @@ par(mfg=c(2, 3))
 plot.new()
 mtext("Di", adj=0, font=2, line=-0.9)
 
-plot.sphere.spherical(m$phi, m$lambda, m$R, m$Tt, m$Rsett)
-plot.outline.spherical(m$phi, m$lambda, m$R, m$gb, m$ht)
+plot.spherical(m, strain=TRUE, datapoints=FALSE)
 rgl.viewpoint(zoom=0.7)
 rgl.postscript("initial-projection.pdf", "pdf")
 
 ## Optimise mapping - this takes a few minutes
 alpha <- 8
-x0 <- 0.6
+x0 <- 0.4
 r <- solve.mapping.cart(m, alpha=alpha, x0=x0, nu=1, dtmax=500, maxmove=1E3,
                         tol=1e-5, plot.3d=FALSE)
 r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5, 
@@ -77,6 +76,7 @@ par(mfg=c(2, 2))
 plot.new()
 mtext("Ei", adj=0, font=2, line=-0.9)
 
+plot.spherical(r, strain=TRUE, datapoints=FALSE)
 rgl.postscript("final-projection.pdf", "pdf")
 
 par(mfg=c(3, 2))
