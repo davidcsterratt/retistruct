@@ -34,6 +34,15 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   plot.grid <-   is.null(args$grid) || args$grid
   plot.strain <- !is.null(args$strain) && args$strain
 
+  if (plot.strain) {
+    o <- getStrains(r)
+    palette(rainbow(100))
+    scols <- strain.colours(o$logstrain)
+    with(r, 
+         segments(P[Cu[,1],1], P[Cu[,1],2],
+                  P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
+  }
+  
   ## Plot a gridline from the spherical retina (described by points phi,
   ## lambda and triangulation Tt) onto a flattened retina (described by
   ## points P and triangulation T). The gridline is described by a
@@ -101,14 +110,6 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
       Lambda <- Lambda * pi/180
       with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
     }
-  }
-  if (plot.strain) {
-    o <- getStrains(r)
-    palette(rainbow(100))
-    scols <- strain.colours(o$logstrain)
-    with(r, 
-         segments(P[Cu[,1],1], P[Cu[,1],2],
-                  P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
   }
 }
 

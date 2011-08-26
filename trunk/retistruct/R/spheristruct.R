@@ -748,7 +748,7 @@ Fcart <- function(P, C, L, B, T, A, R,
   if (verbose==2) { print(l) }
 
   ## Compute general scaling factor
-  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/sqrt(1-(d/2/R)^2)/d
+  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)^2 #/sqrt(1-(d/2/R)^2)/d
 
   ## Now compute the derivatives
   F.E <- B %*% (fac * dP)

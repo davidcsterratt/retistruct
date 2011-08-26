@@ -569,8 +569,8 @@ reconstruction process then proceeds as follows:
           0 & x \ge x_0
           \end{array} \right.
   \end{equation}
-  The parameter $x_0$ is set at 0.1. There is thus no penalty unless
-  triangles have been squashed to less than 10\% of their size in the
+  The parameter $x_0$ is set at 0.5. There is thus no penalty unless
+  triangles have been squashed to less than 50\% of their size in the
   flattened retina.  The parameter $\alpha$ is set to be large enough
   to prevent flipped triangles without causing numerical problems with
   the optimisation. The length of each edge $l_i$ is computed from the
@@ -585,7 +585,8 @@ reconstruction process then proceeds as follows:
   $\lambda_1$ and $\lambda_2$ are the longitudes.  The derivatives of
   $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and the
   BFGS quasi-Newton method implemented in the R optim function is used
-  to minimise $E$.\todo{Check that we really do use this function}.
+  to minimise $E$.\todo{Check that we really do use this function and
+    add FIRE}.
 \item The locations of data points and landmarks on the sphere are
   determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
   each data point the barycentric coordinates within its containing
