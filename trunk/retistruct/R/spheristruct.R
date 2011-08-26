@@ -1200,7 +1200,7 @@ ReconstructedOutline <- function(o,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
 
   ## SCREEN 3
-  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=0, dtmax=500, maxmove=1E3,
+  r <- solve.mapping.cart(r, alpha=alpha, x0=0.01, nu=1, dtmax=500, maxmove=1E3,
                           plot.3d=plot.3d, tol=4e-5,
                           dev.grid=dev.grid, dev.polar=dev.polar)
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0,
