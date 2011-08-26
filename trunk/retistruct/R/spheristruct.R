@@ -696,7 +696,8 @@ Ecart <- function(P, Cu, L, T, A, R,
   P2    <- P[Cu[,2],]
 
   ## Compute lengths of edges
-  l <- vecnorm(P2 - P1)
+  ## l <- vecnorm(P2 - P1)
+  l <- 2*R*asin(vecnorm(P2 - P1)/2/R)
   if (verbose==2) { print(l) }
 
   ## Compute spring energy
@@ -742,11 +743,12 @@ Fcart <- function(P, C, L, B, T, A, R,
 
   ## Lengths of springs
   dP <- P2 - P1
-  l <- vecnorm(dP)
+  d <- vecnorm(dP)
+  l <- 2*R*asin(d/2/R)
   if (verbose==2) { print(l) }
 
   ## Compute general scaling factor
-  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)
+  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/sqrt(1-(d/2/R)^2)/d
 
   ## Now compute the derivatives
   F.E <- B %*% (fac * dP)
@@ -1007,7 +1009,6 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                 nstep=200,
                 m=m, mm=minL/10, verbose=TRUE, ...) # Delta=R*1e-6)
     count <- count - 1
-    print(opt$conv)
     ## Report
     E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
                    alpha=alpha, x0=x0, nu=nu)
@@ -1185,7 +1186,7 @@ ReconstructedOutline <- function(o,
     plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
   }
 
-  report("Optimising mapping...")
+  report("Optimising mapping with FIRE...")
 ##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
 ##                        plot.3d=plot.3d,
 ##                        dev.grid=dev.grid, dev.polar=dev.polar)
@@ -1200,9 +1201,13 @@ ReconstructedOutline <- function(o,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
 
   ## SCREEN 3
-  r <- solve.mapping.cart(r, alpha=alpha, x0=0.01, nu=1, dtmax=500, maxmove=1E3,
-                          plot.3d=plot.3d, tol=4e-5,
+  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1, dtmax=500, maxmove=1E3,
+                          plot.3d=plot.3d, tol=1e-7,
                           dev.grid=dev.grid, dev.polar=dev.polar)
+  report("Optimising mapping with BFGS...")
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=1,
+                        plot.3d=plot.3d, 
+                        dev.grid=dev.grid, dev.polar=dev.polar)
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0,
                         plot.3d=plot.3d, 
                         dev.grid=dev.grid, dev.polar=dev.polar)
