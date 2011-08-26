@@ -7,6 +7,11 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
   v <- 0*r                              
   dt <- min(dt, dtmax)
 
+  ## Counters for number of stops and hits of dtmax and maxmove
+  nstop <- 0
+  ndtmax <- 0
+  nmaxmove <- 0
+
   for (i in 1:nstep) {
     f <- force(r)
     frad <- dot(f, r/vecnorm(r))
@@ -25,12 +30,12 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
       v <- (1 - a)*v + a*f/vecnorm(f)*vecnorm(v)
       if (Nsteps > Nmin) {
         dt <- min(dt*finc, dtmax)
-        if (verbose & dt==dtmax) message("Hitting time limit")
+        if (dt==dtmax) ndtmax <- ndtmax + 1 
         a <- a*fa
       }
       Nsteps <- Nsteps + 1
     } else {
-      if (verbose) message("Stop")
+      nstop <- nstop +1
       v <- 0
       a <- astart
       dt <- dt*fdec
@@ -40,7 +45,7 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
     dr <- dt*v
     normdr <- sqrt(sum(dr*dr))
     if (normdr > maxmove) {
-      if (verbose) message("Hitting maxmove limit")
+      if (verbose) nmaxmove <- nmaxmove + 1
       dr <- maxmove*dr/normdr
     }
     ## if (!is.null(mm)) {
@@ -50,7 +55,12 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
     r <- r + dr
     r <- restraint(r)
   }
-  message("Frms = ", frms, "; Ftanrms = ", ftanrms)
+  if (verbose) {
+    message(paste("FIRE: ", nstop, " stops. ",
+                  nmaxmove, "hits of maxmove. ",
+                  ndtmax, "hits of dtmax."))
+    message("Frms = ", frms, "; Ftanrms = ", ftanrms)
+  }
   return(list(x=r, conv=conv, frms=frms))
 }
 
