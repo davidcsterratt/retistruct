@@ -159,7 +159,7 @@ merge.points.edges <- function(t) {
     Ht[i] <- which(U == H[i])
   }
 
-  ## Create the lengths of the merge edges by averaging
+  ## Create the lengths of the merged edges by averaging
   Lt <- c()
   for (k in 1:length(U)) {
     is <- which(Ht == k)
@@ -183,7 +183,7 @@ merge.points.edges <- function(t) {
     Bt[Ct[i,1],i] <- 1
   }
 
-  m <- merge(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht,
+  m <- merge(list(Pt=Pt, Tt=Tt, Ct=Ct, Cut=Cut, Bt=Bt, Lt=Lt, ht=ht, u=u, U=U,
                   Rset=Rset, Rsett=Rsett, i0t=i0t, P=P, H=H, Ht=Ht), t)
   class(m) <- class(t)
   return(m)
@@ -942,8 +942,8 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
                   E.tot=E.tot, E.l=E.l),
              r)
-  o$mean.strain    <- mean(abs(getStrains(o))$strain)
-  o$mean.logstrain <- mean(abs(getStrains(o))$logstrain)
+  o$mean.strain    <- mean(abs(getStrains(o)$spherical$strain))
+  o$mean.logstrain <- mean(abs(getStrains(o)$spherical$logstrain))
   class(o) <- class(r)
   return(o)
 }
@@ -1052,8 +1052,8 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   o <- merge(list(phi=phi, lambda=lambda, opt=opt, nflip=sum(ft$flipped),
                   E.tot=E.tot, E.l=E.l),
              r)
-  o$mean.strain    <- mean(abs(getStrains(o))$strain)
-  o$mean.logstrain <- mean(abs(getStrains(o))$logstrain)
+  o$mean.strain    <- mean(abs(getStrains(o)$spherical$strain))
+  o$mean.logstrain <- mean(abs(getStrains(o)$spherical$logstrain))
   class(o) <- class(r)
   return(o)
 }
@@ -1064,7 +1064,8 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 ##'
 ##' @title Return strains edges are under in spherical retina
 ##' @param r A \code{\link{reconstructedOutline}} object
-##' @return A data frame containing for each edge in the flat outline
+##' @return A list containing two data frames \code{flat} and \code{spherical}. 
+##' Each data frame contains for each edge in the flat or spherical meshes:
 ##' \item{\code{L}}{Length of the edge in the flat outline }
 ##' \item{\code{l}}{Length of the corresponding edge on the sphere}
 ##' \item{\code{strain}}{The strain of each connection}
@@ -1076,15 +1077,27 @@ getStrains <- function(r) {
   L <- r$L
   ## New lengths in reconstructed object is a vector wtih Mt < M
   ## elements, the number of rows of Cut
-  ls <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
+  lt <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
   ## For each connection in the flattened object, we want the length of
   ## the corresponding connection in the reconstructed object
-  ## The mapping Ht achieves this@
-  l <- ls[r$Ht]
+  ## The mapping Ht achieves this
+  l <- lt[r$Ht]
   stretch <- l/L
   strain <- stretch - 1
   logstrain <- log(stretch)
-  return(data.frame(L=L, l=l, strain=strain, logstrain=logstrain))
+
+  ## Compute quantities in spherical retina too
+  Lt <- r$Lt
+  stretcht <- lt/Lt
+  straint <- stretcht - 1
+  logstraint <- log(stretcht)
+
+  return(list(flat=
+              data.frame(L=L,  l=l,
+                         strain=strain,  logstrain=logstrain),
+              spherical=
+              data.frame(L=Lt, l=lt,
+                         strain=straint, logstrain=logstraint)))
 }
 
 ##' Reconstruct outline into spherical surface. Reconstruction
