@@ -920,8 +920,9 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     ## Plot
     if (plot.3d) {
-      plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
-      plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
+      plot.spherical(list(phi=phi, lambda=lambda, R=R,
+                          Tt=Tt, Rsett=Rsett, gb=r$gb, ht=r$ht),
+                     datapoints=FALSE)
     }
 
     if (!is.na(dev.grid)) {
@@ -1029,8 +1030,9 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     ## Plot
     if (plot.3d) {
-      plot.sphere.spherical(phi, lambda, R, Tt, Rsett)
-      plot.outline.spherical(phi, lambda, R, r$gb, r$ht)
+      plot.spherical(list(phi=phi, lambda=lambda, R=R,
+                          Tt=Tt, Rsett=Rsett, gb=r$gb, ht=r$ht),
+                     datapoints=FALSE)
     }
 
     if (!is.na(dev.grid)) {
@@ -1182,8 +1184,7 @@ ReconstructedOutline <- function(o,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
     ## Initial plot in 3D space
-    plot.sphere.spherical(r$phi, r$lambda, r$R, r$Tt, r$Rsett)
-    plot.outline.spherical(r$phi, r$lambda, r$R, r$gb, r$ht)
+    plot.spherical(r)
   }
 
   report("Optimising mapping with FIRE...")

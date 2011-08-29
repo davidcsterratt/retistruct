@@ -145,3 +145,62 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   }
 
 }
+
+##' Draw a spherical plot of datapoints.
+##'
+##' @title Spherical plot of reconstructed outline
+##' @param r \code{reconstructedOutline} object
+##' @param ... Other graphics parameters -- not used at present
+##' @method plot.spherical reconstructedOutline
+##' @author David Sterratt
+plot.spherical.reconstructedDataset <- function(r, ...) {
+  NextMethod()
+
+  args <- list(...)
+  plot.datapoints <- is.null(args$datapoints) || args$datapoints
+  size <- r$R/10
+  
+  if (plot.datapoints) {
+    Dsc <- r$Dsc
+
+    for (i in 1:length(Dsc)) {
+      Dc <- Dsc[[i]]
+      
+      ## Find axis in z=0 plane that is orthogonal to projection of
+      ## datapoint onto that plane
+      ax1 <- 1/sqrt(apply(Dc[,1:2,drop=FALSE]^2, 1, sum)) * cbind(-Dc[,2], Dc[,1], 0)
+
+      ax1 <- as.matrix(ax1, ncol=3)
+      print("ax1")
+      print(ax1)
+      ## Find axis that is orthogonal to the plane of axis 1 and the
+      ## datapoint
+      ax2 <- extprod3d(Dc, ax1)
+      ax2 <- matrix(ax2, ncol=3)
+      print("ax2")
+      print(ax2)
+
+      ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
+
+      ## Create the verticies of an equillateral triangle to plot
+      v1 <- Dc + size *  ax1/2
+      v2 <- Dc + size * (-ax1/4 + sqrt(3)/4*ax2)
+      v3 <- Dc + size * (-ax1/4 - sqrt(3)/4*ax2)
+
+      ## Plot the triangle inside and outside the sphere
+      inmag <- 0.99
+      outmag <- 1.02
+      
+      x <- rbind(v2[,1], v1[,1], v3[,1])
+      y <- rbind(v2[,2], v1[,2], v3[,2])
+      z <- rbind(v2[,3], v1[,3], v3[,3])
+      triangles3d(inmag*x, inmag*y, inmag*z, color=r$cols[[names(Dsc)[i]]])
+
+      x <- rbind(v1[,1], v2[,1], v3[,1])
+      y <- rbind(v1[,2], v2[,2], v3[,2])
+      z <- rbind(v1[,3], v2[,3], v3[,3])
+      triangles3d(outmag*x, outmag*y, outmag*z, color=r$cols[[names(Dsc)[i]]],
+                  pch=20, ...)
+    }
+  }
+}  

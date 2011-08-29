@@ -203,23 +203,58 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 ##' @method plot.spherical reconstructedOutline
 ##' @author David Sterratt
 plot.spherical.reconstructedOutline <- function(r, ...) {
+  NextMethod()
+  
+  args <- list(...)
+  plot.strain <- !is.null(args$strain) && args$strain
+
   ## FIXME: This needs to be looked at with a view to replacing
   ## functions in plots.R
   with(r, {
     ## Obtain Cartesian coordinates of points
-    Pc <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+    P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+
+    ## Outer triangles
+    fac <- 1.005
+    triangles3d(matrix(fac*P[t(Tt[,c(2,1,3)]),1], nrow=3),
+                matrix(fac*P[t(Tt[,c(2,1,3)]),2], nrow=3),
+                matrix(fac*P[t(Tt[,c(2,1,3)]),3], nrow=3),
+                color="darkgrey", alpha=1)
+  
+    ## Inner triangles
+    triangles3d(matrix(P[t(Tt),1], nrow=3),
+                matrix(P[t(Tt),2], nrow=3),
+                matrix(P[t(Tt),3], nrow=3),
+                color="white", alpha=1)
+
+    ## Plot any flipped triangles
+    ft <- flipped.triangles(phi, lambda, Tt, R)
+    with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
+                      col="blue", size=5))
 
     ## Shrink so that they appear inside the hemisphere
-    P <- Pc*0.99
-    rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-              ...)
+    fac <- 0.997
+    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+              lwd=3)
     
-    P <- Pc*1.001
-    rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-              rbind(P[h[gb[gb]],2], P[h[gb],2]),
-              rbind(P[h[gb[gb]],3], P[h[gb],3]),
-              ...)
+    fac <- 1.006
+    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+              lwd=3)
+
+    if (plot.strain) {
+      o <- getStrains(r)
+      palette(rainbow(100))
+      scols <- strain.colours(o$logstrain)
+
+      fac <- 0.999
+      rgl.lines(fac*rbind(P[Cut[,1],1], P[Cut[,2],1]),
+                fac*rbind(P[Cut[,1],2], P[Cut[,2],2]),
+                fac*rbind(P[Cut[,1],3], P[Cut[,2],3]),
+                color=round(scols), lwd=2)
+    }
   })
 }

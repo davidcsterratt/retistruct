@@ -23,6 +23,8 @@ plot.spherical <- function(r, ...) {
 }
 
 plot.spherical.default <- function(r, ...) {
+  rgl.clear()
+  rgl.bg(color="white")
 }
 
 getDss <- function(x) {

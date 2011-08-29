@@ -72,68 +72,6 @@ plot.l.vs.L <- function(r) {
 ## Spherical plots
 ##
 
-## Function to plot the mesh describing the reconstructed hemisphere
-## in 3D
-##
-## phi    - lattitude of points
-## lambda - longitude of points
-## R      - radius of sphere
-## Tt     - triagulation
-## Rsett  - members of rim set
-##
-plot.sphere.spherical <- function(phi, lambda, R, Tt, Rsett) {
-  ## Now plot this in 3D space....
-  x <- R*cos(phi)*cos(lambda) 
-  y <- R*cos(phi)*sin(lambda)
-  z <- R*sin(phi)
-  P <- cbind(x, y, z)
-  rgl.clear()
-  rgl.bg(color="white")
-
-  ## Outer triangles
-  triangles3d(matrix(1.01*x[t(Tt[,c(2,1,3)])], nrow=3),
-              matrix(1.01*y[t(Tt[,c(2,1,3)])], nrow=3),
-              matrix(1.01*z[t(Tt[,c(2,1,3)])], nrow=3),
-              color="darkgrey", alpha=1)
-  
-  ## Inner triangles
-  triangles3d(matrix(x[t(Tt)], nrow=3),
-              matrix(y[t(Tt)], nrow=3),
-              matrix(z[t(Tt)], nrow=3),
-              color="white", alpha=1)
-
-  ## Plot any flipped triangles
-  ft <- flipped.triangles(phi, lambda, Tt, R)
-  with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
-                    col="blue", size=5))
-}
-
-## Function to plot outline in 3D
-## 
-## phi    - lattitude of points
-## lambda - longitude of points
-## R      - radius of sphere
-## gb     - outline pointer
-## h      - outline correspondences
-##
-plot.outline.spherical <- function(phi, lambda, R, gb, h, ...) {
-  ## Obtain Cartesian coordinates of points
-  Pc <- sphere.spherical.to.sphere.cart(phi, lambda, R)
-
-  ## Shrink so that they appear inside the hemisphere
-  P <- Pc*0.99
-  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-            rbind(P[h[gb[gb]],2], P[h[gb],2]),
-            rbind(P[h[gb[gb]],3], P[h[gb],3]),
-             ...)
-  
-  P <- Pc*1.001
-  rgl.lines(rbind(P[h[gb[gb]],1], P[h[gb],1]),
-            rbind(P[h[gb[gb]],2], P[h[gb],2]),
-            rbind(P[h[gb[gb]],3], P[h[gb],3]),
-             ...)
-}
-
 ## Function to plot data points on a sphere
 ##
 ## It assumes that plot.sphere.spherical has been called already
