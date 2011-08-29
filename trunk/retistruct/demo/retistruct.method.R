@@ -65,9 +65,10 @@ rgl.postscript("initial-projection.pdf", "pdf")
 
 ## Optimise mapping - this takes a few minutes
 alpha <- 8
-x0 <- 0.4
-r <- solve.mapping.cart(m, alpha=alpha, x0=x0, nu=1, dtmax=500, maxmove=1E3,
-                        tol=1e-5, plot.3d=FALSE)
+x0 <- 0.5
+r <- solve.mapping.cart(m, alpha=alpha, x0=x0, nu=1,
+                        dtmax=500, maxmove=1E3, tol=1e-5,
+                        plot.3d=FALSE)
 r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5, 
                       plot.3d=FALSE)
 
