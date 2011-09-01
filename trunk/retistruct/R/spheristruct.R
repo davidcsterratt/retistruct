@@ -824,8 +824,7 @@ Rcart <- function(P, R, Rset, i0, phi0, lambda0) {
 ##' product of two sides of the triangle.
 ##'
 ##' @title Determine indicies of triangles that are flipped
-##' @param phi Vector of lattitudes of points
-##' @param lambda Vector of longitudes of points
+##' @param P Points in Cartesian coordinates
 ##' @param Tt Triangulation of points
 ##' @param R Radius of sphere
 ##' @return List containing:
@@ -833,8 +832,7 @@ Rcart <- function(P, R, Rset, i0, phi0, lambda0) {
 ##' \item{\code{cents}}{Vectors of centres.}
 ##' \item{\code{areas}}{Areas of triangles.}
 ##' @author David Sterratt
-flipped.triangles <- function(phi, lambda, Tt, R) {
-  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+flipped.triangles.cart <- function(P, Tt, R) {
   ## Plot any flipped triangles
   ## First find verticies and find centres and normals of the triangles
   P1 <- P[Tt[,1],]
@@ -848,7 +846,28 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
   flipped <- (-dot(cents, normals) < 0)
   return(list(flipped=flipped, cents=cents, areas=areas))
 }
-  
+
+##' In the projection of points onto the sphere, some triangles maybe
+##' flipped, i.e. in the wrong orientation.  This functions determines
+##' which triangles are flipped by computing the vector pointing to
+##' the centre of each triangle and comparing this direction to vector
+##' product of two sides of the triangle.
+##'
+##' @title Determine indicies of triangles that are flipped
+##' @param phi Vector of lattitudes of points
+##' @param lambda Vector of longitudes of points
+##' @param Tt Triangulation of points
+##' @param R Radius of sphere
+##' @return List containing:
+##' \item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+##' \item{\code{cents}}{Vectors of centres.}
+##' \item{\code{areas}}{Areas of triangles.}
+##' @author David Sterratt
+flipped.triangles <- function(phi, lambda, Tt, R) {
+  return(flipped.triangles.cart(sphere.spherical.to.sphere.cart(phi, lambda, R), Tt, R))
+}
+
+
 ##' Optimise the mapping from the flat outline to the sphere
 ##'
 ##' @title Optimise mapping
@@ -993,7 +1012,12 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   m <- 1/minL
   m <- m/mean(m)
   count <- 10
-  
+
+  stopfun <- function(x) {
+    nflip <- sum(flipped.triangles.cart(x, Tt, 1)$flipped)
+    return(nflip>0)
+  }
+
   while (opt$conv && count) {
     ## Optimise
     ## opt <- optim(opt$p, E, gr=dE,
@@ -1005,6 +1029,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
     opt <- fire(opt$x,
                 force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0, nu)},
                 restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
+                stopfun=stopfun,
                 ##                Tmax=200,
                 dt=1,# gamma=1,
                 nstep=200,
@@ -1200,6 +1225,14 @@ ReconstructedOutline <- function(o,
     plot.spherical(r)
   }
 
+  ## Check for flipped triangles
+  ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
+  nflip <- sum(ft$flipped)
+  
+  if (nflip) {
+    stop(paste(nflip, "flipped triangles after initial projection"))
+  }
+  
   report("Optimising mapping with FIRE...")
 ##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
 ##                        plot.3d=plot.3d,
