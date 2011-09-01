@@ -1012,12 +1012,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   m <- 1/minL
   m <- m/mean(m)
   count <- 10
-
-  stopfun <- function(x) {
-    nflip <- sum(flipped.triangles.cart(x, Tt, 1)$flipped)
-    return(nflip>0)
-  }
-
+  
   while (opt$conv && count) {
     ## Optimise
     ## opt <- optim(opt$p, E, gr=dE,
@@ -1029,7 +1024,6 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
     opt <- fire(opt$x,
                 force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0, nu)},
                 restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
-                stopfun=stopfun,
                 ##                Tmax=200,
                 dt=1,# gamma=1,
                 nstep=200,
@@ -1225,13 +1219,9 @@ ReconstructedOutline <- function(o,
     plot.spherical(r)
   }
 
-  ## Check for flipped triangles
+  ## Check for flipped triangles and record initial number
   ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
-  nflip <- sum(ft$flipped)
-  
-  if (nflip) {
-    stop(paste(nflip, "flipped triangles after initial projection"))
-  }
+  r$nflip0 <- sum(ft$flipped)
   
   report("Optimising mapping with FIRE...")
 ##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),

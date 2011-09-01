@@ -71,6 +71,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
     is.data.dir <- try(check.datadir(dataset))
     EOD <- NA
     nflip <- NA
+    nflip.init <- NA
     E <- NA
     El <- NA
     sqrt.El <- NA
@@ -102,6 +103,7 @@ quit(status=status)",
           if (!is.null(r)) {
             if (!is.null(r$EOD))         { EOD <- r$EOD      }
             if (!is.null(r$nflip))       { nflip <- r$nflip  }
+            if (!is.null(r$nflip0))       { nflip0 <- r$nflip0  }
             if (!is.null(r$opt$value))   { E  <- r$opt$value }
             if (!is.null(r$E.l))         { El <- r$E.l
                                            sqrt.El <- sqrt(r$E.l) }
