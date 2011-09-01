@@ -1,32 +1,6 @@
 ##
-## Plotting functions
+## Utilities for plotting functions
 ## 
-
-## Each function takes a list containing members from the orginal data
-## or derived from the reconstruction procedure
-##
-## General format for function name is
-##
-## plot.<structure>.<view>
-##
-## where <structure> is one of
-## - outline
-## - stitch
-## - sphere
-## - gridlines
-## - datapoints
-## - strain
-##
-## and <view> is one of
-## - flat [default]
-## - spherical
-## - polar
-## - polararea
-##
-
-##
-## Flat plots
-##
 
 ## Generate colours for strain plots
 strain.colours <- function(x) {
@@ -38,17 +12,8 @@ strain.colours <- function(x) {
 }
 
 ## Function to plot the fractional change in length of connections 
-plot.strain.flat <- function(r) {
-  o <- getStrains(r)
-  cols <- strain.colours(o$logstrain)
-  with(r, 
-       segments(P[Cu[,1],1], P[Cu[,1],2],
-                P[Cu[,2],1], P[Cu[,2],2], col=cols))
-}
-
-## Function to plot the fractional change in length of connections 
 plot.l.vs.L <- function(r) {
-  o <- getStrains(r)
+  o <- getStrains(r)$spherical
   op <- par()["mar"]
   par(mar=c(4.5, 4.5, 0.5,0.5))
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
@@ -66,58 +31,6 @@ plot.l.vs.L <- function(r) {
   with(o, text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
                pos=2))
   par(op)
-}
-
-##
-## Spherical plots
-##
-
-## Function to plot data points on a sphere
-##
-## It assumes that plot.sphere.spherical has been called already
-## phi    - lattitude of points
-## lambda - longitude of points
-## R      - radius of sphere
-## Dsc    - structure containing locations of datapoints in spherical
-##          cartesian coordinates
-## size   - size of the points to plot
-plot.datapoints.spherical <- function(phi, lambda, R, Dsc, D.cols, size=R/10) {
-  for(col in names(Dsc)) {
-    Dc <- Dsc[[col]]                      # Cartesian coordinates of points
-
-    ## Code required to plot triangles
-
-    ## Find two axes that are orthogonal to line from the origin to
-    ## the datapoint
-    
-    ## Find axis in z=0 plane that is orthogonal to projection of
-    ## datapoint onto that plane
-    ax1 <- 1/sqrt(apply(Dc[,1:2]^2, 1, sum)) * cbind(-Dc[,2], Dc[,1], 0)
-
-    ## Find axis that is orthogonal to the plane of axis 1 and the
-    ## datapoint
-    ax2 <- extprod3d(Dc, ax1)
-    ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
-
-    ## Create the verticies of an equillateral triangle to plot
-    v1 <- Dc + size *  ax1/2
-    v2 <- Dc + size * (-ax1/4 + sqrt(3)/4*ax2)
-    v3 <- Dc + size * (-ax1/4 - sqrt(3)/4*ax2)
-
-    ## Plot the triangle inside and outside the sphere
-    inmag <- 0.99
-    outmag <- 1.02
-  
-    x <- rbind(v2[,1], v1[,1], v3[,1])
-    y <- rbind(v2[,2], v1[,2], v3[,2])
-    z <- rbind(v2[,3], v1[,3], v3[,3])
-    triangles3d(inmag*x, inmag*y, inmag*z, color=D.cols[[col]])
-
-    x <- rbind(v1[,1], v2[,1], v3[,1])
-    y <- rbind(v1[,2], v2[,2], v3[,2])
-    z <- rbind(v1[,3], v2[,3], v3[,3])
-    triangles3d(outmag*x, outmag*y, outmag*z, color=D.cols[[col]])
-  }
 }
 
 ##
