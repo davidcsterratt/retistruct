@@ -1239,7 +1239,7 @@ ReconstructedOutline <- function(o,
 
   ## SCREEN 3
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
-                          dtmax=500, maxmove=1E3, tol=1e-5,
+                          dtmax=500, maxmove=1E2, tol=1e-6,
                           plot.3d=plot.3d,
                           dev.grid=dev.grid, dev.polar=dev.polar)
   report("Optimising mapping with BFGS...")
