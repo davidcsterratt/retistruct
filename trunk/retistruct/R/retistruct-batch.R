@@ -262,6 +262,7 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##'
 ##' @title Extract statistics from the retistruct-batch.csv summary file
 ##' @param file The path to the retistruct-batch.csv
+##' @return list of various statistics
 ##' @author David Sterratt
 retistruct.batch.analyse.summary <- function(file) {
   dat <- read.csv(file)
@@ -276,13 +277,22 @@ retistruct.batch.analyse.summary <- function(file) {
 
   message("\nSTATISTICS")
   message("sqrt.E")
-  print(summary(sdat[,"sqrt.E"]))
+  sqrt.E <- summary(sdat[,"sqrt.E"])
+  print(sqrt.E)
   message("mean.strain")
-  print(summary(sdat[,"mean.strain"]))
+  mean.strain <- summary(sdat[,"mean.strain"])
+  print(mean.strain)
   message("mean.logstrain")
-  print(summary(sdat[,"mean.logstrain"]))
+  mean.logstrain <- summary(sdat[,"mean.logstrain"])
+  print(mean.logstrain)
   message("time")
-  print(summary(sdat[,"time"]))
+  time <- summary(sdat[,"time"])
+  print(time)
+  message("nflip")
+  nflip <- summary(sdat[,"nflip"])
+  print(nflip)
+  message("%with.flips")
+  with.flips <- mean(sdat[,"nflip"] > 0) * 100
   
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
        xlab=expression(sqrt(E[L])), main="")
@@ -290,5 +300,42 @@ retistruct.batch.analyse.summary <- function(file) {
   message("\nOUTLIERS")
   outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + sd(sqrt.E)))
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
-  print(outliers)
+  ## print(outliers)
+  return(invisible(list(sqrt.E=sqrt.E, mean.strain=mean.strain,
+                        mean.logstrain=mean.logstrain,
+                        time=time, nflip=nflip,
+                        with.flips=with.flips,
+                        outliers=outliers)))
+}
+
+##' Extract statistics from a directory containing
+##' reconstruction directories. 
+##'
+##' @title Extract statistics from a directory containing
+##' reconstruction directories. 
+##' @param path Directory containing recontstruction directories
+##' @return Data frame containg various statistics 
+##' @author David Sterratt
+retistruct.batch.analyse.summaries <- function(path) {
+  files <- list.files(path, recursive=FALSE, full.name=TRUE)
+  fi <- file.info(files)
+  dirs <- row.names(fi[fi$isdir,])
+  out <- data.frame()
+  for (d in dirs) {
+    file <- file.path(d, "retistruct-batch.csv")
+    if (file.exists(file)) {
+      print(file)
+      summ <- try(retistruct.batch.analyse.summary(file))
+      try(print(summ$sqrt.E["Median"]))
+      try(out <- rbind(out, data.frame(file=file,
+                                       sqrt.E.Median=summ$sqrt.E["Median"],
+                                       sqrt.E.Mean=summ$sqrt.E["Mean"],
+                                       nflip.Median=summ$nflip["Median"],
+                                       nflip.Mean=summ$nflip["Mean"],
+                                       nflip.Max=summ$nflip["Max."],
+                                       pc.flipped=summ$with.flips,
+                                       time.Mean=summ$time["Mean"])))
+    }
+  }
+  return(out)
 }
