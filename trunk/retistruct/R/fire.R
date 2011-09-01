@@ -14,13 +14,13 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
 
   for (i in 1:nstep) {
     f <- force(r)
-    frad <- dot(f, r/vecnorm(r))
-    ##print(frad)
-    ftan2 <- dot(f, f) - frad^2
-    ## print(ftan2)
-    frms <- sqrt(mean(f^2))
+    frad2 <- dot(f, r/vecnorm(r))^2
+    ## print(frad2)
+    ftan2 <- dot(f, f) - frad2
+    ##print(ftan2)
+    frms <- sqrt(mean(dot(f, f)))
     ftanrms <- sqrt(mean(ftan2))
-    if (frms < tol) {
+    if (ftanrms < tol) {
       conv <- 0
       break;
     }
