@@ -15,6 +15,9 @@ AnnotatedOutline <- function(o){
   a$VF <- c(x=0)[0]
   a$phi0 <- 0
   a$i0 <- 1
+  a$TFcol <- "cyan"
+  a$TBcol <- "cyan"
+  a$Vcol  <- "cyan"
   return(a)
 }
 
@@ -284,12 +287,12 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
   if (plot.markup) {
     with(a, {
       if (length(V0) > 0) {
-        points(P[VF,,drop=FALSE], col="red", pch="+")
-        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col="red")
-        points(P[VB,,drop=FALSE], col="orange", pch="+")
-        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col="orange")
-        points(P[V0,,drop=FALSE], col="cyan", pch="+")
-        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col="cyan")
+        points(P[VF,,drop=FALSE], col=TFcol, pch="+")
+        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col=TFcol)
+        points(P[VB,,drop=FALSE], col=TBcol, pch="+")
+        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col=TBcol)
+        points(P[V0,,drop=FALSE], col=Vcol, pch="+")
+        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col=Vcol)
       }
       if (!is.null(names(i0))) {
         text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))

@@ -240,13 +240,13 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
     rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
               fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
               fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3)
+              lwd=3, color=TFcol)
     
     fac <- 1.006
     rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
               fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
               fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3)
+              lwd=3, color=TFcol)
 
     if (plot.strain) {
       o <- getStrains(r)

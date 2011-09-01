@@ -239,6 +239,11 @@ retistruct.read.recdata <- function(o) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
+      ## Make Dummy object to carry over properties such as TFcol
+      a <- AnnotatedOutline(list())
+      r$TFcol <- a$TFcol
+      r$TBcol <- a$TBcol
+      r$Vcol <- a$Vcol
       return(r)
     }
   }
