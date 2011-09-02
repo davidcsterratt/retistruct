@@ -140,7 +140,7 @@ and tearing can occur within the rim of the retina or the incisions.
 flatmounted retinae have been used in a variety of
 applications. However, mounting the retina disturbs the retinal
 geometry significantly, which can be problematic in interpreting
-results obtainaed from flatmounted retinae.
+results obtained from flatmounted retinae.
 
 For example, the distribution of mosaics of various cell types has
 been recorded in flatmounted retinae
@@ -277,17 +277,13 @@ $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
 the mean fractional deformation.  
 
-We used our algorithm to reconstruct 226 retinae. The distribution of
+We used our algorithm to reconstruct 208 retinae. The distribution of
 the goodness measure is shown in
-Figure~\ref{retistruct_plos:fig:summary}. It can be seen that there
-are a number of outliers for which reconstruction failed totally and
-then an approximately log-normal distribution
-\todo{May need to be changed with new
-  results}.
+Figure~\ref{retistruct_plos:fig:summary}.
 Figure~\ref{retistruct_plos:fig:examples}A shows an example of a good
-reconstruction with an energy measure $\sqrt{E_\mathrm{L}}=0.039$ and
+reconstruction with an energy measure $\sqrt{E_\mathrm{L}}=0.040$ and
 Figure~\ref{retistruct_plos:fig:examples}B an example of a bad one
-with $\sqrt{E_\mathrm{L}}=0.278$.
+with $\sqrt{E_\mathrm{L}}=0.162$.
 \todo{Note that I am currently playing with the parameters of the
   algorithm having made a subtle change to the error measure, so I
   think there is some room for improvement.}
@@ -321,9 +317,6 @@ with $\sqrt{E_\mathrm{L}}=0.278$.
 
 \subsection*{Validity of the physical model}
 
-\todo{DW suggests that I ``doth protest too much'' in this section. I
-  probably do.}
-
 As far as we are aware, a computational algorithm for reconstructing
 retinae has never been described
 before.\footnote{\todo{DW: But what about optometry?}} The algorithm
@@ -345,36 +338,44 @@ a function of the deformation of the points of the element
 shearing within the material, and materials with varying degrees of
 compressibility (as quantified by Poisson's ratio) can be modelled.
 The FEM is used widely to describe properties of soft tissue in
-simulations of surgery \cite{CartEtal05appl}. The soft tissue is often
-described as a linear-elastic medium, in which the stress depends
-linearly of the strain, but it can also be modelled as a viscoelastic
-medium, in which the stress depends on the history of the strain in
-the material.
+simulations of surgery \cite{CartEtal05appl}. The FEM could be applied
+fairly straightforwardly to the forward problem of how a retina with
+known incisions deforms during flattening. However, it is not possible
+to apply the FEM directly to the problem of mapping the flattened
+retina onto the intact retina: this would require knowledge of the
+stresses and strains in the flattened retina, whereas the only
+information available is the outline of the retina and the location of
+the optic disk.
+
+
+% The soft tissue is often
+% described as a linear-elastic medium, in which the stress depends
+% linearly of the strain, but it can also be modelled as a viscoelastic
+% medium, in which the stress depends on the history of the strain in
+% the material.
 
 % the finite element method is based more strongly on the physics of
 % materials and is regarded as superior \cite{CartEtal05appl}.
 
-In principle, the FEM allows parameters of the material to be measured
-and incorporated in the model in a straightforward way. Given enough
-data about the material properties of retinal tissue, the model could
-be more realistic than the spring-mass model used here.  Weighed
-against this, it is not possible to apply the finite element method
-simply to the problem of mapping the flattened retina onto the intact
-retina, because this would require knowledge of the stresses and
-strains in the flattened retina, whereas the only information
-available is the outline of the retina and the location of the optic
-disk. Also, the standard FEM does not allow for the rotation of
-elements, only their translation or expansion and shearing, though it
-would be possible to overcome this using singlar value decomposition.
 
-Nevertheless, it would be possible to use a modified version of the
-FEM, along with data (or assumptions) about the material properties of
-retinal tissue to model directly the action of the retinal being
-flattened following the dissection cuts. This would lead to a
-prediction of how a retina cut in a particular set of loci would look
-when flattened. Unfortunately, we do not have precise knowledge of
-where the cuts were made in the intact retina or how tears developed,
-so some sort of complex iterative approach would have to be taken.
+% In principle, the FEM allows parameters of the material to be measured
+% and incorporated in the model in a straightforward way. Given enough
+% data about the material properties of retinal tissue, the model could
+% be more realistic than the spring-mass model used here.  Weighed
+% against this, 
+
+%  Also, the standard FEM does not allow for the rotation of
+% elements, only their translation or expansion and shearing, though it
+% would be possible to overcome this using singlar value decomposition.
+
+% Nevertheless, it would be possible to use a modified version of the
+% FEM, along with data (or assumptions) about the material properties of
+% retinal tissue to model directly the action of the retinal being
+% flattened following the dissection cuts. This would lead to a
+% prediction of how a retina cut in a particular set of loci would look
+% when flattened. Unfortunately, we do not have precise knowledge of
+% where the cuts were made in the intact retina or how tears developed,
+% so some sort of complex iterative approach would have to be taken.
 
 % However, the problem of mapping between 2D and 3D surfaces appears in
 % other situations, such as in clothes design and computer animation
@@ -396,8 +397,6 @@ so some sort of complex iterative approach would have to be taken.
 % mapping from 2D surface to 3D surfaces, the effects of forces due to
 % sewing together edges of cloth and of gravity may be incorporated
 % \cite{FanEtal98spri}.
-
-
 
 
 % \subsection*{Potential problems with the method}
@@ -548,7 +547,7 @@ reconstruction process then proceeds as follows:
   triangles from flipping over:
   \begin{equation}
     E = \frac{1}{2|\mathcal{C}|\overline{L}} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
-    + \alpha\sum_{j\in\mathcal{T}} f(a_j/A_j)
+    + \alpha\sum_{j\in\mathcal{T}} (A_j/\overline{A})^\nu f(a_j/A_j)
   \end{equation}
   where $L_i$ and $l_i$ are lengths of corresponding edges
   $i\in\mathcal{C}$ in the flattened and spherical retina
@@ -556,10 +555,12 @@ reconstruction process then proceeds as follows:
   $|\mathcal{C}|$ is the number of edges, $\alpha$ is a constant, $f$
   is a penalty function to be defined below, and $A_j$ and $a_j$ are
   signed areas of corresponding triangles $j\in\mathcal{T}$ in the
-  flattened and spherical retina.  The signed area $a_i$ is positive
-  for triangles in correct orientation, but negative for flipped
-  triangles. The penalty function $f$ is a piecewise, smooth function
-  that increases with negative arguments:
+  flattened and spherical retina, $\overline{A}$ is the mean of $A_j$,
+  and $\nu$ controls how much larger triangles are penalised than
+  smaller ones.  The signed area $a_i$ is positive for triangles in
+  correct orientation, but negative for flipped triangles. The penalty
+  function $f$ is a piecewise, smooth function that increases with
+  negative arguments:
   \begin{equation}
     \label{retistruct_plos:eq:1}
     f(x) = \left\{
@@ -576,6 +577,7 @@ reconstruction process then proceeds as follows:
   the optimisation. The length of each edge $l_i$ is computed from the
   formula for the central angle between its vertices:
   \begin{equation}
+
     \label{retistruct_plos:eq:2}
     l(\phi_1, \lambda_1, \phi_2, \lambda_2) =
     R(\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
@@ -583,10 +585,19 @@ reconstruction process then proceeds as follows:
   \end{equation}
   where $\phi_1$ and $\phi_2$ are the latitudes of the vertices and
   $\lambda_1$ and $\lambda_2$ are the longitudes.  The derivatives of
-  $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and the
-  BFGS quasi-Newton method implemented in the R optim function is used
-  to minimise $E$.\todo{Check that we really do use this function and
-    add FIRE}.
+  $E$ with respect to $\phi_i$ and $\lambda_i$ are computed and used
+  to minimise $E$. The energy surface appears to contain many local
+  minima. Many procedures were tried to optimise the performance of
+  the algorithm, as measured on a corpus of over 200 marked-up
+  retinae. The best procedure found was to first turn off the area
+  penalty by setting $\alpha=0$ and using a modified version of the
+  FIRE algorithm \cite{BitzEtal06stru}. This did a good job of
+  minimising $E_\mathrm{L}$, but left a number of flipped
+  triangles. Another run with FIRE algorithm with $\alpha=8$ and
+  $\nu=1$ got rid of a number of the flipped triangles, dealing
+  preferentially with the biggest. This was followed by a run of the
+  BFGS quasi-Newton method (as implemented in the R optim function)
+  with $\nu=0.5$.
 \item The locations of data points and landmarks on the sphere are
   determined (Figure~\ref{fold-sphere:fig:method}F). To do this, for
   each data point the barycentric coordinates within its containing
@@ -661,28 +672,23 @@ Michael Herrmann.
     a retinal outline (black), three types of data point (red, green
     and yellow circles) and a landmark (blue line). \textbf{(B)}
     Retinal outline with nasal pole (N) and tears marked up. Each pair
-    of red and orange lines indicate the vertices and apex of the five
+    of dark cyan lines connect the vertices and apex of the five
     tears. Note that tear 2 is a child of tear 1. \textbf{(C)} The
     outline after triangulation (shown by grey lines) and stitching,
-    indicated by blue lines between corresponding points on the
-    tears. Green lines indicate connections between tear vertices.
-    \textbf{(D)} The initial projection of the triangulated and
-    stitched outline onto a hemisphere. Tears are shown in
-    white. Below is a representation of lines of latitude and
-    longitude on the flat outline. \textbf{(E)} The projection of the
-    flat retina onto the sphere and the lines of latitude and
-    longitude after optimisation of the mapping. \textbf{(F)} The data
-    represented on a polar plot of the reconstructed retina. Mean
-    locations of the different types of data points are indicated by
-    filled diamonds. The nasal (N), dorsal (D), temporal (T) and
-    ventral (V) poles are indicated. For reference, data is plotted on
-    the flat representation below.
+    indicated by cyan lines between corresponding points on the tears.
+    \textbf{(Di)} The initial projection of the triangulated and
+    stitched outline onto a hemisphere. The strain of each edge is
+    represented on a colour scale with blue indicating compression and
+    red expansion. Tears are shown in cyan. \textbf{(Dii)} The strain
+    plotted on the flat outline with lines of latitude and longitude
+    superposed. \textbf{(Ei,ii)} As \textbf{Di,ii} but after
+    optimisation of the mapping. \textbf{(Fi)} The data represented on
+    a polar plot of the reconstructed retina. Mean locations of the
+    different types of data points are indicated by filled
+    diamonds. The nasal (N), dorsal (D), temporal (T) and ventral (V)
+    poles are indicated. Tears are shown in cyan. \textbf{(Fii)} Data
+    plotted on the flat representation.
     \todo{Figures under D, E and F need to be grouped.}
-    \todo{The spherical representation should be as an open mesh,
-      i.e. grey edges, white surfaces and the cuts in orange or
-      red. Or perhaps with the strains shown to highlight the
-      difference between D and E.}
-    \todo{If we are going to have Di and Dii, we should label it.}
     \todo{Arrows from
       A$\rightarrow$B$\rightarrow$C$\rightarrow$D$\rightarrow$E$\rightarrow$F
       would indicate the progression. }}
@@ -697,18 +703,18 @@ Michael Herrmann.
   &
   \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-strain}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-strain-lvsL}
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-strain-lvsL}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-strain}
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-strain}
   \\
   Aiii & Aiv & Biii & Biv  \\
   \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-flat}
   &
   \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-polar}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-flat}
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-flat}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_adult_single_GM251_R-CONTRA-polar}
+  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-polar}
   \end{tabular}
 
   \caption{\textbf{Examples of reconstructed retinae.} \textbf{(A)}~An
@@ -730,9 +736,9 @@ Michael Herrmann.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{summ16}
+  \includegraphics{retistruct-2011-09-01-CART-CURVI-NU05-TWEAK}
   \caption{\textbf{Histogram of reconstruction errors.}  Successful
-    reconstructions of 226 retinae were made and the energy
+    reconstructions of 208 retinae were made and the energy
     recorded. The energy at the end of each reconstruction was
     recorded and the histogram of the square root of this energy is
     displayed here. For lower values the value of
@@ -758,4 +764,4 @@ Michael Herrmann.
 
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
-% LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th
+% LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
