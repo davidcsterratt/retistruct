@@ -748,7 +748,7 @@ Fcart <- function(P, C, L, B, T, A, R,
   if (verbose==2) { print(l) }
 
   ## Compute general scaling factor
-  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/sqrt(1-(d/2/R)^2)/d
+  fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/c(L, L) #sqrt(1-(d/2/R)^2)/d
 
   ## Now compute the derivatives
   F.E <- B %*% (fac * dP)
@@ -946,7 +946,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     if (!is.na(dev.grid)) {
       dev.set(dev.grid)
-      plot.flat(r, grid=TRUE, 
+      plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 
@@ -1011,7 +1011,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   }
   m <- 1/minL
   m <- m/mean(m)
-  count <- 10
+  count <- 50
   
   while (opt$conv && count) {
     ## Optimise
@@ -1056,7 +1056,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     if (!is.na(dev.grid)) {
       dev.set(dev.grid)
-      plot.flat(r, grid=TRUE, 
+      plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 
@@ -1212,7 +1212,7 @@ ReconstructedOutline <- function(o,
   if (!is.na(dev.grid)) {
     ## Plot of initial gridlines
     dev.set(dev.grid)
-      plot.flat(r, grid=TRUE, 
+      plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
     ## Initial plot in 3D space
@@ -1238,6 +1238,10 @@ ReconstructedOutline <- function(o,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
 
   ## SCREEN 3
+  r <- solve.mapping.cart(r, alpha=0, x0=0, nu=1,
+                          dtmax=500, maxmove=1E2, tol=2e-7,
+                          plot.3d=plot.3d,
+                          dev.grid=dev.grid, dev.polar=dev.polar)
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
                           dtmax=500, maxmove=1E2, tol=1e-6,
                           plot.3d=plot.3d,
