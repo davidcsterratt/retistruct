@@ -1243,7 +1243,7 @@ ReconstructedOutline <- function(o,
                           plot.3d=plot.3d,
                           dev.grid=dev.grid, dev.polar=dev.polar)
   report("Optimising mapping with BFGS...")
-  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0,
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5,
                         plot.3d=plot.3d, 
                         dev.grid=dev.grid, dev.polar=dev.polar)
 
