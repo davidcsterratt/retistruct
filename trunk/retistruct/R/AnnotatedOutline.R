@@ -1,4 +1,5 @@
-##' Constructor for AnnotatedOutline object.
+##'
+##' ##' Constructor for AnnotatedOutline object.
 ##'
 ##' @title Constructor for AnnotatedOutline object
 ##' @param o \code{Outline} object
@@ -15,9 +16,6 @@ AnnotatedOutline <- function(o){
   a$VF <- c(x=0)[0]
   a$phi0 <- 0
   a$i0 <- 1
-  a$TFcol <- "cyan"
-  a$TBcol <- "cyan"
-  a$Vcol  <- "cyan"
   return(a)
 }
 
@@ -287,12 +285,12 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
   if (plot.markup) {
     with(a, {
       if (length(V0) > 0) {
-        points(P[VF,,drop=FALSE], col=TFcol, pch="+")
-        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col=TFcol)
-        points(P[VB,,drop=FALSE], col=TBcol, pch="+")
-        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col=TBcol)
-        points(P[V0,,drop=FALSE], col=Vcol, pch="+")
-        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col=Vcol)
+        points(P[VF,,drop=FALSE], col=getOption("TF.col"), pch="+")
+        segments(P[V0,1], P[V0,2], P[VF,1], P[VF,2], col=getOption("TF.col"))
+        points(P[VB,,drop=FALSE], col=getOption("TB.col"), pch="+")
+        segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col=getOption("TB.col"))
+        points(P[V0,,drop=FALSE], col=getOption("V.col"), pch="+")
+        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col=getOption("V.col"))
       }
       if (!is.null(names(i0))) {
         text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))

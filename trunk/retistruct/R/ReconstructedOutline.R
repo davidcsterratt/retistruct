@@ -190,7 +190,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     ## Plot
     x <- with(r, cos(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
     y <- with(r, sin(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
-    suppressWarnings(lines(x, y, ...))
+    suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
   }
 }
 
@@ -240,13 +240,13 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
     rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
               fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
               fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=TFcol)
+              lwd=3, color=getOption("TF.col"))
     
     fac <- 1.006
     rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
               fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
               fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=TFcol)
+              lwd=3, color=getOption("TF.col"))
 
     if (plot.strain) {
       o <- getStrains(r)

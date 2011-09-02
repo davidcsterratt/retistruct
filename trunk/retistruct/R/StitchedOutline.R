@@ -5,29 +5,26 @@ plot.flat.stitchedOutline <- function(s, axt="n", ylim=NULL, ...) {
 
   if (plot.stitch) {
     with(s, {
-      points(P[VF,], col=TFcol, pch="+")
-      points(P[VB,], col=TBcol, pch="+")
-      points(P[V0,], col=Vcol, pch="+")
       for (TF in TFset) {
-        suppressWarnings(lines(P[TF,], col=TFcol, ...))
+        suppressWarnings(lines(P[TF,], col=getOption("TF.col"), ...))
       }
       for (TB in TBset) {
-        suppressWarnings(lines(P[TB,], col=TBcol, ...))
+        suppressWarnings(lines(P[TB,], col=getOption("TB.col"), ...))
       }
       for (j in 1:length(h)) {
         if (h[j] != j) {
-          suppressWarnings(lines(P[c(j, h[j]),], col="blue", ...))
+          suppressWarnings(lines(P[c(j, h[j]),], col=getOption("stitch.col"), ...))
         }
       }
       
       for (j in 1:length(hf)) {
         if (hf[j] != j) {
-          suppressWarnings(lines(P[c(j, hf[j]),], col="green", ...))
+          suppressWarnings(lines(P[c(j, hf[j]),], col=getOption("stitch.col"), ...))
         }
       }
       for (j in 1:length(hb)) {
         if (hb[j] != j) {
-          suppressWarnings(lines(P[c(j, hb[j]),], col="green", ...))
+          suppressWarnings(lines(P[c(j, hb[j]),], col=getOption("V.stitch.col"), ...))
         }
       }
     })
