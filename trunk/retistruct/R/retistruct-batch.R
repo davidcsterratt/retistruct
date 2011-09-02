@@ -103,7 +103,7 @@ quit(status=status)",
           if (!is.null(r)) {
             if (!is.null(r$EOD))         { EOD <- r$EOD      }
             if (!is.null(r$nflip))       { nflip <- r$nflip  }
-            if (!is.null(r$nflip0))       { nflip0 <- r$nflip0  }
+            if (!is.null(r$nflip0))      { nflip0 <- r$nflip0  }
             if (!is.null(r$opt$value))   { E  <- r$opt$value }
             if (!is.null(r$E.l))         { El <- r$E.l
                                            sqrt.El <- sqrt(r$E.l) }
@@ -123,6 +123,7 @@ quit(status=status)",
                                        E=E,
                                        El=El,
                                        nflip=nflip,
+                                       nflip0=nflip0,
                                        EOD=EOD,
                                        sqrt.E=sqrt.E,
                                        mean.strain=mean.strain,
