@@ -277,16 +277,28 @@ $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
 the mean fractional deformation.  
 
-We used our algorithm to reconstruct 208 retinae. The distribution of
-the goodness measure is shown in
-Figure~\ref{retistruct_plos:fig:summary}.
-Figure~\ref{retistruct_plos:fig:examples}A shows an example of a good
-reconstruction with an energy measure $\sqrt{E_\mathrm{L}}=0.040$ and
-Figure~\ref{retistruct_plos:fig:examples}B an example of a bad one
-with $\sqrt{E_\mathrm{L}}=0.162$.
-\todo{Note that I am currently playing with the parameters of the
-  algorithm having made a subtle change to the error measure, so I
-  think there is some room for improvement.}
+We used our algorithm to reconstruct 224 retinae.
+Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
+with the lowest energy measure $\sqrt{E_\mathrm{L}}=0.038$ and
+Figure~\ref{retistruct_plos:fig:examples}B the example with the
+highest $\sqrt{E_\mathrm{L}}=0.147$. The arrangement of the gridlines
+in the example with lower error looks qualitative smoother and more
+even than in the example with higher energy measure
+(Figures~\ref{retistruct_plos:fig:examples}Aiii
+and~\ref{retistruct_plos:fig:examples}Biii). The strain plot for the
+retina with the lower energy
+(Figure~\ref{retistruct_plos:fig:examples}Aii) indicates that almost
+all edges are unstressed, whereas in the retina with higher energy
+there are many more compressed and expanded edges. It can be seen that
+the retina in Figure~\ref{retistruct_plos:fig:examples}B has a much
+less distinct rim than in Figure~\ref{retistruct_plos:fig:examples}A,
+and this makes it harder for the algorithm to create an even mapping,
+as local roughness in the rim forces significant deformation of the
+surrouding virutual tissue when projected back onto the spehere.
+
+The distribution of the goodness measure is shown in
+Figure~\ref{retistruct_plos:fig:summary}. The mean with 0.073, with a
+median value of 0.0736. 
 
 \subsection*{Validation of the reconstruction algorithm}
 
@@ -577,7 +589,6 @@ reconstruction process then proceeds as follows:
   the optimisation. The length of each edge $l_i$ is computed from the
   formula for the central angle between its vertices:
   \begin{equation}
-
     \label{retistruct_plos:eq:2}
     l(\phi_1, \lambda_1, \phi_2, \lambda_2) =
     R(\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
@@ -697,24 +708,25 @@ Michael Herrmann.
 
 \begin{figure}[!ht]
   \centering
+  \fontfamily{phv}\bfseries\selectfont
   \begin{tabular}{llll}
     Ai & Aii & Bi & Bii  \\
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-strain-lvsL}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/nAChR-B2_adult_GMB530_R-CONTRA-strain-lvsL}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-strain}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/nAChR-B2_adult_GMB530_R-CONTRA-strain}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-strain-lvsL}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/C57BL6J_P0_ML_GM182-4_R-CONTRA-strain-lvsL}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-strain}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/C57BL6J_P0_ML_GM182-4_R-CONTRA-strain}
   \\
   Aiii & Aiv & Biii & Biv  \\
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-flat}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/nAChR-B2_adult_GMB530_R-CONTRA-flat}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P2_AP_GM367-7_R-CONTRA-polar}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/nAChR-B2_adult_GMB530_R-CONTRA-polar}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-flat}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/C57BL6J_P0_ML_GM182-4_R-CONTRA-flat}
   &
-  \includegraphics[width=0.24\linewidth]{C57BL6J_P4_AP_GM142-5_CONTRA-polar}
+  \includegraphics[width=0.24\linewidth]{images-2011-09-02/C57BL6J_P0_ML_GM182-4_R-CONTRA-polar}
   \end{tabular}
 
   \caption{\textbf{Examples of reconstructed retinae.} \textbf{(A)}~An
@@ -726,23 +738,18 @@ Michael Herrmann.
     representation of lines of latitude and longitude with data
     points. \textbf{(Aiv)}~The polar representation with data
     points. \textbf{(B)}~An example of a bad reconstruction. Meaning of
-    \textbf{(Bi--iv)} same as for \textbf{(A)}. \todo{These figures are
-    not necessarily the final ones. Labels need to be increased in
-    size. Hopefully the bad retina will get better -- I am
-    experimenting with values of $\alpha$ and $x_0$.}.
-  }
+    \textbf{(Bi--iv)} same as for \textbf{(A)}.}
   \label{retistruct_plos:fig:examples}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{retistruct-2011-09-01-CART-CURVI-NU05-TWEAK}
+  \includegraphics{retistruct-2011-09-02-LFIRST}
   \caption{\textbf{Histogram of reconstruction errors.}  Successful
-    reconstructions of 208 retinae were made and the energy
-    recorded. The energy at the end of each reconstruction was
-    recorded and the histogram of the square root of this energy is
-    displayed here. For lower values the value of
-    $\sqrt{E_\mathrm{L}}$ is similar to the mean percentage
+    reconstructions of 224 retinae were made. The energy at the end of
+    each reconstruction was recorded and the histogram of the square
+    root of this energy is displayed here. For lower values the value
+    of $\sqrt{E_\mathrm{L}}$ is similar to the mean percentage
     deformation.}
   \label{retistruct_plos:fig:summary}
 \end{figure}
@@ -765,3 +772,4 @@ Michael Herrmann.
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
 % LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
+% LocalWords:  colliculus geniculate vivo
