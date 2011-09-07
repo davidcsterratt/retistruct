@@ -275,13 +275,20 @@ retistruct.batch.analyse.summary <- function(file) {
   message("OUPUT CODES")
   message(rbind(format(etab, width=4), " ", paste(gsub("\n", "\n   ", gsub("\n$", "", names(etab))), "\n")))
 
+  sqrt.E.fail <- 0.2
+  
   ## Get number of failures due to lack of time
   N.outtime <- sum(na.omit(dat$status) == 1)
-  
+
   ## Get successful reconstructions
   sdat <- subset(dat, !is.na(sqrt.E) & status==0)
 
+  ## Get number of failures due to sqrt.E being too large
+  N.fail <- nrow(subset(sdat, sqrt.E >= sqrt.E.fail))
+  sdat <- subset(sdat, sqrt.E < sqrt.E.fail)
+  
   message("\nSTATISTICS")
+  
   message("sqrt.E")
   sqrt.E <- summary(sdat[,"sqrt.E"])
   print(sqrt.E)
@@ -304,11 +311,12 @@ retistruct.batch.analyse.summary <- function(file) {
        xlab=expression(sqrt(E[L])), main="")
 
   message("\nOUTLIERS")
-  outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + sd(sqrt.E)))
+  outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
   ## print(outliers)
   return(invisible(list(N=nrow(sdat),
                         N.outtime=N.outtime,
+                        N.fail=N.fail,
                         sqrt.E=sqrt.E, mean.strain=mean.strain,
                         mean.logstrain=mean.logstrain,
                         time=time, nflip=nflip,
@@ -338,6 +346,7 @@ retistruct.batch.analyse.summaries <- function(path) {
       try(out <- rbind(out, data.frame(file=file,
                                        N=summ$N,
                                        N.outtime=summ$N.outtime,
+                                       N.fail=summ$N.fail,
                                        sqrt.E.Median=summ$sqrt.E["Median"],
                                        sqrt.E.Mean=summ$sqrt.E["Mean"],
                                        nflip.Median=summ$nflip["Median"],
