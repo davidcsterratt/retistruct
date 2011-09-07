@@ -18,6 +18,9 @@ if (!require("ttutils"))       install.packages("ttutils")
 if (!require("multicore"))     install.packages("multicore")
 if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
 update.packages(Sys.getenv("R_LIBS_USER"))
+## These lines needed while  Triangle and geometry only on R-Forge
+install.packages("Triangle", repos="http://R-Forge.R-project.org")
+install.packages("geometry", repos="http://R-Forge.R-project.org")
 ## Now install retistruct
 install.packages("retistruct_0.4.0.tar.gz")
 install.packages("retistructgui_0.4.0.tar.gz")
