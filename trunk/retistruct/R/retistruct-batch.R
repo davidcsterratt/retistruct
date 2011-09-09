@@ -220,7 +220,9 @@ retistruct.batch.summary <- function(tldir=".") {
                                          EOD=n(r$EOD),
                                          sqrt.E=n(sqrt(r$E.l)),
                                          mean.strain=n(r$mean.strain),
-                                         mean.logstrain=n(r$mean.logstrain)))
+                                         mean.logstrain=n(r$mean.logstrain),
+                                         OD.phi=n(r$Dss$OD[1,"phi"]),
+                                         OD.lambda=n(r$Dss$OD[1,"lambda"])))
     }
   }
   return(logdat)
@@ -357,4 +359,24 @@ retistruct.batch.analyse.summaries <- function(path) {
     }
   }
   return(out)
+}
+
+##' Polar plot of ODs of a group of retinae.
+##'
+##' @title Superposed plot of ODs on polar axes
+##' @param summ Summary object returned by \link{\code{retistruct.batch.summary}} 
+##' @return A pseudo retina, in which the optic disks are treated as
+##' datapoints 
+##' @author David Sterratt
+retistruct.batch.plot.ods <- function(summ) {
+  ## Make a dummy retina
+  o <- list()
+  class(o) <- "reconstructedOutline"
+  o$phi0 <- 20*pi/180
+  r <- ReconstructedDataset(o)
+  r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
+  colnames(r$Dss$OD) <- c("phi", "lambda")
+  r$cols["OD"] <- "blue"
+  plot.polar(r)
+  return(r)
 }
