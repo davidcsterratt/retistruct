@@ -6,6 +6,15 @@ retistruct.report <- function(message, title="",...) {
   cat(paste(message, "\n", sep=""))
 }
 
+## Function to check the wether the directory in question is a data
+## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
+## error if the directory appears to be corrupt.
+check.datadir <- function(dir=NULL) {
+  if (idt.check.datadir(dir)) { return("idt") }
+  if (csv.check.datadir(dir)) { return("csv") }
+  return(FALSE)
+}
+
 ##' Read one of the Thompson lab's retinal datasets. Each dataset is a
 ##' folder containing a SYS file in SYSTAT format and a MAP file in
 ##' text format. The SYS file specifies the locations of the data
@@ -35,63 +44,13 @@ retistruct.report <- function(message, title="",...) {
 ##' \item{Ss}{List of landmark lines}
 ##' }
 ##' @author David Sterratt
-retistruct.read.dataset <- function(dataset, d.close=0.25) {
+retistruct.read.dataset <- function(dataset, ...) {
   ## Check to see if dataset is valid
-  check.datadir(dataset)
+  type <- check.datadir(dataset)
   
-  ## Read the raw data
-  map <- read.map(dataset)
-  sys <- read.sys(dataset)
+  if (type=="idt") { return(idt.read.dataset(dataset, ...))}
+  if (type=="csv") { return(csv.read.dataset(dataset, ...))}
 
-  ## Extract datapoints
-  ##
-  ## At present, for the plotting functions to work, the name of each
-  ## group has to be a valid colour.
-  Ds <- list(green =cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
-             red   =cbind(
-               na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
-               na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
-             double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
-  cols <- list(green="green",
-               red="red",
-               double="yellow",
-               OD="blue",
-               default="orange")
-  
-  ## Extract line data
-  segs <- map.to.segments(map)
-
-  ## Connect together segments that look to be joined
-  Ss <- connect.segments(segs)
-
-  ## Determine the lengths of the segments
-  l <- c()
-  for (i in 1:length(Ss)) {
-    l[i] <- segment.length(Ss[[i]])
-  }
-
-  ## The outline (P) is the longest connected segment and the outline
-  ## is removed from the list of segments
-  P  <- Ss[[which.max(l)]]
-  Ss <- Ss[-which.max(l)]
-  ## if (length(Ss) > 0) {
-  ##   names(Ss) <- 1:length(Ss)
-  ## }
-  
-  ## Create forward and backward pointers
-  o <- Outline(P)
-  o <- simplify.outline(o)
-  
-  ## Check that P is more-or-less closed
-  if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
-     plot.map(map, TRUE)
-     points(P[c(1,nrow(P)),], col="black")
-     stop("Unable to find a closed outline.")
-  }
-
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
-  a <- AnnotatedOutline(d)
-  a <- RetinalDataset(a)
   return(a)
 }
 

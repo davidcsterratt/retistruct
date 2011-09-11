@@ -1,7 +1,7 @@
 ## Function to check the wether the directory in question is a data
 ## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
 ## error if the directory appears to be corrupt.
-check.datadir <- function(dir=NULL) {
+idt.check.datadir <- function(dir=NULL) {
   sys <- file.exists(file.path(dir, "SYS.SYS"))
   map <- file.exists(file.path(dir, "ALU.MAP"))
   if (sys  & map ) return(TRUE)
@@ -254,3 +254,88 @@ segment.to.pointers <- function(P) {
 }
 
 
+##' Read one of the Thompson lab's retinal datasets. Each dataset is a
+##' folder containing a SYS file in SYSTAT format and a MAP file in
+##' text format. The SYS file specifies the locations of the data
+##' points and the MAP file specifies the outline. 
+##'
+##' The function returns the outline of the retina. In order to do so,
+##' it has to join up the segments of the MAP file. The tracings are
+##' not always precise; sometimes there are gaps between points that
+##' are actually the same point. The parameter \code{d.close} specifies
+##' how close points must be to count as the same point.
+##' 
+##' @title Read one of the Thompson lab's retinal datasets
+##' @param dataset Path to directory containing as SYS and MAP file
+##' @param d.close Maximum distance between points for them to count
+##' as the same point. This is expressed as a fraction of the width of
+##' the outline.
+##' @return 
+##' \item{dataset}{The path to the directory given as an argument}
+##' \item{raw}{List containing\describe{
+##'    \item{\code{map}}{The raw MAP data}
+##'    \item{\code{sys}}{The raw SYS data}
+##' }}
+##' \item{P}{The points of the outline}
+##' \item{gf}{Forward pointers along the outline}
+##' \item{gb}{Backward pointers along the outline}
+##' \item{Ds}{List of datapoints}
+##' \item{Ss}{List of landmark lines}
+##' }
+##' @author David Sterratt
+idt.read.dataset <- function(dataset, d.close=0.25) {
+  ## Read the raw data
+  map <- read.map(dataset)
+  sys <- read.sys(dataset)
+
+  ## Extract datapoints
+  ##
+  ## At present, for the plotting functions to work, the name of each
+  ## group has to be a valid colour.
+  Ds <- list(green =cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
+             red   =cbind(
+               na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
+               na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
+             double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
+  cols <- list(green="green",
+               red="red",
+               double="yellow",
+               OD="blue",
+               default="orange")
+  
+  ## Extract line data
+  segs <- map.to.segments(map)
+
+  ## Connect together segments that look to be joined
+  Ss <- connect.segments(segs)
+
+  ## Determine the lengths of the segments
+  l <- c()
+  for (i in 1:length(Ss)) {
+    l[i] <- segment.length(Ss[[i]])
+  }
+
+  ## The outline (P) is the longest connected segment and the outline
+  ## is removed from the list of segments
+  P  <- Ss[[which.max(l)]]
+  Ss <- Ss[-which.max(l)]
+  ## if (length(Ss) > 0) {
+  ##   names(Ss) <- 1:length(Ss)
+  ## }
+  
+  ## Create forward and backward pointers
+  o <- Outline(P)
+  o <- simplify.outline(o)
+  
+  ## Check that P is more-or-less closed
+  if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
+     plot.map(map, TRUE)
+     points(P[c(1,nrow(P)),], col="black")
+     stop("Unable to find a closed outline.")
+  }
+
+  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
+  a <- AnnotatedOutline(d)
+  a <- RetinalDataset(a)
+  return(a)
+}
