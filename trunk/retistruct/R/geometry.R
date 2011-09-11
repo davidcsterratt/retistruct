@@ -324,15 +324,18 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 ##' columns \\code{phi} (lattitude) and \code{lambda} (longitude)
 ##' @param a logical value indicating whether \code{NA} values should
 ##' be stripped before the computation proceeds.
+##' @param var logical value indicating whether variance should be
+##' returned too.
 ##' @return Vector of means with components named \code{phi} and
-##' \code{lambda}.
+##' \code{lambda}. If \code{var} is \code{TRUE}, a list containing
+##' mean and varience in elements \code{mean} and \code{var}.
 ##' @references Heo, G. and Small, C. G. (2006). Form representations
 ##' and means for landmarks: A survey and comparative
 ##' study. \emph{Computer Vision and Image Understanding},
 ##' 102:188-203.
 ##' @seealso \code{\link{central.angle}}
 ##' @author David Sterratt
-karcher.mean.sphere <- function(x, na.rm=FALSE) {
+karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   if (na.rm) {
     x <- na.omit(x)
   }
@@ -344,6 +347,7 @@ karcher.mean.sphere <- function(x, na.rm=FALSE) {
   P <- cbind(cos(x[,"phi"])*cos(x[,"lambda"]),
              cos(x[,"phi"])*sin(x[,"lambda"]),
              sin(x[,"phi"]))
+  N <- nrow(P)
   P.mean <- apply(P, 2, mean)
   phi.mean <-    asin(P.mean[3])
   lambda.mean <- atan2(P.mean[2], P.mean[1])
@@ -352,12 +356,17 @@ karcher.mean.sphere <- function(x, na.rm=FALSE) {
   if (all(!is.nan(c(phi.mean, lambda.mean)))) {
     opt <- optim(c(phi.mean, lambda.mean),
                  function(p) { sum((central.angle(x[,"phi"], x[,"lambda"], p[1], p[2]))^2) })
-    X <- opt$par
-    names(X) <- c("phi", "lambda")
-    return(X)
+    mu <- opt$par
+    names(mu) <- c("phi", "lambda")
+    if (var) {
+      X <- list(mean=mu, var=opt$value/N)
+    } else {
+      X <- mu
+    }
   } else {
-    return(cbind(phi=NaN, lambda=NaN))
+    X <- cbind(phi=NaN, lambda=NaN)
   }
+  return(X)
 }
 
 ## karcher.variance.sphere <- function()

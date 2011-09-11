@@ -364,7 +364,8 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' Polar plot of ODs of a group of retinae.
 ##'
 ##' @title Superposed plot of ODs on polar axes
-##' @param summ Summary object returned by \link{\code{retistruct.batch.summary}} 
+##' @param summ Summary object returned by
+##' \code{\link{retistruct.batch.summary}}
 ##' @return A pseudo retina, in which the optic disks are treated as
 ##' datapoints 
 ##' @author David Sterratt
@@ -377,6 +378,12 @@ retistruct.batch.plot.ods <- function(summ) {
   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
   colnames(r$Dss$OD) <- c("phi", "lambda")
   r$cols["OD"] <- "blue"
+  
+  km <- karcher.mean.sphere(r$Dss$OD, na.rm=TRUE, var=TRUE)
+  message("Mean: Lat ", format(km$mean["phi"]*180/pi, digits=3),
+          " Long ", format(km$mean["lambda"]*180/pi, digits=3),
+          " ; SD: ", format(sqrt(km$var)*180/pi, digits=3))
+
   plot.polar(r)
   return(r)
 }
