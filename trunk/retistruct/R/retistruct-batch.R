@@ -32,7 +32,7 @@ list.datasets <- function(path='.', verbose=FALSE) {
     id.data.dir <- TRUE
     ## Case of faulty directory
     tryCatch({
-      is.data.dir <- check.datadir(d)
+      is.data.dir <- is.character(check.datadir(d))
     }, error=function(e) {})
 
     if (!is.data.dir) {

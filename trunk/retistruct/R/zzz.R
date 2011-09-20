@@ -5,4 +5,7 @@
   options(V.col="darkcyan")
   options(stitch.col="cyan")
   options(V.stitch.col="darkcyan")
+  options(grid.maj.col="black")
+  options(grid.min.col="grey")
+  options(outline.col="black")
 }

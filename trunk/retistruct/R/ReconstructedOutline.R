@@ -87,7 +87,8 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   if (plot.grid) {
     grid.int.minor <- 15
     grid.int.major <- 45
-    grid.col <- "gray"
+    grid.maj.col <- getOption("grid.maj.col")
+    grid.min.col <- getOption("grid.min.col")
 
     phi0d <- r$phi0 * 180/pi
     
@@ -95,17 +96,17 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
     Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
     for (Phi in Phis) {
       if ((!(Phi %% grid.int.major) || Phi == phi0d)) {
-        col <- "black"
+        col <- grid.maj.col
       } else {
-        col <- grid.col
+        col <- grid.min.col
       }
       with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...))
     }
     for (Lambda in Lambdas) {
       if (!(Lambda %% grid.int.major)) {
-        col <- "black"
+        col <- grid.maj.col
       } else {
-        col <- grid.col
+        col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
       with(r, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))

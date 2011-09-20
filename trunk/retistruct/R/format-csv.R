@@ -24,6 +24,15 @@ csv.read.dataset <- function(dataset) {
   ## Read the raw data
   out <- read.csv(file.path(dataset, "outline.csv"))
 
+  ## If there is an image, read it
+  im <- NULL
+  imfile <- file.path(dataset, "image.png")
+  if (file.exists(imfile)) {
+    print("Reading image")
+    im <- as.raster(readPNG(imfile))
+    print(dim(im))
+  }
+  
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each
@@ -34,10 +43,14 @@ csv.read.dataset <- function(dataset) {
   ## The outline (P) is the longest connected segment and the outline
   ## is removed from the list of segments
   P  <- out
+  if (!is.null(im)) {
+    message("Image present, so flipping P to align coordinates")
+    P[,2] <- nrow(im) - P[,2] + 1
+  }
   Ss <- list()
   
   ## Create forward and backward pointers
-  o <- Outline(P)
+  o <- Outline(P, im)
   o <- simplify.outline(o)
   
   ## Check that P is more-or-less closed

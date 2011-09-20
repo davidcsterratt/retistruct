@@ -1,4 +1,5 @@
-Outline <- function(P) {
+##' @param im A raster image
+Outline <- function(P, im=NULL) {
   o <- list()
   o$P <- P
   o$h <- 1:nrow(P)
@@ -7,20 +8,32 @@ Outline <- function(P) {
   o$P <- t$P
   o$gf <- t$gf
   o$gb <- t$gb
+  o$im <- im
   return(o)
 }
 
 plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   args <- list(...)
+  plot.image <- is.null(args$image) || args$image
   with(o, {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
     par(mar=c(1.4, 1.4, 1, 1), mgp=c(2, 0.2, 0), tcl=-0.2)
-    
-    suppressWarnings(plot(P[s,1], P[s,2],
+
+    if (plot.image && !is.null(o$im)) {
+      xs <- 1:ncol(im)
+      ys <- 1:nrow(im)
+      plot(NA, NA, xlim=range(xs), ylim=range(ys))
+      ## image(xs, ys, t(im), zlim=range(im))
+      ## rasterImage crashes on some systems, but not others.
+      rasterImage(im, 1, 1, ncol(im), nrow(im))
+    } else {
+      suppressWarnings(plot(P[s,1], P[s,2],
                           pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
                           bty="n", ylim=ylim, ...))
-    suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2], ...))
+    }
+    suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2],
+                              col=getOption("outline.col"), ...))
   })
 }
 
@@ -232,6 +245,6 @@ simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
     message(paste("simplify.outline: Removing vertex", i.rem[1]))
     return(simplify.outline(list(P=P[-i.rem[1],])))
   } else {
-    return(Outline(P))
+    return(Outline(P, o$im))
   }
 }
