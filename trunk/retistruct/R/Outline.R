@@ -18,12 +18,14 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   with(o, {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
-    par(mar=c(1.4, 1.4, 1, 1), mgp=c(2, 0.2, 0), tcl=-0.2)
-
+    ## par(mar=c(1.4, 1.4, 1, 1), mgp=c(2, 0.2, 0), tcl=-0.2)
+    
     if (plot.image && !is.null(o$im)) {
       xs <- 1:ncol(im)
       ys <- 1:nrow(im)
-      plot(NA, NA, xlim=range(xs), ylim=range(ys))
+      plot(NA, NA, xlim=range(xs), ylim=range(ys),
+           xaxt=axt, yaxt=axt, bty="n",
+           xlab="", ylab="")
       ## image(xs, ys, t(im), zlim=range(im))
       ## rasterImage crashes on some systems, but not others.
       rasterImage(im, 1, 1, ncol(im), nrow(im))
