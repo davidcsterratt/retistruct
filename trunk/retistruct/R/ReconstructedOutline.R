@@ -134,7 +134,9 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.int.major=45,
                                             flip.horiz=FALSE,
                                             labels=c(0, 90, 180, 270), ...) {
-
+  args <- list(...)
+  plot.image <- is.null(args$image) || args$image
+      
   phi0d <- r$phi0*180/pi
   par(mar=c(0.5, 0.5, 0.5, 0.5))
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
@@ -146,7 +148,31 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   }
   plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
+  if (plot.image && !is.null(r$im)) {
+    ## Find grid line coordinates
+    with(r, {
+      xs <- 1:ncol(im)
+      ys <- nrow(im):1
 
+      ## Create grid coords
+      I <- cbind(as.vector(outer(ys*0, xs, FUN="+")),
+                 as.vector(outer(ys, xs*0, FUN="+")))
+      ts <- tsearchn(P, T, I)
+      cols <- im[!is.na(ts$idx)]
+      Ib <- list(idx=na.omit(ts$idx), p=ts$p[!is.na(ts$idx),])
+      Ic <- bary.to.sphere.cart(phi, lambda, R, Tt, Ib)
+      print(length(cols))
+      print(dim(Ic))
+      Is <- sphere.cart.to.sphere.spherical(Ic, R)
+      phis    <- Is[,"phi"]
+      lambdas <- Is[,"lambda"]
+      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+      suppressWarnings(points(xpos, ypos, col=cols,
+                              pch='.', cex=3, ...))
+    })
+  }
+  
   ## Plot the grid
   ## Tangnential lines
   angles <- seq(0, 1.96 * pi, by = 0.04 * pi)
