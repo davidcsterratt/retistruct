@@ -1,3 +1,50 @@
+##' Transform an image into the reconstructed space. The four corner
+##' coordinates of each pixel are transformed into spherical
+##' coordinates and a mask matrix with the same dimensions as
+##' \code{im} is created. This has \code{TRUE} for pixels that should
+##' be displayed and \code{FALSE} for ones that should not.
+##'
+##' @title Transform an image into the reconstructed space
+##' @param r \code{reconstructedOutline} object
+##' @return \code{reconstructedOutline} object with extra elements
+##' \item{\code{ims}}{Coordinates of corners of pixes in spherical coordinates}
+##' \item{\code{immask}}{Mask matrix with same dimensions as image \code{im}}
+##' @author David Sterratt
+transform.image.reconstructedOutline <- function(r) {
+  if (!is.null(r$im)) {
+    ## Need to find the *boundaries* of pixels
+    N <- ncol(r$im)
+    M <- nrow(r$im)
+
+    ## Create grid coords of corners of pixels.  These run from the
+    ## top left of the image down each column of the image.
+    xs <- 0:N
+    ys <- M:0
+    ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid 
+    Ix <- outer(ys*0, xs, FUN="+")
+    ## Ditto for y-coords
+    Iy <- outer(ys, xs*0, FUN="+")
+    ## Join to give (x, y) coordinates of all corners
+    I  <- cbind(as.vector(Ix), as.vector(Iy))
+    
+    ## Find Barycentric coordinates of corners of pixels
+    Ib <- tsearchn(r$P, r$T, I)
+    
+    ## Create mask depending on whether corners are in outline
+    idx <- matrix(Ib$idx, M+1, N+1)
+    r$immask <- (!is.na(idx[1:M    , 1:N    ]) & 
+               !is.na(idx[1:M    , 2:(N+1)]) &
+               !is.na(idx[2:(M+1), 1:N    ]) &
+               !is.na(idx[2:(M+1), 2:(N+1)]))
+
+    ## Convert to spherical coordinates
+    Ic <- with(r, bary.to.sphere.cart(phi, lambda, R, Tt, Ib))
+    r$ims <- with(r, sphere.cart.to.sphere.spherical(Ic, R))
+  }
+  return(r)
+}
+
+
 ##' Get spherical coordinates of tears.
 ##'
 ##' @title Get spherical coordinates of tears.
@@ -149,70 +196,30 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
   if (plot.image && !is.null(r$im)) {
-    ## Find grid line coordinates
+    ## Reconstitute image from stored values of phi and lambda
+    ## coordinates of corners of pixels
     with(r, {
-      ## Need to find the *boundaries* of pixels
-      N <- ncol(im)
-      M <- nrow(im)
-      xs <- 0:N
-      ys <- M:0
+      N <- ncol(r$im)
+      M <- nrow(r$im)
 
-      ## Create grid coords of corners of pixels.  These run from the
-      ## top left of the image down each column of the image.
-      ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid 
-      Ix <- outer(ys*0, xs, FUN="+")
-      ## Ditto for y-coords
-      Iy <- outer(ys, xs*0, FUN="+")
-      ## Join to give (x, y) coordinates of all corners
-      I  <- cbind(as.vector(Ix), as.vector(Iy))
-      
-      ## Find Barycentric coordinates of corners of pixels
-      Ib <- tsearchn(P, T, I)
-      
-      ## Create mask depending on whether corners are in outline
-      idx <- matrix(Ib$idx, M+1, N+1)
-      mask <- (!is.na(idx[1:M    , 1:N    ]) & 
-               !is.na(idx[1:M    , 2:(N+1)]) &
-               !is.na(idx[2:(M+1), 1:N    ]) &
-               !is.na(idx[2:(M+1), 2:(N+1)]))
-      ## Only plot pixels for which all four corners are in outline
-      
-      ## cols <- im[!is.na(ts$idx)]
-      ## Ib <- list(idx=na.omit(ts$idx), p=ts$p[!is.na(ts$idx),])
-      
-      Ic <- bary.to.sphere.cart(phi, lambda, R, Tt, Ib)
-      print(length(cols))
-      print(dim(Ic))
-      Is <- sphere.cart.to.sphere.spherical(Ic, R)
-      print(dim(Is))
-      phis    <- Is[,"phi"]
-      lambdas <- Is[,"lambda"]
-      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+      ## Compute x and y positions of cornders of pixels
+      xpos <- matrix(cos(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
+      ypos <- matrix(sin(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
 
-      xpos <- matrix(xpos, M+1, N+1)
-      ypos <- matrix(ypos, M+1, N+1)
-      print(dim(xpos))
-      print(dim(mask))
-      
-      px <- rbind(as.vector(xpos[1:M    , 1:N    ]),
-                  as.vector(xpos[1:M    , 2:(N+1)]),
-                  as.vector(xpos[2:(M+1), 2:(N+1)]),
-                  as.vector(xpos[2:(M+1), 1:N    ]),
-                  NA)
+      ## Convert these to format suitable to polygon
+      impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
+                    as.vector(xpos[1:M    , 2:(N+1)]),
+                    as.vector(xpos[2:(M+1), 2:(N+1)]),
+                    as.vector(xpos[2:(M+1), 1:N    ]),
+                    NA)
+      impy <- rbind(as.vector(ypos[1:M    , 1:N    ]),
+                    as.vector(ypos[1:M    , 2:(N+1)]),
+                    as.vector(ypos[2:(M+1), 2:(N+1)]),
+                    as.vector(ypos[2:(M+1), 1:N    ]),
+                    NA)
 
-      py <- rbind(as.vector(ypos[1:M    , 1:N    ]),
-                  as.vector(ypos[1:M    , 2:(N+1)]),
-                  as.vector(ypos[2:(M+1), 2:(N+1)]),
-                  as.vector(ypos[2:(M+1), 1:N    ]),
-                  NA)
-      print(dim(px))
-      print(dim(py))
-      
-      polygon(px[,mask], py[,mask],  col=im[mask], border=NA)
-      
-      #suppressWarnings(points(xpos, ypos, col=im[mask],
-      #pch='.', cex=3, ...))
+      ## Plot the polygon, masking as we go
+      polygon(impx[,immask], impy[,immask],  col=im[immask], border=NA)
     })
   }
   

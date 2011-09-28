@@ -1290,7 +1290,9 @@ ReconstructedOutline <- function(o,
   ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
   ##                         plot.3d=plot.3d,
   ##                         dev.grid=dev.grid, dev.polar=dev.polar)
-
+  
+  report("Transforming image...")
+  r <- transform.image.reconstructedOutline(r)
   
   report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
                ";", r$nflip, "flipped triangles."))
