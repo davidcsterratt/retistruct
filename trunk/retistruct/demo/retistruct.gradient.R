@@ -12,9 +12,6 @@ o <- retistruct.read.markup(o)
 r <- retistruct.reconstruct(o)
 
 ## Plot with gridlines
-options(outline.col="yellow")
-options(grid.maj.col="yellow")
-options(grid.min.col="white")
 par(mar=c(0.1,0.1,0.1,0.1))
 par(mfrow=c(1, 2))
 plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
