@@ -198,9 +198,10 @@ coordinate system can be thought of as lines of latitude and longitude
 on the globe.  The method requires that an expert mark up the cuts and
 tears, and also that they indicate the position of at least one
 landmark on the rim of the eye. The method has been implemented as a
-program written in R, available to download at \todo{download
-  location}. The accuracy of the method is estimated to be
-\todo{produce estimate for accuracy of method}.
+program written in R, available to download at
+\todo{download location}. The method is estimated to be able to infer
+the location of a point on a flat-mounted retina to within $8^\circ$
+of arc of its original location.
 
 It would be possible to generalise the method to deal with a retina
 modelled by any shape with axial symmetry.
@@ -281,7 +282,7 @@ We used our algorithm to reconstruct 224 retinae.
 Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
 with the lowest energy measure $\sqrt{E_\mathrm{L}}=0.038$ and
 Figure~\ref{retistruct_plos:fig:examples}B the example with the
-highest $\sqrt{E_\mathrm{L}}=0.147$. The arrangement of the gridlines
+highest $\sqrt{E_\mathrm{L}}=0.147$. The arrangement of the grid lines
 in the example with lower error looks qualitative smoother and more
 even than in the example with higher energy measure
 (Figures~\ref{retistruct_plos:fig:examples}Aiii
@@ -305,7 +306,7 @@ median value of 0.0736.
 The goodness measure described in the previous section gives an
 indication of how easy it is to morph any particular flattened retina
 onto a partial sphere, but it does not indicate the error involved in
-the reconstruction, i.e.\ the difference beteween the inferred
+the reconstruction, i.e.\ the difference between the inferred
 position on the spherical retina and the original position on the
 spherical retina. The ideal method for estimating the error would be
 to flatten a retina marked in known locations, and then compare the
@@ -318,17 +319,26 @@ discs across a number of retinae. In mice, the optic disc is located
 ``rather precisely in the geometric center of the retina''
 \cite{DragOlse81gang} though this has not, as far as we are aware,
 been measured. The optic disc has been marked in XXX of our
-flat-mounted retaine, and the distribution of the centres of the
-inferred locations of these optic discs is shown in Figure .. The mean
-location of these optic discs is ... with a standard deviation of
-... Given that some of this variability is biological, this suggests
-that an upper bound on the accuracy of the reconstruction algorithm is
-.... 
+flat-mounted retinae, and the distribution of the centres of the
+inferred locations of these optic discs is shown in
+Figure~\ref{retistruct_plos:fig:ods}. The mean latitude and longitude
+of these optic discs is (-85.7$^\circ$, 83.4$^\circ$) with a standard
+deviation of 8.0$^\circ$. This 4.3$^\circ$ away from the geometrical
+centre of the retina, in reasonable agreement with the unquantified
+observation that the optic disc is at the geometric centre of the
+retina.  Given that some of this variability is biological, this
+suggests that an upper bound on the accuracy of the reconstruction
+algorithm is 8.0$^\circ$.
 
 The second method is to compare the inferred lines of longitude with
 the direction growth of retinal ganglion cell axons towards the optic
 disc.  The growth of retinal ganglion cell axons towards the optic
-disc is radial and highly-ordered \cite{ErskThom09intr}.
+disc is radial and highly-ordered
+\cite{ErskThom09intr}. Figure~\ref{retistruct_plos:fig:superpose}
+shows the superposition of an image a retina \cite{KeelEtal11neur}
+with the grid lines inferred by the method. It can be seen that the
+grid lines are parallel to the RGC axons for most of their way, though
+there are some deviations close to the rim.
 
 \todo{Comparison of MRI images and reconstructed retinae.}
 
@@ -342,8 +352,19 @@ disc is radial and highly-ordered \cite{ErskThom09intr}.
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
-\todo{This would need some decent flatmount images of EphA or EphB
-  and some more work.}
+The gradients of Ephs and ephrins in the retina are usually regarded
+as running down the nasotemporal (N--T) of dorsoventral (D--V)
+axes. The A family of Ephs is associated with the N--T axis and the B
+family with the D--V axis. The level of the labels, as inferred from
+hybridised RNA \emph{in situ} stains has been quantified along the
+axes \cite{ChenEtal95comp,RebeEtal04rela}.  However, the levels of
+marker molecules off the axes have not been quantified. This is
+important to know both for understanding the origin of retinal
+gradients and how the retinocollicular mapping is set up. 
+
+Figure~\ref{retistruct_plos:fig:superpose} shows the EphA3 gradient
+from the literature \cite{ChenEtal95comp} projected onto a polar
+plot. \todo{It would be good to do a contour plot of this.}
 
 \section*{Discussion}
 
@@ -784,17 +805,29 @@ Michael Herrmann.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{superposed-ods}
+  \includegraphics{superposed-ods-sqrtE_0_1}
   \caption{\textbf{Inferred positions of optic discs.}}
   \label{retistruct_plos:fig:ods}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{KeelEtal11neur1b}
-  \caption{\textbf{Superposition of retinal image and gridlines.}}
+  \includegraphics{KeelEtal11}
+  \caption{\textbf{Superposition of retinal image and grid lines.}}
   \label{retistruct_plos:fig:superpose}
 \end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics{ChenEtal95}
+  \caption{\textbf{Mapping of image to polar representation.}
+    \textbf{(A)} Flat-mount E8 chick retina stained for EphA3
+    (Reproduced from \cite{ChenEtal95comp}). \textbf{(B)} Image of
+    gradient mapped to polar representation. \todo{Need to get
+      permission for this data.}}
+  \label{retistruct_plos:fig:superpose}
+\end{figure}
+
 
 \section*{Tables}
 %\begin{table}[!ht]
@@ -814,4 +847,4 @@ Michael Herrmann.
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
 % LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
-% LocalWords:  colliculus geniculate vivo
+% LocalWords:  colliculus geniculate vivo center RGC
