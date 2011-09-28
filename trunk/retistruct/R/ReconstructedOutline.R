@@ -151,25 +151,68 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   if (plot.image && !is.null(r$im)) {
     ## Find grid line coordinates
     with(r, {
-      xs <- 1:ncol(im)
-      ys <- nrow(im):1
+      ## Need to find the *boundaries* of pixels
+      N <- ncol(im)
+      M <- nrow(im)
+      xs <- 0:N
+      ys <- M:0
 
-      ## Create grid coords
-      I <- cbind(as.vector(outer(ys*0, xs, FUN="+")),
-                 as.vector(outer(ys, xs*0, FUN="+")))
-      ts <- tsearchn(P, T, I)
-      cols <- im[!is.na(ts$idx)]
-      Ib <- list(idx=na.omit(ts$idx), p=ts$p[!is.na(ts$idx),])
+      ## Create grid coords of corners of pixels.  These run from the
+      ## top left of the image down each column of the image.
+      ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid 
+      Ix <- outer(ys*0, xs, FUN="+")
+      ## Ditto for y-coords
+      Iy <- outer(ys, xs*0, FUN="+")
+      ## Join to give (x, y) coordinates of all corners
+      I  <- cbind(as.vector(Ix), as.vector(Iy))
+      
+      ## Find Barycentric coordinates of corners of pixels
+      Ib <- tsearchn(P, T, I)
+      
+      ## Create mask depending on whether corners are in outline
+      idx <- matrix(Ib$idx, M+1, N+1)
+      mask <- (!is.na(idx[1:M    , 1:N    ]) & 
+               !is.na(idx[1:M    , 2:(N+1)]) &
+               !is.na(idx[2:(M+1), 1:N    ]) &
+               !is.na(idx[2:(M+1), 2:(N+1)]))
+      ## Only plot pixels for which all four corners are in outline
+      
+      ## cols <- im[!is.na(ts$idx)]
+      ## Ib <- list(idx=na.omit(ts$idx), p=ts$p[!is.na(ts$idx),])
+      
       Ic <- bary.to.sphere.cart(phi, lambda, R, Tt, Ib)
       print(length(cols))
       print(dim(Ic))
       Is <- sphere.cart.to.sphere.spherical(Ic, R)
+      print(dim(Is))
       phis    <- Is[,"phi"]
       lambdas <- Is[,"lambda"]
       xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
       ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-      suppressWarnings(points(xpos, ypos, col=cols,
-                              pch='.', cex=3, ...))
+
+      xpos <- matrix(xpos, M+1, N+1)
+      ypos <- matrix(ypos, M+1, N+1)
+      print(dim(xpos))
+      print(dim(mask))
+      
+      px <- rbind(as.vector(xpos[1:M    , 1:N    ]),
+                  as.vector(xpos[1:M    , 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 1:N    ]),
+                  NA)
+
+      py <- rbind(as.vector(ypos[1:M    , 1:N    ]),
+                  as.vector(ypos[1:M    , 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 1:N    ]),
+                  NA)
+      print(dim(px))
+      print(dim(py))
+      
+      polygon(px[,mask], py[,mask],  col=im[mask], border=NA)
+      
+      #suppressWarnings(points(xpos, ypos, col=im[mask],
+      #pch='.', cex=3, ...))
     })
   }
   
