@@ -183,6 +183,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
+  plot.contours <- TRUE # Contour plotting happens only with image plotting at present
       
   phi0d <- r$phi0*180/pi
   par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -220,6 +221,39 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 
       ## Plot the polygon, masking as we go
       polygon(impx[,immask], impy[,immask],  col=im[immask], border=NA)
+
+      if (plot.contours) {
+        ## Find centre locations of polygons
+        xposc <- 0.25*(xpos[1:M, 1:N]+xpos[1:M,2:(N+1)]+xpos[2:(M+1),1:N]+xpos[2:(M+1),2:(N+1)])
+        yposc <- 0.25*(ypos[1:M, 1:N]+ypos[1:M,2:(N+1)]+ypos[2:(M+1),1:N]+ypos[2:(M+1),2:(N+1)])
+
+        ## Compute intensity of image
+        imrgb <- col2rgb((r$im))  
+        imin <- matrix(0.3*imrgb[1,] + 0.59*imrgb[2,] + 0.11*imrgb[3,],
+                       nrow(r$im), ncol(r$im), byrow=TRUE)
+
+        ## Mask all data
+        xposm <- xposc[r$immask]
+        yposm <- yposc[r$immask]
+        imm <- imin[r$immask]
+
+        ## Interporlate. Length 20 (rather than the default 40) gets
+        ## rid of some noise, though this is quite a crude way of
+        ## doing things
+        im.smooth <- interp(xposm, yposm, imm,
+                         xo=seq(min(xposm), max(xposm), len=20),
+                         yo=seq(min(yposm), max(yposm), len=20))  
+        contour(im.smooth, add=TRUE, nlevels=5)
+
+        ## Alternative ways of doing this: use Kriging (from spatial
+        ## package). May be better, but slower.
+        ##
+        ## im.kr <- surf.ls(6, data.frame(x=xposm, y=yposm, z=imm))
+        ## im.kr <- surf.gls(2, expcov, data.frame(x=xposm, y=yposm, z=imm),
+        ## d=1)
+        ## trsurf=trmat(im.kr, -124, 124, -124, 124, 100)
+        ## contour(trsurf, add=TRUE, nlevels=20)
+      }
     })
   }
   
@@ -269,54 +303,6 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     y <- with(r, sin(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
     suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
   }
-}
-
-fit.contour.reconstructedOutline <- function(r) {
-
-  N <- ncol(r$im)
-  M <- nrow(r$im)
-
-  ## Compute x and y positions of cornders of pixels
-  xpos <- matrix(cos(r$ims[,"lambda"]) * ((r$ims[,"phi"] * 180/pi) + 90), M+1, N+1)
-  ypos <- matrix(sin(r$ims[,"lambda"]) * ((r$ims[,"phi"] * 180/pi) + 90), M+1, N+1)
-
-  xposc <- 0.25*(xpos[1:M, 1:N]+xpos[1:M,2:(N+1)]+xpos[2:(M+1),1:N]+xpos[2:(M+1),2:(N+1)])
-  yposc <- 0.25*(ypos[1:M, 1:N]+ypos[1:M,2:(N+1)]+ypos[2:(M+1),1:N]+ypos[2:(M+1),2:(N+1)])
-
-  xposm <- xposc[r$immask]
-  yposm <- yposc[r$immask]
-
-  imrgb <- col2rgb((r$im))  
-  imin <- matrix(0.3*imrgb[1,] + 0.59*imrgb[2,] + 0.11*imrgb[3,],
-                 nrow(r$im), ncol(r$im), byrow=TRUE)
-
-  imm <- imin[r$immask]
-  print(dim(imin))
-  print(dim(r$im))
-  print(dim(xposm))
-  print(dim(yposm))
-  print(length(xposm))
-  print(length(yposm))
-  print(length(imm))
-  print(any(is.na(xposm)))
-  print(any(is.na(yposm)))
-  print(any(is.na(imm)))
-
-  akima.smooth <- interp(xposm, yposm, imm,
-                         xo=seq(min(xposm), max(xposm), len=20),
-                         yo=seq(min(yposm), max(yposm), len=20))  
-  ## im.kr <- surf.ls(6, data.frame(x=xposm, y=yposm, z=imm))
-  ## im.kr <- surf.gls(2, expcov, data.frame(x=xposm, y=yposm, z=imm), d=1)
-  #trsurf=trmat(im.kr, -124, 124, -124, 124, 100)
-  #immnorm <- 100*(imm-min(imm))/(max(imm)-min(imm))
-                                        #   palette(grey((0:100)/100))
-  ##plot(xposm, yposm, col=immnorm, pch=".", cex=2)
-  ## plot(xposm, yposm, col=iminnorm, pch=".", cex=2)
-  ## plot(xposm, yposm, col=r$im[r$immask], pch=".", cex=4)
-
-  #contour(trsurf, add=TRUE, nlevels=20)
-  contour(akima.smooth, add=TRUE, nlevels=5)
-  return(im.kr)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just
