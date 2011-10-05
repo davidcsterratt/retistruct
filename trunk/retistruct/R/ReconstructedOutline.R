@@ -171,6 +171,8 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
+##' @param flip.horiz Wether to flip about a horizontal axis
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method plot.polar reconstructedOutline
 ##' @author David Sterratt
