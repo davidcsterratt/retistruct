@@ -87,6 +87,20 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
+##' Plot datapoints in polar plot
+##'
+##' @title Polar plot of reconstructed dataset
+##' @param r \code{reconstructedDataset} object
+##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param flip.horiz Wether to flip about a horizontal axis
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
+##' @param ... Other graphics parameters -- not used at present
+##' @method plot.spherical reconstructedOutline
+##' @author David Sterratt
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
@@ -104,34 +118,38 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   ## Datapoints
   if (plot.datapoints) {
     Dss <- getDss(r)
-    for (i in 1:length(Dss)) {
-      phis    <- Dss[[i]][,"phi"]
-      lambdas <- Dss[[i]][,"lambda"]
-      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-      suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
-                              pch=20, ...))
+    if (length(Dss)) {
+      for (i in 1:length(Dss)) {
+        phis    <- Dss[[i]][,"phi"]
+        lambdas <- Dss[[i]][,"lambda"]
+        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+        suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
+                                pch=20, ...))
+      }
     }
   }
 
   ## Mean datapoints
   if (plot.datapoint.means) {
     Dss.mean <- getDss.mean(r)
-    for (i in 1:length(Dss.mean)) {
-      phis    <- Dss.mean[[i]]["phi"]
-      lambdas <- Dss.mean[[i]]["lambda"]
-      xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-      ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
-      suppressWarnings(points(xpos, ypos,
-                              bg=r$cols[[names(Dss.mean)[i]]], col="black",
-                              pch=23, cex=1.5, ...))
+    if (length(Dss.mean)) {
+      for (i in 1:length(Dss.mean)) {
+        phis    <- Dss.mean[[i]]["phi"]
+        lambdas <- Dss.mean[[i]]["lambda"]
+        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
+        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+        suppressWarnings(points(xpos, ypos,
+                                bg=r$cols[[names(Dss.mean)[i]]], col="black",
+                                pch=23, cex=1.5, ...))
+      }
     }
   }
   
   ## Landmarks
   if (plot.landmarks) {
     Sss <- getSss(r)
-    if (length(Sss) > 0) {
+    if (length(Sss)) {
       for (i in 1:length(Sss)) {
         name <- names(Sss)[i]
         col <- ifelse(is.null(name) || (name==""), "default", name)
