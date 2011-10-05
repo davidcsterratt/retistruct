@@ -78,7 +78,7 @@
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
-David C. Sterratt$^{1,\ast}$, Daniel L. Nedergaard$^{2}$, Ian
+David C. Sterratt$^{1,\ast}$, Daniel Lyngholm$^{2}$, Ian
 D. Thompson$^{2}$
 \\
 \bf{1} Institute for Adaptive and Neural Computation, School of
@@ -92,6 +92,8 @@ $\ast$ E-mail: david.c.sterratt@ed.ac.uk
 
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
+
+\todo{Between 250 and 300 words; currently 261}
 
 In the course of studying the function and development of the visual
 system, cells in the retina are often labelled; for example, to
@@ -112,15 +114,14 @@ incisions and tears marked up by an expert. The retinal outline is
 split into triangular elements whose positions are then transformed so
 that they lie on a partial sphere with the expected dimensions of the
 intact retina.  The transformation is adjusted so as to minimise a
-physically-inspired deformation energy function.
+physically-inspired deformation energy function. Our validation
+studies indicate that the algorithm is able to estimate the position
+of a point on the intact retina to within 8$^\circ$ of arc.
 
-% change in the dimensions of each triangle from the flattened outline.
-
-The algorithm is able to produce a transformation which is
-sufficiently good for visualisation. \todo{More about validation} 
-
-We demonstrate the application of the method in a number of
-situations. \todo{More about applications here.}
+We demonstrate three applications of the method: (1) the analysis of
+retrograde tracer experiments; (2) the analysis of mosaics of retinal
+cells; and (3) infering the distribution over the intact retina of
+Ephs and ephrins.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLoS ONE authors please skip this step. 
@@ -137,10 +138,9 @@ field a common experimental procedure is to label cells in the retina
 flatmount in which the distribution of labels can be measured. In
 order to flatten the retina, a number of incisions have to be made,
 and tearing can occur within the rim of the retina or the incisions.
-flatmounted retinae have been used in a variety of
-applications. However, mounting the retina disturbs the retinal
-geometry significantly, which can be problematic in interpreting
-results obtained from flatmounted retinae.
+However, mounting the retina disturbs the retinal geometry
+significantly, which can be problematic in interpreting results
+obtained from flatmounted retinae.
 
 For example, the distribution of mosaics of various cell types has
 been recorded in flatmounted retinae
@@ -201,17 +201,9 @@ landmark on the rim of the eye. The method has been implemented as a
 program written in R, available to download at
 \todo{download location}. The method is estimated to be able to infer
 the location of a point on a flat-mounted retina to within $8^\circ$
-of arc of its original location.
-
-It would be possible to generalise the method to deal with a retina
-modelled by any shape with axial symmetry.
-
-% The algorithm is able to produce a transformation which is
-% sufficiently good for visualisation. \todo{More about validation} 
-
-We demonstrate the application of the method in a number of
-situations. \todo{More about applications here.}
-
+of arc of its original location. We demonstrate that the method is
+applicable to the problems outlined above, namely retrograde tracing
+experiments, mosaic analysis and marker distribution.
 
 % Results and Discussion can be combined.
 \section*{Results}
@@ -368,20 +360,30 @@ plot. \todo{It would be good to do a contour plot of this.}
 
 \section*{Discussion}
 
-\todo{This is all at brain dump stage.}
-
-\subsection*{Insights gained from the method}
-
-\todo{What we have learnt by using the method}
-
-\subsection*{Accuracy of the method}
-
-\subsection*{Validity of the physical model}
+\subsection*{Accuracy and validity of the method}
 
 As far as we are aware, a computational algorithm for reconstructing
 retinae has never been described
-before.\footnote{\todo{DW: But what about optometry?}} The algorithm
-presented here models the retinal tissue as a mesh of masses connected
+before.\footnote{\todo{DW: But what about optometry?}} Our validation
+studies suggest that the method is able to estimate the orignal
+location of a point on a flatted to within 8$^\circ$ of arc. This may
+be an overestimate, as it makes the implicit assumption that the
+location of the optic disc is the same between different retinae.
+There will be some biological variablility in the location of the
+optic disc which will tend to contribute to the measured variability.
+
+We now consider the potential sources of error in the method. The
+first source of error is the marking up of the incisions and
+tears. There is a great deal of variability in dissected retinae; in
+some it is clear where the vertices of incisions and tears lie and in
+others is much less so. The current method depends on human input to
+mark the incisions and tears. This has the potential disadvantage of
+leading to variations between different experts but is more flexible
+in the case of retinae with more or more irregular incisions and
+tears. 
+
+The physical model assumed by the algorithm is also a potential source
+of errer. The retinal tissue is modelled as a mesh of masses connected
 by springs. This basic model is used in modelling deformable surfaces
 in computer animation and clothes design
 \cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf} and has been used
@@ -408,16 +410,41 @@ stresses and strains in the flattened retina, whereas the only
 information available is the outline of the retina and the location of
 the optic disk.
 
+The meshing algorithm might also lead to errors. A problem can arise
+when two points on the outline are very close together. This leads to
+a large number of very samll triangles being constructed, which can
+lead to a tangle of many flipped triangles in the energy minimisation
+phase and, ultimately, small areas of high strain in the reconstructed
+outline. However, this problem can be elimiated by suitable
+preprocessing of outlines to remove very short edges.
 
-% The soft tissue is often
-% described as a linear-elastic medium, in which the stress depends
-% linearly of the strain, but it can also be modelled as a viscoelastic
-% medium, in which the stress depends on the history of the strain in
-% the material.
+\subsection*{Insights gained from the method}
+
+\todo{What we have learnt by using the method}
+
+\subsection*{Extentions to the method}
+
+Another improvement might be to automate the marking up of incisions
+and tears. It would be straightforward to produce a method that would
+work for the retinae in which the incisions and tears are clear, but
+it is harder to envisage a method that would work for the more
+irregularly-flattend retinae.
+
+It would be possible to generalise the method to deal with a retina
+modelled by any shape with axial symmetry. This would just require a
+different energy function to be used in the minimisation
+procedure. This might lead to more accurate reconstructions, though
+would depend on knowing the geometry of the intact retina more
+accurately than at present.
+
+
+% The soft tissue is often described as a linear-elastic medium, in
+% which the stress depends linearly of the strain, but it can also be
+% modelled as a viscoelastic medium, in which the stress depends on
+% the history of the strain in the material.
 
 % the finite element method is based more strongly on the physics of
 % materials and is regarded as superior \cite{CartEtal05appl}.
-
 
 % In principle, the FEM allows parameters of the material to be measured
 % and incorporated in the model in a straightforward way. Given enough
