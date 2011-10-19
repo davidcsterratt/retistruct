@@ -205,7 +205,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
       N <- ncol(r$im)
       M <- nrow(r$im)
 
-      ## Compute x and y positions of cornders of pixels
+      ## Compute x and y positions of corners of pixels
       xpos <- matrix(cos(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
       ypos <- matrix(sin(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
 
@@ -226,11 +226,17 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 
       if (plot.contours) {
         ## Find centre locations of polygons
-        xposc <- 0.25*(xpos[1:M, 1:N]+xpos[1:M,2:(N+1)]+xpos[2:(M+1),1:N]+xpos[2:(M+1),2:(N+1)])
-        yposc <- 0.25*(ypos[1:M, 1:N]+ypos[1:M,2:(N+1)]+ypos[2:(M+1),1:N]+ypos[2:(M+1),2:(N+1)])
+        xposc <- 0.25*(xpos[1:M    , 1:N] +
+                       xpos[1:M    , 2:(N+1)] +
+                       xpos[2:(M+1), 1:N] +
+                       xpos[2:(M+1), 2:(N+1)])
+        yposc <- 0.25*(ypos[1:M,     1:N] +
+                       ypos[1:M,     2:(N+1)] +
+                       ypos[2:(M+1), 1:N] +
+                       ypos[2:(M+1), 2:(N+1)])
 
         ## Compute intensity of image
-        imrgb <- col2rgb((r$im))  
+        imrgb <- col2rgb(r$im)  
         imin <- matrix(0.3*imrgb[1,] + 0.59*imrgb[2,] + 0.11*imrgb[3,],
                        nrow(r$im), ncol(r$im), byrow=TRUE)
 
@@ -243,8 +249,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
         ## rid of some noise, though this is quite a crude way of
         ## doing things
         im.smooth <- interp(xposm, yposm, imm,
-                         xo=seq(min(xposm), max(xposm), len=20),
-                         yo=seq(min(yposm), max(yposm), len=20))  
+                            xo=seq(min(xposm), max(xposm), len=20),
+                            yo=seq(min(yposm), max(yposm), len=20))  
         contour(im.smooth, add=TRUE, nlevels=5)
 
         ## Alternative ways of doing this: use Kriging (from spatial
