@@ -408,7 +408,7 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
 ##'
 ##' @title Plot the fractional change in length of mesh edges
 ##' @param r \code{reconstructedOutline} object
-##' @method plot.l.vs.L.reconstructedOutline
+##' @method plot.l.vs.L reconstructedOutline
 ##' @author David Sterratt
 plot.l.vs.L.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical

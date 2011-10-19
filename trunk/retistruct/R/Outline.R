@@ -38,7 +38,7 @@ Outline <- function(P, scale=1, im=NULL) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat.outline
+##' @method plot.flat outline
 ##' @author David Sterratt
 plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   args <- list(...)
