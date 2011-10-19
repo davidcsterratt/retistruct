@@ -12,14 +12,14 @@ idt.check.datadir <- function(dir=NULL) {
 
 ## Function to read the file containing the systat file with the
 ## locations of the cell bodies in it
-read.sys <- function(dir=NULL) {
+idt.read.sys <- function(dir=NULL) {
   read.systat(file.path(dir, "SYS.SYS"))
 }
 
 ## SYS.MAP might be better to use
 ## Function to read the file containing the "map", i.e. the outline of
 ## the retina
-read.map <- function(dir=NULL) {
+idt.read.map <- function(dir=NULL) {
   e <- function() {stop("Corrupt MAP file.")}
   map <- tryCatch(read.csv(file.path(dir, "ALU.MAP"), sep=" ", header=FALSE),
                   warning=e, error=e)
@@ -29,7 +29,7 @@ read.map <- function(dir=NULL) {
 ## Function to get corners of sample boxes in terms of lower and upper
 ## coordinates
 ## This is to be extended to draw boxes around the edge of the map
-get.sys.boxes <- function(sys) {
+idt.get.sys.boxes <- function(sys) {
   ci <- which(sys[,"COMPLETE"] == 1)
   lower <- rbind(sys[ci, "XGRIDCOO"]-sys[ci, "BOXSIZEX"],
                  sys[ci, "YGRIDCOO"]-sys[ci, "BOXSIZEY"])
@@ -41,7 +41,7 @@ get.sys.boxes <- function(sys) {
 
 ## This function gets the lower and upper coordinates of boxes
 ## around the edge of the map, with width fw
-get.map.boxes <- function(map, fw=1000) {
+idt.get.map.boxes <- function(map, fw=1000) {
   ## Find the edges of the map
   mux <- max(map[,1])
   muy <- max(map[,2])
@@ -58,15 +58,15 @@ get.map.boxes <- function(map, fw=1000) {
 
 ## This function gets the lower and upper coordinates of the "sys" and
 ## "map" boxes
-get.boxes <- function(sys, map) {
-  boxes.sys <- get.sys.boxes(sys)
-  boxes.map <- get.map.boxes(map)
+idt.get.boxes <- function(sys, map) {
+  boxes.sys <- idt.get.sys.boxes(sys)
+  boxes.map <- idt.get.map.boxes(map)
   return(list(lower=cbind(boxes.sys$lower, boxes.map$lower),
               upper=cbind(boxes.sys$upper, boxes.map$upper)))
 }
 
 ## Convert map matrix to a list of segments
-map.to.segments <- function(map) {
+idt.map.to.segments <- function(map) {
   ## Give named columns of the map, and hence segment list
   colnames(map) <- c("X", "Y")
   segs <- list()                        # Initialise list of segments
@@ -98,7 +98,7 @@ map.to.segments <- function(map) {
 ##                NOT IMPLEMENTED YET
 ## Ouput:
 ## Ts   -         list of connected segments
-connect.segments <- function(segs, merge.rad=10) {
+idt.connect.segments <- function(segs, merge.rad=10) {
   N <- length(segs)                        # Number of segments
   ## First find the first and last points of each segment
   ## The start points are in columns 1:N of P, and the end points in
@@ -159,17 +159,17 @@ connect.segments <- function(segs, merge.rad=10) {
 ## S    - segment to measure
 ## Ouput:
 ## l    - length of segment
-segment.length <- function(S) {
+idt.segment.length <- function(S) {
   v <- diff(rbind(S, S[1,]))
   return(sum(sqrt(apply(v^2, 1, sum))))
 }
 
 ## Function to plot the "map", i.e. the outline of the retina
-plot.map <- function(map, seginfo=FALSE,
+idt.plot.map <- function(map, seginfo=FALSE,
                      xlim=range(map[,1]), ylim=range(map[,2])) {
   par(mar=c(2,2,1.5,0.5))
   plot(NA, NA, xlim=xlim, ylim=ylim, xlab="", ylab="")
-  segs <- map.to.segments(map)
+  segs <- idt.map.to.segments(map)
   for (i in 1:length(segs)) {
     seg <- segs[[i]]
     col <- "black"
@@ -183,36 +183,36 @@ plot.map <- function(map, seginfo=FALSE,
 
 ## Function to plot a box specified by a vector at the bottom left
 ## corner (lower) and a vector at the top right corner (upper)
-plot.box <- function(lower, upper) {
+idt.plot.box <- function(lower, upper) {
   lines(c(lower[1], upper[1], upper[1], lower[1], lower[1]),
         c(lower[2], lower[2], upper[2], upper[2], lower[2]))
 }
 
 ## Function to plot boxes specified by the corners specified by the
-## columns of lower and upper (see plot.box())
-plot.boxes <- function(lower, upper) {
+## columns of lower and upper (see idt.plot.box())
+idt.plot.boxes <- function(lower, upper) {
   for(i in 1:(dim(lower)[2])) {
-    plot.box(lower[,i], upper[,i])
+    idt.plot.box(lower[,i], upper[,i])
   }
 }
 
 # Function to plot the unfolded retina, grid and labelled RG cells
-plot.sys.map <- function(sys, map) {
-  plot.map(map)
+idt.plot.sys.map <- function(sys, map) {
+  idt.plot.map(map)
   points.sys(sys)
   
-  boxes <- get.sys.boxes(sys) 
-  plot.boxes(boxes$lower, boxes$upper)
+  boxes <- idt.get.sys.boxes(sys) 
+  idt.plot.boxes(boxes$lower, boxes$upper)
 }  
 
 # Function to plot the labelled RG cells
-points.sys <- function(sys) {
+idt.points.sys <- function(sys) {
   points(sys[,'XGREEN'], sys[,'YGREEN'], col="green", pch=20,cex=0.5)
   points(sys[,'XRED'], sys[,'YRED'], col="red", pch=20,cex=0.5)
 }
 
 ## Remove backtracks to the same point in a path
-remove.backtracks <- function(P) {
+idt.remove.backtracks <- function(P) {
   N <- nrow(P)
   ## Loop through P
   for (i in 2:N) {
@@ -223,7 +223,7 @@ remove.backtracks <- function(P) {
       print(paste("Already been to ", j, "; Removing:"))
       ind <- j:(i-1)
       print(ind)
-      return(remove.backtracks(P[-ind,]))
+      return(idt.remove.backtracks(P[-ind,]))
     }
   }
   return(P)
@@ -233,7 +233,7 @@ remove.backtracks <- function(P) {
 ## Convert segment to pointers
 ## FIXME: At present this is not used. However, it might form part of a
 ## fix for Issue #178: error in segments2pointers()
-segment.to.pointers <- function(P) {
+idt.segment.to.pointers <- function(P) {
   ## uniquify P
   N <- nrow(P)
   U <- unique(P)
@@ -285,8 +285,8 @@ segment.to.pointers <- function(P) {
 ##' @author David Sterratt
 idt.read.dataset <- function(dataset, d.close=0.25) {
   ## Read the raw data
-  map <- read.map(dataset)
-  sys <- read.sys(dataset)
+  map <- idt.read.map(dataset)
+  sys <- idt.read.sys(dataset)
 
   ## Extract datapoints
   ##
@@ -307,12 +307,12 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   segs <- map.to.segments(map)
 
   ## Connect together segments that look to be joined
-  Ss <- connect.segments(segs)
+  Ss <- idt.connect.segments(segs)
 
   ## Determine the lengths of the segments
   l <- c()
   for (i in 1:length(Ss)) {
-    l[i] <- segment.length(Ss[[i]])
+    l[i] <- idt.segment.length(Ss[[i]])
   }
 
   ## The outline (P) is the longest connected segment and the outline
@@ -329,7 +329,7 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   
   ## Check that P is more-or-less closed
   if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
-     plot.map(map, TRUE)
+     idt.plot.map(map, TRUE)
      points(P[c(1,nrow(P)),], col="black")
      stop("Unable to find a closed outline.")
   }
