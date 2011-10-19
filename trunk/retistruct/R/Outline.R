@@ -51,7 +51,7 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
     if (plot.image && !is.null(o$im)) {
       xs <- 1:ncol(im)
       ys <- 1:nrow(im)
-      plot(NA, NA, xlim=range(xs), ylim=range(ys),
+      plot(NA, NA, xlim=range(xs), ylim=range(ys), asp=1,
            xaxt=axt, yaxt=axt, bty="n",
            xlab="", ylab="")
       ## rasterImage crashes on some systems, but not others.
@@ -59,9 +59,9 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
     } else {
       xs <- P[s,1]
       ys <- P[s,2]
-      suppressWarnings(plot(xs, ys, 
+      suppressWarnings(plot(xs, ys, asp=1,
                             pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
-                            bty="n", ylim=ylim, ...))
+                            bty="n", ylim=ylim,  ...))
     }
     suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2],
                               col=getOption("outline.col"), ...))

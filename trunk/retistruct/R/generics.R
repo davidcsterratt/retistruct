@@ -27,6 +27,13 @@ plot.spherical.default <- function(r, ...) {
   rgl.bg(color="white")
 }
 
+plot.l.vs.L <- function(r) {
+  UseMethod("plot.l.vs.L")
+}
+
+plot.l.vs.L.default <- function(r) {
+}
+
 getDss <- function(x) {
   UseMethod("getDss")
 }
