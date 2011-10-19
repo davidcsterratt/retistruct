@@ -147,7 +147,7 @@ idt.connect.segments <- function(segs, merge.rad=10) {
     ## store the segment and find a new starting index, if one exists
     T <- remove.identical.consecutive.rows(T)
     T <- remove.intersections(T)
-    T <- remove.backtracks(T)
+    T <- idt.remove.backtracks(T)
     Ts <- c(Ts, list(T))
     print(paste("Storing new segment", length(Ts)))
   }
@@ -304,7 +304,7 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
                default="orange")
   
   ## Extract line data
-  segs <- map.to.segments(map)
+  segs <- idt.map.to.segments(map)
 
   ## Connect together segments that look to be joined
   Ss <- idt.connect.segments(segs)
@@ -319,12 +319,21 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   ## is removed from the list of segments
   P  <- Ss[[which.max(l)]]
   Ss <- Ss[-which.max(l)]
-  ## if (length(Ss) > 0) {
-  ##   names(Ss) <- 1:length(Ss)
-  ## }
+
+  ## Work out scale. Daniel says: "In the SYS.SYS file, the scale is
+  ## defined by the column BOXSIZEX & BOXSIZEY. Since all of my
+  ## data has been acquired with a 200x200 grid, this means that the
+  ## scale (in um/unit) is BOXSIZE / 200. e.g. if boxsize is 160, then
+  ## scale is 0.8 um/unit."
+  if (sd(sys["BOXSIZEX"], na.rm=TRUE) != 0) {
+    stop("Inconsistent BOXSIZEX; cannot determine scale")
+  }
+  bsx <- mean(sys["BOXSIZEX"], na.rm=TRUE)
+  scale <- bsx/200
+  names(scale) <- NULL
   
-  ## Create forward and backward pointers
-  o <- Outline(P)
+  ## Create Outline object
+  o <- Outline(P, scale=scale)
   o <- simplify.outline(o)
   
   ## Check that P is more-or-less closed

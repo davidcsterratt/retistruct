@@ -288,25 +288,27 @@ do.plot <- function() {
   }
   if ("Strain" %in% svalue(g.show)) {   # Strain plot
     dev.set(d1)
-    plot.flat(r, axt="s",
+    plot.flat(r, axt="n",
               datapoints=FALSE,
               landmarks=FALSE,
               markup=FALSE,
               stitch=FALSE,
               grid=FALSE,
               mesh=FALSE,
-              strain=TRUE)
+              strain=TRUE,
+              scalebar=1)
     dev.set(d2)
     plot.l.vs.L(r)
   } else {
     dev.set(d1)
-    plot.flat(r, axt="s",
+    plot.flat(r, axt="n",
               datapoints=("Datapoints" %in% svalue(g.show)),
               landmarks=("Landmarks" %in% svalue(g.show)),
               markup=("Markup" %in% svalue(g.show)),
               stitch=("Stitch" %in% svalue(g.show)),
               grid=("Grid" %in% svalue(g.show)),
-              mesh=FALSE)
+              mesh=FALSE,
+              scalebar=1)
     dev.set(d2)
     plot.polar(r,
                datapoints=("Datapoints" %in% svalue(g.show)),

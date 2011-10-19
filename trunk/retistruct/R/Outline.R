@@ -1,5 +1,20 @@
-##' @param im A raster image
-Outline <- function(P, im=NULL) {
+##' Construct an outline object. This sanitises the input points
+##' \code{P}, as described below.
+##'
+##' @title Outline constructor
+##' @param P The points of the outline. The last point is not repeated.
+##' @param scale The length of one unit of \code{P} in
+##' micrometres. When images are present, this is the length of the
+##' side of a pixel in the image.
+##' @param im An image as a \code{raster} object
+##' @return An \code{Outline} object containing the following:
+##' \item{\code{P}}{A N-by-2 matrix of points of the \code{Outline} arranged in anticlockwise order}
+##' \item{\code{gf}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling anticlockwise (forwards)}
+##' \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
+##' \item{\code{im}}{The image as a \code{raster} object}
+##' \item{\code{scale}}{The length of one unit of \code{P} in micrometres}
+##' @author David Sterratt
+Outline <- function(P, scale=1, im=NULL) {
   o <- list()
   o$P <- P
   o$h <- 1:nrow(P)
@@ -9,16 +24,29 @@ Outline <- function(P, im=NULL) {
   o$gf <- t$gf
   o$gb <- t$gb
   o$im <- im
+  o$scale <- scale
   return(o)
 }
 
+##' Plot flat outline. If the optional argument \code{plot.image} is
+##' \code{TRUE} the image is displayed behind the outlin. If the
+##' optional argument \code{scalebar} is present and numeric, a scale
+##' bar of length \code{scalebar} mm is plotted.
+##'
+##' @title Flat plot of outline
+##' @param o \code{Outline} object
+##' @param axt whether to plot axes
+##' @param ylim y-limits
+##' @param ... Other plotting parameters
+##' @method plot.flat.outline
+##' @author David Sterratt
 plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
+  scalebar   <- ifelse(is.null(args$scalebar), FALSE, args$scalebar)
   with(o, {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
-    ## par(mar=c(1.4, 1.4, 1, 1), mgp=c(2, 0.2, 0), tcl=-0.2)
     
     if (plot.image && !is.null(o$im)) {
       xs <- 1:ncol(im)
@@ -26,16 +54,24 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
       plot(NA, NA, xlim=range(xs), ylim=range(ys),
            xaxt=axt, yaxt=axt, bty="n",
            xlab="", ylab="")
-      ## image(xs, ys, t(im), zlim=range(im))
       ## rasterImage crashes on some systems, but not others.
       rasterImage(im, 1, 1, ncol(im), nrow(im))
     } else {
-      suppressWarnings(plot(P[s,1], P[s,2],
-                          pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
-                          bty="n", ylim=ylim, ...))
+      xs <- P[s,1]
+      ys <- P[s,2]
+      suppressWarnings(plot(xs, ys, 
+                            pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
+                            bty="n", ylim=ylim, ...))
     }
     suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2],
                               col=getOption("outline.col"), ...))
+
+    ## Plot scalebar if required. scalebar is length in mm.
+    if (scalebar) {
+      sby <- min(ys) - 0.02*(max(ys) - min(ys))
+      sblen <- 1000*scalebar/(scale)
+      lines(c(max(xs)-sblen, max(xs)),c(sby, sby), lwd=2)
+    }
   })
 }
 
@@ -247,6 +283,6 @@ simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
     message(paste("simplify.outline: Removing vertex", i.rem[1]))
     return(simplify.outline(list(P=P[-i.rem[1],])))
   } else {
-    return(Outline(P, o$im))
+    return(Outline(P, o$scale, o$im))
   }
 }
