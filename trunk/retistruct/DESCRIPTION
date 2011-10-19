@@ -5,10 +5,10 @@ Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Description: Program to reconstruct retinae from flattened retinae in
     which there are cuts and tears
-Version: 0.4.0
+Version: 0.4.1
 URL: http://www.neuralmapformation.org
-Date: 2011-06-10
-Depends: R (>= 2.9.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
+Date: 2011-10-19
+Depends: R (>= 2.11.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
     Triangle, rgl, multicore, png, akima
 Collate: 'AnnotatedOutline.R' 'datafile-utils.R' 'Dataset.R' 'fire.R'
     'format-csv.R' 'generics.R' 'geometry.R' 'lagrange.R' 'misc.R'
