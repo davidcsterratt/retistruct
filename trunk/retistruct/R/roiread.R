@@ -91,7 +91,7 @@ read.roi <- function(path) {
   SPLINE_FIT = 1;
   DOUBLE_HEADED = 2;
   OUTLINE = 4;
- 
+  
   ## types
   polygon=0
   rect=1
@@ -163,40 +163,41 @@ read.roi <- function(path) {
     ## return roi;
   }
 
-##   switch(r$type) {
-## ##             case rect:
-## ##                 roi = new Roi(left, top, width, height);
-## p##                 int arcSize <- getShort(con) # ROUNDED_RECT_ARC_SIZE);
-## ##                 if (arcSize>0)
-## ##                     roi.setCornerDiameter(arcSize);
-## ##                 break;
-## ##             case oval:
-## ##                 roi = new OvalRoi(left, top, width, height);
-## ##                 break;
-## ##             case line:
-## ##                 if (subtype==ARROW) {
-## ##                     roi = new Arrow(x1, y1, x2, y2);        
-## ##                     ((Arrow)roi).setDoubleHeaded((options&DOUBLE_HEADED)!=0);
-## ##                     ((Arrow)roi).setOutline((options&OUTLINE)!=0);
-## ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
-## ##                         ((Arrow)roi).setStyle(style);
-## ##                     int headSize = getByte(ARROW_HEAD_SIZE);
-## ##                     if (headSize>=0 && style<=30)
-## ##                         ((Arrow)roi).setHeadSize(headSize);
-## ##                 } else
-## ##                     roi = new Line(x1, y1, x2, y2);     
-## ##                 //IJ.write("line roi: "+x1+" "+y1+" "+x2+" "+y2);
-## ##                 break;
-   if (r$type==0) { ##  polygon: case freehand: case traced: case polyline: case freeline: case angle: case point:
-     r$coords <- matrix(NA, r$n, 2)
-     r$strType <- "Polygon"
-     for (i in 1:r$n) {
-       r$coords[i, 1] <- getShort(con)
-     }
-     for (i in 1:r$n) {
-       r$coords[i, 2] <- getShort(con)
-     }
-   }
+  ##   switch(r$type) {
+  ## ##             case rect:
+  ## ##                 roi = new Roi(left, top, width, height);
+  ## ##                 int arcSize <- getShort(con) # ROUNDED_RECT_ARC_SIZE);
+  ## ##                 if (arcSize>0)
+  ## ##                     roi.setCornerDiameter(arcSize);
+  ## ##                 break;
+  ## ##             case oval:
+  ## ##                 roi = new OvalRoi(left, top, width, height);
+  ## ##                 break;
+  ## ##             case line:
+  ## ##                 if (subtype==ARROW) {
+  ## ##                     roi = new Arrow(x1, y1, x2, y2);        
+  ## ##                     ((Arrow)roi).setDoubleHeaded((options&DOUBLE_HEADED)!=0);
+  ## ##                     ((Arrow)roi).setOutline((options&OUTLINE)!=0);
+  ## ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
+  ## ##                         ((Arrow)roi).setStyle(style);
+  ## ##                     int headSize = getByte(ARROW_HEAD_SIZE);
+  ## ##                     if (headSize>=0 && style<=30)
+  ## ##                         ((Arrow)roi).setHeadSize(headSize);
+  ## ##                 } else
+  ## ##                     roi = new Line(x1, y1, x2, y2);     
+  ## ##                 //IJ.write("line roi: "+x1+" "+y1+" "+x2+" "+y2);
+  ## ##                 break;
+  if (r$type==0) { ##  polygon: case freehand: case traced: case polyline: case freeline: case angle: case point:
+    r$coords <- matrix(NA, r$n, 2)
+    r$strType <- "Polygon"
+    for (i in 1:r$n) {
+      r$coords[i, 1] <- getShort(con)
+    }
+    for (i in 1:r$n) {
+      r$coords[i, 2] <- getShort(con)
+    }
+  }
+  close(con)
   return(r)
 }
 ## ##                     //IJ.write("type: "+type);
