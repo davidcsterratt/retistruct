@@ -57,53 +57,28 @@ getFloat <- function(con)  {
 
 ## ##
 read.roi <- function(path) {
-  ## offsets
-  VERSION_OFFSET = 4;
-  TYPE = 6;
-  TOP = 8;
-  LEFT = 10;
-  BOTTOM = 12;
-  RIGHT = 14;
-  N_COORDINATES = 16;
-  X1 = 18;
-  Y1 = 22;
-  X2 = 26;
-  Y2 = 30;
-  STROKE_WIDTH = 34;
-  SHAPE_ROI_SIZE = 36;
-  STROKE_COLOR = 40;
-  FILL_COLOR = 44;
-  SUBTYPE = 48;
-  OPTIONS = 50;
-  ARROW_STYLE = 52;
-  ELLIPSE_ASPECT_RATIO = 52;
-  ARROW_HEAD_SIZE = 53;
-  ROUNDED_RECT_ARC_SIZE = 54;
-  POSITION = 56;
-  COORDINATES = 64;
-
   ## subtypes
-  TEXT = 1;
-  ARROW = 2;
-  ELLIPSE = 3;
+  subtypes <- list(TEXT    = 1,
+                   ARROW   = 2,
+                   ELLIPSE = 3)
 
   ## options
-  SPLINE_FIT = 1;
-  DOUBLE_HEADED = 2;
-  OUTLINE = 4;
+  opts <- list(SPLINE_FIT    =1,
+               DOUBLE_HEADED =2,
+               OUTLINE       =4)
   
   ## types
-  polygon=0
-  rect=1
-  oval=2
-  line=3
-  freeline=4
-  polyline=5
-  noRoi=6
-  freehand=7
-  traced=8
-  angle=9
-  point=10;
+  types <- list(polygon  = 0,
+                rect     = 1,
+                oval     = 2,
+                line     = 3,
+                freeline = 4,
+                polyline = 5,
+                noRoi    = 6,
+                freehand = 7,
+                traced   = 8,
+                angle    = 9,
+                point    = 10)
 
   ## Main code
   if (!is.null(path)) {
@@ -113,16 +88,19 @@ read.roi <- function(path) {
     ## FIXME name = f.getName();
 
   }
+  ## Open the connection
   con <- file(path, "rb")
-  ##  data <- readBin(path, raw(0), size)
 
-  
+  ## Test that it's the right kind of file
   if (getByte(con) != 73 || getByte(con) != 111) {  ## "Iout"
     stop("This is not an ImageJ ROI");
   }
 
+  ## Create place to store data
   r <- list()
-  
+
+  ## Get the data. This all has to be in the order corresponding to the
+  ## positions mentioned at the top of the file
   getShort(con)                         # Unused
   r$version <-  getShort(con);
   r$type <-     getByte(con);
@@ -149,8 +127,6 @@ read.roi <- function(path) {
   r$position <- getInt(con)   # POSITION);
   getShort(con)
   getShort(con)
-
-  print("Ready to read")
 
   ##   ## if (name!=null && name.endsWith(".roi"))
   ##   ##   name = name.substring(0, name.length()-4);
@@ -187,7 +163,7 @@ read.roi <- function(path) {
   ## ##                     roi = new Line(x1, y1, x2, y2);     
   ## ##                 //IJ.write("line roi: "+x1+" "+y1+" "+x2+" "+y2);
   ## ##                 break;
-  if (r$type==0) { ##  polygon: case freehand: case traced: case polyline: case freeline: case angle: case point:
+  if (r$type==types[["polygon"]]) { ##  polygon: case freehand: case traced: case polyline: case freeline: case angle: case point:
     r$coords <- matrix(NA, r$n, 2)
     r$strType <- "Polygon"
     for (i in 1:r$n) {
