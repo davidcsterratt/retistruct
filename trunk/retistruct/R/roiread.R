@@ -190,11 +190,36 @@ read.roi <- function(file, verbose=FALSE) {
     for (i in 1:r$n) {
       r$coords[i, 2] <- getShort(con)
     }
+    r$coords[r$coords<0] <- 0
+    r$coords[,1] <- r$coords[,1] + r$left
+    r$coords[,2] <- r$coords[,2] + r$top
   }
   close(con)
   class(r) <- "IJROI"
   return(r)
 }
+
+plot.IJROI <- function(x, add=FALSE, ...) {
+  with(x, {
+    dat <- rbind(coords, coords[1,])
+    if (add) {
+      lines(dat, ...)
+    } else {
+      plot(dat, type="l", ...)
+    }
+  })
+}
+
+## Demo
+demo.roi <- function() {
+ im <- as.raster(readPNG("~/image.png"))
+ plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
+ rasterImage(im, 0,  nrow(im), ncol(im), 0)
+ r <- read.roi("~/image.roi")
+ plot(r, TRUE, col="cyan")
+ return(r)
+}
+
 ## ##                     //IJ.write("type: "+type);
 ## ##                     //IJ.write("n: "+n);
 ## ##                     //IJ.write("rect: "+left+","+top+" "+width+" "+height);
