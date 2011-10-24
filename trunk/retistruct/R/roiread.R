@@ -38,7 +38,7 @@ read.roi <- function(file, verbose=FALSE) {
     n <- readBin(con, raw(0), 1, size=1)
     if (verbose)
       message(paste("Pos ", pos , ": Byte ", n, sep=""))
-    return(n)
+    return(as.integer(n))
   }
 
   getShort <- function(con) {
@@ -181,19 +181,24 @@ read.roi <- function(file, verbose=FALSE) {
   ## ##                     roi = new Line(x1, y1, x2, y2);     
   ## ##                 //IJ.write("line roi: "+x1+" "+y1+" "+x2+" "+y2);
   ## ##                 break;
-  if (r$type==types[["polygon"]]) { ##  polygon: case freehand: case traced: case polyline: case freeline: case angle: case point:
+  if (r$type %in% types[c("polygon", "freehand", "traced", "polyline", "freeline", "angle", "point")]) {
     r$coords <- matrix(NA, r$n, 2)
     r$strType <- "Polygon"
-    for (i in 1:r$n) {
-      r$coords[i, 1] <- getShort(con)
+    if (r$n > 0) {
+      for (i in 1:r$n) {
+        r$coords[i, 1] <- getShort(con)
+      }
+      for (i in 1:r$n) {
+        r$coords[i, 2] <- getShort(con)
+      }
+      r$coords[r$coords<0] <- 0
+      r$coords[,1] <- r$coords[,1] + r$left
+      r$coords[,2] <- r$coords[,2] + r$top
     }
-    for (i in 1:r$n) {
-      r$coords[i, 2] <- getShort(con)
-    }
-    r$coords[r$coords<0] <- 0
-    r$coords[,1] <- r$coords[,1] + r$left
-    r$coords[,2] <- r$coords[,2] + r$top
   }
+
+  
+  r$types <- types
   close(con)
   class(r) <- "IJROI"
   return(r)
@@ -220,24 +225,6 @@ demo.roi <- function() {
  return(r)
 }
 
-## ##                     //IJ.write("type: "+type);
-## ##                     //IJ.write("n: "+n);
-## ##                     //IJ.write("rect: "+left+","+top+" "+width+" "+height);
-## ##                     if (n==0) break;
-## ##                     int[] x = new int[n];
-## ##                     int[] y = new int[n];
-## ##                     int base1 = COORDINATES;
-## ##                     int base2 = base1+2*n;
-## ##                     int xtmp, ytmp;
-## ##                     for (int i=0; i<n; i++) {
-## ##                         xtmp <- getShort(con) # base1+i*2);
-## ##                         if (xtmp<0) xtmp = 0;
-## ##                         ytmp <- getShort(con) # base2+i*2);
-## ##                         if (ytmp<0) ytmp = 0;
-## ##                         x[i] = left+xtmp;
-## ##                         y[i] = top+ytmp;
-## ##                         //IJ.write(i+" "+getShort(base1+i*2)+" "+getShort(base2+i*2));
-## ##                     }
 ## ##                     if (type==point) {
 ## ##                         roi = new PointRoi(x, y, n);
 ## ##                         break;
