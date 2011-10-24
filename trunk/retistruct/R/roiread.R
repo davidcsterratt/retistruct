@@ -75,9 +75,9 @@ read.roi <- function(file, verbose=FALSE) {
                    ELLIPSE = 3)
 
   ## options
-  opts <- list(SPLINE_FIT    =1,
-               DOUBLE_HEADED =2,
-               OUTLINE       =4)
+  opts <- list(SPLINE_FIT    = as.raw(1),
+               DOUBLE_HEADED = as.raw(2),
+               OUTLINE       = as.raw(4))
   
   ## types
   types <- list(polygon  = 0,
@@ -136,7 +136,7 @@ read.roi <- function(file, verbose=FALSE) {
   r$strokeColor <- getInt(con);
   r$fillColor <- getInt(con);
   r$subtype <-  getShort(con) #, SUBTYPE);
-  r$options <-  getShort(con) # OPTIONS);
+  r$options <-  as.raw(getShort(con)) # OPTIONS);
   ## style <- getByte(con) #ARROW_STYLE);
   r$aspectRatio <- getFloat(con) # ELLIPSE_ASPECT_RATIO);
   r$position <- getInt(con)   # POSITION);
@@ -157,33 +157,30 @@ read.roi <- function(file, verbose=FALSE) {
     ## return roi;
   }
 
-  ##   switch(r$type) {
-  ## ##             case rect:
-  ## ##                 roi = new Roi(left, top, width, height);
-  ## ##                 int arcSize <- getShort(con) # ROUNDED_RECT_ARC_SIZE);
-  ## ##                 if (arcSize>0)
-  ## ##                     roi.setCornerDiameter(arcSize);
-  ## ##                 break;
-  ## ##             case oval:
-  ## ##                 roi = new OvalRoi(left, top, width, height);
-  ## ##                 break;
-  ## ##             case line:
-  ## ##                 if (subtype==ARROW) {
-  ## ##                     roi = new Arrow(x1, y1, x2, y2);        
-  ## ##                     ((Arrow)roi).setDoubleHeaded((options&DOUBLE_HEADED)!=0);
-  ## ##                     ((Arrow)roi).setOutline((options&OUTLINE)!=0);
-  ## ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
-  ## ##                         ((Arrow)roi).setStyle(style);
-  ## ##                     int headSize = getByte(ARROW_HEAD_SIZE);
-  ## ##                     if (headSize>=0 && style<=30)
-  ## ##                         ((Arrow)roi).setHeadSize(headSize);
-  ## ##                 } else
-  ## ##                     roi = new Line(x1, y1, x2, y2);     
-  ## ##                 //IJ.write("line roi: "+x1+" "+y1+" "+x2+" "+y2);
-  ## ##                 break;
+  if (r$type %in% types[c("rect")]) {
+    ##                 int arcSize <- getShort(con) # ROUNDED_RECT_ARC_SIZE);
+    ##                 if (arcSize>0)
+    ##                     roi.setCornerDiameter(arcSize);
+    ##                 break;
+  }
+
+  ## if (r$type %in% types[c("oval")]) {
+
+  if (r$type %in% types["line"]) {
+    if (r$subtype %in% types("ARROW")) {
+      r$doubleHeaded <- (r$options & opts$DOUBLE_HEADED) !=0
+      r$outline <- (r$options & opts$OUTLINE) !=0
+      ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
+      ##                         ((Arrow)roi).setStyle(style);
+      ##                     int headSize = getByte(ARROW_HEAD_SIZE);
+      ##                     if (headSize>=0 && style<=30)
+      ##                         ((Arrow)roi).setHeadSize(headSize);
+      ##                 } else
+      ##                     roi = new Line(x1, y1, x2, y2);
+    }
+  }
   if (r$type %in% types[c("polygon", "freehand", "traced", "polyline", "freeline", "angle", "point")]) {
     r$coords <- matrix(NA, r$n, 2)
-    r$strType <- "Polygon"
     if (r$n > 0) {
       for (i in 1:r$n) {
         r$coords[i, 1] <- getShort(con)
@@ -195,9 +192,9 @@ read.roi <- function(file, verbose=FALSE) {
       r$coords[,1] <- r$coords[,1] + r$left
       r$coords[,2] <- r$coords[,2] + r$top
     }
-  }
+  } 
 
-  
+  r$strType <- names(types)[which(types==r$type)]
   r$types <- types
   close(con)
   class(r) <- "IJROI"
@@ -206,12 +203,20 @@ read.roi <- function(file, verbose=FALSE) {
 
 plot.IJROI <- function(x, add=FALSE, ...) {
   with(x, {
-    dat <- rbind(coords, coords[1,])
-    if (add) {
-      lines(dat, ...)
-    } else {
-      plot(dat, type="l", ...)
+    if (!add) 
+      plot(NA, NA, xlim=range(coords[,1]), ylim=range(coords[,2]))
+
+    if (type %in% types[c("polygon", "freehand", "traced")]) {
+      coords <- rbind(coords, coords[1,])
+      lines(coords, ...)
     }
+    if (type %in% types[c("polyline", "freeline", "angle")]) {
+      lines(coords, ...)
+    }
+    if (type %in% types[c("point")]) {
+      points(coords, ...)
+    }
+
   })
 }
 
@@ -225,15 +230,6 @@ demo.roi <- function() {
  return(r)
 }
 
-## ##                     if (type==point) {
-## ##                         roi = new PointRoi(x, y, n);
-## ##                         break;
-## ##                     }
-## ##                     int roiType;
-## ##                     if (type==polygon)
-## ##                         roiType = Roi.POLYGON;
-## ##                     else if (type==freehand) {
-## ##                         roiType = Roi.FREEROI;
 ## ##                         if (subtype==ELLIPSE) {
 ## ##                             double ex1 = getFloat(X1);      
 ## ##                             double ey1 = getFloat(Y1);      
@@ -245,16 +241,6 @@ demo.roi <- function() {
 ## ##                         }
 ## ##                     } else if (type==traced)
 ## ##                         roiType = Roi.TRACED_ROI;
-## ##                     else if (type==polyline)
-## ##                         roiType = Roi.POLYLINE;
-## ##                     else if (type==freeline)
-## ##                         roiType = Roi.FREELINE;
-## ##                     else if (type==angle)
-## ##                         roiType = Roi.ANGLE;
-## ##                     else
-## ##                         roiType = Roi.FREEROI;
-## ##                     roi = new PolygonRoi(x, y, n, roiType);
-## ##                     break;
 ## ##             default:
 ## ##                 throw new IOException("Unrecognized ROI type: "+type);
 ## ##         }
@@ -280,20 +266,6 @@ demo.roi <- function() {
 
 ## ## ## Decodes an ImageJ, NIH Image or Scion Image ROI file. 
 ## ## readroi <- function(file) {
-    
-## ##     private byte[] data;
-## ##     private String file;
-## ##     private String name;
-## ##     private int size;
-## p##   con <- file(file, "rb")
-## ##   bytes <- readBin(con, 
-## ##     /** Constructs an RoiDecoder using a byte array. */
-## ##     public RoiDecoder(byte[] bytes, String name) {
-## ##         is = new ByteArrayInputStream(bytes);   
-## ##         this.name = name;
-## ##         this.size = bytes.length;
-## ##     }
-
     
 ## ##     void getStrokeWidthAndColor(Roi roi) {
 ## ##         if (strokeWidth>0)
@@ -329,21 +301,7 @@ demo.roi <- function() {
 ## ##         return roi2;
 ## ##     }
 
-## ## }
-
-  ## getShapeRoi <- function(){
-##   if (type!=rect)
-##     stop("Invalid composite ROI type");
 
 
-##          ## ShapeRoi roi = null;
-##          ## float[] shapeArray = new float[n];
-##          ## int base = COORDINATES;
-##          ## for(int i=0; i<n; i++) {
-##          ##     shapeArray[i] = getFloat(base);
-##          ##     base += 4;
-##          ## }
-##          ## roi = new ShapeRoi(shapeArray);
-##          ## if (name!=null) roi.setName(name);
-##          ## return roi;
-##      }
+
+
