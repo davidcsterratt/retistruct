@@ -23,40 +23,52 @@
 ##     64-       x-coordinates (short), followed by y-coordinates
 ##
 
-getByte <- function(con) {
-  pos <- seek(con) 
-  n <- readBin(con, raw(0), 1, size=1)
-  message(paste("Pos ", pos , ": Byte ", n, sep=""))
-  return(n)
-}
-
-getShort <- function(con) {
-  pos <- seek(con) 
-  n <- readBin(con, integer(0), 1, size=2, signed=TRUE, endian="big")
-  if (n < -5000) {
-    seek(con, -2, origin="current")
-    n <- readBin(con, integer(0), 1, size=2, signed=FALSE, endian="big")
+##' Read an ImageJ ROI file. This returns a structure containing the
+##' ImageJ data. 
+##'
+##' @title Read an ImageJ ROI file
+##' @param file Name of ImageJ ROI file to read
+##' @param verbose Whether to report information
+##' @return A structure of class IJROI containing the ROI information
+##' @author David Sterratt
+read.roi <- function(file, verbose=FALSE) {
+  ## Define internal helper functions
+  getByte <- function(con) {
+    pos <- seek(con) 
+    n <- readBin(con, raw(0), 1, size=1)
+    if (verbose)
+      message(paste("Pos ", pos , ": Byte ", n, sep=""))
+    return(n)
   }
-  message(paste("Pos ", pos , ": Short ", n, sep=""))
-  return(n)
-}
-    
-getInt <- function(con)  {
-  pos <- seek(con) 
-  n <- readBin(con, integer(0), 1, size=4, signed=TRUE, endian="little")
-  message(paste("Pos ", pos , ": Integer ", n, sep=""))
-  return (n);
-}
 
-getFloat <- function(con)  {
-  pos <- seek(con) 
-  n <- readBin(con, double(0), 1, size=4, signed=TRUE, endian="big")
-  message(paste("Pos ", pos , ": Float ", n, sep=""))
-  return (n);
-}
+  getShort <- function(con) {
+    pos <- seek(con) 
+    n <- readBin(con, integer(0), 1, size=2, signed=TRUE, endian="big")
+    if (n < -5000) {
+      seek(con, -2, origin="current")
+      n <- readBin(con, integer(0), 1, size=2, signed=FALSE, endian="big")
+    }
+    if (verbose)
+      message(paste("Pos ", pos , ": Short ", n, sep=""))
+    return(n)
+  }
+  
+  getInt <- function(con)  {
+    pos <- seek(con) 
+    n <- readBin(con, integer(0), 1, size=4, signed=TRUE, endian="little")
+    if (verbose)
+      message(paste("Pos ", pos , ": Integer ", n, sep=""))
+    return (n);
+  }
 
-## ##
-read.roi <- function(path) {
+  getFloat <- function(con)  {
+    pos <- seek(con) 
+    n <- readBin(con, double(0), 1, size=4, signed=TRUE, endian="big")
+    if (verbose)
+      message(paste("Pos ", pos , ": Float ", n, sep=""))
+    return (n);
+  }
+  
   ## subtypes
   subtypes <- list(TEXT    = 1,
                    ARROW   = 2,
@@ -81,21 +93,24 @@ read.roi <- function(path) {
                 point    = 10)
 
   ## Main code
-  if (!is.null(path)) {
-    size <- file.info(path)$size
-    if (!grepl(".roi$", path) && size>5242880)
+  if (!is.null(file)) {
+    size <- file.info(file)$size
+    if (!grepl(".roi$", file) && size>5242880)
       stop("This is not an ROI or file size>5MB)")
     ## FIXME name = f.getName();
 
   }
   ## Open the connection
-  con <- file(path, "rb")
+  con <- file(file, "rb")
 
   ## Test that it's the right kind of file
   if (getByte(con) != 73 || getByte(con) != 111) {  ## "Iout"
     stop("This is not an ImageJ ROI");
   }
 
+  if (verbose)
+    message("Reading format data")
+  
   ## Create place to store data
   r <- list()
 
@@ -128,6 +143,9 @@ read.roi <- function(path) {
   getShort(con)
   getShort(con)
 
+  if (verbose)
+    message("Reading coordinate data")
+  
   ##   ## if (name!=null && name.endsWith(".roi"))
   ##   ##   name = name.substring(0, name.length()-4);
   isComposite <- (r$shapeRoiSize >0);
@@ -174,6 +192,7 @@ read.roi <- function(path) {
     }
   }
   close(con)
+  class(r) <- "IJROI"
   return(r)
 }
 ## ##                     //IJ.write("type: "+type);
@@ -251,7 +270,7 @@ read.roi <- function(path) {
 ## ## readroi <- function(file) {
     
 ## ##     private byte[] data;
-## ##     private String path;
+## ##     private String file;
 ## ##     private String name;
 ## ##     private int size;
 ## p##   con <- file(file, "rb")
