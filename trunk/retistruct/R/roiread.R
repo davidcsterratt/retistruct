@@ -209,6 +209,15 @@ plot.IJROI <- function(x, add=FALSE, ...) {
     if (!add) 
       plot(NA, NA, xlim=range(coords[,1]), ylim=range(coords[,2]))
 
+    if (type == types["rect"]) {
+      rect(left, bottom, right, top, ...)
+    }
+    if (type == types["oval"]) {
+      warning("Plotting oval not yet supported")
+    }
+    if (type == types["line"]) {
+      warning("Plotting line not yet supported")
+    }
     if (type %in% types[c("polygon", "freehand", "traced")]) {
       coords <- rbind(coords, coords[1,])
       lines(coords, ...)
@@ -219,14 +228,15 @@ plot.IJROI <- function(x, add=FALSE, ...) {
     if (type %in% types[c("point")]) {
       points(coords, ...)
     }
-
+    
+    
   })
 }
 
 ## Demo
 demo.roi <- function() {
   im <- as.raster(readPNG("~/image.png"))
-  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
+  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0), asp=1) 
   rasterImage(im, 0,  nrow(im), ncol(im), 0)
   r <- read.roi("~/image.roi")
   plot(r, TRUE, col="cyan")
@@ -235,10 +245,14 @@ demo.roi <- function() {
 
 demo.roi2 <- function() {
   im <- as.raster(readPNG("~/projects/rettect/nmf_morph/trunk/imagej-logo.png"))
-  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
+  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0), asp=1) 
   rasterImage(im, 0,  nrow(im), ncol(im), 0, interpolate=FALSE)
   r <- read.roi("~/projects/rettect/nmf_morph/trunk/0015-0062.roi")
-  plot(r, TRUE, col="cyan")
+  plot(r, TRUE)
+  r <- read.roi("~/projects/rettect/nmf_morph/trunk/0012-0016.roi")
+  plot(r, TRUE)
+  r <- read.roi("~/projects/rettect/nmf_morph/trunk/0016-0176.roi")
+  plot(r, TRUE)
   return(r)
 }
 
