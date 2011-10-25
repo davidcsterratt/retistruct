@@ -51,11 +51,11 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
     if (plot.image && !is.null(o$im)) {
       xs <- 1:ncol(im)
       ys <- 1:nrow(im)
-      plot(NA, NA, xlim=range(xs), ylim=range(ys), asp=1,
+      plot(NA, NA, xlim=c(0, max(xs)), ylim=c(0, max(ys)), asp=1,
            xaxt=axt, yaxt=axt, bty="n",
            xlab="", ylab="")
       ## rasterImage crashes on some systems, but not others.
-      rasterImage(im, 1, 1, ncol(im), nrow(im))
+      rasterImage(im, 0, 0, ncol(im), nrow(im))
     } else {
       xs <- P[s,1]
       ys <- P[s,2]
