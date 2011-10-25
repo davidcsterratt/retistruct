@@ -139,16 +139,19 @@ quit(status=status)",
 ##' \code{tldir}, determining whether the directory contains valid raw
 ##' data and markup, and performing the reconstruction if it does.
 ##'
-##' @title Batch operation using multicore
-##' @param datasets Vector of dataset directories to reconstruct.
+##' @title Batch operation using the multicore package
 ##' @param tldir If datasets is not specified, the top level of the
 ##' directory tree through which to recurse in order to find datasets.
 ##' @param outputdir directory in which to dump a log file and images
+##' @param datasets Vector of dataset directories to reconstruct
 ##' @param device string indicating what type of graphics output
 ##' required. Options are "pdf" and "png".
-##' @param cpu.time.limit amount of CPU after which to terminate the process
+##' @param cpu.time.limit amount of CPU after which to terminate the
+##' process
+##' @param mc.cores The number of cores to use. Defaults to the total
+##' number available.
 ##' @author David Sterratt
-retistruct.multicore <- function(tldir='.', datasets=NULL, outputdir=tldir,
+retistruct.multicore <- function(tldir='.', outputdir=tldir, datasets=NULL, 
                                  device="pdf",
                                  cpu.time.limit=3600,
                                  mc.cores=getOption("cores")) {
