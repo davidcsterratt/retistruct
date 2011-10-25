@@ -99,8 +99,8 @@ read.roi <- function(file, verbose=FALSE) {
     if (!grepl(".roi$", file) && size>5242880)
       stop("This is not an ROI or file size>5MB)")
     name <- basename(file)
-
   }
+  
   ## Open the connection
   con <- file(file, "rb")
 
@@ -152,9 +152,9 @@ read.roi <- function(file, verbose=FALSE) {
   if (verbose)
     message("Reading coordinate data")
   
-  if (!is.null(name) && (!grepl(".roi$", name)))
+  if (!is.null(name) && (grepl(".roi$", name)))
     r$name <- substring(name, 1, nchar(name) - 4)
-      
+    
   isComposite <- (r$shapeRoiSize >0);
   if (isComposite) {
     stop("Composite ROIs not supported")
