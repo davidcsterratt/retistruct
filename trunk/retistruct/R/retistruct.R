@@ -48,8 +48,9 @@ retistruct.read.dataset <- function(dataset, ...) {
   ## Check to see if dataset is valid
   type <- check.datadir(dataset)
   
-  if (type=="idt") { return(idt.read.dataset(dataset, ...))}
-  if (type=="csv") { return(csv.read.dataset(dataset, ...))}
+  if (type=="idt")   { return(idt.read.dataset(dataset, ...))}
+  if (type=="csv")   { return(csv.read.dataset(dataset, ...))}
+  if (type=="ijroi") { return(ijroi.read.dataset(dataset, ...))}
 
   return(a)
 }
