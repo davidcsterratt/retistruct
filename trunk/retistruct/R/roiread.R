@@ -213,7 +213,9 @@ plot.IJROI <- function(x, add=FALSE, ...) {
       rect(left, bottom, right, top, ...)
     }
     if (type == types["oval"]) {
-      warning("Plotting oval not yet supported")
+      theta <- seq(0, 2*pi, len=360)
+      polygon(left + width/2*(1 + sin(theta)),
+              top + height/2*(1 + cos(theta)), ...)
     }
     if (type == types["line"]) {
       warning("Plotting line not yet supported")
