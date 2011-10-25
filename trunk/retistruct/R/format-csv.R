@@ -24,28 +24,12 @@ csv.read.dataset <- function(dataset) {
   ## Read the raw data
   out <- read.csv(file.path(dataset, "outline.csv"))
 
-  ## If there is a scale file, read it
-  scale <- 0
-  scfile <- file.path(dataset, "scale.csv")
-  if (file.exists(scfile)) {
-    print("Reading scale file")
-    sc <- read.csv(file.path(dataset, "scale.csv"))
-    scale <- sc[1,1]
-    if (!is.numeric(scale)) {
-      stop("Scale file has not been read correctly. Check it is in the correct format.")
-    }
-  } else {
-    warning("Scale file does not exist. Scale bar will not be set.")
-  }
+  ## Read scale
+  scale <- read.scale(dataset)
   
   ## If there is an image, read it
-  im <- NULL
-  imfile <- file.path(dataset, "image.png")
-  if (file.exists(imfile)) {
-    print("Reading image")
-    im <- as.raster(readPNG(imfile))
-  }
-  
+  im <- read.image(dataset)
+
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each
