@@ -31,7 +31,7 @@
 ##' @param verbose Whether to report information
 ##' @return A structure of class IJROI containing the ROI information
 ##' @author David Sterratt
-read.roi <- function(file, verbose=FALSE) {
+read.ijroi <- function(file, verbose=FALSE) {
   ## Define internal helper functions
   getByte <- function(con) {
     pos <- seek(con) 
