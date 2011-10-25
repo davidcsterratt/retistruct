@@ -22,7 +22,8 @@ ijroi.check.datadir <- function(dir=NULL) {
 ##' @author David Sterratt
 ijroi.read.dataset <- function(dataset) {
   ## Read the raw data
-  P <- read.roi(file.path(dataset, "outline.roi"))
+  roi <- read.ijroi(file.path(dataset, "outline.roi"))
+  out <- roi$coords
 
   ## Read scale
   scale <- read.scale(dataset)
@@ -41,6 +42,7 @@ ijroi.read.dataset <- function(dataset) {
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
   ## to transform P so that the outline appears in the correct
   ## orientation.
+  P <- out
   offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
   P[,2] <- offset - P[,2]
   Ss <- list()

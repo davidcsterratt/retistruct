@@ -10,8 +10,9 @@ retistruct.report <- function(message, title="",...) {
 ## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
 ## error if the directory appears to be corrupt.
 check.datadir <- function(dir=NULL) {
-  if (idt.check.datadir(dir)) { return("idt") }
-  if (csv.check.datadir(dir)) { return("csv") }
+  if (idt.check.datadir(dir))   { return("idt") }
+  if (csv.check.datadir(dir))   { return("csv") }
+  if (ijroi.check.datadir(dir)) { return("ijroi") }
   return(FALSE)
 }
 
@@ -52,7 +53,7 @@ retistruct.read.dataset <- function(dataset, ...) {
   if (type=="csv")   { return(csv.read.dataset(dataset, ...))}
   if (type=="ijroi") { return(ijroi.read.dataset(dataset, ...))}
 
-  return(a)
+  stop("No valid dataset format detected.")
 }
 
 ##' Test the oputline object \code{o} for the prescense of
