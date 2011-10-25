@@ -93,11 +93,12 @@ read.roi <- function(file, verbose=FALSE) {
                 point    = 10)
 
   ## Main code
+  name <- NULL
   if (!is.null(file)) {
     size <- file.info(file)$size
     if (!grepl(".roi$", file) && size>5242880)
       stop("This is not an ROI or file size>5MB)")
-    ## FIXME name = f.getName();
+    name <- basename(file)
 
   }
   ## Open the connection
@@ -117,37 +118,43 @@ read.roi <- function(file, verbose=FALSE) {
   ## Get the data. This all has to be in the order corresponding to the
   ## positions mentioned at the top of the file
   getShort(con)                         # Unused
-  r$version <-  getShort(con);
-  r$type <-     getByte(con);
-  getByte(con)
-  r$top <-      getShort(con) # TOP);
-  r$left <-     getShort(con) # LEFT);
-  r$bottom <-   getShort(con) # BOTTOM);
-  r$right <-    getShort(con) # RIGHT);
+  r$version <-      getShort(con)
+  r$type <-         getByte(con)
+  getByte(con)                          # Unused
+  r$top <-          getShort(con)       # TOP
+  r$left <-         getShort(con)       # LEFT
+  r$bottom <-       getShort(con)       # Bottom
+  r$right <-        getShort(con)       # RIGHT
   r$width <-    with(r, right-left)
   r$height <-   with(r, bottom-top)
-  r$n <-        getShort(con) # N_COORDINATES);
-  r$x1 <-       getFloat(con);     
-  r$y1 <-       getFloat(con);     
-  r$x2 <-       getFloat(con);     
-  r$y2 <-       getFloat(con);
-  r$strokeWidth <- getShort(con) # STROKE_WIDTH);
-  r$shapeRoiSize <- getInt(con); # SHAPE_ROI_SIZE
-  r$strokeColor <- getInt(con);
-  r$fillColor <- getInt(con);
-  r$subtype <-  getShort(con) #, SUBTYPE);
-  r$options <-  as.raw(getShort(con)) # OPTIONS);
-  ## style <- getByte(con) #ARROW_STYLE);
-  r$aspectRatio <- getFloat(con) # ELLIPSE_ASPECT_RATIO);
-  r$position <- getInt(con)   # POSITION);
-  getShort(con)
-  getShort(con)
+  r$n <-            getShort(con)       # N_COORDINATES
+  r$x1 <-           getFloat(con)     
+  r$y1 <-           getFloat(con)     
+  r$x2 <-           getFloat(con)     
+  r$y2 <-           getFloat(con)
+  r$strokeWidth <-  getShort(con)       # STROKE_WIDTH
+  r$shapeRoiSize <- getInt(con)         # SHAPE_ROI_SIZE
+  r$strokeColor <-  getInt(con)
+  r$fillColor <-    getInt(con)
+  r$subtype <-      getShort(con)       # SUBTYPE
+  r$options < as.raw(getShort(con))     # OPTIONS
+  if (r$type == "oval") {
+    r$aspectRatio <- getFloat(con)      # ELLIPSE_ASPECT_RATIO
+  } else {
+    r$style <-      getByte(con)        # ARROW_STYLE
+    r$headSize <-   getByte(con)        # ARROW_HEAD_SIZE    
+    r$arcSize <-    getShort(con)       # ROUNDED_RECT_ARC_SIZE
+  }
+  r$position <-     getInt(con)         # POSITION
+  getShort(con)                         # Unused
+  getShort(con)                         # Unused
 
   if (verbose)
     message("Reading coordinate data")
   
-  ##   ## if (name!=null && name.endsWith(".roi"))
-  ##   ##   name = name.substring(0, name.length()-4);
+  if (!is.null(name) && (!grepl(".roi$", name)))
+    r$name <- substring(name, 1, nchar(name) - 4)
+      
   isComposite <- (r$shapeRoiSize >0);
   if (isComposite) {
     stop("Composite ROIs not supported")
@@ -156,13 +163,7 @@ read.roi <- function(file, verbose=FALSE) {
     ##          roi.setPosition(position);
     ## return roi;
   }
-
-  if (r$type %in% types[c("rect")]) {
-    ##                 int arcSize <- getShort(con) # ROUNDED_RECT_ARC_SIZE);
-    ##                 if (arcSize>0)
-    ##                     roi.setCornerDiameter(arcSize);
-    ##                 break;
-  }
+  ## if (r$type %in% types[c("rect")]) {
 
   ## if (r$type %in% types[c("oval")]) {
 
@@ -172,13 +173,15 @@ read.roi <- function(file, verbose=FALSE) {
       r$outline <- (r$options & opts$OUTLINE) !=0
       ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
       ##                         ((Arrow)roi).setStyle(style);
-      ##                     int headSize = getByte(ARROW_HEAD_SIZE);
+
       ##                     if (headSize>=0 && style<=30)
       ##                         ((Arrow)roi).setHeadSize(headSize);
       ##                 } else
       ##                     roi = new Line(x1, y1, x2, y2);
     }
   }
+
+  ## Read in coordinates
   if (r$type %in% types[c("polygon", "freehand", "traced", "polyline", "freeline", "angle", "point")]) {
     r$coords <- matrix(NA, r$n, 2)
     if (r$n > 0) {
@@ -222,13 +225,23 @@ plot.IJROI <- function(x, add=FALSE, ...) {
 
 ## Demo
 demo.roi <- function() {
- im <- as.raster(readPNG("~/image.png"))
- plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
- rasterImage(im, 0,  nrow(im), ncol(im), 0)
- r <- read.roi("~/image.roi")
- plot(r, TRUE, col="cyan")
- return(r)
+  im <- as.raster(readPNG("~/image.png"))
+  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
+  rasterImage(im, 0,  nrow(im), ncol(im), 0)
+  r <- read.roi("~/image.roi")
+  plot(r, TRUE, col="cyan")
+  return(r)
 }
+
+demo.roi2 <- function() {
+  im <- as.raster(readPNG("~/projects/rettect/nmf_morph/trunk/imagej-logo.png"))
+  plot(NA, NA, xlim=c(0, ncol(im)), ylim=c(nrow(im), 0)) 
+  rasterImage(im, 0,  nrow(im), ncol(im), 0, interpolate=FALSE)
+  r <- read.roi("~/projects/rettect/nmf_morph/trunk/0015-0062.roi")
+  plot(r, TRUE, col="cyan")
+  return(r)
+}
+
 
 ## ##                         if (subtype==ELLIPSE) {
 ## ##                             double ex1 = getFloat(X1);      
@@ -239,8 +252,6 @@ demo.roi <- function() {
 ## ##                             roi = new EllipseRoi(ex1,ey1,ex2,ey2,aspectRatio);
 ## ##                             break;
 ## ##                         }
-## ##                     } else if (type==traced)
-## ##                         roiType = Roi.TRACED_ROI;
 ## ##             default:
 ## ##                 throw new IOException("Unrecognized ROI type: "+type);
 ## ##         }
@@ -263,10 +274,6 @@ demo.roi <- function() {
 
 ## ## }
 
-
-## ## ## Decodes an ImageJ, NIH Image or Scion Image ROI file. 
-## ## readroi <- function(file) {
-    
 ## ##     void getStrokeWidthAndColor(Roi roi) {
 ## ##         if (strokeWidth>0)
 ## ##             roi.setStrokeWidth(strokeWidth);
