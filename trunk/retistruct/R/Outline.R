@@ -71,7 +71,7 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
     if (scalebar && !is.na(scale)) {
       sby <- min(ys) - 0.02*(max(ys) - min(ys))
       sblen <- 1000*scalebar/(scale)
-      lines(c(max(xs)-sblen, max(xs)),c(sby, sby), lwd=2)
+      lines(c(max(xs) - sblen, max(xs)),c(sby, sby), lwd=2)
     }
   })
 }
