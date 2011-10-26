@@ -224,7 +224,7 @@ h.open <- function(h, ...) {
   setwd(curdir)
 
   ## Read the raw data
-  tryCatch({
+  withCallingHandlers({
     a <<- retistruct.read.dataset(a$dataset)
   }, warning=h.warning, error=h.error)
   
@@ -337,6 +337,7 @@ h.error <- function(e) {
 ## Warning message
 h.warning <- function(e) {
   gmessage(e, title="Warning", icon="warning")
+  invokeRestart("muffleWarning")
 }
 
 ## The GUI itself
