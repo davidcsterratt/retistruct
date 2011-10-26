@@ -240,19 +240,25 @@ sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
   return(P)
 }
 
-## Function to determine the locations of points on the reconstructed surface
-## in Cartesian (X, Y, Z) coordinates
-## phi    - lattitude of mesh points
-## lambda - longitude of mesh points
-## R      - radius of sphere
-## Tt     - triagulation
-## cb     - object returned by tsearch containing information on the
-##          triangle in which a point occurs and the barycentric coordinates
-##          within that triangle
-##
+##' Given a triangular mesh on a sphere described by mesh locations
+##' (\code{phi}, \code{lambda}), a radius \code{R} and a triangulation
+##' \code{Tt}, determine the Cartesian coordinates of points \code{cb}
+##' given in barycentric coordinates with respect to the mesh.
+##'
+##' @title Convert barycentric coordinates of points in mesh on sphere
+##' to cartesian coordinates 
+##' @param phi Lattitudes of mesh points
+##' @param lambda Longitudes of mesh points
+##' @param R Radius of sphere 
+##' @param Tt Triagulation
+##' @param cb Object returned by tsearch containing information on the
+##' triangle in which a point occurs and the barycentric coordinates
+##' within that triangle
+##' @return An N-by-3 matrix of the Cartesian coordinates of the points
+##' @author David Sterratt
 bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
   ## Initialise output
-  cc <- matrix(0, 0, 3)
+  cc <- matrix(NA, nrow(cb$p), 3)
   colnames(cc) <- c("X", "Y", "Z")
 
   ## If there are no points, exit
@@ -265,7 +271,7 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 
   ## Now find locations cc of datapoints in Cartesian coordinates  
   for(i in 1:nrow(cb$p)) {
-    cc <- rbind(cc, bary2cart(P[Tt[cb$idx[i],],], cb$p[i,]))
+    cc[i,] <- bary2cart(P[Tt[cb$idx[i],],], cb$p[i,])
   }
   return(cc)
 }
