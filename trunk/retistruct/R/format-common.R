@@ -1,6 +1,6 @@
 read.scale <- function(dataset) {
   ## If there is a scale file, read it
-  scale <- 0
+  scale <- NA
   scfile <- file.path(dataset, "scale.csv")
   if (file.exists(scfile)) {
     print("Reading scale file")
