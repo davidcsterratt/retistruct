@@ -14,7 +14,7 @@
 ##' \item{\code{im}}{The image as a \code{raster} object}
 ##' \item{\code{scale}}{The length of one unit of \code{P} in micrometres}
 ##' @author David Sterratt
-Outline <- function(P, scale=1, im=NULL) {
+Outline <- function(P, scale=NA, im=NULL) {
   o <- list()
   o$P <- P
   o$h <- 1:nrow(P)
@@ -43,7 +43,8 @@ Outline <- function(P, scale=1, im=NULL) {
 plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
-  scalebar   <- ifelse(is.null(args$scalebar), FALSE, args$scalebar)
+  scalebar   <- ifelse(!is.null(args$scalebar) && !is.null(o$scale),
+                       args$scalebar, FALSE)
   with(o, {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
@@ -67,7 +68,7 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
                               col=getOption("outline.col"), ...))
 
     ## Plot scalebar if required. scalebar is length in mm.
-    if (scalebar) {
+    if (scalebar && !is.na(scale)) {
       sby <- min(ys) - 0.02*(max(ys) - min(ys))
       sblen <- 1000*scalebar/(scale)
       lines(c(max(xs)-sblen, max(xs)),c(sby, sby), lwd=2)
@@ -75,23 +76,32 @@ plot.flat.outline <- function(o, axt="n", ylim=NULL, ...) {
   })
 }
 
-## triangulate.outline(P, g=NULL, n=200, h=1:nrow(P))
-##
-## Create a triangulation of the outline defined by the points P,
-## which are represented as N*2 matrix.  If the pointer list
-## g is supplied, it is used to define the outline. There should be at least n
-## triangles in the triangulation. Correspondences for any new points added
-## are added to the h argument
-## 
-## Returns a list comprising:
-## P   - The set of new points, with the existing points at the start
-## T   - The triangulation
-## a   - Array containing area of each triangle
-## A   - Total area of outline
-## Cu  - Unique set of M connections, as M*2 matrix
-## L   - Length of each connection
-## h   - Correspondances mapping
-##
+##' Create a triangulation of the \code{Outline} object \code{o}.  The
+##' minimum number of triangles in the triangulation is specified by
+##' \code{n}.
+##' 
+##' @title Triangulate outline
+##' @param o \code{\link{Outline}} object
+##' @param n Minimum number of points in the triangulation
+##' @param suppress.external.steiner If \code{TRUE} prevent the
+##' addition of points in the outline. This happens to maintain
+##' triangle quality.
+##' @return A \code{triangulatedOutline} object containing the
+##' following fields:
+##' \item{\code{P}}{The set of new points, with the existing points at the start}
+##' \item{\code{T}}{The triangulation}
+##' \item{\code{Cu}}{Unique set of M connections, as M*2 matrix}
+##' \item{\code{h}}{Correspondances mapping}
+##' \item{\code{A}}{Array containing area of each triangle}
+##' \item{\code{L}}{Length of each connection}
+##' \item{\code{A.signed}}{Signed area of each triangle}
+##' \item{\code{A.tot}}{Total area of outline}
+##' \item{\code{gf}}{Forward pointers}
+##' \item{\code{gb}}{Backward pointers}
+##' \item{\code{S}}{Segments (from \code{\link{triangulate}})}
+##' \item{\code{E}}{Edges (from \code{\link{triangulate}})}
+##' \item{\code{EB}}{Edge boundaries (from \code{\link{triangulate}})}
+##' @author David Sterratt
 triangulate.outline <- function(o, n=200,
                                 suppress.external.steiner=FALSE) {
   P <- o$P
