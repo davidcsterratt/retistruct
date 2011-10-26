@@ -8,6 +8,7 @@
 
 \usepackage[british]{babel}
 \usepackage{tabularx}
+\usepackage{graphicx}
 
 \title{\textsc{Retistruct} manual}
 
@@ -32,7 +33,6 @@ yum install gtk2
 yum install gtk2-devel
 yum install mesa-libGL-devel
 yum install mesa-libGLU-devel
-yum install subversion # Only required if getting code with svn
 \end{verbatim}
 
 \subsubsection{Ubuntu Linux}
@@ -46,7 +46,7 @@ sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cr
 
 \begin{enumerate}
 \item Start \textsc{R}, in a directory containing the \texttt{install.R} and
-   \texttt{retistruct\_0.x.tar.gz} files
+   \texttt{retistruct\_0.x.x.tar.gz} files
  \item  Type:
 \begin{verbatim}
    source("install.R")
@@ -70,13 +70,79 @@ A window should appear.
 \subsection{Opening the files for a retina}
 \label{manual:sec:opening-files-retina}
 
-At present \textsc{Retistruct} can read files in the format used in
-Ian Thompson's lab (see Appendix~\ref{manual:sec:reading-data}). These
-files are contained in a directory. To open the files corresponding to
-a retina, click on the open file icon, and navigate to the directory
-containing the \texttt{SYS} and \texttt{MAP} files. On opening this
-directory, the retinal outline should appear in the
-\textsc{Retistruct} window.
+At present \textsc{Retistruct} can read files in three formats.
+
+\subsubsection{IDT format}
+\label{retistruct-manual:sec:idt-format}
+
+This is the format used in Ian Thompson's lab (see
+Appendix~\ref{manual:sec:reading-data}). These files are contained in
+a directory. To open the files corresponding to a retina, click on the
+open file icon, and navigate to the directory containing the
+\texttt{SYS} and \texttt{MAP} files. On opening this directory, the
+retinal outline should appear in the \textsc{Retistruct} window.
+
+\subsubsection{\textsc{ImageJ} ROI format}
+\label{retistruct-manual:sec:ijroi-format}
+
+This format allows you to load images of retinae whose outlines have
+been marked up in \textsc{ImageJ}. To use this format:
+\begin{enumerate}
+\item Open up \textsc{ImageJ} (or FIJI).
+\item Use \textbf{File$\rightarrow$Open} to open the image.
+\item Use \textbf{Image$\rightarrow$Scale} to down sample so that the
+  resolution is less than 1000x1000. (This is not crucial, but will
+  speed up things later.)
+\item Save the downsampled version of the image to the file name
+  \texttt{image.png}
+\item Use the Polygon Tool
+  (\includegraphics[height=\baselineskip]{poly}) to mark the edge of
+  the retina. According to the \textsc{ImageJ}
+  manual\footnote{http://rsbweb.nih.gov/ij/docs/tools.html}: ``To
+  create the selection, click repeatedly with the mouse to create line
+  segments. When finished, click in the small box at the starting
+  point (or double-click), and ImageJ automatically draws the last
+  segment.
+
+  The points that define a polygon selection can be moved or deleted,
+  and new points can be added. To delete a point, click on it with the
+  alt key down. To add a point, click on an existing point with the
+  shift key down.''
+\item Open the ROI manager by selecting
+\textbf{Analyze$\rightarrow$Tools$\rightarrow$ROI Manager}.
+\item Click on the \textbf{Add [t]} button.
+\item Click on the \textbf{Save} button. In the \textbf{Save
+selection\dots} box that appears, enter the file name
+\texttt{outline.roi} and make sure this file is saved to the same
+directory as the \texttt{image.png} file.
+\item Open \textsc{Retistruct}.
+\item Click on the \textbf{Open File} icon and select the directory
+containing \texttt{image.png} and \texttt{outline.roi}.
+\end{enumerate}
+
+Optionally, the scale of the image can be specified by providing a
+file \texttt{scale.csv} in the same directory as the image and ROI
+files. This file should contain two lines, the first with the heading
+\texttt{Scale} and the second with the length of the side of a pixel
+in micrometres. For example:
+\begin{verbatim}
+"Scale"
+1.5
+\end{verbatim}
+
+\subsubsection{CSV format}
+\label{retistruct-manual:sec:csv-format}
+
+This is the same as the \textsc{ImageJ ROI} format, except that the
+outline is contained in the two columns of a file called
+\texttt{outline.csv}.  Each column should have a heading, e.g.:
+\begin{verbatim}
+"X", "Y"
+1,5
+10,76,
+...
+\end{verbatim}
+
 
 \subsection{The retinal display}
 \label{manual:sec:retinal-display}
@@ -199,7 +265,7 @@ format. It also adds a line to a summary log file in
 \texttt{retinae/reconstructions} called
 \texttt{retistruct-batch.csv}. This file contains a number of columns:
 \begin{description}
-\item[\texttt{Dataset}] The directory of the dataset
+\item[\texttt{Dataset}] The directory of the data set
 \item[\texttt{Return}] The return value from the process
 \item[\texttt{Result}] A summary of the result, including if any
   errors were returned
@@ -379,4 +445,5 @@ each directory there are two files:
 % LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
 % LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
 % LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
-% LocalWords:  Matlab cd matlab lX Dss Tss Sss
+% LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV
+% LocalWords:  Metadata metadata datapoints polararea DssMean
