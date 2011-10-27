@@ -293,8 +293,30 @@ sphere.cart.to.sphere.spherical <- function(P, R=1) {
 
 ## Convert elevation in spherical coordinates into radius in polar
 ## coordinates in an area-preserving projection
-spherical.to.polar.area <- function(phi) { return(sqrt(2*(1 +
-  sin(phi)))) }
+
+##' Project spherical coordinate system \eqn{(\phi, \lambda)} to a polar
+##' coordinate system \eqn{(\rho, \lambda)} such that the area of each
+##' small region is preserved.
+##'
+##' This requires \eqn{R^2\delta\phi\cos\phi\delta\lambda =
+##' \rho\delta\rho\delta\lambda}.  Hence \eqn{R^2\int^{\phi}_{-\pi/2}
+##' \cos\phi' d\phi' = \int_0^{\rho} \rho' d\rho'}.  Solving gives
+##' \eqn{\rho^2/2=R^2(\sin\phi+1)} and hence
+##' \eqn{\rho=R\sqrt{2(\sin\phi+1)}}.
+##' 
+##' As a check, consider that total area needs to be preserved.  If
+##' \eqn{\rho_0} is maximum value of new variable then
+##' \eqn{A=2\pi R^2(\sin(\phi_0)+1)=\pi\rho_0^2}. So
+##' \eqn{\rho_0=R\sqrt{2(\sin\phi_0+1)}}, which agrees with the formula
+##' above.
+##' @title Convert lattitude on sphere to radial variable in
+##' area-preserving projection
+##' @param phi Lattitude
+##' @return Coordinate \code{rho} that has the dimensions of length
+##' @author David Sterratt
+spherical.to.polar.area <- function(phi) {
+  return(sqrt(2*(1 + sin(phi))))
+}
 
 ## Convert polar coordinates to cartesian coordinates
 polar.to.cart <- function(r, theta) {
