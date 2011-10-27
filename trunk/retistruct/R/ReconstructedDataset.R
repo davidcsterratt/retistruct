@@ -98,7 +98,13 @@ getSss.reconstructedDataset <- function(r) {
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param flip.horiz Wether to flip about a horizontal axis
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other graphics parameters -- not used at present
+##' @param ... Other graphics parameters.  The option
+##' \code{preserve.area} creates an area-preserving plot (default
+##' \code{FALSE}). The option \code{datapoints} causes datapoints to
+##' be plotted (default \code{TRUE}).  The option
+##' \code{datapoint.means} causes datapoint means to be plotted
+##' (default \code{TRUE}).  The option \code{landmakrs} causes
+##' landmarks to be plotted (default \code{TRUE}). 
 ##' @method plot.spherical reconstructedOutline
 ##' @author David Sterratt
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
@@ -114,6 +120,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
+  plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
+  pa <- plot.preserve.area
   
   ## Datapoints
   if (plot.datapoints) {
@@ -122,8 +130,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       for (i in 1:length(Dss)) {
         phis    <- Dss[[i]][,"phi"]
         lambdas <- Dss[[i]][,"lambda"]
-        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+        xpos <- cos(lambdas)*phi.to.rho(phis, r$phi0, pa)
+        ypos <- sin(lambdas)*phi.to.rho(phis, r$phi0, pa)
         suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
                                 pch=20, ...))
       }
@@ -137,8 +145,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       for (i in 1:length(Dss.mean)) {
         phis    <- Dss.mean[[i]]["phi"]
         lambdas <- Dss.mean[[i]]["lambda"]
-        xpos <- cos(lambdas) * ((phis * 180/pi) + 90)
-        ypos <- sin(lambdas) * ((phis * 180/pi) + 90)
+        xpos <- cos(lambdas)*phi.to.rho(phis, r$phi0, pa)
+        ypos <- sin(lambdas)*phi.to.rho(phis, r$phi0, pa)
         suppressWarnings(points(xpos, ypos,
                                 bg=r$cols[[names(Dss.mean)[i]]], col="black",
                                 pch=23, cex=1.5, ...))
@@ -155,88 +163,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
         col <- ifelse(is.null(name) || (name==""), "default", name)
         phi    <- Sss[[i]][,"phi"]
         lambda <- Sss[[i]][,"lambda"]
-        x <- cos(lambda) * ((phi * 180/pi) + 90)
-        y <- sin(lambda) * ((phi * 180/pi) + 90)
-        suppressWarnings(lines(x, y, col=r$cols[[col]], ...))
-      }
-    }
-  }
-
-}
-
-##' Plot datapoints in polar plot
-##'
-##' @title Polar plot of reconstructed dataset
-##' @param r \code{reconstructedDataset} object
-##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
-##' @param grid.col Colour of the minor grid lines
-##' @param grid.bg Background colour of the grid
-##' @param grid.int.minor Interval between minor grid lines in degrees
-##' @param grid.int.major Interval between major grid lines in degrees
-##' @param flip.horiz Wether to flip about a horizontal axis
-##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other graphics parameters -- not used at present
-##' @method plot.spherical reconstructedOutline
-##' @author David Sterratt
-plot.polararea.reconstructedDataset <- function(r, show.grid=TRUE,
-                                                grid.col="gray",
-                                                grid.bg="transparent", 
-                                                grid.int.minor=15,
-                                                grid.int.major=45,
-                                                flip.horiz=FALSE,
-                                                labels=c(0, 90, 180, 270), ...) {
-  NextMethod()
-
-  args <- list(...)
-  plot.datapoints <- is.null(args$datapoints) || args$datapoints
-  plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
-  plot.landmarks <- is.null(args$landmarks) || args$landmarks
-
-  phi0d <- r$phi0*180/pi                # Limit in degrees
-  rho0 <- spherical.to.polar.area(r$phi0) # Limit of area-preserving plot
-  
-  ## Datapoints
-  if (plot.datapoints) {
-    Dss <- getDss(r)
-    if (length(Dss)) {
-      for (i in 1:length(Dss)) {
-        phis    <- Dss[[i]][,"phi"]
-        lambdas <- Dss[[i]][,"lambda"]
-        xpos <- cos(lambdas)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
-        ypos <- sin(lambdas)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
-        suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
-                                pch=20, ...))
-      }
-    }
-  }
-
-  ## Mean datapoints
-  if (plot.datapoint.means) {
-    Dss.mean <- getDss.mean(r)
-    if (length(Dss.mean)) {
-      for (i in 1:length(Dss.mean)) {
-        phis    <- Dss.mean[[i]]["phi"]
-        lambdas <- Dss.mean[[i]]["lambda"]
-        xpos <- cos(lambdas)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
-        ypos <- sin(lambdas)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
-        suppressWarnings(points(xpos, ypos,
-                                bg=r$cols[[names(Dss.mean)[i]]], col="black",
-                                pch=23, cex=1.5, ...))
-      }
-    }
-  }
-  
-  ## Landmarks
-  if (plot.landmarks) {
-    Sss <- getSss(r)
-    if (length(Sss)) {
-      for (i in 1:length(Sss)) {
-        name <- names(Sss)[i]
-        col <- ifelse(is.null(name) || (name==""), "default", name)
-        phi    <- Sss[[i]][,"phi"]
-        lambda <- Sss[[i]][,"lambda"]
-        x <- cos(lambda)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
-        y <- sin(lambda)*(phi0d + 90)/rho0*spherical.to.polar.area(phis)
+        x <- cos(lambda)*phi.to.rho(phis, r$phi0, pa)
+        y <- sin(lambda)*phi.to.rho(phis, r$phi0, pa)
         suppressWarnings(lines(x, y, col=r$cols[[col]], ...))
       }
     }

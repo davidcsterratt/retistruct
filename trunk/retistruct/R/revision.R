@@ -1,1 +1,1 @@
-retistruct.global.revision <- 822 
+retistruct.global.revision <- 824 

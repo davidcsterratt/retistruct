@@ -162,7 +162,7 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
 }
 
 ##' Draw a polar plot of reconstructed outline. This method just sets
-##' up the grid lines and the angular labels.
+##' up the grid lines and the angular labels. 
 ##'
 ##' @title Polar plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
@@ -173,7 +173,10 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param flip.horiz Wether to flip about a horizontal axis
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other graphics parameters -- not used at present
+##' @param ... Other parameters, including graphics ones. The option
+##' \code{image} causes an image to be plotted if \code{TRUE}
+##' (default \code{TRUE}).  The option \code{preserve.area} creates an
+##' area-preserving plot (default \code{FALSE}).
 ##' @method plot.polar reconstructedOutline
 ##' @author David Sterratt
 plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
@@ -186,8 +189,11 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
   plot.contours <- FALSE # Contour plotting happens only with image plotting at present
-      
+  plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
+  pa <- plot.preserve.area
+  
   phi0d <- r$phi0*180/pi
+  
   par(mar=c(0.5, 0.5, 0.5, 0.5))
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
   maxlength <- diff(range(grid.pos))
@@ -206,8 +212,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
       M <- nrow(r$im)
 
       ## Compute x and y positions of corners of pixels
-      xpos <- matrix(cos(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
-      ypos <- matrix(sin(ims[,"lambda"]) * ((ims[,"phi"] * 180/pi) + 90), M+1, N+1)
+      xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
+      ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
 
       ## Convert these to format suitable to polygon
       impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
@@ -270,8 +276,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   angles <- seq(0, 1.96 * pi, by = 0.04 * pi)
   if (show.grid) {
     for (i in seq(length(grid.pos), 1, by = -1)) {
-      xpos <- cos(angles) * (grid.pos[i] - grid.pos[1])
-      ypos <- sin(angles) * (grid.pos[i] - grid.pos[1])
+      xpos <- cos(angles)*phi.to.rho(grid.pos[i]*pi/180, r$phi0, pa)
+      ypos <- sin(angles)*phi.to.rho(grid.pos[i]*pi/180, r$phi0, pa)
       if (((grid.pos[i] %% grid.int.major) == 0) || (i == length(grid.pos))) {
         col <- "black"
       } else {
@@ -292,7 +298,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 
   ## Radial Labels
   rlabels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
-  label.pos <- rlabels - min(grid.pos)
+  label.pos <- phi.to.rho(rlabels*pi/180, r$phi0, pa)
   text(label.pos, -maxlength/15, rlabels)
 
   ## Tangential Labels
@@ -307,101 +313,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    x <- with(r, cos(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
-    y <- with(r, sin(Ts[,"lambda"]) * ((Ts[,"phi"] * 180/pi) + 90))
-    suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
-  }
-}
-
-
-##' Draw a polar area-preserving plot of reconstructed outline. This
-##' method just sets up the grid lines and the angular labels.
-##'
-##' @title Polar area-preserving plot of reconstructed outline
-##' @param r \code{reconstructedOutline} object
-##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
-##' @param grid.col Colour of the minor grid lines
-##' @param grid.bg Background colour of the grid
-##' @param grid.int.minor Interval between minor grid lines in degrees
-##' @param grid.int.major Interval between major grid lines in degrees
-##' @param flip.horiz Wether to flip about a horizontal axis
-##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other graphics parameters -- not used at present
-##' @method plot.polar reconstructedOutline
-##' @author David Sterratt
-plot.polararea.reconstructedOutline <- function(r, show.grid=TRUE,
-                                            grid.col="gray",
-                                            grid.bg="transparent", 
-                                            grid.int.minor=15,
-                                            grid.int.major=45,
-                                            flip.horiz=FALSE,
-                                            labels=c(0, 90, 180, 270), ...) {
-  args <- list(...)
-
-  ## Set margins
-  par(mar=c(0.5, 0.5, 0.5, 0.5))
-  
-  phi0d <- r$phi0*180/pi                # Limit in degrees
-  rho0 <- spherical.to.polar.area(r$phi0) # Limit of area-preserving plot
-
-  
-  grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
-  maxlength <- diff(range(grid.pos))
-  if (flip.horiz) {
-    xlim <- c(maxlength, -maxlength)
-  } else {
-    xlim <- c(-maxlength, maxlength)
-  }
-  plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
-       type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
-  
-  ## Plot the grid
-  ## Tangnential lines
-  angles <- seq(0, 1.96*pi, by = 0.04*pi)
-  if (show.grid) {
-    for (i in seq(length(grid.pos), 1, by = -1)) {
-      ## Convert to area-preserving coordinates
-      rhod <- (phi0d + 90)/rho0*spherical.to.polar.area(grid.pos[i]*pi/180)
-      xpos <- cos(angles)*rhod
-      ypos <- sin(angles)*rhod
-      if (((grid.pos[i] %% grid.int.major) == 0) || (i == length(grid.pos))) {
-        col <- "black"
-      } else {
-        col <- grid.col
-      }
-      polygon(xpos, ypos, border = col, col = grid.bg)
-    }
-  }
-
-  ## Radial lines
-  angles <- seq(0, 180-grid.int.minor, by = grid.int.minor)
-  col <- rep(grid.col, length(angles))
-  col[(angles %% grid.int.major) == 0] <- "black"
-  angles <- angles * pi/180
-  xpos <- cos(angles) * maxlength
-  ypos <- sin(angles) * maxlength
-  segments(xpos, ypos, -xpos, -ypos, col=col)
-
-  ## Radial Labels
-  rlabels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
-  label.pos <- (phi0d + 90)/rho0*spherical.to.polar.area(rlabels*pi/180)
-  text(label.pos, -maxlength/15, rlabels)
-
-  ## Tangential Labels
-  if (!is.null(labels)) {
-    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
-    xpos <- cos(angles) * maxlength * 1.1
-    ypos <- sin(angles) * maxlength * 1.1
-    text(xpos, ypos, labels, xpd=TRUE)
-  }
-  
-  ## Plot outline
-  Tss <- getTss(r)
-  for (Ts in Tss) {
-    ## Plot
-    Ts.rhod <- (phi0d + 90)/rho0*spherical.to.polar.area(Ts[,"phi"])
-    x <- cos(Ts[,"lambda"])*Ts.rhod
-    y <- sin(Ts[,"lambda"])*Ts.rhod
+    x <- with(r, cos(Ts[,"lambda"])*phi.to.rho(Ts[,"phi"], phi0, pa))
+    y <- with(r, sin(Ts[,"lambda"])*phi.to.rho(Ts[,"phi"], phi0, pa))
     suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
   }
 }
