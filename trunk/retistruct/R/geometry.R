@@ -291,18 +291,15 @@ sphere.cart.to.sphere.spherical <- function(P, R=1) {
                lambda=atan2(P[,"Y"], P[,"X"])))
 }
 
-## Convert elevation in spherical coordinates into radius in polar
-## coordinates in an area-preserving projection
-
 ##' Project spherical coordinate system \eqn{(\phi, \lambda)} to a polar
 ##' coordinate system \eqn{(\rho, \lambda)} such that the area of each
 ##' small region is preserved.
 ##'
-##' This requires \eqn{R^2\delta\phi\cos\phi\delta\lambda =
-##' \rho\delta\rho\delta\lambda}.  Hence \eqn{R^2\int^{\phi}_{-\pi/2}
+##' This requires \deqn{R^2\delta\phi\cos\phi\delta\lambda =
+##' \rho\delta\rho\delta\lambda}.  Hence \deqn{R^2\int^{\phi}_{-\pi/2}
 ##' \cos\phi' d\phi' = \int_0^{\rho} \rho' d\rho'}.  Solving gives
 ##' \eqn{\rho^2/2=R^2(\sin\phi+1)} and hence
-##' \eqn{\rho=R\sqrt{2(\sin\phi+1)}}.
+##' \deqn{\rho=R\sqrt{2(\sin\phi+1)}}.
 ##' 
 ##' As a check, consider that total area needs to be preserved.  If
 ##' \eqn{\rho_0} is maximum value of new variable then
@@ -314,8 +311,8 @@ sphere.cart.to.sphere.spherical <- function(P, R=1) {
 ##' @param phi Lattitude
 ##' @return Coordinate \code{rho} that has the dimensions of length
 ##' @author David Sterratt
-spherical.to.polar.area <- function(phi) {
-  return(sqrt(2*(1 + sin(phi))))
+spherical.to.polar.area <- function(phi, R=1) {
+  return(R*sqrt(2*(1 + sin(phi))))
 }
 
 ## Convert polar coordinates to cartesian coordinates
