@@ -185,7 +185,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
-  plot.contours <- TRUE # Contour plotting happens only with image plotting at present
+  plot.contours <- FALSE # Contour plotting happens only with image plotting at present
       
   phi0d <- r$phi0*180/pi
   par(mar=c(0.5, 0.5, 0.5, 0.5))
