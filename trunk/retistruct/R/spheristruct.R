@@ -1143,7 +1143,7 @@ getStrains <- function(r) {
 ##' }
 ##'
 ##' @title Reconstruct outline into spherical surface
-##' @param o \code{\link{Outline}} object, containing the following information:\describe{
+##' @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
 ##' \item{\code{P}}{outline points as N-by-2 matrix}
 ##' \item{\code{V0}}{indicies of the apex of each tear}
 ##' \item{\code{VF}}{indicies of the forward vertex of each tear}

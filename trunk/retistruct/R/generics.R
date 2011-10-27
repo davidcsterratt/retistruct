@@ -18,6 +18,20 @@ plot.polar.default <- function(r, show.grid=TRUE,
   plot.new()
 }
 
+plot.polararea <- function(r, show.grid=TRUE,
+                       grid.col="gray", grid.bg="transparent", 
+                       grid.int.minor=15, grid.int.major=45, ...) {
+  UseMethod("plot.polararea")
+}
+
+plot.polararea.default <- function(r, show.grid=TRUE,
+                               grid.col="gray", grid.bg="transparent", 
+                               grid.int.minor=15, grid.int.major=45,
+                               flip.horiz=FALSE, ...) {
+  plot.new()
+}
+
+
 plot.spherical <- function(r, ...) {
   UseMethod("plot.spherical")
 }
