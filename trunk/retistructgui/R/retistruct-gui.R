@@ -46,7 +46,7 @@ h.add <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   pids <- with(a, identify(P[,1], P[,2], n=3))
-  tryCatch({
+  withCallingHandlers({
     a <<- addTear(a, pids)
   }, warning=h.warning, error=h.warning)
   do.plot()
@@ -119,7 +119,7 @@ h.mark.n <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- with(a, identify(P[,1], P[,2], n=1))
-  tryCatch({
+  withCallingHandlers({
     a <<- setFixedPoint(a, id, "Nasal")
   }, warning=h.warning, error=h.warning)
   do.plot()
@@ -135,7 +135,7 @@ h.mark.d <- function(h, ...) {
                             identify.abort.text())
   dev.set(d1)
   id <- with(a, identify(P[,1], P[,2], n=1))
-  tryCatch({
+  withCallingHandlers({
     a <<- setFixedPoint(a, id, "Dorsal")
   }, warning=h.warning, error=h.warning)
   do.plot()
@@ -229,14 +229,14 @@ h.open <- function(h, ...) {
   }, warning=h.warning, error=h.error)
   
   ## Read the markup
-  tryCatch({
+  withCallingHandlers({
     a <<- retistruct.read.markup(a, error=message)
   }, warning=h.warning, error=h.warning)
   svalue(g.dataset) <- a$dataset 
   svalue(g.phi0d)   <- a$phi0*180/pi
   
   ## Read the reconstruction data
-  tryCatch({
+  withCallingHandlers({
     r <<- retistruct.read.recdata(a)
   }, warning=h.warning, error=h.error)
   ## If there is no reconstruction data, show the markup so that we
@@ -254,7 +254,7 @@ h.open <- function(h, ...) {
 h.reconstruct <- function(h, ...) {
   unsaved.data(TRUE)
   enable.widgets(FALSE)
-  tryCatch({
+  withCallingHandlers({
     r <<- retistruct.reconstruct(a, report=set.status,
                                  plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
   }, warning=h.warning, error=h.warning)  
