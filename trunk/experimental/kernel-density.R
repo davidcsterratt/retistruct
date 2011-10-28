@@ -38,7 +38,6 @@ mu <- cbind(phi=phi, lambda=lambda)
 r <- cbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda))
 plot(r)
 
-
 ## Kernel function - just a Gaussian
 kappa <- function(x, mu, sigma) {
   return(1/sqrt(2*pi)/sigma*exp(-1/2*(metric(x, mu))^2/sigma^2))
@@ -95,16 +94,22 @@ gp <- cart.to.polar(gc)
 ## gcb <- polar.to.cart(gp)
 
 ## Make space for the kernel density estimates
-kg <- rep(0, nrow(gp))
+gk <- rep(0, nrow(gp))
 for (i in 1:nrow(gp)) {
-  kg[i] <- K(gp[i,], mu, sigma)
+  gk[i] <- K(gp[i,], mu, sigma)
 }
+
+## Determine the value of gk that encloses 0.95 of the density
+is <- findInterval(1-c(0.95, .9, .75, .5), cumsum(sort(gk))/sum(gk))
+klevels <- gk[is]
 
 ## Put the estimates back into a matrix. The matrix is filled up
 ## column-wise, so the matrix elements should match the elements of
 ## gxs and gys
-kg <- matrix(kg, 100, 101)
-image(xs, ys, kg)
+k <- matrix(gk, 100, 101)
+image(xs, ys, k)
 points(r)
+contour(xs, ys, k, add=TRUE, levels=klevels)
+cs <- contourLines(xs, ys, k, levels=klevels)
 
 
