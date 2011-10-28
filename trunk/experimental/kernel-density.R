@@ -13,48 +13,82 @@ metric <- function(r, s) {
 }
 
 ## Generate some test data
-
 N <- 200                                # Number of points
-
 lambda <- 2*pi*runif(N)                 # Latitudes
 phi <- -pi/2 + 0.2*(rnorm(N))^2         # Longitudes
-
-## Bind the lattitudes and longitudes together
-mu <- cbind(phi, lambda)                
 
 ## Project the test data to a polar representation, and plot it
 r <- cbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda))
 plot(r)
 
-d <- matrix(NA, N, N)
-## Compute distance matrix
-for (i in 1:N) {
-  for (j in 1:N) {
-    d[i, j] <- ifelse(i !=j,
-                      metric(mu[i], mu[j]),
-                      0)
+## Bind the lattitudes and longitudes together to create the matrix of
+## data points, with one data point on each row
+mu <- cbind(phi, lambda)                
 
-  }
-}
-
+## Kernel function - just a Gaussian
 kappa <- function(x, mu, sigma) {
   return(1/sqrt(2*pi)/sigma*exp(-1/2*(metric(x, mu))^2/sigma^2))
 }
 
+## Estimate of density at x, given points at mu and a bandwidth of
+## sigma
 K <- function(x, mu, sigma) {
   return(1/nrow(mu)*sum(kappa(x, mu, sigma)))
 }
 
-Ki <- function(mu, sigma, i) {
-  return(K(mu[i,], mu[-i,], sigma))
-}
-
+## Estimate of the log probability of the points mu given a particular
+## value of sigma
 logP <- function(mu, sigma) {
-  return(sum(sapply(1:nrow(mu), function(i) {log(Ki(mu, sigma, i))})))
+  ## We get clever here, and define a funtion within a function. This
+  ## is the kernel density for data point i if the density is
+  ## determined by all the other points. Note that mu[-i,] means all
+  ## the rows of mu apart from row i
+  logKi <- function(i) {
+    return(log(K(mu[i,], mu[-i,], sigma)))
+  }
+
+  ## We now pass this function to sapply, which creates a vector of
+  ## the result of logKi for every value of i
+  return(sum(sapply(1:nrow(mu), logKi)))
 }
 
-
-opt <- optimise(function(sigma) {logP(mu, sigma)}, interval=c(0.1, 5), maximum=TRUE)
-
+## Now find the value of sigma that optimises logP
+opt <- optimise(function(sigma) {logP(mu, sigma)}, interval=c(0.1, 5),
+                maximum=TRUE)
 sigma <- opt$maximum
 
+## Now we've found sigma, let's try to estimate and display the
+## density over our polar representation of the data points
+
+## First create a grid in Cartesian coordinates
+xlim <- range(r[,1])
+ylim <- range(r[,2])
+xs <- seq(xlim[1], xlim[2], len=100)
+ys <- seq(ylim[1], ylim[2], len=101)
+
+## Create grid
+gxs <- outer(ys*0, xs, "+")
+gys <- outer(ys, xs*0, "+")
+             
+## Now convert it to polar coordinates
+gphi <- sqrt(gxs^2 + gys^2)
+glambda <- atan2(gys, gxs)
+
+
+
+
+## Make space for output
+kg <- gxs * 0
+for (i in 1:nrow(gphi)) {
+  for (j in 1:ncol(gphi)) {
+    gmu <- c(gphi[i, j], glambda[i, j])
+    kg[i, j] <- K(gmu, mu, sigma)
+  }
+}
+
+image(xs, ys, t(kg))
+points(r)
+
+rg <- cbind(as.vector(cos(gphi)*cos(glambda)),
+            as.vector(cos(gphi)*sin(glambda)))
+plot(rg)
