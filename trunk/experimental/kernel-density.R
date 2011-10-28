@@ -34,7 +34,6 @@ phi <- -pi/2 + 0.2*(rnorm(N))^2         # Longitudes
 ## data points, with one data point on each row
 mu <- cbind(phi=phi, lambda=lambda)                
 
-
 ## Project the test data to a polar representation, and plot it
 r <- cbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda))
 plot(r)
@@ -82,8 +81,8 @@ xs <- seq(xlim[1], xlim[2], len=100)
 ys <- seq(ylim[1], ylim[2], len=101)
 
 ## Create grid
-gxs <- outer(ys*0, xs, "+")
-gys <- outer(ys, xs*0, "+")
+gxs <- outer(xs*0, ys, "+")
+gys <- outer(xs, ys*0, "+")
 
 ## gxs and gys are both 101 by 100 matrixes We now combine both
 ## matrices as a 101*100 by 2 matrix. The conversion as.vector() goes
@@ -104,8 +103,8 @@ for (i in 1:nrow(gp)) {
 ## Put the estimates back into a matrix. The matrix is filled up
 ## column-wise, so the matrix elements should match the elements of
 ## gxs and gys
-kg <- matrix(kg, 101, 100)
-image(xs, ys, t(kg))
+kg <- matrix(kg, 100, 101)
+image(xs, ys, kg)
 points(r)
 
 
