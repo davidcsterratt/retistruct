@@ -12,18 +12,33 @@ metric <- function(r, s) {
   return(central.angle(r[1], r[2], s[,1], s[,2]))
 }
 
+cart.to.polar <- function(r) {
+  rho <- sqrt(r[,"x"]^2 + r[,"y"]^2)
+  phi <- asin(rho - 1)
+  lambda <- atan2(r[,"y"], r[,"x"])
+  return(cbind(phi=phi, lambda=lambda))
+}
+
+polar.to.cart <- function(r) {
+  x <- (1 + sin(r[,"phi"]))*cos(r[,"lambda"])
+  y <- (1 + sin(r[,"phi"]))*sin(r[,"lambda"])
+  return(cbind(x=x, y=y))
+}
+
 ## Generate some test data
-N <- 200                                # Number of points
+N <- 100                                # Number of points
 lambda <- 2*pi*runif(N)                 # Latitudes
 phi <- -pi/2 + 0.2*(rnorm(N))^2         # Longitudes
+
+## Bind the lattitudes and longitudes together to create the matrix of
+## data points, with one data point on each row
+mu <- cbind(phi=phi, lambda=lambda)                
+
 
 ## Project the test data to a polar representation, and plot it
 r <- cbind(cos(phi)*cos(lambda), cos(phi)*sin(lambda))
 plot(r)
 
-## Bind the lattitudes and longitudes together to create the matrix of
-## data points, with one data point on each row
-mu <- cbind(phi, lambda)                
 
 ## Kernel function - just a Gaussian
 kappa <- function(x, mu, sigma) {
@@ -69,26 +84,28 @@ ys <- seq(ylim[1], ylim[2], len=101)
 ## Create grid
 gxs <- outer(ys*0, xs, "+")
 gys <- outer(ys, xs*0, "+")
-             
-## Now convert it to polar coordinates
-gphi <- sqrt(gxs^2 + gys^2)
-glambda <- atan2(gys, gxs)
 
+## gxs and gys are both 101 by 100 matrixes We now combine both
+## matrices as a 101*100 by 2 matrix. The conversion as.vector() goes
+## down the columns of the matrices gxs and gys
+gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
 
+## Now convert the cartesian coordinates to polar coordinates
+gp <- cart.to.polar(gc)
 
+## gcb <- polar.to.cart(gp)
 
-## Make space for output
-kg <- gxs * 0
-for (i in 1:nrow(gphi)) {
-  for (j in 1:ncol(gphi)) {
-    gmu <- c(gphi[i, j], glambda[i, j])
-    kg[i, j] <- K(gmu, mu, sigma)
-  }
+## Make space for the kernel density estimates
+kg <- rep(0, nrow(gp))
+for (i in 1:nrow(gp)) {
+  kg[i] <- K(gp[i,], mu, sigma)
 }
 
+## Put the estimates back into a matrix. The matrix is filled up
+## column-wise, so the matrix elements should match the elements of
+## gxs and gys
+kg <- matrix(kg, 101, 100)
 image(xs, ys, t(kg))
 points(r)
 
-rg <- cbind(as.vector(cos(gphi)*cos(glambda)),
-            as.vector(cos(gphi)*sin(glambda)))
-plot(rg)
+
