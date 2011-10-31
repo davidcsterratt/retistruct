@@ -41,6 +41,18 @@ phi.to.rho <- function(phi, phi0, area.preserving) {
   }
 }
 
+## FIXME: it would be nice to tidy up the profusion of conversion
+## functions
+
+##' This is a helper function for \code{\link{plot.polar}}
+##'
+##' @title Convert rho variable into normalised radial coordinate in degrees
+##' @param rho The rho variable. This may be in radians or the
+##' area-preserving coordinate
+##' @param phi0 Lattitude of top of curtailed sphere
+##' @param area.preserving Whether the conversion should preserve area
+##' @return Radial variable
+##' @author David Sterratt
 rho.to.degrees <- function(rho, phi0, area.preserving) {
   if (area.preserving) {
     phi0d <- phi0*180/pi
