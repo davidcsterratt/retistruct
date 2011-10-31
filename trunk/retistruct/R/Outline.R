@@ -291,7 +291,7 @@ simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
   ## If there are any points to remove, remove the first one
   if (length(i.rem) > 0) {
     message(paste("simplify.outline: Removing vertex", i.rem[1]))
-    return(simplify.outline(list(P=P[-i.rem[1],])))
+    return(simplify.outline(list(P=P[-i.rem[1],], scale=o$scale, im=o$im)))
   } else {
     return(Outline(P, o$scale, o$im))
   }
