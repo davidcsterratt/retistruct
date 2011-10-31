@@ -204,7 +204,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   }
   plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
-  if (plot.image && !is.null(r$im)) {
+  if (plot.image && !is.null(r$ims)) {
     ## Reconstitute image from stored values of phi and lambda
     ## coordinates of corners of pixels
     with(r, {
