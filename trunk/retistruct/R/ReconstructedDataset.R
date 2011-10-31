@@ -219,7 +219,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
 
           ## Plot contours
           contour(180/pi*xs, 180/pi*ys, k, add=TRUE, levels=klevels,
-                  col=r$cols[[names(Dss)[i]]])
+                  col=r$cols[[names(Dss)[i]]], drawlabels=FALSE)
         }
       }
     }
