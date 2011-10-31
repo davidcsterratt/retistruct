@@ -152,7 +152,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   }
 
   ## Contours
-  vols <- 0.5
+  vols <- 0.95
   res <- 100
   if (plot.datapoint.contours) {
     Dss <- getDss(r)
@@ -206,10 +206,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
           ## Determine the value of gk that encloses 0.95 of the
           ## density. FIXME: But of course to compute the density, we need to
           ## know the area of each little square...
-          k.vec <- as.vector(k)
-          js <- findInterval(1 - vols, cumsum(sort(k.vec))/sum(k.vec))
-          klevels <- k.vec[js]
-          klevels <- (1-vols)*max(k)
+          k.sort <- sort(as.vector(k))
+          js <- findInterval(1 - vols, cumsum(k.sort)/sum(k.sort))
+          klevels <- k.sort[js]
           message(paste("klevels=", klevels))
 
           ## Plot contours
