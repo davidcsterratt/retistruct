@@ -69,7 +69,8 @@ getDss.mean.reconstructedDataset <- function(r) {
   Dss.mean <- list()
   if (length(r$Dss)) {
     for (i in 1:length(r$Dss)) {
-      Dss.mean[[i]] <- karcher.mean.sphere(r$Dss[[i]], na.rm=TRUE)
+      km <- karcher.mean.sphere(r$Dss[[i]], na.rm=TRUE)
+      Dss.mean[[i]] <- cbind(phi=km["phi"], lambda=km["lambda"])
     }
   }
   names(Dss.mean) <- names(r$Dss)
@@ -129,11 +130,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     Dss <- getDss(r)
     if (length(Dss)) {
       for (i in 1:length(Dss)) {
-        phis    <- Dss[[i]][,"phi"]
-        lambdas <- Dss[[i]][,"lambda"]
-        xpos <- cos(lambdas)*phi.to.rho(phis, r$phi0, pa)
-        ypos <- sin(lambdas)*phi.to.rho(phis, r$phi0, pa)
-        suppressWarnings(points(xpos, ypos, col=r$cols[[names(Dss)[i]]],
+        pos <- sphere.spherical.to.polar.cart(Dss[[i]], pa)
+        suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
+                                col=r$cols[[names(Dss)[i]]],
                                 pch=20, ...))
       }
     }
@@ -144,11 +143,8 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     Dss.mean <- getDss.mean(r)
     if (length(Dss.mean)) {
       for (i in 1:length(Dss.mean)) {
-        phis    <- Dss.mean[[i]]["phi"]
-        lambdas <- Dss.mean[[i]]["lambda"]
-        xpos <- cos(lambdas)*phi.to.rho(phis, r$phi0, pa)
-        ypos <- sin(lambdas)*phi.to.rho(phis, r$phi0, pa)
-        suppressWarnings(points(xpos, ypos,
+        pos <- sphere.spherical.to.polar.cart(Dss.mean[[i]], pa)
+        suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
                                 bg=r$cols[[names(Dss.mean)[i]]], col="black",
                                 pch=23, cex=1.5, ...))
       }
@@ -170,9 +166,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       gxs <- outer(xs, ys*0, "+")
       gys <- outer(xs*0, ys, "+")
 
-      ## gxs and gys are both 101 by 100 matrixes We now combine both
-      ## matrices as a 101*100 by 2 matrix. The conversion as.vector() goes
-      ## down the columns of the matrices gxs and gys
+      ## gxs and gys are both res-by-res matrices We now combine both
+      ## matrices as a res*res by 2 matrix. The conversion as.vector()
+      ## goes down the columns of the matrices gxs and gys
       gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
 
       ## Now convert the cartesian coordinates to polar coordinates
@@ -180,7 +176,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
 
       ## Check conversion
       ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
-      ## points(180/pi*gcb[,"x"], 180/pi*gcb[,"y"], pch='.')
+      ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
       
       for (i in 1:length(Dss)) {
         mu <- cbind(phi=Dss[[i]][,"phi"], lambda=Dss[[i]][,"lambda"])
@@ -215,10 +211,11 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
           klevels <- k.vec[js]
           klevels <- (1-vols)*max(k)
           message(paste("klevels=", klevels))
-          
 
           ## Plot contours
-          contour(180/pi*xs, 180/pi*ys, k, add=TRUE, levels=klevels,
+          contour(rho.to.degrees(xs, r$phi0, pa),
+                  rho.to.degrees(ys, r$phi0, pa),
+                  k, add=TRUE, levels=klevels,
                   col=r$cols[[names(Dss)[i]]], drawlabels=FALSE)
         }
       }
@@ -233,11 +230,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       for (i in 1:length(Sss)) {
         name <- names(Sss)[i]
         col <- ifelse(is.null(name) || (name==""), "default", name)
-        phi    <- Sss[[i]][,"phi"]
-        lambda <- Sss[[i]][,"lambda"]
-        x <- cos(lambda)*phi.to.rho(phis, r$phi0, pa)
-        y <- sin(lambda)*phi.to.rho(phis, r$phi0, pa)
-        suppressWarnings(lines(x, y, col=r$cols[[col]], ...))
+        pos <- sphere.spherical.to.polar.cart(Sss[[i]], pa)
+        suppressWarnings(lines(rho.to.degrees(pos, r$phi, pa),
+                               col=r$cols[[col]], ...))
       }
     }
   }
