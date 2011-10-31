@@ -20,7 +20,7 @@ strain.colours <- function(x) {
 ##' @param text Test to place
 ##' @author David Sterratt
 text.polar <- function(text) {
-  mtext(text, 1, adj=1, line=-0.1)
+  mtext(text, 1, adj=1, line=-1)
 }
 
 ##' This is a helper function for \code{\link{plot.polar}}
