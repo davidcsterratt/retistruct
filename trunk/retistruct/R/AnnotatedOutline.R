@@ -290,7 +290,8 @@ plot.flat.annotatedOutline <- function(a, axt="n", ylim=NULL, ...) {
         points(P[VB,,drop=FALSE], col=getOption("TB.col"), pch="+")
         segments(P[V0,1], P[V0,2], P[VB,1], P[VB,2], col=getOption("TB.col"))
         points(P[V0,,drop=FALSE], col=getOption("V.col"), pch="+")
-        text(P[V0,,drop=FALSE]+100, labels=1:length(V0), col=getOption("V.col"))
+        text(P[V0,,drop=FALSE] + 0.02*(max(P[,1])-min(P[,1])),
+             labels=1:length(V0), col=getOption("V.col"))
       }
       if (!is.null(names(i0))) {
         text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))
