@@ -88,6 +88,22 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
+getDss.bandwidth <- function(r) {
+  Dss.bandwidth <- list()
+  if (length(r$Dss)) {
+    for (i in 1:length(r$Dss)) {
+      if (nrow(r$Dss[[i]]) > 2) {
+        Dss.bandwidth[[i]] <- compute.bandwidth(r$Dss[[i]], K)
+      } else {
+        Dss.bandwidth[[i]] <- NA
+      }
+    }
+  }
+  names(Dss.bandwidth) <- names(r$Dss)
+  return(Dss.bandwidth)
+  
+}
+
 ##' Plot datapoints in polar plot
 ##'
 ##' @title Polar plot of reconstructed dataset
@@ -151,69 +167,93 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     }
   }
 
+  ## Helper function to create grid
+  create.grid <- function(pa) {
+    lim <- sphere.spherical.to.polar.cart(cbind(phi=r$phi0, lambda=0), pa)[1,"x"]
+    xs <- seq(-lim, lim, len=res)
+    ys <- seq(-lim, lim, len=res)
+
+    ## Create grid
+    gxs <- outer(xs, ys*0, "+")
+    gys <- outer(xs*0, ys, "+")
+
+    ## gxs and gys are both res-by-res matrices We now combine both
+    ## matrices as a res*res by 2 matrix. The conversion as.vector()
+    ## goes down the columns of the matrices gxs and gys
+    gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
+
+    ## Now convert the cartesian coordinates to polar coordinates
+    gs <- polar.cart.to.sphere.spherical(gc, pa)
+    return(list(s=gs, c=gc, xs=xs, ys=ys))
+  }
+
+  ## Helper function to get kde as locations gs in spherical coordinates
+  get.kde <- function(gs, mu, sigma, res) {
+    ## Make space for the kernel density estimates
+    gk <- rep(0, nrow(gs))
+    for (j in 1:nrow(gs)) {
+      gk[j] <- K(gs[j,], mu, sigma)
+    }
+    
+    gk[gs[,"phi"] > r$phi0] <- NA
+    ## Put the estimates back into a matrix. The matrix is filled up
+    ## column-wise, so the matrix elements should match the elements of
+    ## gxs and gys
+    k <- matrix(gk, res, res)
+    k[is.na(k)] <- 0
+    return(k)
+  }
+  
   ## Contours
   vols <- 0.95
   res <- 100
   if (plot.datapoint.contours) {
     Dss <- getDss(r)
     if (length(Dss)) {
-      ## First create a grid in Cartesian coordinates
-      lim <- sphere.spherical.to.polar.cart(cbind(phi=r$phi0, lambda=0), pa)[1,"x"]
-      xs <- seq(-lim, lim, len=res)
-      ys <- seq(-lim, lim, len=res)
+      ## First create a grid in Cartesian coordinates with
+      ## area-preserving coords
+      gpa <- create.grid(TRUE)
 
-      ## Create grid
-      gxs <- outer(xs, ys*0, "+")
-      gys <- outer(xs*0, ys, "+")
-
-      ## gxs and gys are both res-by-res matrices We now combine both
-      ## matrices as a res*res by 2 matrix. The conversion as.vector()
-      ## goes down the columns of the matrices gxs and gys
-      gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
-
-      ## Now convert the cartesian coordinates to polar coordinates
-      gs <- polar.cart.to.sphere.spherical(gc, pa)
+      ## If we are not using polar area coordinates, we need to create
+      ## another grid that is in polar area coords.
+      if (pa) {
+        g <- gpa
+      } else {
+        g <- create.grid(pa)
+      }
 
       ## Check conversion
       ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
       ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
       
+      sigmas <- getDss.bandwidth(r)
       for (i in 1:length(Dss)) {
-        mu <- cbind(phi=Dss[[i]][,"phi"], lambda=Dss[[i]][,"lambda"])
-        if (nrow(mu) > 2) {
+        if (!is.na(sigmas[[i]])) {
           ## Find the optimal bandwidth of the kernel density estimator
-          sigma <- compute.bandwidth(mu, K)
-          message(paste("sigma=", sigma))
-          
-          ## points(sphere.spherical.to.polar.cart(mu, pa)*180/pi)
+          sigma <- sigmas[[i]]
           
           ## Now we've found sigma, let's try to estimate and display the
           ## density over our polar representation of the data points
-
-          ## Make space for the kernel density estimates
-          gk <- rep(0, nrow(gs))
-          for (j in 1:nrow(gs)) {
-            gk[j] <- K(gs[j,], mu, sigma)
-          }
-
-          gk[gs[,"phi"] > r$phi0] <- NA
-          ## Put the estimates back into a matrix. The matrix is filled up
-          ## column-wise, so the matrix elements should match the elements of
-          ## gxs and gys
-          k <- matrix(gk, res, res)
-          k[is.na(k)] <- 0
+          kpa <- get.kde(gpa$s, Dss[[i]], sigma, res)
           
           ## Determine the value of gk that encloses 0.95 of the
-          ## density. FIXME: But of course to compute the density, we need to
-          ## know the area of each little square...
-          k.sort <- sort(as.vector(k))
+          ## density.  To compute the density, we need to know the
+          ## area of each little square, which is why we have used the
+          ## are-preserving projection. FIXME: I think this method of
+          ## "integration" could be improved.
+          k.sort <- sort(as.vector(kpa))
           js <- findInterval(1 - vols, cumsum(k.sort)/sum(k.sort))
           klevels <- k.sort[js]
-          message(paste("klevels=", klevels))
 
+          if (pa) {
+            k <- kpa
+          } else {
+            k <- get.kde(g$s, Dss[[i]], sigma, res)
+          }
+          
           ## Plot contours
-          contour(rho.to.degrees(xs, r$phi0, pa),
-                  rho.to.degrees(ys, r$phi0, pa),
+          contour(rho.to.degrees(g$xs, r$phi0, pa),
+                  rho.to.degrees(g$ys, r$phi0, pa),
                   k, add=TRUE, levels=klevels,
                   col=r$cols[[names(Dss)[i]]], drawlabels=FALSE)
         }
