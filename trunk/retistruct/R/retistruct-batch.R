@@ -45,93 +45,6 @@ list.datasets <- function(path='.', verbose=FALSE) {
   return(datasets)
 }
 
-##' Recurse through a directory tree, determining whether the
-##' directory contains valid raw data and markup, and performing the
-##' reconstruction if it does
-##'
-##' @title Retistruct batch operation 
-##' @param tldir the top level of the tree through which to recurse
-##' @param outputdir directory in which to dump a log file and images
-##' @param cpu.time.limit amount of CPU after which to terminate the process
-##' @param device string indicating what type of graphics output
-##' required. Options are "pdf" and "png".
-##' @author David Sterratt
-retistruct.batch <- function(tldir='.', outputdir=tldir, cpu.time.limit=3600,
-                             device="pdf") {
-  print(outputdir)
-  datasets <- list.datasets(tldir)
-  logdat <- data.frame()
-  for (dataset in datasets) {
-    Result <- ""
-    ret <- -1
-    logfile <- file.path(outputdir,
-                         paste(retistruct.cli.basepath(dataset),
-                               ".log", sep=""))
-    message(paste("Trying to open", dataset, "..."))
-    is.data.dir <- try(check.datadir(dataset))
-    EOD <- NA
-    nflip <- NA
-    nflip.init <- NA
-    E <- NA
-    El <- NA
-    sqrt.El <- NA
-    mean.strain <- NA
-    mean.logstrain <- NA
-    
-    if (inherits(is.data.dir, "try-error")) {
-      ret <- 1
-      Result <- gsub("\n$", "", geterrmessage())
-    } else {
-      if (!is.data.dir) {
-        message("... not a data directory.")
-        next
-      }
-      if (is.data.dir) {
-        message(paste("... reconstructing. Logging to", logfile))
-        ret <- system(paste("R --vanilla >", logfile, "2>&1"),
-                      input=paste("library(retistruct)
-status = retistruct.cli(\"",
-                        dataset, "\",",
-                        cpu.time.limit, ",\"",
-                        outputdir, "\", \"",
-                        device, "\")
-quit(status=status)",
-                        sep=""),
-                      intern=FALSE, wait=TRUE)
-        if (ret==0) {
-          r <- retistruct.read.recdata(list(dataset=dataset))
-          if (!is.null(r)) {
-            if (!is.null(r$EOD))         { EOD <- r$EOD      }
-            if (!is.null(r$nflip))       { nflip <- r$nflip  }
-            if (!is.null(r$nflip0))      { nflip0 <- r$nflip0  }
-            if (!is.null(r$opt$value))   { E  <- r$opt$value }
-            if (!is.null(r$E.l))         { El <- r$E.l
-                                           sqrt.El <- sqrt(r$E.l) }
-            if (!is.null(r$mean.strain)) { mean.strain <- r$mean.strain }
-            if (!is.null(r$mean.logstrain)) { mean.logstrain <- r$mean.logstrain }
-          }
-        }
-        message(paste("Return value", ret, ". Result:"))
-        out <- read.csv(logfile)
-        Result <- out[nrow(out),1]
-        print(as.vector(Result))
-      }
-    }
-    logdat <- rbind(logdat, data.frame(Dataset=dataset,
-                                       Return=ret,
-                                       Result=Result,
-                                       E=E,
-                                       El=El,
-                                       nflip=nflip,
-                                       nflip0=nflip0,
-                                       EOD=EOD,
-                                       sqrt.E=sqrt.E,
-                                       mean.strain=mean.strain,
-                                       mean.logstrain=mean.logstrain))
-    write.csv(logdat, file.path(outputdir, "retistruct-batch.csv"))
-  }
-}
-
 ##' This function reconstructs a number of  datasets, using the R
 ##' \code{multicore} package to distribute the reconstruction of
 ##' multiple datasets across CPUs. If \code{datasets} is not specified
@@ -151,10 +64,10 @@ quit(status=status)",
 ##' @param mc.cores The number of cores to use. Defaults to the total
 ##' number available.
 ##' @author David Sterratt
-retistruct.multicore <- function(tldir='.', outputdir=tldir, datasets=NULL, 
-                                 device="pdf",
-                                 cpu.time.limit=3600,
-                                 mc.cores=getOption("cores")) {
+retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL, 
+                             device="pdf",
+                             cpu.time.limit=3600,
+                             mc.cores=getOption("cores")) {
   ## Get datasets
   if (is.null(datasets)) {
     datasets <- list.datasets(tldir)
