@@ -40,3 +40,14 @@ phi.to.rho <- function(phi, phi0, area.preserving) {
     return(phi*180/pi + 90)      
   }
 }
+
+rho.to.degrees <- function(rho, phi0, area.preserving) {
+  if (area.preserving) {
+    phi0d <- phi0*180/pi
+    rho0 <- spherical.to.polar.area(phi0)
+    return((phi0d + 90)/rho0*rho)
+  } else {
+    return(rho*180/pi)
+  }
+}
+
