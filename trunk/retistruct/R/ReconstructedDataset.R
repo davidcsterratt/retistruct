@@ -119,6 +119,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
+  plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
   pa <- plot.preserve.area
@@ -153,6 +154,77 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       }
     }
   }
+
+  ## Contours
+  vols <- 0.5
+  res <- 100
+  if (plot.datapoint.contours) {
+    Dss <- getDss(r)
+    if (length(Dss)) {
+      ## First create a grid in Cartesian coordinates
+      lim <- sphere.spherical.to.polar.cart(cbind(phi=r$phi0, lambda=0), pa)[1,"x"]
+      xs <- seq(-lim, lim, len=res)
+      ys <- seq(-lim, lim, len=res)
+
+      ## Create grid
+      gxs <- outer(xs, ys*0, "+")
+      gys <- outer(xs*0, ys, "+")
+
+      ## gxs and gys are both 101 by 100 matrixes We now combine both
+      ## matrices as a 101*100 by 2 matrix. The conversion as.vector() goes
+      ## down the columns of the matrices gxs and gys
+      gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
+
+      ## Now convert the cartesian coordinates to polar coordinates
+      gs <- polar.cart.to.sphere.spherical(gc, pa)
+
+      ## Check conversion
+      ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
+      ## points(180/pi*gcb[,"x"], 180/pi*gcb[,"y"], pch='.')
+      
+      for (i in 1:length(Dss)) {
+        mu <- cbind(phi=Dss[[i]][,"phi"], lambda=Dss[[i]][,"lambda"])
+        if (nrow(mu) > 2) {
+          ## Find the optimal bandwidth of the kernel density estimator
+          sigma <- compute.bandwidth(mu, K)
+          message(paste("sigma=", sigma))
+          
+          ## points(sphere.spherical.to.polar.cart(mu, pa)*180/pi)
+          
+          ## Now we've found sigma, let's try to estimate and display the
+          ## density over our polar representation of the data points
+
+          ## Make space for the kernel density estimates
+          gk <- rep(0, nrow(gs))
+          for (j in 1:nrow(gs)) {
+            gk[j] <- K(gs[j,], mu, sigma)
+          }
+
+          gk[gs[,"phi"] > r$phi0] <- NA
+          ## Put the estimates back into a matrix. The matrix is filled up
+          ## column-wise, so the matrix elements should match the elements of
+          ## gxs and gys
+          k <- matrix(gk, res, res)
+          k[is.na(k)] <- 0
+          
+          ## Determine the value of gk that encloses 0.95 of the
+          ## density. FIXME: But of course to compute the density, we need to
+          ## know the area of each little square...
+          k.vec <- as.vector(k)
+          js <- findInterval(1 - vols, cumsum(sort(k.vec))/sum(k.vec))
+          klevels <- k.vec[js]
+          klevels <- (1-vols)*max(k)
+          message(paste("klevels=", klevels))
+          
+
+          ## Plot contours
+          contour(180/pi*xs, 180/pi*ys, k, add=TRUE, levels=klevels,
+                  col=r$cols[[names(Dss)[i]]])
+        }
+      }
+    }
+  }
+  
   
   ## Landmarks
   if (plot.landmarks) {
@@ -169,7 +241,6 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       }
     }
   }
-
 }
 
 ##' Draw a spherical plot of datapoints.
@@ -230,3 +301,4 @@ plot.spherical.reconstructedDataset <- function(r, ...) {
     }
   }
 }  
+

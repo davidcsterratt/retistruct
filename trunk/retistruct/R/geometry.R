@@ -315,9 +315,47 @@ spherical.to.polar.area <- function(phi, R=1) {
   return(R*sqrt(2*(1 + sin(phi))))
 }
 
-## Convert polar coordinates to cartesian coordinates
-polar.to.cart <- function(r, theta) {
-  return(cbind(x=r*cos(theta), y=r*sin(theta)))   
+##' This is the inverse of \code{\link{polar.cart.to.sphere.spherical}}
+##'
+##' @title Convert spherical coordinates on sphere to  polar
+##' projection in Cartesian coordinates
+##' @param r 2-column Matrix of spherical coordinates of points on
+##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @param pa If \code{TRUE}, make this an area-preserving projection
+##' @return 2-column Matrix of Cartesian coordinates of points on polar
+##' projection. Column names should be \code{x} and \code{y}
+##' @author David Sterratt
+sphere.spherical.to.polar.cart <- function(r, pa=FALSE) {
+  if (pa) {
+    rho <- sqrt(2*(1 + sin(r[,"phi"])))
+    ## rho <- spherical.to.polar.area(r[,"phi"])
+  } else {
+    rho <- pi/2 + r[,"phi"]
+  }
+  x <- rho*cos(r[,"lambda"])
+  y <- rho*sin(r[,"lambda"])
+  return(cbind(x=x, y=y))
+}
+
+##' This is the inverse of \code{\link{sphere.spherical.to.polar.cart}}
+##'
+##' @title Convert polar projection in Cartesian coordinates to
+##' spherical coordinates on sphere
+##' @param r 2-column Matrix of Cartesian coordinates of points on
+##' polar projection. Column names should be \code{x} and \code{y}
+##' @param pa If \code{TRUE}, make this an area-preserving projection
+##' @return 2-column Matrix of spherical coordinates of points on
+##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @author David Sterratt
+polar.cart.to.sphere.spherical <- function(r, pa=FALSE) {
+  rho2 <- r[,"x"]^2 + r[,"y"]^2
+  if (pa) {
+    phi <- asin(rho2/2 - 1)
+  } else {
+    phi <- sqrt(rho2) - pi/2
+  }
+  lambda <- atan2(r[,"y"], r[,"x"])
+  return(cbind(phi=phi, lambda=lambda))
 }
 
 ##' On a sphere the central angle between two points is defined as the
