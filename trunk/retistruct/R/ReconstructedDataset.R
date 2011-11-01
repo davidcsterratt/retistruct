@@ -205,7 +205,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   }
   
   ## Contours
-  vols <- 0.95
+  vols <- c(0.05, 0.1, 0.2, 0.5)
   res <- 100
   if (plot.datapoint.contours) {
     Dss <- getDss(r)
@@ -241,9 +241,14 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
           ## area of each little square, which is why we have used the
           ## are-preserving projection. FIXME: I think this method of
           ## "integration" could be improved.
-          k.sort <- sort(as.vector(kpa))
-          js <- findInterval(1 - vols, cumsum(k.sort)/sum(k.sort))
-          klevels <- k.sort[js]
+          vol.contours <- TRUE
+          if (vol.contours) {
+            k.sort <- sort(as.vector(kpa))
+            js <- findInterval(vols, cumsum(k.sort)/sum(k.sort))
+            klevels <- k.sort[js]
+          } else {
+            klevels <- vols*max(kpa)
+          }
 
           if (pa) {
             k <- kpa
@@ -255,7 +260,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
           contour(rho.to.degrees(g$xs, r$phi0, pa),
                   rho.to.degrees(g$ys, r$phi0, pa),
                   k, add=TRUE, levels=klevels,
-                  col=r$cols[[names(Dss)[i]]], drawlabels=FALSE)
+                  col=r$cols[[names(Dss)[i]]],
+                  ## drawlabels=FALSE,
+                  labels=vols*100)
         }
       }
     }
