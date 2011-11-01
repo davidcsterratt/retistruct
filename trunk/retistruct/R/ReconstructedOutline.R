@@ -418,8 +418,6 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
 ##' @author David Sterratt
 plot.l.vs.L.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
-  op <- par()["mar"]
-  par(mar=c(4.5, 4.5, 0.5,0.5))
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   cols <- strain.colours(o$logstrain)
   with(o, plot(L, l, col=cols, pch=20,
@@ -434,5 +432,4 @@ plot.l.vs.L.reconstructedOutline <- function(r) {
                pos=4))
   with(o, text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
                pos=2))
-  par(op)
 }

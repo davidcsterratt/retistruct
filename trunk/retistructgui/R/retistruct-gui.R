@@ -299,6 +299,7 @@ do.plot <- function() {
               strain=TRUE,
               scalebar=1)
     dev.set(d2)
+    par(mar=c(4.5, 4.5, 0.5, 0.5))
     plot.l.vs.L(r)
   } else {
     dev.set(d1)
