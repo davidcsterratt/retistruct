@@ -420,16 +420,33 @@ plot.l.vs.L.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   cols <- strain.colours(o$logstrain)
-  with(o, plot(L, l, col=cols, pch=20,
-               xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
-               xlab="Length on flattened object",
-               ylab="Length on reconstructed object", asp=1))
+  L <- o$L
+  l <- o$l
+  
+  if (!is.null(r$scale)) {
+    scale <- r$scale
+    print(scale)
+    if (!is.na(scale)) {
+      L <- L*scale
+      l <- l*scale
+    }
+  }
+
+  plot(L, l, col=cols, pch=20,
+       xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
+       xlab=ifelse(!is.na(scale),
+         expression(paste("Flat ", italic(L), " (", mu, "m)")),
+         expression(paste("Flat ", italic(L)))),
+       ylab=ifelse(!is.na(scale),
+         expression(paste("Reconstructed ", italic(l), " (", mu, "m)")),
+         expression(paste("Reconstructed ", italic(l)))),
+       asp=1)
   par(xpd=FALSE)
   abline(0, 1)
   abline(0, 0.75, col="blue")
   abline(0, 1.25, col="red")
-  with(o, text(0.7*max(L), 0.7*max(L)*0.75, "25% compressed", col="blue",
-               pos=4))
-  with(o, text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
-               pos=2))
+  text(0.2*max(L), 0.2*max(L)*0.5, "25% compressed", col="blue",
+               pos=4)
+  text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
+               pos=2)
 }
