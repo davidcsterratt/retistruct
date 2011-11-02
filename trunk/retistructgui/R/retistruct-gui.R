@@ -282,6 +282,43 @@ h.eye <- function(h, ...) {
   do.plot()
 }
 
+## Print device d to file
+print.image <- function(d, file) {
+  dev <- NULL
+  if (grepl(".png$", file, ignore.case=TRUE)) 
+    dev <- png
+  if (grepl(".jpeg$", file, ignore.case=TRUE) ||
+      grepl(".jpg$", file, ignore.case=TRUE))
+    dev <- jpeg
+  if (grepl(".tif$", file, ignore.case=TRUE) ||
+      grepl(".tiff$", file, ignore.case=TRUE))
+    dev <- tiff
+  if (is.null(dev)) {
+    file <- paste(file, ".png")
+    dev <- png
+  }
+  dev.set(d)
+  dev.print(dev, file, width=1000, height=1000)
+}
+
+h.print.image <- function(d, initialfilename) {
+  setwd(a$dataset)  
+  gfile(type="save", text="Select a filename to save image to...",
+        initialfilename=initialfilename,
+        handler=function(h, ...) {
+          print.image(d, h$file)
+        })
+}
+
+h.print1 <- function(h, ...) {
+  h.print.image(d1, initialfilename="image-flat.png")
+}
+
+h.print2 <- function(h, ...) {
+  h.print.image(d2, initialfilename="image-polar.png")
+}
+
+
 ## Plot in edit pane
 do.plot <- function() {
   if (is.null(r)) {
@@ -416,10 +453,15 @@ retistruct <- function(guiToolkit="RGtk2") {
                             handler=h.show, container=g.show.frame)
 
   ## Graphs at right
-  g.f <<-  ggraphics(expand=TRUE, ps=11, container=g.body)
+  g.f1 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.fd1 <<- ggraphics(expand=TRUE, ps=11, container=g.f1)
   d1 <<- dev.cur()
-  g.f2 <<- ggraphics(expand=TRUE, ps=11, container=g.body)
+  g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
+
+  g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
   d2 <<- dev.cur()
+  g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
 
   ## Status bar
   ## g.statusbar <<- ggroup(container=g.rows)
