@@ -84,3 +84,11 @@ getTss.default <- function(x) {
   return(NULL)
 }
 
+getIms <- function(x) {
+  UseMethod("getIms")
+}
+
+getIms.default <- function(x) {
+  return(NULL)
+}
+

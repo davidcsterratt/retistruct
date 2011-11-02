@@ -44,6 +44,9 @@ transform.image.reconstructedOutline <- function(r) {
   return(r)
 }
 
+getIms.reconstructedOutline <- function(r) {
+  return(r$ims)
+}
 
 ##' Get spherical coordinates of tears.
 ##'
@@ -204,71 +207,71 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   }
   plot(NA, NA, xlim=xlim, ylim=c(-maxlength, maxlength), 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
-  if (plot.image && !is.null(r$ims)) {
+  ims <- getIms(r)
+  if (plot.image && !is.null(ims)) {
     ## Reconstitute image from stored values of phi and lambda
     ## coordinates of corners of pixels
-    with(r, {
-      N <- ncol(r$im)
-      M <- nrow(r$im)
+    N <- ncol(r$im)
+    M <- nrow(r$im)
 
-      ## Compute x and y positions of corners of pixels
-      xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
-      ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
+    ## Compute x and y positions of corners of pixels
+    xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
+    ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
+    
+    ## Convert these to format suitable to polygon
+    impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
+                  as.vector(xpos[1:M    , 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 1:N    ]),
+                  NA)
+    impy <- rbind(as.vector(ypos[1:M    , 1:N    ]),
+                  as.vector(ypos[1:M    , 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 1:N    ]),
+                  NA)
 
-      ## Convert these to format suitable to polygon
-      impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
-                    as.vector(xpos[1:M    , 2:(N+1)]),
-                    as.vector(xpos[2:(M+1), 2:(N+1)]),
-                    as.vector(xpos[2:(M+1), 1:N    ]),
-                    NA)
-      impy <- rbind(as.vector(ypos[1:M    , 1:N    ]),
-                    as.vector(ypos[1:M    , 2:(N+1)]),
-                    as.vector(ypos[2:(M+1), 2:(N+1)]),
-                    as.vector(ypos[2:(M+1), 1:N    ]),
-                    NA)
+    ## Plot the polygon, masking as we go
+    with(r, polygon(impx[,immask], impy[,immask],  col=im[immask], border=NA))
 
-      ## Plot the polygon, masking as we go
-      polygon(impx[,immask], impy[,immask],  col=im[immask], border=NA)
+    if (plot.contours) {
+      ## Find centre locations of polygons
+      xposc <- 0.25*(xpos[1:M    , 1:N] +
+                     xpos[1:M    , 2:(N+1)] +
+                     xpos[2:(M+1), 1:N] +
+                     xpos[2:(M+1), 2:(N+1)])
+      yposc <- 0.25*(ypos[1:M,     1:N] +
+                     ypos[1:M,     2:(N+1)] +
+                     ypos[2:(M+1), 1:N] +
+                     ypos[2:(M+1), 2:(N+1)])
 
-      if (plot.contours) {
-        ## Find centre locations of polygons
-        xposc <- 0.25*(xpos[1:M    , 1:N] +
-                       xpos[1:M    , 2:(N+1)] +
-                       xpos[2:(M+1), 1:N] +
-                       xpos[2:(M+1), 2:(N+1)])
-        yposc <- 0.25*(ypos[1:M,     1:N] +
-                       ypos[1:M,     2:(N+1)] +
-                       ypos[2:(M+1), 1:N] +
-                       ypos[2:(M+1), 2:(N+1)])
+      ## Compute intensity of image
+      imrgb <- col2rgb(r$im)  
+      imin <- matrix(0.3*imrgb[1,] + 0.59*imrgb[2,] + 0.11*imrgb[3,],
+                     nrow(r$im), ncol(r$im), byrow=TRUE)
 
-        ## Compute intensity of image
-        imrgb <- col2rgb(r$im)  
-        imin <- matrix(0.3*imrgb[1,] + 0.59*imrgb[2,] + 0.11*imrgb[3,],
-                       nrow(r$im), ncol(r$im), byrow=TRUE)
+      ## Mask all data
+      xposm <- xposc[r$immask]
+      yposm <- yposc[r$immask]
+      imm <- imin[r$immask]
 
-        ## Mask all data
-        xposm <- xposc[r$immask]
-        yposm <- yposc[r$immask]
-        imm <- imin[r$immask]
+      ## Interporlate. Length 20 (rather than the default 40) gets
+      ## rid of some noise, though this is quite a crude way of
+      ## doing things
+      im.smooth <- interp(xposm, yposm, imm,
+                          xo=seq(min(xposm), max(xposm), len=20),
+                          yo=seq(min(yposm), max(yposm), len=20))  
+      contour(im.smooth, add=TRUE, nlevels=5)
 
-        ## Interporlate. Length 20 (rather than the default 40) gets
-        ## rid of some noise, though this is quite a crude way of
-        ## doing things
-        im.smooth <- interp(xposm, yposm, imm,
-                            xo=seq(min(xposm), max(xposm), len=20),
-                            yo=seq(min(yposm), max(yposm), len=20))  
-        contour(im.smooth, add=TRUE, nlevels=5)
+      ## Alternative ways of doing this: use Kriging (from spatial
+      ## package). May be better, but slower.
+      ##
+      ## im.kr <- surf.ls(6, data.frame(x=xposm, y=yposm, z=imm))
+      ## im.kr <- surf.gls(2, expcov, data.frame(x=xposm, y=yposm, z=imm),
+      ## d=1)
+      ## trsurf=trmat(im.kr, -124, 124, -124, 124, 100)
+      ## contour(trsurf, add=TRUE, nlevels=20)
 
-        ## Alternative ways of doing this: use Kriging (from spatial
-        ## package). May be better, but slower.
-        ##
-        ## im.kr <- surf.ls(6, data.frame(x=xposm, y=yposm, z=imm))
-        ## im.kr <- surf.gls(2, expcov, data.frame(x=xposm, y=yposm, z=imm),
-        ## d=1)
-        ## trsurf=trmat(im.kr, -124, 124, -124, 124, 100)
-        ## contour(trsurf, add=TRUE, nlevels=20)
-      }
-    })
+    }
   }
   
   ## Plot the grid

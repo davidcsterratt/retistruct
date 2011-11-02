@@ -37,7 +37,7 @@ getDss.retinalReconstructedDataset <- function(r) {
     }
     if (r$side=="Left") {
       for (i in 1:length(Dss)) {
-        Dss[[i]][,"lambda"] <- pi - Dss[[i]][,"lambda"]
+        Dss[[i]][,"lambda"] <- 2*pi - Dss[[i]][,"lambda"]
       }
     }
   }
@@ -65,7 +65,7 @@ getDss.mean.retinalReconstructedDataset <- function(r) {
     }
     if (r$side=="Left") {
       for (i in 1:length(Dss.mean)) {
-        Dss.mean[[i]]["lambda"] <- pi - Dss.mean[[i]]["lambda"]
+        Dss.mean[[i]]["lambda"] <- 2*pi - Dss.mean[[i]]["lambda"]
       }
     }
   }
@@ -90,7 +90,7 @@ getSss.retinalReconstructedDataset <- function(r) {
     }
     if (r$side=="Left") {
       for (i in 1:length(Sss)) {
-        Sss[[i]][,"lambda"] <- pi - Sss[[i]][,"lambda"]
+        Sss[[i]][,"lambda"] <- 2*pi - Sss[[i]][,"lambda"]
       }
     }
   }
@@ -114,7 +114,7 @@ getTss.retinalReconstructedDataset <- function(r) {
   }
   if (r$side=="Left") {
     for (i in 1:length(Tss)) {
-      Tss[[i]][,"lambda"] <- pi - Tss[[i]][,"lambda"]
+      Tss[[i]][,"lambda"] <- 2*pi - Tss[[i]][,"lambda"]
     }
   }
   return(Tss)
