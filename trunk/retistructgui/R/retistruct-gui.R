@@ -8,7 +8,8 @@ enable.group <- function(widgets, state=TRUE) {
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d, g.mark.od,
-                 g.phi0d, g.show, g.data, g.eye), state)
+                 g.phi0d, g.show, g.data, g.eye,
+                 g.print1, g.print2), state)
   if (state) 
     enable.group(c(g.mark.od), retistruct.potential.od(a))
   if (!retistruct.check.markup(a)) {
@@ -317,7 +318,6 @@ h.print1 <- function(h, ...) {
 h.print2 <- function(h, ...) {
   h.print.image(d2, initialfilename="image-polar.png")
 }
-
 
 ## Plot in edit pane
 do.plot <- function() {
