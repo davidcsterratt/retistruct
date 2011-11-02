@@ -11,7 +11,7 @@
 ##' @author David Sterratt
 RetinalDataset <- function(d) {
   a <- d
-  class(a) <- c("retinalDataset", class(a))
+  class(a) <- addClass("retinalDataset", a)
   a$DVflip <- FALSE
   a$side <- "Right"
   return(a)

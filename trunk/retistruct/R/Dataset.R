@@ -16,7 +16,7 @@
 ##' @author David Sterratt
 Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
   d <- o
-  class(d) <- c("dataset", class(o))
+  class(d) <- addClass("dataset", o)
   d$dataset <- dataset
   d$Ds <- Ds
   d$Ss <- Ss

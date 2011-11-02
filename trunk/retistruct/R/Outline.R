@@ -242,7 +242,7 @@ triangulate.outline <- function(o, n=200,
   t <- merge(list(P=P, T=T, Cu=Cu, h=h,  A=A, L=L,
                   A.signed=A.signed, A.tot=A.tot,
                   gf=gf, gb=gb, S=out$S, E=out$E, EB=out$EB), o)
-  class(t) <- c("triangulatedOutline", class(o))
+  class(t) <- addClass("triangulatedOutline", o)
   return(t)
 }
 

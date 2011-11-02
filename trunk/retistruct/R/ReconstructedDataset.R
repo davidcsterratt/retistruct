@@ -43,7 +43,7 @@ ReconstructedDataset <- function(r, report=message) {
 
   d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                   Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
-  class(d) <- unique(c("reconstructedDataset", class(r)))
+  class(d) <- addClass("reconstructedDataset", r)
   return(d)
 }
 

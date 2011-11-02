@@ -15,7 +15,7 @@ RetinalReconstructedDataset <- function(r) {
         inherits(r, "retinalDataset"))) {
     stop("Argument needs to inherit reconstructedDataset and retinalDataset")
   }
-  class(r) <- unique(c("retinalReconstructedDataset", class(r)))
+  class(r) <- addClass("retinalReconstructedDataset", r)
   return(r)
 }
 

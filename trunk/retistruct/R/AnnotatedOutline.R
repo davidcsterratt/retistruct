@@ -9,7 +9,7 @@
 ##' @author David Sterratt
 AnnotatedOutline <- function(o){
   a <- o
-  class(a) <- c("annotatedOutline", class(o))
+  class(a) <- addClass("annotatedOutline", o)
   ## Trick to make V0, VB and VF "named numeric" of length 0
   a$V0 <- c(x=0)[0]
   a$VB <- c(x=0)[0]
@@ -386,7 +386,7 @@ stitch.outline <- function(a) {
                   TFset=TFset, TBset=TBset,
                   P=P, h=h, hf=hf, hb=hb,
                   gf=gf, gb=gb), a)
-  class(s) <- c("stitchedOutline", class(a))
+  class(s) <- addClass("stitchedOutline", a)
   return(s)
 }
 

@@ -256,7 +256,8 @@ h.reconstruct <- function(h, ...) {
   enable.widgets(FALSE)
   withCallingHandlers({
     r <<- retistruct.reconstruct(a, report=set.status,
-                                 plot.3d=TRUE, dev.grid=d1, dev.polar=d2)
+                                 plot.3d=getOption("show.sphere"),
+                                 dev.grid=d1, dev.polar=d2)
   }, warning=h.warning, error=h.warning)  
   enable.widgets(TRUE)
   do.plot()

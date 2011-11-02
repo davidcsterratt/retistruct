@@ -292,7 +292,7 @@ project.to.sphere <- function(r) {
   p <- merge(list(phi=phi, lambda=lambda, R=R,
                   phi0=phi0, lambda0=lambda0, Ps=Ps),
              r)
-  class(p) <- unique(c("reconstructedOutline", class(r)))
+  class(p) <- addClass("reconstructedOutline", r)
   return(p)
 }
 
@@ -1216,7 +1216,9 @@ ReconstructedOutline <- function(o,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
     ## Initial plot in 3D space
-    plot.spherical(r)
+    if (plot.3d) {
+      plot.spherical(r)
+    }
   }
 
   ## Check for flipped triangles and record initial number
@@ -1296,6 +1298,6 @@ ReconstructedOutline <- function(o,
   
   report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
                ";", r$nflip, "flipped triangles."))
-  class(r) <- unique(c("reconstructedOutline", class(r)))
+  class(r) <- addClass("reconstructedOutline", r)
   return(r)
 }

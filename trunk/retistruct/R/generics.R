@@ -1,3 +1,21 @@
+##' This adds a new class to the class vector. If the class is dataset
+##' type it is prepended at the start of the class vector. If it is an
+##' outline type, it is put after all the dataset classes, but before
+##' the other outline ones. This is needed for the plotting functions
+##' to work properly.
+##'
+##' @title Add new class to class vector of object
+##' @param newclass New class to add
+##' @param obj Object to which to add it
+##' @return New class vector
+##' @author David Sterratt
+addClass <- function(newclass, obj) {
+  cl <- unique(c(newclass, class(obj)))
+  cld <- cl[grep("[Dd]ataset", cl)]
+  clo <- cl[setdiff(1:length(cl), grep("[Dd]ataset", cl))]
+  return(c(cld, clo))
+}
+
 plot.flat <- function(x, axt="n", ylim=NULL, ...) {
   UseMethod("plot.flat")
 }
@@ -65,3 +83,4 @@ getTss <- function(x) {
 getTss.default <- function(x) {
   return(NULL)
 }
+
