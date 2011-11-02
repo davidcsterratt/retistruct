@@ -29,14 +29,16 @@ RetinalReconstructedDataset <- function(r) {
 ##' @author David Sterratt
 getDss.retinalReconstructedDataset <- function(r) {
   Dss <- NextMethod()
-  if (r$DVflip) {
-    for (i in 1:length(Dss)) {
-      Dss[[i]][,"lambda"] <- -Dss[[i]][,"lambda"]
+  if (length(Dss) > 0) {
+    if (r$DVflip) {
+      for (i in 1:length(Dss)) {
+        Dss[[i]][,"lambda"] <- -Dss[[i]][,"lambda"]
+      }
     }
-  }
-  if (r$side=="Left") {
-    for (i in 1:length(Dss)) {
-      Dss[[i]][,"lambda"] <- pi - Dss[[i]][,"lambda"]
+    if (r$side=="Left") {
+      for (i in 1:length(Dss)) {
+        Dss[[i]][,"lambda"] <- pi - Dss[[i]][,"lambda"]
+      }
     }
   }
   return(Dss)
@@ -55,14 +57,16 @@ getDss.retinalReconstructedDataset <- function(r) {
 getDss.mean.retinalReconstructedDataset <- function(r) {
   Dss.mean <- NextMethod()
   Dss.mean[["OD"]] <- NULL
-  if (r$DVflip) {
-    for (i in 1:length(Dss.mean)) {
-      Dss.mean[[i]]["lambda"] <- -Dss.mean[[i]]["lambda"]
+  if (length(Dss.mean) > 0) {
+    if (r$DVflip) {
+      for (i in 1:length(Dss.mean)) {
+        Dss.mean[[i]]["lambda"] <- -Dss.mean[[i]]["lambda"]
+      }
     }
-  }
-  if (r$side=="Left") {
-    for (i in 1:length(Dss.mean)) {
-      Dss.mean[[i]]["lambda"] <- pi - Dss.mean[[i]]["lambda"]
+    if (r$side=="Left") {
+      for (i in 1:length(Dss.mean)) {
+        Dss.mean[[i]]["lambda"] <- pi - Dss.mean[[i]]["lambda"]
+      }
     }
   }
   return(Dss.mean)
@@ -78,14 +82,16 @@ getDss.mean.retinalReconstructedDataset <- function(r) {
 ##' @author David Sterratt
 getSss.retinalReconstructedDataset <- function(r) {
   Sss <- NextMethod()
-  if (r$DVflip) {
-    for (i in 1:length(Sss)) {
-      Sss[[i]][,"lambda"] <- -Sss[[i]][,"lambda"]
+  if (length(Sss) > 0) {
+    if (r$DVflip) {
+      for (i in 1:length(Sss)) {
+        Sss[[i]][,"lambda"] <- -Sss[[i]][,"lambda"]
+      }
     }
-  }
-  if (r$side=="Left") {
-    for (i in 1:length(Sss)) {
-      Sss[[i]][,"lambda"] <- pi - Sss[[i]][,"lambda"]
+    if (r$side=="Left") {
+      for (i in 1:length(Sss)) {
+        Sss[[i]][,"lambda"] <- pi - Sss[[i]][,"lambda"]
+      }
     }
   }
   return(Sss)
