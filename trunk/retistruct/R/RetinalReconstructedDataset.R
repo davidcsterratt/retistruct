@@ -60,12 +60,12 @@ getDss.mean.retinalReconstructedDataset <- function(r) {
   if (length(Dss.mean) > 0) {
     if (r$DVflip) {
       for (i in 1:length(Dss.mean)) {
-        Dss.mean[[i]]["lambda"] <- -Dss.mean[[i]]["lambda"]
+        Dss.mean[[i]][,"lambda"] <- -Dss.mean[[i]][,"lambda"]
       }
     }
     if (r$side=="Left") {
       for (i in 1:length(Dss.mean)) {
-        Dss.mean[[i]]["lambda"] <- 2*pi - Dss.mean[[i]]["lambda"]
+        Dss.mean[[i]][,"lambda"] <- 2*pi - Dss.mean[[i]][,"lambda"]
       }
     }
   }
