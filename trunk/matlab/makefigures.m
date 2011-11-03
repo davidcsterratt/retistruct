@@ -3,16 +3,17 @@ datasets = listdirs(tldir);
 mkdir(outputdir)
 for n = 1:size(datasets, 2)
     d = datasets{n};
+    disp(d);
     f = [d, '/r.mat'];
     if exist(f)
         disp(['Loading ', f])
-        clear Dss Sss phi0 Tss DssMean
+        clear Dss Sss phi0 Tss DssMean KDE
         load(f)
-        clf
-        plot_datapoints_polar(Dss)
-        hold on
-        plot_landmarks_polar(Sss)
+        clf 
         plot_outline_polar(Tss)
+        hold on
+        plot_datapoints_polar(Dss)
+        plot_landmarks_polar(Sss)
         
         % Make a nice name for the file
         sname = d;
