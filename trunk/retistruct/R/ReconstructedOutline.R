@@ -197,7 +197,6 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   
   phi0d <- r$phi0*180/pi
   
-  par(mar=c(0.5, 0.5, 0.5, 0.5))
   grid.pos <- c(seq(-90, phi0d, by=grid.int.minor), phi0d)
   maxlength <- diff(range(grid.pos))
   if (flip.horiz) {

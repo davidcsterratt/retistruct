@@ -351,6 +351,7 @@ do.plot <- function() {
               mesh=FALSE,
               scalebar=1)
     dev.set(d2)
+    par(mar=c(0.7, 0.7, 0.7, 0.7))
     plot.polar(r,
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
