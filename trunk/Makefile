@@ -23,7 +23,7 @@ retistructgui: retistruct
 
 install: install-retistruct install-retistructgui
 
-install-retistruct: retistruct
+install-retistruct: retistruct check
 	R CMD INSTALL --latex $(RETISTRUCT_PACKAGE) 
 
 install-retistructgui: retistructgui
