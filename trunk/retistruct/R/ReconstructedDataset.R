@@ -104,6 +104,120 @@ getDss.bandwidth <- function(r) {
   
 }
 
+##' Get contours of data points in spherical coordinates.
+##'
+##' @title Get contours of data points in spherical coordinates
+##' @param r \code{reconstructedDataset} object
+##' @return List containing for each set of datapoints a list of
+##' contours
+##' @author David Sterratt
+getKDE <- function(r) {
+  
+  vols <- getOption("contour.levels")
+  res <- 100
+
+  ## Helper function to create grid
+  create.grid <- function(pa) {
+    lim <- sphere.spherical.to.polar.cart(cbind(phi=r$phi0, lambda=0), pa)[1,"x"]
+    xs <- seq(-lim, lim, len=res)
+    ys <- seq(-lim, lim, len=res)
+
+    ## Create grid
+    gxs <- outer(xs, ys*0, "+")
+    gys <- outer(xs*0, ys, "+")
+
+    ## gxs and gys are both res-by-res matrices We now combine both
+    ## matrices as a res*res by 2 matrix. The conversion as.vector()
+    ## goes down the columns of the matrices gxs and gys
+    gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
+
+    ## Now convert the cartesian coordinates to polar coordinates
+    gs <- polar.cart.to.sphere.spherical(gc, pa)
+    return(list(s=gs, c=gc, xs=xs, ys=ys))
+  }
+
+  ## Helper function to get kde as locations gs in spherical coordinates
+  get.kde <- function(gs, mu, sigma, res) {
+    ## Make space for the kernel density estimates
+    gk <- rep(0, nrow(gs))
+    for (j in 1:nrow(gs)) {
+      gk[j] <- K(gs[j,], mu, sigma)
+    }
+    
+    gk[gs[,"phi"] > r$phi0] <- NA
+    ## Put the estimates back into a matrix. The matrix is filled up
+    ## column-wise, so the matrix elements should match the elements of
+    ## gxs and gys
+    k <- matrix(gk, res, res)
+    k[is.na(k)] <- 0
+    return(k)
+  }
+  
+  ## Get data points
+  Dss <- getDss(r)
+  KDE <- list()
+  if (length(Dss)) {
+    ## First create a grid in Cartesian coordinates with
+    ## area-preserving coords
+    gpa <- create.grid(TRUE)
+    ## And one without area-preserving coords
+    g   <- create.grid(FALSE)
+
+    ## Check conversion
+    ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
+    ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
+    
+    hs <- getDss.bandwidth(r)
+    for (i in 1:length(Dss)) {
+      if (!is.na(hs[[i]])) {
+        ## Find the optimal bandwidth of the kernel density estimator
+        h <- hs[[i]]
+        
+        ## Now we've found sigma, let's try to estimate and display the
+        ## density over our polar representation of the data points
+        fpa <- get.kde(gpa$s, Dss[[i]], h, res)
+        f  <-  get.kde(g$s,   Dss[[i]], h, res)
+        
+        ## Determine the value of gk that encloses 0.95 of the
+        ## density.  To compute the density, we need to know the
+        ## area of each little square, which is why we have used the
+        ## are-preserving projection. FIXME: I think this method of
+        ## "integration" could be improved.
+        vol.contours <- FALSE
+        if (vol.contours) {
+          f.sort <- sort(as.vector(fpa))
+          js <- findInterval(vols/100, cumsum(f.sort)/sum(f.sort))
+          flevels <- f.sort[js]
+        } else {
+          flevels <- vols/100*max(fpa)
+        }
+
+        ## Store full kde matrices
+        KDE[[i]] <- list(flevels=flevels,
+                              labels=vols,
+                              g=  list(xs=g$xs,   ys=g$ys,   f=f),
+                              gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
+
+        ## Get contours in Cartesian space
+        cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
+        cs <- list()
+        if (length(cc) > 0) {
+          for (j in 1:length(cc)) {
+            cs[[j]] <- list()
+            ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
+            cs[[j]]$r <- polar.cart.to.sphere.spherical(ccj, TRUE)
+            cs[[j]]$level <- cc[[j]]$level
+            cs[[j]]$label <- vols[which(flevels==cc[[j]]$level)]
+          }
+        }
+        KDE[[i]]$contours <- cs
+        ## Convert back to Spherical coordinates
+      }
+    }
+  }
+  return(KDE)
+}
+
 ##' Plot datapoints in polar plot
 ##'
 ##' @title Polar plot of reconstructed dataset
@@ -167,107 +281,27 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     }
   }
 
-  ## Helper function to create grid
-  create.grid <- function(pa) {
-    lim <- sphere.spherical.to.polar.cart(cbind(phi=r$phi0, lambda=0), pa)[1,"x"]
-    xs <- seq(-lim, lim, len=res)
-    ys <- seq(-lim, lim, len=res)
-
-    ## Create grid
-    gxs <- outer(xs, ys*0, "+")
-    gys <- outer(xs*0, ys, "+")
-
-    ## gxs and gys are both res-by-res matrices We now combine both
-    ## matrices as a res*res by 2 matrix. The conversion as.vector()
-    ## goes down the columns of the matrices gxs and gys
-    gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
-
-    ## Now convert the cartesian coordinates to polar coordinates
-    gs <- polar.cart.to.sphere.spherical(gc, pa)
-    return(list(s=gs, c=gc, xs=xs, ys=ys))
-  }
-
-  ## Helper function to get kde as locations gs in spherical coordinates
-  get.kde <- function(gs, mu, sigma, res) {
-    ## Make space for the kernel density estimates
-    gk <- rep(0, nrow(gs))
-    for (j in 1:nrow(gs)) {
-      gk[j] <- K(gs[j,], mu, sigma)
-    }
-    
-    gk[gs[,"phi"] > r$phi0] <- NA
-    ## Put the estimates back into a matrix. The matrix is filled up
-    ## column-wise, so the matrix elements should match the elements of
-    ## gxs and gys
-    k <- matrix(gk, res, res)
-    k[is.na(k)] <- 0
-    return(k)
-  }
   
-  ## Contours
-  vols <- getOption("contour.levels")/100
-  res <- 100
+  ## KDE
   if (plot.datapoint.contours) {
-    Dss <- getDss(r)
-    if (length(Dss)) {
-      ## First create a grid in Cartesian coordinates with
-      ## area-preserving coords
-      gpa <- create.grid(TRUE)
-
-      ## If we are not using polar area coordinates, we need to create
-      ## another grid that is in polar area coords.
-      if (pa) {
-        g <- gpa
-      } else {
-        g <- create.grid(pa)
-      }
-
-      ## Check conversion
-      ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
-      ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
-      
-      sigmas <- getDss.bandwidth(r)
-      for (i in 1:length(Dss)) {
-        if (!is.na(sigmas[[i]])) {
-          ## Find the optimal bandwidth of the kernel density estimator
-          sigma <- sigmas[[i]]
-          
-          ## Now we've found sigma, let's try to estimate and display the
-          ## density over our polar representation of the data points
-          kpa <- get.kde(gpa$s, Dss[[i]], sigma, res)
-          
-          ## Determine the value of gk that encloses 0.95 of the
-          ## density.  To compute the density, we need to know the
-          ## area of each little square, which is why we have used the
-          ## are-preserving projection. FIXME: I think this method of
-          ## "integration" could be improved.
-          vol.contours <- FALSE
-          if (vol.contours) {
-            k.sort <- sort(as.vector(kpa))
-            js <- findInterval(vols, cumsum(k.sort)/sum(k.sort))
-            klevels <- k.sort[js]
-          } else {
-            klevels <- vols*max(kpa)
-          }
-
-          if (pa) {
-            k <- kpa
-          } else {
-            k <- get.kde(g$s, Dss[[i]], sigma, res)
-          }
-          
-          ## Plot contours
-          contour(rho.to.degrees(g$xs, r$phi0, pa),
-                  rho.to.degrees(g$ys, r$phi0, pa),
-                  k, add=TRUE, levels=klevels,
-                  col=r$cols[[names(Dss)[i]]],
-                  ## drawlabels=FALSE,
-                  labels=vols*100)
+    k <- getKDE(r)
+    if (length(k)) {
+      for (i in 1:length(k)) {
+        if (pa) {
+          g <- k[[i]]$gpa
+        } else {
+          g <- k[[i]]$g
         }
+        ## Plot contours
+        contour(rho.to.degrees(g$xs, r$phi0, pa),
+                rho.to.degrees(g$ys, r$phi0, pa),
+                g$f, add=TRUE, levels=k[[i]]$flevels,
+                col=r$cols[[names(Dss)[i]]],
+                ## drawlabels=FALSE,
+                labels=k[[i]]$labels)
       }
     }
   }
-  
   
   ## Landmarks
   if (plot.landmarks) {
