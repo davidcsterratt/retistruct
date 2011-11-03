@@ -1,5 +1,6 @@
 ## Set up a 3x3 grid for plotting
 par(mfrow=c(3, 3))
+par(mar=c(0.5, 0.5, 0.5, 0.5))
 
 ## Load the raw data
 dataset <- file.path(system.file(package = "retistruct"), "extdata", "GM114-4-RC")
@@ -8,17 +9,16 @@ o <- retistruct.read.dataset(dataset)
 ## Load the human annotation of tears
 o <- retistruct.read.markup(o)
 
+## Make this a left eye to help with orientatio of points
+o$side="Left"
+
 ## Plot of raw data. Axes are reversed to improve comparison with
 ## polar plot later
-xlim <- range(o$P[,1])[c(2,1)]
-ylim <- range(o$P[,2])[c(2,1)]
-plot.flat(o, markup=FALSE,
-          xlim=xlim, ylim=ylim)
+plot.flat(o, markup=FALSE)
 mtext("A", adj=0, font=2, line=-0.9)
 
 ## Plot the annotation
-plot.flat(o, datapoints=FALSE, landmarks=FALSE,
-          xlim=xlim, ylim=ylim)
+plot.flat(o, datapoints=FALSE, landmarks=FALSE)
 mtext("B", adj=0, font=2, line=-0.9)
 
 ## Set up fixed point
@@ -32,8 +32,7 @@ t <- triangulate.outline(o, n=n)
 s <- stitch.outline(t)
 
 ## Plot triangulation and stitching
-plot.flat(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE,
-          xlim=xlim, ylim=ylim)
+plot.flat(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
 mtext("C", adj=0, font=2, line=-0.9)
 
 ## Triangulate again, to take into account points added by stitching
@@ -50,8 +49,7 @@ m <- project.to.sphere(m)
 par(mfg=c(3, 3))
 plot.flat(m, grid=TRUE, 
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
-          stitch=FALSE, strain=TRUE,
-          xlim=xlim, ylim=ylim)
+          stitch=FALSE, strain=TRUE)
 mtext("Dii", adj=0, font=2, line=-0.9)
 
 ## Plot the intial projection in 3D
@@ -86,8 +84,7 @@ rgl.postscript("final-projection.pdf", "pdf")
 par(mfg=c(3, 2))
 plot.flat(r, grid=TRUE, 
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
-          stitch=FALSE, strain=TRUE,
-          xlim=xlim, ylim=ylim)
+          stitch=FALSE, strain=TRUE)
 mtext("Eii", adj=0, font=2, line=-0.9)
 
 ## Infer locations of datapoints in spherical coordinates
@@ -96,14 +93,13 @@ r <- RetinalReconstructedDataset(r)
 
 ## Plot data in polar coordinates and flattend retina
 par(mfg=c(2, 1))
-plot.polar(r, datapoints=TRUE, landmarks=TRUE)
+plot.polar(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
 mtext("Fi", adj=0, font=2, line=-0.9)
 
 par(mfg=c(3, 1))
 plot.flat(r, grid=TRUE, 
           datapoints=TRUE, landmarks=TRUE, mesh=FALSE, markup=FALSE,
-          stitch=FALSE,
-          xlim=xlim, ylim=ylim)
+          stitch=FALSE)
 mtext("Fii", adj=0, font=2, line=-0.9)
 
 ## Save to PDF
