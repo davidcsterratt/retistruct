@@ -295,12 +295,27 @@ retistruct.export.matlab <- function(r) {
     if (!is.null(r)) {
       f <- file.path(r$dataset, "r.mat")
       message(paste("Saving", f))
+      KDE <- getKDE(r)
+      for (i in 1:length(KDE)) {
+        KDEi <- KDE[[i]]
+        KDEi$flevels <- NULL
+        KDEi$labels <- NULL
+        KDEi <- unlist(KDEi, recursive=FALSE)
+        KDE[[i]] <- list(flevels=KDE[[i]]$flevels, labels=KDE[[i]]$labels)
+        KDE[[i]] <- c(KDE[[i]], KDEi)
+      }
+      print(names(KDE))
+      print(names(unlist(KDE, recursive=FALSE)))
+      KDE <- unlist(KDE, recursive=FALSE)
+      names(KDE) <- gsub('\\.', '_', names(KDE))
+      
       writeMat(f,
                phi0=r$phi0*180/pi,
                Dss=getDss(r),
                DssMean=getDss.mean(r),
                Sss=name.list(getSss(r)),
                Tss=name.list(getTss(r)),
+               KDE=KDE,
                side=r$side, DVflip=r$DVflip)
     }
   }

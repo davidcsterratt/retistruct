@@ -156,7 +156,7 @@ getKDE <- function(r) {
   ## Get data points
   Dss <- getDss(r)
   KDE <- list()
-  if (length(Dss)) {
+  if (length(Dss) > 0) {
     ## First create a grid in Cartesian coordinates with
     ## area-preserving coords
     gpa <- create.grid(TRUE)
@@ -168,7 +168,7 @@ getKDE <- function(r) {
     ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
     
     hs <- getDss.bandwidth(r)
-    for (i in 1:length(Dss)) {
+    for (i in names(Dss)) {
       if (!is.na(hs[[i]])) {
         ## Find the optimal bandwidth of the kernel density estimator
         h <- hs[[i]]
@@ -194,23 +194,24 @@ getKDE <- function(r) {
 
         ## Store full kde matrices
         KDE[[i]] <- list(flevels=flevels,
-                              labels=vols,
-                              g=  list(xs=g$xs,   ys=g$ys,   f=f),
-                              gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
+                         labels=vols,
+                         g=  list(xs=g$xs,   ys=g$ys,   f=f),
+                         gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
 
         ## Get contours in Cartesian space
         cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
         cs <- list()
         if (length(cc) > 0) {
+          labels <- rep(NA, length(cc))
           for (j in 1:length(cc)) {
             cs[[j]] <- list()
             ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
-            cs[[j]]$r <- polar.cart.to.sphere.spherical(ccj, TRUE)
-            cs[[j]]$level <- cc[[j]]$level
-            cs[[j]]$label <- vols[which(flevels==cc[[j]]$level)]
+            cs[[j]] <- polar.cart.to.sphere.spherical(ccj, TRUE)
+            labels[j] <- vols[which(flevels==cc[[j]]$level)]
           }
         }
         KDE[[i]]$contours <- cs
+        KDE[[i]]$labels <- labels
         ## Convert back to Spherical coordinates
       }
     }
