@@ -1,0 +1,79 @@
+[1] "Adding old segment 1"
+[1] "Storing new segment 1"
+[1] "Adding old segment 2"
+[1] "Adding old segment 3"
+[1] "Adding old segment 4"
+[1] "Adding old segment 5"
+[1] "Adding old segment 6"
+[1] "Adding old segment 7"
+[1] "Adding old segment 8"
+[1] "Intersection found. Old points:"
+    X     Y 
+-4820 -3251 
+    X     Y 
+-5350 -2811 
+    X     Y 
+-5330 -2831 
+    X     Y 
+-5910 -2191 
+[1] "Point i+1 has been changed:"
+    X     Y 
+-4820 -3251 
+        X         Y 
+-5342.429 -2817.286 
+    X     Y 
+-5330 -2831 
+    X     Y 
+-5910 -2191 
+[1] "a= 0.059157261177596"
+[1] "l= 845.204781369019"
+[1] "New points:"
+    X     Y 
+-4820 -3251 
+        X         Y 
+-5342.429 -2817.286 
+        X         Y 
+-5876.424 -2228.049 
+    X     Y 
+-5910 -2191 
+[1] "Intersection found. Old points:"
+    X     Y 
+-5000  -721 
+    X     Y 
+-5150  -631 
+    X     Y 
+-5110  -651 
+    X     Y 
+-5370  -651 
+[1] "Point i+1 has been changed:"
+    X     Y 
+-5000  -721 
+        X         Y 
+-5116.667  -651.000 
+    X     Y 
+-5110  -651 
+    X     Y 
+-5370  -651 
+[1] "a= 0.197368421052627"
+[1] "l= 253.333333333339"
+[1] "New points:"
+    X     Y 
+-5000  -721 
+        X         Y 
+-5116.667  -651.000 
+    X     Y 
+-5320  -651 
+    X     Y 
+-5370  -651 
+[1] "Storing new segment 2"
+$green
+           phi   lambda
+phi -0.8094951 9.369592
+
+$red
+           phi   lambda
+phi -0.6824311 3.255186
+
+$double
+           phi   lambda
+phi -0.7235144 9.422938
