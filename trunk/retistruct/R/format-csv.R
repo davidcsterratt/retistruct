@@ -18,7 +18,6 @@ csv.check.datadir <- function(dir=NULL) {
 ##' \item{gb}{Backward pointers along the outline}
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
-##' }
 ##' @author David Sterratt
 csv.read.dataset <- function(dataset) {
   ## Read the raw data

@@ -281,7 +281,6 @@ idt.segment.to.pointers <- function(P) {
 ##' \item{gb}{Backward pointers along the outline}
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
-##' }
 ##' @author David Sterratt
 idt.read.dataset <- function(dataset, d.close=0.25) {
   ## Read the raw data
