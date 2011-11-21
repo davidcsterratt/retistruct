@@ -34,9 +34,11 @@ ijroi.read.dataset <- function(dataset) {
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each
-  ## group has to be a valid colour.
+  ## group has to be a valid colour. There are no datapoints in this
+  ## format, but we may have landmarks.
   Ds <- list()
-  cols <- list()
+  cols <- list(OD="blue",
+               default="orange")
 
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
@@ -45,7 +47,19 @@ ijroi.read.dataset <- function(dataset) {
   P <- out
   offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
   P[,2] <- offset - P[,2]
+
   Ss <- list()
+
+  ## Read in an Optic Disc. FIXME: this should actually be marked as
+  ## the Optic Disc
+  od.file <- file.path(dataset, "od.roi")
+  if (file.exists(od.file)) {
+    roi <- read.ijroi(od.file)
+    out <-  roi$coords
+    offset <- ifelse(is.null(im), max(out[,2]), nrow(im))
+    out[,2] <- offset - out[,2]
+    Ss[["OD"]] <- out
+  }
   
   ## Create forward and backward pointers
   o <- Outline(P, scale, im)
