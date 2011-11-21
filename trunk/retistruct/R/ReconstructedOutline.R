@@ -230,7 +230,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                   NA)
 
     ## Plot the polygon, masking as we go
-    with(r, polygon(impx[,immask], impy[,immask],  col=im[immask], border=NA))
+    with(r, polygon(impx[,immask], impy[,immask],
+                    col=im[immask], border=im[immask]))
 
     if (plot.contours) {
       ## Find centre locations of polygons
