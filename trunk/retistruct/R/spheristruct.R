@@ -1301,3 +1301,52 @@ ReconstructedOutline <- function(o,
   class(r) <- addClass("reconstructedOutline", r)
   return(r)
 }
+
+##' Try a range of values of phis in the reconstruction, redording the
+##' energy of the mapping in each case.
+##'
+##' @title Titrate values of phi0
+##' @param r \code{\link{ReconstructedOutline}} object
+##' @param alpha
+##' @param x0 
+##' @param phis 
+##' @return 
+##' @author David Sterratt
+titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
+                                         len.up=5, len.down=5) {
+  dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
+
+  by <- byd*pi/180
+
+
+  ## Going up from phi0
+  message("Going up from phi0")
+  s <- r
+  phi0s <- r$phi0 + seq(by, by=by, len=len.up)
+  for (phi0 in phi0s)  {
+    message(paste("phi0 =", phi0*180/pi))
+    s$phi0 <- phi0
+    ## Stretch the mapping to help with optimisation
+    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+  }
+
+  ## Going down from phi0
+  message("Going down from phi0")
+  s <- r
+  phi0s <- r$phi0 - seq(by, by=by, len=len.down)
+  for (phi0 in phi0s)  {
+    message(paste("phi0 =", phi0*180/pi))
+    s$phi0 <- phi0
+    ## Stretch the mapping to help with optimisation
+    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+  }
+
+  
+  return(dat)
+}
