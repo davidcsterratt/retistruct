@@ -222,11 +222,12 @@ outline and to mark the location of one of the poles
 triangulated and the incisions and tears are stitched together
 (Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
 onto a spherical surface, with the points on the rim all lying at the
-same latitude (Figure~\ref{fold-sphere:fig:method}Di). Each edge in
-the mesh is treated as a spring whose natural length is the length of
-the corresponding edge in the flat mesh.  In the initial mapping onto
-the spherical surface, the springs are compressed or expanded; in the
-next step the springs are allowed to relax so as to minimise the total
+same latitude (Figure~\ref{fold-sphere:fig:method}Di). How the
+lattitude is determined will be discussed later. Each edge in the mesh
+is treated as a spring whose natural length is the length of the
+corresponding edge in the flat mesh.  In the initial mapping onto the
+spherical surface, the springs are compressed or expanded; in the next
+step the springs are allowed to relax so as to minimise the total
 potential energy contained in all the springs. This gives the
 spherical mesh shown in
 Figure~\ref{fold-sphere:fig:method}Ei. Finally, the locations of data
@@ -269,6 +270,25 @@ an edge in the flat mesh is $\overline{L}$ and the number of edges is
 $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
 the mean fractional deformation.  
+
+\subsection*{Determination of the lattitude of the rim}
+\label{retistruct_plos:sec:determ-latt-rim}
+
+To determine the lattitude of the rim, we measured mouse eyes at
+varying stages of development. Specifically, we measured the distance
+$d_\mathrm{e}$ from the back of the eye to the front of the cornea and
+the distance $d_\mathrm{r}$ from the back of the eye to the edge of
+the retina (Figure~\ref{retistruct_plos:fig:eyegrowth}). We then
+computed the lattitude $\phi_0$ of the rim using the formula:
+\begin{equation}
+  \label{retistruct_plos:eq:4}
+  \phi_0 = \arcsin (2d_\mathrm{r}/d_\mathrm{e}-1)
+\end{equation}
+The measurements and derived lattitudes for animals of various ages
+are shown in Table~\ref{tab:eygrowth}.
+
+\subsection*{Performance of the algorithm}
+\label{retistruct_plos:sec:perf-algor}
 
 We used our algorithm to reconstruct 224 retinae.
 Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
@@ -788,7 +808,15 @@ comments throughout this work.
       would indicate the progression. }}
   \label{fold-sphere:fig:method}
 \end{figure}
-
+\begin{figure}[!ht]
+  \centering
+  \includegraphics{eyegrowth}
+  \caption{\textbf{Dimensions of eye measured} The diagram shows the
+    measurements $d_\mathrm{e}$ and $d_\mathrm{r}$ made on mouse eyes
+    at different stages of development, and the rim angle $\phi_0$
+    derived from these measurements.}
+  \label{retistruct_plos:fig:eyegrowth}
+\end{figure}
 \begin{figure}[!ht]
   \centering
   \includegraphics{retistruct-good-bad}
@@ -870,6 +898,36 @@ comments throughout this work.
 %\end{flushleft}
 %\label{tab:label}
 % \end{table}
+
+\begin{table}[!ht]
+  \caption{\textbf{Measurements of mouse eyes at various stages of
+      development.}  }
+\begin{tabular}{l*{3}{r@{$\pm$}l}}
+Age & 
+\multicolumn{2}{c}{$d_\mathrm{e}$} &
+\multicolumn{2}{c}{$d_\mathrm{r}$} & 
+\multicolumn{2}{c}{$\phi_0$}\\
+\hline
+P0  & 1632 & 17 & 1308 & 17 & 37.13 & 1.92 \\\hline
+P2  & 2146 & 13 & 1780 & 29 & 41.20 & 2.20 \\\hline
+P4  & 2250 &  9 & 1857 & 20 & 40.58 & 1.40 \\\hline
+P6  & 2450 & 41 & 1963 & 25 & 37.02 & 2.41 \\\hline
+P8  & 2646 &  1 & 2088 & 34 & 35.31 & 1.81 \\\hline
+P12 & 2786 & 15 & 2212 & 65 & 36.03 & 3.37 \\\hline
+P16 & 2808 & 17 & 2043 & 17 & 27.10 & 0.96 \\\hline
+P22 & 2958 & 35 & 2117 & 44 & 25.57 & 2.17 \\\hline
+P64 & 3160 & 56 & 2161 & 30 & 21.56 & 1.89 \\\hline
+\end{tabular}
+\begin{flushleft}The distance from the back of the eye to the surface
+  of the cornea $d_\mathrm{e}$, the perpendicular distance from the
+  back of the eye 
+  to the rim of the  retina $d_\mathrm{r}$ and the angle $\phi_0$
+  derived from this. Each measurement is averaged over the right and
+  left eyes of two different animals, i.e. over four eyes in total.
+\end{flushleft}
+\label{tab:eygrowth}
+ \end{table}
+
 
 \end{document}
 
