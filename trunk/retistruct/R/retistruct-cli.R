@@ -74,7 +74,8 @@ retistruct.cli.figure <- function(dataset,
     ## Flat plot
     dev(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
            width=width, height=height)
-    plot.flat(r, axt="s",
+    par(mar=c(1, 1, 1, 1))
+    plot.flat(r, axt="n",
               datapoints=TRUE,
               landmarks=TRUE,
               markup=FALSE,
@@ -88,6 +89,7 @@ retistruct.cli.figure <- function(dataset,
     ## Polar plot
     dev(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
            width=width, height=height)
+    par(mar=c(2, 2, 2, 2))
     plot.polar(r)
     title(dataset)
     if (!is.null(r$EOD)) {
@@ -98,7 +100,8 @@ retistruct.cli.figure <- function(dataset,
     ## Strain plot
     dev(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
            width=width, height=height)
-    plot.flat(r, axt="s",
+    par(mar=c(1, 1, 1, 1))
+    plot.flat(r, axt="n",
               datapoints=FALSE,
               landmarks=FALSE,
               markup=FALSE,
@@ -106,12 +109,18 @@ retistruct.cli.figure <- function(dataset,
               grid=FALSE,
               mesh=FALSE,
               strain=TRUE)
+    title(dataset)
     dev.off()
 
     ## l.vs.L plot
     dev(file=file.path(outputdir, paste(basepath, "-strain-lvsL", suffix, sep="")),
            width=width, height=height)
+    par(mar=c(3.0, 3.0, 1.5, 0.5))
+    par(mgp=c(1.5, 0.5, 0))
+    par(tcl=-0.3)
+    
     plot.l.vs.L(r)
+    title(dataset)
     dev.off()
   }
 }
