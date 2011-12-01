@@ -214,8 +214,8 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     M <- nrow(r$im)
 
     ## Compute x and y positions of corners of pixels
-    xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
-    ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], phi0, pa), M+1, N+1)
+    xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], r$phi0, pa), M+1, N+1)
+    ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], r$phi0, pa), M+1, N+1)
     
     ## Convert these to format suitable to polygon
     impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
