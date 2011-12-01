@@ -1307,10 +1307,12 @@ ReconstructedOutline <- function(o,
 ##'
 ##' @title Titrate values of phi0
 ##' @param r \code{\link{ReconstructedOutline}} object
-##' @param alpha
+##' @param alpha 
 ##' @param x0 
-##' @param phis 
-##' @return 
+##' @param byd
+##' @param len.up
+##' @param len.down
+##' @return dat
 ##' @author David Sterratt
 titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
                                          len.up=5, len.down=5) {
