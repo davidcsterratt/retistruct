@@ -52,43 +52,43 @@ plot.l.vs.L <- function(r) {
 plot.l.vs.L.default <- function(r) {
 }
 
-getDss <- function(x) {
+getDss <- function(r) {
   UseMethod("getDss")
 }
 
-getDss.default <- function(x) {
+getDss.default <- function(r) {
   return(NULL)
 }
 
-getDss.mean <- function(x) {
+getDss.mean <- function(r) {
   UseMethod("getDss.mean")
 }
 
-getDss.mean.default <- function(x) {
+getDss.mean.default <- function(r) {
   return(NULL)
 }
 
-getSss <- function(x) {
+getSss <- function(r) {
   UseMethod("getSss")
 }
 
-getSss.default <- function(x) {
+getSss.default <- function(r) {
   return(NULL)
 }
 
-getTss <- function(x) {
+getTss <- function(r) {
   UseMethod("getTss")
 }
 
-getTss.default <- function(x) {
+getTss.default <- function(r) {
   return(NULL)
 }
 
-getIms <- function(x) {
+getIms <- function(r) {
   UseMethod("getIms")
 }
 
-getIms.default <- function(x) {
+getIms.default <- function(r) {
   return(NULL)
 }
 
