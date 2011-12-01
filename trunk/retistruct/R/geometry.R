@@ -350,7 +350,11 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE) {
 polar.cart.to.sphere.spherical <- function(r, pa=FALSE) {
   rho2 <- r[,"x"]^2 + r[,"y"]^2
   if (pa) {
-    phi <- asin(rho2/2 - 1)
+    ## Need to make sure that the argument is not greater that 1. This
+    ## can happen when passing a values produced from a Cartesian grid
+    sinphi <- rho2/2 - 1
+    sinphi[sinphi>1] <- NA
+    phi <- asin(sinphi)
   } else {
     phi <- sqrt(rho2) - pi/2
   }
