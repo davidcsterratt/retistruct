@@ -41,6 +41,9 @@ logP <- function(mu, sigma) {
   return(sum(sapply(1:nrow(mu), logKi)))
 }
 
+## FIXME: The interval in
+## this function is hard-coded; should it be adapted to the dimensions
+## at hand?
 ## Find the value of sigma that optimises logP
 compute.bandwidth <- function(mu, K) {
   opt <- optimise(function(sigma) {logP(mu, sigma)}, interval=c(0.1, 5),

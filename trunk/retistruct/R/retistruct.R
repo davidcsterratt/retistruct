@@ -304,8 +304,8 @@ retistruct.export.matlab <- function(r) {
         KDE[[i]] <- list(flevels=KDE[[i]]$flevels, labels=KDE[[i]]$labels)
         KDE[[i]] <- c(KDE[[i]], KDEi)
       }
-      print(names(KDE))
-      print(names(unlist(KDE, recursive=FALSE)))
+      ## print(names(KDE))
+      ## print(names(unlist(KDE, recursive=FALSE)))
       KDE <- unlist(KDE, recursive=FALSE)
       names(KDE) <- gsub('\\.', '_', names(KDE))
       

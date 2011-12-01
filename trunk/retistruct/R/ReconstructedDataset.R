@@ -21,6 +21,12 @@ ReconstructedDataset <- function(r, report=message) {
   if (!is.null(r$Ds) & (length(r$Ds) > 0)) {
     for (name in names(r$Ds)) {
       Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
+      oo <- is.na(Dsb[[name]]$idx)     # Points outwith outline
+      if (any(oo)) {
+        warning(paste(sum(oo), name, "datapoints outwith the outline will be ignored."))
+      }
+      Dsb[[name]]$p   <- Dsb[[name]]$p[!oo,,drop=FALSE]
+      Dsb[[name]]$idx <- Dsb[[name]]$idx[!oo]
       Dsc[[name]] <- bary.to.sphere.cart(r$phi, r$lambda, r$R, r$Tt, Dsb[[name]])
       Dss[[name]] <- sphere.cart.to.sphere.spherical(Dsc[[name]], r$R)
     }
@@ -201,8 +207,9 @@ getKDE <- function(r) {
         ## Get contours in Cartesian space
         cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
         cs <- list()
+        ## Must be careful, as there is a core function called labels
+        labels <- rep(NA, length(cc))
         if (length(cc) > 0) {
-          labels <- rep(NA, length(cc))
           for (j in 1:length(cc)) {
             cs[[j]] <- list()
             ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
