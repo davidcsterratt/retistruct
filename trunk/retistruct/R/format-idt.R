@@ -199,7 +199,7 @@ idt.plot.boxes <- function(lower, upper) {
 # Function to plot the unfolded retina, grid and labelled RG cells
 idt.plot.sys.map <- function(sys, map) {
   idt.plot.map(map)
-  points.sys(sys)
+  idt.points.sys(sys)
   
   boxes <- idt.get.sys.boxes(sys) 
   idt.plot.boxes(boxes$lower, boxes$upper)
