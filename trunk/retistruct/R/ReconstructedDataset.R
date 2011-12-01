@@ -114,10 +114,14 @@ getDss.bandwidth <- function(r) {
 ##'
 ##' @title Get contours of data points in spherical coordinates
 ##' @param r \code{reconstructedDataset} object
+##' @param cache if \code{TRUE} use the cached object
 ##' @return List containing for each set of datapoints a list of
 ##' contours
 ##' @author David Sterratt
-getKDE <- function(r) {
+getKDE <- function(r, cache=TRUE) {
+  if (cache & !is.null(r$KDE)) {
+    return(r$KDE)
+  }
   
   vols <- getOption("contour.levels")
   res <- 100
