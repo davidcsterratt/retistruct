@@ -310,7 +310,7 @@ as local roughness in the rim forces significant deformation of the
 surrounding virtual tissue when projected back onto the sphere.
 
 The distribution of the goodness measure is shown in
-Figure~\ref{retistruct_plos:fig:summary}. The mean was 0.073, with a
+Figure~\ref{retistruct_plos:fig:summary}A. The mean was 0.073, with a
 median value of 0.0736. 
 
 \subsection*{Estimate of errors of the reconstruction algorithm}
@@ -333,7 +333,7 @@ discs across a number of retinae. In mice, the optic disc is located
 been measured. The optic disc has been marked in XXX of our
 flat-mounted retinae, and the distribution of the centres of the
 inferred locations of these optic discs is shown in
-Figure~\ref{retistruct_plos:fig:ods}. The mean latitude and longitude
+Figure~\ref{retistruct_plos:fig:summary}C. The mean latitude and longitude
 of these optic discs is (-85.7$^\circ$, 83.4$^\circ$) with a standard
 deviation of 8.0$^\circ$. This 4.3$^\circ$ away from the geometrical
 centre of the retina, in reasonable agreement with the unquantified
@@ -657,6 +657,7 @@ reconstruction process then proceeds as follows:
   locations of the vertices on the spherical surface so as to minimise
   an error measure. This measure, $E$, comprises the sum of normalised
   squared differences between lengths of corresponding connections in
+
   flattened and spherical retina, and a penalty term that prevents the
   triangles from flipping over:
   \begin{equation}
@@ -693,7 +694,7 @@ reconstruction process then proceeds as follows:
   \begin{equation}
     \label{retistruct_plos:eq:2}
     l(\phi_1, \lambda_1, \phi_2, \lambda_2) =
-    R(\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
+    R\arccos(\cos\phi_1\cos\phi_2\cos(\lambda_1-\lambda_2) +
     \sin\phi_1\sin\phi_2)
   \end{equation}
   where $\phi_1$ and $\phi_2$ are the latitudes of the vertices and
@@ -772,40 +773,28 @@ comments throughout this work.
   % GM184-5/R-CONTRA (One subtear, butter gap)
   % GM263-1/R-CONTRA (perfect!)
   \includegraphics{retistruct-method}
-  
-  \vspace*{-4.54in}
-
-  \mbox{\hspace{2.27in}{
-      \includegraphics[width=2.27in]{final-projection}
-      \includegraphics[width=2.27in]{initial-projection}
-    }}
-
-  \vspace*{2.27in}
 
   \caption{\textbf{Overview of the method.} \textbf{(A)} The raw data:
-    a retinal outline (black), three types of data point (red, green
-    and yellow circles) and a landmark (blue line). \textbf{(B)}
-    Retinal outline with nasal pole (N) and tears marked up. Each pair
-    of dark cyan lines connect the vertices and apex of the five
-    tears. Note that tear 2 is a child of tear 1. \textbf{(C)} The
-    outline after triangulation (shown by grey lines) and stitching,
-    indicated by cyan lines between corresponding points on the tears.
-    \textbf{(Di)} The initial projection of the triangulated and
-    stitched outline onto a hemisphere. The strain of each edge is
-    represented on a colour scale with blue indicating compression and
-    red expansion. Tears are shown in cyan. \textbf{(Dii)} The strain
-    plotted on the flat outline with lines of latitude and longitude
+    a retinal outline from a P22 mouse (black), three types of data
+    point (red, green and yellow circles) and a landmark (blue
+    line). \textbf{(B)} Retinal outline with nasal pole (N) and tears
+    marked up. Each pair of dark cyan lines connect the vertices and
+    apex of the five tears. Note that tear 2 is a child of tear
+    1. \textbf{(C)} The outline after triangulation (shown by grey
+    lines) and stitching, indicated by cyan lines between
+    corresponding points on the tears.  \textbf{(Di)} The initial
+    projection of the triangulated and stitched outline onto a
+    curtailed sphere. The strain of each edge is represented on a colour
+    scale with blue indicating compression and red expansion. Tears
+    are shown in cyan. \textbf{(Dii)} The strain plotted on the flat
+    outline with lines of latitude and longitude
     superposed. \textbf{(Ei,ii)} As \textbf{Di,ii} but after
     optimisation of the mapping. \textbf{(Fi)} The data represented on
     a polar plot of the reconstructed retina. Mean locations of the
     different types of data points are indicated by filled
     diamonds. The nasal (N), dorsal (D), temporal (T) and ventral (V)
     poles are indicated. Tears are shown in cyan. \textbf{(Fii)} Data
-    plotted on the flat representation.
-    \todo{Figures under D, E and F need to be grouped.}
-    \todo{Arrows from
-      A$\rightarrow$B$\rightarrow$C$\rightarrow$D$\rightarrow$E$\rightarrow$F
-      would indicate the progression. }}
+    plotted on the flat representation.}
   \label{fold-sphere:fig:method}
 \end{figure}
 \begin{figure}[!ht]
@@ -839,21 +828,18 @@ comments throughout this work.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{retistruct-2011-09-02-LFIRST}
-  \caption{\textbf{Histogram of reconstruction errors.}  Successful
-    reconstructions of 224 retinae were made. The energy at the end of
-    each reconstruction was recorded and the histogram of the square
-    root of this energy is displayed here. For lower values the value
-    of $\sqrt{E_\mathrm{L}}$ is similar to the mean percentage
-    deformation.}
+  A\includegraphics[width=0.3\linewidth]{retistruct-2011-09-02-LFIRST}
+  B Plot of goodness versus age.
+  C\includegraphics[width=0.3\linewidth]{superposed-ods-sqrtE_0_1}
+  \caption{\textbf{Measures of goodness of reconstructions.}
+    \textbf{(A)} Histogram of the reconstruction error measure
+    $\sqrt{E_\mathrm{L}}$ obtained from 224 successfully reconstructed
+    retinae. For lower values the value of is similar to the mean
+    percentage deformation of the mesh. \textbf{(B)} Relationship
+    between error measure and age. \textbf{C} Inferreed positions of
+    optic discs from XXX adult reconstructed retinae plotted on the
+    same polar grid.}
   \label{retistruct_plos:fig:summary}
-\end{figure}
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics{superposed-ods-sqrtE_0_1}
-  \caption{\textbf{Inferred positions of optic discs.}}
-  \label{retistruct_plos:fig:ods}
 \end{figure}
 
 \begin{figure}[!ht]
