@@ -43,7 +43,6 @@ check.datadir <- function(dir=NULL) {
 ##' \item{gb}{Backward pointers along the outline}
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
-##' }
 ##' @author David Sterratt
 retistruct.read.dataset <- function(dataset, ...) {
   ## Check to see if dataset is valid

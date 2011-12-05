@@ -18,7 +18,6 @@ ijroi.check.datadir <- function(dir=NULL) {
 ##' \item{gb}{Backward pointers along the outline}
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
-##' }
 ##' @author David Sterratt
 ijroi.read.dataset <- function(dataset) {
   ## Read the raw data
