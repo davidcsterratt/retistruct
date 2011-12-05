@@ -1,1 +1,6 @@
 retistruct.method    Demonstration of the stages of the retistruct algorithm
+good.bad             Demonstration of good and bad reconstructions
+retistruct.image     Demonstration of reconstructing an image
+ijroi                Demonstration of the ImageJ ROI code
+orange               Reconstruct a peeled orange!
+
