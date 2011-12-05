@@ -30,10 +30,12 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
   retistruct.save.recdata(r)
   
   if (!is.na(outputdir)) {
+    message("Producing figures")
     retistruct.cli.figure(dataset, outputdir, device=device)
   }
 
   ## Export to matlab
+  message("Exporting to matlab")
   retistruct.export.matlab(r)
 }
 
