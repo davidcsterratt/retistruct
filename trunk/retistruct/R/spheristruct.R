@@ -242,7 +242,6 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##' @title Project mesh points in the flat outline onto a sphere
 ##' @param r \code{Outline} object to which the following information
 ##' has been added with \code{\link{merge.points.edges}}
-##' \list{
 ##' \item{\code{Pt}}{The mesh point coordinates.}
 ##' \item{\code{Rsett}}{The set of points on the rim.}
 ##' \item{\code{A.tot}}{The area of the flat outline.}}
@@ -738,13 +737,10 @@ Ecart <- function(P, Cu, L, T, A, R,
 Fcart <- function(P, C, L, B, T, A, R,
                   alpha=1, x0, nu=1, verbose=FALSE) {
   ## Compute derivative of elastic energy
-  P1 <- P[C[,1],]
-  P2 <- P[C[,2],]
-
+  
   ## Lengths of springs
-  dP <- P2 - P1
-  d <- vecnorm(dP)
-  l <- 2*R*asin(d/2/R)
+  dP <- P[C[,2],] - P[C[,1],]
+  l <- 2*R*asin(vecnorm(dP)/2/R)
   if (verbose==2) { print(l) }
 
   ## Compute general scaling factor
@@ -1302,24 +1298,25 @@ ReconstructedOutline <- function(o,
   return(r)
 }
 
-##' Try a range of values of phis in the reconstruction, redording the
+##' Try a range of values of phi0s in the reconstruction, recording the
 ##' energy of the mapping in each case.
 ##'
 ##' @title Titrate values of phi0
 ##' @param r \code{\link{ReconstructedOutline}} object
-##' @param alpha 
-##' @param x0 
-##' @param byd
-##' @param len.up
-##' @param len.down
-##' @return dat
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param byd Increments in degrees
+##' @param len.up How many increments to go up from starting value of
+##' \code{phi0} in \code{r}.
+##' @param len.down How many increments to go up from starting value
+##' of \code{phi0} in \code{r}.
+##' @return dat Output data frame
 ##' @author David Sterratt
 titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
                                          len.up=5, len.down=5) {
   dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
 
   by <- byd*pi/180
-
 
   ## Going up from phi0
   message("Going up from phi0")
@@ -1348,7 +1345,10 @@ titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
                           plot.3d=FALSE)
     dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
   }
-
+  dat$phi0d <- dat$phi0*180/pi
+  dat <- dat[order(dat$phi0d),]
+  phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
   
-  return(dat)
+  return(list(dat=dat, phi0d.orig=r$phi0*180/pi,
+              phi0d.opt=phi0d.opt))
 }
