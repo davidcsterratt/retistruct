@@ -241,7 +241,8 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##'
 ##' @title Project mesh points in the flat outline onto a sphere
 ##' @param r \code{Outline} object to which the following information
-##' has been added with \code{\link{merge.points.edges}}
+##' has been added with \code{\link{merge.points.edges}}:
+##' \describe{
 ##' \item{\code{Pt}}{The mesh point coordinates.}
 ##' \item{\code{Rsett}}{The set of points on the rim.}
 ##' \item{\code{A.tot}}{The area of the flat outline.}}
