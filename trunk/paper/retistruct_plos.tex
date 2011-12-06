@@ -352,15 +352,18 @@ with the grid lines inferred by the method. It can be seen that the
 grid lines are parallel to the RGC axons for most of their way, though
 there are some deviations close to the rim.
 
-\todo{Comparison of MRI images and reconstructed retinae.}
-
 \subsection*{Application: retrograde tracing}
 
-\todo{Need to discuss this with Dan and Ian}
+\todo{Daniel and Ian to write something about this.}
 
-\subsection*{Application: mosaic properties?}
+\subsection*{Application: mosaic properties}
 
-\todo{Could discuss this with Stephen}
+\todo{I still need to develop the code to do this. In order to do this
+  I need some mosaic data. I have some courtesy of Ben Reese's lab,
+  but that's not our data. We have the SMI32 image, but the datapoints
+  aren't marked up. To use our SMI32 data, I suppose that we need a
+  method of adding datapoints to an image... possibly using ImageJ.
+  Or what do we think?}
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
@@ -374,15 +377,12 @@ marker molecules off the axes have not been quantified. This is
 important to know both for understanding the origin of retinal
 gradients and how the retinocollicular mapping is set up. 
 
-Figure~\ref{retistruct_plos:fig:superpose} shows the EphA3 gradient
-from the literature \cite{ChenEtal95comp} projected onto a polar
-plot. \todo{It would be good to do a contour plot of this.} 
-
-Figure~\ref{retistruct_plos:fig:marcetal96} shows the EphA, EphB,
-ephrin-A and ephrin-B gradients from the literature \cite{MarcEtal96eph}
-projected onto polar plots.
-\todo{I need to check rendering and contouring in these images, but
-  they give an idea of what might be possible.}
+To quantify gradients in mouse over the whole retina, we used ephrinA,
+ephrinB, EphA and EphB antibody fusion proteins to stain P?
+retinae. The flat-mounted and reconstructed retinae are shown in
+Figure~\ref{retistruct_plos:fig:superpose}.
+\todo{This figure is just a place holder until we have the fusion
+  protein stained retinae.}
 
 \section*{Discussion}
 
@@ -598,7 +598,8 @@ accurately than at present.
 \subsection*{Retinae}
 \label{retistruct_plos:sec:retinae}
 
-\todo{Some information about the preparation of the retinae.}
+\todo{Daniel and Ian to write some information about the preparation
+  of the retinae.}
 
 \subsection*{Reconstruction algorithm}
 \label{retistruct_plos:sec:reconstr-algor}
@@ -828,9 +829,7 @@ comments throughout this work.
 
 \begin{figure}[!ht]
   \centering
-  A\includegraphics[width=0.3\linewidth]{retistruct-2011-09-02-LFIRST}
-  B Plot of goodness versus age.
-  C\includegraphics[width=0.3\linewidth]{superposed-ods-sqrtE_0_1}
+  \includegraphics{retistruct-goodness}\includegraphics[width=0.33\linewidth]{superposed-ods-sqrtE_0_1}
   \caption{\textbf{Measures of goodness of reconstructions.}
     \textbf{(A)} Histogram of the reconstruction error measure
     $\sqrt{E_\mathrm{L}}$ obtained from 224 successfully reconstructed
@@ -844,34 +843,24 @@ comments throughout this work.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{KeelEtal11}
-  \caption{\textbf{Superposition of retinal image and grid lines.}}
+  \includegraphics{smi32}
+  \caption{\textbf{Reconstruction of retinal image and grid lines.}
+    Retina stained with SMI32. \todo{More details in caption.}}
   \label{retistruct_plos:fig:superpose}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \includegraphics{ChenEtal95}
-  \caption{\textbf{Mapping of image to polar representation.}
+  \caption{\textbf{Distribution of gradients.}
+    \todo{This needs to be replaced with our fusion proteain data for
+      EphA and eprhinA, and hopefully the B system too, depending on
+      how well the A system works.}
     \textbf{(A)} Flat-mount E8 chick retina stained for EphA3
     (Reproduced from \cite{ChenEtal95comp}). \textbf{(B)} Image of
-    gradient mapped to polar representation. \todo{Need to get
-      permission for this data.}}
+    gradient mapped to polar representation.  }
   \label{retistruct_plos:fig:superpose}
 \end{figure}
-
-\begin{figure}[!ht]
-  \centering
-%  \includegraphics{MarkEtal96}
-  [Figure to follow]
-  \caption{\textbf{Mapping of image to polar representation.}  All
-    images are of E15 retinae stained by \cite{MarcEtal96eph} for EphA
-    \textbf{(A,B)}, ephrin-A \textbf{(C,D)}, EphB \textbf{(E,F)} and
-    ephrin-B \textbf{(G,H)}.
-    \todo{Need to get permission for this data.}}
-  \label{retistruct_plos:fig:marcetal96}
-\end{figure}
-
 
 \section*{Tables}
 %\begin{table}[!ht]
