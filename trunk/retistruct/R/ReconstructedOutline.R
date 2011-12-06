@@ -302,7 +302,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   ## Radial Labels
   rlabels <- c(seq(-90, phi0d, by=grid.int.major), phi0d)
   label.pos <- phi.to.rho(rlabels*pi/180, r$phi0, pa)
-  text(label.pos, -maxlength/15, rlabels)
+  text(label.pos, -maxlength/15, rlabels, xpd=TRUE, pos=2, offset=0)
 
   ## Tangential Labels
   if (!is.null(labels)) {

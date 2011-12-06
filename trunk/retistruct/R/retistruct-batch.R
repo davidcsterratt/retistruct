@@ -185,9 +185,12 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##' @param file The path to the retistruct-batch.csv
 ##' @return list of various statistics
 ##' @author David Sterratt
-retistruct.batch.analyse.summary <- function(file) {
-  dat <- read.csv(file)
-
+retistruct.batch.analyse.summary <- function(path) {
+  dat <- read.csv(file.path(path, "retistruct-batch.csv"))
+  par(mfcol=c(1, 3))
+  par(mar=c(2.4, 2.3, 0.7, 0.2))
+  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  
   ## Detailed output codes
   etab <- sort(table(dat[,"mess"]), decreasing=TRUE)
   message("OUPUT CODES")
@@ -226,12 +229,40 @@ retistruct.batch.analyse.summary <- function(file) {
   with.flips <- mean(sdat[,"nflip"] > 0) * 100
   
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
-       xlab=expression(sqrt(E[L])), main="")
-
+       xlab=expression(sqrt(italic(E)[L])), main="")
+  mtext("A", adj=-0.15, font=2, line=-0.7)
+  
   message("\nOUTLIERS")
   outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
   ## print(outliers)
+
+  ## Plot of age versus goodness
+  ## Find datasets containing ("Pxx")
+  fage <- grepl("^.*(P\\d+).*$",  sdat$dataset)
+  sdat$age <- sub("^.*P(\\d+).*$", "\\1", sdat$dataset)
+  sdat$age <- sub(".*adult.*", "adult", sdat$age)
+  sdat$age[grepl(".{6}", sdat$age)] <- NA
+  sdat$age <- ordered(sdat$age, c(unique(sort(as.numeric(sdat$age))), "adult"))
+  ## print(factor(sdat$age))
+  ## print(sort(as.numeric(factor(sdat$age))))
+  ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
+  levels(sdat$age) <- sub("adult", "A", levels(sdat$age))
+  ##  print(factor(sdat$age))
+  with(sdat, boxplot(sqrt.E ~ age,
+                     xaxt="n",
+                     xlab="Postnatal day",
+                     ylab=expression(sqrt(italic(E)[L]))))
+  mtext("B", adj=-0.15, font=2, line=-0.7)
+  axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
+  mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.8)
+
+  par(mar=c(1,1,0.7,1))
+  retistruct.batch.plot.ods(sdat)
+  mtext("C", adj=-0.05, font=2, line=-0.7)
+  
+  ## with(sdat, table(sqrt.E ~ age))
+  dev.copy2pdf(file=file.path(path, "retistruct-goodness.pdf"), width=6.83, height=6.83/3)
   return(invisible(list(N=nrow(sdat),
                         N.outtime=N.outtime,
                         N.fail=N.fail,
@@ -239,7 +270,8 @@ retistruct.batch.analyse.summary <- function(file) {
                         mean.logstrain=mean.logstrain,
                         time=time, nflip=nflip,
                         with.flips=with.flips,
-                        outliers=outliers)))
+                        outliers=outliers,
+                        sdat=sdat)))
 }
 
 ##' Extract statistics from a directory containing
@@ -259,7 +291,7 @@ retistruct.batch.analyse.summaries <- function(path) {
     file <- file.path(d, "retistruct-batch.csv")
     if (file.exists(file)) {
       print(file)
-      summ <- try(retistruct.batch.analyse.summary(file))
+      summ <- try(retistruct.batch.analyse.summary(d))
       try(print(summ$sqrt.E["Median"]))
       try(out <- rbind(out, data.frame(file=file,
                                        N=summ$N,
@@ -289,17 +321,33 @@ retistruct.batch.plot.ods <- function(summ) {
   ## Make a dummy retina
   o <- list()
   class(o) <- "reconstructedOutline"
-  o$phi0 <- 20*pi/180
+  o$phi0 <- -60*pi/180
   r <- ReconstructedDataset(o)
+  summ <- subset(summ, age=="A")
   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
   colnames(r$Dss$OD) <- c("phi", "lambda")
   r$cols["OD"] <- "blue"
   
   km <- karcher.mean.sphere(r$Dss$OD, na.rm=TRUE, var=TRUE)
+  message(nrow(summ), " points")
   message("Mean: Lat ", format(km$mean["phi"]*180/pi, digits=3),
           " Long ", format(km$mean["lambda"]*180/pi, digits=3),
           " ; SD: ", format(sqrt(km$var)*180/pi, digits=3))
+  message("Mean location is ", 180/pi*central.angle(km$mean["phi"],
+                                      km$mean["lambda"],
+                                      -pi/2,
+                                      0),  " away from geometric centre")
+  
+  summ$OD.res <- 180/pi*central.angle(km$mean["phi"],
+                                      km$mean["lambda"],
+                                      r$Dss$OD[,"phi"],
+                                      r$Dss$OD[,"lambda"])
 
-  plot.polar(r)
+  summlm <- lm(OD.res ~ sqrt.E, summ)
+  print(summary(summlm))
+  plot.polar(r, datapoint.contours=FALSE)
+  ##with(summ, plot(sqrt.E, OD.res))
+  ##abline(summlm)
+  
   return(r)
 }

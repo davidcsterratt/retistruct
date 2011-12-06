@@ -120,7 +120,7 @@ of a point on the intact retina to within 8$^\circ$ of arc.
 
 We demonstrate three applications of the method: (1) the analysis of
 retrograde tracer experiments; (2) the analysis of mosaics of retinal
-cells; and (3) infering the distribution over the intact retina of
+cells; and (3) inferring the distribution over the intact retina of
 Ephs and ephrins.
 
 % Please keep the Author Summary between 150 and 200 words
@@ -223,7 +223,7 @@ triangulated and the incisions and tears are stitched together
 (Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
 onto a spherical surface, with the points on the rim all lying at the
 same latitude (Figure~\ref{fold-sphere:fig:method}Di). How the
-lattitude is determined will be discussed later. Each edge in the mesh
+latitude is determined will be discussed later. Each edge in the mesh
 is treated as a spring whose natural length is the length of the
 corresponding edge in the flat mesh.  In the initial mapping onto the
 spherical surface, the springs are compressed or expanded; in the next
@@ -257,7 +257,7 @@ natural length the log strain is zero (represented by green), for a
 compressed spring it is negative (blue) and for an expanded one
 positive (red).
 
-A measure of the overall goodness of reconstruction is the square root
+A measure of the overall error of reconstruction is the square root
 of the length energy function:
 \begin{equation} 
   \sqrt{E_\mathrm{L}} = \sqrt{\frac{1}{2|\mathcal{C}|\overline{L}}
@@ -271,31 +271,31 @@ $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
 the mean fractional deformation.  
 
-\subsection*{Determination of the lattitude of the rim}
+\subsection*{Determination of the latitude of the rim}
 \label{retistruct_plos:sec:determ-latt-rim}
 
-To determine the lattitude of the rim, we measured mouse eyes at
+To determine the latitude of the rim, we measured mouse eyes at
 varying stages of development. Specifically, we measured the distance
 $d_\mathrm{e}$ from the back of the eye to the front of the cornea and
 the distance $d_\mathrm{r}$ from the back of the eye to the edge of
 the retina (Figure~\ref{retistruct_plos:fig:eyegrowth}). We then
-computed the lattitude $\phi_0$ of the rim using the formula:
+computed the latitude $\phi_0$ of the rim using the formula:
 \begin{equation}
   \label{retistruct_plos:eq:4}
   \phi_0 = \arcsin (2d_\mathrm{r}/d_\mathrm{e}-1)
 \end{equation}
-The measurements and derived lattitudes for animals of various ages
+The measurements and derived latitudes for animals of various ages
 are shown in Table~\ref{tab:eygrowth}.
 
 \subsection*{Performance of the algorithm}
 \label{retistruct_plos:sec:perf-algor}
 
-We used our algorithm to reconstruct 224 retinae.
+We used our algorithm to reconstruct 229 retinae. 
 Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
 with the lowest energy measure $\sqrt{E_\mathrm{L}}=0.038$ and
 Figure~\ref{retistruct_plos:fig:examples}B the example with the
 highest $\sqrt{E_\mathrm{L}}=0.147$. The arrangement of the grid lines
-in the example with lower error looks qualitative smoother and more
+in the example with lower error looks qualitatively smoother and more
 even than in the example with higher energy measure
 (Figures~\ref{retistruct_plos:fig:examples}Aiii
 and~\ref{retistruct_plos:fig:examples}Biii). The strain plot for the
@@ -309,13 +309,21 @@ and this makes it harder for the algorithm to create an even mapping,
 as local roughness in the rim forces significant deformation of the
 surrounding virtual tissue when projected back onto the sphere.
 
-The distribution of the goodness measure is shown in
-Figure~\ref{retistruct_plos:fig:summary}A. The mean was 0.073, with a
-median value of 0.0736. 
+This demonstrates that the measure $\sqrt{E_\mathrm{L}}$ gives some
+indication of the apparent quality of the reconstruction. Roughly
+speaking, noticeably bad reconstructions had
+$\sqrt{E_\mathrm{L}}>0.1$. The distribution of the error measure
+(Figure~\ref{retistruct_plos:fig:summary}A) indicates that 20 out of
+229 retinae had a error measure exceeding 0.1. The mean was 0.072,
+with a median value of 0.071. Due to the more delicate nature of
+younger tissue, it is harder to dissect retinae out of young animals
+cleanly. This is reflected in the lower $\sqrt{E_\mathrm{L}}$ scores
+when it is analysed by age of animal
+(Figure~\ref{retistruct_plos:fig:summary}B).
 
 \subsection*{Estimate of errors of the reconstruction algorithm}
 
-The goodness measure described in the previous section gives an
+The error measure described in the previous section gives an
 indication of how easy it is to morph any particular flattened retina
 onto a partial sphere, but it does not indicate the error involved in
 the reconstruction, i.e.\ the difference between the inferred
@@ -330,17 +338,17 @@ The first method is to look at the inferred locations of the optic
 discs across a number of retinae. In mice, the optic disc is located
 ``rather precisely in the geometric center of the retina''
 \cite{DragOlse81gang} though this has not, as far as we are aware,
-been measured. The optic disc has been marked in XXX of our
-flat-mounted retinae, and the distribution of the centres of the
-inferred locations of these optic discs is shown in
-Figure~\ref{retistruct_plos:fig:summary}C. The mean latitude and longitude
-of these optic discs is (-85.7$^\circ$, 83.4$^\circ$) with a standard
-deviation of 8.0$^\circ$. This 4.3$^\circ$ away from the geometrical
-centre of the retina, in reasonable agreement with the unquantified
-observation that the optic disc is at the geometric centre of the
-retina.  Given that some of this variability is biological, this
-suggests that an upper bound on the accuracy of the reconstruction
-algorithm is 8.0$^\circ$.
+been measured. The optic disc has been marked in 57 of flat-mounted
+adult retinae, and the distribution of the centres of the inferred
+locations of these optic discs is shown in
+Figure~\ref{retistruct_plos:fig:summary}C. The mean latitude and
+longitude of these optic discs is (-86.0$^\circ$, 93.4$^\circ$) with a
+standard deviation of 7.5$^\circ$. The mean is therefore 4.0$^\circ$
+away from the geometrical centre of the retina, in reasonable
+agreement with the unquantified observation that the optic disc is at
+the geometric centre of the retina.  Given that some of this
+variability is biological, this suggests that an upper bound on the
+accuracy of the reconstruction algorithm is 7.5$^\circ$.
 
 The second method is to compare the inferred lines of longitude with
 the direction growth of retinal ganglion cell axons towards the optic
@@ -360,9 +368,9 @@ there are some deviations close to the rim.
 
 \todo{I still need to develop the code to do this. In order to do this
   I need some mosaic data. I have some courtesy of Ben Reese's lab,
-  but that's not our data. We have the SMI32 image, but the datapoints
+  but that's not our data. We have the SMI32 image, but the data points
   aren't marked up. To use our SMI32 data, I suppose that we need a
-  method of adding datapoints to an image... possibly using ImageJ.
+  method of adding data points to an image... possibly using ImageJ.
   Or what do we think?}
 
 \subsection*{Application: marker distribution in spherical coordinates}
@@ -391,11 +399,11 @@ Figure~\ref{retistruct_plos:fig:superpose}.
 As far as we are aware, a computational algorithm for reconstructing
 retinae has never been described
 before.\footnote{\todo{DW: But what about optometry?}} Our validation
-studies suggest that the method is able to estimate the orignal
+studies suggest that the method is able to estimate the original
 location of a point on a flatted to within 8$^\circ$ of arc. This may
 be an overestimate, as it makes the implicit assumption that the
 location of the optic disc is the same between different retinae.
-There will be some biological variablility in the location of the
+There will be some biological variability in the location of the
 optic disc which will tend to contribute to the measured variability.
 
 We now consider the potential sources of error in the method. The
@@ -409,7 +417,7 @@ in the case of retinae with more or more irregular incisions and
 tears. 
 
 The physical model assumed by the algorithm is also a potential source
-of errer. The retinal tissue is modelled as a mesh of masses connected
+of error. The retinal tissue is modelled as a mesh of masses connected
 by springs. This basic model is used in modelling deformable surfaces
 in computer animation and clothes design
 \cite{FanEtal98spri,MaCaEtal99flat,WangEtal02surf} and has been used
@@ -438,23 +446,23 @@ the optic disk.
 
 The meshing algorithm might also lead to errors. A problem can arise
 when two points on the outline are very close together. This leads to
-a large number of very samll triangles being constructed, which can
+a large number of very small triangles being constructed, which can
 lead to a tangle of many flipped triangles in the energy minimisation
 phase and, ultimately, small areas of high strain in the reconstructed
-outline. However, this problem can be elimiated by suitable
-preprocessing of outlines to remove very short edges.
+outline. However, this problem can be eliminated by suitable
+prepossessing of outlines to remove very short edges.
 
 \subsection*{Insights gained from the method}
 
 \todo{What we have learnt by using the method}
 
-\subsection*{Extentions to the method}
+\subsection*{Extensions to the method}
 
 Another improvement might be to automate the marking up of incisions
 and tears. It would be straightforward to produce a method that would
 work for the retinae in which the incisions and tears are clear, but
 it is harder to envisage a method that would work for the more
-irregularly-flattend retinae.
+irregularly-flattened retinae.
 
 It would be possible to generalise the method to deal with a retina
 modelled by any shape with axial symmetry. This would just require a
@@ -829,15 +837,18 @@ comments throughout this work.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics{retistruct-goodness}\includegraphics[width=0.33\linewidth]{superposed-ods-sqrtE_0_1}
-  \caption{\textbf{Measures of goodness of reconstructions.}
+  \includegraphics{retistruct-goodness}
+  \caption{\textbf{Measures of error of reconstructions.}
     \textbf{(A)} Histogram of the reconstruction error measure
     $\sqrt{E_\mathrm{L}}$ obtained from 224 successfully reconstructed
     retinae. For lower values the value of is similar to the mean
     percentage deformation of the mesh. \textbf{(B)} Relationship
-    between error measure and age. \textbf{C} Inferreed positions of
-    optic discs from XXX adult reconstructed retinae plotted on the
-    same polar grid.}
+    between error measure and age. ``A'' indicates adult
+    animals. \textbf{C} Inferred positions of optic discs from 57
+    adult reconstructed retinae plotted on the same polar grid. The
+    latitude and longitude is ($-86.0^\circ$, $93.4^\circ$). The
+    standard deviation in the angular displacement from the mean is
+    $7.6^\circ$.}
   \label{retistruct_plos:fig:summary}
 \end{figure}
 
@@ -853,8 +864,8 @@ comments throughout this work.
   \centering
   \includegraphics{ChenEtal95}
   \caption{\textbf{Distribution of gradients.}
-    \todo{This needs to be replaced with our fusion proteain data for
-      EphA and eprhinA, and hopefully the B system too, depending on
+    \todo{This needs to be replaced with our fusion protein data for
+      EphA and ephrin-A, and hopefully the B system too, depending on
       how well the A system works.}
     \textbf{(A)} Flat-mount E8 chick retina stained for EphA3
     (Reproduced from \cite{ChenEtal95comp}). \textbf{(B)} Image of
@@ -910,4 +921,4 @@ P64 & 3160 & 56 & 2161 & 30 & 21.56 & 1.89 \\\hline
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
 % LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
-% LocalWords:  colliculus geniculate vivo center RG
+% LocalWords:  colliculus geniculate vivo center RG RGC SMI ImageJ Hjorth
