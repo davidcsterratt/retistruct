@@ -13,10 +13,13 @@ plot.flat(o)
 r <- retistruct.reconstruct(o)
 
 ## Plot with gridlines
-options(outline.col="yellow")
-options(grid.maj.col="yellow")
-options(grid.min.col="white")
+## options(outline.col="yellow")
+## options(grid.maj.col="yellow")
+## options(grid.min.col="white")
+par(mar=c(0.1,0.1,0.1,0.1))
 plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 
+par(mar=c(1,1,1,1))
+plot.polar(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 ## To print for PloS Biol.
-## dev.copy2eps(file="KeelEtal11.eps", width=6.83, height=6.83)
+## dev.copy2eps(file="smi32.pdf", width=6.83, height=6.83/2)

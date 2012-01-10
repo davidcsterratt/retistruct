@@ -121,13 +121,13 @@ triangulate.outline <- function(o, n=200,
     S <- pointers2segments(g)
   }
   ## Make initial triangulation
-  out <- triangulate(pslg(V=P, S=S), Y=TRUE, j=TRUE, Q=TRUE)
+  out <- triangulate(pslg(P=P, S=S), Y=TRUE, j=TRUE, Q=TRUE)
 
   ## It can be that there are crossovers in the segments. The
   ## triangulate() routine will reveal this as segments that are not
   ## on a boundary. We get rid of these segments by re-triangulating,
   ## only using boundary segments
-  out <- triangulate(pslg(V=out$V, S=out$S[out$SB==1,]), Y=TRUE, j=TRUE, Q=TRUE)
+  out <- triangulate(pslg(P=out$P, S=out$S[out$SB==1,]), Y=TRUE, j=TRUE, Q=TRUE)
   
   ## Sometimes a point exists which only belongs to one segment. The
   ## point to which it is connected, is itself connected by three
@@ -136,24 +136,24 @@ triangulate.outline <- function(o, n=200,
   i.bad <- which(table(out$S)==1)
   if (length(i.bad) > 0) {
     warning(paste("Bad points:", paste(i.bad, collapse=" ")))
-    out <- triangulate(pslg(V=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
+    out <- triangulate(pslg(P=P[-i.bad,], S=S), Y=TRUE, j=TRUE, Q=TRUE)
   }
 
   ## Now determine the area
-  A.tot <- sum(with(out, tri.area(V, T)))
+  A.tot <- sum(with(out, tri.area(P, T)))
 
   ## Produce refined triangulation
-  P <- out$V
+  P <- out$P
   S <- out$S
   if (!is.na(n)) {
-    out <- triangulate(pslg(V=P, S=S), a=A.tot/n, q=20,
+    out <- triangulate(pslg(P=P, S=S), a=A.tot/n, q=20,
                        Y=suppress.external.steiner, j=TRUE,
                        Q=TRUE)
   }
-  if (any(P != out$V[1:nrow(P),])) {
+  if (any(P != out$P[1:nrow(P),])) {
     stop("Points changed in triangulation")
   }
-  P <- out$V
+  P <- out$P
   T <- out$T
 
   ## Create pointers from segments

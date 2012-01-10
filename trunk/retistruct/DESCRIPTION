@@ -9,7 +9,7 @@ Version: 0.4.6
 URL: http://www.neuralmapformation.org
 Date: 2011-12-05
 Depends: R (>= 2.11.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
-    Triangle, rgl, multicore, png, akima
+    Triangle (>= 1.6-0.2), rgl, multicore, png, akima
 Collate: 'AnnotatedOutline.R' 'Dataset.R' 'fire.R' 'format-common.R'
     'format-csv.R' 'format-idt.R' 'format-ijroi.R' 'generics.R'
     'geometry.R' 'kernel-density.R' 'lagrange.R' 'misc.R' 'Outline.R'
