@@ -4,10 +4,10 @@ License: file LICENSE
 Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Description: Program to reconstruct retinae from flattened retinae in
-    which there are cuts and tears
-Version: 0.4.6
+    which there are incisions and tears
+Version: 0.4.7
 URL: http://www.neuralmapformation.org
-Date: 2011-12-05
+Date: 2012-01-11
 Depends: R (>= 2.11.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
     Triangle (>= 1.6-0.2), rgl, multicore, png, akima
 Collate: 'AnnotatedOutline.R' 'Dataset.R' 'fire.R' 'format-common.R'
