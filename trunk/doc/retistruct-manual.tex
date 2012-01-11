@@ -163,14 +163,14 @@ checkboxes that allow you to show various types of information:
 \item[Preserve area] When this is selected, the polar plot displays an
   area-preserving projection
 \item[Contours] Display Kernel Density Estimate contours of the data
-  points. By default, contours at 5\%, 25\% and 50\% of the maximum
+  points. By default, contours at 5\%, 25\%, 50\%, 75\% and 95\% of the maximum
   density are shown. This can be changed by a command like this at the
   R prompt:
 \begin{verbatim}
-options(contour.levels=c(5,25,50,75,95))
+options(contour.levels=c(5, 25, 50))
 \end{verbatim}
-This command would cause the 5\%, 25\%, 50\%, 75\% and 95\% contour
-lines to be displayed.
+  This command would cause the 5\%, 25\% and 50\% contour lines to be
+  displayed.
 \end{description}
 
 \subsection{Marking up the retina}
