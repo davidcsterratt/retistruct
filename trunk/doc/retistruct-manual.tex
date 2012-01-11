@@ -160,6 +160,17 @@ checkboxes that allow you to show various types of information:
 \item[Landmarks] Landmarks such as the optic disc
 \item[Strain] This shows information about how the retina has been
   reconstructed, after the reconstruction step has taken place.
+\item[Preserve area] When this is selected, the polar plot displays an
+  area-preserving projection
+\item[Contours] Display Kernel Density Estimate contours of the data
+  points. By default, contours at 5\%, 25\% and 50\% of the maximum
+  density are shown. This can be changed by a command like this at the
+  R prompt:
+\begin{verbatim}
+options(contour.levels=c(5,25,50,75,95))
+\end{verbatim}
+This command would cause the 5\%, 25\%, 50\%, 75\% and 95\% contour
+lines to be displayed.
 \end{description}
 
 \subsection{Marking up the retina}
@@ -344,6 +355,16 @@ There are also some embryonic scripts to create polar plots:
     \texttt{Sss} & A structure in which each element contains
     spherical coordinates (in the same latitude-longitude format as
     above) of a landmark. \\
+    \texttt{KDE} & An object containing information about Kernel
+    Density Estimates of the locations of cell bodies. For example,
+    elements such as \texttt{KDE.green\_contours5} contain the 5\%
+    contours of the green cell bodies. To customise the contours, see
+    the instructions in Section~\ref{manual:sec:retinal-display}. The
+    full density information is contained in
+    \texttt{KDE.green\_g\_xs}, \texttt{KDE.green\_g\_ys}, and
+    \texttt{KDE.green\_g\_f}. This can be plotted in MATLAB using the
+    command \texttt{contour(KDE.green\_g\_xs, KDE.green\_g\_ys,
+      KDE.green\_g\_f)}. \\
     \hline
   \end{tabularx}
   \caption{Variables exported in the \texttt{r.mat} file.}
@@ -445,5 +466,5 @@ each directory there are two files:
 % LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
 % LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
 % LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
-% LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV
-% LocalWords:  Metadata metadata datapoints polararea DssMean
+% LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV xs
+% LocalWords:  Metadata metadata datapoints polararea DssMean KDE ys
