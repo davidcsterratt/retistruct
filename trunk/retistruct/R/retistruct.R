@@ -298,7 +298,7 @@ retistruct.export.matlab <- function(r) {
     if (!is.null(r)) {
       f <- file.path(r$dataset, "r.mat")
       message(paste("Saving", f))
-      KDE <- getKDE(r)
+      KDE <- getKDE(r, cache=FALSE)
       for (i in 1:length(KDE)) {
         KDEi <- KDE[[i]]
         KDEi$flevels <- NULL
