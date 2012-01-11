@@ -7,5 +7,5 @@
   options(grid.maj.col="black")
   options(grid.min.col="grey")
   options(outline.col="black")
-  options(contour.levels=c(5, 25, 50))
+  options(contour.levels=c(5, 25, 50, 75, 95))
 }
