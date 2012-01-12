@@ -29,7 +29,7 @@ Outline <- function(P, scale=NA, im=NULL) {
 }
 
 ##' Plot flat \code{\link{Outline}}. If the optional argument
-##' \code{plot.image} is \code{TRUE} the image (if it is present) is
+##' \code{image} is \code{TRUE} the image (if it is present) is
 ##' displayed behind the outline. If the optional argument
 ##' \code{scalebar} is present and numeric, a scale bar of length
 ##' \code{scalebar} mm is plotted. If \code{scalebar} is \code{FALSE}
@@ -55,7 +55,7 @@ plot.flat.outline <- function(x, axt="n", ylim=NULL, ...) {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
     
-    if (plot.image && !is.null(o$im)) {
+    if (plot.image && !is.null(x$im)) {
       xs <- 1:ncol(im)
       ys <- 1:nrow(im)
       plot(NA, NA, xlim=c(0, max(xs)), ylim=c(0, max(ys)), asp=1,

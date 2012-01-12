@@ -254,6 +254,7 @@ getKDE <- function(r, cache=TRUE) {
 ##' landmarks to be plotted (default \code{TRUE}). 
 ##' @method plot.spherical reconstructedOutline
 ##' @author David Sterratt
+##' @export
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 

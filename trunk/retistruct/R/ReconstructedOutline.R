@@ -189,6 +189,7 @@ plot.flat.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' area-preserving plot (default \code{FALSE}).
 ##' @method plot.polar reconstructedOutline
 ##' @author David Sterratt
+##' @export
 plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 

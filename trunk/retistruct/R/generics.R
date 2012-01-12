@@ -16,7 +16,7 @@ addClass <- function(newclass, obj) {
   return(c(cld, clo))
 }
 
-##' Plot flat object
+##' Plot flat representation of object
 ##'
 ##' @title Flat plot of object
 ##' @param o \code{\link{Outline}}, \code{\link{Dataset}} \&c object
@@ -29,19 +29,39 @@ plot.flat <- function(x, axt="n", ylim=NULL, ...) {
   UseMethod("plot.flat")
 }
 
+##' @export
 plot.flat.default <- function(x, axt="n", ylim=NULL, ...) {
 }
 
+##' Plot polar representation of object
+##'
+##' @title Polar plot of object
+##' @param r \code{\link{ReconstructedOutline}},
+##' \code{\link{ReconstructDataset}}  object
+##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param flip.horiz Wether to flip about a horizontal axis
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
+##' @param ... Other plotting parameters
+##' @author David Sterratt
+##' @export
 plot.polar <- function(r, show.grid=TRUE,
                        grid.col="gray", grid.bg="transparent", 
-                       grid.int.minor=15, grid.int.major=45, ...) {
+                       grid.int.minor=15, grid.int.major=45,
+                       flip.horiz=FALSE,
+                       labels=c(0, 90, 180, 270),...) {
   UseMethod("plot.polar")
 }
 
+##' @export
 plot.polar.default <- function(r, show.grid=TRUE,
                                grid.col="gray", grid.bg="transparent", 
                                grid.int.minor=15, grid.int.major=45,
-                               flip.horiz=FALSE, ...) {
+                               flip.horiz=FALSE, labels=c(0, 90, 180, 270),
+                               ...) {
   plot.new()
 }
 
