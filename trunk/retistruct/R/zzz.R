@@ -1,4 +1,4 @@
-.First.lib <- function(lib, pkg) {
+.onLoad <- function(lib, pkg) {
   options(TF.col="darkcyan")
   options(TB.col="darkcyan")
   options(V.col="darkcyan")
