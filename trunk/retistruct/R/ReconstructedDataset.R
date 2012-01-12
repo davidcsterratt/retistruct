@@ -13,6 +13,7 @@
 ##' \item{\code{Ssc}}{Landmarks on reconstructed sphere in cartesian coordinates}
 ##' \item{\code{Sss}}{Landmarks on reconstructed sphere in spherical coordinates}
 ##' @author David Sterratt
+##' @import geometry
 ReconstructedDataset <- function(r, report=message) {
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
