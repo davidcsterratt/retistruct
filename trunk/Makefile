@@ -10,7 +10,7 @@ dist: retistruct retistructgui
 
 roxygen:
 	rm -f retistruct/man/*
-	R CMD roxygen -d retistruct
+	echo "library(roxygen2) ; roxygenize(\"retistruct\")" |	R --no-restore --slave
 
 fix-revision:
 	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" retistruct/R/revision.R
