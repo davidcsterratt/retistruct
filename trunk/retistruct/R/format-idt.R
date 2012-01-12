@@ -282,6 +282,7 @@ idt.segment.to.pointers <- function(P) {
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
 ##' @author David Sterratt
+##' @export
 idt.read.dataset <- function(dataset, d.close=0.25) {
   ## Read the raw data
   map <- idt.read.map(dataset)
@@ -324,10 +325,10 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   ## data has been acquired with a 200x200 grid, this means that the
   ## scale (in um/unit) is BOXSIZE / 200. e.g. if boxsize is 160, then
   ## scale is 0.8 um/unit."
-  if (sd(sys["BOXSIZEX"], na.rm=TRUE) != 0) {
+  if (sapply(sys["BOXSIZEX"], sd, na.rm=TRUE) != 0) {
     stop("Inconsistent BOXSIZEX; cannot determine scale")
   }
-  bsx <- mean(sys["BOXSIZEX"], na.rm=TRUE)
+  bsx <- sapply(sys["BOXSIZEX"], mean, na.rm=TRUE)
   scale <- bsx/200
   names(scale) <- NULL
   
