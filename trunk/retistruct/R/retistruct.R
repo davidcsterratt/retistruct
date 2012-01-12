@@ -1,4 +1,5 @@
 ## Global variables
+##' @export
 recfile.version <- 4      # Version of reconstruction file data format
 
 ## Report function, with similar arguments to print
