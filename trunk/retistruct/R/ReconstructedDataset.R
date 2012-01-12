@@ -60,6 +60,7 @@ ReconstructedDataset <- function(r, report=message) {
 ##' @return \code{Dss}
 ##' @method getDss reconstructedDataset
 ##' @author David Sterratt
+##' @export
 getDss.reconstructedDataset <- function(r) {
   return(r$Dss)
 }
@@ -67,10 +68,11 @@ getDss.reconstructedDataset <- function(r) {
 ##' Get Karcher mean of datapoints in spherical coordinates.
 ##'
 ##' @title Karcher mean of datapoints in spherical coordinates
-##' @param r \code{reonstructedDataset} object.
+##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
 ##' @method getDss.mean reconstructedDataset
 ##' @author David Sterratt
+##' @export
 getDss.mean.reconstructedDataset <- function(r) {
   Dss.mean <- list()
   if (length(r$Dss)) {
@@ -90,6 +92,7 @@ getDss.mean.reconstructedDataset <- function(r) {
 ##' @return \code{Sss}
 ##' @method getSss reconstructedDataset
 ##' @author David Sterratt
+##' @export
 getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }

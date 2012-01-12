@@ -44,6 +44,7 @@ check.datadir <- function(dir=NULL) {
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
 ##' @author David Sterratt
+##' @export
 retistruct.read.dataset <- function(dataset, ...) {
   ## Check to see if dataset is valid
   type <- check.datadir(dataset)
@@ -102,6 +103,7 @@ retistruct.potential.od <- function(o) {
 ##' \item{phi0}{Angle of rim in degrees}
 ##' \item{DVflip}{Boolean variable indicating if DV axis has been flipped}
 ##' @author David Sterratt
+##' @export
 retistruct.read.markup <- function(a, error=stop) {
   ## Return index in P of closest point to x
   closest <- function(P, x) {
@@ -191,6 +193,7 @@ retistruct.check.markup <- function(o) {
 ##' @return If the reconstruction data exists, return a reconstruction
 ##' object, else return the outline object \code{o}.
 ##' @author David Sterratt
+##' @export
 retistruct.read.recdata <- function(o) {
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
@@ -205,7 +208,21 @@ retistruct.read.recdata <- function(o) {
   return(NULL)
 }
 
-##  Reconstructing the retina
+##' @title Reconstruct a retina
+##' @param o \code{\link{AnnotatedOutline}} object
+##' @param report Function to report progress
+##' @param plot.3d If \code{TRUE} show progress in a 3D plot 
+##' @param dev.grid The ID of the device to which to plot the flat
+##' representation
+##' @param dev.polar The ID of the device to which to plot the polar
+##' representation
+##' @param ... Parameters to be passed to \code{\link{ReconstructedOutline}}
+##' @return Object of classes
+##' \code{\link{RetinalReconstructedOutline}} and
+##' \code{\link{RetinalReconstructedDataset}} that contains all the
+##' reconstruction information
+##' @author David Sterratt
+##' @export
 retistruct.reconstruct <- function(o, report=retistruct.report,
                                    plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
                                    ...) {

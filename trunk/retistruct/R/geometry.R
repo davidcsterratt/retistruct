@@ -61,6 +61,7 @@ tri.area <- function(P, Pt) {
 ##' From MathWorld--A Wolfram Web Resource.
 ##' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
 ##' @author David Sterratt
+##' @export
 ##' @examples
 ##' ## Intersection of two intersecting lines
 ##' line.line.intersection(c(0, 0), c(1, 1), c(0, 1), c(1, 0))

@@ -16,6 +16,15 @@ addClass <- function(newclass, obj) {
   return(c(cld, clo))
 }
 
+##' Plot flat object
+##'
+##' @title Flat plot of object
+##' @param o \code{\link{Outline}}, \code{\link{Dataset}} \&c object
+##' @param axt whether to plot axes
+##' @param ylim y-limits
+##' @param ... Other plotting parameters
+##' @author David Sterratt
+##' @export
 plot.flat <- function(x, axt="n", ylim=NULL, ...) {
   UseMethod("plot.flat")
 }
@@ -52,6 +61,13 @@ plot.l.vs.L <- function(r) {
 plot.l.vs.L.default <- function(r) {
 }
 
+##' Get spherical coordinates of datapoints.
+##'
+##' @title Get transformed spherical coordinates of datapoints
+##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @return \code{Dss}
+##' @author David Sterratt
+##' @export
 getDss <- function(r) {
   UseMethod("getDss")
 }
@@ -60,6 +76,13 @@ getDss.default <- function(r) {
   return(NULL)
 }
 
+##' Get Karcher mean of datapoints in spherical coordinates.
+##'
+##' @title Karcher mean of datapoints in spherical coordinates
+##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @return \code{Dss.mean}
+##' @author David Sterratt
+##' @export
 getDss.mean <- function(r) {
   UseMethod("getDss.mean")
 }
@@ -68,6 +91,13 @@ getDss.mean.default <- function(r) {
   return(NULL)
 }
 
+##' Get spherical coordinates of landmarks.
+##'
+##' @title Get transformed spherical coordinates of landmarks.
+##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @return \code{Sss}
+##' @author David Sterratt
+##' @export
 getSss <- function(r) {
   UseMethod("getSss")
 }
@@ -84,6 +114,11 @@ getTss.default <- function(r) {
   return(NULL)
 }
 
+##' @title Get coordinates of corners of pixels of image in spherical coordinates 
+##' @param r \code{\link{reconstructedOutline}} or \code{\link{retinalReconstructedOutline}} object
+##' @return Coordinates of corners of pixels in spherical coordinates 
+##' @author David Sterratt
+##' @export
 getIms <- function(r) {
   UseMethod("getIms")
 }

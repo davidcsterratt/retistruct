@@ -8,14 +8,44 @@ Description: Program to reconstruct retinae from flattened retinae in
 Version: 0.4.7
 URL: http://www.neuralmapformation.org
 Date: 2012-01-11
-Depends: R (>= 2.11.0), geometry (>= 0.2), foreign, R.matlab, ttutils,
-    Triangle (>= 1.6-0.2), rgl, multicore, png, akima
-Collate: 'AnnotatedOutline.R' 'Dataset.R' 'fire.R' 'format-common.R'
-    'format-csv.R' 'format-idt.R' 'format-ijroi.R' 'generics.R'
-    'geometry.R' 'kernel-density.R' 'lagrange.R' 'misc.R' 'Outline.R'
-    'plots.R' 'ReconstructedDataset.R' 'ReconstructedOutline.R'
-    'RetinalDataset.R' 'RetinalReconstructedDataset.R'
-    'RetinalReconstructedOutline.R' 'retistruct-batch.R'
-    'retistruct-cli.R' 'retistruct.R' 'revision.R' 'roiread.R'
-    'spheristruct-energy.R' 'spheristruct.R' 'StitchedOutline.R'
-    'TriangulatedOutline.R' 'tsearch.R' 'zzz.R'
+Depends:
+    R (>= 2.11.0),
+    geometry (>= 0.2),
+    foreign,
+    R.matlab,
+    ttutils,
+    Triangle (>= 1.6-0.2),
+    rgl,
+    multicore,
+    png,
+    akima
+Collate:
+    'AnnotatedOutline.R'
+    'Dataset.R'
+    'fire.R'
+    'format-common.R'
+    'format-csv.R'
+    'format-idt.R'
+    'format-ijroi.R'
+    'generics.R'
+    'geometry.R'
+    'kernel-density.R'
+    'lagrange.R'
+    'misc.R'
+    'Outline.R'
+    'plots.R'
+    'ReconstructedDataset.R'
+    'ReconstructedOutline.R'
+    'RetinalDataset.R'
+    'RetinalReconstructedDataset.R'
+    'RetinalReconstructedOutline.R'
+    'retistruct-batch.R'
+    'retistruct-cli.R'
+    'retistruct.R'
+    'revision.R'
+    'roiread.R'
+    'spheristruct-energy.R'
+    'spheristruct.R'
+    'StitchedOutline.R'
+    'TriangulatedOutline.R'
+    'zzz.R'

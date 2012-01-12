@@ -47,6 +47,7 @@
 ##' @param verbose Whether to report information
 ##' @return A structure of class IJROI containing the ROI information
 ##' @author David Sterratt
+##' @export
 ##' @examples
 ##' path <- file.path(system.file(package = "retistruct"), "extdata", "ijroi")
 ##' im <- as.raster(readPNG(file.path(path, "imagej-logo.png")))
@@ -232,6 +233,12 @@ read.ijroi <- function(file, verbose=FALSE) {
   return(r)
 }
 
+##' @title Plot IJROI object
+##' @param x The IJROI object
+##' @param add Whether to add to an existing plot
+##' @param ... Additional parameters
+##' @export
+##' @author David Sterratt
 plot.IJROI <- function(x, add=FALSE, ...) {
   with(x, {
     if (!add) 

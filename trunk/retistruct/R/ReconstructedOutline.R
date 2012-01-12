@@ -43,7 +43,12 @@ transform.image.reconstructedOutline <- function(r) {
   }
   return(r)
 }
-
+##' @title Get coordinates of corners of pixels of image in spherical coordinates 
+##' @param r \code{\link{reconstructedOutline}} object
+##' @return Coordinates of corners of pixels in spherical coordinates 
+##' @author David Sterratt
+##' @method getIms reconstructedOutline
+##' @export
 getIms.reconstructedOutline <- function(r) {
   return(r$ims)
 }
@@ -65,19 +70,21 @@ getTss.reconstructedOutline <- function(r) {
   return(Tss)
 }
 
-##' Plot a mesh of gridlines from the spherical retina (described by
-##' points \code{phi}, \code{lambda} and triangulation \code{Tt} and
-##' cutoff point \code{phi0}) onto a flattened retina (described by
-##' points \code{P} and triangulation \code{T}).
+##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
+##' of gridlines from the spherical retina (described by points
+##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cutoff
+##' point \code{phi0}) onto a flattened retina (described by points
+##' \code{P} and triangulation \code{T}).
 ##'
 ##' @title Flat plot of reconstructed outline
-##' @param r \code{reconstructedOutline} object
+##' @param x \code{\link{ReconstructedOutline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
 ##' @method plot.flat reconstructedOutline
 ##' @author David Sterratt
-plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
+##' @export
+plot.flat.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
   NextMethod()
 
   args <- list(...)
@@ -85,10 +92,10 @@ plot.flat.reconstructedOutline <- function(r, axt="n", ylim=NULL, ...) {
   plot.strain <- !is.null(args$strain) && args$strain
 
   if (plot.strain) {
-    o <- getStrains(r)
+    o <- getStrains(x)
     palette(rainbow(100))
     scols <- strain.colours(o$flat$logstrain)
-    with(r, 
+    with(x, 
          segments(P[Cu[,1],1], P[Cu[,1],2],
                   P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
   }
