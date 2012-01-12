@@ -1185,7 +1185,7 @@ ReconstructedOutline <- function(o,
   }
     
   report("Stitching...")
-  s <- stitch.outline(t)
+  s <- StitchedOutline(t)
   if (!is.na(dev.flat)) {
     dev.set(dev.flat)
     plot.flat(s, datapoints=FALSE)
