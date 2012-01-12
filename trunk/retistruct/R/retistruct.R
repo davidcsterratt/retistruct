@@ -65,6 +65,7 @@ retistruct.read.dataset <- function(dataset, ...) {
 ##' @param o Outline object
 ##' @return \code{TRUE} if an optic disc may be present; \code{FALSE} otherwise
 ##' @author David Sterratt
+##' @export
 retistruct.potential.od <- function(o) {
   if (inherits(o, "dataset")) {
     return(with(o, exists("Ss")) && is.list(o$Ss) && (length(o$Ss) > 0))
@@ -182,6 +183,7 @@ retistruct.read.markup <- function(a, error=stop) {
 ##' @return If all markup is present, return \code{TRUE}. Otherwise
 ##' return \code{FALSE}.
 ##' @author David Sterratt
+##' @export
 retistruct.check.markup <- function(o) {
   return(!is.null(names(o$i0)))
 }
@@ -278,7 +280,13 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   return(r)
 }
 
-## retistruct.save.markup() - save markup
+##' Save the makrup in the \code{\link{RetinalDataset}} \code{a} to a
+##' file called \code{markup.csv} in the directory \code{a$dataset}.
+##'
+##' @title Save markup
+##' @param a \code{\link{RetinalDataset}} object
+##' @author David Sterratt
+##' @export
 retistruct.save.markup <- function(a) {
   if (inherits(a, "retinalDataset")) {
     with(a, {
@@ -299,7 +307,16 @@ retistruct.save.markup <- function(a) {
   }
 }
 
-## retistruct.save.recdata() - save reconstruction data
+
+##' Save the reconstruction data in an object \code{r}  that inherits
+##' \code{\link{ReconstructedDataset}} and
+##' \code{\link{ReconstructedOutline}}  to a file called
+##' \code{r.Rdata} in the directory \code{r$dataset}.
+##'
+##' @title Save reconstruction data
+##' @param r \code{\link{ReconstructedDataset}} object
+##' @author David Sterratt
+##' @export
 retistruct.save.recdata <- function(r) {
   if (!is.null(r$dataset)) {
     ## Save the derived data
@@ -310,7 +327,15 @@ retistruct.save.recdata <- function(r) {
   }
 }
 
-## retistruct.export.matlab() - save selected reconstruction data to matlab
+##' Save as a MATLAB object certain fields  of an object \code{r}
+##' that inherits \code{\link{ReconstructedDataset}} and
+##' \code{\link{ReconstructedOutline}}  to a file called \code{r.mat}
+##' in the directory \code{r$dataset}.
+##'
+##' @title Save reconstruction data in MATLAB format
+##' @param r \code{\link{ReconstructedDataset}} object
+##' @author David Sterratt
+##' @export
 retistruct.export.matlab <- function(r) {
   if (!is.null(r$dataset)) {
     if (!is.null(r)) {

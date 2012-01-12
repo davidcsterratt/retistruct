@@ -44,7 +44,6 @@ Collate:
     'retistruct.R'
     'revision.R'
     'roiread.R'
-    'spheristruct-energy.R'
     'spheristruct.R'
     'StitchedOutline.R'
     'TriangulatedOutline.R'
