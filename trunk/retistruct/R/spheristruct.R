@@ -873,12 +873,12 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' @param x0 Area penalty cutoff coefficient
 ##' @param method Method to pass to \code{optim}
 ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
-##' @param dev.grid Device handle for plotting grid to
+##' @param dev.flat Device handle for plotting grid to
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
 optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
-                             plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
+                             plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
                              control=list()) {
   phi <- r$phi
   lambda <- r$lambda
@@ -941,8 +941,8 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                      datapoints=FALSE)
     }
 
-    if (!is.na(dev.grid)) {
-      dev.set(dev.grid)
+    if (!is.na(dev.flat)) {
+      dev.set(dev.flat)
       plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
@@ -972,12 +972,12 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 ##' @param x0 Area penalty cutoff coefficient
 ##' @param method Method to pass to \code{optim}
 ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
-##' @param dev.grid Device handle for plotting grid to
+##' @param dev.flat Device handle for plotting grid to
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
 solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
-                               plot.3d=FALSE, dev.grid=NA, dev.polar=NA, ...) {
+                               plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
   phi <- r$phi
   lambda <- r$lambda
   R <- r$R
@@ -1051,8 +1051,8 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                      datapoints=FALSE)
     }
 
-    if (!is.na(dev.grid)) {
-      dev.set(dev.grid)
+    if (!is.na(dev.flat)) {
+      dev.set(dev.flat)
       plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
@@ -1154,7 +1154,7 @@ getStrains <- function(r) {
 ##' @param x0 Area cutoff coefficient
 ##' @param report Function used to report progress.
 ##' @param plot.3d Whether to show 3D picture during optimisation.
-##' @param dev.grid Device to plot grid onto. Value of \code{NA} (default)
+##' @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
 ##' means no plotting.
 ##' @param dev.polar Device to plot polar plot onto. Value of NA
 ##' (default) means no plotting.
@@ -1170,7 +1170,7 @@ getStrains <- function(r) {
 ReconstructedOutline <- function(o, 
                                  n=500, alpha=8, x0=0.5,
                                  report=print,
-                                 plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
+                                 plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
   ## Clear polar plot, if it's required
   if (!is.na(dev.polar)) {
     dev.set(dev.polar)
@@ -1179,15 +1179,15 @@ ReconstructedOutline <- function(o,
   
   report("Triangulating...")
   t <- triangulate.outline(o, n=n)
-  if (!is.na(dev.grid)) {
-    dev.set(dev.grid)
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
     plot.flat(t)
   }
     
   report("Stitching...")
   s <- stitch.outline(t)
-  if (!is.na(dev.grid)) {
-    dev.set(dev.grid)
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
     plot.flat(s, datapoints=FALSE)
   }
 
@@ -1195,8 +1195,8 @@ ReconstructedOutline <- function(o,
   r <- triangulate.outline(s, n=n,
                            suppress.external.steiner=TRUE)
   
-  if (!is.na(dev.grid)) {
-    dev.set(dev.grid)
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
     plot.flat(r, datapoints=FALSE)
   }
 
@@ -1206,9 +1206,9 @@ ReconstructedOutline <- function(o,
   report("Projecting to sphere...")
   r <- project.to.sphere(r)
   
-  if (!is.na(dev.grid)) {
+  if (!is.na(dev.flat)) {
     ## Plot of initial gridlines
-    dev.set(dev.grid)
+    dev.set(dev.flat)
       plot.flat(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
@@ -1225,70 +1225,70 @@ ReconstructedOutline <- function(o,
   report("Optimising mapping with FIRE...")
 ##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
 ##                        plot.3d=plot.3d,
-##                        dev.grid=dev.grid, dev.polar=dev.polar)
+##                        dev.flat=dev.flat, dev.polar=dev.polar)
 
   ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
   ## plot.3d=plot.3d,
-  ## dev.grid=dev.grid, dev.polar=dev.polar)
+  ## dev.flat=dev.flat, dev.polar=dev.polar)
 
   ## SCREEN 3
   ## r <- solve.mapping.cart(r, alpha=alpha, x0=0.1, nu=0, dtmax=0.001/alpha, tol=0.01,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
 
   ## SCREEN 3
   ## r <- solve.mapping.cart(r, alpha=0, x0=0, nu=1,
   ##                         dtmax=500, maxmove=1E2, tol=2e-7,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   r <- optimise.mapping(r, alpha=0, x0=0, nu=1,
                         plot.3d=plot.3d, 
-                        dev.grid=dev.grid, dev.polar=dev.polar)
+                        dev.flat=dev.flat, dev.polar=dev.polar)
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
                           dtmax=500, maxmove=1E2, tol=1e-5,
                           plot.3d=plot.3d,
-                          dev.grid=dev.grid, dev.polar=dev.polar)
+                          dev.flat=dev.flat, dev.polar=dev.polar)
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=1,
                         plot.3d=plot.3d,
-                        dev.grid=dev.grid, dev.polar=dev.polar)
+                        dev.flat=dev.flat, dev.polar=dev.polar)
   report("Optimising mapping with BFGS...")
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5,
                         plot.3d=plot.3d, 
-                        dev.grid=dev.grid, dev.polar=dev.polar)
+                        dev.flat=dev.flat, dev.polar=dev.polar)
 
   ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
   ##                         plot.3d=plot.3d, tol=5e-5,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1,
   ##                         plot.3d=plot.3d, tol=1e-5,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
 
   
   ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
 
 
   
   ## SCREEN 2
   ## r <- solve.mapping.cart(r, alpha=0, x0=x0, dtmax=50, maxmove=1E3,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
   ##                         plot.3d=plot.3d,
-  ##                         dev.grid=dev.grid, dev.polar=dev.polar)
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   
   report("Transforming image...")
   r <- transform.image.reconstructedOutline(r)

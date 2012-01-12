@@ -212,7 +212,7 @@ retistruct.read.recdata <- function(o) {
 ##' @param o \code{\link{AnnotatedOutline}} object
 ##' @param report Function to report progress
 ##' @param plot.3d If \code{TRUE} show progress in a 3D plot 
-##' @param dev.grid The ID of the device to which to plot the flat
+##' @param dev.flat The ID of the device to which to plot the flat
 ##' representation
 ##' @param dev.polar The ID of the device to which to plot the polar
 ##' representation
@@ -224,7 +224,7 @@ retistruct.read.recdata <- function(o) {
 ##' @author David Sterratt
 ##' @export
 retistruct.reconstruct <- function(o, report=retistruct.report,
-                                   plot.3d=FALSE, dev.grid=NA, dev.polar=NA,
+                                   plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
                                    ...) {
   ## Check that markup is there
   if (!retistruct.check.markup(o)) {
@@ -254,7 +254,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   r <- NULL
   r <- ReconstructedOutline(o,
                             report=report,
-                            plot.3d=plot.3d, dev.grid=dev.grid,
+                            plot.3d=plot.3d, dev.flat=dev.flat,
                             dev.polar=dev.polar,
                             ...)
   if (!is.null(r)) {
