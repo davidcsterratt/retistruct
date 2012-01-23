@@ -14,6 +14,7 @@
 ##' \item{\code{Sss}}{Landmarks on reconstructed sphere in spherical coordinates}
 ##' @author David Sterratt
 ##' @import geometry
+##' @export
 ReconstructedDataset <- function(r, report=message) {
   report("Inferring coordinates of datapoints")
   Dsb <- list() # Datapoints in barycentric coordinates
@@ -270,6 +271,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
+  plot.voronoi <- TRUE #  !is.null(args$voronoi) && args$voronoi
   pa <- plot.preserve.area
   
   ## Datapoints
@@ -297,7 +299,6 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
       }
     }
   }
-
   
   ## KDE
   if (plot.datapoint.contours) {
@@ -316,6 +317,28 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                 col=r$cols[[names(Dss)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
+      }
+    }
+  }
+
+  ## Voroni
+  if (plot.voronoi) {
+    Dss <- getDss(r)
+    if (length(Dss)) {
+      for (i in 1:length(Dss)) {
+        ## Convert to angle-preserving coordinates
+        pos <- sphere.spherical.to.polar.cart(Dss[[i]], preserve="angle")
+        ## Create Voronoi mosaic in area-preserving coordinates
+        vm <- voronoi.mosaic(pos[,1], pos[,2])
+        ## Convert back to polar coords
+        vmxy.polar <- polar.cart.to.sphere.spherical(cbind(vm$x, vm$y),
+                                                     preserve="angle")
+        ## Convert into whichever representation we're using
+        ## and put back on to voroini object for plotting
+        pos <- sphere.spherical.to.polar.cart(vmxy.polar, pa)
+        vm$x <- pos[,1]
+        vm$y <- pos[,2]
+        plot(vm, add=TRUE, r$cols[[names(Dss.mean)[i]]])
       }
     }
   }
