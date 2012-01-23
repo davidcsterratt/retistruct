@@ -26,17 +26,17 @@ o$lambda0 <- 0
 
 ## Initial triangulation (with 500 points)
 n <- 500
-t <- triangulate.outline(o, n=n)
+t <- TriangulatedOutline(o, n=n)
 
 ## Stitching
-s <- stitch.outline(t)
+s <- StitchedOutline(t)
 
 ## Plot triangulation and stitching
 plot.flat(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
 mtext("C", adj=0, font=2, line=-0.9)
 
 ## Triangulate again, to take into account points added by stitching
-m <- triangulate.outline(s, n=n,
+m <- TriangulatedOutline(s, n=n,
                          suppress.external.steiner=TRUE)
 
 ## Merge the points that have been stitched

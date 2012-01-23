@@ -79,23 +79,33 @@ pointers2segments <- function(g) {
   return(cbind(S1, S2))
 }
 
-## Merge points and edges before optimising the elastic energy
-## The information to be merged is contained in the
-## list t, and the index of the landmark i0
-##
-## The information includes 
-## h    - the point correspondence mapping
-## Rset - the set of points on the rim
-## i0   - the index of the landmark
-## T    - the triangulation
-## Cu   - the edge matrix
-## L    - the edge lengths
-## P    - the point locations
-##
-## The function returns merged and transformed versions of all these
-## objects (all suffixed with t), as well as a matrix Bt, which maps a
-## binary vector representation of edge indicies onto a binary vector
-## representation of the indicies of the points linked by the edge
+##' This function creates merged and transformed versions (all
+##' suffixed with \code{t}) of a number of existing variables, as well
+##' as a matrix \code{Bt}, which maps a binary vector representation
+##' of edge indicies onto a binary vector representation of the
+##' indicies of the points linked by the edge.
+##' @title  Merge stitched points and edges 
+##' @param t A \code{StitchedOutline} object in which points that have
+##' been added by stitching have been triangulated
+##' @return Adds following fields to input
+##' \item{\code{Pt}}{Transformed point locations}
+##' \item{\code{Tt}}{Transformed triangulation}
+##' \item{\code{Ct}}{Transformed connection set}
+##' \item{\code{Cut}}{Transformed symmetric connection set}
+##' \item{\code{Bt}}{Transformed binary vector representation
+##' of edge indicies onto a binary vector representation of the
+##' indicies of the points linked by the edge}
+##' \item{\code{Lt}}{Transformed edge lengths}
+##' \item{\code{ht}}{Transformed correspondences}
+##' \item{\code{u}}{Indicies of unique points in untransformed space}
+##' \item{\code{U}}{Transformed indicies of unique points in untransformed space}
+##' \item{\code{Rset}}{The set of points on the rim (which has been reoorded)}
+##' \item{\code{Rsett}}{Transformed set of points on rim}
+##' \item{\code{i0t}}{Transformed index of the landmark}
+##' \item{H}{mapping from edges onto corresponding edges}
+##' \item{Ht}{Transformed mapping from edges onto corresponding edges}
+##' @author David Sterratt
+##' @export
 merge.points.edges <- function(t) {
   h <- t$h
   T <- t$T
@@ -252,6 +262,7 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##' \item{\code{lmabda}}{Longitude of mesh points.}
 ##' \item{\code{R}}{Radius of sphere.}
 ##' @author David Sterratt
+##' @export
 project.to.sphere <- function(r) {
   Pt <- r$Pt
   Rsett <- r$Rsett
@@ -877,6 +888,7 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
+##' @export
 optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                              plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
                              control=list()) {
@@ -976,6 +988,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 ##' @param dev.polar Device handle for plotting ploar plot to
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
+##' @export
 solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
   phi <- r$phi
@@ -1178,7 +1191,7 @@ ReconstructedOutline <- function(o,
   }
   
   report("Triangulating...")
-  t <- triangulate.outline(o, n=n)
+  t <- TriangulatedOutline(o, n=n)
   if (!is.na(dev.flat)) {
     dev.set(dev.flat)
     plot.flat(t)
@@ -1192,7 +1205,7 @@ ReconstructedOutline <- function(o,
   }
 
   report("Triangulating...")  
-  r <- triangulate.outline(s, n=n,
+  r <- TriangulatedOutline(s, n=n,
                            suppress.external.steiner=TRUE)
   
   if (!is.na(dev.flat)) {

@@ -10,6 +10,7 @@
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt
+##' @export
 RetinalReconstructedDataset <- function(r) {
   if (!(inherits(r, "reconstructedDataset") &
         inherits(r, "retinalDataset"))) {

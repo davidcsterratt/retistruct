@@ -1,5 +1,5 @@
 ##'
-##' ##' Constructor for AnnotatedOutline object.
+##' Constructor for AnnotatedOutline object.
 ##'
 ##' @title Constructor for AnnotatedOutline object
 ##' @param o \code{Outline} object
