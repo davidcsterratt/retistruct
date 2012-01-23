@@ -65,19 +65,23 @@ plot.polar.default <- function(r, show.grid=TRUE,
   plot.new()
 }
 
+##' @export
 plot.spherical <- function(r, ...) {
   UseMethod("plot.spherical")
 }
 
+##' @export
 plot.spherical.default <- function(r, ...) {
   rgl.clear()
   rgl.bg(color="white")
 }
 
+##' @export
 plot.l.vs.L <- function(r) {
   UseMethod("plot.l.vs.L")
 }
 
+##' @export
 plot.l.vs.L.default <- function(r) {
 }
 
@@ -92,6 +96,7 @@ getDss <- function(r) {
   UseMethod("getDss")
 }
 
+##' @export
 getDss.default <- function(r) {
   return(NULL)
 }
@@ -107,6 +112,7 @@ getDss.mean <- function(r) {
   UseMethod("getDss.mean")
 }
 
+##' @export
 getDss.mean.default <- function(r) {
   return(NULL)
 }
@@ -122,14 +128,17 @@ getSss <- function(r) {
   UseMethod("getSss")
 }
 
+##' @export
 getSss.default <- function(r) {
   return(NULL)
 }
 
+##' @export
 getTss <- function(r) {
   UseMethod("getTss")
 }
 
+##' @export
 getTss.default <- function(r) {
   return(NULL)
 }
@@ -143,6 +152,7 @@ getIms <- function(r) {
   UseMethod("getIms")
 }
 
+##' @export
 getIms.default <- function(r) {
   return(NULL)
 }

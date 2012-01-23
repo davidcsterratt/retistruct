@@ -2,11 +2,6 @@
 ## Geometry functions
 ## 
 
-## scalar product of two column matricies
-dot <- function(x, y) {
-  return(rowSums(x * y))
-}
-
 ##' @title Vector norm
 ##' @param X Vector or matrix. 
 ##' @return If a vector, returns the 2-norm  of the
@@ -337,6 +332,8 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE) {
   y <- rho*sin(r[,"lambda"])
   return(cbind(x=x, y=y))
 }
+## p = alpha*sqrt(2*(1+sin(phi))/(1-sin(phi)))
+## phi = asin((rho^2/alpha^2-2)/(rho^2/alphpa^2+2))
 
 ##' This is the inverse of \code{\link{sphere.spherical.to.polar.cart}}
 ##'

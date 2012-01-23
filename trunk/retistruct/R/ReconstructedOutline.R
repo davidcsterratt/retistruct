@@ -427,6 +427,7 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
 ##' @param r \code{reconstructedOutline} object
 ##' @method plot.l.vs.L reconstructedOutline
 ##' @author David Sterratt
+##' @export
 plot.l.vs.L.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70

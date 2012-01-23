@@ -319,7 +319,7 @@ compute.areas <- function(phi, lambda, T, R) {
                  sin(phi))
 
   ## Find areas of all triangles
-  areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+  areas <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]), 2)
   
   return(areas)
 }
@@ -546,7 +546,7 @@ E.ca <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
                    sin(phi))
 
     ## Find signed areas of all triangles
-    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]), 2)
 
     ## Now compute area energy
     E.A <- sum(f(a/A, x0=x0))
@@ -632,7 +632,7 @@ dE.ca <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
     dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
 
     ## Find areas of all triangles
-    a <- dot(P[T[,1],], dAdPt1)
+    a <- dot(P[T[,1],], dAdPt1, 2)
     
     ## Now convert area derivative to energy derivative
     dEdPt1 <- fp(a/A, x0=x0)/A * dAdPt1
@@ -708,7 +708,7 @@ Ecart <- function(P, Cu, L, T, A, R,
   E.A <- 0
   if (alpha) {
     ## Find signed areas of all triangles
-    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]))
+    a <- -0.5/R * dot(P[T[,1],], extprod3d(P[T[,2],], P[T[,3],]), 2)
 
     ## Now compute area energy
     E.A <- sum((A/mean(A))^nu*f(a/A, x0=x0))
@@ -765,7 +765,7 @@ Fcart <- function(P, C, L, B, T, A, R,
     dAdPt1 <- -0.5/R * extprod3d(P[T[,2],], P[T[,3],])
     
     ## Find areas of all triangles
-    a <- dot(P[T[,1],], dAdPt1)
+    a <- dot(P[T[,1],], dAdPt1, 2)
     
     ## Now convert area derivative to energy derivative
     dEdPt1 <- -(A/mean(A))^nu*fp(a/A, x0=x0)/A*dAdPt1
@@ -838,9 +838,9 @@ flipped.triangles.cart <- function(P, Tt, R) {
   cents <- (P1 + P2 + P3)/3
   normals <- 0.5 * extprod3d(P2 - P1, P3 - P2)
 
-  areas <- -0.5/R * dot(P1, extprod3d(P2, P3))
+  areas <- -0.5/R * dot(P1, extprod3d(P2, P3), 2)
   
-  flipped <- (-dot(cents, normals) < 0)
+  flipped <- (-dot(cents, normals, 2) < 0)
   return(list(flipped=flipped, cents=cents, areas=areas))
 }
 
