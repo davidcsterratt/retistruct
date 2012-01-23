@@ -318,22 +318,33 @@ spherical.to.polar.area <- function(phi, R=1) {
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
+##' @param preserve Quantity to preserve locally in the
+##' projection. Options are \code{lattitude}, \code{area} or
+##' \code{angle}
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}
 ##' @author David Sterratt
-sphere.spherical.to.polar.cart <- function(r, pa=FALSE) {
-  if (pa) {
+sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
+  rho <- NULL
+  if (pa)
+    preserve <- "area"
+  if (preserve=="area") {
     rho <- sqrt(2*(1 + sin(r[,"phi"])))
     ## rho <- spherical.to.polar.area(r[,"phi"])
-  } else {
+  }
+  if (preserve=="angle") {
+    ## rho = alpha*sqrt(2*(1+sin(phi))/(1-sin(phi)))
+    rho <- sqrt(2*(1+sin(r[,"phi"]))/(1-sin(r[,"phi"])))
+  }
+  if (preserve=="lattitude") {
     rho <- pi/2 + r[,"phi"]
   }
+  if (is.null(rho))
+    stop(paste("preserve argument", preserve, "not recognised"))
   x <- rho*cos(r[,"lambda"])
   y <- rho*sin(r[,"lambda"])
   return(cbind(x=x, y=y))
 }
-## p = alpha*sqrt(2*(1+sin(phi))/(1-sin(phi)))
-## phi = asin((rho^2/alpha^2-2)/(rho^2/alphpa^2+2))
 
 ##' This is the inverse of \code{\link{sphere.spherical.to.polar.cart}}
 ##'
@@ -342,20 +353,33 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE) {
 ##' @param r 2-column Matrix of Cartesian coordinates of points on
 ##' polar projection. Column names should be \code{x} and \code{y}
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
+##' @param preserve Quantity to preserve locally in the
+##' projection. Options are \code{lattitude}, \code{area} or
+##' \code{angle}
 ##' @return 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @author David Sterratt
-polar.cart.to.sphere.spherical <- function(r, pa=FALSE) {
+polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
+  rho <- NULL
+  if (pa)
+    preserve <- "area"
   rho2 <- r[,"x"]^2 + r[,"y"]^2
-  if (pa) {
+  if (preserve=="area") {
     ## Need to make sure that the argument is not greater that 1. This
     ## can happen when passing a values produced from a Cartesian grid
     sinphi <- rho2/2 - 1
     sinphi[sinphi>1] <- NA
     phi <- asin(sinphi)
-  } else {
+  }
+  if (preserve=="angle") {
+    ## phi = asin((rho^2/alpha^2-2)/(rho^2/alphpa^2+2))
+    phi <- asin((rho2/alpha^2-2)/(rho2/alphpa^2+2))
+  }
+  if (preserve=="lattitude") {
     phi <- sqrt(rho2) - pi/2
   }
+  if (is.null(phi))
+    stop(paste("preserve argument", preserve, "not recognised"))
   lambda <- atan2(r[,"y"], r[,"x"])
   return(cbind(phi=phi, lambda=lambda))
 }
