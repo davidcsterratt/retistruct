@@ -271,7 +271,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
-  plot.voronoi <- TRUE #  !is.null(args$voronoi) && args$voronoi
+  plot.voronoi <- !is.null(args$voronoi) && args$voronoi
   pa <- plot.preserve.area
   
   ## Datapoints
@@ -326,19 +326,32 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     Dss <- getDss(r)
     if (length(Dss)) {
       for (i in 1:length(Dss)) {
-        ## Convert to angle-preserving coordinates
-        pos <- sphere.spherical.to.polar.cart(Dss[[i]], preserve="angle")
-        ## Create Voronoi mosaic in area-preserving coordinates
-        vm <- voronoi.mosaic(pos[,1], pos[,2])
-        ## Convert back to polar coords
-        vmxy.polar <- polar.cart.to.sphere.spherical(cbind(vm$x, vm$y),
-                                                     preserve="angle")
-        ## Convert into whichever representation we're using
-        ## and put back on to voroini object for plotting
-        pos <- sphere.spherical.to.polar.cart(vmxy.polar, pa)
-        vm$x <- pos[,1]
-        vm$y <- pos[,2]
-        plot(vm, add=TRUE, r$cols[[names(Dss.mean)[i]]])
+        if (nrow(Dss[[i]]) >= 2) {
+          ## Convert to angle-preserving coordinates
+          pos <- sphere.spherical.to.polar.cart(Dss[[i]], preserve="angle")
+          ## Create Voronoi mosaic in area-preserving coordinates
+          vm <- voronoi.mosaic(pos[,1], pos[,2])
+
+          ## Convert back to polar coords
+          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$x, y=vm$y),
+                                                       preserve="angle")
+          ## Convert into whichever representation we're using
+          ## and put back on to voroini object for plotting
+          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
+          vm$x <- pos[,1]
+          vm$y <- pos[,2]
+          ## Do the same for the dummy coordinates
+          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$dummy.x,
+                                                             y=vm$dummy.y),
+                                                       preserve="angle")
+          ## Convert into whichever representation we're using
+          ## and put back on to voroini object for plotting
+          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
+          vm$dummy.x <- pos[,1]
+          vm$dummy.y <- pos[,2]
+
+          plot(vm, add=TRUE, col=r$cols[[names(Dss.mean)[i]]], do.points=FALSE, all=FALSE)
+        }
       }
     }
   }

@@ -324,6 +324,7 @@ spherical.to.polar.area <- function(phi, R=1) {
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}
 ##' @author David Sterratt
+##' @export
 sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
   rho <- NULL
   if (pa)
@@ -359,6 +360,7 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
 ##' @return 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @author David Sterratt
+##' @export
 polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
   rho <- NULL
   if (pa)
@@ -373,7 +375,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
   }
   if (preserve=="angle") {
     ## phi = asin((rho^2/alpha^2-2)/(rho^2/alphpa^2+2))
-    phi <- asin((rho2/alpha^2-2)/(rho2/alphpa^2+2))
+    phi <- asin((rho2 - 2)/(rho2 + 2))
   }
   if (preserve=="lattitude") {
     phi <- sqrt(rho2) - pi/2
