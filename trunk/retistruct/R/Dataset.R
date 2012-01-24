@@ -71,7 +71,7 @@ getLandmarkID <- function(d, name) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat outline
+##' @method plot.flat dataset
 ##' @author David Sterratt
 ##' @export
 plot.flat.dataset <- function(x, axt="n", ylim=NULL, ...) {
