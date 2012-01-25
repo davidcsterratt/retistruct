@@ -287,6 +287,8 @@ computed the latitude $\phi_0$ of the rim using the formula:
 The measurements and derived latitudes for animals of various ages
 are shown in Table~\ref{tab:eygrowth}.
 
+We also 
+
 \subsection*{Performance of the algorithm}
 \label{retistruct_plos:sec:perf-algor}
 
@@ -362,7 +364,16 @@ there are some deviations close to the rim.
 
 \subsection*{Application: retrograde tracing}
 
-\todo{Daniel and Ian to write something about this.}
+Reconstructing the retinae of individual animals that have had
+retrograde tracer injected into primary visual areas enables
+comparisons of projection patterns across animals independent of
+shifts introduced by retinal dissection. Moreover, having a standard
+retinal space means that data from multiple animals can be used to
+create aggregate topographic maps. Likewise for injections of tracer
+into the retina, post-hoc reconstruction of the retina reduces errors
+in determining the exact position of the injection site, improving the
+accuracy of establishing whether projection-patterns are normal or
+aberrant.
 
 \subsection*{Application: mosaic properties}
 
@@ -372,6 +383,18 @@ there are some deviations close to the rim.
   aren't marked up. To use our SMI32 data, I suppose that we need a
   method of adding data points to an image... possibly using ImageJ.
   Or what do we think?}
+
+When examining retinae with mosaic labelling, reconstructing the
+retina into its original spherical coordinates means that it is
+possible todetermine more accurately the relative distances between
+cells between peripheral and central retina and thereby determine
+whether it is a true mosaic, as illustrated by the
+voronoi-tessellation analysis of SMI-32 antibody staining (1:2000;
+SMI-32R; Covance) \todo{see figure}. It is, furthermore, possible to
+check the constancy of the mosaic even in areas where cuts or tears
+transect the retina. An additional advantage to having a standardised
+retinal space is that retinae can be compared following consecutive
+stainings even if additional tears are introduced.
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
@@ -606,8 +629,23 @@ accurately than at present.
 \subsection*{Retinae}
 \label{retistruct_plos:sec:retinae}
 
-\todo{Daniel and Ian to write some information about the preparation
-  of the retinae.}
+A microknife cut was made in nasal cornea at the level of the middle
+of the nictitating membrane parallel to the eyelids. This allowed an
+orienting cut to be made subsequently in nasal retina. The eye was
+removed and dissected using a Sylgard-filled Petri dish and
+insect-pins. The nasal position of the cut was verified as being
+orthogonal to dorsal-ventral gradient from antibody staining for blue
+opsin (1:200; AB5407; Millipore) and by labelling of muscle-insertions
+onto the retina with fluorescein- and tetramethylrhodamine-conjugated
+dextrans (10\% v/w; D1820, D1817; Invitrogen)
+\todo{Supplementary figure}. The front of the eye was removed just
+anterior to the corneo-scleral junction and the lens removed. Fine
+scissors were used to make a long cut through the sclera, choroid and
+retina from the nasal orienting cut towards the optic disc. Shorter
+relaxing cuts were made at approximately 90$^\circ$ intervals. The
+retina was freed from the choroid and cut free at the optic disc. It
+was then transferred to a poly-lysine coated microscope slide, mounted
+ganglion cell layer up and cover-slipped using Fluoromount (Sigma).
 
 \subsection*{Reconstruction algorithm}
 \label{retistruct_plos:sec:reconstr-algor}
