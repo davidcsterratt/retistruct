@@ -1,3 +1,300 @@
+##' Reconstruct outline into spherical surface. Reconstruction
+##' proceeds in a number of stages:
+##'
+##' \enumerate{
+##' 
+##' \item The flat object is triangulated with at least \code{n}
+##' triangles. This can introduce new vertices in the rim. 
+##'
+##' \item The triangulated object is stitched.
+##'
+##' \item The stitched object is triangulated again, but this time it
+##' is not permitted to add extra vertices to the rim.
+##'
+##' \item The corresponding points determined by the stitching process
+##' are merged to form a new set of merged points and a new
+##' triangulation.
+##'
+##' \item The merged points are projected roughly to a sphere.
+##'
+##' \item The locations of the points on the sphere are moved so as to
+##' minimise the energy function.
+##' }
+##'
+##' @title Reconstruct outline into spherical surface
+##' @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
+##' \item{\code{P}}{outline points as N-by-2 matrix}
+##' \item{\code{V0}}{indicies of the apex of each tear}
+##' \item{\code{VF}}{indicies of the forward vertex of each tear}
+##' \item{\code{VB}}{indicies of the backward vertex of each tear}
+##' \item{\code{i0}}{index of the landmark on the rim}
+##' \item{\code{phi0}}{lattitude of rim of partial sphere}
+##' \item{\code{lambda0}}{longitude of landmark on rim}
+##' }
+##' @param n Number of points in triangulation.
+##' @param alpha Area scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param report Function used to report progress.
+##' @param plot.3d Whether to show 3D picture during optimisation.
+##' @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
+##' means no plotting.
+##' @param dev.polar Device to plot polar plot onto. Value of NA
+##' (default) means no plotting.
+##' @return \code{reconstructedOutline} object containing the input
+##' information and the following modified and extra information:
+##' \item{\code{P}}{New set of points in flattened object}
+##' \item{\code{gf}}{New set of forward pointers in flattened object}
+##' \item{\code{gb}}{New set of backward pointers in flattened object}
+##' \item{\code{phi}}{lattitude of new points on sphere}
+##' \item{\code{lambda}}{longitude of new points on sphere}
+##' \item{\code{Tt}}{New triangulation}
+##' @author David Sterratt
+ReconstructedOutline <- function(o, 
+                                 n=500, alpha=8, x0=0.5,
+                                 report=print,
+                                 plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
+  ## Clear polar plot, if it's required
+  if (!is.na(dev.polar)) {
+    dev.set(dev.polar)
+    plot.polar(o$phi0)
+  }
+  
+  report("Triangulating...")
+  t <- TriangulatedOutline(o, n=n)
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
+    plot.flat(t)
+  }
+    
+  report("Stitching...")
+  s <- StitchedOutline(t)
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
+    plot.flat(s, datapoints=FALSE)
+  }
+
+  report("Triangulating...")  
+  r <- TriangulatedOutline(s, n=n,
+                           suppress.external.steiner=TRUE)
+  
+  if (!is.na(dev.flat)) {
+    dev.set(dev.flat)
+    plot.flat(r, datapoints=FALSE)
+  }
+
+  report("Merging points...")
+  r <- merge.points.edges(r)
+  
+  report("Projecting to sphere...")
+  r <- project.to.sphere(r)
+  
+  if (!is.na(dev.flat)) {
+    ## Plot of initial gridlines
+    dev.set(dev.flat)
+      plot.flat(r, grid=TRUE, strain=TRUE,
+                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
+    
+    ## Initial plot in 3D space
+    if (plot.3d) {
+      plot.spherical(r)
+    }
+  }
+
+  ## Check for flipped triangles and record initial number
+  ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
+  r$nflip0 <- sum(ft$flipped)
+  
+  report("Optimising mapping with FIRE...")
+##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
+##                        plot.3d=plot.3d,
+##                        dev.flat=dev.flat, dev.polar=dev.polar)
+
+  ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
+  ## plot.3d=plot.3d,
+  ## dev.flat=dev.flat, dev.polar=dev.polar)
+
+  ## SCREEN 3
+  ## r <- solve.mapping.cart(r, alpha=alpha, x0=0.1, nu=0, dtmax=0.001/alpha, tol=0.01,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+
+  ## SCREEN 3
+  ## r <- solve.mapping.cart(r, alpha=0, x0=0, nu=1,
+  ##                         dtmax=500, maxmove=1E2, tol=2e-7,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  r <- optimise.mapping(r, alpha=0, x0=0, nu=1,
+                        plot.3d=plot.3d, 
+                        dev.flat=dev.flat, dev.polar=dev.polar)
+  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
+                          dtmax=500, maxmove=1E2, tol=1e-5,
+                          plot.3d=plot.3d,
+                          dev.flat=dev.flat, dev.polar=dev.polar)
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=1,
+                        plot.3d=plot.3d,
+                        dev.flat=dev.flat, dev.polar=dev.polar)
+  report("Optimising mapping with BFGS...")
+  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5,
+                        plot.3d=plot.3d, 
+                        dev.flat=dev.flat, dev.polar=dev.polar)
+
+  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d, tol=5e-5,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1,
+  ##                         plot.3d=plot.3d, tol=1e-5,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+
+  
+  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+
+
+  
+  ## SCREEN 2
+  ## r <- solve.mapping.cart(r, alpha=0, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
+  ##                         plot.3d=plot.3d,
+  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  
+  report("Transforming image...")
+  r <- transform.image.reconstructedOutline(r)
+  
+  report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
+               ";", r$nflip, "flipped triangles."))
+  class(r) <- addClass("reconstructedOutline", r)
+  return(r)
+}
+
+##' Try a range of values of phi0s in the reconstruction, recording the
+##' energy of the mapping in each case.
+##'
+##' @title Titrate values of phi0
+##' @param r \code{\link{ReconstructedOutline}} object
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area cutoff coefficient
+##' @param byd Increments in degrees
+##' @param len.up How many increments to go up from starting value of
+##' \code{phi0} in \code{r}.
+##' @param len.down How many increments to go up from starting value
+##' of \code{phi0} in \code{r}.
+##' @return dat Output data frame
+##' @author David Sterratt
+##' @export
+titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
+                                         len.up=5, len.down=5) {
+  dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
+
+  by <- byd*pi/180
+
+  ## Going up from phi0
+  message("Going up from phi0")
+  s <- r
+  sqrt.E.min <- sqrt(r$E.l)
+  r.opt <- r
+  phi0s <- r$phi0 + seq(by, by=by, len=len.up)
+  for (phi0 in phi0s)  {
+    message(paste("phi0 =", phi0*180/pi))
+    s$phi0 <- phi0
+    ## Stretch the mapping to help with optimisation
+    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+    sqrt.E <- sqrt(s$E.l)
+    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
+    if (sqrt.E < sqrt.E.min) {
+      r.opt <- s
+    }
+  }
+
+  ## Going down from phi0
+  message("Going down from phi0")
+  s <- r
+  phi0s <- r$phi0 - seq(by, by=by, len=len.down)
+  for (phi0 in phi0s)  {
+    message(paste("phi0 =", phi0*180/pi))
+    s$phi0 <- phi0
+    ## Stretch the mapping to help with optimisation
+    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+    sqrt.E <- sqrt(s$E.l)
+    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+    if (sqrt.E < sqrt.E.min) {
+      r.opt <- s
+    }
+  }
+  dat$phi0d <- dat$phi0*180/pi
+  dat <- dat[order(dat$phi0d),]
+  phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
+
+  ## Find mean difference between grid points
+  ## First map range of original positions onto 
+  phi.adj <- -pi/2 + (r$phi + pi/2)*(phi0d.opt*pi/180+pi/2)/(r$phi0+pi/2)
+  Dtheta.mean <- mean(central.angle(phi.adj, r$lambda, r.opt$phi, r.opt$lambda)) * 180/pi
+  
+  return(list(dat=dat, phi0d.orig=r$phi0*180/pi,
+              phi0d.opt=phi0d.opt,
+              r.opt=r.opt,
+              Dtheta.mean=Dtheta.mean))
+}
+
+##' This function returns information about how edges on the sphere
+##' have been deformed from their flat state.
+##'
+##' @title Return strains edges are under in spherical retina
+##' @param r A \code{\link{reconstructedOutline}} object
+##' @return A list containing two data frames \code{flat} and \code{spherical}. 
+##' Each data frame contains for each edge in the flat or spherical meshes:
+##' \item{\code{L}}{Length of the edge in the flat outline }
+##' \item{\code{l}}{Length of the corresponding edge on the sphere}
+##' \item{\code{strain}}{The strain of each connection}
+##' \item{\code{logstrain}}{The logarithmic strain of each connection}
+##' @author David Sterratt
+getStrains <- function(r) {
+  ## Original lengths in flattened outline is a vector with
+  ## M elements, the number of rows of Cu
+  L <- r$L
+  ## New lengths in reconstructed object is a vector wtih Mt < M
+  ## elements, the number of rows of Cut
+  lt <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
+  ## For each connection in the flattened object, we want the length of
+  ## the corresponding connection in the reconstructed object
+  ## The mapping Ht achieves this
+  l <- lt[r$Ht]
+  stretch <- l/L
+  strain <- stretch - 1
+  logstrain <- log(stretch)
+
+  ## Compute quantities in spherical retina too
+  Lt <- r$Lt
+  stretcht <- lt/Lt
+  straint <- stretcht - 1
+  logstraint <- log(stretcht)
+
+  return(list(flat=
+              data.frame(L=L,  l=l,
+                         strain=strain,  logstrain=logstrain),
+              spherical=
+              data.frame(L=Lt, l=lt,
+                         strain=straint, logstrain=logstraint)))
+}
+
 ##' Transform an image into the reconstructed space. The four corner
 ##' coordinates of each pixel are transformed into spherical
 ##' coordinates and a mask matrix with the same dimensions as
