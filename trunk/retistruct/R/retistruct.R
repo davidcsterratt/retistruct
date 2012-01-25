@@ -7,9 +7,12 @@ retistruct.report <- function(message, title="",...) {
   cat(paste(message, "\n", sep=""))
 }
 
-## Function to check the wether the directory in question is a data
-## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
-## error if the directory appears to be corrupt.
+##' @title Check the whether  directory contains valid data 
+##' @param dir Diectory to check.
+##' @return  \code{TRUE} if \code{dir} contains valid data;
+##' \code{FALSE} otherwise.
+##' @author David Sterratt
+##' @export
 check.datadir <- function(dir=NULL) {
   if (idt.check.datadir(dir))   { return("idt") }
   if (csv.check.datadir(dir))   { return("csv") }
@@ -17,33 +20,18 @@ check.datadir <- function(dir=NULL) {
   return(FALSE)
 }
 
-##' Read one of the Thompson lab's retinal datasets. Each dataset is a
-##' folder containing a SYS file in SYSTAT format and a MAP file in
-##' text format. The SYS file specifies the locations of the data
-##' points and the MAP file specifies the outline. 
-##'
-##' The function returns the outline of the retina. In order to do so,
-##' it has to join up the segments of the MAP file. The tracings are
-##' not always precise; sometimes there are gaps between points that
-##' are actually the same point. The parameter \code{d.close} specifies
-##' how close points must be to count as the same point.
+##' Read a retinal dataset in one of three formats; for information on
+##' formats see see \code{\link{idt.read.dataset}},
+##' \code{\link{csv.read.dataset}} and
+##' \code{\link{ijroi.read.dataset}}. The format is autodetected from
+##' the files in the directory.
 ##' 
-##' @title Read one of the Thompson lab's retinal datasets
+##' @title Read a retinal dataset
 ##' @param dataset Path to directory containing as SYS and MAP file
-##' @param d.close Maximum distance between points for them to count
-##' as the same point. This is expressed as a fraction of the width of
-##' the outline.
-##' @return 
-##' \item{dataset}{The path to the directory given as an argument}
-##' \item{raw}{List containing\describe{
-##'    \item{\code{map}}{The raw MAP data}
-##'    \item{\code{sys}}{The raw SYS data}
-##' }}
-##' \item{P}{The points of the outline}
-##' \item{gf}{Forward pointers along the outline}
-##' \item{gb}{Backward pointers along the outline}
-##' \item{Ds}{List of datapoints}
-##' \item{Ss}{List of landmark lines}
+##' @param ... Parameters passed to the format-specific functions. 
+##' @return An object that of classes \code{\link{RetinalDataset}} and
+##' \code{\link{RetinalDataset}}. There may be extra fields too,
+##' depending on the format.
 ##' @author David Sterratt
 ##' @export
 retistruct.read.dataset <- function(dataset, ...) {
