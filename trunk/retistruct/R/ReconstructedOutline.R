@@ -104,73 +104,23 @@ ReconstructedOutline <- function(o,
   ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
   r$nflip0 <- sum(ft$flipped)
   
-  report("Optimising mapping with FIRE...")
-##  r <- solve.mapping.cart(r, alpha=0, x0=0, #control=list(reltol=0.0001),
-##                        plot.3d=plot.3d,
-##                        dev.flat=dev.flat, dev.polar=dev.polar)
-
-  ## r <- solve.mapping.cart(r, alpha=0, x0=x0,
-  ## plot.3d=plot.3d,
-  ## dev.flat=dev.flat, dev.polar=dev.polar)
-
-  ## SCREEN 3
-  ## r <- solve.mapping.cart(r, alpha=alpha, x0=0.1, nu=0, dtmax=0.001/alpha, tol=0.01,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-
-  ## SCREEN 3
-  ## r <- solve.mapping.cart(r, alpha=0, x0=0, nu=1,
-  ##                         dtmax=500, maxmove=1E2, tol=2e-7,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
+  report("Optimising mapping with no area constratint using BFGS...")
   r <- optimise.mapping(r, alpha=0, x0=0, nu=1,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
+  report("Optimising mapping with area constraint using FIRE...")
   r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
                           dtmax=500, maxmove=1E2, tol=1e-5,
                           plot.3d=plot.3d,
                           dev.flat=dev.flat, dev.polar=dev.polar)
+  report("Optimising mapping with strong area constratint using BFGS...")
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=1,
                         plot.3d=plot.3d,
                         dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with BFGS...")
+  report("Optimising mapping with weak area constratint using BFGS...")
   r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
-
-  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1E3,
-  ##                         plot.3d=plot.3d, tol=5e-5,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=8, x0=x0, dtmax=50, maxmove=1,
-  ##                         plot.3d=plot.3d, tol=1e-5,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-
-  
-  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-
-
-  
-  ## SCREEN 2
-  ## r <- solve.mapping.cart(r, alpha=0, x0=x0, dtmax=50, maxmove=1E3,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=1, x0=x0, dtmax=50, maxmove=1E3,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=2, x0=x0, nu=0.5, dtmax=50, maxmove=0.1,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
-  ## r <- solve.mapping.cart(r, alpha=4, x0=x0, nu=0, dtmax=50, maxmove=0.1,
-  ##                         plot.3d=plot.3d,
-  ##                         dev.flat=dev.flat, dev.polar=dev.polar)
   
   report("Transforming image...")
   r <- transform.image.reconstructedOutline(r)
