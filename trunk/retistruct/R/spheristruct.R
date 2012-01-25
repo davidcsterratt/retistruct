@@ -1326,6 +1326,7 @@ ReconstructedOutline <- function(o,
 ##' of \code{phi0} in \code{r}.
 ##' @return dat Output data frame
 ##' @author David Sterratt
+##' @export
 titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
                                          len.up=5, len.down=5) {
   dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
@@ -1335,6 +1336,8 @@ titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
   ## Going up from phi0
   message("Going up from phi0")
   s <- r
+  sqrt.E.min <- sqrt(r$E.l)
+  r.opt <- r
   phi0s <- r$phi0 + seq(by, by=by, len=len.up)
   for (phi0 in phi0s)  {
     message(paste("phi0 =", phi0*180/pi))
@@ -1343,7 +1346,11 @@ titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
     s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
     s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
                           plot.3d=FALSE)
-    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+    sqrt.E <- sqrt(s$E.l)
+    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
+    if (sqrt.E < sqrt.E.min) {
+      r.opt <- s
+    }
   }
 
   ## Going down from phi0
@@ -1357,12 +1364,23 @@ titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
     s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
     s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
                           plot.3d=FALSE)
+    sqrt.E <- sqrt(s$E.l)
     dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+    if (sqrt.E < sqrt.E.min) {
+      r.opt <- s
+    }
   }
   dat$phi0d <- dat$phi0*180/pi
   dat <- dat[order(dat$phi0d),]
   phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
+
+  ## Find mean difference between grid points
+  ## First map range of original positions onto 
+  phi.adj <- -pi/2 + (r$phi + pi/2)*(phi0d.opt*pi/180+pi/2)/(r$phi0+pi/2)
+  Dtheta.mean <- mean(central.angle(phi.adj, r$lambda, r.opt$phi, r.opt$lambda)) * 180/pi
   
   return(list(dat=dat, phi0d.orig=r$phi0*180/pi,
-              phi0d.opt=phi0d.opt))
+              phi0d.opt=phi0d.opt,
+              r.opt=r.opt,
+              Dtheta.mean=Dtheta.mean))
 }
