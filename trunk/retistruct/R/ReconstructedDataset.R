@@ -253,7 +253,7 @@ getKDE <- function(r, cache=TRUE) {
 ##' \code{datapoint.means} causes datapoint means to be plotted
 ##' (default \code{TRUE}).  The option \code{landmakrs} causes
 ##' landmarks to be plotted (default \code{TRUE}). 
-##' @method plot.spherical reconstructedOutline
+##' @method plot.polar reconstructedDataset
 ##' @author David Sterratt
 ##' @export
 plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
@@ -376,8 +376,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
 ##' @title Spherical plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
 ##' @param ... Other graphics parameters -- not used at present
-##' @method plot.spherical reconstructedOutline
+##' @method plot.spherical reconstructedDataset
 ##' @author David Sterratt
+##' @export
 plot.spherical.reconstructedDataset <- function(r, ...) {
   NextMethod()
 

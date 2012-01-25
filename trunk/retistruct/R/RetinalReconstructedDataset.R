@@ -79,7 +79,7 @@ getDss.mean.retinalReconstructedDataset <- function(r) {
 ##' @title Get transformed spherical coordinates of datapoints
 ##' @param r \code{retinalReonstructedDataset} object.
 ##' @return \code{Dss}
-##' @method getDss retinalReconstructedDataset
+##' @method getSss retinalReconstructedDataset
 ##' @author David Sterratt
 getSss.retinalReconstructedDataset <- function(r) {
   Sss <- NextMethod()
@@ -104,7 +104,7 @@ getSss.retinalReconstructedDataset <- function(r) {
 ##' @title Get transformed spherical coordinates of datapoints
 ##' @param r \code{retinalReonstructedDataset} object.
 ##' @return \code{Dss}
-##' @method getDss retinalReconstructedDataset
+##' @method getTss retinalReconstructedDataset
 ##' @author David Sterratt
 getTss.retinalReconstructedDataset <- function(r) {
   Tss <- NextMethod()

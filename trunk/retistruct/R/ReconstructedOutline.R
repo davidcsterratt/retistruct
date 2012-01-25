@@ -338,6 +338,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method plot.spherical reconstructedOutline
 ##' @author David Sterratt
+##' @export
 plot.spherical.reconstructedOutline <- function(r, ...) {
   NextMethod()
   

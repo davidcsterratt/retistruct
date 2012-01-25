@@ -19,7 +19,7 @@ addClass <- function(newclass, obj) {
 ##' Plot flat representation of object
 ##'
 ##' @title Flat plot of object
-##' @param o \code{\link{Outline}}, \code{\link{Dataset}} \&c object
+##' @param x \code{\link{Outline}}, \code{\link{Dataset}} \&c object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters

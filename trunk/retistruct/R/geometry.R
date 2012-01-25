@@ -413,7 +413,7 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 ##' @title Karcher mean on the sphere
 ##' @param x Matrix of points on sphere as N-by-2 matrix with labelled
 ##' columns \\code{phi} (lattitude) and \code{lambda} (longitude)
-##' @param a logical value indicating whether \code{NA} values should
+##' @param na.rm logical value indicating whether \code{NA} values should
 ##' be stripped before the computation proceeds.
 ##' @param var logical value indicating whether variance should be
 ##' returned too.
