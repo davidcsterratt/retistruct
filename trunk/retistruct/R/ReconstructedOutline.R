@@ -146,7 +146,7 @@ ReconstructedOutline <- function(o,
 ##' @return dat Output data frame
 ##' @author David Sterratt
 ##' @export
-titrate.ReconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
+titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
                                          len.up=5, len.down=5) {
   dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
 

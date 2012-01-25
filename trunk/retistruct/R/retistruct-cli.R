@@ -1,10 +1,25 @@
+##' This calls \code{\link{retistruct.cli.process}} with a time limit
+##' specified by \code{cpu.time.limit}.
+##' 
+##' @title Process a dataset with a time limit
+##' @param dataset Path to dataset to process 
+##' @param cpu.time.limit Time limit in seconds
+##' @param outputdir Directory in which to save any figures
+##' @param device String representing device to print figures to
+##' @param ... Other arguments to pass to \code{\link{retistruct.cli.process}}
+##' @return A list comprising
+##' \item{\code{status}}{0 for success, 1 for reaching
+##' \code{cpu.time.limit} and 2 for an unknown error}
+##' \item{\code{time}}{The time take in seconds}
+##' \item{\code{mess}}{Any error message}
+##' @author David Sterratt
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
-                           device="pdf") {
+                           device="pdf", ...) {
   ## Return code
   status <- 0
   setTimeLimit(cpu=cpu.time.limit)
   syst <- system.time(out <- tryCatch(retistruct.cli.process(dataset,
-                                                             outputdir=outputdir, device=device),
+                                                             outputdir=outputdir, device=device, ...),
                                       error=function(e) {return(e)}))
   mess <- "Success"
   if (inherits(out, "error")) {
@@ -20,12 +35,27 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
   return(list(status=status, time=syst["user.self"], mess=mess))
 }
 
-retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf") {
+##' This function processes a \code{dataset}, saving the
+##' reconstruction data and matlab export data to the \code{dataset}
+##' directory and printing figures to \code{outputdir}.
+##'
+##' @title Process a dataset, saving results to disk
+##' @param dataset Path to dataset to process 
+##' @param outputdir Directory in which to save any figures
+##' @param device String representing device to print figures to
+##' @param titrate If \code{TRUE} add output of
+##' \code{\link{titrate.reconstructedOutline}}  to object saved.
+##' @author David Sterratt
+##' @export
+retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
+                                   titrate=FALSE) {
   ## Processing
   r <- retistruct.read.dataset(dataset)
   r <- retistruct.read.markup(r)
   r <- retistruct.reconstruct(r)
-
+  if (titrate) {
+    r$titration <- titrate.reconstructedOutline(r)
+  }
   ## Output
   retistruct.save.recdata(r)
   

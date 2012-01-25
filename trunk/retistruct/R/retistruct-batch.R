@@ -6,6 +6,7 @@
 ##' @param verbose If \code{TRUE} report on progress
 ##' @return A vector of directories containing datasets
 ##' @author David Sterratt
+##' @export
 list.datasets <- function(path='.', verbose=FALSE) {
   ## We have to define a function to do directory listings as
   ## (a) list.files doesn't work recursively on all platforms and (b)
@@ -64,8 +65,9 @@ list.datasets <- function(path='.', verbose=FALSE) {
 ##' @param mc.cores The number of cores to use. Defaults to the total
 ##' number available.
 ##' @author David Sterratt
+##' @export
 retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL, 
-                             device="pdf",
+                             device="pdf", titrate=FALSE,
                              cpu.time.limit=3600,
                              mc.cores=getOption("cores")) {
   ## Get datasets
@@ -83,7 +85,8 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
     flog <- file(logfile, open="wt")
     sink(flog)
     sink(flog, type="message")
-    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device))
+    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device,
+                          titrate=titrate))
   }
 
   ## Run the reconstructions
@@ -116,6 +119,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
 ##' recurse.
 ##' @return Data frame containing summary data
 ##' @author David Sterratt
+##' @export
 retistruct.batch.summary <- function(tldir=".") {
   datasets <- list.datasets(tldir)
   logdat <- data.frame()
@@ -138,7 +142,10 @@ retistruct.batch.summary <- function(tldir=".") {
                                          mean.strain=n(r$mean.strain),
                                          mean.logstrain=n(r$mean.logstrain),
                                          OD.phi=n(r$Dss$OD[1,"phi"]),
-                                         OD.lambda=n(r$Dss$OD[1,"lambda"])))
+                                         OD.lambda=n(r$Dss$OD[1,"lambda"]),
+                                         mean.dtheta=n(r$titration$Dtheta.mean),
+                                         phi0d=n(r$phi0*180/pi),
+                                         phi0d.opt=n(r$titration$phi0d.opt)))
     }
   }
   return(logdat)
@@ -154,6 +161,7 @@ retistruct.batch.summary <- function(tldir=".") {
 ##' @param outputdir Directory in which to dump a log file and images
 ##' @param ... Parameters passed to plotting functions
 ##' @author David Sterratt
+##' @export
 retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
   datasets <- list.datasets(tldir)
   for (dataset in datasets) {
@@ -170,6 +178,7 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
 ##' @param tldir The top level of the directory tree through which to
 ##' recurse
 ##' @author David Sterratt
+##' @export
 retistruct.batch.export.matlab <- function(tldir=".") {
   datasets <- list.datasets(tldir)
   for (dataset in datasets) {
@@ -185,6 +194,7 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##' @param file The path to the retistruct-batch.csv
 ##' @return list of various statistics
 ##' @author David Sterratt
+##' @export
 retistruct.batch.analyse.summary <- function(path) {
   dat <- read.csv(file.path(path, "retistruct-batch.csv"))
   par(mfcol=c(1, 3))
@@ -282,6 +292,7 @@ retistruct.batch.analyse.summary <- function(path) {
 ##' @param path Directory containing recontstruction directories
 ##' @return Data frame containg various statistics 
 ##' @author David Sterratt
+##' @export
 retistruct.batch.analyse.summaries <- function(path) {
   files <- list.files(path, recursive=FALSE, full.name=TRUE)
   fi <- file.info(files)
@@ -317,6 +328,7 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' @return A pseudo retina, in which the optic disks are treated as
 ##' datapoints 
 ##' @author David Sterratt
+##' @export
 retistruct.batch.plot.ods <- function(summ) {
   ## Make a dummy retina
   o <- list()
