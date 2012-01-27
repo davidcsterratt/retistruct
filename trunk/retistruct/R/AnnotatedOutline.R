@@ -28,6 +28,7 @@ AnnotatedOutline <- function(o){
 ##' @param o Outline object
 ##' @return Vector of indicies labelled with V0, VF and VB
 ##' @author David Sterratt
+##' @export
 labelTearPoints <- function(o, m) {
   with(o, {
     ## Each row of this matrix is a permutation of the markers
@@ -70,6 +71,7 @@ labelTearPoints <- function(o, m) {
 ##' @param pid ID of point
 ##' @return ID of tear
 ##' @author David Sterratt
+##' @export
 whichTear <- function(o, pid) {
   M <- with(o, cbind(V0, VF, VB))       # Tear matrix
   tid <- which(apply(pid==M, 1, any))[1]
@@ -86,6 +88,7 @@ whichTear <- function(o, pid) {
 ##' @return Vector of three point IDs, labelled with \code{V0},
 ##' \code{VF} and \code{VB}
 ##' @author David Sterratt
+##' @export
 getTear <- function(o, tid) {
   return(with(o, c(V0=V0[tid], VB=VB[tid], VF=VF[tid])))
 }
@@ -194,6 +197,7 @@ computeTearRelationships <- function(o, V0, VB, VF) {
 ##' @param pids Vector of three point IDs to be added
 ##' @return \code{AnnotatedOutline} object
 ##' @author David Sterratt
+##' @export
 addTear <- function(a, pids) {
   M <- labelTearPoints(a, pids)
   V0 <- c(a$V0, M["V0"])
@@ -215,6 +219,7 @@ addTear <- function(a, pids) {
 ##' @param tid Tear ID, which can be returned from \code{whichTear()}
 ##' @return \code{AnnotatedOutline} object
 ##' @author David Sterratt
+##' @export
 removeTear <- function(o, tid) {
   if (!is.na(tid)) {
     o$V0 <- o$V0[-tid]
@@ -247,6 +252,13 @@ checkTears <- function(o) {
   return(out)
 }
 
+##' @title Set fixed point
+##' @param o \code{\link{AnnotatedOutline}} object
+##' @param i0 Index of fixed point
+##' @param name Name of fixed point
+##' @return New \code{\link{AnnotatedOutline}} object
+##' @author David Sterratt
+##' @export
 setFixedPoint <- function(o, i0, name) {
   o$i0 <- i0
   names(o$i0) <- name
@@ -257,9 +269,9 @@ setFixedPoint <- function(o, i0, name) {
 ##' Ensure that the fixed point \code{i0} is in the rim, not a tear.
 ##'
 ##' @title Ensure that the fixed point is in the rim, not a tear
-##' @param o \code{annotatedOutline} object
-##' @return o \code{annotatedOutline} object in which \code{i0} may
-##' have been changed. 
+##' @param o \code{\link{AnnotatedOutline}} object
+##' @return o \code{\link{AnnotatedOutline}} object in which \code{i0}
+##' may have been changed. 
 ##' @author David Sterratt
 ensureFixedPointInRim <- function(o) {
   suppressMessages(t <- computeTearRelationships(o, o$V0, o$VB, o$VF))
