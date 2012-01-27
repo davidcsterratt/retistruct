@@ -4,20 +4,13 @@ csv.check.datadir <- function(dir=NULL) {
 
 ##' Read a retinal dataset in CSV format. Each dataset is a folder
 ##' containing a file called outline.csv that specifies the outline in
-##' X-Y coordinates.
+##' X-Y coordinates. It may also contain a file \code{datapoints.csv},
+##' containing the locations of data points; see
+##' \code{\link{read.datapoints}} for the format of this file.
 ##' 
 ##' @title Read a retinal dataset in CSV format
 ##' @param dataset Path to directory containing \code{outline.csv}
 ##' @return A \code{RetinalDataset} object
-##' \item{dataset}{The path to the directory given as an argument}
-##' \item{raw}{List containing\describe{
-##'    \item{\code{outline}}{The raw outline.csv data}
-##' }}
-##' \item{P}{The points of the outline}
-##' \item{gf}{Forward pointers along the outline}
-##' \item{gb}{Backward pointers along the outline}
-##' \item{Ds}{List of datapoints}
-##' \item{Ss}{List of landmark lines}
 ##' @author David Sterratt
 csv.read.dataset <- function(dataset) {
   ## Read the raw data
@@ -35,6 +28,9 @@ csv.read.dataset <- function(dataset) {
   ## group has to be a valid colour.
   Ds <- list()
   cols <- list()
+  dat <- read.datapoints(dataset)
+  Ds <- c(Ds, dat$Ds)
+  cols <- c(cols, dat$cols)
 
   ## The outline (P) is the longest connected segment and the outline
   ## is removed from the list of segments

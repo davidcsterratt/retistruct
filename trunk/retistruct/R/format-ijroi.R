@@ -3,21 +3,14 @@ ijroi.check.datadir <- function(dir=NULL) {
 }
 
 ##' Read a retinal dataset in IJROI format. Each dataset is a folder
-##' containing a file called outline.roi that specifies the outline in
-##' X-Y coordinates.
+##' containing a file called \code{outline.roi} that specifies the
+##' outline in X-Y coordinates. It may also contain a file
+##' \code{datapoints.csv}, containing the locations of data points;
+##' see \code{\link{read.datapoints}} for the format of this file.
 ##' 
 ##' @title Read a retinal dataset in IJROI format
 ##' @param dataset Path to directory containing \code{outline.roi}
-##' @return A \code{RetinalDataset} object
-##' \item{dataset}{The path to the directory given as an argument}
-##' \item{raw}{List containing\describe{
-##'    \item{\code{outline}}{The raw outline.roi data}
-##' }}
-##' \item{P}{The points of the outline}
-##' \item{gf}{Forward pointers along the outline}
-##' \item{gb}{Backward pointers along the outline}
-##' \item{Ds}{List of datapoints}
-##' \item{Ss}{List of landmark lines}
+##' @return A \code{\link{RetinalDataset}} object
 ##' @author David Sterratt
 ijroi.read.dataset <- function(dataset) {
   ## Read the raw data
@@ -29,6 +22,14 @@ ijroi.read.dataset <- function(dataset) {
   
   ## If there is an image, read it
   im <- read.image(dataset)
+
+  ## ImageJ ROI format plots has the coordinate (0, 0) in the top
+  ## left.  We have the coordinate (0, 0) in the bottom left. We need
+  ## to transform P so that the outline appears in the correct
+  ## orientation.
+  P <- out
+  offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
+  P[,2] <- offset - P[,2]
   
   ## Extract datapoints
   ##
@@ -38,14 +39,10 @@ ijroi.read.dataset <- function(dataset) {
   Ds <- list()
   cols <- list(OD="blue",
                default="orange")
-
-  ## ImageJ ROI format plots has the coordinate (0, 0) in the top
-  ## left.  We have the coordinate (0, 0) in the bottom left. We need
-  ## to transform P so that the outline appears in the correct
-  ## orientation.
-  P <- out
-  offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
-  P[,2] <- offset - P[,2]
+  dat <- read.datapoints(dataset)
+  Ds <- c(Ds, dat$Ds)
+  cols <- c(cols, dat$cols)
+  Ds <- lapply(Ds, function(P) {cbind(P[,1], offset - P[,2])})
 
   Ss <- list()
 
