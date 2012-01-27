@@ -303,6 +303,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   ## KDE
   if (plot.datapoint.contours) {
     k <- getKDE(r)
+    Dss <- getDss(r)
     if (length(k)) {
       for (i in 1:length(k)) {
         if (pa) {
