@@ -43,7 +43,7 @@ sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cr
 
 To start the program, start R. At the R prompt type:
 
-> library(retistruct)
+> library(retistructgui)
 > retistruct()
 
 A window should appear.
