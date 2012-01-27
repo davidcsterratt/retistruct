@@ -121,12 +121,25 @@ getTss.retinalReconstructedDataset <- function(r) {
   return(Tss)
 }
 
+##' This lablels the poles N, D, T and V
+##' 
+##' @title Polar plot of reconstructed dataset
+##' @param r \code{RetinalReconstructedDataset} object
+##' @param show.grid Whether or not to show the grid lines of
+##' lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param ... 
+##' @method plot.polar retinalReconstructedDataset
+##' @author David Sterratt
+##' @export
 plot.polar.retinalReconstructedDataset <- function(r, show.grid=TRUE,
                                                    grid.col="gray",
                                                    grid.bg="transparent", 
                                                    grid.int.minor=15,
-                                                   grid.int.major=45,
-                                                   flip.horiz=FALSE, ...) {
+                                                   grid.int.major=45,  ...) {
   ## This will call plot.polar.reconstructedDataset()
   NextMethod(flip.horiz=(r$side=="Left"),
              labels=c("N", "D", "T", "V"))
