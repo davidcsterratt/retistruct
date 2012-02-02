@@ -738,10 +738,13 @@ Ecart <- function(P, Cu, L, T, A, R,
 ##' @param P N-by-3 matrix of point coordinates
 ##' @param C The connectivity matrix
 ##' @param L Length of each edge in the flattened outline
+##' @param B 
 ##' @param T Triangulation in the flattened outline
 ##' @param A Area of each triangle in the flattened outline
+##' @param R Radius of sphere
 ##' @param alpha Area penalty scaling coefficient
 ##' @param x0 Area penalty cutoff coefficient
+##' @param nu 
 ##' @param verbose How much information to report
 ##' @return A vector representing the derivative of the energy of this
 ##' particular configuration with respect to the parameter vector
@@ -761,7 +764,7 @@ Fcart <- function(P, C, L, B, T, A, R,
   ## Now compute the derivatives
   F.E <- B %*% (fac * dP)
 
-  dEdpi <- 0
+  dEdpi <- matrix(0, nrow(P), 3)
   ## Compute the derivative of the area component if alpha is nonzero
   if (alpha) {
     ## Here follows computation of the derivative - it's a bit
@@ -782,13 +785,11 @@ Fcart <- function(P, C, L, B, T, A, R,
     dEdPt1 <- -(A/mean(A))^nu*fp(a/A, x0=x0)/A*dAdPt1
     ## dEdPt1 <- -fp(a/A, x0=x0)/A*dAdPt1
 
-    ## Now map back onto coordinates
-    ## Create an N-by-M matrix
-    TtoN <- matrix(0, nrow(P), nrow(T))
+    ## Map contribution of first vertex of each triangle back onto the
+    ## points
     for(m in 1:nrow(T)) {
-      TtoN[T[m,1],m] <- 1
+      dEdpi[T[m,1],] <- dEdpi[T[m,1],] - dEdPt1[m,]
     }
-    dEdpi <- -TtoN %*% dEdPt1
 
   }
   return(F.E - alpha*dEdpi)
