@@ -1,5 +1,5 @@
 ##' This stitches together the incisions and tears by inserting new
-##' points in tehe ars and creating correspondences between new
+##' points in the tears and creating correspondences between new
 ##' points.
 ##'
 ##' @title Stitch together incisions and tears in an AnnotatedOutline
