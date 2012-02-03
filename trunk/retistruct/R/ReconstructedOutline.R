@@ -147,7 +147,7 @@ ReconstructedOutline <- function(o,
 ##' @author David Sterratt
 ##' @export
 titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
-                                         len.up=5, len.down=5) {
+                                         len.up=10, len.down=10) {
   dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
 
   by <- byd*pi/180
