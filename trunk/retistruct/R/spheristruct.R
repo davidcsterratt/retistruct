@@ -704,12 +704,9 @@ Ecart <- function(P, Cu, L, T, A, R,
   ## using the upper triagular part of the
   ## connectivity matrix Cu to extract coordinates of end-points of
   ## each edge
-  P1    <- P[Cu[,1],]
-  P2    <- P[Cu[,2],]
-
   ## Compute lengths of edges
   ## l <- vecnorm(P2 - P1)
-  l <- 2*R*asin(vecnorm(P2 - P1)/2/R)
+  l <- 2*R*asin(vecnorm(P[Cu[,2],] - P[Cu[,1],])/2/R)
   if (verbose==2) { print(l) }
 
   ## Compute spring energy
