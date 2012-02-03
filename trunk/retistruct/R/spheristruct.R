@@ -188,6 +188,7 @@ merge.points.edges <- function(t) {
   Ct <- rbind(Cut, Cut[,2:1])
 
   ## Matrix to map line segments onto the points they link
+  ## Bt <- Matrix(0, nrow(Pt), nrow(Ct), sparse=TRUE)
   Bt <- matrix(0, nrow(Pt), nrow(Ct))
   for (i in 1:nrow(Ct)) {
     Bt[Ct[i,1],i] <- 1
@@ -749,6 +750,7 @@ Ecart <- function(P, Cu, L, T, A, R,
 ##' @return A vector representing the derivative of the energy of this
 ##' particular configuration with respect to the parameter vector
 ##' @author David Sterratt
+##' @useDynLib retistruct
 Fcart <- function(P, C, L, B, T, A, R,
                   alpha=1, x0, nu=1, verbose=FALSE) {
   ## Compute derivative of elastic energy
@@ -762,11 +764,23 @@ Fcart <- function(P, C, L, B, T, A, R,
   fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/c(L, L) #sqrt(1-(d/2/R)^2)/d
 
   ## Now compute the derivatives
-  F.E <- B %*% (fac * dP)
+  ## This method is slower than using dense matrix multiplication
+  ## dF <- fac * dP
 
-  dEdpi <- matrix(0, nrow(P), 3)
+  ## F.E <- matrix(0, nrow(P), 3)
+  ## for (i in 1:nrow(C)) {
+  ##   F.E[C[i,1],] <- F.E[C[i,1],] + dF[i,]
+  ## }
+
+  ## Now compute the derivatives
+  ## F.E <- as.matrix(B %*% (fac * dP))
+
+  F.E <- matrix(0, nrow(P), 3)
+  F.E <- .Call("sum_force_components", fac*dP, C, F.E, PACKAGE="retistruct")
+
   ## Compute the derivative of the area component if alpha is nonzero
   if (alpha) {
+    dEdpi <- matrix(0, nrow(P), 3)
     ## Here follows computation of the derivative - it's a bit
     ## complicated!
     
@@ -787,12 +801,14 @@ Fcart <- function(P, C, L, B, T, A, R,
 
     ## Map contribution of first vertex of each triangle back onto the
     ## points
-    for(m in 1:nrow(T)) {
-      dEdpi[T[m,1],] <- dEdpi[T[m,1],] - dEdPt1[m,]
-    }
-
+    ## for(m in 1:nrow(T)) {
+    ##   dEdpi[T[m,1],] <- dEdpi[T[m,1],] - dEdPt1[m,]
+    ## }
+    dEdpi <- .Call("sum_force_components", -dEdPt1, T, dEdpi , PACKAGE="retistruct")
+    
+    F.E <- F.E - alpha*dEdpi
   }
-  return(F.E - alpha*dEdpi)
+  return(F.E)
 }
 
 ##' Restore points to spherical manifold after an update of the

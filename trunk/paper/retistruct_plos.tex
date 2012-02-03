@@ -375,6 +375,8 @@ in determining the exact position of the injection site, improving the
 accuracy of establishing whether projection-patterns are normal or
 aberrant.
 
+\todo{Kernel density estimation}
+
 \subsection*{Application: mosaic properties}
 
 \todo{I still need to develop the code to do this. In order to do this
@@ -771,23 +773,38 @@ reconstruction process then proceeds as follows:
   intersection with the sphere. This allows plotting of points in a
   polar representation. The procedure can be used in reverse to infer
   the locations of lines of latitude and longitude in the flat retina.
-\item The Karcher mean of each set of points is determined
-  (Figure~\ref{fold-sphere:fig:method}F). The Karcher mean of a set of
-  points on the sphere \cite{Karc77riem,HeoSmal06form} is defined as
-  the point $(\overline{\phi}, \overline{\lambda})$ that has a minimal
-  sum of squared distances to the set of points $(\phi_i, \lambda_i)$:
-  %% See also BergWerm06
-  \begin{equation}
-    \label{retistruct_plos:eq:3}
-    (\overline{\phi}, \overline{\lambda}) = \mbox{arg min}_{(\phi,
-      \lambda)} \sum_{i=1}^N l^2(\phi, \lambda, \phi_i, \lambda_i)
-  \end{equation}
-  where the function $l$ is defined in
-  Equation~(\ref{retistruct_plos:eq:2}).
 \end{enumerate}
 
 The procedure of reconstructing a retina takes a few minutes on a
 modern desktop computer.
+
+\subsection*{Analysis of reconstructed data}
+\label{retistruct_plos:sec:analys-reconstr-data}
+
+\paragraph{Mean location of data points}
+\label{retistruct_plos:sec:mean-location-data}
+
+The Karcher mean of each set of points is determined
+(Figure~\ref{fold-sphere:fig:method}F). The Karcher mean of a set of
+points on the sphere \cite{Karc77riem,HeoSmal06form} is defined as the
+point $(\overline{\phi}, \overline{\lambda})$ that has a minimal sum
+of squared distances to the set of points $(\phi_i, \lambda_i)$:
+%% See also BergWerm06
+\begin{equation}
+  \label{retistruct_plos:eq:3}
+  (\overline{\phi}, \overline{\lambda}) = \mbox{arg min}_{(\phi,
+    \lambda)} \sum_{i=1}^N l^2(\phi, \lambda, \phi_i, \lambda_i)
+\end{equation}
+where the function $l$ is defined in
+Equation~(\ref{retistruct_plos:eq:2}).
+
+\paragraph{Kernel density estimates}
+\label{retistruct_plos:sec:kern-dens-estim}
+
+\paragraph{Mosaic construction}
+\label{retistruct_plos:sec:mosaic-construction}
+
+
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
