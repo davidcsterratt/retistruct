@@ -114,13 +114,15 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
 ##' directory contains valid derived data and extracting summary data
 ##' if it does.
 ##'
-##' @title Plot figures for a batch of reconstructions
+##' @title Extract summary data for a batch of reconstructions
 ##' @param tldir The top level directory of the tree through which to
 ##' recurse.
+##' @param cache If \code{TRUE} use the cached statistics rather than
+##' generate on the fly (which is slower).
 ##' @return Data frame containing summary data
 ##' @author David Sterratt
 ##' @export
-retistruct.batch.summary <- function(tldir=".") {
+retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
   datasets <- list.datasets(tldir)
   logdat <- data.frame()
 
@@ -148,10 +150,12 @@ retistruct.batch.summary <- function(tldir=".") {
                         phi0d=n(r$phi0*180/pi),
                         phi0d.opt=n(r$titration$phi0d.opt))
       message(paste("Getting KDE"))
-      KDE <- getKDE(r, FALSE)
-      KDEdat <- lapply(KDE, function(x) {x$h})
-      names(KDEdat) <- paste("h.", names(KDEdat), sep="")
-      dat <- cbind(dat, KDEdat)
+      KDE <- getKDE(r, cache)
+      if (length(KDE) > 0) {
+        KDEdat <- lapply(KDE, function(x) {x$h})
+        names(KDEdat) <- paste("h.", names(KDEdat), sep="")
+        dat <- cbind(dat, KDEdat)
+      }
       logdat <- merge(logdat, dat, all=TRUE)
     }
   }

@@ -99,6 +99,7 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
+## FIXME - this function should be merged into getKDE
 getDss.bandwidth <- function(r) {
   Dss.bandwidth <- list()
   if (length(r$Dss)) {
@@ -123,6 +124,7 @@ getDss.bandwidth <- function(r) {
 ##' @return List containing for each set of datapoints a list of
 ##' contours
 ##' @author David Sterratt
+##' @export
 getKDE <- function(r, cache=TRUE) {
   if (cache & !is.null(r$KDE)) {
     return(r$KDE)
@@ -208,7 +210,8 @@ getKDE <- function(r, cache=TRUE) {
         }
 
         ## Store full kde matrices
-        KDE[[i]] <- list(flevels=flevels,
+        KDE[[i]] <- list(h=h,
+                         flevels=flevels,
                          labels=vols,
                          g=  list(xs=g$xs,   ys=g$ys,   f=f),
                          gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
