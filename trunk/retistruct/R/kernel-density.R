@@ -41,19 +41,23 @@ logP <- function(mu, sigma) {
   return(sum(sapply(1:nrow(mu), logKi)))
 }
 
-## FIXME: The interval in
-## this function is hard-coded; should it be adapted to the dimensions
-## at hand?
-## Find the value of sigma that optimises logP
+## FIXME: The interval in this function is hard-coded; should it be
+## adapted to the dimensions at hand?
+## Find the value of sigma that
+## optimises logP
 compute.bandwidth <- function(mu, K) {
-  opt <- optimise(function(sigma) {logP(mu, sigma)}, interval=c(0.1, 5),
+  opt <- optimise(function(sigma) {logP(mu, sigma)}, interval=c(0.01, 5),
                   maximum=TRUE)
   return(opt$maximum)
 }
 
-## gcb <- polar.to.cart(gp)
-## image(xs, ys, k)
-## points(r)
-## cs <- contourLines(xs, ys, k, levels=klevels)
+## compute.bandwidth.new <- function(mu) {
+##   ## Compute matrix of distances once
+##   d <- matrix(0, nrow(mu), nrow(mu))
+##   for(i in 1:nrow(d)) {
+    
+##   }
+## }
+
 
 
