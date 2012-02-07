@@ -131,21 +131,28 @@ retistruct.batch.summary <- function(tldir=".") {
 
   ## Go through datasets
   for (dataset in datasets) {
+    message(paste("Reading", dataset))
     r <- retistruct.read.recdata(list(dataset=dataset))
     if (!is.null(r)) {
-      logdat <- rbind(logdat, data.frame(dataset=dataset,
-                                         E=n(r$opt$value),
-                                         El=n(r$E.l),
-                                         nflip=n(r$nflip),
-                                         EOD=n(r$EOD),
-                                         sqrt.E=n(sqrt(r$E.l)),
-                                         mean.strain=n(r$mean.strain),
-                                         mean.logstrain=n(r$mean.logstrain),
-                                         OD.phi=n(r$Dss$OD[1,"phi"]),
-                                         OD.lambda=n(r$Dss$OD[1,"lambda"]),
-                                         mean.dtheta=n(r$titration$Dtheta.mean),
-                                         phi0d=n(r$phi0*180/pi),
-                                         phi0d.opt=n(r$titration$phi0d.opt)))
+      dat <- data.frame(dataset=dataset,
+                        E=n(r$opt$value),
+                        El=n(r$E.l),
+                        nflip=n(r$nflip),
+                        EOD=n(r$EOD),
+                        sqrt.E=n(sqrt(r$E.l)),
+                        mean.strain=n(r$mean.strain),
+                        mean.logstrain=n(r$mean.logstrain),
+                        OD.phi=n(r$Dss$OD[1,"phi"]),
+                        OD.lambda=n(r$Dss$OD[1,"lambda"]),
+                        mean.dtheta=n(r$titration$Dtheta.mean),
+                        phi0d=n(r$phi0*180/pi),
+                        phi0d.opt=n(r$titration$phi0d.opt))
+      message(paste("Getting KDE"))
+      KDE <- getKDE(r, FALSE)
+      KDEdat <- lapply(KDE, function(x) {x$h})
+      names(KDEdat) <- paste("h.", names(KDEdat), sep="")
+      dat <- cbind(dat, KDEdat)
+      logdat <- merge(logdat, dat, all=TRUE)
     }
   }
   return(logdat)
@@ -182,7 +189,6 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
 retistruct.batch.export.matlab <- function(tldir=".") {
   datasets <- list.datasets(tldir)
   for (dataset in datasets) {
-    print(dataset)
     r <- retistruct.read.recdata(list(dataset=dataset))
     retistruct.export.matlab(r)
   }
