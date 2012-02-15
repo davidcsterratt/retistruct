@@ -275,7 +275,7 @@ retistruct.batch.analyse.summary <- function(path) {
 
   ## Plot of various things
   par(mar=c(2.4, 2.3, 0.7, 0.2))
-  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 3))
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
        xlab=expression(sqrt(italic(E)[L])), main="")
@@ -300,7 +300,7 @@ retistruct.batch.analyse.summary <- function(path) {
                      ylab=expression(sqrt(italic(E)[L]))))
   mtext("B", adj=-0.15, font=2, line=-0.7)
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
-  mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.8)
+  mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
 
   par(mar=c(1,1,0.7,1))
   retistruct.batch.plot.ods(sdat)
