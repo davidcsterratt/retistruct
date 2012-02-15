@@ -201,15 +201,12 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##' Extract statistics from the retistruct-batch.csv summary file
 ##'
 ##' @title Extract statistics from the retistruct-batch.csv summary file
-##' @param file The path to the retistruct-batch.csv
+##' @param path The path to the retistruct-batch.csv
 ##' @return list of various statistics
 ##' @author David Sterratt
 ##' @export
 retistruct.batch.analyse.summary <- function(path) {
   dat <- read.csv(file.path(path, "retistruct-batch.csv"))
-  par(mfcol=c(1, 3))
-  par(mar=c(2.4, 2.3, 0.7, 0.2))
-  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
   
   ## Detailed output codes
   etab <- sort(table(dat[,"mess"]), decreasing=TRUE)
@@ -227,6 +224,10 @@ retistruct.batch.analyse.summary <- function(path) {
   ## Get number of failures due to sqrt.E being too large
   N.fail <- nrow(subset(sdat, sqrt.E >= sqrt.E.fail))
   sdat <- subset(sdat, sqrt.E < sqrt.E.fail)
+
+  ## Get number of failures due to phi0d not being set
+  N.nophi <- nrow(subset(sdat, phi0d == 0))
+  sdat <- subset(sdat, phi0d != 0)
   
   message("\nSTATISTICS")
   
@@ -248,17 +249,41 @@ retistruct.batch.analyse.summary <- function(path) {
   message("%with.flips")
   with.flips <- mean(sdat[,"nflip"] > 0) * 100
   
-  hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
-       xlab=expression(sqrt(italic(E)[L])), main="")
-  mtext("A", adj=-0.15, font=2, line=-0.7)
-  
   message("\nOUTLIERS")
   outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
   ## print(outliers)
 
+  ## Plot of optimal rim lattitude versus the sub
+  par(mar=c(2.4, 2.8, 0.7, 0.2))
+  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 1))
+  par(cex=0.66)
+  
+  ## Ignore retinae whose rim angle is 0 - this is the default and
+  ## means that it probably hasn't been set properly
+  with(sdat, plot(phi0d.opt ~ phi0d, col="white",
+                       xlab=expression(italic(phi)[0]),
+                       ylab=expression(hat(italic(phi))[0])))
+  with(sdat, boxplot(phi0d.opt ~ round(phi0d), at=unique(sort(round(phi0d))),
+                     xaxt="n", add=TRUE))
+  abline(0,1)
+  abline(10, 1, col="grey")
+  abline(-10, 1, col="grey")
+  mtext("B", adj=-0.3, font=2, line=-0.7)
+  dev.copy2pdf(file=file.path(path, "retistruct-phi0.pdf"), width=6.83/4, height=6.83/4)
+
+  ## Plot of various things
+  par(mar=c(2.4, 2.3, 0.7, 0.2))
+  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 3))
+  hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
+       xlab=expression(sqrt(italic(E)[L])), main="")
+  mtext("A", adj=-0.15, font=2, line=-0.7)
+
   ## Plot of age versus goodness
   ## Find datasets containing ("Pxx")
+
   fage <- grepl("^.*(P\\d+).*$",  sdat$dataset)
   sdat$age <- sub("^.*P(\\d+).*$", "\\1", sdat$dataset)
   sdat$age <- sub(".*adult.*", "adult", sdat$age)
@@ -283,9 +308,11 @@ retistruct.batch.analyse.summary <- function(path) {
   
   ## with(sdat, table(sqrt.E ~ age))
   dev.copy2pdf(file=file.path(path, "retistruct-goodness.pdf"), width=6.83, height=6.83/3)
+  
   return(invisible(list(N=nrow(sdat),
                         N.outtime=N.outtime,
                         N.fail=N.fail,
+                        N.nophi=N.nophi,
                         sqrt.E=sqrt.E, mean.strain=mean.strain,
                         mean.logstrain=mean.logstrain,
                         time=time, nflip=nflip,

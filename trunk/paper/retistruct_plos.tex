@@ -218,8 +218,10 @@ labelled points (red, green and yellow circles) and an example of a
 landmark (blue line), in this case the optic disk.  The first step is
 for an expert to mark the locations of incisions and tears in the
 outline and to mark the location of one of the poles
-(Figure~\ref{fold-sphere:fig:method}B). The outline is then
-triangulated and the incisions and tears are stitched together
+(Figure~\ref{fold-sphere:fig:method}B). At this stage the expected
+lattitude of the rim is also supplied (see next section and
+Table~\ref{tab:eygrowth}). The outline is then triangulated and the
+incisions and tears are stitched together
 (Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
 onto a spherical surface, with the points on the rim all lying at the
 same latitude (Figure~\ref{fold-sphere:fig:method}Di). How the
@@ -274,12 +276,12 @@ the mean fractional deformation.
 \subsection*{Determination of the latitude of the rim}
 \label{retistruct_plos:sec:determ-latt-rim}
 
-To determine the latitude of the rim, we measured mouse eyes at
-varying stages of development. Specifically, we measured the distance
-$d_\mathrm{e}$ from the back of the eye to the front of the cornea and
-the distance $d_\mathrm{r}$ from the back of the eye to the edge of
-the retina (Figure~\ref{retistruct_plos:fig:eyegrowth}). We then
-computed the latitude $\phi_0$ of the rim using the formula:
+To determine the latitude of the rim of mouse eyes at varying stages
+of development we measured the distance $d_\mathrm{e}$ from the back
+of the eye to the front of the cornea and the distance $d_\mathrm{r}$
+from the back of the eye to the edge of the retina
+(Figure~\ref{retistruct_plos:fig:eyegrowth}A). We then computed the
+latitude $\phi_0$ of the rim using the formula:
 \begin{equation}
   \label{retistruct_plos:eq:4}
   \phi_0 = \arcsin (2d_\mathrm{r}/d_\mathrm{e}-1)
@@ -287,12 +289,19 @@ computed the latitude $\phi_0$ of the rim using the formula:
 The measurements and derived latitudes for animals of various ages
 are shown in Table~\ref{tab:eygrowth}.
 
-We also 
+An alternative approach to setting the rim lattitude is to allow the
+algorithm itself to infer the rim lattitude of each individual
+retina. This was done by repeating the minimisation for rim lattitudes
+within $\pm10^\circ$ of the one determined by measurement as above. A
+comparison of the two methods is shown in
+Figure~\ref{retistruct_plos:fig:eyegrowth}B. It can be seen that the
+rim angle inferred by the algorithm is usually less than that inferred
+from measurement of standard retinae. 
 
 \subsection*{Performance of the algorithm}
 \label{retistruct_plos:sec:perf-algor}
 
-We used our algorithm to reconstruct 229 retinae. 
+We used our algorithm to reconstruct 280 retinae. 
 Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
 with the lowest energy measure $\sqrt{E_\mathrm{L}}=0.038$ and
 Figure~\ref{retistruct_plos:fig:examples}B the example with the
@@ -554,7 +563,7 @@ accurately than at present.
 % development, under the assumption that the retina had linear
 % elasticity and a Poission ratio of 0.5 \cite{ReicEtal91deve}.  The
 % Poission's ratio is an index of how much a material shrinks in the two
-% dimentions perpendicular to an expansion. A perfectly incopressible
+% dimensions perpendicular to an expansion. A perfectly incopressible
 % matierial has an Poission's ratio of 0.5. They found that the modulus
 % increased threefold between P2 and P15. They also found that the
 % stiffness of the retinal tissue depended on its location within the
@@ -864,10 +873,14 @@ comments throughout this work.
 \begin{figure}[!ht]
   \centering
   \includegraphics{eyegrowth}
-  \caption{\textbf{Dimensions of eye measured} The diagram shows the
+  \includegraphics{retistruct-phi0}
+  \caption{\textbf{Measurement of rim lattitude.} \textbf{(A)} The
     measurements $d_\mathrm{e}$ and $d_\mathrm{r}$ made on mouse eyes
     at different stages of development, and the rim angle $\phi_0$
-    derived from these measurements.}
+    derived from these measurements. \textbf{(B)} Rim lattitude
+    $\hat{\phi}_0$ inferred by the algorithm versus the rim angle
+    $\phi_0$ infered from eye measurements. Solid line shows equality
+    and grey lines indicate $\pm10^\circ$ from equality.}
   \label{retistruct_plos:fig:eyegrowth}
 \end{figure}
 \begin{figure}[!ht]
@@ -895,15 +908,15 @@ comments throughout this work.
   \includegraphics{retistruct-goodness}
   \caption{\textbf{Measures of error of reconstructions.}
     \textbf{(A)} Histogram of the reconstruction error measure
-    $\sqrt{E_\mathrm{L}}$ obtained from 224 successfully reconstructed
+    $\sqrt{E_\mathrm{L}}$ obtained from 280 successfully reconstructed
     retinae. For lower values the value of is similar to the mean
     percentage deformation of the mesh. \textbf{(B)} Relationship
     between error measure and age. ``A'' indicates adult
-    animals. \textbf{C} Inferred positions of optic discs from 57
+    animals. \textbf{C} Inferred positions of optic discs from 64
     adult reconstructed retinae plotted on the same polar grid. The
-    latitude and longitude is ($-86.0^\circ$, $93.4^\circ$). The
+    latitude and longitude is ($-85.6^\circ$, $93.5^\circ$). The
     standard deviation in the angular displacement from the mean is
-    $7.6^\circ$.}
+    $7.29^\circ$.}
   \label{retistruct_plos:fig:summary}
 \end{figure}
 
