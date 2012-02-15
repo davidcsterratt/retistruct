@@ -28,7 +28,7 @@ read.image <- function(dataset) {
 ##' Read data points from a file \code{dataponts.csv} in the directory
 ##' \code{dataset}. The CSV should contain two columns for every
 ##' dataset. Each pair of columns must contain a unique name in the
-##' first cell of the first row  and a valid colour in the seconde
+##' first cell of the first row  and a valid colour in the second
 ##' cell of the first row. In the remaining rows, the X coordinates of
 ##' data points should be in the first column and the Y coordinates
 ##' should be in the second column.
