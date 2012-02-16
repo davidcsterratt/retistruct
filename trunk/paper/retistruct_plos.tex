@@ -273,7 +273,7 @@ $|\mathcal{C}|$. This measure is constructed so as to be of a similar
 order to the mean log strain, which in turn is of the same order as
 the mean fractional deformation.  
 
-\subsection*{Determination of the latitude of the rim}
+\subsection*{Determination of the rim latitude}
 \label{retistruct_plos:sec:determ-latt-rim}
 
 To determine the latitude of the rim of mouse eyes at varying stages
@@ -296,7 +296,12 @@ within $\pm10^\circ$ of the one determined by measurement as above. A
 comparison of the two methods is shown in
 Figure~\ref{retistruct_plos:fig:eyegrowth}B. It can be seen that the
 rim angle inferred by the algorithm is usually less than that inferred
-from measurement of standard retinae. 
+from measurement of standard retinae.
+Figure~\ref{retistruct_plos:fig:eyegrowth}C shows deviations of the
+length energy $\sqrt{E_\mathrm{L}}$ around the optimal value. For many
+retinae the surface is convex and the deviation is of the order of
+less than 0.01 per degree, but for some retinae the curves are more
+variable.
 
 \subsection*{Performance of the algorithm}
 \label{retistruct_plos:sec:perf-algor}
@@ -386,26 +391,26 @@ aberrant.
 
 \todo{Kernel density estimation}
 
-\subsection*{Application: mosaic properties}
+% \subsection*{Application: mosaic properties}
 
-\todo{I still need to develop the code to do this. In order to do this
-  I need some mosaic data. I have some courtesy of Ben Reese's lab,
-  but that's not our data. We have the SMI32 image, but the data points
-  aren't marked up. To use our SMI32 data, I suppose that we need a
-  method of adding data points to an image... possibly using ImageJ.
-  Or what do we think?}
+% \todo{I still need to develop the code to do this. In order to do this
+%   I need some mosaic data. I have some courtesy of Ben Reese's lab,
+%   but that's not our data. We have the SMI32 image, but the data points
+%   aren't marked up. To use our SMI32 data, I suppose that we need a
+%   method of adding data points to an image... possibly using ImageJ.
+%   Or what do we think?}
 
-When examining retinae with mosaic labelling, reconstructing the
-retina into its original spherical coordinates means that it is
-possible todetermine more accurately the relative distances between
-cells between peripheral and central retina and thereby determine
-whether it is a true mosaic, as illustrated by the
-voronoi-tessellation analysis of SMI-32 antibody staining (1:2000;
-SMI-32R; Covance) \todo{see figure}. It is, furthermore, possible to
-check the constancy of the mosaic even in areas where cuts or tears
-transect the retina. An additional advantage to having a standardised
-retinal space is that retinae can be compared following consecutive
-stainings even if additional tears are introduced.
+% When examining retinae with mosaic labelling, reconstructing the
+% retina into its original spherical coordinates means that it is
+% possible todetermine more accurately the relative distances between
+% cells between peripheral and central retina and thereby determine
+% whether it is a true mosaic, as illustrated by the
+% voronoi-tessellation analysis of SMI-32 antibody staining (1:2000;
+% SMI-32R; Covance) \todo{see figure}. It is, furthermore, possible to
+% check the constancy of the mosaic even in areas where cuts or tears
+% transect the retina. An additional advantage to having a standardised
+% retinal space is that retinae can be compared following consecutive
+% stainings even if additional tears are introduced.
 
 \subsection*{Application: marker distribution in spherical coordinates}
 
@@ -874,13 +879,16 @@ comments throughout this work.
   \centering
   \includegraphics{eyegrowth}
   \includegraphics{retistruct-phi0}
-  \caption{\textbf{Measurement of rim lattitude.} \textbf{(A)} The
+  \includegraphics{retistruct-titration}
+  \caption{\textbf{Measurement of rim lattitude.} \textbf{(A)}~The
     measurements $d_\mathrm{e}$ and $d_\mathrm{r}$ made on mouse eyes
     at different stages of development, and the rim angle $\phi_0$
-    derived from these measurements. \textbf{(B)} Rim lattitude
+    derived from these measurements. \textbf{(B)}~Rim lattitude
     $\hat{\phi}_0$ inferred by the algorithm versus the rim angle
     $\phi_0$ infered from eye measurements. Solid line shows equality
-    and grey lines indicate $\pm10^\circ$ from equality.}
+    and grey lines indicate $\pm10^\circ$ and $\pm20^\circ$ from
+    equality. \textbf{(C)}~Deviations of the reconstruction error
+    around the optimal rim angle.}
   \label{retistruct_plos:fig:eyegrowth}
 \end{figure}
 \begin{figure}[!ht]
