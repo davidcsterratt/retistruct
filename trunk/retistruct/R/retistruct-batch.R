@@ -103,7 +103,9 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                           status=sapply(ret, function(x) {return(n(x$status))}),
                           mess=as.character(sapply(ret, function(x) {return(x$mess)})),
                           time=sapply(ret, function(x) {return(n(x$time))})))
-
+  ## Defensive output, unless anything goes wrong at the next stage
+  write.csv(dat, file.path(outputdir, "retistruct-batch-0.csv"))
+  
   summ <- retistruct.batch.summary(tldir)
   dat <- merge(summ, dat, by="dataset", all=TRUE)
   write.csv(dat, file.path(outputdir, "retistruct-batch.csv"))
@@ -179,6 +181,48 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
     message(paste("Attempting to produce figures from", dataset))
     try(retistruct.cli.figure(dataset, outputdir, ...))
   }
+}
+
+##' @export
+retistruct.batch.get.titrations <- function(tldir=".", outputdir=tldir, ...) {
+  datasets <- list.datasets(tldir)
+  dat <- list()
+  for (dataset in datasets) {
+    r <- retistruct.read.recdata(list(dataset=dataset))
+    if (!is.null(r)) {
+      dat <- c(dat, list(r$titration$dat))
+    }
+  }
+  return(dat)
+}
+
+##' @export
+retistruct.batch.plot.titrations <- function(tdat) {
+  dat <- array(NA, dim=c(length(tdat), nrow(tdat[[1]]), 2))
+  for (i in 1:length(tdat)) {
+    d <- tdat[[i]]
+    if (min(d[,"sqrt.E"]) < 0.2) {
+      dat[i,,2] <- d[,"sqrt.E"] - min(d[,"sqrt.E"])
+      phi0dmin <- d[which.min(d[,"sqrt.E"]), "phi0d"]
+      dat[i,,1] <- d[,"phi0d"] - phi0dmin
+    }
+  }
+
+  par(mar=c(2.4, 3.2, 0.7, 0.2))
+  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 1))
+  par(cex=0.66)
+
+  plot(NA, NA, xlim=range(dat[,,1], na.rm=TRUE), ylim=c(0, 0.2),
+       xlab=expression(paste(phi[0] - hat(phi)[0])),
+       ylab=expression(paste(sqrt(E[L]) - sqrt(hat(E[L])))))
+  for (i in 1:length(tdat)) {
+    lines(dat[i,,1], dat[i,,2], col="#00000040")
+  }
+  mtext("C", adj=-0.2, font=2, line=-0.7)
+  dev.copy2pdf(file=file.path("retistruct-titration.pdf"), width=6.83/3, height=6.83/4)
+  
+  return(dat)
 }
 
 ##' Recurse through a directory tree, determining whether the
@@ -263,13 +307,16 @@ retistruct.batch.analyse.summary <- function(path) {
   ## Ignore retinae whose rim angle is 0 - this is the default and
   ## means that it probably hasn't been set properly
   with(sdat, plot(phi0d.opt ~ phi0d, col="white",
-                       xlab=expression(italic(phi)[0]),
-                       ylab=expression(hat(italic(phi))[0])))
+                  asp=1,
+                  xlab=expression(italic(phi)[0]),
+                  ylab=expression(hat(italic(phi))[0])))
   with(sdat, boxplot(phi0d.opt ~ round(phi0d), at=unique(sort(round(phi0d))),
                      xaxt="n", add=TRUE))
   abline(0,1)
-  abline(10, 1, col="grey")
+  abline( 10, 1, col="grey")
+  abline( 20, 1, col="grey")
   abline(-10, 1, col="grey")
+  abline(-20, 1, col="grey")
   mtext("B", adj=-0.3, font=2, line=-0.7)
   dev.copy2pdf(file=file.path(path, "retistruct-phi0.pdf"), width=6.83/4, height=6.83/4)
 
