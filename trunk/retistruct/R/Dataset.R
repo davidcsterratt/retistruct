@@ -38,6 +38,7 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
 ##' @param name name to give landmark
 ##' @return New \code{dataset} object in which landmark is named
 ##' @author David Sterratt
+##' @export
 nameLandmark <- function(d, i, name) {
   if (!is.na(i)) {
     new.names <- names(d$Ss)
