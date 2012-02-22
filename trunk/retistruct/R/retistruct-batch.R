@@ -355,6 +355,65 @@ retistruct.batch.analyse.summary <- function(path) {
   
   ## with(sdat, table(sqrt.E ~ age))
   dev.copy2pdf(file=file.path(path, "retistruct-goodness.pdf"), width=6.83, height=6.83/3)
+
+  ## Plot of kernel density features
+  par(mar=c(2.4, 2.3, 0.7, 0.2))
+  par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 2))
+
+  hist(na.omit(sdat[,"h.red"]), breaks=seq(0, max(na.omit(sdat[,"h.red"])),
+                                  len=100),
+       xlab=expression(italic(h)[red]), main="")
+  mtext("A", adj=-0.15, font=2, line=-0.7)
+
+  ## Plot of age versus goodness
+  ## Find datasets containing ("Pxx")
+
+  fage <- grepl("^.*(P\\d+).*$",  sdat$dataset)
+  sdat$age <- sub("^.*P(\\d+).*$", "\\1", sdat$dataset)
+  sdat$age <- sub(".*adult.*", "adult", sdat$age)
+  sdat$age[grepl(".{6}", sdat$age)] <- NA
+  sdat$age <- ordered(sdat$age, c(unique(sort(as.numeric(sdat$age))), "adult"))
+  ## print(factor(sdat$age))
+  ## print(sort(as.numeric(factor(sdat$age))))
+  ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
+  levels(sdat$age) <- sub("adult", "A", levels(sdat$age))
+  ##  print(factor(sdat$age))
+  with(sdat, boxplot(h.red ~ age,
+                     xaxt="n",
+                     xlab="Postnatal day",
+                     ylab=expression(italic(h)[red])))
+  mtext("B", adj=-0.15, font=2, line=-0.7)
+  axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
+  mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
+  
+  ## with(sdat, table(sqrt.E ~ age))
+  dev.copy2pdf(file=file.path(path, "retistruct-bandwidth.pdf"), width=4.5, height=3)
+
+  ## More KDE analysis -- first ignore outliers
+
+##  genotype <- c()
+#
+##  genotype[!grep("GMB", sdat$dataset)] <- "WT"
+  
+  sdat <- cbind(sdat, genotype="W")
+  levels(sdat$genotype) <- c("W", "B")
+  sdat[grep("GMB", sdat$dataset), "genotype"] <- "B"
+  kdat <- subset(sdat, h.red < 4)
+  
+  ## Plot of kernel density features
+  par(mar=c(2.4, 2.3, 0.7, 0.2))
+  par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 1))
+  print(kdat)
+  
+  with(kdat, boxplot(h.red ~ genotype+age, col=c("white", "red"),
+                     ## xaxt="n",
+                     xlab="Postnatal day",
+                     ylab=expression(italic(h)[red])))
+  dev.copy2pdf(file=file.path(path, "retistruct-bandwidth-genotype.pdf"), width=12, height=8)
+
+
   
   return(invisible(list(N=nrow(sdat),
                         N.outtime=N.outtime,

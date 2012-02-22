@@ -401,6 +401,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
 ##' @return Central angle
 ##' @source Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
 ##' @author David Sterratt
+##' @export
 central.angle <- function(phi1, lambda1, phi2, lambda2) {
   return(acos(sin(phi1)*sin(phi2) + cos(phi1)*cos(phi2)*cos(lambda1-lambda2)))
 }
@@ -426,6 +427,7 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 ##' 102:188-203.
 ##' @seealso \code{\link{central.angle}}
 ##' @author David Sterratt
+##' @export
 karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   if (na.rm) {
     x <- na.omit(x)
