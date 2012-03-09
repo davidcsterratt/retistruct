@@ -193,6 +193,7 @@ retistruct.read.recdata <- function(o) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
+      r$KDE <- getKDE(r, FALSE)
       return(r)
     }
   }
@@ -309,6 +310,7 @@ retistruct.save.recdata <- function(r) {
   if (!is.null(r$dataset)) {
     ## Save the derived data
     r$version <- recfile.version        # Datafile version
+    r$KDE <- NULL                       # KDE is regenerated on loading
     if (!is.null(r)) {
       save(r, file=file.path(r$dataset, "r.Rdata"))
     }
