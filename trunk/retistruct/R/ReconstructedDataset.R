@@ -99,23 +99,6 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
-## FIXME - this function should be merged into getKDE
-getDss.bandwidth <- function(r) {
-  Dss.bandwidth <- list()
-  if (length(r$Dss)) {
-    for (i in 1:length(r$Dss)) {
-      if (nrow(r$Dss[[i]]) > 2) {
-        Dss.bandwidth[[i]] <- compute.bandwidth(r$Dss[[i]], K)
-      } else {
-        Dss.bandwidth[[i]] <- NA
-      }
-    }
-  }
-  names(Dss.bandwidth) <- names(r$Dss)
-  return(Dss.bandwidth)
-  
-}
-
 ##' Get contours of data points in spherical coordinates.
 ##'
 ##' @title Get contours of data points in spherical coordinates
@@ -154,13 +137,10 @@ getKDE <- function(r, cache=TRUE) {
   }
 
   ## Helper function to get kde as locations gs in spherical coordinates
-  get.kde <- function(gs, mu, sigma, res) {
+  get.kde <- function(gs, mu, kappa, res) {
     ## Make space for the kernel density estimates
-    gk <- rep(0, nrow(gs))
-    for (j in 1:nrow(gs)) {
-      gk[j] <- K(gs[j,], mu, sigma)
-    }
-    
+    gk <- kde.fhat(gs, mu, kappa)
+
     gk[gs[,"phi"] > r$phi0] <- NA
     ## Put the estimates back into a matrix. The matrix is filled up
     ## column-wise, so the matrix elements should match the elements of
@@ -184,16 +164,17 @@ getKDE <- function(r, cache=TRUE) {
     ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
     ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
     
-    hs <- getDss.bandwidth(r)
     for (i in names(Dss)) {
-      if (!is.na(hs[[i]])) {
-        ## Find the optimal bandwidth of the kernel density estimator
-        h <- hs[[i]]
+      if (nrow(Dss[[i]]) > 2) {
+        ## Find the optimal concentration of the kernel density
+        ## estimator
+        kappa <- kde.compute.concentration(Dss[[i]])
         
-        ## Now we've found sigma, let's try to estimate and display the
-        ## density over our polar representation of the data points
-        fpa <- get.kde(gpa$s, Dss[[i]], h, res)
-        f  <-  get.kde(g$s,   Dss[[i]], h, res)
+        ## Now we've found the concentration, let's try to estimate
+        ## and display the density over our polar representation of
+        ## the data points
+        fpa <- get.kde(gpa$s, Dss[[i]], kappa, res)
+        f  <-  get.kde(g$s,   Dss[[i]], kappa, res)
         
         ## Determine the value of gk that encloses 0.95 of the
         ## density.  To compute the density, we need to know the
@@ -210,7 +191,8 @@ getKDE <- function(r, cache=TRUE) {
         }
 
         ## Store full kde matrices
-        KDE[[i]] <- list(h=h,
+        KDE[[i]] <- list(kappa=kappa,
+                         h=1/sqrt(kappa),
                          flevels=flevels,
                          labels=vols,
                          g=  list(xs=g$xs,   ys=g$ys,   f=f),
@@ -275,7 +257,21 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
   plot.mosaic <- !is.null(args$mosaic) && args$mosaic
+  plot.kde <- !is.null(args$kde) && args$kde
   pa <- plot.preserve.area
+
+  if (plot.kde) {
+    KDE <- getKDE(r)
+    image(rho.to.degrees(KDE$red$g$xs, r$phi0, pa),
+          rho.to.degrees(KDE$red$g$ys, r$phi0, pa),
+          KDE$red$g$f, col=gray((0:100)/100))
+    Dss <- getDss(r)
+    pos <- sphere.spherical.to.polar.cart(Dss[["red"]], pa)
+        suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
+                                col="red",
+                                pch=20, cex=0.2, ...))
+
+  }
   
   ## Datapoints
   if (plot.datapoints) {
