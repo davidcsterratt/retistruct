@@ -19,6 +19,7 @@ strain.colours <- function(x) {
 ##' @title Put text on the polar plot
 ##' @param text Test to place
 ##' @author David Sterratt
+##' @export
 text.polar <- function(text) {
   mtext(text, 1, adj=1, line=-1)
 }
@@ -53,6 +54,7 @@ phi.to.rho <- function(phi, phi0, area.preserving) {
 ##' @param area.preserving Whether the conversion should preserve area
 ##' @return Radial variable
 ##' @author David Sterratt
+##' @export
 rho.to.degrees <- function(rho, phi0, area.preserving) {
   if (area.preserving) {
     phi0d <- phi0*180/pi
