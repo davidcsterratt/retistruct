@@ -302,6 +302,11 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
                double="yellow",
                OD="blue",
                default="orange")
+
+  ci <- which(sys[,"COMPLETE"] == 1)
+  Gs <- list(green =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
+             red   =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALRED"]),
+             double=cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALDOU"]))
   
   ## Extract line data
   segs <- idt.map.to.segments(map)
@@ -343,7 +348,7 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
      stop("Unable to find a closed outline.")
   }
 
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys))
+  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
   a <- AnnotatedOutline(d)
   a <- RetinalDataset(a)
   return(a)

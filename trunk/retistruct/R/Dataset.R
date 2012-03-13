@@ -3,18 +3,24 @@
 ##' @title Constructor for a \code{dataset} object.
 ##' @param o An \code{outline} object.
 ##' @param dataset The name of the dataset
-##' @param Ds A list of datapoints. Each item in the list should be
-##' named. Elements with these names should also be in the \code{cols}
-##' argument (see below).
+##' @param Ds A list of data point sets, with each set being a 2
+##' column matrix of X and Y coordinates of data point locations. Each
+##' item in the list should be named. Elements with these names should
+##' also be in the \code{cols} argument (see below).
 ##' @param Ss A list of landmarks. These do not need to be named. If
 ##' any elements are  named, the names should map onto an element in
 ##' the \code{cols} argument. Any elements that are named \code{""}
 ##' will be plotted using the default colour.
 ##' @param cols A list of colours in which to plot datapoints and landmarks.
 ##' @param raw A place to put raw data in whatever format is desired.
+##' @param Gs  A list of grouped point sets, with each set being a 3
+##' column matrix of X and Y coordinates and the value Z of the
+##' variable at that point.  Each item in the list should be
+##' named. Elements with these names should also be in the \code{cols}
+##' argument.
 ##' @return A \code{dataset} object.
 ##' @author David Sterratt
-Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
+Dataset <- function(o, dataset, Ds, Ss, cols, raw, Gs=NULL) {
   d <- o
   class(d) <- addClass("dataset", o)
   d$dataset <- dataset
@@ -25,6 +31,7 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw) {
   }
   d$cols <- cols
   d$raw <- raw
+  d$Gs <- Gs
   return(d)
 }
 
