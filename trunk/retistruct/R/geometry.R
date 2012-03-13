@@ -462,4 +462,34 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   return(X)
 }
 
-## karcher.variance.sphere <- function()
+##' @title Create grid on projection of hemisphere onto plain
+##' @param pa If \code{TRUE}, make this an area-preserving projection
+##' @param res Resolution of grid
+##' @return List containing:
+##' \item{\code{gs}}{Grid locations in spherical coordinates}
+##' \item{\code{gc}}{Grid locations in Cartesian coordinates on plane}
+##' \item{\code{xs}}{X grid line locations in Cartesian coordinates on plane}
+##' \item{\code{ys}}{Y grid line locations in Cartesian coordinates on plane}
+##' @author David Sterratt
+##' @export
+create.polar.cart.grid <- function(pa, res, phi0) {
+  lim <- sphere.spherical.to.polar.cart(cbind(phi=phi0, lambda=0), pa)[1,"x"]
+  xs <- seq(-lim, lim, len=res)
+  ys <- seq(-lim, lim, len=res)
+
+  ## Create grid
+  gxs <- outer(xs, ys*0, "+")
+  gys <- outer(xs*0, ys, "+")
+
+  ## gxs and gys are both res-by-res matrices We now combine both
+  ## matrices as a res*res by 2 matrix. The conversion as.vector()
+  ## goes down the columns of the matrices gxs and gys
+  gc <- cbind(x=as.vector(gxs), y=as.vector(gys))
+
+  ## Now convert the cartesian coordinates to polar coordinates
+  gs <- polar.cart.to.sphere.spherical(gc, pa)
+  return(list(s=gs, c=gc, xs=xs, ys=ys))
+}
+
+
+

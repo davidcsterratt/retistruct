@@ -10,6 +10,9 @@
 ##' @return New class vector
 ##' @author David Sterratt
 addClass <- function(newclass, obj) {
+  if (newclass %in% class(obj)) {
+    return(class(obj))
+  }
   cl <- unique(c(newclass, class(obj)))
   cld <- cl[grep("[Dd]ataset", cl)]
   clo <- cl[setdiff(1:length(cl), grep("[Dd]ataset", cl))]
@@ -116,6 +119,21 @@ getDss.mean <- function(r) {
 getDss.mean.default <- function(r) {
   return(NULL)
 }
+
+##' @title Get grouped variable with locations in spherical coordinates.
+##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @return \code{Gss}
+##' @author David Sterratt
+##' @export
+getGss <- function(r) {
+  UseMethod("getGss")
+}
+
+##' @export
+getGss.default <- function(r) {
+  return(NULL)
+}
+
 
 ##' Get spherical coordinates of landmarks.
 ##'
