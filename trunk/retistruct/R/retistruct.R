@@ -185,7 +185,7 @@ retistruct.check.markup <- function(o) {
 ##' object, else return the outline object \code{o}.
 ##' @author David Sterratt
 ##' @export
-retistruct.read.recdata <- function(o) {
+retistruct.read.recdata <- function(o, cache=FALSE) {
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
     load(recfile)                       # This puts r in the environment
@@ -193,7 +193,15 @@ retistruct.read.recdata <- function(o) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
     } else {
-      r$KDE <- getKDE(r, FALSE)
+      ## Overwrite and dataset information and generated derived
+      ## quantities
+      if (!cache) {
+        r$Ds <- o$Ds
+        r$Gs <- o$Gs
+        r$Ss <- o$Ss
+        r <- ReconstructedDataset(r)
+        r <- RetinalReconstructedDataset(r)
+      }
       return(r)
     }
   }
