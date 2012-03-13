@@ -84,7 +84,91 @@ kde.compute.concentration <- function(mu) {
   return(opt$maximum)
 }
 
+##' @title Kernel regression on sphere using Fisherian density with
+##' polar coordinates
+##' @param r Locations at which to estimate dependent variables in
+##' polar coordinates
+##' @param mu  Locations in polar coordinates (independent variables)
+##' @param y Values at data points (dependent variables)
+##' @param kappa Concentration parameter
+##' @return Estimates of dependent variables at locations \code{r}
+##' @author David Sterratt
+##' @export
+kr.yhat <- function(r, mu, y, kappa) {
+    return(kr.yhat.cart(sphere.spherical.to.sphere.cart(r[,"phi"],  r[,"lambda"]),
+                         sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]),
+                         y,
+                         kappa))
+}
 
+##' @title Kernel regression on sphere using Fisherian density with
+##' Cartesian coordinates
+##' @param r Locations at which to estimate dependent variables in
+##' Cartesian coordinates
+##' @param mu Locations in Cartesian coordinates (independent variables)
+##' @param y Values at locations (dependent variables)
+##' @param kappa Concentration parameter
+##' @return Estimates of dependent variables at locations \code{r}
+##' @author David Sterratt
+##' @export
+kr.yhat.cart <- function(r, mu, y, kappa) {
+  if (is.vector(r)) {
+    if (length(r) == 3) {
+      r <- matrix(r, ncol=3)
+    } else {
+      stop("r does not have 3 elements")
+    }
+  } else {
+    if (ncol(r) != 3) {
+      stop("r does not have 3 columns")
+    }
+  }
 
+  ## n <- nrow(mu)
+  ## if (kappa < 1e-10) {
+  ## fac <- 1
+  ## } else {
+  ##    fac <- kappa/sinh(kappa)
+  ## }
+  ## fac/(4*pi*n)
+  
+  ks <- exp(kappa*(outer(r[,1], mu[,1]) +
+                   outer(r[,2], mu[,2]) +
+                   outer(r[,3], mu[,3])))
+  return((ks%*% matrix(y, ncol=1))/rowSums(ks))
+}
 
+##' @title Cross validation estimate of the least squares error of the
+##' points mu given a particular value of the concentration kappa
+##' @param mu Locations in Cartesian coordinates (independent variables)
+##' @param y Values at locations (dependent variables)
+##' @param kappa Concentration parameter
+##' @return Least squares error
+##' @author David Sterratt
+##' @export
+kr.sscv <- function(mu, y, kappa) {
+  ## We get clever here, and define a funtion within a function. This
+  ## is the kernel density for data point i if the density is
+  ## determined by all the other points. Note that mu[-i,] means all
+  ## the rows of mu apart from row i
+  yhati.ss <- function(i) {
+    return((y[i] - kr.yhat.cart(mu[i,], mu[-i,], y[-i], kappa))^2)
+  }
 
+  ## We now pass this function to sapply, which creates a vector of
+  ## the result of log.fhati for every value of i
+  return(sum(sapply(1:nrow(mu), yhati.ss)))
+}
+
+##' @title Find the optimal concentration for a set of data
+##' @param mu Locations in Cartesian coordinates (independent variables)
+##' @param y Values at locations (dependent variables)
+##' @return The optimal concentration
+##' @author David Sterratt
+##' @export
+kr.compute.concentration <- function(mu, y) {
+  mu.cart <- sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]) 
+  opt <- optimise(function(kappa) {kr.sscv(mu.cart, y, kappa)}, interval=c(0, 500),
+                  maximum=FALSE)
+  return(opt$minimum)
+}
