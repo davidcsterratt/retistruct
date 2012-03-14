@@ -17,6 +17,8 @@ RetinalReconstructedDataset <- function(r) {
     stop("Argument needs to inherit reconstructedDataset and retinalDataset")
   }
   class(r) <- addClass("retinalReconstructedDataset", r)
+  r$KDE <- getKDE(r)
+  r$KR <-  getKR(r)
   return(r)
 }
 

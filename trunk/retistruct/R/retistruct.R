@@ -269,9 +269,6 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
         
     r <- RetinalReconstructedOutline(r)
     r <- RetinalReconstructedDataset(r)
-
-    report("Computing Kernel Density estimates of datapoints")
-    r$KDE <- getKDE(r, cache=FALSE)
     report("")
   }
   return(r)

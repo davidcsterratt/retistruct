@@ -152,7 +152,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
                         phi0d=n(r$phi0*180/pi),
                         phi0d.opt=n(r$titration$phi0d.opt))
       message(paste("Getting KDE"))
-      KDE <- getKDE(r, cache)
+      KDE <- getKDE(r)
       if (length(KDE) > 0) {
         KDEdat <- lapply(KDE, function(x) {x$h})
         names(KDEdat) <- paste("h.", names(KDEdat), sep="")

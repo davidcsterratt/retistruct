@@ -71,9 +71,11 @@ ReconstructedDataset <- function(r, report=message) {
   d <- merge(list(Dsb=Dsb, Dsc=Dsc, Dss=Dss,
                   Gsb=Gsb, Gsc=Gsc, Gss=Gss,
                   Ssb=Ssb, Ssc=Ssc, Sss=Sss), r)
+  ## Trigger recomputation of Kernel density estimates
+  d$KDE <- NULL
+  d$KR <- NULL
+
   class(d) <- addClass("reconstructedDataset", r)
-  d$KDE <- getKDE(d, FALSE)
-  d$KR <- getKR(d)
   return(d)
 }
 
@@ -131,29 +133,50 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
-##' Get contours of data points in spherical coordinates.
-##'
-##' @title Get contours of data points in spherical coordinates
+##' @title Get kernel density estimate of data points
 ##' @param r \code{reconstructedDataset} object
-##' @param cache if \code{TRUE} use the cached object
-##' @return List containing for each set of datapoints a list of
-##' contours
+##' @return See \code{\link{compute.kernel.estimate}}
 ##' @author David Sterratt
 ##' @export
-getKDE <- function(r, cache=TRUE) {
-  if (cache & !is.null(r$KDE)) {
-    return(r$KDE)
+getKDE <- function(r) {
+  if (is.null(r$KDE)) {
+    return(compute.kernel.estimate(getDss(r), r$phi0, kde.fhat, kde.compute.concentration))
   }
-  
+  return(r$KDE)
+}
+
+##' @title Kernel estimate over grid
+##' @param Dss List of datasets. The first two columns of each datasets
+##' are coordinates of points on the sphere in spherical polar
+##' (lattitude, \code{phi}, and longitude, \code{lambda})
+##' coordinates. In the case kernel smoothing, there is a third column
+##' of values of dependent variables at those points.
+##' @param phi0 Rim angle in radians
+##' @param fhat Function such as \code{\link{kde.fhat}} or
+##' \code{\link{kr.yhat}} to compute the density given data and a
+##' value of the concentration parameter \code{kappa} of the Fisher
+##' density.
+##' @param compute.conc Function to return the optimal value of the
+##' concentration parameter kappa given the data.
+##' @return A list containing
+##' \item{kappa}{The concentration parameter}
+##' \item{h}{A pseudo-bandwidth parameter, the inverse of the square root of \code{kappa}.}
+##' \item{flevels}{Contour levels}
+##' \item{labels}{Labels of the contours}
+##' \item{g}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}) and density estimates at these points, \code{f}.}
+##' \item{gpa}{Raw density estimate drawn on area-preserving projection. Comprises same elements as above.}
+##' @author David Sterratt
+##' @export
+compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
   vols <- getOption("contour.levels")
   res <- 100
 
   ## Helper function to get kde as locations gs in spherical coordinates
   get.kde <- function(gs, mu, kappa, res) {
     ## Make space for the kernel density estimates
-    gk <- kde.fhat(gs, mu, kappa)
+    gk <- fhat(gs, mu, kappa)
 
-    gk[gs[,"phi"] > r$phi0] <- NA
+    gk[gs[,"phi"] > phi0] <- NA
     ## Put the estimates back into a matrix. The matrix is filled up
     ## column-wise, so the matrix elements should match the elements of
     ## gxs and gys
@@ -163,24 +186,23 @@ getKDE <- function(r, cache=TRUE) {
   }
   
   ## Get data points
-  Dss <- getDss(r)
   KDE <- list()
   if (length(Dss) > 0) {
     ## First create a grid in Cartesian coordinates with
     ## area-preserving coords
-    gpa <- create.polar.cart.grid(TRUE, res, r$phi0)
+    gpa <- create.polar.cart.grid(TRUE, res, phi0)
     ## And one without area-preserving coords
-    g   <- create.polar.cart.grid(FALSE, res, r$phi0)
+    g   <- create.polar.cart.grid(FALSE, res, phi0)
 
     ## Check conversion
     ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
-    ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
+    ## points(rho.to.degrees(gcb, phi0, pa), pch='.')
     
     for (i in names(Dss)) {
       if (nrow(Dss[[i]]) > 2) {
         ## Find the optimal concentration of the kernel density
         ## estimator
-        kappa <- kde.compute.concentration(Dss[[i]])
+        kappa <- compute.conc(Dss[[i]])
         
         ## Now we've found the concentration, let's try to estimate
         ## and display the density over our polar representation of
