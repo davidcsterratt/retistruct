@@ -358,7 +358,8 @@ do.plot <- function() {
                landmarks=("Landmarks" %in% svalue(g.show)),
                preserve.area=("Preserve area" %in% svalue(g.show)),
                mosaic=("Mosaic" %in% svalue(g.show)),
-               datapoint.contours=("Contours" %in% svalue(g.show)))
+               datapoint.contours=("Contours" %in% svalue(g.show)),
+               grouped.contours=("Group Contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
       text.polar(paste("OD displacement:",
@@ -450,8 +451,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)
   g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints", "Means",
-                              "Landmarks", "Strain", "Preserve area", "Contours", "Mosaic"),
-                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+                              "Landmarks", "Strain", "Preserve area", "Contours", "Group Contours", "Mosaic"),
+                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
   ## Graphs at right
