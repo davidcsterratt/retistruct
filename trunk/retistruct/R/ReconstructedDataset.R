@@ -366,6 +366,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
   plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
+  plot.grouped.contours <- is.null(args$grouped.contours) || args$grouped.contours
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
   plot.mosaic <- !is.null(args$mosaic) && args$mosaic
@@ -433,6 +434,28 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
     }
   }
 
+  ## KDE
+  if (plot.grouped.contours) {
+    k <- getKR(r)
+    Gss <- getGss(r)
+    if (length(k)) {
+      for (i in 1:length(k)) {
+        if (pa) {
+          g <- k[[i]]$gpa
+        } else {
+          g <- k[[i]]$g
+        }
+        ## Plot contours
+        contour(rho.to.degrees(g$xs, r$phi0, pa),
+                rho.to.degrees(g$ys, r$phi0, pa),
+                g$f, add=TRUE, levels=k[[i]]$flevels,
+                col=r$cols[[names(Gss)[i]]],
+                ## drawlabels=FALSE,
+                labels=k[[i]]$labels)
+      }
+    }
+  }
+  
   ## Voroni
   if (plot.mosaic) {
     Dss <- getDss(r)

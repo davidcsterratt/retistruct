@@ -45,6 +45,31 @@ getDss.retinalReconstructedDataset <- function(r) {
   return(Dss)
 }
 
+##' Get spherical coordinates of datapoints, transformed according to
+##' the values of \code{DVflip} and \code{side}.
+##'
+##' @title Get transformed spherical coordinates of datapoints
+##' @param r \code{retinalReonstructedDataset} object.
+##' @return \code{Dss}
+##' @method getDss retinalReconstructedDataset
+##' @author David Sterratt
+getGss.retinalReconstructedDataset <- function(r) {
+  Gss <- NextMethod()
+  if (length(Gss) > 0) {
+    if (r$DVflip) {
+      for (i in 1:length(Gss)) {
+        Gss[[i]][,"lambda"] <- -Gss[[i]][,"lambda"]
+      }
+    }
+    if (r$side=="Left") {
+      for (i in 1:length(Gss)) {
+        Gss[[i]][,"lambda"] <- 2*pi - Gss[[i]][,"lambda"]
+      }
+    }
+  }
+  return(Gss)
+}
+
 ##' Get Karcher mean of datapoints in spherical coordinates,
 ##' transformed according to the values of \code{DVflip} and
 ##' \code{side}.
