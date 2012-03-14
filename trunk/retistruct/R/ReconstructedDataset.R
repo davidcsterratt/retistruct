@@ -215,7 +215,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         ## area of each little square, which is why we have used the
         ## are-preserving projection. FIXME: I think this method of
         ## "integration" could be improved.
-        vol.contours <- FALSE
+        vol.contours <- TRUE
         if (vol.contours) {
           f.sort <- sort(as.vector(fpa))
           js <- findInterval(vols/100, cumsum(f.sort)/sum(f.sort))
@@ -237,17 +237,23 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         cs <- list()
         ## Must be careful, as there is a core function called labels
         labels <- rep(NA, length(cc))
+        contour.areas <- rep(NA, length(cc))
         if (length(cc) > 0) {
           for (j in 1:length(cc)) {
             cs[[j]] <- list()
+            contour.areas[j] <- polyarea(cc[[j]]$x, cc[[j]]$y) * (180/pi)^2
             ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
+            ## Convert back to Spherical coordinates
             cs[[j]] <- polar.cart.to.sphere.spherical(ccj, TRUE)
             labels[j] <- vols[which(flevels==cc[[j]]$level)]
           }
         }
         KDE[[i]]$contours <- cs
         KDE[[i]]$labels <- labels
-        ## Convert back to Spherical coordinates
+        names(contour.areas) <- labels
+        KDE[[i]]$contour.areas <- contour.areas
+        KDE[[i]]$tot.contour.areas <- aggregate(contour.areas ~ labels,
+                                                data.frame(labels, contour.areas), sum)
       }
     }
   }
@@ -267,7 +273,14 @@ getKR <- function(r) {
     compute.conc <- function(mu) {
       kr.compute.concentration(mu[,1:2], mu[,3])
     }
-    return(compute.kernel.estimate(getGss(r), r$phi0, yhat, compute.conc))
+    Gss <- getGss(r)
+    ## Get rid of datasets with very little data
+    for (n in names(Gss)) {
+      if (sum(Gss[[n]][,3]) <= 2) {
+        Gss[[n]] <- NULL
+      }
+    }
+    return(compute.kernel.estimate(Gss, r$phi0, yhat, compute.conc))
   }
   return(r$KR)
 }
