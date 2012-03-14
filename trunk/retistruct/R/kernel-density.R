@@ -88,7 +88,7 @@ kde.compute.concentration <- function(mu) {
 ##' polar coordinates
 ##' @param r Locations at which to estimate dependent variables in
 ##' polar coordinates
-##' @param mu  Locations in polar coordinates (independent variables)
+##' @param mu Locations in polar coordinates (independent variables)
 ##' @param y Values at data points (dependent variables)
 ##' @param kappa Concentration parameter
 ##' @return Estimates of dependent variables at locations \code{r}
