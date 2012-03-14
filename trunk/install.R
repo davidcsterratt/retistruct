@@ -25,8 +25,8 @@ update.packages(Sys.getenv("R_LIBS_USER"))
 install.packages("Triangle", repos="http://R-Forge.R-project.org")
 install.packages("geometry", repos="http://R-Forge.R-project.org")
 ## Now install retistruct
-install.packages("retistruct_0.4.7.tar.gz")
-install.packages("retistructgui_0.4.7.tar.gz")
+install.packages("retistruct_0.4.8.tar.gz")
+install.packages("retistructgui_0.4.8.tar.gz")
 
 library(retistructgui)
 retistruct()
