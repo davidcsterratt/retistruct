@@ -254,104 +254,22 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
   return(KDE)
 }
 
-##' Get contours of data points in spherical coordinates.
-##'
-##' @title Get contours of data points in spherical coordinates
+##' @title Get kernel regression estimate of grouped data points
 ##' @param r \code{reconstructedDataset} object
-##' @param cache if \code{TRUE} use the cached object
-##' @return List containing for each set of datapoints a list of
-##' contours
+##' @return See \code{\link{compute.kernel.estimate}}
 ##' @author David Sterratt
 ##' @export
 getKR <- function(r) {
-  
-  vols <- getOption("contour.levels")
-  res <- 100
-
-  ## Helper function to get kde as locations gs in spherical coordinates
-  get.kr <- function(gs, mu, y, kappa, res) {
-    ## Make space for the kernel density estimates
-    gk <- kr.yhat(gs, mu, y, kappa)
-
-    gk[gs[,"phi"] > r$phi0] <- NA
-    ## Put the estimates back into a matrix. The matrix is filled up
-    ## column-wise, so the matrix elements should match the elements of
-    ## gxs and gys
-    k <- matrix(gk, res, res)
-    k[is.na(k)] <- 0
-    return(k)
-  }
-  
-  ## Get data points
-  Gss <- getGss(r)
-  KR <- list()
-  if (length(Gss) > 0) {
-    ## First create a grid in Cartesian coordinates with
-    ## area-preserving coords
-    gpa <- create.polar.cart.grid(TRUE, res, r$phi0)
-    ## And one without area-preserving coords
-    g   <- create.polar.cart.grid(FALSE, res, r$phi0)
-
-    ## Check conversion
-    ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
-    ## points(rho.to.degrees(gcb, r$phi0, pa), pch='.')
-    
-    for (i in names(Gss)) {
-      if (nrow(Gss[[i]]) > 2) {
-        mu <- Gss[[i]][,1:2]
-        y  <- Gss[[i]][,3]
-        ## Find the optimal concentration of the kernel density
-        ## estimator
-        kappa <- kr.compute.concentration(mu, y)
-        
-        ## Now we've found the concentration, let's try to estimate
-        ## and display the density over our polar representation of
-        ## the data points
-        fpa <- get.kr(gpa$s, mu, y, kappa, res)
-        f  <-  get.kr(g$s,   mu, y, kappa, res)
-        
-        ## Determine the value of gk that encloses 0.95 of the
-        ## density.  To compute the density, we need to know the
-        ## area of each little square, which is why we have used the
-        ## are-preserving projection. FIXME: I think this method of
-        ## "integration" could be improved.
-        vol.contours <- FALSE
-        if (vol.contours) {
-          f.sort <- sort(as.vector(fpa))
-          js <- findInterval(vols/100, cumsum(f.sort)/sum(f.sort))
-          flevels <- f.sort[js]
-        } else {
-          flevels <- vols/100*max(fpa)
-        }
-
-        ## Store full kde matrices
-        KR[[i]] <- list(kappa=kappa,
-                        h=1/sqrt(kappa),
-                        flevels=flevels,
-                        labels=vols,
-                        g=  list(xs=g$xs,   ys=g$ys,   f=f),
-                        gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
-
-        ## Get contours in Cartesian space
-        cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
-        cs <- list()
-        ## Must be careful, as there is a core function called labels
-        labels <- rep(NA, length(cc))
-        if (length(cc) > 0) {
-          for (j in 1:length(cc)) {
-            cs[[j]] <- list()
-            ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
-            cs[[j]] <- polar.cart.to.sphere.spherical(ccj, TRUE)
-            labels[j] <- vols[which(flevels==cc[[j]]$level)]
-          }
-        }
-        KR[[i]]$contours <- cs
-        KR[[i]]$labels <- labels
-        ## Convert back to Spherical coordinates
-      }
+  if (is.null(r$KR)) {
+    yhat <- function(r, mu, kappa) {
+      kr.yhat(r, mu[,1:2], mu[,3], kappa)
     }
+    compute.conc <- function(mu) {
+      kr.compute.concentration(mu[,1:2], mu[,3])
+    }
+    return(compute.kernel.estimate(getGss(r), r$phi0, yhat, compute.conc))
   }
-  return(KR)
+  return(r$KR)
 }
 
 ##' Plot datapoints in polar plot
