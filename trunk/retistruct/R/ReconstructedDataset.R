@@ -145,6 +145,14 @@ getKDE <- function(r) {
   return(r$KDE)
 }
 
+##' Compute a kernel estimate over a grid and do a contour analsysis
+##' of this estimate. The contour heights the determined by finding
+##' heights that exclude a certain fraction of the probability. For
+##' example, the 95% contour is excludes 95% of the probability mass,
+##' and it should enclose about 5% of the points. The contour levels
+##' are specified by  the \code{contour.levels} option; by default
+##' they are \code{c(5, 25, 50, 75, 95)}.
+##' 
 ##' @title Kernel estimate over grid
 ##' @param Dss List of datasets. The first two columns of each datasets
 ##' are coordinates of points on the sphere in spherical polar
@@ -159,12 +167,14 @@ getKDE <- function(r) {
 ##' @param compute.conc Function to return the optimal value of the
 ##' concentration parameter kappa given the data.
 ##' @return A list containing
-##' \item{kappa}{The concentration parameter}
-##' \item{h}{A pseudo-bandwidth parameter, the inverse of the square root of \code{kappa}.}
-##' \item{flevels}{Contour levels}
-##' \item{labels}{Labels of the contours}
-##' \item{g}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}) and density estimates at these points, \code{f}.}
-##' \item{gpa}{Raw density estimate drawn on area-preserving projection. Comprises same elements as above.}
+##' \item{\code{kappa}}{The concentration parameter}
+##' \item{\code{h}}{A pseudo-bandwidth parameter, the inverse of the square root of \code{kappa}. Units of degrees.}
+##' \item{\code{flevels}}{Contour levels.}
+##' \item{\code{labels}}{Labels of the contours.}
+##' \item{\code{g}}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}) and density estimates at these points, \code{f}.}
+##' \item{\code{gpa}}{Raw density estimate drawn on area-preserving projection. Comprises same elements as above.}
+##' \item{\code{contour.areas}}{Area of each individual contour. One level may ahave more than one contour; this shows the areas of all such contours.}
+##' \item{\code{tot.contour.areas}}{Data frame containing the total area within the contours at each level.}
 ##' @author David Sterratt
 ##' @export
 compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
@@ -226,7 +236,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
 
         ## Store full kde matrices
         KDE[[i]] <- list(kappa=kappa,
-                         h=1/sqrt(kappa),
+                         h=180/pi/sqrt(kappa),
                          flevels=flevels,
                          labels=vols,
                          g=  list(xs=g$xs,   ys=g$ys,   f=f),
