@@ -40,7 +40,7 @@ ReconstructedDataset <- function(r, report=message) {
   Gss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(r$Gs) & (length(r$Gs) > 0)) {
     for (name in names(r$Gs)) {
-      Gsb[[name]] <- tsearchn(r$P, r$T, r$Gs[[name]][,1:2])
+      Gsb[[name]] <- tsearchn(r$P, r$T, r$Gs[[name]][,1:2,drop=FALSE])
       oo <- is.na(Gsb[[name]]$idx)     # Points outwith outline
       if (any(oo)) {
         warning(paste(sum(oo), name, "datapoints outwith the outline will be ignored."))
