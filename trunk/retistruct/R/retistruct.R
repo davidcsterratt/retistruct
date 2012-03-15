@@ -196,6 +196,11 @@ retistruct.read.recdata <- function(o, cache=FALSE) {
       ## Overwrite and dataset information and generated derived
       ## quantities
       if (!cache) {
+        if (!inherits(o, "retinalReconstructedDataset") | is.null(r$Gs)) {
+          o <- tryCatch(retistruct.read.dataset(o$dataset),
+                        error=function(e) {warning(e); return(NULL)})
+          if (is.null(o)) { return(o) }
+        }
         r$Ds <- o$Ds
         r$Gs <- o$Gs
         r$Ss <- o$Ss
