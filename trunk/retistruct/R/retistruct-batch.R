@@ -154,10 +154,32 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
       message(paste("Getting KDE"))
       KDE <- getKDE(r)
       if (length(KDE) > 0) {
+        ## Get out bandwidths by going through each component of the KDE
         KDEdat <- lapply(KDE, function(x) {x$h})
-        names(KDEdat) <- paste("h.", names(KDEdat), sep="")
+        names(KDEdat) <- paste("kde.h.", names(KDEdat), sep="")
         dat <- cbind(dat, KDEdat)
+        ## Get out contour areas by going through each component of the KDE
+        for (name in names(KDE)) {
+          KDEdat <- as.list(KDE[[name]]$tot.contour.areas[,"contour.areas"])
+          names(KDEdat) <- paste("kde.c", KDE[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
+          dat <- cbind(dat, KDEdat)
+        }
       }
+      message(paste("Getting KR"))
+      KR <- getKR(r)
+      if (length(KR) > 0) {
+        ## Get out bandwidths by going through each component of the KR
+        KRdat <- lapply(KR, function(x) {x$h})
+        names(KRdat) <- paste("kr.h.", names(KRdat), sep="")
+        dat <- cbind(dat, KRdat)
+        ## Get out contour areas by going through each component of the KR
+        for (name in names(KR)) {
+          KRdat <- as.list(KR[[name]]$tot.contour.areas[,"contour.areas"])
+          names(KRdat) <- paste("kr.c", KR[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
+          dat <- cbind(dat, KRdat)
+        }
+      }
+
       logdat <- merge(logdat, dat, all=TRUE)
     }
   }
