@@ -132,10 +132,10 @@ idt.connect.segments <- function(segs, merge.rad=10) {
       ## Add the segement to T
       if (i<=N) {
         T <- rbind(T, segs[[i]])
-        print(paste("Adding old segment", i))
+        message(paste("Adding old segment", i))
       } else {
         T <- rbind(T, flipud(segs[[j]]))
-        print(paste("Adding old segment", j))
+        message(paste("Adding old segment", j))
       }
       
       added[i] <- TRUE             # Ignore these indicies in the future
@@ -149,7 +149,7 @@ idt.connect.segments <- function(segs, merge.rad=10) {
     T <- remove.intersections(T)
     T <- idt.remove.backtracks(T)
     Ts <- c(Ts, list(T))
-    print(paste("Storing new segment", length(Ts)))
+    message(paste("Storing new segment", length(Ts)))
   }
   return(Ts)
 }
@@ -220,9 +220,9 @@ idt.remove.backtracks <- function(P) {
     j <- which(apply(P[1:(i-1),,drop=FALSE], 1, function(x) {identical(x, P[i,])}))
     ## If so, remove all of P between there and here
     if (length(j)) {
-      print(paste("Already been to ", j, "; Removing:"))
+      message(paste("idt.remove.backtracks: Already been to ", j, "; Removing:"))
       ind <- j:(i-1)
-      print(ind)
+      message(paste(" ", ind))
       return(idt.remove.backtracks(P[-ind,]))
     }
   }

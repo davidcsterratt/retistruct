@@ -136,7 +136,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
   ## Go through datasets
   for (dataset in datasets) {
     message(paste("Reading", dataset))
-    r <- retistruct.read.recdata(list(dataset=dataset))
+    suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset)))
     if (!is.null(r)) {
       dat <- data.frame(dataset=dataset,
                         E=n(r$opt$value),
