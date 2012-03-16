@@ -78,13 +78,20 @@ retistruct.cli.basepath <- function(dataset) {
   return(basepath)
 }
 
-## retistruct.cli.figure - Print a figure to file
-##
-## It requires the global variable dataset to be set
+##' @title Print a figure to file
+##' @param dataset Path to dataset to process 
+##' @param outputdir Directory in which to save any figures
+##' @param device String representing device to print figures to
+##' @param width Width of figures in inches
+##' @param height Height of figures in inches
+##' @param res Resolution of figures in dpi (only applies to bitmap
+##' devices)
+##' @export
+##' @author David Sterratt
 retistruct.cli.figure <- function(dataset,
                                   outputdir, device="pdf", width=6, height=6,
                                   res=100) {
-  r <- retistruct.read.recdata(list(dataset=dataset))
+  suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset)))
   units <- NULL
   if (device!="pdf") {
     height <- height*res
@@ -118,17 +125,29 @@ retistruct.cli.figure <- function(dataset,
     title(dataset)
     dev.off()
 
-    ## Polar plot
-    dev(file=file.path(outputdir, paste(basepath, "-polar", suffix, sep="")),
+    ## Polar plot with KDE contours
+    dev(file=file.path(outputdir, paste(basepath, "-polar-kde", suffix, sep="")),
            width=width, height=height)
     par(mar=c(2, 2, 2, 2))
-    plot.polar(r)
-    title(dataset)
+    plot.polar(r, datapoint.contours=TRUE, grouped.contours=FALSE)
+    title(paste("KDE:", dataset))
     if (!is.null(r$EOD)) {
       text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
     }
     dev.off()
 
+    ## Polar plot with KR contours
+    dev(file=file.path(outputdir, paste(basepath, "-polar-kr", suffix, sep="")),
+           width=width, height=height)
+    par(mar=c(2, 2, 2, 2))
+    plot.polar(r, datapoint.contours=FALSE, grouped.contours=TRUE)
+    title(paste("KR:", dataset))
+    if (!is.null(r$EOD)) {
+      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+    }
+    dev.off()
+
+    
     ## Strain plot
     dev(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
            width=width, height=height)
