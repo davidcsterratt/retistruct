@@ -118,7 +118,7 @@ remove.identical.consecutive.rows <- function(P) {
 ##' intersection point, defined B'.  Point C is replaced by a point C'
 ##' on the line B'D. The maxium distance of B'C' is given by the
 ##' parameter d. If the distance l B'D is less than 2d, the distance
-##' B'C' is l/2. .. content for \description{} (no empty lines) ..
+##' B'C' is l/2.
 ##'
 ##' @title Remove intersections between adjacent segements in a closed path
 ##' @param P The points, as a 2-column matrix
