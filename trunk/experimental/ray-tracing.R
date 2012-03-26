@@ -161,21 +161,30 @@ trace.ray <- function(r0, S) {
 ##' @param S System defined  by data frame containing left margin of
 ##' surfaces (A), radii of surfaces (R)  and refracive indices (n).
 ##' @author David Sterratt
-draw.system <- function(S) {
-  plot(NA, NA, xlim=c(-4, 6), ylim=c(-5, 5), asp=1)
-  abline(0, 0)
+draw.system <- function(S, xoff=-10, ypad=1) {
   with(S, {
+    xlim <- range(A)
+    xlim[1] <- xlim[1] + xoff
+    ylim <- c(min(-R*sin(C) - ypad), max(R*sin(C) + ypad))
+    print(ylim)
+    plot(NA, NA, xlim=xlim, ylim=ylim, asp=1)
+    abline(0, 0)
     for (i in 1:length(A)) {
-      draw.arc(A[i], R[i])
+      draw.arc(A[i], R[i], C[i])
     }})
 }
 
 ## Define system by data frame containing left margin of surfaces (A),
 ## radii of surfaces (R) and refracive indices (n).
-S <- data.frame(A=c(3,  4,  8),
-                R=c(1, -1, -4),
-                C=c(pi/2, pi/2, pi/2),
-                n=c(1, 1.4, 1))
+
+## According to the thin lens approximation, the focal length of this
+## lens should be
+## 1/f = (n - 1)(1/R1 - 1/R2) = (1.5 - 1)(1/10 - 1/(-10))
+## => f = 5/0.5 = 10
+S.thin <- data.frame(A=c(-0.1,  0.1,  10),
+                       R=c(10, -10, -10000),
+                       C=c(pi/20, pi/20, pi/10),
+                       n=c(1, 1.5, 1))
 
 S.hughes <- data.frame(A=c(0,     0.26,  0.881, 1.778,  3.695,  4.591,  5.981),
                        R=c(2.965, 2.705, 2.340, 0.958, -0.958, -2.340, -2.813),
@@ -183,6 +192,7 @@ S.hughes <- data.frame(A=c(0,     0.26,  0.881, 1.778,  3.695,  4.591,  5.981),
                        n=c(1,     1.38,  1.337, 1.390,  1.50,   1.390,  1.337))
 
 S <- S.hughes
+S <- S.thin
 draw.system(S)
 #trace.ray(c(0, 0.5, 0), S)
 #trace.ray(c(0, 0.5, -0.05), S)
@@ -199,13 +209,16 @@ draw.system(S)
 
 ## r <- trace.ray(c(-500, 101, -0.2), S)
 
-## r <- trace.ray(c(-500, 102.5, -0.2), S)
-## r <- trace.ray(c(-500, 102, -0.2), S)
-## r <- trace.ray(c(-500, 100, -0.2), S)
+
+r <- trace.ray(c(-500, 49.5, -atan2(50, 500)), S)
+r <- trace.ray(c(-500, 50.5, -atan2(50, 500)), S)
+r <- trace.ray(c(-500, 50, -atan2(50, 500)), S)
 ## r <- trace.ray(c(-500, 100.8, -0.2), S)
 ## r <- trace.ray(c(-500, 99, -0.2), S)
 
 ## r <- trace.ray(c(1, 4, -pi/2), S)
-r <- trace.ray(c(1.5, 4, -pi/2), S)
+## r <- trace.ray(c(1.5, 4, -pi/2), S)
+## r <- trace.ray(c(1.75, 4, -pi/2), S)
+## r <- trace.ray(c(2, 4, -pi/2), S)
 ## r <- trace.ray(c(-500, 101.5, -0.2), S)
 
