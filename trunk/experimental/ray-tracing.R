@@ -98,14 +98,16 @@ new.ray <- function(r0, S) {
 
   ## Compute incident angle to lens surface
   if (j != nrow(S)) {
-    alpha1 <- atan2(P1[2], P1[1] - (S$A[j] + S$R[j]))
-    I0 <- pi + theta0 - alpha1
-    if (I0 >= pi) I0 <- I0 - pi
+    ## Angle of normal for spherical arc
+    alpha <- -asin(P1[2]/S$R[j])
+    ## Incident angle of beam, mapped onto the range -pi/2, pi/2
+    I0 <- theta0 - alpha
+    I0 <- ((I0 + pi/2) %% pi) - pi/2
     ## Snell's law
     I1 <- with(S, asin(n[j]*sin(I0)/n[j+1]))
-    theta1 <- I1 + alpha1 - pi
-    if (theta1 <=  -pi) theta1 <- theta1 + pi
-    message(paste("alpha =", alpha1*180/pi, "; I0 =", I0*180/pi, "; I1 =", I1*180/pi, "; theta0 =", theta0*180/pi, ";theta1 =", theta1*180/pi))
+    ## theta1 <- I1 + alpha
+    theta1 <- theta0 + I1 - I0
+    message(sprintf("theta0 = % 03.1f; alpha = % 03.1f; I0 = % 03.1f; I1 = % 03.1f; theta1 = % 03.1f", theta0*180/pi, alpha*180/pi, I0*180/pi,  I1*180/pi, theta1*180/pi))
   } else {
     theta1 <- NA
   }
@@ -205,5 +207,5 @@ draw.system(S)
 
 ## r <- trace.ray(c(1, 4, -pi/2), S)
 r <- trace.ray(c(1.5, 4, -pi/2), S)
-r <- trace.ray(c(-500, 101.5, -0.2), S)
+## r <- trace.ray(c(-500, 101.5, -0.2), S)
 
