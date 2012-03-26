@@ -33,56 +33,93 @@ ray.arc.intersection <- function(Ptheta, A, R, C) {
 
   ## Find out if the intersections are on the arc
   gamma <- acos((X - x)/R)
-  print(gamma)
-  print(C)
+  ## print(gamma)
+  ##  print(C)
   ## If not, return NA
   if (all(gamma > C)) {
     return(NA)
   }
   out <- cbind(x, y, lambda)
-  print(out)
+  ## print(out)
   out <- out[gamma <= C,,drop=FALSE]
   ## print(out)
-  out <- out[out[,"lambda"]>0,,drop=FALSE]
+  out <- out[out[,"lambda"]>1e-10,,drop=FALSE]
+  ## print(out)
+  if (nrow(out) == 0) {
+    return(NA)
+  }
+  ## print(out)
   out <- out[which.min(out[,"lambda"]),]
-  print(out)
+  ## print(out)
   
   ## Otherwise return the first intersection
   return(out)
 }
 
 ##' @title Compute origin and deflection of new ray
-##' @param Ptheta0 Vector comprising cartesian coordinates of incident
-##' ray origin and angle with x-axis of incident ray
-##' @param A1 Left-edge of circle on x-axis
-##' @param R1 Radius of circle
-##' @param n0 Refractive index of medium to left of circle
-##' @param n1 Refractive index of medium to right of circle
+##' @param r0 Vector comprising cartesian coordinates of incident ray
+##' origin, angle of incident ray with x-axis and index of system
+##' surface that origin lies on, \code{NA} if the origin is not
+##' associated with any surface.
+##' @param S S System defined by data frame containing left margin of
+##' surfaces (A), radii of surfaces (R), cut-offs (C) and refracive
+##' indices (n).
 ##' @return Vector comprinsing new origin and angle
 ##' @author David Sterratt
-new.ray <- function(Ptheta0, A1, R1, C1, n0, n1) {
-  P0 <- Ptheta0[1:2]
-  theta0 <- Ptheta0[3]
-  ## Compute intersection
-  P1 <- ray.arc.intersection(Ptheta0, A1, R1, C1)
-  if (any(is.na(P1))) {
+new.ray <- function(r0, S) {
+  P0 <- r0[1:2]
+  theta0 <- r0[3]
+  j <- r0[4]
+  ## Compute the next intersection with a surface
+  lambda.min <- Inf                     # Minmum distance along ray
+  P1 <- NA
+
+  ## Indicies of surfaces to search trhough. Ignore the one associated
+  ## with the origin
+  iarc <- 1:nrow(S)
+
+  ## Do the seraching
+  ## print(iarc)
+  for (i in iarc) {
+    P <- with(S, ray.arc.intersection(r0, A[i], R[i], C[i]))
+    ## print(lambda.min)
+    ## print(P)
+    if (!any(is.na(P))) {
+      if (P[3] < lambda.min) {
+        lambda.min <- P[3]
+        P1 <- P
+        j <- i
+      }
+    }
+  }
+  if (all(is.na(P1))) {
     return(NA)
   }
+
   ## Compute incident angle to lens surface
-  alpha1 <- sin(P1[2]/R1)
-  I0 <- theta0 + alpha1
-  ## Snell's law
-  I1 <- asin(n0*sin(I0)/n1)
-  theta1 <- I1 - alpha1
-  return(c(P1[1:2], theta1))
+  if (j != nrow(S)) {
+    alpha1 <- atan2(P1[2], P1[1] - (S$A[j] + S$R[j]))
+    I0 <- pi + theta0 - alpha1
+    if (I0 >= pi) I0 <- I0 - pi
+    ## Snell's law
+    I1 <- with(S, asin(n[j]*sin(I0)/n[j+1]))
+    theta1 <- I1 + alpha1 - pi
+    if (theta1 <=  -pi) theta1 <- theta1 + pi
+    message(paste("alpha =", alpha1*180/pi, "; I0 =", I0*180/pi, "; I1 =", I1*180/pi, "; theta0 =", theta0*180/pi, ";theta1 =", theta1*180/pi))
+  } else {
+    theta1 <- NA
+  }
+  out <- c(P1[1:2],  theta1, j)
+  names(out) <- c("x", "y", "theta", "j")
+  return(out)
 }
 
-##' @title Draw a lens
-##' @param A Left edge of lens
-##' @param R Radius of lens
+##' @title Draw a arc
+##' @param A Left edge of arc
+##' @param R Radius of arc
 ##' @param C Cutoff angle
 ##' @author David Sterratt
-draw.lens <- function(A, R, C=pi/2) {
+draw.arc <- function(A, R, C=pi/2) {
   X <- A + R
   angles <- seq(-C, C, len=100)
   P <- R*circle(100)
@@ -93,25 +130,29 @@ draw.lens <- function(A, R, C=pi/2) {
 
 ##' @title Trace ray through system
 ##' @param r0 Initial ray vector
-##' @param S System defined  by data frame containing left margin of
-##' surfaces (A), radii of surfaces (R)  and refracive indices (n).
+##' @param S System defined by data frame containing left margin of
+##' surfaces (A), radii of surfaces (R), cut-offs (C) and refracive
+##' indices (n).
 ##' @return Matrix with x & y coordinates in first column and angles
 ##' in final colum.
 ##' @author David Sterratt
 trace.ray <- function(r0, S) {
-  r <- matrix(r0, ncol=3)
-  with(S, {
-    for (i in 1:(nrow(S))) {
-      r1 <- new.ray(r0, A[i], R[i], C[i], n[i], n[i+1])
-      if (!is.na(r1[1])) {
-        r <- rbind(r, r1)
-        r0 <- r1
-      }
+  r0 <- c(r0, NA)
+  r <- matrix(r0, ncol=4)
+  colnames(r) <- c("x", "y", "theta", "j")
+
+  iter <- 10
+  while(!is.na(r0[3]) & iter) {
+    ## print(r0)
+    r1 <- new.ray(r0, S)
+    if (!is.na(r1[1])) {
+      r <- rbind(r, r1)
+      r0 <- r1
     }
-    ## lines(c(r[-nrow(r),1], r[-1,1]), c(r[-nrow(r),2], r[-1,2]))
-    lines(r[,1], r[,2])
-    return(r)
-  })
+    iter <- iter - 1
+  }
+  lines(r[,1], r[,2])
+  return(r)
 }
 
 ##' @title Draw a system of lenses
@@ -123,7 +164,7 @@ draw.system <- function(S) {
   abline(0, 0)
   with(S, {
     for (i in 1:length(A)) {
-      draw.lens(A[i], R[i])
+      draw.arc(A[i], R[i])
     }})
 }
 
@@ -154,20 +195,15 @@ draw.system(S)
 ## r <- trace.ray(c(-500, 50, -0.1), S)
 ## r <- trace.ray(c(-500, 50.5, -0.1), S)
 
-r <- trace.ray(c(-500, 101, -0.2), S)
-## r <- trace.ray(c(-500, 101.5, -0.2), S)
-r <- trace.ray(c(-500, 102.5, -0.2), S)
-r <- trace.ray(c(-500, 102, -0.2), S)
-r <- trace.ray(c(-500, 100, -0.2), S)
+## r <- trace.ray(c(-500, 101, -0.2), S)
+
+## r <- trace.ray(c(-500, 102.5, -0.2), S)
+## r <- trace.ray(c(-500, 102, -0.2), S)
+## r <- trace.ray(c(-500, 100, -0.2), S)
 ## r <- trace.ray(c(-500, 100.8, -0.2), S)
 ## r <- trace.ray(c(-500, 99, -0.2), S)
 
-r <- trace.ray(c(1, 4, -pi/2), S)
+## r <- trace.ray(c(1, 4, -pi/2), S)
+r <- trace.ray(c(1.5, 4, -pi/2), S)
+r <- trace.ray(c(-500, 101.5, -0.2), S)
 
-
-
-
-
-
-
-6.291 - 1.7 - 1.778
