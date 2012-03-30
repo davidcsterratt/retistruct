@@ -356,7 +356,6 @@ retistruct.export.matlab <- function(r) {
       ## print(names(unlist(KDE, recursive=FALSE)))
       KDE <- unlist(KDE, recursive=FALSE)
       names(KDE) <- gsub('\\.', '_', names(KDE))
-      print(names(KDE))
     }
     return(KDE)
   }
