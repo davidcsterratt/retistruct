@@ -337,24 +337,36 @@ retistruct.save.recdata <- function(r) {
 ##' @author David Sterratt
 ##' @export
 retistruct.export.matlab <- function(r) {
-  if (!is.null(r$dataset)) {
-    if (!is.null(r)) {
-      f <- file.path(r$dataset, "r.mat")
-      message(paste("Saving", f))
-      KDE <- getKDE(r)
+  ## writeMat() doesn't seem to cope with hierarchical structures, so
+  ## we have to unlist the KDE and KR objects using this function
+  unlist.kernel.estimate <- function(KDE) {
+    if (length(KDE) > 0) {
       for (i in 1:length(KDE)) {
         KDEi <- KDE[[i]]
         KDEi$flevels <- NULL
         KDEi$labels <- NULL
+        KDEi$tot.contour.areas <- NULL
         KDEi <- unlist(KDEi, recursive=FALSE)
-        KDE[[i]] <- list(flevels=KDE[[i]]$flevels, labels=KDE[[i]]$labels)
+        KDE[[i]] <- list(flevels=KDE[[i]]$flevels, labels=KDE[[i]]$labels,
+                         tot.contour.areas=KDE[[i]]$tot.contour.areas)
         KDE[[i]] <- c(KDE[[i]], KDEi)
+        names(KDE[[i]]$contour.areas) <- c()
       }
       ## print(names(KDE))
       ## print(names(unlist(KDE, recursive=FALSE)))
       KDE <- unlist(KDE, recursive=FALSE)
       names(KDE) <- gsub('\\.', '_', names(KDE))
-      
+      print(names(KDE))
+    }
+    return(KDE)
+  }
+  
+  if (!is.null(r$dataset)) {
+    if (!is.null(r)) {
+      f <- file.path(r$dataset, "r.mat")
+      message(paste("Saving", f))
+      KDE <- unlist.kernel.estimate(getKDE(r))
+      KR <-  unlist.kernel.estimate(getKR(r))
       writeMat(f,
                phi0=r$phi0*180/pi,
                Dss=getDss(r),
@@ -362,6 +374,7 @@ retistruct.export.matlab <- function(r) {
                Sss=name.list(getSss(r)),
                Tss=name.list(getTss(r)),
                KDE=KDE,
+               KR=KR,
                side=r$side, DVflip=r$DVflip)
     }
   }

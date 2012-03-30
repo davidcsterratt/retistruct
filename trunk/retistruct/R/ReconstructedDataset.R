@@ -238,7 +238,6 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         KDE[[i]] <- list(kappa=kappa,
                          h=180/pi/sqrt(kappa),
                          flevels=flevels,
-                         labels=vols,
                          g=  list(xs=g$xs,   ys=g$ys,   f=f),
                          gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
 
@@ -260,7 +259,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         }
         KDE[[i]]$contours <- cs
         KDE[[i]]$labels <- labels
-        names(contour.areas) <- labels
+        names(contour.areas) <- c()
         KDE[[i]]$contour.areas <- contour.areas
         KDE[[i]]$tot.contour.areas <- aggregate(contour.areas ~ labels,
                                                 data.frame(labels, contour.areas), sum)

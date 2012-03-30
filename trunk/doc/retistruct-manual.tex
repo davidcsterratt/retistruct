@@ -356,15 +356,48 @@ There are also some embryonic scripts to create polar plots:
     spherical coordinates (in the same latitude-longitude format as
     above) of a landmark. \\
     \texttt{KDE} & An object containing information about Kernel
-    Density Estimates of the locations of cell bodies. For example,
-    elements such as \texttt{KDE.green\_contours5} contain the 5\%
-    contours of the green cell bodies. To customise the contours, see
-    the instructions in Section~\ref{manual:sec:retinal-display}. The
-    full density information is contained in
-    \texttt{KDE.green\_g\_xs}, \texttt{KDE.green\_g\_ys}, and
-    \texttt{KDE.green\_g\_f}. This can be plotted in MATLAB using the
-    command \texttt{contour(KDE.green\_g\_xs, KDE.green\_g\_ys,
-      KDE.green\_g\_f)}. \\
+    Density Estimates of the locations of cell bodies.\\
+    & \begin{tabular}{p{1.5in}p{3in}} \texttt{green\_flevels} &
+      Contour heights, determined by finding heights that exclude a
+      certain fraction of the probability. For example, the 95\%
+      contour is excludes 95\% of the probability mass,
+      and it should enclose about 5\% of the points. \\
+      \texttt{green\_labels} & Contour labels. These give the label
+      (e.g.\ 5, 25, 50, where these are the percentages above) of each
+      contour. Note that there may be more than one contour at the
+      same level, so this vector may contain more elements than
+      \texttt{flevels}. The first element of \texttt{green\_labels}
+      labels the contour whose coordinates are specified in
+      \texttt{green\_contours1}, the second element of
+      \texttt{green\_labels} relates to \texttt{green\_contours2} and
+      so on. \\
+      \texttt{green\_tot\_contour\_areas} & The total area in square
+      degrees enclosed by each contour. This is a matrix with the
+      first column giving the contour label (see above) and the
+      next column giving the area. \\
+      \texttt{green\_kappa} & The concentration parameter of
+      the Fisher density determined by the kernel fitting algorithm. \\
+      \texttt{green\_h} & A pseudo-bandwidth parameter, the inverse
+      of the square root of \texttt{kappa}. Units of degrees. \\
+      \texttt{green\_g\_xs} \texttt{green\_g\_ys} \texttt{green\_g\_f}
+      & Kernel density estimates on standard polar grid. This can be
+      plotted in MATLAB using the command
+      \texttt{contour(KDE.green\_g\_xs, KDE.green\_g\_ys,
+        KDE.green\_g\_f)}. \\
+      \texttt{green\_gpa\_xs} \texttt{green\_gpa\_ys}
+      \texttt{green\_gpa\_f} & Kernel density estimates on
+      area-preserving polar grid. Plotted in MATLAB as above. \\
+      \texttt{green\_contours1}, \texttt{green\_contours2\dots} &
+      Coordinates of contours. See \texttt{green\_labels} above for
+      more explanation. \\
+      \texttt{green\_contour\_areas1},
+      \texttt{green\_contour\_areas2\dots} & Area contained within each
+      individual contour. See \texttt{green\_labels} above for more
+      explanation.
+    \end{tabular} \\
+    \texttt{KR} & An object containing Kernel Regression estimates of the
+    density of points, derived from the grouped data points. All
+    fields correspond to \texttt{KDE} above.\\
     \hline
   \end{tabularx}
   \caption{Variables exported in the \texttt{r.mat} file.}
