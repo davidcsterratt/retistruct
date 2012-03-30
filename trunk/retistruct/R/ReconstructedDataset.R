@@ -377,7 +377,6 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   ## KDE
   if (plot.datapoint.contours) {
     k <- getKDE(r)
-    Dss <- getDss(r)
     if (length(k)) {
       for (i in 1:length(k)) {
         if (pa) {
@@ -389,7 +388,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
         contour(rho.to.degrees(g$xs, r$phi0, pa),
                 rho.to.degrees(g$ys, r$phi0, pa),
                 g$f, add=TRUE, levels=k[[i]]$flevels,
-                col=r$cols[[names(Dss)[i]]],
+                col=r$cols[[names(k)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
       }
@@ -399,7 +398,6 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
   ## KDE
   if (plot.grouped.contours) {
     k <- getKR(r)
-    Gss <- getGss(r)
     if (length(k)) {
       for (i in 1:length(k)) {
         if (pa) {
@@ -411,7 +409,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
         contour(rho.to.degrees(g$xs, r$phi0, pa),
                 rho.to.degrees(g$ys, r$phi0, pa),
                 g$f, add=TRUE, levels=k[[i]]$flevels,
-                col=r$cols[[names(Gss)[i]]],
+                col=r$cols[[names(k)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
       }
