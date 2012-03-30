@@ -476,7 +476,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
                  sinp)
 
   ## Compute force in Cartesian coordinates
-  dE.dp <- -Fcart(P, C, L, B, T, A, R,
+  dE.dp <- -Fcart(P, C, L, T, A, R,
                   alpha, x0, nu, verbose)
 
   ## Convert to Spherical coordinates
@@ -677,22 +677,15 @@ dE.ca <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' that is received from the \code{optim} function.
 ##'
 ##' @title The deformation energy function
-##' @param p Parameter vector of \code{phi} and \code{lambda}
+##' @param P N-by-3 matrix of point coordinates
 ##' @param Cu The upper part of the connectivity matrix
-##' @param C The connectivity matrix
 ##' @param L Length of each edge in the flattened outline
-##' @param B Connectivity matrix
 ##' @param T Triangulation in the flattened outline
 ##' @param A Area of each triangle in the flattened outline
-##' @param R Radius of the sphere
-##' @param Rset Indicies of points on the rim
-##' @param i0 Index of fixed point on rim
-##' @param phi0 Lattitude at which sphere curtailed
-##' @param lambda0 Longitude of fixed points
-##' @param Nphi Number of free values of \code{phi}
-##' @param N Number of points in sphere
-##' @param alpha Area scaling coefficient
-##' @param x0 Area cutoff coefficient
+##' @param R Radius of sphere
+##' @param alpha Area penalty scaling coefficient
+##' @param x0 Area penalty cutoff coefficient
+##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A single value, representing the energy of this particular
 ##' configuration
@@ -736,19 +729,18 @@ Ecart <- function(P, Cu, L, T, A, R,
 ##' @param P N-by-3 matrix of point coordinates
 ##' @param C The connectivity matrix
 ##' @param L Length of each edge in the flattened outline
-##' @param B 
 ##' @param T Triangulation in the flattened outline
 ##' @param A Area of each triangle in the flattened outline
 ##' @param R Radius of sphere
 ##' @param alpha Area penalty scaling coefficient
 ##' @param x0 Area penalty cutoff coefficient
-##' @param nu 
+##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A vector representing the derivative of the energy of this
 ##' particular configuration with respect to the parameter vector
 ##' @author David Sterratt
 ##' @useDynLib retistruct
-Fcart <- function(P, C, L, B, T, A, R,
+Fcart <- function(P, C, L, T, A, R,
                   alpha=1, x0, nu=1, verbose=FALSE) {
   ## Compute derivative of elastic energy
   
@@ -1046,7 +1038,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
     ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
     ##              verbose=FALSE, control=control)
     opt <- fire(opt$x,
-                force=function(x) {Fcart(x, Ct, Lt, Bt, Tt, A, R, alpha, x0, nu)},
+                force=function(x) {Fcart(x, Ct, Lt, Tt, A, R, alpha, x0, nu)},
                 restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                 ##                Tmax=200,
                 dt=1,# gamma=1,
