@@ -171,7 +171,7 @@ getKDE <- function(r) {
 ##' \item{\code{h}}{A pseudo-bandwidth parameter, the inverse of the square root of \code{kappa}. Units of degrees.}
 ##' \item{\code{flevels}}{Contour levels.}
 ##' \item{\code{labels}}{Labels of the contours.}
-##' \item{\code{g}}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}) and density estimates at these points, \code{f}.}
+##' \item{\code{g}}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}), density estimates at these points, \code{f} and location of maximum in Cartesian coordinates (\code{max}).}
 ##' \item{\code{gpa}}{Raw density estimate drawn on area-preserving projection. Comprises same elements as above.}
 ##' \item{\code{contour.areas}}{Area of each individual contour. One level may ahave more than one contour; this shows the areas of all such contours.}
 ##' \item{\code{tot.contour.areas}}{Data frame containing the total area within the contours at each level.}
@@ -219,6 +219,9 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         ## the data points
         fpa <- get.kde(gpa$s, Dss[[i]], kappa, res)
         f  <-  get.kde(g$s,   Dss[[i]], kappa, res)
+        rmax.pa <- gpa$c[which.max(fpa),]
+        rmax    <- g$c[which.max(f),]
+
         
         ## Determine the value of gk that encloses 0.95 of the
         ## density.  To compute the density, we need to know the
@@ -238,8 +241,8 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         KDE[[i]] <- list(kappa=kappa,
                          h=180/pi/sqrt(kappa),
                          flevels=flevels,
-                         g=  list(xs=g$xs,   ys=g$ys,   f=f),
-                         gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
+                         g=  list(xs=g$xs,   ys=g$ys,   f=f,   max=rmax),
+                         gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa, max=rmax.pa))
 
         ## Get contours in Cartesian space
         cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
@@ -391,6 +394,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                 col=r$cols[[names(k)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
+        points(rho.to.degrees(g$max[1], r$phi0, pa),
+               rho.to.degrees(g$max[2], r$phi0, pa),
+               pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
   }
@@ -412,6 +418,9 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                 col=r$cols[[names(k)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
+        points(rho.to.degrees(g$max[1], r$phi0, pa),
+               rho.to.degrees(g$max[2], r$phi0, pa),
+               pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
   }
