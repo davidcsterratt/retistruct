@@ -3,6 +3,10 @@
 @preamble{"\def\myjournaltitle#1#2#3{\expandafter\ifx\csname%
    myshortjournaltitles\endcsname\relax\href{#3}{#1}\else\href{#3}{#2}\fi}%
  " }
+@string{COMPUTGEOSCI = {\myjournaltitle{Computers \& Geosciences}{Comput.\ Geosci.}{}}}
+
+@string{PRSLA = {\myjournaltitle{Proceedings of the Royal Society of
+                  London (Series A)}{Proc.\ R.\ Soc.\ Lond., A}{}}}
 @String{NEURON =
                   {\myjournaltitle{Neuron}{Neuron}{http://www.neuron.org/}}}
 @String{JVISCA = {\myjournaltitle{Journal of Visualization and
@@ -30,6 +34,13 @@
                   Science}{Invest.\ Ophth.\ Vis.\ Sci.}{}}}
 @string{CUP = {Cambridge University Press}}
 @String{CAMBUK = {Cambridge, UK}}
+@string{TPROBAPP = {\myjournaltitle{Theory of Probability and its
+                  Applications}{Theory Probab.\ Appl.}{}}}
+@string{SANKHYA = {\myjournaltitle{Sankhy\={a}: The Indian Journal of
+                  Statistics, Series A}{Sankhya Ser.\ A}{}}}
+
+
+
 
 @Article{BeviEtal11gene,
   abstract     = {Retinal ganglion cells ({RGCs}) project axons from
@@ -148,6 +159,26 @@
 }
 @Comment LocalWords:  BeviEtal RGCs midbrain ratiometric Bevins Lemke Reber JN
                   @Comment LocalWords:  Micha citeulike linkout epha jul pmid
+
+@Article{DiggFish85sphe,
+  author       = {Peter J Diggle and Nicholas I Fisher},
+  title        = {{SPHERE: A} contouring program for spherical data},
+  journal      = COMPUTGEOSCI,
+  year         = 1985,
+  volume       = 11,
+  pages        = {725-766}
+}
+
+@Article{Fish53disp,
+  author       = {Ronald Fisher},
+  title        = {Dispersion on a Sphere},
+  journal      = PRSLA,
+  year         = 1953,
+  volume       = 217,
+  pages        = {295-305}
+}
+@Comment LocalWords:  disp PRSLA
+
 
 @Book{FishEtal87spat,
   author       = {N I Fisher and T Lewis and B J J Embleton},
@@ -446,6 +477,19 @@
                   @Comment LocalWords:  Reichenbach behavior neighboring PNAS
 
 
+@Article{Nada64esti,
+  author       = {E. A. Nadaraya},
+  title        = {On Estimating Regression},
+  journal      = TPROBAPP,
+  year         = 1964,
+  volume       = 9,
+  pages        = {141-142},
+  timestamp    = {2012/04/03},
+  added-by     = {sterratt}
+}
+@Comment LocalWords:  esti Nadaraya TPROBAPP sterratt
+
+
 @Article{RashEtal05oppo,
   author       = {Rashid, T. and Upton, A. L. and Blentic, A. and
                   Ciossek, T. and Kn\"{o}ll, B. and Thompson,
@@ -668,6 +712,19 @@
   volume       = 180,
   year         = 1996
 }
+
+@Article{Watt1964smoo,
+  author       = {Geoffrey S Watson},
+  title        = {Smooth Regression Analysis},
+  journal      = SANKHYA,
+  year         = 1964,
+  volume       = 26,
+  pages        = {359-372},
+  timestamp    = {2012/04/03},
+  added-by     = {sterratt}
+}
+@Comment LocalWords:  smoo SANKYHA
+
 
 @Comment LocalWords:  PHYREV
 
