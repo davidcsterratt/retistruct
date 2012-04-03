@@ -192,7 +192,7 @@ S.hughes <- data.frame(A=c(0,     0.26,  0.881, 1.778,  3.695,  4.591,  5.981),
                        n=c(1,     1.38,  1.337, 1.390,  1.50,   1.390,  1.337))
 
 S <- S.hughes
-S <- S.thin
+## S <- S.thin
 draw.system(S)
 #trace.ray(c(0, 0.5, 0), S)
 #trace.ray(c(0, 0.5, -0.05), S)
@@ -212,13 +212,13 @@ draw.system(S)
 
 r <- trace.ray(c(-500, 49.5, -atan2(50, 500)), S)
 r <- trace.ray(c(-500, 50.5, -atan2(50, 500)), S)
-r <- trace.ray(c(-500, 50, -atan2(50, 500)), S)
+## r <- trace.ray(c(-500, 50, -atan2(50, 500)), S)
 ## r <- trace.ray(c(-500, 100.8, -0.2), S)
 ## r <- trace.ray(c(-500, 99, -0.2), S)
 
 ## r <- trace.ray(c(1, 4, -pi/2), S)
 ## r <- trace.ray(c(1.5, 4, -pi/2), S)
-## r <- trace.ray(c(1.75, 4, -pi/2), S)
-## r <- trace.ray(c(2, 4, -pi/2), S)
+r <- trace.ray(c(1.75, 4, -pi/2), S)
+r <- trace.ray(c(2, 4, -pi/2), S)
 ## r <- trace.ray(c(-500, 101.5, -0.2), S)
 
