@@ -336,19 +336,19 @@ There are also some embryonic scripts to create polar plots:
     \hline \texttt{phi0} & The latitude of the rim, expressed in
     radians
     \\
-    \texttt{Dss.green} & Locations of green-labelled cell bodies in
-    spherical coordinates. The first column contains the latitude of
-    each point, measured in radians. The second column contains the
+    \texttt{Dss.green}, \texttt{Dss.red} & Locations of green (red)
+    labelled cell bodies in spherical coordinates. The first column
+    contains the latitude of each point, measured in radians. The
+    second column contains the
     longitude of each point, measured in radians. \\
-    \texttt{Dss.red} & Locations of red-labelled cell
-    bodies. Columns have same meaning as \texttt{Dss.green}. \\
-    \texttt{DssMean.green} & Location of Karcher mean of
-    green-labelled cell bodies in spherical coordinates. The first
-    column contains the latitude of each point, measured in
+    \texttt{DssMean.green}, \texttt{DssMean.red} & Location of Karcher
+    mean of green-labelled cell bodies in spherical coordinates. The
+    first column contains the latitude of each point, measured in
     radians. The second column contains the
     longitude of each point, measured in radians. \\
-    \texttt{DssMean.red} & Location of Karcher mean of red-labelled
-    cell bodies. Columns have same meaning as \texttt{DssMean.green}. \\
+    \texttt{DssHullarea.green}, \texttt{DssHullarea.red} & Area of
+    convex hull of green (red) points on sphere. The convex hull is
+    essentially a polygon drawn around data points. \\
     \texttt{Tss} & A structure in which each element contains
     spherical coordinates (in the same latitude-longitude format as
     above) of a tear. \\
@@ -379,9 +379,9 @@ There are also some embryonic scripts to create polar plots:
       the Fisher density determined by the kernel fitting algorithm. \\
       \texttt{green\_h} & A pseudo-bandwidth parameter, the inverse
       of the square root of \texttt{kappa}. Units of degrees. \\
-      \texttt{green_maxss_phi} & Lattitude of maximum point of kernel
+      \texttt{green_maxs_phi} & Lattitude of maximum point of kernel
       estimate. \\
-      \texttt{green_maxss_lambda} & Longitude of maximum point of kernel
+      \texttt{green_maxs_lambda} & Longitude of maximum point of kernel
       estimate. \\
       \texttt{green\_g\_xs} \texttt{green\_g\_ys} \texttt{green\_g\_f}
       & Kernel density estimates on standard polar grid. This can be

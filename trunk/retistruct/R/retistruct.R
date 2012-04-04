@@ -370,6 +370,7 @@ retistruct.export.matlab <- function(r) {
                phi0=r$phi0*180/pi,
                Dss=getDss(r),
                DssMean=getDss.mean(r),
+               DssHullarea=na.omit(getDss.hullarea(r)),
                Sss=name.list(getSss(r)),
                Tss=name.list(getTss(r)),
                KDE=KDE,
