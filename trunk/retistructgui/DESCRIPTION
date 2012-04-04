@@ -1,10 +1,10 @@
 Package: retistructgui
-Version: 0.4.9
-Date: 2012-02-15
+Version: 0.4.10
+Date: 2012-04-04
 Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
-Depends: R (>= 2.11.0), retistruct, gWidgets, gWidgetsRGtk2,
+Depends: R (>= 2.14.0), retistruct (>= 0.4.10), gWidgets, gWidgetsRGtk2,
     cairoDevice
 Description: Program to reconstruct retinae from flattened retinae in
     which there are incisions and tears

@@ -5,9 +5,9 @@ Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Description: Program to reconstruct retinae from flattened retinae in
     which there are incisions and tears
-Version: 0.4.9
+Version: 0.4.10
 URL: http://www.neuralmapformation.org
-Date: 2012-02-15
+Date: 2012-04-04
 Depends:
     R (>= 2.14.0),
     geometry (>= 0.2-1),
