@@ -23,10 +23,10 @@ if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forg
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## These lines needed while  Triangle and geometry only on R-Forge
 install.packages("Triangle", repos="http://R-Forge.R-project.org")
-install.packages("geometry", repos="http://R-Forge.R-project.org")
+## install.packages("geometry", repos="http://R-Forge.R-project.org")
 ## Now install retistruct
-install.packages("retistruct_0.4.9.tar.gz")
-install.packages("retistructgui_0.4.9.tar.gz")
+install.packages("retistruct_0.4.10.tar.gz")
+install.packages("retistructgui_0.4.10.tar.gz")
 
 library(retistructgui)
 retistruct()
