@@ -121,6 +121,28 @@ getDss.mean.reconstructedDataset <- function(r) {
   return(Dss.mean)
 }
 
+##' @title Get area of convex hull around data points on sphere
+##' @param r code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @return Area in degress squared
+##' @author David Sterratt
+##' @export
+getDss.hullarea <- function(r) {
+  Dss.hullarea <- list()
+  if (length(r$Dss)) {
+    for (i in 1:length(r$Dss)) {
+      if (nrow(r$Dss[[i]])) {
+        Dsp <- sphere.spherical.to.polar.cart(r$Dss[[i]], pa=TRUE)
+        Dspt <- delaunayn(Dsp)
+        Dss.hullarea[[i]] <- sum(sphere.tri.area(r$Dss[[i]], Dspt))*(180/pi)^2
+      } else {
+        Dss.hullarea[[i]] <- NA
+      }
+    }
+  }
+  names(Dss.hullarea) <- names(r$Dss)
+  return(Dss.hullarea)
+}
+
 ##' Get spherical coordinates of landmarks.
 ##'
 ##' @title Get transformed spherical coordinates of landmarks.
