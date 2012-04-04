@@ -226,7 +226,7 @@ landmark (blue line), in this case the optic disk.  The first step is
 for an expert to mark the locations of incisions and tears in the
 outline and to mark the location of one of the poles
 (Figure~\ref{fold-sphere:fig:method}B). At this stage the expected
-lattitude of the rim is also supplied (see next section and
+latitude of the rim is also supplied (see next section and
 Table~\ref{tab:eygrowth}). The outline is then triangulated and the
 incisions and tears are stitched together
 (Figure~\ref{fold-sphere:fig:method}C). This mesh is then projected
@@ -296,9 +296,9 @@ latitude $\phi_0$ of the rim using the formula:
 The measurements and derived latitudes for animals of various ages
 are shown in Table~\ref{tab:eygrowth}.
 
-An alternative approach to setting the rim lattitude is to allow the
-algorithm itself to infer the rim lattitude of each individual
-retina. This was done by repeating the minimisation for rim lattitudes
+An alternative approach to setting the rim latitude is to allow the
+algorithm itself to infer the rim latitude of each individual
+retina. This was done by repeating the minimisation for rim latitudes
 within $\pm10^\circ$ of the one determined by measurement as above. A
 comparison of the two methods is shown in
 Figure~\ref{retistruct_plos:fig:eyegrowth}B. It can be seen that the
@@ -455,15 +455,15 @@ Figure~\ref{retistruct_plos:fig:gradients}.
 
 Method: retinae will be stained for blueopsin. This will show up part
 of the ventro-temporal crescent. The edge of this crescent is expected
-to corresponde to the horizontal meridian. It is possible (or will
+to correspond to the horizontal meridian. It is possible (or will
 be!) to compute the location of the meridian on the retina for any
 orientation of the retinal axis.  The orientation of the axis will be
 optimised so as to provide the best match between the experimentally
-meausred boundary and the theoretical one.
+measured boundary and the theoretical one.
 
-\todo{DL/IDT to check reasoning about derevation of optic axis and  provide
+\todo{DL/IDT to check reasoning about derivation of optic axis and  provide
   data}
-\todo{DCS to invstigate shift of coordinates based on Drager and
+\todo{DCS to investigate shift of coordinates based on Drager and
   Olsen/Hubel and the Bear paper}
 
 \section*{Discussion}
@@ -880,7 +880,7 @@ defined as:
 \begin{equation}
   \hat f(\phi,\lambda;\kappa) = \frac{1}{n} \sum_{i=1}^n F(\phi, \lambda, \phi_i, \lambda_i; \kappa)
 \end{equation}
-The concencentration parameter is chosen so as to maximise a
+The concentration parameter is chosen so as to maximise a
 cross-validated log-likelihood:
 \begin{equation}
   \label{kernel-density:eq:2}
@@ -901,7 +901,7 @@ Fisher density and the spherical coordinates:
   \label{kernel-density:eq:4}
     \hat y(\phi,\lambda;\kappa) = \frac{\sum_{i=1}^n F(\phi, \lambda, \phi_i, \lambda_i; \kappa)y_i}{\sum_{i=1}^n F(\phi, \lambda, \phi_i, \lambda_i; \kappa)}
 \end{equation}
-The concentration paramter $\kappa$ is set by minimising the summed
+The concentration parameter $\kappa$ is set by minimising the summed
 squared error:
 \begin{equation}
   \label{kernel-density:eq:2}
@@ -925,7 +925,7 @@ by 100 Cartesian grid over the area-preserving (Lambert) polar
 projection, finding the polar coordinates of each point on the grid,
 and then computing the density estimate at each point.  A standard
 contouring algorithm is then used to plot the contours.  There are a
-number of methods for determing contour heights
+number of methods for determining contour heights
 \cite{FishEtal87spat}. We chose to define them in terms of the amount
 of probability mass that they exclude. For example, the 5\% contour
 excludes 5\% of the probability mass.  The area contained within each
@@ -937,27 +937,59 @@ contour in the area-preserving (Lambert) projection
 
 In previous work of the mapping of visual space on the superior
 colliculus \cite{DragHube76topo}, visual space has been described in
-terms of elevation $\alpha$ and aziumth $\theta$ with respect to the
+terms of elevation $\alpha$ and azimuth $\theta$ with respect to the
 long axis of the mouse. Visual space is mapped onto the retina via the
 optical system of the eye. This mapping depends on the angle that a
 ray makes with the optic axis, which we define as being oriented at
-($\alpha_0, \theta_0$) in the elevation-aziumuth coordinate
+($\alpha_0, \theta_0$) in the elevation-azimuth coordinate
 system. This has been estimated to be ($42^\circ, 62^\circ$)
-\cite{DragHube76topo} \todo{Check my reading of Dr\"{a}ger and Hubel}.
+\cite{DragHube76topo} \todo{Check DCS's reading of Dr\"{a}ger and Hubel}.
 Therefore, in order to map visual space onto the retina we need to
 determine the (a) the angle $\psi$ that a ray from a point ($\alpha$,
-$\theta$) in elevation-aziumth coordinates makes with the optic axis,
-(b) the angle $-\lambda$ that the projection of the ray makes onto the
-plane perpendicular to the optic axis and (c) the lattitude $\phi$ (in
+$\theta$) in elevation-azimuth coordinates makes with the optic axis,
+(b) the angle $\lambda'$ that the projection of the ray makes onto the
+plane perpendicular to the optic axis and (c) the latitude $\phi$ (in
 retinal coordinates) at which a ray making an angle $\psi$ with the
 optic axis hits the retina. 
 
 Angles (a) and (b) can be deduced from the following purely geometrical
-considerations. 
+considerations. First determine the Cartesian coordinates of the
+azimuth and elevation on a unit sphere. The $z$-axis points up and the
+$y$ axis forwards along the long axis of the mouse:
+\begin{equation}
+  \label{retistruct_plos:eq:5}
+  \vec{r} = (\cos\theta\sin\alpha, \cos\theta\cos\alpha, \sin\theta)^T
+\end{equation}
+If $\vec{r}_0$ are the Cartesian coordinates of ($\alpha_0, \theta_0$)
+then the angle $\psi$ made with the optic axis is:
+\begin{equation}
+  \label{retistruct_plos:eq:6}
+  \psi=\arccos \vec{r}\cdot\vec{r}_0
+\end{equation}
+The projection $(x', y')$ of the point on the plane perpendicular to
+the optic axis is given
+\begin{equation}
+  \label{retistruct_plos:eq:7}
+  \left(
+    \begin{array}{c}
+      x' \\ y
+    \end{array}
+    \right) =     
+    \left(
+    \begin{array}{ccc}
+      -cos\theta_0 & \sin\theta_0 & 0  \\ 
+      -\sin\alpha_0\sin\theta_0 & \sin\alpha_0\cos\theta_0 & \cos\alpha_0
+    \end{array}
+    \right) \vec{r}
+\end{equation}
+and $\lambda'$ is derived from the arc-tangent of $y'/x'$. Since
+$\lambda'$ is in visual field coordinates, the longitude on the retina
+$\lambda$ can be found by adding or subtracting $180^\circ$ from
+$\lambda'$.
 
-The estimation of the angle (c) requires experimental
-measurements or a schematic model of the optics of the mouse eye, such
-as those
+The estimation of the angle (c) requires experimental measurements or
+a schematic model of the optics of the mouse eye
+\cite{RemtHall85schem,SchmScha04para}.
 
 % \paragraph{Mosaic construction}
 % \label{retistruct_plos:sec:mosaic-construction}
@@ -1024,12 +1056,12 @@ comments throughout this work.
   \includegraphics{eyegrowth}
   \includegraphics{retistruct-phi0}
   \includegraphics{retistruct-titration}
-  \caption{\textbf{Measurement of rim lattitude.} \textbf{(A)}~The
+  \caption{\textbf{Measurement of rim latitude.} \textbf{(A)}~The
     measurements $d_\mathrm{e}$ and $d_\mathrm{r}$ made on mouse eyes
     at different stages of development, and the rim angle $\phi_0$
-    derived from these measurements. \textbf{(B)}~Rim lattitude
+    derived from these measurements. \textbf{(B)}~Rim latitude
     $\hat{\phi}_0$ inferred by the algorithm versus the rim angle
-    $\phi_0$ infered from eye measurements. Solid line shows equality
+    $\phi_0$ inferred from eye measurements. Solid line shows equality
     and grey lines indicate $\pm10^\circ$ and $\pm20^\circ$ from
     equality. \textbf{(C)}~Deviations of the reconstruction error
     around the optimal rim angle.}
@@ -1098,7 +1130,7 @@ comments throughout this work.
     \todo{Ideally we would have  fusion protein data for EphA and
       ephrin-A, and hopefully the B system too, depending on how well
       the A system works.}
-    \textbf{(A)} Flat-mount retina stained for eprhin-A fusion
+    \textbf{(A)} Flat-mount retina stained for ephrin-A fusion
     protein. \textbf{(B)} Image of gradient mapped to polar
     representation.  }
   \label{retistruct_plos:fig:gradients}
@@ -1152,4 +1184,5 @@ P64 & 3160 & 56 & 2161 & 30 & 21.56 & 1.89 \\\hline
 % LocalWords:  Sterratt Nedergaard MRC MacOS Retistruct BFGS optim Karcher arg
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
 % LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
-% LocalWords:  colliculus geniculate vivo center RG RGC SMI ImageJ Hjorth
+% LocalWords:  colliculus geniculate vivo center RG RGC SMI ImageJ Hjorth DCS
+% LocalWords:  Lyngholm DL IDT hoc Hubel Diggle DCS's ger ccc
