@@ -150,8 +150,11 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
                         OD.lambda=n(r$Dss$OD[1,"lambda"]),
                         mean.dtheta=n(r$titration$Dtheta.mean),
                         phi0d=n(r$phi0*180/pi),
-                        phi0d.opt=n(r$titration$phi0d.opt),
-                        dss.hullarea=getDss.hullarea(r))
+                        phi0d.opt=n(r$titration$phi0d.opt))
+      hullarea <- getDss.hullarea(r)
+      if (length(hullarea) > 0) {
+        dat <- data.frame(dat, hullarea=hullarea)
+      }
       message(paste("Getting KDE"))
       KDE <- getKDE(r)
       if (length(KDE) > 0) {
