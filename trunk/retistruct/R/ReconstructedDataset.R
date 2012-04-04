@@ -241,7 +241,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         ## the data points
         fpa <- get.kde(gpa$s, Dss[[i]], kappa, res)
         f  <-  get.kde(g$s,   Dss[[i]], kappa, res)
-        maxss   <- gpa$s[which.max(fpa),,drop=FALSE]
+        maxs   <- gpa$s[which.max(fpa),,drop=FALSE]
         
         ## Determine the value of gk that encloses 0.95 of the
         ## density.  To compute the density, we need to know the
@@ -261,7 +261,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         KDE[[i]] <- list(kappa=kappa,
                          h=180/pi/sqrt(kappa),
                          flevels=flevels,
-                         maxss=maxss,
+                         maxs=maxs,
                          g=  list(xs=g$xs,   ys=g$ys,   f=f  ),
                          gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
 
@@ -415,7 +415,7 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
                 col=r$cols[[names(k)[i]]],
                 ## drawlabels=FALSE,
                 labels=k[[i]]$labels)
-        pos <- sphere.spherical.to.polar.cart(k[[i]]$maxss, pa)
+        pos <- sphere.spherical.to.polar.cart(k[[i]]$maxs, pa)
         suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
                                 bg=r$cols[[names(k)[i]]], col="black", 
                                 pch=22, cex=1.5, ...))
