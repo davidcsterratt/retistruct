@@ -15,10 +15,15 @@ vecnorm <- function(X) {
   }
 }
 
-## Function to return "signed area" of triangles on a plane
-## given points P and a triangulation Pt. Positive sign
-## indicates points are anticlockwise direction; negative indicates
-## clockwise
+##' @title "Signed area" of triangles on a plane
+##' @param P 2-column matrix of vertices of triangles
+##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' triangulation
+##' @return Vectors of signed areas of triangles. Positive sign
+##' indicates points are anticlockwise direction; negative indicates
+##' clockwise.
+##' @author David Sterratt
+##' @export
 tri.area.signed <- function(P, Pt) {
   A <- P[Pt[,1],]
   B <- P[Pt[,2],]
@@ -28,12 +33,66 @@ tri.area.signed <- function(P, Pt) {
   return(0.5 * extprod3d(AB, BC)[,3])
 }
 
-## Function to return area of triangles on a plane
-## given points P and a triangulation Pt. Positive sign
-## indicates points are anticlockwise direction; negative indicates
-## clockwise
+##' @title Area of triangles on a plane
+##' @param P 2-column matrix of vertices of triangles
+##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' triangulation
+##' @return Vectors of areas of triangles
+##' @author David Sterratt
+##' @export
 tri.area <- function(P, Pt) {
   return(abs(tri.area.signed(P, Pt)))
+}
+
+##' This uses l'Hullier's theorem to compute the spherical excess and
+##' hence the area of the spherical triangle.
+##' 
+##' @title Area of triangles on a sphere
+##' @param P 2-column matrix of vertices of triangles given in
+##' spherical polar coordinates. Columns need to be labelled
+##' \code{phi} (lattidute) and \code{lambda} (longitude).
+##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' triangulation
+##' @return Vectors of areas of triangles in units of steradians
+##' @source Wolfram MathWorld
+##' \url{http://mathworld.wolfram.com/SphericalTriangle.html} and
+##' \url{http://mathworld.wolfram.com/SphericalExcess.html}
+##' @author David Sterratt
+##' @examples
+##' ## Something that should be an eighth of a sphere, i.e. pi/2
+##' P <- cbind(phi=c(0, 0, pi/2), lambda=c(0, pi/2, pi/2))
+##' Pt <- cbind(1, 2, 3)
+##' ## The result of this should be 0.5
+##' print(sphere.tri.area(P, Pt)/pi)
+##'
+##' ## Now a small triangle
+##' P1 <- cbind(phi=c(0, 0, 0.01), lambda=c(0, 0.01, 0.01))
+##' Pt1 <- cbind(1, 2, 3)
+##' ## The result of this should approximately 0.01^2/2
+##' print(sphere.tri.area(P, Pt)/(0.01^2/2))
+##'
+##' ## Now check that it works for both 
+##' P <- rbind(P, P1)
+##' Pt <- rbind(1:3, 4:6)
+##' ## Should have two components
+##' print(sphere.tri.area(P, Pt))
+##' @export
+sphere.tri.area <- function(P, Pt) {
+  ## Get lengths of sides of all triangles
+  a <- central.angle(P[Pt[,1],"phi"], P[Pt[,1],"lambda"],
+                     P[Pt[,2],"phi"], P[Pt[,2],"lambda"])
+  b <- central.angle(P[Pt[,2],"phi"], P[Pt[,2],"lambda"],
+                     P[Pt[,3],"phi"], P[Pt[,3],"lambda"])
+  c <- central.angle(P[Pt[,3],"phi"], P[Pt[,3],"lambda"],
+                     P[Pt[,1],"phi"], P[Pt[,1],"lambda"])
+  
+  ## Semiperimeter is half perimeter
+  s <- 1/2*(a + b + c)
+
+  ## Compute excess using L'Huilier's Theorem
+  E <- 4*atan(sqrt(tan(s/2)*tan((s-a)/2)*tan((s-b)/2)*tan((s-c)/2)))
+  names(E) <- c()
+  return(E)
 }
 
 ##' Determine the intersection of two lines L1 and L2 in two dimensions,
@@ -100,11 +159,13 @@ line.line.intersection <- function(P1, P2, P3, P4, interior.only=FALSE) {
   return(c(X, Y))
 }
 
-## Remove identical consecutive rows from a matrix
-##
-## This is simlar to unique(), but spares rows which are duplicated, but 
-## at different points in the matrix
-##
+##' This is simlar to unique(), but spares rows which are duplicated, but 
+##' at different points in the matrix
+##' 
+##' @title Remove identical consecutive rows from a matrix
+##' @param P Source matrix
+##' @return Matrix with identical consecutive rows removed.
+##' @author David Sterratt
 remove.identical.consecutive.rows <- function(P) {
   for (i in 2:nrow(P)) {
     if (identical(P[i-1,], P[i,])) {
