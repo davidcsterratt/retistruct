@@ -447,6 +447,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
   plot.contours <- FALSE # Contour plotting happens only with image plotting at present
+  plot.space <- !is.null(args$space) && args$space
   plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
   pa <- plot.preserve.area
   
@@ -574,6 +575,59 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     x <- with(r, cos(Ts[,"lambda"])*phi.to.rho(Ts[,"phi"], phi0, pa))
     y <- with(r, sin(Ts[,"lambda"])*phi.to.rho(Ts[,"phi"], phi0, pa))
     suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
+  }
+
+  ## Plot the projection of visual space onto the retina
+  if (plot.space) {
+    alphads <- seq(-90, 90, by = 10)    # elevations
+    alphas <- alphads*pi/180
+    thetads <- seq(-180, 180, by = 10) # azimuths
+    thetas <- thetads*pi/180 # azimuths
+    s0azel <- r$s0azel
+    if (is.null(s0azel)) {
+      ## s0azel <- cbind(alpha=0, theta=0)
+      s0azel = cbind(alpha=42, theta=62)*pi/180
+    }
+
+    ## Lines of constant Elevation 
+    for (alphad in alphads) {
+      ## Coordinates to represent
+      sazel <- cbind(alpha=alphad*pi/180, theta=thetas)
+      ## Convert to spherical colattitude
+      ssc <- azel.to.sphere.colattitude(sazel, s0azel)
+      ## Convert to spherical coordinates
+      sss <- cbind(ssc[,"psi"] - pi/2, ssc[,"lambda"] -pi)
+      colnames(sss) <- c("phi", "lambda")
+      ## Project onto polar plot
+      pos <- sphere.spherical.to.polar.cart(sss, pa=pa)
+      ##      suppressWarnings(lines(rho.to.degrees(pos[sss[,"phi"] < r$phi0,], r$phi, pa),
+      ## col="black", ...))
+      suppressWarnings(lines(rho.to.degrees(pos, r$phi, pa),
+                             col="red", ...))
+
+      
+      tpos <- rho.to.degrees(pos[which(sazel[,"theta"]==0),], r$phi, pa)
+      text(tpos[1], tpos[2], alphad, cex=0.8, col="red")
+    }
+
+    ## Lines of constant Aziumth
+    for (thetad in thetads) {
+      ## Coordinates to represent
+      sazel <- cbind(alpha=alphas, theta=thetad*pi/180)
+      ## Convert to spherical colattitude
+      ssc <- azel.to.sphere.colattitude(sazel, s0azel)
+      ## Convert to spherical coordinates
+      sss <- cbind(ssc[,"psi"] - pi/2, ssc[,"lambda"] -pi)
+      colnames(sss) <- c("phi", "lambda")
+      ## Project onto poloar plot
+      pos <- sphere.spherical.to.polar.cart(sss, pa=pa)
+      suppressWarnings(lines(rho.to.degrees(pos, r$phi, pa),
+                             col="red", lty=2, ...))
+
+      tpos <- rho.to.degrees(pos[which(sazel[,"alpha"]==0),], r$phi, pa)
+      text(tpos[1], tpos[2], thetad, cex=0.8, col="red")
+
+    }
   }
 }
 

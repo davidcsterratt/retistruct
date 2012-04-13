@@ -447,6 +447,54 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
   return(cbind(phi=phi, lambda=lambda))
 }
 
+##' @title Convert azimuth-elevation coordinates to spherical coordinates
+##' @param r Coordinates of points in azimuth-elevation coordinates
+##' represented as  2 column matrix with column names \code{alpha}
+##' (elevation) and \code{theta} (azimuth).
+##' @param r0 Direction of the axis of the sphere on which to project
+##' represented as a 2 column matrix of with column names \code{alpha}
+##' (elevation) and \code{theta} (azimuth).
+##' @return 2-column matrix of spherical coordinates of points with
+##' column names \code{psi} (colattidude) and \code{lambda} (longitude).
+##' @author David Sterratt
+##' @examples
+##' r0 <- cbind(alpha=0, theta=0)
+##' r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
+##' azel.to.sphere.spherical(r, r0)
+##' @export
+azel.to.sphere.colattitude <- function(r, r0) {
+  ## Find Cartesian coordinates of aziumuth and elevation on sphere
+  rc <- cbind(cos(r[,"alpha"])*sin(r[,"theta"]),
+              cos(r[,"alpha"])*cos(r[,"theta"]),
+              sin(r[,"alpha"]))
+
+  ## Find Cartesian coordinates of aziumuth and elevation on sphere
+  r0c <- cbind(cos(r0[,"alpha"])*sin(r0[,"theta"]),
+               cos(r0[,"alpha"])*cos(r0[,"theta"]),
+               sin(r0[,"alpha"]))
+
+
+  ## Angle made with optic axis is
+  psi <- acos(rc %*% t(r0c))
+
+  ## Projection onto the plane perpendicular to the optic axis
+  pc <- rbind(cbind(-cos(r0[,"theta"]),
+                     sin(r0[,"theta"]),
+                     0),
+              cbind(-sin(r0[,"alpha"])*sin(r0[,"theta"]),
+                    -sin(r0[,"alpha"])*cos(r0[,"theta"]),
+                     cos(r0[,"alpha"]))) %*% t(rc)
+  print(r0c)
+  print(rc)
+  print(t(pc))
+  lambdap <- atan2(pc[2,], pc[1,])
+
+  out <- cbind(psi, lambdap)
+  colnames(out) <- c("psi", "lambda")
+  
+  return(out)
+}
+
 ##' On a sphere the central angle between two points is defined as the
 ##' angle whose vertex is the centre of the sphere and that subtends
 ##' the arc formed by the great circle between the points. This
