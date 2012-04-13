@@ -577,6 +577,7 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
     suppressWarnings(lines(x, y, col=getOption("TF.col"), ...))
   }
 
+  ## FIXME: This should probably go in RetinalReconstructedOutline.R
   ## Plot the projection of visual space onto the retina
   if (plot.space) {
     alphads <- seq(-90, 90, by = 10)    # elevations
@@ -589,14 +590,24 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
       s0azel = cbind(alpha=42, theta=62)*pi/180
     }
 
+    ray.trace <- FALSE
     ## Lines of constant Elevation 
     for (alphad in alphads) {
       ## Coordinates to represent
       sazel <- cbind(alpha=alphad*pi/180, theta=thetas)
       ## Convert to spherical colattitude
       ssc <- azel.to.sphere.colattitude(sazel, s0azel)
-      ## Convert to spherical coordinates
-      sss <- cbind(ssc[,"psi"] - pi/2, ssc[,"lambda"] -pi)
+      
+      ## Weed out points likely not to fall on retina
+      ##sazel <- sazel[ssc[,"psi"] < r$phi0 + pi/2,, drop=FALSE]
+      ## ssc   <- ssc[ssc[,"psi"] < r$phi0 + pi/2,, drop=FALSE]
+      ssc[ssc[,"psi"] > r$phi0 + pi/2,] <- c(NA, NA)
+      ## Trace through lens
+      if (ray.trace) {
+        ssc[,"psi"] <- incident.to.lens.angle(ssc[,"psi"], 0.2, S.mouse.ss.23)
+      }
+      ## Invert and convert to spherical coordinates
+      sss <- cbind(ssc[,"psi"] - pi/2, ssc[,"lambda"] - pi)
       colnames(sss) <- c("phi", "lambda")
       ## Project onto polar plot
       pos <- sphere.spherical.to.polar.cart(sss, pa=pa)
@@ -616,6 +627,12 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
       sazel <- cbind(alpha=alphas, theta=thetad*pi/180)
       ## Convert to spherical colattitude
       ssc <- azel.to.sphere.colattitude(sazel, s0azel)
+      ## Weed out points likely not to fall on retina
+      ssc[ssc[,"psi"] > r$phi0 + pi/2,] <- c(NA, NA)
+      ## Trace through lens
+      if (ray.trace) {
+        ssc[,"psi"] <- incident.to.lens.angle(ssc[,"psi"], 0.2, S.mouse.ss.23)
+      }
       ## Convert to spherical coordinates
       sss <- cbind(ssc[,"psi"] - pi/2, ssc[,"lambda"] -pi)
       colnames(sss) <- c("phi", "lambda")
