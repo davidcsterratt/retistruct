@@ -32,6 +32,7 @@ text.polar <- function(text) {
 ##' @param area.preserving Whether the conversion should preserve area
 ##' @return Radial variable
 ##' @author David Sterratt
+##' @export
 phi.to.rho <- function(phi, phi0, area.preserving) {
   if (area.preserving) {
     phi0d <- phi0*180/pi
