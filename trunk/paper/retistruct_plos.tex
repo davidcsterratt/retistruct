@@ -120,7 +120,7 @@ that they lie on a partial sphere with the expected dimensions of the
 intact retina.  The transformation is adjusted so as to minimise a
 physically-inspired deformation energy function. Our validation
 studies indicate that the algorithm is able to estimate the position
-of a point on the intact retina to within 8$^\circ$ of arc.
+of a point on the intact retina to within $8^\circ$ of arc.
 
 We demonstrate three applications of the method: (1) the analysis of
 retrograde tracer experiments; (2) the analysis of mosaics of retinal
@@ -269,7 +269,7 @@ positive (red).
 A measure of the overall error of reconstruction is the square root
 of the length energy function:
 \begin{equation} 
-  \sqrt{E_\mathrm{L}} = \sqrt{\frac{1}{2|\mathcal{C}|\overline{L}}
+  \sqrt{E_{\mathrm{L}}} = \sqrt{\frac{1}{2|\mathcal{C}|\overline{L}}
   \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}}
 \end{equation} 
 where $L_i$ is the length of the $i$th edge in the flat mesh, $l_i$ is
@@ -284,14 +284,14 @@ the mean fractional deformation.
 \label{retistruct_plos:sec:determ-latt-rim}
 
 To determine the latitude of the rim of mouse eyes at varying stages
-of development we measured the distance $d_\mathrm{e}$ from the back
-of the eye to the front of the cornea and the distance $d_\mathrm{r}$
+of development we measured the distance $d_{\mathrm{e}}$ from the back
+of the eye to the front of the cornea and the distance $d_{\mathrm{r}}$
 from the back of the eye to the edge of the retina
 (Figure~\ref{retistruct_plos:fig:eyegrowth}A). We then computed the
 latitude $\phi_0$ of the rim using the formula:
 \begin{equation}
   \label{retistruct_plos:eq:4}
-  \phi_0 = \arcsin (2d_\mathrm{r}/d_\mathrm{e}-1)
+  \phi_0 = \arcsin (2d_{\mathrm{r}}/d_{\mathrm{e}}-1)
 \end{equation}
 The measurements and derived latitudes for animals of various ages
 are shown in Table~\ref{tab:eygrowth}.
@@ -305,7 +305,7 @@ Figure~\ref{retistruct_plos:fig:eyegrowth}B. It can be seen that the
 rim angle inferred by the algorithm is usually less than that inferred
 from measurement of standard retinae.
 Figure~\ref{retistruct_plos:fig:eyegrowth}C shows deviations of the
-length energy $\sqrt{E_\mathrm{L}}$ around the optimal value. For many
+length energy $\sqrt{E_{\mathrm{L}}}$ around the optimal value. For many
 retinae the surface is convex and the deviation is of the order of
 less than 0.01 per degree, but for some retinae the curves are more
 variable.
@@ -315,9 +315,9 @@ variable.
 
 We used our algorithm to reconstruct 280 retinae. 
 Figure~\ref{retistruct_plos:fig:examples}A shows the reconstruction
-with the lowest energy measure $\sqrt{E_\mathrm{L}}=0.038$ and
+with the lowest energy measure $\sqrt{E_{\mathrm{L}}}=0.038$ and
 Figure~\ref{retistruct_plos:fig:examples}B the example with the
-highest $\sqrt{E_\mathrm{L}}=0.147$. The arrangement of the grid lines
+highest $\sqrt{E_{\mathrm{L}}}=0.147$. The arrangement of the grid lines
 in the example with lower error looks qualitatively smoother and more
 even than in the example with higher energy measure
 (Figures~\ref{retistruct_plos:fig:examples}Aiii
@@ -332,19 +332,20 @@ and this makes it harder for the algorithm to create an even mapping,
 as local roughness in the rim forces significant deformation of the
 surrounding virtual tissue when projected back onto the sphere.
 
-This demonstrates that the measure $\sqrt{E_\mathrm{L}}$ gives some
+This demonstrates that the measure $\sqrt{E_{\mathrm{L}}}$ gives some
 indication of the apparent quality of the reconstruction. Roughly
 speaking, noticeably bad reconstructions had
-$\sqrt{E_\mathrm{L}}>0.1$. The distribution of the error measure
+$\sqrt{E_{\mathrm{L}}}>0.1$. The distribution of the error measure
 (Figure~\ref{retistruct_plos:fig:summary}A) indicates that 20 out of
 229 retinae had a error measure exceeding 0.1. The mean was 0.072,
 with a median value of 0.071. Due to the more delicate nature of
 younger tissue, it is harder to dissect retinae out of young animals
-cleanly. This is reflected in the lower $\sqrt{E_\mathrm{L}}$ scores
+cleanly. This is reflected in the lower $\sqrt{E_{\mathrm{L}}}$ scores
 when it is analysed by age of animal
 (Figure~\ref{retistruct_plos:fig:summary}B).
 
-\subsection*{Estimate of errors of the reconstruction algorithm}
+\subsection*{Estimate of errors of the reconstruction algorithm from
+  optic disc location}
 
 The error measure described in the previous section gives an
 indication of how easy it is to morph any particular flattened retina
@@ -357,37 +358,36 @@ inferred with the known locations. However, this proved to be
 technically very difficult and so we tried two other methods of
 estimating the error.
 
-The first method is to look at the inferred locations of the optic
-discs across a number of retinae. In mice, the optic disc is located
+One method is to look at the inferred locations of the optic discs
+across a number of retinae. In mice, the optic disc is located
 ``rather precisely in the geometric center of the retina''
 \cite{DragOlse81gang} though this has not, as far as we are aware,
 been measured. The optic disc has been marked in 57 of flat-mounted
 adult retinae, and the distribution of the centres of the inferred
 locations of these optic discs is shown in
 Figure~\ref{retistruct_plos:fig:summary}C. The mean latitude and
-longitude of these optic discs is (-86.0$^\circ$, 93.4$^\circ$) with a
-standard deviation of 7.5$^\circ$. The mean is therefore 4.0$^\circ$
+longitude of these optic discs is ($-86.0^\circ$, $93.4^\circ$) with a
+standard deviation of $7.5^\circ$. The mean is therefore $4.0^\circ$
 away from the geometrical centre of the retina, in reasonable
 agreement with the unquantified observation that the optic disc is at
 the geometric centre of the retina.  Given that some of this
 variability is biological, this suggests that an upper bound on the
-accuracy of the reconstruction algorithm is 7.5$^\circ$.
-
-The second method is to compare the inferred lines of longitude with
-the direction growth of retinal ganglion cell axons towards the optic
-disc.  The growth of retinal ganglion cell axons towards the optic
-disc is radial and highly-ordered
-\cite{ErskThom09intr}. Figure~\ref{retistruct_plos:fig:superpose}
-shows the superposition of an image a retina \cite{KeelEtal11neur}
-with the grid lines inferred by the method. It can be seen that the
-grid lines are parallel to the RGC axons for most of their way, though
-there are some deviations close to the rim.
+accuracy of the reconstruction algorithm is $7.5^\circ$.
 
 \subsection*{Estimation of errors from muscle insertion data}
 
+Figure~\ref{retistruct_plos:fig:orientation}.
+
 \todo{DL/IDT to provide muscle insertion data and DCS to analyse}
 
-\subsection*{Application: retrograde tracing}
+\todo{DL to revised figure with images at top and grouped data at bottom.}
+
+\todo{DL/IDT to write text}
+
+\todo{DCS to implement Wulff projection.}
+
+\subsection*{Contouring of ipsi and contra projections labelled by LGN
+  fills with dextran}
 
 Reconstructing the retinae of individual animals that have had
 retrograde tracer injected into primary visual areas enables
@@ -400,60 +400,57 @@ in determining the exact position of the injection site, improving the
 accuracy of establishing whether projection-patterns are normal or
 aberrant.
 
-An important quantity that changes through development is the spread
-of the tracer in the retina: this generally decreases over time and
-varies according to phenotype. To quantify this we derived kernel
-density estimates of the underlying probability of data points
-appearing at any point in the retina and represented these estimates
-using contours that exclude 5\%, 25\%, 50\% and 95\% of the points
+The reconstruction method allows the mapping from the dLGN onto the
+contralateral and ipsilateral retinae. The dLGN was filled with
+dextran, as described in the Methods. After XX days the retinae were
+dissected, flat-mounted, photographed and the locations of labelled
+cell bodies were annotated. The Retistruct program was used to
+reconstruct the retinae (Figure~\ref{retistruct_plos:fig:contouring}).
+To quantify this we derived kernel density estimates of the underlying
+probability of data points appearing at any point in the retina and
+represented these estimates using contours that exclude 5\%, 25\%,
+50\% and 95\% of the points
 (Figure~\ref{retistruct_plos:fig:contouring}A; Methods). In some
 cases, the only data available were cell counts within defined boxes
 on the flattened retina. Here we used kernel regression as the source
 for the contouring algorithm
 (Figure~\ref{retistruct_plos:fig:contouring}B; Methods).
 
-% \subsection*{Application: mosaic properties}
+\todo{DL/IDT to drive text and figures, with help possibly required
+  from DCS.}
 
-% \todo{I still need to develop the code to do this. In order to do this
-%   I need some mosaic data. I have some courtesy of Ben Reese's lab,
-%   but that's not our data. We have the SMI32 image, but the data points
-%   aren't marked up. To use our SMI32 data, I suppose that we need a
-%   method of adding data points to an image... possibly using ImageJ.
-%   Or what do we think?}
+\subsection*{Transformation to visuotopic coordinates}
+\label{retistruct_plos:sec:transf-visu-coord}
 
-% When examining retinae with mosaic labelling, reconstructing the
-% retina into its original spherical coordinates means that it is
-% possible todetermine more accurately the relative distances between
-% cells between peripheral and central retina and thereby determine
-% whether it is a true mosaic, as illustrated by the
-% voronoi-tessellation analysis of SMI-32 antibody staining (1:2000;
-% SMI-32R; Covance) \todo{see figure}. It is, furthermore, possible to
-% check the constancy of the mosaic even in areas where cuts or tears
-% transect the retina. An additional advantage to having a standardised
-% retinal space is that retinae can be compared following consecutive
-% stainings even if additional tears are introduced.
+Location of ipsi \& contra decussation line (DCL) in visuotopic
+space. Does it correspond to the vertical meridian? If not, how do we
+move optic axis so as to align the DCL with the vertical meridian in
+visuotopic space. As proof of principle plot decussation lines in
+visuotopic coordinate system \cite{BishEtal62some}.
 
-\subsection*{Application: marker distribution in spherical coordinates}
+Figure~\ref{retistruct_plos:fig:visuotopic}. Plots of contours or raw
+data in retinal space, standard visuotopic space (i.e. with standard
+orientation of optic axis) and then in corrected visuotopic
+space. Scattergram of rotation coordinate system and translation of
+optic axis. Possibly example images of a red or green crescent on
+either side of the midline. Overlaid images.
 
-The gradients of Ephs and ephrins in the retina are usually regarded
-as running down the nasotemporal (N--T) of dorsoventral (D--V)
-axes. The A family of Ephs is associated with the N--T axis and the B
-family with the D--V axis. The level of the labels, as inferred from
-hybridised RNA \emph{in situ} stains has been quantified along the
-axes \cite{ChenEtal95comp,RebeEtal04rela}.  However, the levels of
-marker molecules off the axes have not been quantified. This is
-important to know both for understanding the origin of retinal
-gradients and how the retinocollicular mapping is set up. 
+\todo{DCS to try elevation 35, azimuth 60 deg OD from Drager 1978 and to infer the origin of the optic axis by computing location of OD from adult data.}
 
-To quantify gradients in mouse over the whole retina, we used ephrinA,
-ephrinB, EphA and EphB antibody fusion proteins to stain P?
-retinae. The flat-mounted and reconstructed retinae are shown in
-Figure~\ref{retistruct_plos:fig:gradients}.
+\todo{DCS to work out how to rotate the axes.}
 
-\subsection*{Application: estimation of the direction of the optic axis}
+\todo{DCS to tidy contours by removing coords around edge. DCS to produce visuotopic representation.}
+
+\todo{DCS to think about optimisation.}
+
+\todo{DL/IDT to find good retinae.}
+
+\subsection*{Eye muscles and S-opsins in corrected visuotopic space}
 \label{retistruct_plos:sec:appl-estim-direct}
 
-Method: retinae will be stained for blueopsin. This will show up part
+Figure~\ref{retistruct_plos:fig:s-opsins}.
+
+Method: retinae will be stained for S-opsin. This will show up part
 of the ventro-temporal crescent. The edge of this crescent is expected
 to correspond to the horizontal meridian. It is possible (or will
 be!) to compute the location of the meridian on the retina for any
@@ -461,10 +458,8 @@ orientation of the retinal axis.  The orientation of the axis will be
 optimised so as to provide the best match between the experimentally
 measured boundary and the theoretical one.
 
-\todo{DL/IDT to check reasoning about derivation of optic axis and  provide
-  data}
-\todo{DCS to investigate shift of coordinates based on Drager and
-  Olsen/Hubel and the Bear paper}
+\todo{DL to send existing s-opsin images to DCS. DL would like to do
+  some more.}
 
 \section*{Discussion}
 
@@ -474,7 +469,7 @@ As far as we are aware, a computational algorithm for reconstructing
 retinae has never been described
 before.\footnote{\todo{DW: But what about optometry?}} Our validation
 studies suggest that the method is able to estimate the original
-location of a point on a flatted to within 8$^\circ$ of arc. This may
+location of a point on a flatted to within $8^\circ$ of arc. This may
 be an overestimate, as it makes the implicit assumption that the
 location of the optic disc is the same between different retinae.
 There will be some biological variability in the location of the
@@ -530,6 +525,19 @@ prepossessing of outlines to remove very short edges.
 
 \todo{Describe what we have learnt by using the method}
 
+SMI supplemental figure:
+
+The second method is to compare the inferred lines of longitude with
+the direction growth of retinal ganglion cell axons towards the optic
+disc.  The growth of retinal ganglion cell axons towards the optic
+disc is radial and highly-ordered
+\cite{ErskThom09intr}. Figure~\ref{retistruct_plos:fig:superpose}
+shows the superposition of an image a retina \cite{KeelEtal11neur}
+with the grid lines inferred by the method. It can be seen that the
+grid lines are parallel to the RGC axons for most of their way, though
+there are some deviations close to the rim.
+
+
 \subsection*{Extensions to the method}
 
 Another improvement might be to automate the marking up of incisions
@@ -544,6 +552,38 @@ different energy function to be used in the minimisation
 procedure. This might lead to more accurate reconstructions, though
 would depend on knowing the geometry of the intact retina more
 accurately than at present.
+
+\subsection*{Potential applications}
+\label{retistruct_plos:sec:potent-appl}
+
+When examining retinae with mosaic labelling, reconstructing the
+retina into its original spherical coordinates would make it possible
+to determine more accurately the relative distances between cells
+between peripheral and central retina. To implement mosaic analysis
+would require computation of a Voronoi tesselation on the sphere. It
+would be possible to incorporate this analysis into the
+program. \todo{REF for mosaic analysis and for tesselation on sphere.}
+
+Another potential use would be to determine the gradients of
+developmentally-important molecules over the surface of the retain. The
+gradients of Ephs and ephrins in the retina are usually regarded as
+running down the nasotemporal (N--T) of dorsoventral (D--V) axes. The
+A family of Ephs is associated with the N--T axis and the B family
+with the D--V axis. The level of the labels, as inferred from
+hybridised RNA \emph{in situ} stains has been quantified along the
+axes \cite{ChenEtal95comp,RebeEtal04rela}.  However, the levels of
+marker molecules off the axes have not been quantified. This is
+important to know both for understanding the origin of retinal
+gradients and how the retinocollicular mapping is set up.
+
+
+
+% check the constancy of the mosaic even in areas where cuts or tears
+% transect the retina. An additional advantage to having a standardised
+% retinal space is that retinae can be compared following consecutive
+% stainings even if additional tears are introduced.
+% voronoi-tessellation analysis of SMI-32 antibody staining (1:2000;
+% SMI-32R; Covance) \todo{see figure}.
 
 
 % The soft tissue is often described as a linear-elastic medium, in
@@ -694,7 +734,7 @@ removed just anterior to the corneo-scleral junction and the lens
 removed. Fine scissors were used to make a long cut through the
 sclera, choroid and retina from the nasal orienting cut towards the
 optic disc. Shorter relaxing cuts were made at approximately
-90$^\circ$ intervals. The retina was freed from the choroid and cut
+$90^\circ$ intervals. The retina was freed from the choroid and cut
 free at the optic disc. It was then transferred to a poly-lysine
 coated microscope slide, mounted ganglion cell layer up and
 cover-slipped using Fluoromount (Sigma).
@@ -778,11 +818,11 @@ reconstruction process then proceeds as follows:
   \begin{equation}
     \label{retistruct_plos:eq:1}
     f(x) = \left\{
-        \begin{array}{ll}
-          -(x - x_0/2) & x < 0 \\
-          \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\
-          0 & x \ge x_0
-          \end{array} \right.
+      \begin{array}{ll}
+        -(x - x_{0}/2) & x < 0 \\
+        \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\
+        0 & x \ge x_0
+      \end{array} \right.
   \end{equation}
   The parameter $x_0$ is set at 0.5. There is thus no penalty unless
   triangles have been squashed to less than 50\% of their size in the
@@ -805,7 +845,7 @@ reconstruction process then proceeds as follows:
   retinae. The best procedure found was to first turn off the area
   penalty by setting $\alpha=0$ and using a modified version of the
   FIRE algorithm \cite{BitzEtal06stru}. This did a good job of
-  minimising $E_\mathrm{L}$, but left a number of flipped
+  minimising $E_{\mathrm{L}}$, but left a number of flipped
   triangles. Another run with FIRE algorithm with $\alpha=8$ and
   $\nu=1$ got rid of a number of the flipped triangles, dealing
   preferentially with the biggest. This was followed by a run of the
@@ -888,7 +928,6 @@ cross-validated log-likelihood:
 \end{equation}
 where $\hat f_{i}(\phi, \lambda;\kappa)$ is the kernel density estimate
 calculated from all but the $i$th data point.
-
 
 \paragraph{Kernel regression estimates}
 \label{retistruct_plos:sec:kern-regr-estim}
@@ -977,7 +1016,7 @@ the optic axis is given
     \right) =     
     \left(
     \begin{array}{ccc}
-      -cos\theta_0 & \sin\theta_0 & 0  \\ 
+      -\cos\theta_0 & \sin\theta_0 & 0  \\ 
       -\sin\alpha_0\sin\theta_0 & \sin\alpha_0\cos\theta_0 & \cos\alpha_0
     \end{array}
     \right) \vec{r}
@@ -999,9 +1038,9 @@ a schematic model of the optics of the mouse eye
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
 
-The authors would like to thank Andrew Lowe, David Willshaw, Stephen
-Eglen, Johannes Hjorth, and Michael Herrmann for their very helpful
-comments throughout this work.
+The authors would like to thank Andrew Lowe, Stephen Eglen, Johannes
+Hjorth, and Michael Herrmann for their very helpful comments
+throughout this work.
 
 %\section*{References}
 % The bibtex filename
@@ -1038,17 +1077,19 @@ comments throughout this work.
     lines) and stitching, indicated by cyan lines between
     corresponding points on the tears.  \textbf{(Di)} The initial
     projection of the triangulated and stitched outline onto a
-    curtailed sphere. The strain of each edge is represented on a colour
-    scale with blue indicating compression and red expansion. Tears
-    are shown in cyan. \textbf{(Dii)} The strain plotted on the flat
-    outline with lines of latitude and longitude
+    curtailed sphere. The strain of each edge is represented on a
+    colour scale with blue indicating compression and red
+    expansion. Tears are shown in cyan. \textbf{(Dii)} The strain
+    plotted on the flat outline with lines of latitude and longitude
     superposed. \textbf{(Ei,ii)} As \textbf{Di,ii} but after
     optimisation of the mapping. \textbf{(Fi)} The data represented on
     a polar plot of the reconstructed retina. Mean locations of the
     different types of data points are indicated by filled
     diamonds. The nasal (N), dorsal (D), temporal (T) and ventral (V)
     poles are indicated. Tears are shown in cyan. \textbf{(Fii)} Data
-    plotted on the flat representation.}
+    plotted on the flat representation.
+    \todo{DL to mark up better to avoid gap, or provide better
+      image.}}
   \label{fold-sphere:fig:method}
 \end{figure}
 \begin{figure}[!ht]
@@ -1057,14 +1098,14 @@ comments throughout this work.
   \includegraphics{retistruct-phi0}
   \includegraphics{retistruct-titration}
   \caption{\textbf{Measurement of rim latitude.} \textbf{(A)}~The
-    measurements $d_\mathrm{e}$ and $d_\mathrm{r}$ made on mouse eyes
+    measurements $d_{\mathrm{e}}$ and $d_{\mathrm{r}}$ made on mouse eyes
     at different stages of development, and the rim angle $\phi_0$
     derived from these measurements. \textbf{(B)}~Rim latitude
     $\hat{\phi}_0$ inferred by the algorithm versus the rim angle
     $\phi_0$ inferred from eye measurements. Solid line shows equality
     and grey lines indicate $\pm10^\circ$ and $\pm20^\circ$ from
     equality. \textbf{(C)}~Deviations of the reconstruction error
-    around the optimal rim angle.}
+    around the optimal rim angle. \todo{DCS to investigate outliers.}}
   \label{retistruct_plos:fig:eyegrowth}
 \end{figure}
 \begin{figure}[!ht]
@@ -1083,7 +1124,7 @@ comments throughout this work.
     locations of the incisions and tears (cyan) and the location of
     the optic disc (blue) \textbf{(E--H)}~An example of a bad
     reconstruction of a P0 retina. Meaning of \textbf{(E--H)} same as
-    for corresponding panel in \textbf{(A--D)}.}
+    for corresponding panel in \textbf{(A--D)}. \todo{DCS to write sentence or paragraph about cutoff for bad retinae.}}
   \label{retistruct_plos:fig:examples}
 \end{figure}
 
@@ -1092,7 +1133,7 @@ comments throughout this work.
   \includegraphics{retistruct-goodness}
   \caption{\textbf{Measures of error of reconstructions.}
     \textbf{(A)} Histogram of the reconstruction error measure
-    $\sqrt{E_\mathrm{L}}$ obtained from 280 successfully reconstructed
+    $\sqrt{E_{\mathrm{L}}}$ obtained from 280 successfully reconstructed
     retinae. For lower values the value of is similar to the mean
     percentage deformation of the mesh. \textbf{(B)} Relationship
     between error measure and age. ``A'' indicates adult
@@ -1100,8 +1141,58 @@ comments throughout this work.
     adult reconstructed retinae plotted on the same polar grid. The
     latitude and longitude is ($-85.6^\circ$, $93.5^\circ$). The
     standard deviation in the angular displacement from the mean is
-    $7.29^\circ$.}
+    $7.29^\circ$. \todo{DCS to investigate outliers.}}
   \label{retistruct_plos:fig:summary}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  
+  \caption{\textbf{Orientation w.r.t. Muscles and fiducial cut.}
+    \textbf{(A)} Image showing nasal cut to nicitating membrane very
+    close to assumed location of medial rectus and injections at
+    insertion points of XXX (blue) YYY (red) and ZZZ (green)
+    muscles. \textbf{(B)} Locations of insertion points on
+    reconstructed retina. \textbf{(C)} Locations of insertion points
+    from a number of retinae superpsed onto the standard space. }
+  \label{retistruct_plos:fig:orientation}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  % \includegraphics{ChenEtal95}
+  \caption{\textbf{Contour analysis of ipsilateral and contralateral
+      projections from the dLGN.}
+    \textbf{(A)} Locations of cells labelled by retrograde staining
+    from the ipsilateral SC.  Contours produced from kernel density
+    estimates derived from locations of cells. \textbf{(B)} Locations
+    of cells labelled by retrograde staining from the ipsilateral SC.
+    Contours produced from kernel regression estimates derived from
+    cell counts within sampling boxes. \textbf{(C)}: Composite
+    ipsis. \textbf{(D)} Plot of ispi distances. \textbf{E\&F} Same
+    thing for contra, if seen.}
+  \label{retistruct_plos:fig:contouring}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  
+  \caption{\textbf{Transformation to visuotopic coordintates.} Plots
+    of contours or raw data in retinal space, standard visuotopic
+    space (i.e. with standard orientation of optic axis) and then in
+    corrected visuotopic space. Scattergram of rotation coordinate
+    system and translation of optic axis. Possibly example images of a
+    red or green crescent on either side of the midline. Overlaid
+    images.}
+  \label{retistruct_plos:fig:visuotopic}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  
+  \caption{\textbf{Eye muscles and S-opsins in corrected
+      visuotopic space}}
+  \label{retistruct_plos:fig:s-opsins}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -1112,29 +1203,7 @@ comments throughout this work.
   \label{retistruct_plos:fig:superpose}
 \end{figure}
 
-\begin{figure}[!ht]
-  \centering
-  % \includegraphics{ChenEtal95}
-  \caption{\textbf{Contour analysis}
-    \todo{Produce contour analysis figure?}  \textbf{(A)} Contours
-    produced from kernel density estimates derived from cell
-    locations. \textbf{(B)} Contours produced from kernel regression
-    estimates derived from cell counts. }
-  \label{retistruct_plos:fig:contouring}
-\end{figure}
 
-\begin{figure}[!ht]
-  \centering
-  % \includegraphics{ChenEtal95}
-  \caption{\textbf{Distribution of gradients.}
-    \todo{Ideally we would have  fusion protein data for EphA and
-      ephrin-A, and hopefully the B system too, depending on how well
-      the A system works.}
-    \textbf{(A)} Flat-mount retina stained for ephrin-A fusion
-    protein. \textbf{(B)} Image of gradient mapped to polar
-    representation.  }
-  \label{retistruct_plos:fig:gradients}
-\end{figure}
 
 \section*{Tables}
 %\begin{table}[!ht]
@@ -1153,8 +1222,8 @@ comments throughout this work.
       development.}  }
 \begin{tabular}{l*{3}{r@{$\pm$}l}}
 Age & 
-\multicolumn{2}{c}{$d_\mathrm{e}$} &
-\multicolumn{2}{c}{$d_\mathrm{r}$} & 
+\multicolumn{2}{c}{$d_{\mathrm{e}}$} &
+\multicolumn{2}{c}{$d_{\mathrm{r}}$} & 
 \multicolumn{2}{c}{$\phi_0$}\\
 \hline
 P0  & 1632 & 17 & 1308 & 17 & 37.13 & 1.92 \\\hline
@@ -1168,9 +1237,9 @@ P22 & 2958 & 35 & 2117 & 44 & 25.57 & 2.17 \\\hline
 P64 & 3160 & 56 & 2161 & 30 & 21.56 & 1.89 \\\hline
 \end{tabular}
 \begin{flushleft}The distance from the back of the eye to the surface
-  of the cornea $d_\mathrm{e}$, the perpendicular distance from the
+  of the cornea $d_{\mathrm{e}}$, the perpendicular distance from the
   back of the eye 
-  to the rim of the  retina $d_\mathrm{r}$ and the angle $\phi_0$
+  to the rim of the  retina $d_{\mathrm{r}}$ and the angle $\phi_0$
   derived from this. Each measurement is averaged over the right and
   left eyes of two different animals, i.e. over four eyes in total.
 \end{flushleft}
@@ -1185,4 +1254,5 @@ P64 & 3160 & 56 & 2161 & 30 & 21.56 & 1.89 \\\hline
 % LocalWords:  Acknowledgments nmf naso EphB dorso Ei Fi Dii Eii Fii Ai Aii DW
 % LocalWords:  Willshaw Eglen Herrmann llll Bii Aiii Aiv Biii Biv th flatmount
 % LocalWords:  colliculus geniculate vivo center RG RGC SMI ImageJ Hjorth DCS
-% LocalWords:  Lyngholm DL IDT hoc Hubel Diggle DCS's ger ccc
+% LocalWords:  Lyngholm DL IDT hoc Hubel Diggle DCS's ger ccc Wulff ipsi LGN
+% LocalWords:  dLGN DCL
