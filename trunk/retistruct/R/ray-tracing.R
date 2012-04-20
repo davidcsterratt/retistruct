@@ -178,6 +178,7 @@ trace.ray <- function(r0, S) {
 ##' @param add If \code{TRUE} add to an existing plot
 ##' @param ... Graphics parameters
 ##' @author David Sterratt
+##' @export
 draw.system <- function(S, xoff=-10, ypad=1, add=FALSE, ...) {
   with(S, {
     xlim <- range(A)
@@ -192,22 +193,17 @@ draw.system <- function(S, xoff=-10, ypad=1, add=FALSE, ...) {
     }})
 }
 
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
 ##' @title Trace ray at an angle
 ##' @param psi Angle from axis
 ##' @param anp Nodal point (hopefully anterior nodal point)
 ##' @param S System
 ##' @return Ray - see \code{\link{trace.ray}}
 ##' @author David Sterratt
+##' @export
 trace.ray.angle <- function(psi, anp, S) {
   return(trace.ray(c(anp-2*cos(psi), -2*sin(psi), psi), S))
 }
 
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
 ##' @title Convert incident angle to angle on lens
 ##' @param psi Incident angles
 ##' @param anp Anterior nodal point on x-axis
@@ -216,12 +212,12 @@ trace.ray.angle <- function(psi, anp, S) {
 ##' @examples
 ##' S <- S.mouse.ss.23
 ##' draw.system(S, xoff=-2)
-##' imfile <- "eye23.png"
-##' im <- as.raster(readPNG(imfile))
+##' ## imfile <- "eye23.png"
+##' ## im <- as.raster(readPNG(imfile))
 ##' scale <- 0.0086
 ##' xoff <- -0.52
 ##' yoff <- 0.31
-##' rasterImage(im, xoff, yoff-scale*nrow(im)/2, xoff+scale*ncol(im), yoff+scale*nrow(im)/2)
+##' ## rasterImage(im, xoff, yoff-scale*nrow(im)/2, xoff+scale*ncol(im), yoff+scale*nrow(im)/2)
 
 ##' draw.system(S, add=TRUE, col="yellow")
 
