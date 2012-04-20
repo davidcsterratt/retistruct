@@ -460,7 +460,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
 ##' @examples
 ##' r0 <- cbind(alpha=0, theta=0)
 ##' r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
-##' azel.to.sphere.spherical(r, r0)
+##' azel.to.sphere.colattitude(r, r0)
 ##' @export
 azel.to.sphere.colattitude <- function(r, r0) {
   ## Find Cartesian coordinates of aziumuth and elevation on sphere
