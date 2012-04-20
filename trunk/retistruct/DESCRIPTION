@@ -31,7 +31,6 @@ Collate:
     'generics.R'
     'geometry.R'
     'kernel-density.R'
-    'lagrange.R'
     'misc.R'
     'Outline.R'
     'plots.R'
