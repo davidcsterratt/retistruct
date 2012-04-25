@@ -3,7 +3,7 @@
 .libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths()))
 
 ## Need to make sure we have a valid repository
-options(repos="http://cran.r-project.org")
+options(repos=c("http://cran.r-project.org"))
 
 ## It ought to be possible to get these dependendcies from the
 ## retistruct DESCRIPTION, but I don't know how!!
@@ -19,10 +19,10 @@ if (!require("multicore"))     install.packages("multicore")
 if (!require("png"))           install.packages("png")
 if (!require("akima"))         install.packages("akima")
 if (!require("tripack"))       install.packages("tripack")
-if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
-update.packages(Sys.getenv("R_LIBS_USER"))
+## if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
 ## These lines needed while  Triangle and geometry only on R-Forge
 install.packages("Triangle", repos="http://R-Forge.R-project.org")
+update.packages(Sys.getenv("R_LIBS_USER"))
 ## install.packages("geometry", repos="http://R-Forge.R-project.org")
 ## Now install retistruct
 install.packages("retistruct_0.4.11.tar.gz")
