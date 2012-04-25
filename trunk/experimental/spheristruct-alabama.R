@@ -200,7 +200,7 @@ optimise.mapping.alabama <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
 
     if (!is.na(dev.polar)) {
       dev.set(dev.polar)
-      plot.polar(phi0 * 180/pi)
+      polarplot(phi0 * 180/pi)
       r$phi <- phi
       r$lambda <- lambda
       plot.outline.polar(r)

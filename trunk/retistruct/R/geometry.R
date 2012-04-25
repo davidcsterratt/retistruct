@@ -473,7 +473,6 @@ azel.to.sphere.colattitude <- function(r, r0) {
                cos(r0[,"alpha"])*cos(r0[,"theta"]),
                sin(r0[,"alpha"]))
 
-
   ## Angle made with optic axis is
   psi <- acos(rc %*% t(r0c))
 

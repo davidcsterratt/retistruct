@@ -1,4 +1,4 @@
-csv.check.datadir <- function(dir=NULL) {
+csv.checkDatadir <- function(dir=NULL) {
   return(file.exists(file.path(dir, "outline.csv")))
 }
 

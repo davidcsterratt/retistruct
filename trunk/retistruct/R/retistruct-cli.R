@@ -129,10 +129,10 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-polar-kde", suffix, sep="")),
            width=width, height=height)
     par(mar=c(2, 2, 2, 2))
-    plot.polar(r, datapoint.contours=TRUE, grouped.contours=FALSE)
+    polarplot(r, datapoint.contours=TRUE, grouped.contours=FALSE)
     title(paste("KDE:", dataset))
     if (!is.null(r$EOD)) {
-      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+      polartext(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
     }
     dev.off()
 
@@ -140,10 +140,10 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-polar-kr", suffix, sep="")),
            width=width, height=height)
     par(mar=c(2, 2, 2, 2))
-    plot.polar(r, datapoint.contours=FALSE, grouped.contours=TRUE)
+    polarplot(r, datapoint.contours=FALSE, grouped.contours=TRUE)
     title(paste("KR:", dataset))
     if (!is.null(r$EOD)) {
-      text.polar(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
+      polartext(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
     }
     dev.off()
 
@@ -170,7 +170,7 @@ retistruct.cli.figure <- function(dataset,
     par(mgp=c(1.5, 0.5, 0))
     par(tcl=-0.3)
     
-    plot.l.vs.L(r)
+    lvsLplot(r)
     title(dataset)
     dev.off()
   }

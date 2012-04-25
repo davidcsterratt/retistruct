@@ -40,10 +40,10 @@ m <- TriangulatedOutline(s, n=n,
                          suppress.external.steiner=TRUE)
 
 ## Merge the points that have been stitched
-m <- merge.points.edges(m)
+m <- mergePointsEdges(m)
 
 ## Make a rough projection to a sphere
-m <- project.to.sphere(m)
+m <- projectToSphere(m)
 
 ## Plot the initial gridlines in 2D
 par(mfg=c(3, 3))
@@ -57,17 +57,17 @@ par(mfg=c(2, 3))
 plot.new()
 mtext("Di", adj=0, font=2, line=-0.9)
 
-plot.spherical(m, strain=TRUE, datapoints=FALSE)
+sphericalplot(m, strain=TRUE, datapoints=FALSE)
 rgl.viewpoint(zoom=0.7)
 rgl.postscript("initial-projection.pdf", "pdf")
 
 ## Optimise mapping - this takes a few minutes
 alpha <- 8
 x0 <- 0.5
-r <- solve.mapping.cart(m, alpha=0, x0=0, nu=1,
+r <- solveMappingCart(m, alpha=0, x0=0, nu=1,
                         dtmax=500, maxmove=1E2, tol=2e-7,
                           plot.3d=FALSE)
-r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
+r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
                         dtmax=500, maxmove=1E2, tol=1e-6,
                         plot.3d=FALSE)
 r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5, 
@@ -78,7 +78,7 @@ par(mfg=c(2, 2))
 plot.new()
 mtext("Ei", adj=0, font=2, line=-0.9)
 
-plot.spherical(r, strain=TRUE, datapoints=FALSE)
+sphericalplot(r, strain=TRUE, datapoints=FALSE)
 rgl.postscript("final-projection.pdf", "pdf")
 
 par(mfg=c(3, 2))
@@ -93,7 +93,7 @@ r <- RetinalReconstructedDataset(r)
 
 ## Plot data in polar coordinates and flattend retina
 par(mfg=c(2, 1))
-plot.polar(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
+polarplot(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
 mtext("Fi", adj=0, font=2, line=-0.9)
 
 par(mfg=c(3, 1))

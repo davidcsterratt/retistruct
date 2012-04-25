@@ -1,7 +1,7 @@
 ## Function to check the wether the directory in question is a data
 ## directory or not. Returns TRUE if so, FALSE otherwise, and throws an
 ## error if the directory appears to be corrupt.
-idt.check.datadir <- function(dir=NULL) {
+idt.checkDatadir <- function(dir=NULL) {
   sys <- file.exists(file.path(dir, "SYS.SYS"))
   map <- file.exists(file.path(dir, "ALU.MAP"))
   if (sys  & map ) return(TRUE)

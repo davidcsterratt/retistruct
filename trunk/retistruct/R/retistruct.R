@@ -13,10 +13,10 @@ retistruct.report <- function(message, title="",...) {
 ##' \code{FALSE} otherwise.
 ##' @author David Sterratt
 ##' @export
-check.datadir <- function(dir=NULL) {
-  if (idt.check.datadir(dir))   { return("idt") }
-  if (csv.check.datadir(dir))   { return("csv") }
-  if (ijroi.check.datadir(dir)) { return("ijroi") }
+checkDatadir <- function(dir=NULL) {
+  if (idt.checkDatadir(dir))   { return("idt") }
+  if (csv.checkDatadir(dir))   { return("csv") }
+  if (ijroi.checkDatadir(dir)) { return("ijroi") }
   return(FALSE)
 }
 
@@ -36,7 +36,7 @@ check.datadir <- function(dir=NULL) {
 ##' @export
 retistruct.read.dataset <- function(dataset, ...) {
   ## Check to see if dataset is valid
-  type <- check.datadir(dataset)
+  type <- checkDatadir(dataset)
   
   if (type=="idt")   { return(idt.read.dataset(dataset, ...))}
   if (type=="csv")   { return(csv.read.dataset(dataset, ...))}

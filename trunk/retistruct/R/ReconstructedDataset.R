@@ -336,10 +336,10 @@ getKR <- function(r) {
 ##' \code{datapoint.means} causes datapoint means to be plotted
 ##' (default \code{TRUE}).  The option \code{landmakrs} causes
 ##' landmarks to be plotted (default \code{TRUE}). 
-##' @method plot.polar reconstructedDataset
+##' @method polarplot reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
+polarplot.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
@@ -502,10 +502,10 @@ plot.polar.reconstructedDataset <- function(r, show.grid=TRUE,
 ##' @title Spherical plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
 ##' @param ... Other graphics parameters -- not used at present
-##' @method plot.spherical reconstructedDataset
+##' @method sphericalplot reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-plot.spherical.reconstructedDataset <- function(r, ...) {
+sphericalplot.reconstructedDataset <- function(r, ...) {
   NextMethod()
 
   args <- list(...)

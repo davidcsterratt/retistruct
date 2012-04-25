@@ -38,7 +38,7 @@
 ##' @param plot.3d Whether to show 3D picture during optimisation.
 ##' @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
 ##' means no plotting.
-##' @param dev.polar Device to plot polar plot onto. Value of NA
+##' @param dev.polar Device to polarplot plot onto. Value of NA
 ##' (default) means no plotting.
 ##' @return \code{reconstructedOutline} object containing the input
 ##' information and the following modified and extra information:
@@ -56,7 +56,7 @@ ReconstructedOutline <- function(o,
   ## Clear polar plot, if it's required
   if (!is.na(dev.polar)) {
     dev.set(dev.polar)
-    plot.polar(o$phi0)
+    polarplot(o$phi0)
   }
   
   report("Triangulating...")
@@ -83,10 +83,10 @@ ReconstructedOutline <- function(o,
   }
 
   report("Merging points...")
-  r <- merge.points.edges(r)
+  r <- mergePointsEdges(r)
   
   report("Projecting to sphere...")
-  r <- project.to.sphere(r)
+  r <- projectToSphere(r)
   
   if (!is.na(dev.flat)) {
     ## Plot of initial gridlines
@@ -96,7 +96,7 @@ ReconstructedOutline <- function(o,
     
     ## Initial plot in 3D space
     if (plot.3d) {
-      plot.spherical(r)
+      sphericalplot(r)
     }
   }
 
@@ -109,7 +109,7 @@ ReconstructedOutline <- function(o,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
   report("Optimising mapping with area constraint using FIRE...")
-  r <- solve.mapping.cart(r, alpha=alpha, x0=x0, nu=1,
+  r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
                           dtmax=500, maxmove=1E2, tol=1e-5,
                           plot.3d=plot.3d,
                           dev.flat=dev.flat, dev.polar=dev.polar)
@@ -434,10 +434,10 @@ plot.flat.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' \code{image} causes an image to be plotted if \code{TRUE}
 ##' (default \code{TRUE}).  The option \code{preserve.area} creates an
 ##' area-preserving plot (default \code{FALSE}).
-##' @method plot.polar reconstructedOutline
+##' @method polarplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
+polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
@@ -654,10 +654,10 @@ plot.polar.reconstructedOutline <- function(r, show.grid=TRUE,
 ##' @title Spherical plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
 ##' @param ... Other graphics parameters -- not used at present
-##' @method plot.spherical reconstructedOutline
+##' @method sphericalplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-plot.spherical.reconstructedOutline <- function(r, ...) {
+sphericalplot.reconstructedOutline <- function(r, ...) {
   NextMethod()
   
   args <- list(...)
@@ -744,10 +744,10 @@ plot.spherical.reconstructedOutline <- function(r, ...) {
 ##'
 ##' @title Plot the fractional change in length of mesh edges
 ##' @param r \code{reconstructedOutline} object
-##' @method plot.l.vs.L reconstructedOutline
+##' @method lvsLplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-plot.l.vs.L.reconstructedOutline <- function(r) {
+lvsLplot.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   cols <- strain.colours(o$logstrain)

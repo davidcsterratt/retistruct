@@ -338,7 +338,7 @@ do.plot <- function() {
               scalebar=1)
     dev.set(d2)
     par(mar=c(4.5, 4.5, 1, 0.5))
-    plot.l.vs.L(r)
+    lvsLplot(r)
   } else {
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -352,7 +352,7 @@ do.plot <- function() {
               scalebar=1)
     dev.set(d2)
     par(mar=c(0.7, 0.7, 0.7, 0.7))
-    plot.polar(r,
+    polarplot(r,
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),
@@ -361,7 +361,7 @@ do.plot <- function() {
                grouped.contours=("Group Contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
-      text.polar(paste("OD displacement:",
+      polartext(paste("OD displacement:",
                        format(r$EOD, digits=3, nsmall=2), "deg"))
     }
   }

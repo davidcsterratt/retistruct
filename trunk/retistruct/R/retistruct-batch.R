@@ -33,7 +33,7 @@ list.datasets <- function(path='.', verbose=FALSE) {
     id.data.dir <- TRUE
     ## Case of faulty directory
     tryCatch({
-      is.data.dir <- is.character(check.datadir(d))
+      is.data.dir <- is.character(checkDatadir(d))
     }, error=function(e) {})
 
     if (!is.data.dir) {
@@ -526,7 +526,7 @@ retistruct.batch.plot.ods <- function(summ) {
 
   summlm <- lm(OD.res ~ sqrt.E, summ)
   print(summary(summlm))
-  plot.polar(r, datapoint.contours=FALSE)
+  polarplot(r, datapoint.contours=FALSE)
   ##with(summ, plot(sqrt.E, OD.res))
   ##abline(summlm)
   

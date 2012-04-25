@@ -1,4 +1,4 @@
-ijroi.check.datadir <- function(dir=NULL) {
+ijroi.checkDatadir <- function(dir=NULL) {
   return(file.exists(file.path(dir, "outline.roi")))
 }
 

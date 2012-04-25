@@ -343,7 +343,7 @@ fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
 
     if (!is.na(dev.polar)) {
       dev.set(dev.polar)
-      plot.polar(phi0 * 180/pi)
+      polarplot(phi0 * 180/pi)
       r$phi <- phi
       r$lambda <- lambda
       plot.outline.polar(r)

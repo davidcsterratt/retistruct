@@ -22,7 +22,7 @@ par(mfrow=c(2, 4))
 par(mar=c(2.2, 2.2, 0.5, 0.5),
     mgp=c(1.1, 0.2, 0),
     tcl=-0.15)
-plot.l.vs.L(r.good)
+lvsLplot(r.good)
 mtext("A", adj=-0.2, font=2, line=-0.9)
 
 par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -30,12 +30,12 @@ plot.flat(r.good, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoint
 mtext("B", adj=0, font=2, line=-0.9)
 plot.flat(r.good, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
 mtext("C", adj=0, font=2, line=-0.9)
-plot.polar(r.good, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
+polarplot(r.good, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
 mtext("D", adj=0, font=2, line=-0.9)
 
 ## Bad Retina
 par(mar=c(2.2, 2.2, 0.5, 0.5))
-plot.l.vs.L(r.bad)
+lvsLplot(r.bad)
 mtext("E", adj=-0.2, font=2, line=-0.9)
 
 par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -43,7 +43,7 @@ plot.flat(r.bad, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints
 mtext("F", adj=0, font=2, line=-0.9)
 plot.flat(r.bad, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
 mtext("G", adj=0, font=2, line=-0.9)
-plot.polar(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
+polarplot(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
 mtext("H", adj=0, font=2, line=-0.9)
 
 ## Printing

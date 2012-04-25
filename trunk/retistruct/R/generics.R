@@ -51,16 +51,16 @@ plot.flat.default <- function(x, axt="n", ylim=NULL, ...) {
 ##' @param ... Other plotting parameters
 ##' @author David Sterratt
 ##' @export
-plot.polar <- function(r, show.grid=TRUE,
+polarplot <- function(r, show.grid=TRUE,
                        grid.col="gray", grid.bg="transparent", 
                        grid.int.minor=15, grid.int.major=45,
                        flip.horiz=FALSE,
                        labels=c(0, 90, 180, 270),...) {
-  UseMethod("plot.polar")
+  UseMethod("polarplot")
 }
 
 ##' @export
-plot.polar.default <- function(r, show.grid=TRUE,
+polarplot.default <- function(r, show.grid=TRUE,
                                grid.col="gray", grid.bg="transparent", 
                                grid.int.minor=15, grid.int.major=45,
                                flip.horiz=FALSE, labels=c(0, 90, 180, 270),
@@ -69,23 +69,23 @@ plot.polar.default <- function(r, show.grid=TRUE,
 }
 
 ##' @export
-plot.spherical <- function(r, ...) {
-  UseMethod("plot.spherical")
+sphericalplot <- function(r, ...) {
+  UseMethod("sphericalplot")
 }
 
 ##' @export
-plot.spherical.default <- function(r, ...) {
+sphericalplot.default <- function(r, ...) {
   rgl.clear()
   rgl.bg(color="white")
 }
 
 ##' @export
-plot.l.vs.L <- function(r) {
-  UseMethod("plot.l.vs.L")
+lvsLplot <- function(r) {
+  UseMethod("lvsLplot")
 }
 
 ##' @export
-plot.l.vs.L.default <- function(r) {
+lvsLplot.default <- function(r) {
 }
 
 ##' Get spherical coordinates of datapoints.

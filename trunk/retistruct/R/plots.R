@@ -14,17 +14,17 @@ strain.colours <- function(x) {
   return(col)
 }
 
-##' Place text at bottom right of \code{\link{plot.polar}}
+##' Place text at bottom right of \code{\link{polarplot}}
 ##'
 ##' @title Put text on the polar plot
 ##' @param text Test to place
 ##' @author David Sterratt
 ##' @export
-text.polar <- function(text) {
+polartext <- function(text) {
   mtext(text, 1, adj=1, line=-1)
 }
 
-##' This is a helper function for \code{\link{plot.polar}}
+##' This is a helper function for \code{\link{polarplot}}
 ##'
 ##' @title Convert lattitude to radial variable in polar plot
 ##' @param phi Lattitude
@@ -46,7 +46,7 @@ phi.to.rho <- function(phi, phi0, area.preserving) {
 ## FIXME: it would be nice to tidy up the profusion of conversion
 ## functions
 
-##' This is a helper function for \code{\link{plot.polar}}
+##' This is a helper function for \code{\link{polarplot}}
 ##'
 ##' @title Convert rho variable into normalised radial coordinate in degrees
 ##' @param rho The rho variable. This may be in radians or the

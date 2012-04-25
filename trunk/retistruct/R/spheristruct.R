@@ -106,7 +106,7 @@ pointers2segments <- function(g) {
 ##' \item{Ht}{Transformed mapping from edges onto corresponding edges}
 ##' @author David Sterratt
 ##' @export
-merge.points.edges <- function(t) {
+mergePointsEdges <- function(t) {
   h <- t$h
   T <- t$T
   Cu <- t$Cu
@@ -252,7 +252,7 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##'
 ##' @title Project mesh points in the flat outline onto a sphere
 ##' @param r \code{Outline} object to which the following information
-##' has been added with \code{\link{merge.points.edges}}:
+##' has been added with \code{\link{mergePointsEdges}}:
 ##' \describe{
 ##' \item{\code{Pt}}{The mesh point coordinates.}
 ##' \item{\code{Rsett}}{The set of points on the rim.}
@@ -264,7 +264,7 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##' \item{\code{R}}{Radius of sphere.}
 ##' @author David Sterratt
 ##' @export
-project.to.sphere <- function(r) {
+projectToSphere <- function(r) {
   Pt <- r$Pt
   Rsett <- r$Rsett
   i0t <- r$i0t
@@ -954,7 +954,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     ## Plot
     if (plot.3d) {
-      plot.spherical(list(phi=phi, lambda=lambda, R=R,
+      sphericalplot(list(phi=phi, lambda=lambda, R=R,
                           Tt=Tt, Rsett=Rsett, gb=r$gb, ht=r$ht),
                      datapoints=FALSE)
     }
@@ -969,7 +969,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
       dev.set(dev.polar)
       r$phi <- phi
       r$lambda <- lambda
-      plot.polar(r)
+      polarplot(r)
     }
   }
 
@@ -995,7 +995,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
 ##' @export
-solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
+solveMappingCart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
   phi <- r$phi
   lambda <- r$lambda
@@ -1065,7 +1065,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     ## Plot
     if (plot.3d) {
-      plot.spherical(list(phi=phi, lambda=lambda, R=R,
+      sphericalplot(list(phi=phi, lambda=lambda, R=R,
                           Tt=Tt, Rsett=Rsett, gb=r$gb, ht=r$ht),
                      datapoints=FALSE)
     }
@@ -1080,7 +1080,7 @@ solve.mapping.cart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
       dev.set(dev.polar)
       r$phi <- phi
       r$lambda <- lambda
-      plot.polar(r)
+      polarplot(r)
     }
   }
 

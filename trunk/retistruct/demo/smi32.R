@@ -20,6 +20,6 @@ par(mar=c(0.1,0.1,0.1,0.1))
 plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 
 par(mar=c(1,1,1,1))
-plot.polar(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
+polarplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 ## To print for PloS Biol.
 ## dev.copy2eps(file="smi32.pdf", width=6.83, height=6.83/2)

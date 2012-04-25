@@ -159,15 +159,15 @@ getTss.retinalReconstructedDataset <- function(r) {
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param ... 
-##' @method plot.polar retinalReconstructedDataset
+##' @method polarplot retinalReconstructedDataset
 ##' @author David Sterratt
 ##' @export
-plot.polar.retinalReconstructedDataset <- function(r, show.grid=TRUE,
+polarplot.retinalReconstructedDataset <- function(r, show.grid=TRUE,
                                                    grid.col="gray",
                                                    grid.bg="transparent", 
                                                    grid.int.minor=15,
                                                    grid.int.major=45,  ...) {
-  ## This will call plot.polar.reconstructedDataset()
+  ## This will call polarplot.reconstructedDataset()
   NextMethod(flip.horiz=(r$side=="Left"),
              labels=c("N", "D", "T", "V"))
 }

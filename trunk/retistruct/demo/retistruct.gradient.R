@@ -16,7 +16,7 @@ par(mar=c(0.2,0.2,0.2,0.2))
 par(mfrow=c(1, 2))
 plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("A", adj=0, font=2, line=-0.9)
-plot.polar(r, mesh=FALSE)
+polarplot(r, mesh=FALSE)
 mtext("B", adj=0, font=2, line=-0.9)
 
 ## To print for PloS Biol.
