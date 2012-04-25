@@ -4,7 +4,7 @@
 ##' @title Constructor for RecontructedDataset object
 ##' @param r Object that of clases \code{reconstructedOutline} and \code{dataset}.
 ##' @param report Function used to report progress.
-##' @return \code{reconstructedDataset} object containing the input
+##' @return \code{\link{ReconstructedDataset}} object containing the input
 ##' information and the following modified and extra information:
 ##' \item{\code{Dsb}}{Datapoints in barycentric coordinates}
 ##' \item{\code{Dsc}}{Datapoints on reconstructed sphere in cartesian coordinates}
@@ -82,7 +82,7 @@ ReconstructedDataset <- function(r, report=message) {
 ##' Get spherical coordinates of datapoints.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{reonstructedDataset} object.
+##' @param r \code{ReconstructedDataset} object.
 ##' @return \code{Dss}
 ##' @method getDss reconstructedDataset
 ##' @author David Sterratt
@@ -92,7 +92,7 @@ getDss.reconstructedDataset <- function(r) {
 }
 
 ##' @title Get grouped variable with locations in spherical coordinates.
-##' @param r \code{reonstructedDataset} object.
+##' @param r \code{ReconstructedDataset} object.
 ##' @return \code{Gss}
 ##' @method getGss reconstructedDataset
 ##' @author David Sterratt
@@ -104,7 +104,7 @@ getGss.reconstructedDataset <- function(r) {
 ##' Get Karcher mean of datapoints in spherical coordinates.
 ##'
 ##' @title Karcher mean of datapoints in spherical coordinates
-##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
 ##' @method getDss.mean reconstructedDataset
 ##' @author David Sterratt
@@ -122,7 +122,7 @@ getDss.mean.reconstructedDataset <- function(r) {
 }
 
 ##' @title Get area of convex hull around data points on sphere
-##' @param r code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return Area in degress squared
 ##' @author David Sterratt
 ##' @export
@@ -146,7 +146,7 @@ getDss.hullarea <- function(r) {
 ##' Get spherical coordinates of landmarks.
 ##'
 ##' @title Get transformed spherical coordinates of landmarks.
-##' @param r \code{reonstructedDataset} object.
+##' @param r \code{ReconstructedDataset} object.
 ##' @return \code{Sss}
 ##' @method getSss reconstructedDataset
 ##' @author David Sterratt
@@ -156,7 +156,7 @@ getSss.reconstructedDataset <- function(r) {
 }
 
 ##' @title Get kernel density estimate of data points
-##' @param r \code{reconstructedDataset} object
+##' @param r \code{\link{ReconstructedDataset}} object
 ##' @return See \code{\link{compute.kernel.estimate}}
 ##' @author David Sterratt
 ##' @export
@@ -294,7 +294,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
 }
 
 ##' @title Get kernel regression estimate of grouped data points
-##' @param r \code{reconstructedDataset} object
+##' @param r \code{\link{ReconstructedDataset}} object
 ##' @return See \code{\link{compute.kernel.estimate}}
 ##' @author David Sterratt
 ##' @export
@@ -321,7 +321,7 @@ getKR <- function(r) {
 ##' Plot datapoints in polar plot
 ##'
 ##' @title Polar plot of reconstructed dataset
-##' @param r \code{reconstructedDataset} object
+##' @param r \code{\link{ReconstructedDataset}} object
 ##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
 ##' @param grid.col Colour of the minor grid lines
 ##' @param grid.bg Background colour of the grid

@@ -3,10 +3,10 @@
 ##' that have been transformed according to the values of
 ##' \code{DVflip} and \code{side}.
 ##'
-##' @title RetinalReonstructedDataset constructor
+##' @title RetinalReconstructedDataset constructor
 ##' @param r Object that inherits both \code{reconstructedDataset} and
 ##' \code{dataset}.
-##' @return \code{retinalReonstructedDataset} object. This does not
+##' @return \code{\link{RetinalReconstructedDataset}} object. This does not
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt
@@ -26,7 +26,7 @@ RetinalReconstructedDataset <- function(r) {
 ##' the values of \code{DVflip} and \code{side}.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{retinalReonstructedDataset} object.
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss}
 ##' @method getDss retinalReconstructedDataset
 ##' @author David Sterratt
@@ -51,7 +51,7 @@ getDss.retinalReconstructedDataset <- function(r) {
 ##' the values of \code{DVflip} and \code{side}.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{retinalReonstructedDataset} object.
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss}
 ##' @method getDss retinalReconstructedDataset
 ##' @author David Sterratt
@@ -78,7 +78,7 @@ getGss.retinalReconstructedDataset <- function(r) {
 ##'
 ##' @title Get transformed spherical coordinates of Karcher mean of
 ##' datapoints
-##' @param r \code{retinalReonstructedDataset} object.
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
 ##' @method getDss.mean retinalReconstructedDataset
 ##' @author David Sterratt
@@ -104,7 +104,7 @@ getDss.mean.retinalReconstructedDataset <- function(r) {
 ##' the values of \code{DVflip} and \code{side}.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{retinalReonstructedDataset} object.
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss}
 ##' @method getSss retinalReconstructedDataset
 ##' @author David Sterratt
@@ -129,7 +129,7 @@ getSss.retinalReconstructedDataset <- function(r) {
 ##' the values of \code{DVflip} and \code{side}.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{retinalReonstructedDataset} object.
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss}
 ##' @method getTss retinalReconstructedDataset
 ##' @author David Sterratt

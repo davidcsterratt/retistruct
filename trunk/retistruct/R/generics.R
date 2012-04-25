@@ -40,7 +40,7 @@ plot.flat.default <- function(x, axt="n", ylim=NULL, ...) {
 ##'
 ##' @title Polar plot of object
 ##' @param r \code{\link{ReconstructedOutline}},
-##' \code{\link{ReconstructDataset}}  object
+##' \code{\link{ReconstructedDataset}}  object
 ##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
 ##' @param grid.col Colour of the minor grid lines
 ##' @param grid.bg Background colour of the grid
@@ -91,7 +91,7 @@ lvsLplot.default <- function(r) {
 ##' Get spherical coordinates of datapoints.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss}
 ##' @author David Sterratt
 ##' @export
@@ -107,7 +107,7 @@ getDss.default <- function(r) {
 ##' Get Karcher mean of datapoints in spherical coordinates.
 ##'
 ##' @title Karcher mean of datapoints in spherical coordinates
-##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
 ##' @author David Sterratt
 ##' @export
@@ -121,7 +121,7 @@ getDss.mean.default <- function(r) {
 }
 
 ##' @title Get grouped variable with locations in spherical coordinates.
-##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Gss}
 ##' @author David Sterratt
 ##' @export
@@ -138,7 +138,7 @@ getGss.default <- function(r) {
 ##' Get spherical coordinates of landmarks.
 ##'
 ##' @title Get transformed spherical coordinates of landmarks.
-##' @param r \code{\link{reconstructedDataset}} or \code{\link{retinalReconstructedDataset}} object.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Sss}
 ##' @author David Sterratt
 ##' @export
@@ -162,7 +162,8 @@ getTss.default <- function(r) {
 }
 
 ##' @title Get coordinates of corners of pixels of image in spherical coordinates 
-##' @param r \code{\link{reconstructedOutline}} or \code{\link{retinalReconstructedOutline}} object
+##' @param r \code{\link{ReconstructedOutline}} or
+##' \code{\link{RetinalReconstructedOutline}} object
 ##' @return Coordinates of corners of pixels in spherical coordinates 
 ##' @author David Sterratt
 ##' @export

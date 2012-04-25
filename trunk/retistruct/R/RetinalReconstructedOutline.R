@@ -3,10 +3,9 @@
 ##' that have been transformed according to the values of
 ##' \code{DVflip} and \code{side}.
 ##'
-##' @title RetinalReonstructedOutline constructor
-##' @param r Object that inherits both \code{reconstructedDataset} and
-##' \code{dataset}.
-##' @return \code{retinalReonstructedDataset} object. This does not
+##' @title RetinalReconstructedOutline constructor
+##' @param r Object that inherits \code{ReconstructedOutline}
+##' @return \code{RetinalReconstructedOutline} object. This does not
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt

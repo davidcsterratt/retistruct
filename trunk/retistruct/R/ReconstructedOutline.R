@@ -208,7 +208,7 @@ titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
 ##' have been deformed from their flat state.
 ##'
 ##' @title Return strains edges are under in spherical retina
-##' @param r A \code{\link{reconstructedOutline}} object
+##' @param r A \code{\link{ReconstructedOutline}} object
 ##' @return A list containing two data frames \code{flat} and \code{spherical}. 
 ##' Each data frame contains for each edge in the flat or spherical meshes:
 ##' \item{\code{L}}{Length of the edge in the flat outline }
@@ -291,7 +291,7 @@ transform.image.reconstructedOutline <- function(r) {
   return(r)
 }
 ##' @title Get coordinates of corners of pixels of image in spherical coordinates 
-##' @param r \code{\link{reconstructedOutline}} object
+##' @param r \code{\link{ReconstructedOutline}} object
 ##' @return Coordinates of corners of pixels in spherical coordinates 
 ##' @author David Sterratt
 ##' @method getIms reconstructedOutline

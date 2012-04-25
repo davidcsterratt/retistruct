@@ -209,7 +209,7 @@ mergePointsEdges <- function(t) {
 ##' @param P.fix Coordinates of fixed points
 ##' @return New matrix of 2D point locations
 ##' @author David Sterratt
-stretch.mesh <- function(Cu, L, i.fix, P.fix) {
+stretchMesh <- function(Cu, L, i.fix, P.fix) {
   N <- max(Cu)
   M <- length(L)
   C <- matrix(0, 2*N, 2*N)
@@ -248,7 +248,7 @@ stretch.mesh <- function(Cu, L, i.fix, P.fix) {
 ##' the curtailed sphere. It uses the area of the flat outline and
 ##' \code{phi0} to determine the radius \code{R} of the sphere. It
 ##' tries to get a good first approximation by using the function
-##' \code{\link{strech.mesh}}.
+##' \code{\link{stretchMesh}}.
 ##'
 ##' @title Project mesh points in the flat outline onto a sphere
 ##' @param r \code{Outline} object to which the following information
@@ -293,7 +293,7 @@ projectToSphere <- function(r) {
     L.Rsett[i] <- C[Rsett[i],Rsett[mod1(i+1, length(Rsett))]]
   }
   ## Stretch mesh points to circle
-  Ps <- stretch.mesh(Cut, Lt, Rsett, circle(L=L.Rsett))
+  Ps <- stretchMesh(Cut, Lt, Rsett, circle(L=L.Rsett))
   x <- Ps[,1]
   y <- Ps[,2]
   phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
