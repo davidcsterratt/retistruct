@@ -165,7 +165,7 @@ TriangulatedOutline <- function(o, n=200,
   return(t)
 }
 
-plot.flat.triangulatedOutline <- function(t, axt="n", ylim=NULL, ...) {
+flatplot.triangulatedOutline <- function(t, axt="n", ylim=NULL, ...) {
   NextMethod()
   args <- list(...)
   plot.mesh <- is.null(args$mesh) || args$mesh

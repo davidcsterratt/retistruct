@@ -327,7 +327,7 @@ do.plot <- function() {
   if ("Strain" %in% svalue(g.show)) {   # Strain plot
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
-    plot.flat(r, axt="n",
+    flatplot(r, axt="n",
               datapoints=FALSE,
               landmarks=FALSE,
               markup=FALSE,
@@ -342,7 +342,7 @@ do.plot <- function() {
   } else {
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
-    plot.flat(r, axt="n",
+    flatplot(r, axt="n",
               datapoints=("Datapoints" %in% svalue(g.show)),
               landmarks=("Landmarks" %in% svalue(g.show)),
               markup=("Markup" %in% svalue(g.show)),

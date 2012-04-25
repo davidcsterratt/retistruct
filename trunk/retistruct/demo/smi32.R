@@ -7,7 +7,7 @@ o <- retistruct.read.markup(o)
 
 ## Initial plot
 par(mar=c(0.1,0.1,0.1,0.1))
-plot.flat(o)
+flatplot(o)
 
 ## Reconstruct
 r <- retistruct.reconstruct(o)
@@ -17,7 +17,7 @@ r <- retistruct.reconstruct(o)
 ## options(grid.maj.col="yellow")
 ## options(grid.min.col="white")
 par(mar=c(0.1,0.1,0.1,0.1))
-plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 
 par(mar=c(1,1,1,1))
 polarplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)

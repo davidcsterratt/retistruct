@@ -14,11 +14,11 @@ o$side="Left"
 
 ## Plot of raw data. Axes are reversed to improve comparison with
 ## polar plot later
-plot.flat(o, markup=FALSE)
+flatplot(o, markup=FALSE)
 mtext("A", adj=0, font=2, line=-0.9)
 
 ## Plot the annotation
-plot.flat(o, datapoints=FALSE, landmarks=FALSE)
+flatplot(o, datapoints=FALSE, landmarks=FALSE)
 mtext("B", adj=0, font=2, line=-0.9)
 
 ## Set up fixed point
@@ -32,7 +32,7 @@ t <- TriangulatedOutline(o, n=n)
 s <- StitchedOutline(t)
 
 ## Plot triangulation and stitching
-plot.flat(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
+flatplot(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
 mtext("C", adj=0, font=2, line=-0.9)
 
 ## Triangulate again, to take into account points added by stitching
@@ -47,7 +47,7 @@ m <- projectToSphere(m)
 
 ## Plot the initial gridlines in 2D
 par(mfg=c(3, 3))
-plot.flat(m, grid=TRUE, 
+flatplot(m, grid=TRUE, 
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
           stitch=FALSE, strain=TRUE)
 mtext("Dii", adj=0, font=2, line=-0.9)
@@ -82,7 +82,7 @@ sphericalplot(r, strain=TRUE, datapoints=FALSE)
 rgl.postscript("final-projection.pdf", "pdf")
 
 par(mfg=c(3, 2))
-plot.flat(r, grid=TRUE, 
+flatplot(r, grid=TRUE, 
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
           stitch=FALSE, strain=TRUE)
 mtext("Eii", adj=0, font=2, line=-0.9)
@@ -97,7 +97,7 @@ polarplot(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
 mtext("Fi", adj=0, font=2, line=-0.9)
 
 par(mfg=c(3, 1))
-plot.flat(r, grid=TRUE, 
+flatplot(r, grid=TRUE, 
           datapoints=TRUE, landmarks=TRUE, mesh=FALSE, markup=FALSE,
           stitch=FALSE)
 mtext("Fii", adj=0, font=2, line=-0.9)

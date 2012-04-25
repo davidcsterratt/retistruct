@@ -28,12 +28,12 @@ addClass <- function(newclass, obj) {
 ##' @param ... Other plotting parameters
 ##' @author David Sterratt
 ##' @export
-plot.flat <- function(x, axt="n", ylim=NULL, ...) {
-  UseMethod("plot.flat")
+flatplot <- function(x, axt="n", ylim=NULL, ...) {
+  UseMethod("flatplot")
 }
 
 ##' @export
-plot.flat.default <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.default <- function(x, axt="n", ylim=NULL, ...) {
 }
 
 ##' Plot polar representation of object

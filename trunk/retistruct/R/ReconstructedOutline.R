@@ -63,14 +63,14 @@ ReconstructedOutline <- function(o,
   t <- TriangulatedOutline(o, n=n)
   if (!is.na(dev.flat)) {
     dev.set(dev.flat)
-    plot.flat(t)
+    flatplot(t)
   }
     
   report("Stitching...")
   s <- StitchedOutline(t)
   if (!is.na(dev.flat)) {
     dev.set(dev.flat)
-    plot.flat(s, datapoints=FALSE)
+    flatplot(s, datapoints=FALSE)
   }
 
   report("Triangulating...")  
@@ -79,7 +79,7 @@ ReconstructedOutline <- function(o,
   
   if (!is.na(dev.flat)) {
     dev.set(dev.flat)
-    plot.flat(r, datapoints=FALSE)
+    flatplot(r, datapoints=FALSE)
   }
 
   report("Merging points...")
@@ -91,7 +91,7 @@ ReconstructedOutline <- function(o,
   if (!is.na(dev.flat)) {
     ## Plot of initial gridlines
     dev.set(dev.flat)
-      plot.flat(r, grid=TRUE, strain=TRUE,
+      flatplot(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     
     ## Initial plot in 3D space
@@ -328,10 +328,10 @@ getTss.reconstructedOutline <- function(r) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat reconstructedOutline
+##' @method flatplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-plot.flat.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
   NextMethod()
 
   args <- list(...)

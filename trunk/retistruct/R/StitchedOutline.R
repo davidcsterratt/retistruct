@@ -163,10 +163,10 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat stitchedOutline
+##' @method flatplot stitchedOutline
 ##' @author David Sterratt
 ##' @export
-plot.flat.stitchedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.stitchedOutline <- function(x, axt="n", ylim=NULL, ...) {
   NextMethod()
   args <- list(...)
   plot.stitch <- is.null(args$stitch) || args$stitch

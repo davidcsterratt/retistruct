@@ -10,7 +10,7 @@ o <- retistruct.read.markup(o)
 r.EphA <- retistruct.reconstruct(o)
 
 ## Plot with gridlines
-plot.flat(r.EphA, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r.EphA, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("A", adj=0, font=2, line=-0.9)
 polarplot(r.EphA, mesh=FALSE)
 mtext("B", adj=0, font=2, line=-0.9)
@@ -24,7 +24,7 @@ o <- retistruct.read.markup(o)
 r.ephrinA <- retistruct.reconstruct(o)
 
 ## Plot with gridlines
-plot.flat(r.ephrinA, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r.ephrinA, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("C", adj=0, font=2, line=-0.9)
 polarplot(r.ephrinA, mesh=FALSE)
 mtext("D", adj=0, font=2, line=-0.9)
@@ -38,7 +38,7 @@ o <- retistruct.read.markup(o)
 r.EphB <- retistruct.reconstruct(o)
 
 ## Plot with gridlines
-plot.flat(r.EphB, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r.EphB, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("E", adj=0, font=2, line=-0.9)
 polarplot(r.EphB, mesh=FALSE)
 mtext("F", adj=0, font=2, line=-0.9)
@@ -51,7 +51,7 @@ o <- retistruct.read.markup(o)
 ## Reconstruct
 r.ephrinB <- retistruct.reconstruct(o)
 
-plot.flat(r.ephrinB, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r.ephrinB, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("G", adj=0, font=2, line=-0.9)
 polarplot(r.ephrinB, mesh=FALSE)
 mtext("H", adj=0, font=2, line=-0.9)

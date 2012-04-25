@@ -298,10 +298,10 @@ ensureFixedPointInRim <- function(o) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat annotatedOutline
+##' @method flatplot annotatedOutline
 ##' @author David Sterratt
 ##' @export
-plot.flat.annotatedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.annotatedOutline <- function(x, axt="n", ylim=NULL, ...) {
   NextMethod()
   args <- list(...)
   plot.markup <- is.null(args$markup) || args$markup

@@ -114,7 +114,7 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-flat", suffix, sep="")),
            width=width, height=height)
     par(mar=c(1, 1, 1, 1))
-    plot.flat(r, axt="n",
+    flatplot(r, axt="n",
               datapoints=TRUE,
               landmarks=TRUE,
               markup=FALSE,
@@ -152,7 +152,7 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-strain", suffix, sep="")),
            width=width, height=height)
     par(mar=c(1, 1, 1, 1))
-    plot.flat(r, axt="n",
+    flatplot(r, axt="n",
               datapoints=FALSE,
               landmarks=FALSE,
               markup=FALSE,

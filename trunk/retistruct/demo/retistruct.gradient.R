@@ -6,7 +6,7 @@ o <- retistruct.read.dataset(dataset)
 o <- retistruct.read.markup(o)
 
 ## Initial plot
-## plot.flat(o)
+## flatplot(o)
 
 ## Reconstruct
 r <- retistruct.reconstruct(o)
@@ -14,7 +14,7 @@ r <- retistruct.reconstruct(o)
 ## Plot with gridlines
 par(mar=c(0.2,0.2,0.2,0.2))
 par(mfrow=c(1, 2))
-plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 mtext("A", adj=0, font=2, line=-0.9)
 polarplot(r, mesh=FALSE)
 mtext("B", adj=0, font=2, line=-0.9)

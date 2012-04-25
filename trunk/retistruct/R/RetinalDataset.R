@@ -27,9 +27,9 @@ RetinalDataset <- function(d) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat retinalDataset
+##' @method flatplot retinalDataset
 ##' @author David Sterratt
-plot.flat.retinalDataset <- function(a, axt="n", ylim=NULL, ...) {
+flatplot.retinalDataset <- function(a, axt="n", ylim=NULL, ...) {
   if (a$DVflip) {
     if (is.null(ylim)) {
       ylim <- c(max(a$P[,2]), min(a$P[,2]))

@@ -961,7 +961,7 @@ optimise.mapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     if (!is.na(dev.flat)) {
       dev.set(dev.flat)
-      plot.flat(r, grid=TRUE, strain=TRUE,
+      flatplot(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 
@@ -1072,7 +1072,7 @@ solveMappingCart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 
     if (!is.na(dev.flat)) {
       dev.set(dev.flat)
-      plot.flat(r, grid=TRUE, strain=TRUE,
+      flatplot(r, grid=TRUE, strain=TRUE,
                 datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 

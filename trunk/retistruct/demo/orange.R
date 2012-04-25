@@ -7,12 +7,12 @@ o <- retistruct.read.markup(o)
 
 ## Initial plot
 par(mar=c(0.1,0.1,0.1,0.1))
-plot.flat(o)
+flatplot(o)
 
 ## Reconstruct
 r <- retistruct.reconstruct(o)
 
-plot.flat(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
+flatplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 
 ## Initial plot in 3D space
 ## plot.retina(p$phi, p$lambda, p$R, m$Tt, m$Rsett)

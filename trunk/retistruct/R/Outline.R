@@ -41,10 +41,10 @@ Outline <- function(P, scale=NA, im=NULL) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat outline
+##' @method flatplot outline
 ##' @author David Sterratt
 ##' @export
-plot.flat.outline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.outline <- function(x, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
   scalebar <- ifelse(!is.null(args$scalebar),

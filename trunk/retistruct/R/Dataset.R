@@ -79,16 +79,16 @@ getLandmarkID <- function(d, name) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
-##' @method plot.flat dataset
+##' @method flatplot dataset
 ##' @author David Sterratt
 ##' @export
-plot.flat.dataset <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.dataset <- function(x, axt="n", ylim=NULL, ...) {
   args <- list(...)
   plot.datapoints <- is.null(args$datapoints) || args$datapoints
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
 
   NextMethod()
-  ## plot.flat.outline(d, axt=axt, ylim=ylim, ...)
+  ## flatplot.outline(d, axt=axt, ylim=ylim, ...)
   if (plot.datapoints) {
     with(x, {
       for (col in names(Ds)) {
