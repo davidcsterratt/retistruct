@@ -19,9 +19,9 @@ if (!require("multicore"))     install.packages("multicore")
 if (!require("png"))           install.packages("png")
 if (!require("akima"))         install.packages("akima")
 if (!require("tripack"))       install.packages("tripack")
-## if (!require("Triangle"))      install.packages("Triangle", repos="http://R-Forge.R-project.org")
+## if (!require("RTriangle"))      install.packages("RTriangle", repos="http://R-Forge.R-project.org")
 ## These lines needed while  Triangle and geometry only on R-Forge
-install.packages("Triangle", repos="http://R-Forge.R-project.org")
+install.packages("RTriangle", repos="http://R-Forge.R-project.org")
 update.packages(Sys.getenv("R_LIBS_USER"))
 ## install.packages("geometry", repos="http://R-Forge.R-project.org")
 ## Now install retistruct
