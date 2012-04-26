@@ -196,7 +196,7 @@ gr <- function(p) {
   return(-o$g)
 }
 
-optimise.mapping <- function(Q.init) {
+optimiseMapping <- function(Q.init) {
   opt <- optim(as.vector(Q.init), fn, gr, method="BFGS")
   print(opt)
   return(matrix(opt$p, nrow=3))

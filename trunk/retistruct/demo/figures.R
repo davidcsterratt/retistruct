@@ -1,12 +1,12 @@
 source("M643-4.R")
 
 ## Optimisation procedure
-## r <- optimise.mapping(p, m, t, s, E0.A=100)
-r <- optimise.mapping(p, m, t, s, E0.A=exp(3), k.A=1)
+## r <- optimiseMapping(p, m, t, s, E0.A=100)
+r <- optimiseMapping(p, m, t, s, E0.A=exp(3), k.A=1)
 p1 <- p
 p1$phi <- r$phi
 p1$lambda <- r$lambda
-r <- optimise.mapping(p1, m, t, s, E0.A=exp(10), k.A=20)
+r <- optimiseMapping(p1, m, t, s, E0.A=exp(10), k.A=20)
 
 ## Figure of triangulated and stitched retina
 par(mar=c(0,0,0,0))

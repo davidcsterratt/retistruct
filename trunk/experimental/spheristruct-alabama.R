@@ -128,7 +128,7 @@ heq.jac.alabama <- function(p,  P0, Rset, i0, R, ...) {
 
 
 ## Grand optimisation function
-optimise.mapping.alabama <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
+optimiseMapping.alabama <- function(r, E0.A=10, k.A=1, x0=0.5, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi <- r$phi
   lambda <- r$lambda

@@ -70,7 +70,7 @@ r <- solveMappingCart(m, alpha=0, x0=0, nu=1,
 r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
                         dtmax=500, maxmove=1E2, tol=1e-6,
                         plot.3d=FALSE)
-r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5, 
+r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5, 
                       plot.3d=FALSE)
 
 ## Plot the final projection in 3D and on the grid

@@ -200,7 +200,7 @@ fem.solve.euler <- function(P, T, Tt, Q.init,
 }
 
 ##  Optimisation function when output points are constrained to be on a sphere
-fem.optimise.mapping <- function(r, nu=0.45, method="BFGS",
+fem.optimiseMapping <- function(r, nu=0.45, method="BFGS",
                              plot.3d=FALSE, dev.grid=NA, dev.polar=NA) {
   phi     <- r$phi
   lambda  <- r$lambda

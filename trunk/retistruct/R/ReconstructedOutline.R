@@ -105,7 +105,7 @@ ReconstructedOutline <- function(o,
   r$nflip0 <- sum(ft$flipped)
   
   report("Optimising mapping with no area constratint using BFGS...")
-  r <- optimise.mapping(r, alpha=0, x0=0, nu=1,
+  r <- optimiseMapping(r, alpha=0, x0=0, nu=1,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
   report("Optimising mapping with area constraint using FIRE...")
@@ -114,11 +114,11 @@ ReconstructedOutline <- function(o,
                           plot.3d=plot.3d,
                           dev.flat=dev.flat, dev.polar=dev.polar)
   report("Optimising mapping with strong area constratint using BFGS...")
-  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=1,
+  r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=1,
                         plot.3d=plot.3d,
                         dev.flat=dev.flat, dev.polar=dev.polar)
   report("Optimising mapping with weak area constratint using BFGS...")
-  r <- optimise.mapping(r, alpha=alpha, x0=x0, nu=0.5,
+  r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
   
@@ -163,7 +163,7 @@ titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
     s$phi0 <- phi0
     ## Stretch the mapping to help with optimisation
     s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
-    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+    s <- optimiseMapping(s, alpha=alpha, x0=x0, nu=0.5,
                           plot.3d=FALSE)
     sqrt.E <- sqrt(s$E.l)
     dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
@@ -181,7 +181,7 @@ titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
     s$phi0 <- phi0
     ## Stretch the mapping to help with optimisation
     s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
-    s <- optimise.mapping(s, alpha=alpha, x0=x0, nu=0.5,
+    s <- optimiseMapping(s, alpha=alpha, x0=x0, nu=0.5,
                           plot.3d=FALSE)
     sqrt.E <- sqrt(s$E.l)
     dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
