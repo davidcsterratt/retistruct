@@ -81,7 +81,7 @@ retistruct.potential.od <- function(o) {
 ##' flipped in the \eqn{y}-direction. This operation also requires the
 ##' swapping of \code{gf}  and \code{gb} and \code{VF} and \code{VB}.
 ##' @title Read the markup data
-##' @param o Dataset object, containing \code{dataset} path
+##' @param a Dataset object, containing \code{dataset} path
 ##' @param error Function to run on error, by default \code{stop()}
 ##' @return o \code{RetinalDataset} object
 ##' \item{V0}{Indicies in \code{P} of apicies of tears}
@@ -181,6 +181,12 @@ retistruct.check.markup <- function(o) {
 ##'
 ##' @title Read the reconstruction data from file
 ##' @param o Outline object containing \code{dataset} field
+##' @param cache If \code{TRUE} read dervied data such as the
+##' locations of data points in spherical cordinates (\code{Dss}) from
+##' \file{\var{dataset}/r.Rdata}. If \code{FALSE} this information
+##' will be regenerated. This is useful if analysis routines (e.g. the
+##' Kernel Density Estimation) change and the reconstruction algorithm
+##' hasn't changed.
 ##' @return If the reconstruction data exists, return a reconstruction
 ##' object, else return the outline object \code{o}.
 ##' @author David Sterratt

@@ -60,6 +60,8 @@ list.datasets <- function(path='.', verbose=FALSE) {
 ##' @param datasets Vector of dataset directories to reconstruct
 ##' @param device string indicating what type of graphics output
 ##' required. Options are "pdf" and "png".
+##' @param titrate Whether to "titrate" the reconstruction for
+##' different values of \code{phi0}. See \code{titrate.reconstructedOutline}.
 ##' @param cpu.time.limit amount of CPU after which to terminate the
 ##' process
 ##' @param mc.cores The number of cores to use. Defaults to the total

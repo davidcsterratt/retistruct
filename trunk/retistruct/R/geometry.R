@@ -99,7 +99,6 @@ sphere.tri.area <- function(P, Pt) {
 ##' using the formula described by Weisstein.
 ##' 
 ##' @title Determine intersection between two lines 
-##' @usage P <- line.line.intersection(P1, P2, P3, P4, interior.only=TRUE)
 ##' @param P1 vector containing x,y coordinates of one end of L1
 ##' @param P2 vector containing x,y coordinates of other end of L1
 ##' @param P3 vector containing x,y coordinates of one end of L2
@@ -366,6 +365,7 @@ sphere.cart.to.sphere.spherical <- function(P, R=1) {
 ##' @title Convert lattitude on sphere to radial variable in
 ##' area-preserving projection
 ##' @param phi Lattitude
+##' @param R Radius
 ##' @return Coordinate \code{rho} that has the dimensions of length
 ##' @author David Sterratt
 spherical.to.polar.area <- function(phi, R=1) {
