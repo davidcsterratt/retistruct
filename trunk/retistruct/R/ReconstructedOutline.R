@@ -517,16 +517,6 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
                           xo=seq(min(xposm), max(xposm), len=20),
                           yo=seq(min(yposm), max(yposm), len=20))  
       contour(im.smooth, add=TRUE, nlevels=5)
-
-      ## Alternative ways of doing this: use Kriging (from spatial
-      ## package). May be better, but slower.
-      ##
-      ## im.kr <- surf.ls(6, data.frame(x=xposm, y=yposm, z=imm))
-      ## im.kr <- surf.gls(2, expcov, data.frame(x=xposm, y=yposm, z=imm),
-      ## d=1)
-      ## trsurf=trmat(im.kr, -124, 124, -124, 124, 100)
-      ## contour(trsurf, add=TRUE, nlevels=20)
-
     }
   }
   
