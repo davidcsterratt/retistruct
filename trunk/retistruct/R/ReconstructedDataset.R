@@ -106,10 +106,10 @@ getGss.reconstructedDataset <- function(r) {
 ##' @title Karcher mean of datapoints in spherical coordinates
 ##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
-##' @method getDss.mean reconstructedDataset
+##' @method getDssMean reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-getDss.mean.reconstructedDataset <- function(r) {
+getDssMean.reconstructedDataset <- function(r) {
   Dss.mean <- list()
   if (length(r$Dss)) {
     for (i in 1:length(r$Dss)) {
@@ -126,7 +126,7 @@ getDss.mean.reconstructedDataset <- function(r) {
 ##' @return Area in degress squared
 ##' @author David Sterratt
 ##' @export
-getDss.hullarea <- function(r) {
+getDssHullarea <- function(r) {
   Dss.hullarea <- list()
   if (length(r$Dss)) {
     for (i in 1:length(r$Dss)) {
@@ -387,7 +387,7 @@ polarplot.reconstructedDataset <- function(r, show.grid=TRUE,
 
   ## Mean datapoints
   if (plot.datapoint.means) {
-    Dss.mean <- getDss.mean(r)
+    Dss.mean <- getDssMean(r)
     if (length(Dss.mean)) {
       for (i in 1:length(Dss.mean)) {
         pos <- sphere.spherical.to.polar.cart(Dss.mean[[i]], pa)

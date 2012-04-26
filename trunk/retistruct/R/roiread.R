@@ -237,6 +237,7 @@ read.ijroi <- function(file, verbose=FALSE) {
 ##' @param x The IJROI object
 ##' @param add Whether to add to an existing plot
 ##' @param ... Additional parameters
+##' @method plot IJROI
 ##' @export
 ##' @author David Sterratt
 plot.IJROI <- function(x, add=FALSE, ...) {

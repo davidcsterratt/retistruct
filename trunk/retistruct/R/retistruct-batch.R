@@ -153,7 +153,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
                         mean.dtheta=n(r$titration$Dtheta.mean),
                         phi0d=n(r$phi0*180/pi),
                         phi0d.opt=n(r$titration$phi0d.opt))
-      hullarea <- getDss.hullarea(r)
+      hullarea <- getDssHullarea(r)
       if (length(hullarea) > 0) {
         dat <- data.frame(dat, hullarea=hullarea)
       }

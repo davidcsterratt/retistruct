@@ -111,12 +111,12 @@ getDss.default <- function(r) {
 ##' @return \code{Dss.mean}
 ##' @author David Sterratt
 ##' @export
-getDss.mean <- function(r) {
-  UseMethod("getDss.mean")
+getDssMean <- function(r) {
+  UseMethod("getDssMean")
 }
 
 ##' @export
-getDss.mean.default <- function(r) {
+getDssMean.default <- function(r) {
   return(NULL)
 }
 

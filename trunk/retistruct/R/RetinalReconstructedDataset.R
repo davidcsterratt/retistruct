@@ -47,14 +47,13 @@ getDss.retinalReconstructedDataset <- function(r) {
   return(Dss)
 }
 
-##' Get spherical coordinates of datapoints, transformed according to
-##' the values of \code{DVflip} and \code{side}.
-##'
-##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{\link{RetinalReconstructedDataset}} object.
-##' @return \code{Dss}
-##' @method getDss retinalReconstructedDataset
+
+##' @title Get grouped variable with locations in spherical coordinates.
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
+##' @return \code{Gss}
+##' @method getGss retinalReconstructedDataset
 ##' @author David Sterratt
+##' @export
 getGss.retinalReconstructedDataset <- function(r) {
   Gss <- NextMethod()
   if (length(Gss) > 0) {
@@ -80,9 +79,9 @@ getGss.retinalReconstructedDataset <- function(r) {
 ##' datapoints
 ##' @param r \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Dss.mean}
-##' @method getDss.mean retinalReconstructedDataset
+##' @method getDssMean retinalReconstructedDataset
 ##' @author David Sterratt
-getDss.mean.retinalReconstructedDataset <- function(r) {
+getDssMean.retinalReconstructedDataset <- function(r) {
   Dss.mean <- NextMethod()
   Dss.mean[["OD"]] <- NULL
   if (length(Dss.mean) > 0) {
@@ -158,7 +157,7 @@ getTss.retinalReconstructedDataset <- function(r) {
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
-##' @param ... 
+##' @param ... Other graphics parameters.
 ##' @method polarplot retinalReconstructedDataset
 ##' @author David Sterratt
 ##' @export

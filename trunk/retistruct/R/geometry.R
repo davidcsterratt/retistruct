@@ -573,6 +573,7 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
 ##' @title Create grid on projection of hemisphere onto plain
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
 ##' @param res Resolution of grid
+##' @param phi0 Value of \code{phi0} at edge of grid
 ##' @return List containing:
 ##' \item{\code{gs}}{Grid locations in spherical coordinates}
 ##' \item{\code{gc}}{Grid locations in Cartesian coordinates on plane}
