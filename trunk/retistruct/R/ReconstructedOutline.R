@@ -473,7 +473,7 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
     xpos <- matrix(cos(ims[,"lambda"])*phi.to.rho(ims[,"phi"], r$phi0, pa), M+1, N+1)
     ypos <- matrix(sin(ims[,"lambda"])*phi.to.rho(ims[,"phi"], r$phi0, pa), M+1, N+1)
     
-    ## Convert these to format suitable to polygon
+    ## Convert these to format suitable for polygon()
     impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
                   as.vector(xpos[1:M    , 2:(N+1)]),
                   as.vector(xpos[2:(M+1), 2:(N+1)]),
@@ -636,6 +636,68 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
     }
   }
+}
+
+##' @export
+sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
+                                            grid.col="gray",
+                                            grid.bg="transparent", 
+                                            grid.int.minor=15,
+                                            grid.int.major=45,
+                                            flip.horiz=FALSE,
+                                            labels=c(0, 90, 180, 270), ...) {
+  show.grid <- TRUE
+  
+  lambdalim <- c(-180, 180)             # Limits of longitude
+  philim <- c(-90, 90)                  # Limits of lattitude
+  lambda0 <- 0                          # Central meridian
+
+  ## Set up the plot region
+  xlim <- sinusoidalproj(cbind(lambda=lambdalim, phi=0))[,"x"]
+  print(xlim)
+  ylim <- sinusoidalproj(cbind(lambda=0, phi=philim))[,"y"]
+  plot(NA, NA, xlim=xlim, ylim=ylim, 
+       type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
+
+  ## Plot an image (FIXME: to implement)
+
+  ## Plot the grid
+  if (show.grid) {
+    ## Lines of lattitude
+    phis.maj <- c(rev(seq(0             , philim[1], by=-grid.int.major)),
+                      seq(grid.int.major, philim[2], by= grid.int.major))
+    phis.min <- c(rev(seq(0             , philim[1], by=-grid.int.minor)),
+                      seq(grid.int.minor, philim[2], by=grid.int.minor))
+    phis.min <- setdiff(phis.min, phis.maj)
+
+    rc1 <- sinusoidalproj(cbind(phi=phis.min, lambda=lambdalim[1]))
+    rc2 <- sinusoidalproj(cbind(phi=phis.min, lambda=lambdalim[2]))
+    segments(rc1[,"x"], rc1[,"y"],
+             rc2[,"x"], rc2[,"y"],
+             col=grid.col)
+    rc1 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[1]))
+    rc2 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[2]))
+    segments(rc1[,"x"], rc1[,"y"],
+             rc2[,"x"], rc2[,"y"],
+             col="black")
+    
+    ## Lines of longitude
+    lambdas.maj <- c(rev(seq(0         , lambdalim[1], by=-grid.int.major)),
+                     seq(grid.int.major, lambdalim[2], by= grid.int.major))
+    lambdas.min <- c(rev(seq(0         , lambdalim[1], by=-grid.int.minor)),
+                     seq(grid.int.minor, lambdalim[2], by=grid.int.minor))
+    lambdas.min <- setdiff(lambdas.min, lambdas.maj)
+    
+    phis <- seq(-90, 90, by=1)
+    lines(sinusoidalproj(cbind(phi   =as.vector(outer(c(phis, NA), lambdas.min*0, FUN="+")),
+                               lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+")))), col=grid.col)
+    lines(sinusoidalproj(cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
+                               lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+")))), col="black")
+  }
+
+  ## Longitude Labels
+
+  ## Lattitude Labels
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just

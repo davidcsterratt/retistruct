@@ -600,5 +600,21 @@ create.polar.cart.grid <- function(pa, res, phi0) {
   return(list(s=gs, c=gc, xs=xs, ys=ys))
 }
 
-
-
+##' @title Sinusoidal projection
+##' @param r Lattitude-longitude coordinates in a matrix with columns
+##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
+##' @param lambda0 Coordinate of central meridian
+##' @param units String indicating whether the units of the supplied spherical coordinates are in \code{degrees} or \code{radians}
+##' @return Two-column matrix with columns labelled \code{x} and
+##' \code{y} of locations of projection of coordinates on plane 
+##' @author David Sterratt
+##' @export
+sinusoidalproj <- function(r, lambda0=0, units="degrees") {
+  if (units=="degrees") {
+    r <- r*pi/180
+    lambda0 <- lambda0*pi/180
+  }
+  x <- (r[,"lambda"] - lambda0)*cos(r[,"phi"])
+  y <- r[,"phi"]
+  return(cbind(x=x, y=y))
+}
