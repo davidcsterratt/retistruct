@@ -654,7 +654,6 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
   ## Set up the plot region
   xlim <- sinusoidalproj(cbind(lambda=lambdalim, phi=0))[,"x"]
-  print(xlim)
   ylim <- sinusoidalproj(cbind(lambda=0, phi=philim))[,"y"]
   plot(NA, NA, xlim=xlim, ylim=ylim, 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
@@ -675,12 +674,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     segments(rc1[,"x"], rc1[,"y"],
              rc2[,"x"], rc2[,"y"],
              col=grid.col)
-    rc1 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[1]))
-    rc2 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[2]))
-    segments(rc1[,"x"], rc1[,"y"],
-             rc2[,"x"], rc2[,"y"],
-             col="black")
-    
+
     ## Lines of longitude
     lambdas.maj <- c(rev(seq(0         , lambdalim[1], by=-grid.int.major)),
                      seq(grid.int.major, lambdalim[2], by= grid.int.major))
@@ -693,8 +687,24 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                                lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+")))), col=grid.col)
     lines(sinusoidalproj(cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
                                lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+")))), col="black")
+
+    ## Major lines of latitude on top of all minor lines
+    rc1 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[1]))
+    rc2 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[2]))
+    segments(rc1[,"x"], rc1[,"y"],
+             rc2[,"x"], rc2[,"y"],
+             col="black")
   }
 
+  ## Plot outline
+  Tss <- getTss(r)
+  for (Ts in Tss) {
+    ## Plot
+    suppressWarnings(lines(sinusoidalproj(Ts, units="radians"), col=getOption("TF.col"), ...))
+  }
+
+    
+  
   ## Longitude Labels
 
   ## Lattitude Labels
