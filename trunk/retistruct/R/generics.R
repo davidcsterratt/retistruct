@@ -79,11 +79,13 @@ polarplot.default <- function(r, show.grid=TRUE,
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param flip.horiz Wether to flip about a horizontal axis
+##' @param transform Transform function to apply to spherical coordinates
+##' before rotation
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param ... Other parameters, including graphics ones. The option
-##' \code{image} causes an image to be plotted if \code{TRUE}
-##' (default \code{TRUE}).  The option \code{preserve.area} creates an
-##' area-preserving plot (default \code{FALSE}).
+##'ode{image} causes an image to be plotted if \code{TRUE}
+##'efault \code{TRUE}).  The option \code{preserve.area} creates an
+##'ea-preserving plot (default \code{FALSE}).
 ##' @author David Sterratt
 ##' @export
 sinusoidalplot <- function(r, show.grid=TRUE,
@@ -92,18 +94,20 @@ sinusoidalplot <- function(r, show.grid=TRUE,
                            grid.int.minor=15,
                            grid.int.major=45,
                            flip.horiz=FALSE,
+                           transform=invert.sphere,
                            labels=c(0, 90, 180, 270), ...) {
   UseMethod("sinusoidalplot")
 }
 
 ##' @export
 sinusoidalplot.default <- function(r, show.grid=TRUE,
-                           grid.col="gray",
-                           grid.bg="transparent", 
-                           grid.int.minor=15,
-                           grid.int.major=45,
-                           flip.horiz=FALSE,
-                           labels=c(0, 90, 180, 270), ...) {
+                                   grid.col="gray",
+                                   grid.bg="transparent", 
+                                   grid.int.minor=15,
+                                   grid.int.major=45,
+                                   flip.horiz=FALSE,
+                                   transform=invert.sphere,
+                                   labels=c(0, 90, 180, 270), ...) {
   plot.new()
 }
 

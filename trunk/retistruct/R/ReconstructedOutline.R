@@ -640,12 +640,13 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
 ##' @export
 sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
-                                            grid.col="gray",
-                                            grid.bg="transparent", 
-                                            grid.int.minor=15,
-                                            grid.int.major=45,
-                                            flip.horiz=FALSE,
-                                            labels=c(0, 90, 180, 270), ...) {
+                                                grid.col="gray",
+                                                grid.bg="transparent", 
+                                                grid.int.minor=15,
+                                                grid.int.major=45,
+                                                flip.horiz=FALSE,
+                                                transform=invert.sphere,
+                                                labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   show.grid <- TRUE
   plot.image <- is.null(args$image) || args$image
@@ -679,7 +680,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     M <- nrow(r$im)
 
     ## Transform the pixel coordinates
-    tims <- rotate.axis(invert.sphere(ims), r0opt*pi/180)
+    tims <- rotate.axis(transform(ims), r0opt*pi/180)
     
     ## Compute x and y positions of corners of pixels.
     rc <- sinusoidalproj(tims,
@@ -768,14 +769,14 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   ## Plot rim in visutopic space
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
   ## Negative sign inverts 
-  rs.rot <- rotate.axis(invert.sphere(rs), r0opt*pi/180)
+  rs.rot <- rotate.axis(transform(rs), r0opt*pi/180)
   ## "Home" position for a cyclops looking ahead
   ## r$r0opt = cbind(phi=0, lambda=-90)
   
   lines(sinusoidalproj(rs.rot, units="radians", lambdalim=lambdalim*pi/180, lines=TRUE), col=getOption("TF.col"))
 
   ## Projection of optic axis
-  oa.rot <- rotate.axis(invert.sphere(cbind(phi=-pi/2, lambda=0)), r0opt*pi/180)
+  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0)), r0opt*pi/180)
   points(sinusoidalproj(oa.rot, units="radians"),
          pch="*", col=getOption("TF.col"), cex=2)
   
@@ -783,7 +784,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    suppressWarnings(lines(sinusoidalproj(rotate.axis(invert.sphere(Ts), r0opt*pi/180),
+    suppressWarnings(lines(sinusoidalproj(rotate.axis(transform(Ts), r0opt*pi/180),
                                           units="radians",
                                           lines=TRUE,
                                           lambdalim=lambdalim*pi/180),
