@@ -646,20 +646,104 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                                             grid.int.major=45,
                                             flip.horiz=FALSE,
                                             labels=c(0, 90, 180, 270), ...) {
+  args <- list(...)
   show.grid <- TRUE
+  plot.image <- is.null(args$image) || args$image
   
   lambdalim <- c(-180, 180)             # Limits of longitude
   philim <- c(-90, 90)                  # Limits of lattitude
   lambda0 <- 0                          # Central meridian
 
+  ## Azimuth/elevation of optic axis in visutopic space
+  r0opt <- r$r0opt
+  if (is.null(r0opt)) {
+    r0opt <- cbind(phi=35, lambda=60-90)
+  }
+  
   ## Set up the plot region
   xlim <- sinusoidalproj(cbind(lambda=lambdalim, phi=0))[,"x"]
   ylim <- sinusoidalproj(cbind(lambda=0, phi=philim))[,"y"]
   plot(NA, NA, xlim=xlim, ylim=ylim, 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
 
-  ## Plot an image (FIXME: to implement)
+  ## Plot an image.
 
+  ## Get the spherical coordinates of the corners of pixels.
+  ims <- getIms(r)
+  if (plot.image && !is.null(ims)) {
+    ## Reconstitute image from stored values of phi and lambda
+    ## coordinates of corners of pixels
+
+    ## Get the size of the image
+    N <- ncol(r$im)
+    M <- nrow(r$im)
+
+    ## Transform the pixel coordinates
+    tims <- rotate.axis(invert.sphere(ims), r0opt*pi/180)
+    
+    ## Compute x and y positions of corners of pixels.
+    rc <- sinusoidalproj(tims,
+                         units="radians",
+                         lambdalim=lambdalim*pi/180)
+    xpos <- matrix(rc[,"x"], M+1, N+1)
+    ypos <- matrix(rc[,"y"], M+1, N+1)
+    ## print(sum(is.na(xpos)))
+    ## print(dim(rc))
+    
+    ## Convert these to format suitable for polygon()
+    impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
+                  as.vector(xpos[1:M    , 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 2:(N+1)]),
+                  as.vector(xpos[2:(M+1), 1:N    ]),
+                  NA)
+    impy <- rbind(as.vector(ypos[1:M    , 1:N    ]),
+                  as.vector(ypos[1:M    , 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 2:(N+1)]),
+                  as.vector(ypos[2:(M+1), 1:N    ]),
+                  NA)
+
+    ## print(dim(impx))
+    ## print(sum(apply(impx[,1:4], 2, function(x){any(is.na(x))})))
+
+    ## Pixels outside the image should be masked. A mask has been
+    ## precomputed.
+    immask <- r$immask
+    ## print(length(immask))
+    ## print(sum(immask))
+
+    ## Get rid of any colums contating NAs
+    immask <- r$immask & !apply(impx[1:4,], 2, function(x){any(is.na(x))})
+    ## print(sum(immask))
+
+    ## We want to get rid of any poly-pixels that cross either extreme
+    ## of the longitude range. To do this, first construct a matrix
+    ## implambda of the values of the longitude at all pixel
+    ## corners. This should correspond to impx and impy.
+    lambdapos <- matrix(tims[,"lambda"], M+1, N+1)
+    implambda <- rbind(as.vector(lambdapos[1:M    , 1:N    ]),
+                       as.vector(lambdapos[1:M    , 2:(N+1)]),
+                       as.vector(lambdapos[2:(M+1), 2:(N+1)]),
+                       as.vector(lambdapos[2:(M+1), 1:N    ]))
+    ## print(dim(implambda))
+    ## print(as.vector(apply(implambda, 2, function(x) {return(normalise.angle(x - lambdalim[1])>0)})))
+
+    ## If a pixel crosses over, it will have cornders with high and
+    ## low longitudes
+    immask[which(apply(implambda, 2, function(x) {max(x) - min(x)}) > 1)] <- FALSE
+    ## print(sum(immask))
+    bigpx <- which(apply(impx[1:4,], 2, function(x) {max(x) - min(x)}) > 0.1)
+    ## print(normalise.angle(implambda[,bigpx]))
+    
+    ## Plot the polygon, masking as we go
+    polygon(impx[,immask], impy[,immask],
+                    col=r$im[immask], border=r$im[immask])
+
+    ## Plot any polygons that are regarded as very big
+##    polygon(impx[,bigpx], impy[,bigpx],
+##                  col="yellow", border="yellow")
+
+  }
+  
   ## Plot the grid
   if (show.grid) {
     ## Lines of lattitude
@@ -696,11 +780,28 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
              col="black")
   }
 
+  ## Plot rim in visutopic space
+  rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
+  ## Negative sign inverts 
+  rs.rot <- rotate.axis(invert.sphere(rs), r0opt*pi/180)
+  ## "Home" position for a cyclops looking ahead
+  ## r$r0opt = cbind(phi=0, lambda=-90)
+  
+  lines(sinusoidalproj(rs.rot, units="radians", lambdalim=lambdalim*pi/180, lines=TRUE), col=getOption("TF.col"))
+
+  ## Projection of optic axis
+  oa.rot <- rotate.axis(invert.sphere(cbind(phi=pi/2, lambda=0)), r0opt*pi/180)
+  points(sinusoidalproj(oa.rot, units="radians"), pch=20)
+  
   ## Plot outline
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    suppressWarnings(lines(sinusoidalproj(Ts, units="radians"), col=getOption("TF.col"), ...))
+    suppressWarnings(lines(sinusoidalproj(rotate.axis(invert.sphere(Ts), r0opt*pi/180),
+                                          units="radians",
+                                          lines=TRUE,
+                                          lambdalim=lambdalim*pi/180),
+                           col=getOption("TF.col"), ...))
   }
 
     

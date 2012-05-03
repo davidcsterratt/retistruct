@@ -494,6 +494,66 @@ azel.to.sphere.colattitude <- function(r, r0) {
   return(out)
 }
 
+
+##' @title Rotate frame of reference
+##' @param r Coordinates of points in spherical coordinates
+##' represented as  2 column matrix with column names \code{phi}
+##' (lattitude) and \code{lambda} (longitude).
+##' @param r0 Direction of the polar axis of the sphere on which to project
+##' represented as a 2 column matrix of with column names \code{phi}
+##' (lattitude) and \code{lambda} (azimuth).
+##' @return 2-column matrix of spherical coordinates of points with
+##' column names \code{psi} (colattidude) and \code{lambda} (longitude).
+##' @author David Sterratt
+##' @examples
+##' r0 <- cbind(alpha=0, theta=0)
+##' r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
+##' azel.to.sphere.colattitude(r, r0)
+##' @export
+rotate.axis <- function(r, r0) {
+  ## Find cartesian coordinates of points on sphere
+  P <- sphere.spherical.to.sphere.cart(r[,"phi"], r[,"lambda"])
+    
+  ## Rotate them about the equatorial axis through the zero meridian
+  ## (the x-axis)
+  dp <- pi/2 - r0[,"phi"]
+  P <- P %*% cbind(c(1, 0, 0),
+                   c(0,  cos(dp), sin(dp)),
+                   c(0, -sin(dp), cos(dp)))
+
+  ## Then rotate about the z-axis
+  dl <- r0[,"lambda"]
+  P <- P %*% cbind(c(cos(dl), -sin(dl), 0),
+                   c(sin(dl),  cos(dl), 0),
+                   c(0, 0, 1))
+
+  colnames(P) <- c("X", "Y", "Z")
+  return(sphere.cart.to.sphere.spherical(P))
+}
+
+##' @title Invert sphere about its centre
+##' @param r Coordinates of points in spherical coordinates
+##' represented as  2 column matrix with column names \code{phi}
+##' (lattitude) and \code{lambda} (longitude).
+##' @return Matrix in same format, but with \code{pi} added to lambda
+##' and \code{phi} negated.
+##' @author David Sterratt
+##' @export
+invert.sphere <- function(r) {
+  r[,"phi"] <- -r[,"phi"]
+  r[,"lambda"] <- (r[,"lambda"] + pi) %% (2*pi)
+  return(r)
+}
+
+##' @title Bring angle into range
+##' @param r Angle to bring into range \code{(-pi, pi)}
+##' @return Normalised angle
+##' @author David Sterratt
+##' @export
+normalise.angle <- function(theta) {
+  return(theta %% (2*pi) - pi)
+}
+
 ##' On a sphere the central angle between two points is defined as the
 ##' angle whose vertex is the centre of the sphere and that subtends
 ##' the arc formed by the great circle between the points. This
@@ -605,16 +665,29 @@ create.polar.cart.grid <- function(pa, res, phi0) {
 ##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
 ##' @param lambda0 Coordinate of central meridian
 ##' @param units String indicating whether the units of the supplied spherical coordinates are in \code{degrees} or \code{radians}
+##' @param lambdalim 
+##' @param lines 
 ##' @return Two-column matrix with columns labelled \code{x} and
 ##' \code{y} of locations of projection of coordinates on plane 
 ##' @author David Sterratt
 ##' @export
-sinusoidalproj <- function(r, lambda0=0, units="degrees") {
+sinusoidalproj <- function(r, lambda0=0, units="degrees",
+                           lambdalim=NULL, lines=FALSE) {
   if (units=="degrees") {
     r <- r*pi/180
     lambda0 <- lambda0*pi/180
+    lambdalim <- lambdalim*pi/180
   }
   x <- (r[,"lambda"] - lambda0)*cos(r[,"phi"])
   y <- r[,"phi"]
-  return(cbind(x=x, y=y))
+  rc <- cbind(x=x, y=y)
+  if (!is.null(lambdalim)) {
+    rc[r[,"lambda"] > lambdalim[2],] <- NA
+    rc[r[,"lambda"] < lambdalim[1],] <- NA
+    if (lines) {
+      inds <- which(abs(diff(r[,"lambda"])) > 0.5*(lambdalim[2] - lambdalim[1]))
+      rc[inds,] <- NA
+    }
+  }
+  return(rc)
 }
