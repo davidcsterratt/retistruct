@@ -687,8 +687,6 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                          lambdalim=lambdalim*pi/180)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
-    ## print(sum(is.na(xpos)))
-    ## print(dim(rc))
     
     ## Convert these to format suitable for polygon()
     impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
@@ -702,18 +700,9 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                   as.vector(ypos[2:(M+1), 1:N    ]),
                   NA)
 
-    ## print(dim(impx))
-    ## print(sum(apply(impx[,1:4], 2, function(x){any(is.na(x))})))
-
     ## Pixels outside the image should be masked. A mask has been
     ## precomputed.
     immask <- r$immask
-    ## print(length(immask))
-    ## print(sum(immask))
-
-    ## Get rid of any colums contating NAs
-    immask <- r$immask & !apply(impx[1:4,], 2, function(x){any(is.na(x))})
-    ## print(sum(immask))
 
     ## We want to get rid of any poly-pixels that cross either extreme
     ## of the longitude range. To do this, first construct a matrix
@@ -724,24 +713,20 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                        as.vector(lambdapos[1:M    , 2:(N+1)]),
                        as.vector(lambdapos[2:(M+1), 2:(N+1)]),
                        as.vector(lambdapos[2:(M+1), 1:N    ]))
-    ## print(dim(implambda))
-    ## print(as.vector(apply(implambda, 2, function(x) {return(normalise.angle(x - lambdalim[1])>0)})))
 
     ## If a pixel crosses over, it will have cornders with high and
     ## low longitudes
     immask[which(apply(implambda, 2, function(x) {max(x) - min(x)}) > 1)] <- FALSE
-    ## print(sum(immask))
-    bigpx <- which(apply(impx[1:4,], 2, function(x) {max(x) - min(x)}) > 0.1)
-    ## print(normalise.angle(implambda[,bigpx]))
     
     ## Plot the polygon, masking as we go
     polygon(impx[,immask], impy[,immask],
                     col=r$im[immask], border=r$im[immask])
 
+    ## This is debugging code to compute large pixels in x-direction
+    ## bigpx <- which(apply(impx[1:4,], 2, function(x) {max(x) - min(x)}) > 0.1)
     ## Plot any polygons that are regarded as very big
-##    polygon(impx[,bigpx], impy[,bigpx],
-##                  col="yellow", border="yellow")
-
+    ## polygon(impx[,bigpx], impy[,bigpx],
+    ##         col="yellow", border="yellow")
   }
   
   ## Plot the grid
@@ -790,8 +775,9 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   lines(sinusoidalproj(rs.rot, units="radians", lambdalim=lambdalim*pi/180, lines=TRUE), col=getOption("TF.col"))
 
   ## Projection of optic axis
-  oa.rot <- rotate.axis(invert.sphere(cbind(phi=pi/2, lambda=0)), r0opt*pi/180)
-  points(sinusoidalproj(oa.rot, units="radians"), pch=20)
+  oa.rot <- rotate.axis(invert.sphere(cbind(phi=-pi/2, lambda=0)), r0opt*pi/180)
+  points(sinusoidalproj(oa.rot, units="radians"),
+         pch="*", col=getOption("TF.col"), cex=2)
   
   ## Plot outline
   Tss <- getTss(r)
