@@ -290,7 +290,8 @@ transform.image.reconstructedOutline <- function(r) {
   }
   return(r)
 }
-##' @title Get coordinates of corners of pixels of image in spherical coordinates 
+##' @title Get coordinates of corners of pixels of image in spherical
+##' coordinates 
 ##' @param r \code{\link{ReconstructedOutline}} object
 ##' @return Coordinates of corners of pixels in spherical coordinates 
 ##' @author David Sterratt
@@ -676,9 +677,82 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     ## coordinates of corners of pixels
 
     ## Get the size of the image
-    N <- ncol(r$im)
     M <- nrow(r$im)
+    N <- ncol(r$im)
 
+    ## Downsample the image by first selecting rows and columns to
+    ## look at
+    by <- 10                            # Number of pixels to merge
+    Ms <- seq(1, M - (M %% by), by=by)
+    Ns <- seq(1, N - (N %% by), by=by)
+    print(N)
+    print(max(Ns))
+
+    ## Downsample the image mask and image itself
+    immask <- r$immask[Ms, Ns]
+    im <- with(r, matrix(rainbow(nrow(im)), nrow(im), ncol(im)))
+    im     <- im[Ms, Ns]
+
+    ## Now need to do the more complex job of downsampling the matrix
+    ## containing the coordinates of the corners of pixels
+    imsmask <- matrix(FALSE, M+1, N+1)
+    print("dim(imssmask)")
+    print(dim(imsmask))
+
+    print("length(imssmask)")
+    print(length(imsmask))
+
+    print("dim(r$ims)")
+    print(dim(r$ims))
+    
+    imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
+    ## ims <- r$ims[imsmask,]
+
+    d3 <- dev.cur()
+    x11()
+    par(mfcol=c(2, 2))
+    imlambda <- matrix(r$ims[,"lambda"], M+1, N+1)
+    imphi    <- matrix(r$ims[,"phi"],    M+1, N+1)
+    ## image(imlambda)
+    ## image(imphi)
+    
+    print("dim(imlambda)")
+    print(dim(imlambda))
+
+    print("dim(imphi)")
+    print(dim(imphi))
+    
+    imlambda <- matrix(imlambda[imsmask], nrow(im)+1, ncol(im)+1)
+    imphi    <- matrix(   imphi[imsmask], nrow(im)+1, ncol(im)+1)
+
+    ## image(imlambda)
+    ## image(imphi)
+    
+    print("dim(imlambda)")
+    print(dim(imlambda))
+
+    print("dim(imphi)")
+    print(dim(imphi))
+
+    ims <- cbind(lambda=as.vector(imlambda), phi=as.vector(imphi))
+    
+    print("dim(im)")
+    print(dim(im))
+
+    print("dim(immask)")
+    print(dim(immask))
+
+    print("length(immask)")
+    print(length(immask))
+    
+    print("dim(ims)")
+    print(dim(ims))
+
+
+    ## Convenience variables for the new image sizes
+    M <- nrow(im)
+    N <- ncol(im)
+    
     ## Transform the pixel coordinates
     tims <- rotate.axis(transform(ims), r0opt*pi/180)
     
@@ -688,6 +762,12 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                          lambdalim=lambdalim*pi/180)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
+    image(xpos)
+    image(ypos)
+    plot(NA, NA, xlim=c(0, 1), ylim=c(0, 1))
+    im[!immask] <- NA
+    rasterImage(im, 0, 0, 1, 1, interpolate=FALSE)
+    image(ypos)
     
     ## Convert these to format suitable for polygon()
     impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
@@ -703,8 +783,18 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
     ## Pixels outside the image should be masked. A mask has been
     ## precomputed.
-    immask <- r$immask
 
+    ## However, if there is subsampling, it is possible that one of
+    ## more of the corners of the poly-pixel lie outwith the
+    ## outline. These corners will have the coordinate NA.
+    print("sum(!is.na(colSums(impx[1:4,])))")
+    print(sum(!is.na(colSums(impx[1:4,]))))
+    print("sum(immask)")
+    print(sum(immask))
+    image(immask)
+    immask <- matrix(!is.na(colSums(impx[1:4,])), M, N)
+    image(immask)
+    
     ## We want to get rid of any poly-pixels that cross either extreme
     ## of the longitude range. To do this, first construct a matrix
     ## implambda of the values of the longitude at all pixel
@@ -715,19 +805,42 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                        as.vector(lambdapos[2:(M+1), 2:(N+1)]),
                        as.vector(lambdapos[2:(M+1), 1:N    ]))
 
-    ## If a pixel crosses over, it will have cornders with high and
+    ## If a pixel crosses over, it will have corners with high and
     ## low longitudes
-    immask[which(apply(implambda, 2, function(x) {max(x) - min(x)}) > 1)] <- FALSE
+    immask[which(apply(implambda, 2,
+    function(x) {max(x) - min(x)}) > 1)] <- FALSE
+
+    dev.set(d3)
+
+    print("dim(impx)")
+    print(dim(impx))
+    print("dim(impx[,immask])")
+    print(dim(impx[,immask]))
+
+    print("dim(impy[,immask])")
+    print(dim(impy[,immask]))
+
+    
+    print("dim(immask)")
+    print(dim(immask))
+    print("length(im[immask])")
+    print(length(im[immask]))
+
+    polygon(impx[,immask], impy[,immask],
+##            col=rainbow(100), border=rainbow(100))
+             col=im[immask], border=im[immask])
     
     ## Plot the polygon, masking as we go
-    polygon(impx[,immask], impy[,immask],
-                    col=r$im[immask], border=r$im[immask])
-
+    ##  polygon(impx[,immask], impy[,immask],
+##            col=rainbow(100), border=rainbow(100))
+    ## col=im[immask], border=im[immask])
+    
     ## This is debugging code to compute large pixels in x-direction
-    ## bigpx <- which(apply(impx[1:4,], 2, function(x) {max(x) - min(x)}) > 0.1)
+    bigpx <- which(apply(impx[1:4,immask], 2,
+                         function(x) {max(x) - min(x)}) > 0.1)
     ## Plot any polygons that are regarded as very big
     ## polygon(impx[,bigpx], impy[,bigpx],
-    ##         col="yellow", border="yellow")
+    ## col="yellow", border="yellow")
   }
   
   ## Plot the grid
