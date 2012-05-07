@@ -338,7 +338,8 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 ##' It is assumed that all points are lying on the surface of a sphere
 ##' of radius R.
 ##' @title Convert from Cartesian to spherical coordinates
-##' @param P locations of points on sphere as N-by-3 matrix with labelled columns "X", "Y" and "Z"
+##' @param P locations of points on sphere as N-by-3 matrix with
+##' labelled columns "X", "Y" and "Z"
 ##' @param R radius of sphere 
 ##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of locations of points in spherical coordinates 
 ##' @author David Sterratt
@@ -660,34 +661,3 @@ create.polar.cart.grid <- function(pa, res, phi0) {
   return(list(s=gs, c=gc, xs=xs, ys=ys))
 }
 
-##' @title Sinusoidal projection
-##' @param r Lattitude-longitude coordinates in a matrix with columns
-##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
-##' @param lambda0 Coordinate of central meridian
-##' @param units String indicating whether the units of the supplied spherical coordinates are in \code{degrees} or \code{radians}
-##' @param lambdalim 
-##' @param lines 
-##' @return Two-column matrix with columns labelled \code{x} and
-##' \code{y} of locations of projection of coordinates on plane 
-##' @author David Sterratt
-##' @export
-sinusoidalproj <- function(r, lambda0=0, units="degrees",
-                           lambdalim=NULL, lines=FALSE) {
-  if (units=="degrees") {
-    r <- r*pi/180
-    lambda0 <- lambda0*pi/180
-    lambdalim <- lambdalim*pi/180
-  }
-  x <- (r[,"lambda"] - lambda0)*cos(r[,"phi"])
-  y <- r[,"phi"]
-  rc <- cbind(x=x, y=y)
-  if (!is.null(lambdalim)) {
-    rc[r[,"lambda"] > lambdalim[2],] <- NA
-    rc[r[,"lambda"] < lambdalim[1],] <- NA
-    if (lines) {
-      inds <- which(abs(diff(r[,"lambda"])) > 0.5*(lambdalim[2] - lambdalim[1]))
-      rc[inds,] <- NA
-    }
-  }
-  return(rc)
-}

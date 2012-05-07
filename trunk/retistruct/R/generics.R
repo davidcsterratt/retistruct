@@ -95,6 +95,7 @@ sinusoidalplot <- function(r, show.grid=TRUE,
                            grid.int.major=45,
                            flip.horiz=FALSE,
                            transform=invert.sphere,
+                           projection=sinusoidalproj,
                            labels=c(0, 90, 180, 270), ...) {
   UseMethod("sinusoidalplot")
 }
@@ -107,6 +108,7 @@ sinusoidalplot.default <- function(r, show.grid=TRUE,
                                    grid.int.major=45,
                                    flip.horiz=FALSE,
                                    transform=invert.sphere,
+                                   projection=sinusoidalproj,
                                    labels=c(0, 90, 180, 270), ...) {
   plot.new()
 }

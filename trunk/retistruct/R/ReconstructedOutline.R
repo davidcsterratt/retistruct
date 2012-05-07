@@ -647,6 +647,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                                                 grid.int.major=45,
                                                 flip.horiz=FALSE,
                                                 transform=invert.sphere,
+                                                projection=sinusoidalproj,
                                                 labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   show.grid <- TRUE
@@ -661,10 +662,50 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   if (is.null(r0opt)) {
     r0opt <- cbind(phi=35, lambda=60-90)
   }
+
+  ## Compute grid lines
+
+  ## Lines of latitude (parallels)
+
+  ## Determine the major and minor parallels
+  phis.maj <- c(rev(seq(0             , philim[1], by=-grid.int.major)),
+                       seq(grid.int.major,     philim[2], by= grid.int.major))
+  phis.min <- c(rev(seq(0             , philim[1], by=-grid.int.minor)),
+                       seq(grid.int.minor, philim[2], by= grid.int.minor))
+  phis.min <- setdiff(phis.min, phis.maj)
+
+  ## Longitudes at which to draw lines; the smaller the by interval,
+  ## the smoother
+  lambdas <- seq(lambdalim[1], lambdalim[2], by=1)
+
+  ## Compute the minor and and major parallels to draw
+  paras.min <- projection(pi/180*cbind(phi   =as.vector(outer(c(lambdas, NA)*0, phis.min, FUN="+")),
+                                       lambda=as.vector(outer(c(lambdas, NA), phis.min*0, FUN="+"))))
+  paras.maj <- projection(pi/180*cbind(phi   =as.vector(outer(c(lambdas, NA)*0, phis.maj, FUN="+")),
+                                       lambda=as.vector(outer(c(lambdas, NA), phis.maj*0, FUN="+"))))
+
+  ## Lines of longitude (meridians)
+
+  ## Determine the major and minor parallels
+  lambdas.maj <- c(rev(seq(0         , lambdalim[1], by=-grid.int.major)),
+                   seq(grid.int.major, lambdalim[2], by= grid.int.major))
+  lambdas.min <- c(rev(seq(0         , lambdalim[1], by=-grid.int.minor)),
+                   seq(grid.int.minor, lambdalim[2], by= grid.int.minor))
+  lambdas.min <- setdiff(lambdas.min, lambdas.maj)
+
+  ## Lattidues at which to draw lines; the smaller the by interval,
+  ## the smoother
+  phis <- seq(-90, 90, by=1)
+
+  ## Compute the minor and and major meridians to draw
+  merids.min <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.min*0, FUN="+")),
+                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+"))))
+  merids.maj <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
+                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+"))))
   
   ## Set up the plot region
-  xlim <- sinusoidalproj(cbind(lambda=lambdalim, phi=0))[,"x"]
-  ylim <- sinusoidalproj(cbind(lambda=0, phi=philim))[,"y"]
+  xlim <- range(na.omit(rbind(paras.min))[,"x"])
+  ylim <- range(na.omit(rbind(paras.min))[,"y"])
   plot(NA, NA, xlim=xlim, ylim=ylim, 
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
 
@@ -704,9 +745,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     tims <- rotate.axis(transform(ims), r0opt*pi/180)
     
     ## Compute x and y positions of corners of pixels.
-    rc <- sinusoidalproj(tims,
-                         units="radians",
-                         lambdalim=lambdalim*pi/180)
+    rc <- projection(tims, lambdalim=lambdalim*pi/180)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
     
@@ -760,38 +799,13 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   
   ## Plot the grid
   if (show.grid) {
-    ## Lines of lattitude
-    phis.maj <- c(rev(seq(0             , philim[1], by=-grid.int.major)),
-                      seq(grid.int.major, philim[2], by= grid.int.major))
-    phis.min <- c(rev(seq(0             , philim[1], by=-grid.int.minor)),
-                      seq(grid.int.minor, philim[2], by=grid.int.minor))
-    phis.min <- setdiff(phis.min, phis.maj)
-
-    rc1 <- sinusoidalproj(cbind(phi=phis.min, lambda=lambdalim[1]))
-    rc2 <- sinusoidalproj(cbind(phi=phis.min, lambda=lambdalim[2]))
-    segments(rc1[,"x"], rc1[,"y"],
-             rc2[,"x"], rc2[,"y"],
-             col=grid.col)
-
-    ## Lines of longitude
-    lambdas.maj <- c(rev(seq(0         , lambdalim[1], by=-grid.int.major)),
-                     seq(grid.int.major, lambdalim[2], by= grid.int.major))
-    lambdas.min <- c(rev(seq(0         , lambdalim[1], by=-grid.int.minor)),
-                     seq(grid.int.minor, lambdalim[2], by=grid.int.minor))
-    lambdas.min <- setdiff(lambdas.min, lambdas.maj)
-    
-    phis <- seq(-90, 90, by=1)
-    lines(sinusoidalproj(cbind(phi   =as.vector(outer(c(phis, NA), lambdas.min*0, FUN="+")),
-                               lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+")))), col=grid.col)
-    lines(sinusoidalproj(cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
-                               lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+")))), col="black")
+    ## Minor paralells and meridians
+    lines(paras.min,  col=grid.col)
+    lines(merids.min, col=grid.col)
 
     ## Major lines of latitude on top of all minor lines
-    rc1 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[1]))
-    rc2 <- sinusoidalproj(cbind(phi=phis.maj, lambda=lambdalim[2]))
-    segments(rc1[,"x"], rc1[,"y"],
-             rc2[,"x"], rc2[,"y"],
-             col="black")
+    lines(paras.maj,  col="black")
+    lines(merids.maj, col="black")
   }
 
   ## Plot rim in visutopic space
@@ -801,21 +815,21 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   ## "Home" position for a cyclops looking ahead
   ## r$r0opt = cbind(phi=0, lambda=-90)
   
-  lines(sinusoidalproj(rs.rot, units="radians", lambdalim=lambdalim*pi/180, lines=TRUE), col=getOption("TF.col"))
+  lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE),
+        col=getOption("TF.col"))
 
   ## Projection of optic axis
   oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0)), r0opt*pi/180)
-  points(sinusoidalproj(oa.rot, units="radians"),
+  points(projection(oa.rot),
          pch="*", col=getOption("TF.col"), cex=2)
   
   ## Plot outline
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    suppressWarnings(lines(sinusoidalproj(rotate.axis(transform(Ts), r0opt*pi/180),
-                                          units="radians",
-                                          lines=TRUE,
-                                          lambdalim=lambdalim*pi/180),
+    suppressWarnings(lines(projection(rotate.axis(transform(Ts), r0opt*pi/180),
+                                      lines=TRUE,
+                                      lambdalim=lambdalim*pi/180),
                            col=getOption("TF.col"), ...))
   }
 

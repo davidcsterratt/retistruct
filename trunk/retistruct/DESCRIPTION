@@ -49,3 +49,4 @@ Collate:
     'TriangulatedOutline.R'
     'zzz.R'
     'ray-tracing.R'
+    'projections.R'
