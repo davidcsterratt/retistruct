@@ -650,7 +650,6 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
                                                 projection=sinusoidalproj,
                                                 labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
-  show.grid <- TRUE
   plot.image <- is.null(args$image) || args$image
   
   lambdalim <- c(-180, 180)             # Limits of longitude
@@ -770,31 +769,19 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     ## print(sum(!is.na(colSums(impx[1:4,]))))
     immask <- matrix(!is.na(colSums(impx[1:4,])), M, N)
     
-    ## We want to get rid of any poly-pixels that cross either extreme
-    ## of the longitude range. To do this, first construct a matrix
-    ## implambda of the values of the longitude at all pixel
-    ## corners. This should correspond to impx and impy.
-    lambdapos <- matrix(tims[,"lambda"], M+1, N+1)
-    implambda <- rbind(as.vector(lambdapos[1:M    , 1:N    ]),
-                       as.vector(lambdapos[1:M    , 2:(N+1)]),
-                       as.vector(lambdapos[2:(M+1), 2:(N+1)]),
-                       as.vector(lambdapos[2:(M+1), 1:N    ]))
-
-    ## If a pixel crosses over, it will have corners with high and
-    ## low longitudes
-    immask[which(apply(implambda, 2,
-                       function(x) {max(x) - min(x)}) > 1)] <- FALSE
-
+    ## We want to get rid of any poly-pixels that cross either end of
+    ## the longitude range in a pseudocylindrical projection. A simple
+    ## way of doing this is to say that if a pixel is very large,
+    ## don't plot it.
+    bigpx <- which(apply(impx[1:4,], 2,
+                         function(x) {max(x) - min(x)}) > 0.1*abs(diff(xlim)) |
+                   apply(impy[1:4,], 2,
+                         function(y) {max(y) - min(y)}) > 0.1*abs(diff(ylim)))
+    immask[bigpx] <- FALSE
+    
     ## Plot the polygon, masking as we go
     polygon(impx[,immask], impy[,immask],
             col=im[immask], border=im[immask])
-    
-    ## This is debugging code to compute large pixels in x-direction
-    ## bigpx <- which(apply(impx[1:4,immask], 2,
-    ## function(x) {max(x) - min(x)}) > 0.1)
-    ## Plot any polygons that are regarded as very big
-    ## polygon(impx[,bigpx], impy[,bigpx],
-    ## col="yellow", border="yellow")
   }
   
   ## Plot the grid
