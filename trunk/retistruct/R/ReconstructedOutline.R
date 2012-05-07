@@ -682,7 +682,8 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
     ## Downsample the image by first selecting rows and columns to
     ## look at
-    by <- 1                           # Number of pixels to merge
+    max.proj.dim <- getOption("max.proj.dim")
+    by <-  ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
     Ms <- seq(1, M - (M %% by), by=by)
     Ns <- seq(1, N - (N %% by), by=by)
 
