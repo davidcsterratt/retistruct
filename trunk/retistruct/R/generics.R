@@ -68,10 +68,10 @@ polarplot.default <- function(r, show.grid=TRUE,
   plot.new()
 }
 
-##' Draw a sinusoidal plot of a reconstructed outline. This method just sets
-##' up the grid lines and the angular labels. 
+##' Draw a projection of a reconstructed outline. This method sets up
+##' the grid lines and the angular labels and draws the image.
 ##'
-##' @title Sinusoidal projection
+##' @title  Projection of a ReconstructedOutline
 ##' @param r \code{ReconstructedOutline} object
 ##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
 ##' @param grid.col Colour of the minor grid lines
@@ -81,35 +81,49 @@ polarplot.default <- function(r, show.grid=TRUE,
 ##' @param flip.horiz Wether to flip about a horizontal axis
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
+##' @param projection Projection in which to display object,
+##' e.g. \code{\link{lambertproj}} or \code{\link{sinusoidalproj}}
+##' @param philim Limits of latitude (in degrees) to display
+##' @param lambdalim Limits of longitude (in degrees) to display
+##' @param lambda0 Central meridian to display
+##' @param axisdir Direction of axis (North pole) of sphere in external space
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param ... Other parameters, including graphics ones. The option
-##'ode{image} causes an image to be plotted if \code{TRUE}
-##'efault \code{TRUE}).  The option \code{preserve.area} creates an
-##'ea-preserving plot (default \code{FALSE}).
+##'age} causes an image to be plotted if \code{TRUE}
+##'\code{TRUE}).  The option \code{preserve.area} creates an
+##'serving plot (default \code{FALSE}).
 ##' @author David Sterratt
 ##' @export
-sinusoidalplot <- function(r, show.grid=TRUE,
-                           grid.col="gray",
-                           grid.bg="transparent", 
-                           grid.int.minor=15,
-                           grid.int.major=45,
-                           flip.horiz=FALSE,
-                           transform=invert.sphere,
-                           projection=sinusoidalproj,
-                           labels=c(0, 90, 180, 270), ...) {
-  UseMethod("sinusoidalplot")
+projection <- function(r, show.grid=TRUE,
+                       grid.col="gray",
+                       grid.bg="transparent", 
+                       grid.int.minor=15,
+                       grid.int.major=45,
+                       flip.horiz=FALSE,
+                       transform=identity,
+                       projection=lambertproj,
+                       philim=c(-90, 90),                  # Limits of lattitude
+                       lambdalim=c(-180, 180),             # Limits of longitude
+                       lambda0=0,                          # Central meridian
+                       axisdir=cbind(phi=90, lambda=0), # Direction of axis
+                       labels=c(0, 90, 180, 270), ...) {
+  UseMethod("projection")
 }
 
 ##' @export
-sinusoidalplot.default <- function(r, show.grid=TRUE,
-                                   grid.col="gray",
-                                   grid.bg="transparent", 
-                                   grid.int.minor=15,
-                                   grid.int.major=45,
-                                   flip.horiz=FALSE,
-                                   transform=invert.sphere,
-                                   projection=sinusoidalproj,
-                                   labels=c(0, 90, 180, 270), ...) {
+projection.default <- function(r, show.grid=TRUE,
+                               grid.col="gray",
+                               grid.bg="transparent", 
+                               grid.int.minor=15,
+                               grid.int.major=45,
+                               flip.horiz=FALSE,
+                               transform=identity,
+                               projection=lambertproj,
+                               philim=c(-90, 90),                  # Limits of lattitude
+                               lambdalim=c(-180, 180),             # Limits of longitude
+                               lambda0=0,                          # Central meridian
+                               axisdir=cbind(phi=90, lambda=0), # Direction of axis
+                               labels=c(0, 90, 180, 270), ...) {
   plot.new()
 }
 

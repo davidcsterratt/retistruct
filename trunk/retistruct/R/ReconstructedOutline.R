@@ -640,27 +640,25 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
 }
 
 ##' @export
-sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
-                                                grid.col="gray",
-                                                grid.bg="transparent", 
-                                                grid.int.minor=15,
-                                                grid.int.major=45,
-                                                flip.horiz=FALSE,
-                                                transform=invert.sphere,
-                                                projection=sinusoidalproj,
-                                                labels=c(0, 90, 180, 270), ...) {
+projection.reconstructedOutline <- function(r, show.grid=TRUE,
+                                            grid.col="gray",
+                                            grid.bg="transparent", 
+                                            grid.int.minor=15,
+                                            grid.int.major=45,
+                                            flip.horiz=FALSE,
+                                            transform=identity,
+                                            projection=lambertproj,
+                                            philim=c(-90, 90),           # Limits of lattitude
+                                            lambdalim=c(-180, 180),      # Limits of longitude
+                                            lambda0=0,                   # Central meridian
+                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
+                                            labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
-  
-  lambdalim <- c(-180, 180)             # Limits of longitude
-  philim <- c(-90, 90)                  # Limits of lattitude
-  lambda0 <- 0                          # Central meridian
 
   ## Azimuth/elevation of optic axis in visutopic space
-  r0opt <- r$r0opt
-  if (is.null(r0opt)) {
-    r0opt <- cbind(phi=35, lambda=60-90)
-  }
+  ## Drager 
+  ## axisdir <- cbind(phi=35, lambda=60-90)
 
   ## Compute grid lines
 
@@ -740,11 +738,9 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
     M <- nrow(im)
     N <- ncol(im)
     
-    ## Transform the pixel coordinates
-    tims <- rotate.axis(transform(ims), r0opt*pi/180)
-    
-    ## Compute x and y positions of corners of pixels.
-    rc <- projection(tims, lambdalim=lambdalim*pi/180)
+    ## Transform the pixel coordinates and compute x and y positions
+    ## of corners of pixels.
+    rc <- projection(rotate.axis(transform(ims), axisdir*pi/180), lambdalim=lambdalim*pi/180)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
     
@@ -797,16 +793,15 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
 
   ## Plot rim in visutopic space
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
-  ## Negative sign inverts 
-  rs.rot <- rotate.axis(transform(rs), r0opt*pi/180)
+  rs.rot <- rotate.axis(transform(rs), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
-  ## r$r0opt = cbind(phi=0, lambda=-90)
+  ## r$axisdir = cbind(phi=0, lambda=-90)
   
   lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE),
         col=getOption("TF.col"))
 
   ## Projection of optic axis
-  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0)), r0opt*pi/180)
+  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0)), axisdir*pi/180)
   points(projection(oa.rot),
          pch="*", col=getOption("TF.col"), cex=2)
   
@@ -814,7 +809,7 @@ sinusoidalplot.reconstructedOutline <- function(r, show.grid=TRUE,
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    suppressWarnings(lines(projection(rotate.axis(transform(Ts), r0opt*pi/180),
+    suppressWarnings(lines(projection(rotate.axis(transform(Ts), axisdir*pi/180),
                                       lines=TRUE,
                                       lambdalim=lambdalim*pi/180),
                            col=getOption("TF.col"), ...))
