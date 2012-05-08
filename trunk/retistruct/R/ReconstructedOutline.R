@@ -308,6 +308,7 @@ getIms.reconstructedOutline <- function(r) {
 ##' @return \code{Tss}
 ##' @method getTss reconstructedOutline
 ##' @author David Sterratt
+##' @export
 getTss.reconstructedOutline <- function(r) {
   Tss <- list()
   for (TF in r$TFset) {

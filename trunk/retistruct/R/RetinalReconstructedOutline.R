@@ -9,6 +9,7 @@
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt
+##' @export
 RetinalReconstructedOutline <- function(r) {
   if (!(inherits(r, "reconstructedOutline"))) {
     stop("Argument needs to inherit reconstructedOutline")
@@ -17,6 +18,7 @@ RetinalReconstructedOutline <- function(r) {
   return(r)
 }
 
+##' @export
 getIms.retinalReconstructedOutline <- function(r) {
   ims <- NextMethod()
   if (r$DVflip) {
@@ -24,13 +26,38 @@ getIms.retinalReconstructedOutline <- function(r) {
       ims[,"lambda"] <- -ims[,"lambda"]
     }
   }
-  if (r$side=="Left") {
-    if (!is.null(ims)) {
-      ims[,"lambda"] <- 2*pi - ims[,"lambda"]
-    }
-  }
+  ## if (r$side=="Left") {
+  ##   if (!is.null(ims)) {
+  ##     ims[,"lambda"] <- 2*pi - ims[,"lambda"]
+  ##   }
+  ## }
   return(ims)
 }
+
+##' Get spherical coordinates of datapoints, transformed according to
+##' the values of \code{DVflip} and \code{side}.
+##'
+##' @title Get transformed spherical coordinates of datapoints
+##' @param r \code{\link{RetinalReconstructedOutline}} object.
+##' @return \code{Dss}
+##' @method getTss retinalReconstructedOutline
+##' @author David Sterratt
+##' @export
+getTss.retinalReconstructedOutline <- function(r) {
+  Tss <- NextMethod()
+  if (r$DVflip) {
+    for (i in 1:length(Tss)) {
+      Tss[[i]][,"lambda"] <- -Tss[[i]][,"lambda"]
+    }
+  }
+  ## if (r$side=="Left") {
+  ##   for (i in 1:length(Tss)) {
+  ##     Tss[[i]][,"lambda"] <- 2*pi - Tss[[i]][,"lambda"]
+  ##   }
+  ## }
+  return(Tss)
+}
+
 
 ##' @export
 projection.retinalReconstructedOutline <- function(r, show.grid=TRUE,

@@ -352,7 +352,7 @@ do.plot <- function() {
               scalebar=1)
     dev.set(d2)
     par(mar=c(0.7, 0.7, 0.7, 0.7))
-    polarplot(r,
+    projection(r,
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),

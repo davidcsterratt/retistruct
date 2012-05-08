@@ -255,7 +255,11 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
     o$lambda0 <- 90 * pi/180
   }
   if (names(o$i0)[1]=="Nasal") {
-    o$lambda0 <- 0
+    if (o$side=="Right") {
+      o$lambda0 <- 0
+    } else {
+      o$lambda0 <- pi
+    }
   }
   if (!is.na(getLandmarkID(o, "OD"))) {
     o$Ds[["OD"]] <- with(o, matrix(colMeans(Ss[[getLandmarkID(o, "OD")]]), 1, 2))

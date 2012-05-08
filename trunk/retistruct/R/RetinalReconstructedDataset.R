@@ -124,29 +124,6 @@ getSss.retinalReconstructedDataset <- function(r) {
   return(Sss)
 }
 
-##' Get spherical coordinates of datapoints, transformed according to
-##' the values of \code{DVflip} and \code{side}.
-##'
-##' @title Get transformed spherical coordinates of datapoints
-##' @param r \code{\link{RetinalReconstructedDataset}} object.
-##' @return \code{Dss}
-##' @method getTss retinalReconstructedDataset
-##' @author David Sterratt
-getTss.retinalReconstructedDataset <- function(r) {
-  Tss <- NextMethod()
-  if (r$DVflip) {
-    for (i in 1:length(Tss)) {
-      Tss[[i]][,"lambda"] <- -Tss[[i]][,"lambda"]
-    }
-  }
-  if (r$side=="Left") {
-    for (i in 1:length(Tss)) {
-      Tss[[i]][,"lambda"] <- 2*pi - Tss[[i]][,"lambda"]
-    }
-  }
-  return(Tss)
-}
-
 ##' This lablels the poles N, D, T and V
 ##' 
 ##' @title Polar plot of reconstructed dataset
