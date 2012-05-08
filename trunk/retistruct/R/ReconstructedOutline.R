@@ -656,6 +656,9 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
                                             labels=c(0, 90, 180, 270), ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
+  lambda.label.off <- 8                 # Offset of longitude labels
+                                        # from the phi0 line in
+                                        # degrees
 
   ## Azimuth/elevation of optic axis in visutopic space
   ## Drager 
@@ -820,9 +823,20 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
 
     
   
-  ## Longitude Labels
-
+  ## Longitude labels around rim
+  if (!is.null(labels)) {
+    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
+    rs <- cbind(phi=r$phi0 + lambda.label.off*pi/180, lambda=angles)
+    rc <- projection(rotate.axis(transform(rs), axisdir*pi/180))
+    text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
+  }
+  
   ## Lattitude Labels
+  rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
+  rs <- cbind(phi=rlabels*pi/180, lambda=lambda0)
+  rc <- projection(rotate.axis(transform(rs), axisdir*pi/180))
+  text(rc[,"x"], rc[,"y"], rlabels, xpd=TRUE, adj=c(1, 1))
+  ## text(label.pos, -maxlength/15, rlabels, xpd=TRUE, pos=2, offset=0)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just
@@ -933,7 +947,6 @@ lvsLplot.reconstructedOutline <- function(r) {
   
   if (!is.null(r$scale)) {
     scale <- r$scale
-    print(scale)
     if (!is.na(scale)) {
       L <- L*scale
       l <- l*scale
