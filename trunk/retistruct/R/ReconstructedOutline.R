@@ -665,10 +665,12 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
   ## Lines of latitude (parallels)
 
   ## Determine the major and minor parallels
-  phis.maj <- c(rev(seq(0             , philim[1], by=-grid.int.major)),
-                       seq(grid.int.major,     philim[2], by= grid.int.major))
-  phis.min <- c(rev(seq(0             , philim[1], by=-grid.int.minor)),
-                       seq(grid.int.minor, philim[2], by= grid.int.minor))
+  phis.maj <- unique(c(rev(seq(0           , philim[1], by=-grid.int.major)),
+                       seq(0,                philim[2], by= grid.int.major),
+                       philim[2]))
+  phis.min <- unique(c(rev(seq(0       , philim[1], by=-grid.int.minor)),
+                       seq(0,            philim[2], by= grid.int.minor),
+                       philim[2]))
   phis.min <- setdiff(phis.min, phis.maj)
 
   ## Longitudes at which to draw lines; the smaller the by interval,
@@ -692,7 +694,7 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
 
   ## Lattidues at which to draw lines; the smaller the by interval,
   ## the smoother
-  phis <- seq(-90, 90, by=1)
+  phis <- seq(philim[1], philim[2], by=1)
 
   ## Compute the minor and and major meridians to draw
   merids.min <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.min*0, FUN="+")),
@@ -709,8 +711,8 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
   ## Plot an image.
 
   ## Get the spherical coordinates of the corners of pixels.
-  ## ims <- getIms(r)
-  if (plot.image && !is.null(r$ims)) {
+  ims <- getIms(r)
+  if (plot.image && !is.null(ims)) {
     ## Reconstitute image from stored values of phi and lambda
     ## coordinates of corners of pixels
 
@@ -732,7 +734,7 @@ projection.reconstructedOutline <- function(r, show.grid=TRUE,
     ## containing the coordinates of the corners of pixels
     imsmask <- matrix(FALSE, M+1, N+1)
     imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
-    ims <- r$ims[imsmask,]
+    ims <- ims[imsmask,]
 
     ## Convenience variables for the new image sizes
     M <- nrow(im)

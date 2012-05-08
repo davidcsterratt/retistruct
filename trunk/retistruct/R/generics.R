@@ -89,9 +89,9 @@ polarplot.default <- function(r, show.grid=TRUE,
 ##' @param axisdir Direction of axis (North pole) of sphere in external space
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param ... Other parameters, including graphics ones. The option
-##'age} causes an image to be plotted if \code{TRUE}
-##'\code{TRUE}).  The option \code{preserve.area} creates an
-##'serving plot (default \code{FALSE}).
+##' \code{image} causes an image to be plotted if \code{TRUE}. The
+##' option \code{preserve.area} creates an serving plot (default
+##' \code{FALSE}).
 ##' @author David Sterratt
 ##' @export
 projection <- function(r, show.grid=TRUE,
