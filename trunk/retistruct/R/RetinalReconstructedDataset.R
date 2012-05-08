@@ -38,11 +38,6 @@ getDss.retinalReconstructedDataset <- function(r) {
         Dss[[i]][,"lambda"] <- -Dss[[i]][,"lambda"]
       }
     }
-    if (r$side=="Left") {
-      for (i in 1:length(Dss)) {
-        Dss[[i]][,"lambda"] <- 2*pi - Dss[[i]][,"lambda"]
-      }
-    }
   }
   return(Dss)
 }
@@ -60,11 +55,6 @@ getGss.retinalReconstructedDataset <- function(r) {
     if (r$DVflip) {
       for (i in 1:length(Gss)) {
         Gss[[i]][,"lambda"] <- -Gss[[i]][,"lambda"]
-      }
-    }
-    if (r$side=="Left") {
-      for (i in 1:length(Gss)) {
-        Gss[[i]][,"lambda"] <- 2*pi - Gss[[i]][,"lambda"]
       }
     }
   }
@@ -90,11 +80,6 @@ getDssMean.retinalReconstructedDataset <- function(r) {
         Dss.mean[[i]][,"lambda"] <- -Dss.mean[[i]][,"lambda"]
       }
     }
-    if (r$side=="Left") {
-      for (i in 1:length(Dss.mean)) {
-        Dss.mean[[i]][,"lambda"] <- 2*pi - Dss.mean[[i]][,"lambda"]
-      }
-    }
   }
   return(Dss.mean)
 }
@@ -113,11 +98,6 @@ getSss.retinalReconstructedDataset <- function(r) {
     if (r$DVflip) {
       for (i in 1:length(Sss)) {
         Sss[[i]][,"lambda"] <- -Sss[[i]][,"lambda"]
-      }
-    }
-    if (r$side=="Left") {
-      for (i in 1:length(Sss)) {
-        Sss[[i]][,"lambda"] <- 2*pi - Sss[[i]][,"lambda"]
       }
     }
   }

@@ -26,11 +26,6 @@ getIms.retinalReconstructedOutline <- function(r) {
       ims[,"lambda"] <- -ims[,"lambda"]
     }
   }
-  ## if (r$side=="Left") {
-  ##   if (!is.null(ims)) {
-  ##     ims[,"lambda"] <- 2*pi - ims[,"lambda"]
-  ##   }
-  ## }
   return(ims)
 }
 
@@ -50,14 +45,8 @@ getTss.retinalReconstructedOutline <- function(r) {
       Tss[[i]][,"lambda"] <- -Tss[[i]][,"lambda"]
     }
   }
-  ## if (r$side=="Left") {
-  ##   for (i in 1:length(Tss)) {
-  ##     Tss[[i]][,"lambda"] <- 2*pi - Tss[[i]][,"lambda"]
-  ##   }
-  ## }
   return(Tss)
 }
-
 
 ##' @export
 projection.retinalReconstructedOutline <- function(r, show.grid=TRUE,
