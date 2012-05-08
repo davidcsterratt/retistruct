@@ -497,6 +497,203 @@ polarplot.reconstructedDataset <- function(r, show.grid=TRUE,
   }
 }
 
+##' Plot datapoints in polar plot
+##'
+##' @title Polar plot of reconstructed dataset
+##' @param r \code{\link{ReconstructedDataset}} object
+##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param flip.horiz Wether to flip about a horizontal axis
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
+##' @param ... Other graphics parameters.  The option
+##' \code{preserve.area} creates an area-preserving plot (default
+##' \code{FALSE}). The option \code{datapoints} causes datapoints to
+##' be plotted (default \code{TRUE}).  The option
+##' \code{datapoint.means} causes datapoint means to be plotted
+##' (default \code{TRUE}).  The option \code{landmakrs} causes
+##' landmarks to be plotted (default \code{TRUE}). 
+##' @method polarplot reconstructedDataset
+##' @author David Sterratt
+##' @export
+projection.reconstructedDataset <- function(r, show.grid=TRUE,
+                                            grid.col="gray",
+                                            grid.bg="transparent", 
+                                            grid.int.minor=15,
+                                            grid.int.major=45,
+                                            flip.horiz=FALSE,
+                                            transform=identity,
+                                            projection=lambertproj,
+                                            lambdalim=c(-180, 180),      # Limits of longitude
+                                            lambda0=0,                          # Central meridian
+                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
+                                            labels=c(0, 90, 180, 270), ...) {
+  NextMethod()
+
+  args <- list(...)
+  plot.datapoints <- is.null(args$datapoints) || args$datapoints
+  plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
+  plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
+  plot.grouped.contours <- is.null(args$grouped.contours) || args$grouped.contours
+  plot.landmarks <- is.null(args$landmarks) || args$landmarks
+  plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
+  plot.mosaic <- !is.null(args$mosaic) && args$mosaic
+  plot.kde <- !is.null(args$kde) && args$kde
+  pa <- plot.preserve.area
+
+  ## FIXME: This should either go or be fixed
+  if (plot.kde) {
+    KDE <- getKDE(r)
+    image(rho.to.degrees(KDE$red$g$xs, r$phi0, pa),
+          rho.to.degrees(KDE$red$g$ys, r$phi0, pa),
+          KDE$red$g$f, col=gray((0:100)/100))
+    Dss <- getDss(r)
+    pos <- sphere.spherical.to.polar.cart(Dss[["red"]], pa)
+        suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
+                                col="red",
+                                pch=20, cex=0.2, ...))
+
+  }
+  
+  ## Datapoints
+  if (plot.datapoints) {
+    Dss <- getDss(r)
+    if (length(Dss)) {
+      for (i in 1:length(Dss)) {
+        suppressWarnings(points(projection(rotate.axis(transform(Dss[[i]]), axisdir*pi/180)),
+                                col=r$cols[[names(Dss)[i]]],
+                                pch=20, ...))
+      }
+    }
+  }
+
+  ## Mean datapoints
+  if (plot.datapoint.means) {
+    Dss.mean <- getDssMean(r)
+    if (length(Dss.mean)) {
+      for (i in 1:length(Dss.mean)) {
+        suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[i]]), axisdir*pi/180)),
+                                bg=r$cols[[names(Dss.mean)[i]]], col="black",
+                                pch=23, cex=1.5, ...))
+      }
+    }
+  }
+  
+  ## KDE
+  if (plot.datapoint.contours) {
+    k <- getKDE(r)
+    if (length(k)) {
+      for (i in 1:length(k)) {
+        if (pa) {
+          g <- k[[i]]$gpa
+        } else {
+          g <- k[[i]]$g
+        }
+        ## Plot contours
+        css <- k[[i]]$contours
+        for(cs in css) {
+          lines(projection(rotate.axis(transform(cs), axisdir*pi/180),
+                           lambdalim=lambdalim*pi/180, lines=TRUE),
+                col=r$cols[[names(k)[i]]])
+        }
+        ## FIXME: contours need to be labelled
+        ## contour(rho.to.degrees(g$xs, r$phi0, pa),
+        ##         rho.to.degrees(g$ys, r$phi0, pa),
+        ##         g$f, add=TRUE, levels=k[[i]]$flevels,
+        ##         col=r$cols[[names(k)[i]]],
+        ##         ## drawlabels=FALSE,
+        ##         labels=k[[i]]$labels)
+        suppressWarnings(points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
+                                col=r$cols[[names(Dss)[i]]],
+                                pch=20, ...))
+      }
+      for (i in 1:length(k)) {
+        points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
+               pch=22, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
+      }
+    }
+  }
+
+  ## KR
+  if (plot.grouped.contours) {
+    k <- getKR(r)
+    if (length(k)) {
+      for (i in 1:length(k)) {
+        if (pa) {
+          g <- k[[i]]$gpa
+        } else {
+          g <- k[[i]]$g
+        }
+        ## Plot contours
+        css <- k[[i]]$contours
+        for(cs in css) {
+          lines(projection(rotate.axis(transform(cs), axisdir*pi/180),
+                           lambdalim=lambdalim*pi/180, lines=TRUE),
+                col=r$cols[[names(k)[i]]])
+        }
+        ## FIXME: contours need to be labelled
+      }
+      for (i in 1:length(k)) {
+        points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
+               pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
+      }
+    }
+  }
+  
+  ## Voroni
+  if (plot.mosaic) {
+    Dss <- getDss(r)
+    if (length(Dss)) {
+      for (i in 1:length(Dss)) {
+        if (nrow(Dss[[i]]) >= 2) {
+          ## Convert to angle-preserving coordinates
+          pos <- sphere.spherical.to.polar.cart(Dss[[i]], preserve="angle")
+          ## Create Voronoi mosaic in area-preserving coordinates
+          vm <- voronoi.mosaic(pos[,1], pos[,2])
+
+          ## Convert back to polar coords
+          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$x, y=vm$y),
+                                                       preserve="angle")
+          ## Convert into whichever representation we're using
+          ## and put back on to voroini object for plotting
+          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
+          vm$x <- pos[,1]
+          vm$y <- pos[,2]
+          ## Do the same for the dummy coordinates
+          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$dummy.x,
+                                                             y=vm$dummy.y),
+                                                       preserve="angle")
+          ## Convert into whichever representation we're using
+          ## and put back on to voroini object for plotting
+          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
+          vm$dummy.x <- pos[,1]
+          vm$dummy.y <- pos[,2]
+
+          plot.voronoi.circular(vm, R=r$phi0*180/pi + 90, col=r$cols[[names(Dss)[i]]])
+        }
+      }
+    }
+  }
+  
+  ## Landmarks
+  if (plot.landmarks) {
+    Sss <- getSss(r)
+    if (length(Sss)) {
+      for (i in 1:length(Sss)) {
+        name <- names(Sss)[i]
+        col <- ifelse(is.null(name) || (name==""), "default", name)
+        suppressWarnings(lines(projection(rotate.axis(transform(Dss.mean[[i]]), axisdir*pi/180)),
+                               col=r$cols[[col]], ...))
+        ## FIXME: Might want to put lines argument here
+      }
+    }
+  }
+}
+
+
+
 ##' Draw a spherical plot of datapoints.
 ##'
 ##' @title Spherical plot of reconstructed outline
