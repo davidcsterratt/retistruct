@@ -128,4 +128,11 @@ polarplot.retinalReconstructedDataset <- function(r, show.grid=TRUE,
              labels=c("N", "D", "T", "V"))
 }
 
+##' @method projection retinalReconstructedDataset
+##' @export
+projection.retinalReconstructedDataset <- function(r, ...) {
+  ## This will call projection.reconstructedDataset()
+  NextMethod()
+}
+
 

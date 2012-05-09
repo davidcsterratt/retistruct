@@ -82,7 +82,7 @@ polarplot.default <- function(r, show.grid=TRUE,
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
 ##' @param projection Projection in which to display object,
-##' e.g. \code{\link{lambertproj}} or \code{\link{sinusoidalproj}}
+##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
 ##' @param philim Limits of latitude (in degrees) to display
 ##' @param lambdalim Limits of longitude (in degrees) to display
 ##' @param lambda0 Central meridian to display
@@ -101,7 +101,7 @@ projection <- function(r, show.grid=TRUE,
                        grid.int.major=45,
                        flip.horiz=FALSE,
                        transform=identity,
-                       projection=lambertproj,
+                       projection=azimuthal.equalarea,
                        philim=c(-90, 90),                  # Limits of lattitude
                        lambdalim=c(-180, 180),             # Limits of longitude
                        lambda0=0,                          # Central meridian
@@ -118,7 +118,7 @@ projection.default <- function(r, show.grid=TRUE,
                                grid.int.major=45,
                                flip.horiz=FALSE,
                                transform=identity,
-                               projection=lambertproj,
+                               projection=azimuthal.equalarea,
                                philim=c(-90, 90),                  # Limits of lattitude
                                lambdalim=c(-180, 180),             # Limits of longitude
                                lambda0=0,                          # Central meridian

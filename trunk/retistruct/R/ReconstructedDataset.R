@@ -515,7 +515,7 @@ polarplot.reconstructedDataset <- function(r, show.grid=TRUE,
 ##' \code{datapoint.means} causes datapoint means to be plotted
 ##' (default \code{TRUE}).  The option \code{landmakrs} causes
 ##' landmarks to be plotted (default \code{TRUE}). 
-##' @method polarplot reconstructedDataset
+##' @method projection reconstructedDataset
 ##' @author David Sterratt
 ##' @export
 projection.reconstructedDataset <- function(r, show.grid=TRUE,
@@ -525,7 +525,7 @@ projection.reconstructedDataset <- function(r, show.grid=TRUE,
                                             grid.int.major=45,
                                             flip.horiz=FALSE,
                                             transform=identity,
-                                            projection=lambertproj,
+                                            projection=azimuthal.equalarea,
                                             lambdalim=c(-180, 180),      # Limits of longitude
                                             lambda0=0,                          # Central meridian
                                             axisdir=cbind(phi=90, lambda=0), # Direction of axis

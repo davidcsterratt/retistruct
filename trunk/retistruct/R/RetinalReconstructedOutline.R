@@ -56,13 +56,13 @@ projection.retinalReconstructedOutline <- function(r, show.grid=TRUE,
                                                    grid.int.major=45,
                                                    flip.horiz=FALSE,
                                                    transform=identity,
-                                                   projection=lambertproj,
+                                                   projection=azimuthal.equalarea,
                                                    lambdalim=c(-180, 180),      # Limits of longitude
                                                    lambda0=0,                   # Central meridian
                                                    axisdir=cbind(phi=90, lambda=0), # Direction of axis
                                                    ...) {
   philim <- c(-90, 90)
-  if (!identical(projection, sinusoidalproj)) {
+  if (!identical(projection, sinusoidal)) {
     philim <- c(-90, r$phi0*180/pi)
   }
   if (r$side=="Right") {
