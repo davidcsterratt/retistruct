@@ -326,7 +326,7 @@ getProjections <- function() {
               "Sinusoidal"           =sinusoidal))
 }
 
-getTransformations <- function() {
+getTransforms <- function() {
     return(list("None"  =identity,
                 "Invert"=invert.sphere))
 }
@@ -369,8 +369,9 @@ do.plot <- function() {
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),
-               transform=getTransformations()[[svalue(g.transformation)]],
+               transform=getTransforms()[[svalue(g.transform)]],
                projection=getProjections()[[svalue(g.projection)]],
+               axisdir=cbind(phi=svalue(g.axis.el), lambda=svalue(g.axis.az)),
                datapoint.contours=("Contours" %in% svalue(g.show)),
                grouped.contours=("Group Contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
@@ -475,11 +476,21 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
 
   g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.f2.row1 <<- ggroup(horizontal = TRUE, container=g.f2)
+  g.projection.frame <<- gframe("Projection", container=g.f2.row1)
   g.projection <<- gdroplist(names(getProjections()), selected = 1,  handler = h.show, 
-                             action = NULL, container = g.f2)
-  g.transformation <<- gdroplist(names(getTransformations()), selected = 1,  handler = h.show, 
-                                 action = NULL, container = g.f2)
-
+                             action = NULL, container = g.projection.frame)
+  g.transform.frame <<- gframe("Transform", container=g.f2.row1)
+  g.transform <<- gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
+                                 action = NULL, container = g.transform.frame)
+  g.axisdir.frame <<- gframe("Axis direction", container=g.f2, horizontal=TRUE)
+  glabel("Elevation", container=g.axisdir.frame)
+  g.axis.el <<- gedit(0, handler=h.show, width=5, coerce.with=as.numeric,
+                      container=g.axisdir.frame)
+  glabel("Azimuth", container=g.axisdir.frame)
+  g.axis.az <<- gedit(0, handler=h.show, width=5, coerce.with=as.numeric,
+                      container=g.axisdir.frame)
+  
   g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
   d2 <<- dev.cur()
   g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
