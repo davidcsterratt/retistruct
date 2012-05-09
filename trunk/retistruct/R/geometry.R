@@ -7,6 +7,7 @@
 ##' @return If a vector, returns the 2-norm  of the
 ##' vector. If a matrix, returns the 2-norm of each row of the matrix
 ##' @author David Sterratt
+##' @export
 vecnorm <- function(X) {
   if (is.vector(X)) {
     return(sqrt(sum(X^2)))
