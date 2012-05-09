@@ -88,7 +88,7 @@ azimuthal.equidistant <- function(r, ...) {
 ##' University Press, Cambridge, UK.
 ##' @export
 azimuthal.conformal <- function(r, ...) {
-  rho <- tan(pi/2 + r[,"phi"]/2)
+  rho <- tan(pi/4 + r[,"phi"]/2)
   x <- rho*cos(r[,"lambda"])
   y <- rho*sin(r[,"lambda"])
   return(cbind(x=x, y=y))
