@@ -531,25 +531,7 @@ projection.reconstructedDataset <- function(r,
   plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
   plot.grouped.contours <- is.null(args$grouped.contours) || args$grouped.contours
   plot.landmarks <- is.null(args$landmarks) || args$landmarks
-  plot.preserve.area <- !is.null(args$preserve.area) && args$preserve.area
-  plot.mosaic <- !is.null(args$mosaic) && args$mosaic
-  plot.kde <- !is.null(args$kde) && args$kde
-  pa <- plot.preserve.area
 
-  ## FIXME: This should either go or be fixed
-  if (plot.kde) {
-    KDE <- getKDE(r)
-    image(rho.to.degrees(KDE$red$g$xs, r$phi0, pa),
-          rho.to.degrees(KDE$red$g$ys, r$phi0, pa),
-          KDE$red$g$f, col=gray((0:100)/100))
-    Dss <- getDss(r)
-    pos <- sphere.spherical.to.polar.cart(Dss[["red"]], pa)
-        suppressWarnings(points(rho.to.degrees(pos, r$phi0, pa),
-                                col="red",
-                                pch=20, cex=0.2, ...))
-
-  }
-  
   ## Datapoints
   if (plot.datapoints) {
     Dss <- getDss(r)
@@ -579,11 +561,6 @@ projection.reconstructedDataset <- function(r,
     k <- getKDE(r)
     if (length(k)) {
       for (i in 1:length(k)) {
-        if (pa) {
-          g <- k[[i]]$gpa
-        } else {
-          g <- k[[i]]$g
-        }
         ## Plot contours
         css <- k[[i]]$contours
         for(cs in css) {
@@ -592,12 +569,6 @@ projection.reconstructedDataset <- function(r,
                 col=r$cols[[names(k)[i]]])
         }
         ## FIXME: contours need to be labelled
-        ## contour(rho.to.degrees(g$xs, r$phi0, pa),
-        ##         rho.to.degrees(g$ys, r$phi0, pa),
-        ##         g$f, add=TRUE, levels=k[[i]]$flevels,
-        ##         col=r$cols[[names(k)[i]]],
-        ##         ## drawlabels=FALSE,
-        ##         labels=k[[i]]$labels)
         suppressWarnings(points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
                                 col=r$cols[[names(Dss)[i]]],
                                 pch=20, ...))
@@ -613,12 +584,6 @@ projection.reconstructedDataset <- function(r,
   if (plot.grouped.contours) {
     k <- getKR(r)
     if (length(k)) {
-      for (i in 1:length(k)) {
-        if (pa) {
-          g <- k[[i]]$gpa
-        } else {
-          g <- k[[i]]$g
-        }
         ## Plot contours
         css <- k[[i]]$contours
         for(cs in css) {
@@ -631,41 +596,6 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(k)) {
         points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
                pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
-      }
-    }
-  }
-  
-  ## Voroni
-  if (plot.mosaic) {
-    Dss <- getDss(r)
-    if (length(Dss)) {
-      for (i in 1:length(Dss)) {
-        if (nrow(Dss[[i]]) >= 2) {
-          ## Convert to angle-preserving coordinates
-          pos <- sphere.spherical.to.polar.cart(Dss[[i]], preserve="angle")
-          ## Create Voronoi mosaic in area-preserving coordinates
-          vm <- voronoi.mosaic(pos[,1], pos[,2])
-
-          ## Convert back to polar coords
-          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$x, y=vm$y),
-                                                       preserve="angle")
-          ## Convert into whichever representation we're using
-          ## and put back on to voroini object for plotting
-          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
-          vm$x <- pos[,1]
-          vm$y <- pos[,2]
-          ## Do the same for the dummy coordinates
-          vmxy.polar <- polar.cart.to.sphere.spherical(cbind(x=vm$dummy.x,
-                                                             y=vm$dummy.y),
-                                                       preserve="angle")
-          ## Convert into whichever representation we're using
-          ## and put back on to voroini object for plotting
-          pos <- rho.to.degrees(sphere.spherical.to.polar.cart(vmxy.polar, pa), r$phi, pa)
-          vm$dummy.x <- pos[,1]
-          vm$dummy.y <- pos[,2]
-
-          plot.voronoi.circular(vm, R=r$phi0*180/pi + 90, col=r$cols[[names(Dss)[i]]])
-        }
       }
     }
   }
