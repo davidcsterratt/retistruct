@@ -326,6 +326,11 @@ getProjections <- function() {
               "Sinusoidal"           =sinusoidal))
 }
 
+getTransformations <- function() {
+    return(list("None"  =identity,
+                "Invert"=invert.sphere))
+}
+
 ## Plot in edit pane
 do.plot <- function() {
   
@@ -364,6 +369,7 @@ do.plot <- function() {
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),
+               transform=getTransformations()[[svalue(g.transformation)]],
                projection=getProjections()[[svalue(g.projection)]],
                datapoint.contours=("Contours" %in% svalue(g.show)),
                grouped.contours=("Group Contours" %in% svalue(g.show)))
@@ -471,6 +477,9 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
   g.projection <<- gdroplist(names(getProjections()), selected = 1,  handler = h.show, 
                              action = NULL, container = g.f2)
+  g.transformation <<- gdroplist(names(getTransformations()), selected = 1,  handler = h.show, 
+                                 action = NULL, container = g.f2)
+
   g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
   d2 <<- dev.cur()
   g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
