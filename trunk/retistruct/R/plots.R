@@ -24,22 +24,4 @@ polartext <- function(text) {
   mtext(text, 1, adj=1, line=-1)
 }
 
-##' This is a helper function for \code{\link{projection}}
-##'
-##' @title Convert lattitude to radial variable in polar plot
-##' @param phi Lattitude
-##' @param phi0 Lattitude of top of curtailed sphere
-##' @param area.preserving Whether the conversion should preserve area
-##' @return Radial variable
-##' @author David Sterratt
-##' @export
-phi.to.rho <- function(phi, phi0, area.preserving) {
-  if (area.preserving) {
-    phi0d <- phi0*180/pi
-    rho0 <- spherical.to.polar.area(phi0)
-    return((phi0d + 90)/rho0*spherical.to.polar.area(phi))
-  } else {
-    return(phi*180/pi + 90)      
-  }
-}
 

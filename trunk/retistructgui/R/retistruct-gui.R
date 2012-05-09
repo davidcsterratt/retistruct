@@ -319,8 +319,16 @@ h.print2 <- function(h, ...) {
   h.print.image(d2, initialfilename="image-polar.png")
 }
 
+getProjections <- function() {
+  return(list("Azimuthal Equidistant"=azimuthal.equidistant,
+              "Azimuthal Equal Area" =azimuthal.equalarea,
+              "Azimuthal Conformal"  =azimuthal.conformal,
+              "Sinusoidal"           =sinusoidal))
+}
+
 ## Plot in edit pane
 do.plot <- function() {
+  
   if (is.null(r)) {
     r <- a
   }
@@ -356,7 +364,7 @@ do.plot <- function() {
                datapoints=("Datapoints" %in% svalue(g.show)),
                datapoint.means=("Means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),
-               preserve.area=("Preserve area" %in% svalue(g.show)),
+               projection=getProjections()[[svalue(g.projection)]],
                datapoint.contours=("Contours" %in% svalue(g.show)),
                grouped.contours=("Group Contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
@@ -450,8 +458,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## What to show
   g.show.frame <<- gframe("Show", container=g.editor)
   g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints", "Means",
-                              "Landmarks", "Strain", "Preserve area", "Contours", "Group Contours"),
-                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+                              "Landmarks", "Strain", "Contours", "Group Contours"),
+                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
   ## Graphs at right
@@ -461,6 +469,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
 
   g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.projection <<- gdroplist(names(getProjections()), selected = 1,  handler = h.show, 
+                             action = NULL, container = g.f2)
   g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
   d2 <<- dev.cur()
   g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)

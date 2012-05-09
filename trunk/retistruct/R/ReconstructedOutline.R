@@ -440,9 +440,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param ... Other parameters, including graphics ones. The option
-##' \code{image} causes an image to be plotted if \code{TRUE}. The
-##' option \code{preserve.area} creates an serving plot (default
-##' \code{FALSE}).
+##' \code{image} causes an image to be plotted if \code{TRUE}.
 ##' @method projection reconstructedOutline
 ##' @export
 projection.reconstructedOutline <- function(r,
