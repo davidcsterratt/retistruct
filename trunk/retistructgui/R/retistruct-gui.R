@@ -238,7 +238,7 @@ h.open <- function(h, ...) {
   
   ## Read the reconstruction data
   withCallingHandlers({
-    r <<- retistruct.read.recdata(a)
+    r <<- retistruct.read.recdata(a, cache=TRUE)
   }, warning=h.warning, error=h.error)
   ## If there is no reconstruction data, show the markup so that we
   ## don't think there is no markup.
