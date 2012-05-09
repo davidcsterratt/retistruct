@@ -31,6 +31,7 @@ sinusoidal <- function(r, lambda0=0,
 ##' @title Lambert azimuthal equal area projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @param ... Arguments not used by this projection.
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt
@@ -53,6 +54,7 @@ azimuthal.equalarea <- function(r, ...) {
 ##' @title Azimuthal equidistant projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @param ... Arguments not used by this projection.
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt
@@ -72,6 +74,7 @@ azimuthal.equidistant <- function(r, ...) {
 ##' @title Azimuthal conformal or stereographic or Wulff projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @param ... Arguments not used by this projection.
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt

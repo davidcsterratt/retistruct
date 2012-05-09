@@ -861,19 +861,12 @@ solveMappingCart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   
   while (opt$conv && count) {
     ## Optimise
-    ## opt <- optim(opt$p, E, gr=dE,
-    ##              method=method,
-    ##              T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-    ##              alpha=alpha,  N=Nt, x0=x0,
-    ##              Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
-    ##              verbose=FALSE, control=control)
     opt <- fire(opt$x,
                 force=function(x) {Fcart(x, Ct, Lt, Tt, A, R, alpha, x0, nu)},
                 restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
-                ##                Tmax=200,
-                dt=1,# gamma=1,
+                dt=1,
                 nstep=200,
-                m=m, mm=minL/10, verbose=TRUE, ...) # Delta=R*1e-6)
+                m=m, verbose=TRUE, ...) 
     count <- count - 1
     ## Report
     E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,

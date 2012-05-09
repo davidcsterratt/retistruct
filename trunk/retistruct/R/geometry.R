@@ -547,7 +547,7 @@ invert.sphere <- function(r) {
 }
 
 ##' @title Bring angle into range
-##' @param r Angle to bring into range \code{(-pi, pi)}
+##' @param theta Angle to bring into range \code{(-pi, pi)}
 ##' @return Normalised angle
 ##' @author David Sterratt
 ##' @export

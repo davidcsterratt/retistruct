@@ -73,8 +73,8 @@ polarplot.default <- function(r, show.grid=TRUE,
 ##' @title Plot projection of an object
 ##' @param r Object such as a \code{\link{ReconstructedOutline}}
 ##' @param ... Other parameters; see
-##' \code{\link{projection.ReconstructedOutline}} and
-##' \code{\link{projection.ReconstructedDataset}}
+##' \code{\link{projection.reconstructedOutline}} and
+##' \code{\link{projection.reconstructedDataset}}
 ##' @author David Sterratt
 ##' @export
 projection <- function(r, ...) {

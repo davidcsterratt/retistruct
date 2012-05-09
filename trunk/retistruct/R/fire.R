@@ -1,6 +1,34 @@
+##' This is an implmentation of the FIRE algorithm for structural
+##' relaxation put forward by Bitzek et al. (2006)
+##' @title The FIRE algorithm
+##' @param r Initial locations of particles
+##' @param force Force function
+##' @param restraint Restraint function
+##' @param m Masses of points
+##' @param dt Initial time step
+##' @param maxmove Maximum distance to move in any time step
+##' @param dtmax Maxiumum time step
+##' @param Nmin Number of steps after which to start increasing \code{dt}
+##' @param finc Fractional increase in \code{dt} per time step
+##' @param fdec Fractional decrease in \code{dt} after a stop
+##' @param astart Starting value of \code{a} after a stop
+##' @param fa Fraction of \code{a} to retain after each step
+##' @param a Initial value of \code{a}
+##' @param nstep Maxiumum number of steps
+##' @param tol Tolerance - if RMS force is below this value, stop and
+##' report convergence
+##' @param verbose If \code{TRUE} report progress verbosely
+##' @return List containing \code{x}, the positions of the points,
+##' \code{conv}, which is 0 if convergence as occured and 1 otherwise,
+##' and \code{frms}, the root mean square of the forces on the
+##' particles.
+##' @references Bitzek, E., Koskinen, P., G\"{a}hler, F., Moseler, M.,
+##' and Gumbsch, P. (2006). Structural relaxation made
+##' simple. Phys. Rev. Lett., 97:170201.
+##' @author David Sterratt
 fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
                  Nmin=5, finc=1.1, fdec=0.5, astart=0.1, fa=0.99, a=0.1,
-                 nstep=100, tol=0.00001, verbose=FALSE, mm=NULL) {
+                 nstep=100, tol=0.00001, verbose=FALSE) {
   Nsteps <- 0
   conv <- 1
   # Initialise velocity
