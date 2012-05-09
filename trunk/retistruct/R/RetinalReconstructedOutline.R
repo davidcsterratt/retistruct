@@ -18,6 +18,7 @@ RetinalReconstructedOutline <- function(r) {
   return(r)
 }
 
+##' @method getIms retinalReconstructedOutline
 ##' @export
 getIms.retinalReconstructedOutline <- function(r) {
   ims <- NextMethod()
@@ -37,6 +38,7 @@ getIms.retinalReconstructedOutline <- function(r) {
 ##' @return \code{Dss}
 ##' @method getTss retinalReconstructedOutline
 ##' @author David Sterratt
+##' @method getTss retinalReconstructedOutline
 ##' @export
 getTss.retinalReconstructedOutline <- function(r) {
   Tss <- NextMethod()
@@ -48,6 +50,7 @@ getTss.retinalReconstructedOutline <- function(r) {
   return(Tss)
 }
 
+##' @method retinalReconstructedOutline
 ##' @export
 projection.retinalReconstructedOutline <- function(r, show.grid=TRUE,
                                                    grid.col="gray",
