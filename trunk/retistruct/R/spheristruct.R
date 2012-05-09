@@ -797,7 +797,7 @@ optimiseMapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
       dev.set(dev.polar)
       r$phi <- phi
       r$lambda <- lambda
-      polarplot(r)
+      projection(r)
     }
   }
 
@@ -903,7 +903,7 @@ solveMappingCart <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
       dev.set(dev.polar)
       r$phi <- phi
       r$lambda <- lambda
-      polarplot(r)
+      projection(r)
     }
   }
 

@@ -93,7 +93,7 @@ r <- RetinalReconstructedDataset(r)
 
 ## Plot data in polar coordinates and flattend retina
 par(mfg=c(2, 1))
-polarplot(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
+projection(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
 mtext("Fi", adj=0, font=2, line=-0.9)
 
 par(mfg=c(3, 1))

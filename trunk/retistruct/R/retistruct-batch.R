@@ -528,7 +528,7 @@ retistruct.batch.plot.ods <- function(summ) {
 
   summlm <- lm(OD.res ~ sqrt.E, summ)
   print(summary(summlm))
-  polarplot(r, datapoint.contours=FALSE)
+  projection(r, datapoint.contours=FALSE)
   ##with(summ, plot(sqrt.E, OD.res))
   ##abline(summlm)
   

@@ -30,7 +30,7 @@ flatplot(r.good, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints
 mtext("B", adj=0, font=2, line=-0.9)
 flatplot(r.good, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
 mtext("C", adj=0, font=2, line=-0.9)
-polarplot(r.good, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
+projection(r.good, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
 mtext("D", adj=0, font=2, line=-0.9)
 
 ## Bad Retina
@@ -43,7 +43,7 @@ flatplot(r.bad, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=
 mtext("F", adj=0, font=2, line=-0.9)
 flatplot(r.bad, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
 mtext("G", adj=0, font=2, line=-0.9)
-polarplot(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
+projection(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
 mtext("H", adj=0, font=2, line=-0.9)
 
 ## Printing

@@ -36,37 +36,6 @@ flatplot <- function(x, axt="n", ylim=NULL, ...) {
 flatplot.default <- function(x, axt="n", ylim=NULL, ...) {
 }
 
-##' Plot polar representation of object
-##'
-##' @title Polar plot of object
-##' @param r \code{\link{ReconstructedOutline}},
-##' \code{\link{ReconstructedDataset}}  object
-##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
-##' @param grid.col Colour of the minor grid lines
-##' @param grid.bg Background colour of the grid
-##' @param grid.int.minor Interval between minor grid lines in degrees
-##' @param grid.int.major Interval between major grid lines in degrees
-##' @param flip.horiz Wether to flip about a horizontal axis
-##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other plotting parameters
-##' @author David Sterratt
-##' @export
-polarplot <- function(r, show.grid=TRUE,
-                       grid.col="gray", grid.bg="transparent", 
-                       grid.int.minor=15, grid.int.major=45,
-                       flip.horiz=FALSE,
-                       labels=c(0, 90, 180, 270),...) {
-  UseMethod("polarplot")
-}
-
-##' @export
-polarplot.default <- function(r, show.grid=TRUE,
-                               grid.col="gray", grid.bg="transparent", 
-                               grid.int.minor=15, grid.int.major=45,
-                               flip.horiz=FALSE, labels=c(0, 90, 180, 270),
-                               ...) {
-  plot.new()
-}
 
 ##' Generic function for plotting projections of objects.
 ##'

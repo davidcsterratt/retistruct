@@ -129,7 +129,7 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-polar-kde", suffix, sep="")),
            width=width, height=height)
     par(mar=c(2, 2, 2, 2))
-    polarplot(r, datapoint.contours=TRUE, grouped.contours=FALSE)
+    projection(r, datapoint.contours=TRUE, grouped.contours=FALSE)
     title(paste("KDE:", dataset))
     if (!is.null(r$EOD)) {
       polartext(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
@@ -140,7 +140,7 @@ retistruct.cli.figure <- function(dataset,
     dev(file=file.path(outputdir, paste(basepath, "-polar-kr", suffix, sep="")),
            width=width, height=height)
     par(mar=c(2, 2, 2, 2))
-    polarplot(r, datapoint.contours=FALSE, grouped.contours=TRUE)
+    projection(r, datapoint.contours=FALSE, grouped.contours=TRUE)
     title(paste("KR:", dataset))
     if (!is.null(r$EOD)) {
       polartext(paste("OD displacement:", format(r$EOD, digits=3, nsmall=2), "deg"))
