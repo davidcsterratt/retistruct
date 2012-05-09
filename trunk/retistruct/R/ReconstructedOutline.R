@@ -640,20 +640,45 @@ polarplot.reconstructedOutline <- function(r, show.grid=TRUE,
   }
 }
 
+##' Draw a projection of a \code{\link{ReconstructedOutline}}. This method sets up
+##' the grid lines and the angular labels and draws the image.
+##'
+##' @title  Projection of a reconstructed outline
+##' @param r \code{ReconstructedOutline} object
+##' @param transform Transform function to apply to spherical coordinates
+##' before rotation
+##' @param projection Projection in which to display object,
+##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
+##' @param axisdir Direction of axis (North pole) of sphere in external space
+##' @param lambdalim Limits of longitude (in degrees) to display
+##' @param lambda0 Central meridian to display
+##' @param philim Limits of latitude (in degrees) to display
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
+##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid.col Colour of the minor grid lines
+##' @param grid.bg Background colour of the grid
+##' @param grid.int.minor Interval between minor grid lines in degrees
+##' @param grid.int.major Interval between major grid lines in degrees
+##' @param ... Other parameters, including graphics ones. The option
+##' \code{image} causes an image to be plotted if \code{TRUE}. The
+##' option \code{preserve.area} creates an serving plot (default
+##' \code{FALSE}).
+##' @method projection reconstructedOutline
 ##' @export
-projection.reconstructedOutline <- function(r, show.grid=TRUE,
+projection.reconstructedOutline <- function(r,
+                                            transform=identity,
+                                            projection=azimuthal.equalarea,
+                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
+                                            lambdalim=c(-180, 180),      # Limits of longitude
+                                            lambda0=0,                   # Central meridian
+                                            philim=c(-90, 90),           # Limits of lattitude
+                                            labels=c(0, 90, 180, 270),
+                                            show.grid=TRUE,
                                             grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45,
-                                            flip.horiz=FALSE,
-                                            transform=identity,
-                                            projection=azimuthal.equalarea,
-                                            philim=c(-90, 90),           # Limits of lattitude
-                                            lambdalim=c(-180, 180),      # Limits of longitude
-                                            lambda0=0,                   # Central meridian
-                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
-                                            labels=c(0, 90, 180, 270), ...) {
+                                            ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
   lambda.label.off <- 8                 # Offset of longitude labels

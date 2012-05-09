@@ -497,39 +497,32 @@ polarplot.reconstructedDataset <- function(r, show.grid=TRUE,
   }
 }
 
-##' Plot datapoints in polar plot
+##' Plot projection of data points.
 ##'
 ##' @title Polar plot of reconstructed dataset
 ##' @param r \code{\link{ReconstructedDataset}} object
-##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
-##' @param grid.col Colour of the minor grid lines
-##' @param grid.bg Background colour of the grid
-##' @param grid.int.minor Interval between minor grid lines in degrees
-##' @param grid.int.major Interval between major grid lines in degrees
-##' @param flip.horiz Wether to flip about a horizontal axis
-##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param ... Other graphics parameters.  The option
-##' \code{preserve.area} creates an area-preserving plot (default
-##' \code{FALSE}). The option \code{datapoints} causes datapoints to
-##' be plotted (default \code{TRUE}).  The option
+##' @param transform Transform function to apply to spherical coordinates
+##' before rotation
+##' @param projection Projection in which to display object,
+##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
+##' @param axisdir Direction of axis (North pole) of sphere in external space
+##' @param lambdalim Limits of longitude (in degrees) to display
+##' @param lambda0 Central meridian to display
+##' @param ... Other parameters.  The option \code{datapoints} causes
+##' datapoints to plotted (default \code{TRUE}).  The option
 ##' \code{datapoint.means} causes datapoint means to be plotted
-##' (default \code{TRUE}).  The option \code{landmakrs} causes
+##' (default \code{TRUE}).  The option \code{landmarks} causes
 ##' landmarks to be plotted (default \code{TRUE}). 
 ##' @method projection reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-projection.reconstructedDataset <- function(r, show.grid=TRUE,
-                                            grid.col="gray",
-                                            grid.bg="transparent", 
-                                            grid.int.minor=15,
-                                            grid.int.major=45,
-                                            flip.horiz=FALSE,
+projection.reconstructedDataset <- function(r, 
                                             transform=identity,
                                             projection=azimuthal.equalarea,
+                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
                                             lambdalim=c(-180, 180),      # Limits of longitude
                                             lambda0=0,                          # Central meridian
-                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
-                                            labels=c(0, 90, 180, 270), ...) {
+                                            ...) {
   NextMethod()
 
   args <- list(...)
