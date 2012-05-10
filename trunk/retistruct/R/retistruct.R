@@ -127,9 +127,7 @@ retistruct.read.markup <- function(a, error=stop) {
     M.df <- read.csv(markupfile)
     ## Get strings out before converting to vector
     if ("side" %in% names(M.df)) {
-      print("side")
       a$side <- M.df[1,"side"]
-      print(a$side)
     }
     ## Convert to vector
     M <- sapply(M.df, function(x) x)
