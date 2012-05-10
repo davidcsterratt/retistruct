@@ -235,6 +235,7 @@ h.open <- function(h, ...) {
   }, warning=h.warning, error=h.warning)
   svalue(g.dataset) <- a$dataset 
   svalue(g.phi0d)   <- a$phi0*180/pi
+  svalue(g.eye)     <- a$side
   
   ## Read the reconstruction data
   withCallingHandlers({
@@ -454,8 +455,8 @@ retistruct <- function(guiToolkit="RGtk2") {
                             handler=h.flipdv, container=g.data.frame)
   g.eye.frame <<- gframe("Eye", container=g.editor, horizontal=FALSE)
   g.eye <<- gradio(c("Right", "Left"),
-                            checked=c(FALSE),
-                            handler=h.eye, container=g.eye.frame)
+                   checked=c(FALSE),
+                   handler=h.eye, container=g.eye.frame)
   
   ## Editing of phi0
   g.phi0d.frame <<- gframe("Phi0", container=g.editor)

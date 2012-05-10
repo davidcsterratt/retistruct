@@ -123,9 +123,16 @@ retistruct.read.markup <- function(a, error=stop) {
   ## Read in markup file
   markupfile <- file.path(a$dataset, "markup.csv")
   if (file.exists(markupfile)) {
-    M.old <- read.csv(markupfile)
+    ## read.csv() returns a data frame
+    M.df <- read.csv(markupfile)
+    ## Get strings out before converting to vector
+    if ("side" %in% names(M.df)) {
+      print("side")
+      a$side <- M.df[1,"side"]
+      print(a$side)
+    }
     ## Convert to vector
-    M <- sapply(M.old, function(x) x)
+    M <- sapply(M.df, function(x) x)
     if (!is.na(M["iD"])) {
       M["iD"] <- convert.markup(M["iD"], P.old, a$P)
       a <- setFixedPoint(a, M["iD"], "Dorsal")
@@ -140,9 +147,6 @@ retistruct.read.markup <- function(a, error=stop) {
     }
     if ("DVflip" %in% names(M)) {
       a$DVflip <- M["DVflip"]
-      if ("side" %in% names(M)) {
-        a$side <- M["side"]
-      }
     }
   } else {
     error("Markup file M.csv doesn't exist.")
