@@ -620,10 +620,8 @@ projection.reconstructedOutline <- function(r,
                                       lambdalim=lambdalim*pi/180),
                            col=getOption("TF.col"), ...))
   }
-
-    
   
-  ## Longitude labels around rim
+  ## Longitude labels around rim - not on actual frame of reference!
   if (!is.null(labels)) {
     ## Longitudes (meridians) at which to plot at
     angles <- seq(0, by=2*pi/length(labels), len=length(labels))
@@ -653,9 +651,8 @@ projection.reconstructedOutline <- function(r,
   ## Lattitude Labels
   rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
   rs <- cbind(phi=rlabels*pi/180, lambda=lambda0)
-  rc <- projection(rotate.axis(transform(rs), axisdir*pi/180))
+  rc <- projection(rs)
   text(rc[,"x"], rc[,"y"], rlabels, xpd=TRUE, adj=c(1, 1))
-  ## text(label.pos, -maxlength/15, rlabels, xpd=TRUE, pos=2, offset=0)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just
