@@ -516,13 +516,15 @@ rotate.axis <- function(r, r0) {
   ## Find cartesian coordinates of points on sphere
   P <- sphere.spherical.to.sphere.cart(r[,"phi"], r[,"lambda"])
     
-  ## Rotate them about the equatorial axis through the zero meridian
+  ## Rotate them about the equatorial axis through the 0 degrees meridian
   ## (the x-axis)
   dp <- pi/2 - r0[,"phi"]
   P <- P %*% cbind(c(1, 0, 0),
                    c(0,  cos(dp), sin(dp)),
                    c(0, -sin(dp), cos(dp)))
-
+  ## This will have taken the North pole to (0, -90). Hence we need to
+  ## rotate by another 90 degrees to get to where we want to.
+  
   ## Then rotate about the z-axis
   dl <- r0[,"lambda"]
   P <- P %*% cbind(c(cos(dl), -sin(dl), 0),
