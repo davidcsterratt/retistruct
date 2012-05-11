@@ -428,7 +428,9 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(Sss)) {
         name <- names(Sss)[i]
         col <- ifelse(is.null(name) || (name==""), "default", name)
-        suppressWarnings(lines(projection(rotate.axis(transform(Dss.mean[[i]]), axisdir*pi/180)),
+        suppressWarnings(lines(projection(rotate.axis(transform(Sss[[i]]), axisdir*pi/180),
+                                          lines=TRUE,
+                                          lambdalim=lambdalim*pi/180),
                                col=r$cols[[col]], ...))
         ## FIXME: Might want to put lines argument here
       }
