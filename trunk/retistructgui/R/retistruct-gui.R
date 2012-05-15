@@ -486,10 +486,10 @@ retistruct <- function(guiToolkit="RGtk2") {
                                  action = NULL, container = g.transform.frame)
   g.axisdir.frame <<- gframe("Axis direction", container=g.f2, horizontal=TRUE)
   glabel("Elevation", container=g.axisdir.frame)
-  g.axis.el <<- gedit(0, handler=h.show, width=5, coerce.with=as.numeric,
+  g.axis.el <<- gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.axisdir.frame)
   glabel("Azimuth", container=g.axisdir.frame)
-  g.axis.az <<- gedit(0, handler=h.show, width=5, coerce.with=as.numeric,
+  g.axis.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.axisdir.frame)
   
   g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
