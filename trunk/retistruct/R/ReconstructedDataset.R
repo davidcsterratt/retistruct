@@ -338,7 +338,7 @@ getKR <- function(r) {
 ##' @author David Sterratt
 ##' @export
 projection.reconstructedDataset <- function(r, 
-                                            transform=identity,
+                                            transform=identity.transform,
                                             projection=azimuthal.equalarea,
                                             axisdir=cbind(phi=90, lambda=0), # Direction of axis
                                             lambdalim=c(-180, 180),      # Limits of longitude
@@ -358,7 +358,9 @@ projection.reconstructedDataset <- function(r,
     Dss <- getDss(r)
     if (length(Dss)) {
       for (i in 1:length(Dss)) {
-        suppressWarnings(points(projection(rotate.axis(transform(Dss[[i]]), axisdir*pi/180)),
+        suppressWarnings(points(projection(rotate.axis(transform(Dss[[i]],
+                                                                 phi0=r$phi0),
+                                                       axisdir*pi/180)),
                                 col=r$cols[[names(Dss)[i]]],
                                 pch=20, ...))
       }
@@ -370,7 +372,9 @@ projection.reconstructedDataset <- function(r,
     Dss.mean <- getDssMean(r)
     if (length(Dss.mean)) {
       for (i in 1:length(Dss.mean)) {
-        suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[i]]), axisdir*pi/180)),
+        suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[i]],
+                                                                 phi0=r$phi0),
+                                                       axisdir*pi/180)),
                                 bg=r$cols[[names(Dss.mean)[i]]], col="black",
                                 pch=23, cex=1.5, ...))
       }
@@ -385,7 +389,8 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(k)) {
         css <- k[[i]]$contours
         for(cs in css) {
-          lines(projection(rotate.axis(transform(cs), axisdir*pi/180),
+          lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
+                                       axisdir*pi/180),
                            lambdalim=lambdalim*pi/180, lines=TRUE),
                 col=r$cols[[names(k)[i]]])
         }
@@ -393,7 +398,8 @@ projection.reconstructedDataset <- function(r,
       }
       ## Plot locations of highest contours
       for (i in 1:length(k)) {
-        points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
+        points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
+                                      axisdir*pi/180)),
                pch=22, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
@@ -407,7 +413,8 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(k)) {
         css <- k[[i]]$contours
         for(cs in css) {
-          lines(projection(rotate.axis(transform(cs), axisdir*pi/180),
+          lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
+                                       axisdir*pi/180),
                            lambdalim=lambdalim*pi/180, lines=TRUE),
                 col=r$cols[[names(k)[i]]])
         }
@@ -415,7 +422,8 @@ projection.reconstructedDataset <- function(r,
       }
       ## Plot locations of highest contours
       for (i in 1:length(k)) {
-        points(projection(rotate.axis(transform(k[[i]]$maxs), axisdir*pi/180)),
+        points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
+                                      axisdir*pi/180)),
                pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
@@ -428,7 +436,9 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(Sss)) {
         name <- names(Sss)[i]
         col <- ifelse(is.null(name) || (name==""), "default", name)
-        suppressWarnings(lines(projection(rotate.axis(transform(Sss[[i]]), axisdir*pi/180),
+        suppressWarnings(lines(projection(rotate.axis(transform(Sss[[i]],
+                                                                phi0=r$phi0),
+                                                      axisdir*pi/180),
                                           lines=TRUE,
                                           lambdalim=lambdalim*pi/180),
                                col=r$cols[[col]], ...))

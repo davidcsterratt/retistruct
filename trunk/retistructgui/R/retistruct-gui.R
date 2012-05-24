@@ -328,8 +328,9 @@ getProjections <- function() {
 }
 
 getTransforms <- function() {
-    return(list("None"  =identity,
-                "Invert"=invert.sphere))
+    return(list("None"  =identity.transform,
+                "Invert"=invert.sphere,
+                "Invert to hemisphere"=invert.sphere.to.hemisphere))
 }
 
 ## Plot in edit pane

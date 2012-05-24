@@ -444,7 +444,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' @method projection reconstructedOutline
 ##' @export
 projection.reconstructedOutline <- function(r,
-                                            transform=identity,
+                                            transform=identity.transform,
                                             projection=azimuthal.equalarea,
                                             axisdir=cbind(phi=90, lambda=0), # Direction of axis
                                             lambdalim=c(-180, 180),      # Limits of longitude
@@ -546,7 +546,9 @@ projection.reconstructedOutline <- function(r,
     
     ## Transform the pixel coordinates and compute x and y positions
     ## of corners of pixels.
-    rc <- projection(rotate.axis(transform(ims), axisdir*pi/180), lambdalim=lambdalim*pi/180)
+    rc <- projection(rotate.axis(transform(ims, phi0=r$phi0),
+                                 axisdir*pi/180),
+                     lambdalim=lambdalim*pi/180)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
     
@@ -599,7 +601,7 @@ projection.reconstructedOutline <- function(r,
 
   ## Plot rim in visutopic space
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
-  rs.rot <- rotate.axis(transform(rs), axisdir*pi/180)
+  rs.rot <- rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
   ## r$axisdir = cbind(phi=0, lambda=-90)
   
@@ -607,7 +609,8 @@ projection.reconstructedOutline <- function(r,
         col=getOption("TF.col"))
 
   ## Projection of optic axis
-  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0)), axisdir*pi/180)
+  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0), phi0=r$phi0),
+                        axisdir*pi/180)
   points(projection(oa.rot),
          pch="*", col=getOption("TF.col"), cex=2)
   
@@ -615,7 +618,8 @@ projection.reconstructedOutline <- function(r,
   Tss <- getTss(r)
   for (Ts in Tss) {
     ## Plot
-    suppressWarnings(lines(projection(rotate.axis(transform(Ts), axisdir*pi/180),
+    suppressWarnings(lines(projection(rotate.axis(transform(Ts, phi0=r$phi0),
+                                                  axisdir*pi/180),
                                       lines=TRUE,
                                       lambdalim=lambdalim*pi/180),
                            col=getOption("TF.col"), ...))
@@ -635,8 +639,10 @@ projection.reconstructedOutline <- function(r,
     opt <- optimise(function(a) {
       rs0 <- cbind(phi=r$phi0,     lambda=angles[1])
       rs  <- cbind(phi=r$phi0 + a, lambda=angles[1])
-      rc0 <- projection(rotate.axis(transform(rs0), axisdir*pi/180))
-      rc  <- projection(rotate.axis(transform(rs), axisdir*pi/180))
+      rc0 <- projection(rotate.axis(transform(rs0, phi0=r$phi0),
+                                    axisdir*pi/180))
+      rc  <- projection(rotate.axis(transform(rs, phi0=r$phi0),
+                                    axisdir*pi/180))
       return((vecnorm(rc - rc0) - label.fax*abs(diff(xlim)))^2)
     }
                                 ,interval=c(1, 20)*pi/180)
@@ -644,7 +650,7 @@ projection.reconstructedOutline <- function(r,
 
     ## Now plot the labels themselves. Phew!!
     rs <- cbind(phi=r$phi0 + lambda.label.off, lambda=angles)
-    rc <- projection(rotate.axis(transform(rs), axisdir*pi/180))
+    rc <- projection(rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180))
     text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
   }
 
