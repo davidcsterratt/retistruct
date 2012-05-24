@@ -342,7 +342,8 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 ##' @param P locations of points on sphere as N-by-3 matrix with
 ##' labelled columns "X", "Y" and "Z"
 ##' @param R radius of sphere 
-##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of locations of points in spherical coordinates 
+##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of
+##' locations of points in spherical coordinates 
 ##' @author David Sterratt
 sphere.cart.to.sphere.spherical <- function(P, R=1) {
   return(cbind(phi   =asin(P[,"Z"]/R),
@@ -496,41 +497,52 @@ azel.to.sphere.colattitude <- function(r, r0) {
   return(out)
 }
 
-
-##' @title Rotate frame of reference
+##' This rotates points on sphere by specifying the direction its
+##' polar axis, i.e. the axis going through (90, 0), should point
+##' after (a) a rotation about an axis through the poins (0, 0) and
+##' (0, 180) and (b) rotation about the original polar axis.
+##' @title Rotate axis of sphere
 ##' @param r Coordinates of points in spherical coordinates
 ##' represented as  2 column matrix with column names \code{phi}
 ##' (lattitude) and \code{lambda} (longitude).
 ##' @param r0 Direction of the polar axis of the sphere on which to project
 ##' represented as a 2 column matrix of with column names \code{phi}
-##' (lattitude) and \code{lambda} (azimuth).
+##' (lattitude) and \code{lambda} (longitude).
 ##' @return 2-column matrix of spherical coordinates of points with
-##' column names \code{psi} (colattidude) and \code{lambda} (longitude).
+##' column names \code{phi} (lattidude) and \code{lambda} (longitude).
 ##' @author David Sterratt
 ##' @examples
-##' r0 <- cbind(alpha=0, theta=0)
+##' r0 <- cbind(phi=0, lambda=-pi/2)
 ##' r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
-##' azel.to.sphere.colattitude(r, r0)
+##' r <- cbind(phi=pi/2, lambda=0)
+##' rotate.axis(r, r0)
 ##' @export
 rotate.axis <- function(r, r0) {
+  ## If we are not changing the longitude of the main axis, do nothing
+  if (r0[,"phi"]==pi/2) {
+    return(r)
+  }
   ## Find cartesian coordinates of points on sphere
   P <- sphere.spherical.to.sphere.cart(r[,"phi"], r[,"lambda"])
-    
+  ## print(P)
+  
   ## Rotate them about the equatorial axis through the 0 degrees meridian
   ## (the x-axis)
   dp <- pi/2 - r0[,"phi"]
-  P <- P %*% cbind(c(1, 0, 0),
+  ## print(dp)
+  P <- P %*% rbind(c(1, 0, 0),
                    c(0,  cos(dp), sin(dp)),
                    c(0, -sin(dp), cos(dp)))
+  ## print(P)
   ## This will have taken the North pole to (0, -90). Hence we need to
   ## rotate by another 90 degrees to get to where we want to.
   
   ## Then rotate about the z-axis
-  dl <- r0[,"lambda"]
-  P <- P %*% cbind(c(cos(dl), -sin(dl), 0),
-                   c(sin(dl),  cos(dl), 0),
+  dl <- r0[,"lambda"] + pi/2
+  P <- P %*% rbind(c( cos(dl), sin(dl), 0),
+                   c(-sin(dl), cos(dl), 0),
                    c(0, 0, 1))
-
+  ##  print(P)
   colnames(P) <- c("X", "Y", "Z")
   return(sphere.cart.to.sphere.spherical(P))
 }
