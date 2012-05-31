@@ -14,12 +14,10 @@ Depends:
     foreign,
     R.matlab,
     ttutils,
-    tripack,
     RTriangle (>= 1.6-0.4),
     rgl,
     multicore,
-    png,
-    akima
+    png
 Collate:
     'AnnotatedOutline.R'
     'Dataset.R'

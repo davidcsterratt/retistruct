@@ -17,8 +17,6 @@ if (!require("R.matlab"))      install.packages("R.matlab")
 if (!require("ttutils"))       install.packages("ttutils")
 if (!require("multicore"))     install.packages("multicore")
 if (!require("png"))           install.packages("png")
-if (!require("akima"))         install.packages("akima")
-if (!require("tripack"))       install.packages("tripack")
 ## These lines needed while  Triangle and geometry only on R-Forge
 install.packages("RTriangle", repos="http://R-Forge.R-project.org")
 update.packages(Sys.getenv("R_LIBS_USER"))
