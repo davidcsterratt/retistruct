@@ -51,20 +51,13 @@ getTss.retinalReconstructedOutline <- function(r) {
 
 ##' @method projection retinalReconstructedOutline
 ##' @export
-projection.retinalReconstructedOutline <- function(r, show.grid=TRUE,
-                                                   grid.col="gray",
-                                                   grid.bg="transparent", 
-                                                   grid.int.minor=15,
-                                                   grid.int.major=45,
-                                                   flip.horiz=FALSE,
-                                                   transform=identity,
-                                                   projection=azimuthal.equalarea,
-                                                   lambdalim=c(-180, 180),      # Limits of longitude
-                                                   lambda0=0,                   # Central meridian
-                                                   axisdir=cbind(phi=90, lambda=0), # Direction of axis
-                                                   ...) {
+projection.retinalReconstructedOutline <-
+  function(r,
+           projection=azimuthal.equalarea,
+           ...) {
   philim <- c(-90, 90)
-  if (!identical(projection, sinusoidal)) {
+  if (!(identical(projection, sinusoidal) |
+        identical(projection, orthographic))) {
     philim <- c(-90, r$phi0*180/pi)
   }
   if (r$side=="Right") {

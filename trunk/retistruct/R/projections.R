@@ -1,19 +1,23 @@
 ##' @title Sinusoidal projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
 ##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
-##' @param lambda0 Coordinate of central meridian
+##' @param proj.centre Location of centre of projection as matrix with
+##' column names \code{phi} (elevation) and \code{lambda}
+##' (longitude). Currently only longitude is used by this function.
 ##' @param lambdalim Limits of longitude to plot
 ##' @param lines If this is \code{TRUE} create breaks of \code{NA}s
 ##' when lines cross the limits of longitude. This prevents lines
 ##' crossing the centre of the projection.
+##' @param ... Arguments not used by this projection.
 ##' @return Two-column matrix with columns labelled \code{x} and
 ##' \code{y} of locations of projection of coordinates on plane
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
 ##' \url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
 ##' @author David Sterratt
 ##' @export
-sinusoidal <- function(r, lambda0=0,
-                       lambdalim=NULL, lines=FALSE) {
+sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
+                       lambdalim=NULL, lines=FALSE, ...) {
+  lambda0 <- proj.centre[1, "lambda"]
   x <- (r[,"lambda"] - lambda0)*cos(r[,"phi"])
   y <- r[,"phi"]
   rc <- cbind(x=x, y=y)
@@ -25,6 +29,45 @@ sinusoidal <- function(r, lambda0=0,
       rc[inds,] <- NA
     }
   }
+  return(rc)
+}
+
+##' @title Orthographic projection
+##' @param r Lattitude-longitude coordinates in a matrix with columns
+##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
+##' @param proj.centre Location of centre of projection as matrix with
+##' column names \code{phi} (elevation) and \code{lambda} (longitude).
+##' @param ... Arguments not used by this projectio.n
+##' @return Two-column matrix with columns labelled \code{x} and
+##' \code{y} of locations of projection of coordinates on plane
+##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
+##' \url{http://mathworld.wolfram.com/OrthographicProjection.html}
+##' @author David Sterratt
+##' @export
+orthographic <- function(r,
+                         proj.centre=cbind(phi=0, lambda=0),
+                         ...) {
+  lambda0 <- proj.centre[1, "lambda"]
+  phi0    <- proj.centre[1, "phi"]
+  
+  ## First translate to Cartesian coordinates with only the rotation
+  ## about the polar axis so that (0, lambda0) is at the centre of the
+  ## projection.
+  P <- cbind(x=cos(r[,"phi"])*sin(r[,"lambda"] - lambda0),
+             y=sin(r[,"phi"]),
+             z=cos(r[,"phi"])*cos(r[,"lambda"] - lambda0))
+
+  ## The rotate about the x axis so that (phi0, lambda0) is at the
+  ## centre
+  P <- P %*% rbind(c(1, 0, 0),
+                   c(0,  cos(phi0), sin(phi0)),
+                   c(0, -sin(phi0), cos(phi0)))
+  
+  ## Projection onto the x-y plane
+  rc <- cbind(x=P[, 1], y=P[, 2])
+
+  ## Anything with negative z is obsured
+  rc[P[, 3] < 0,] <- NA
   return(rc)
 }
 
@@ -93,3 +136,4 @@ azimuthal.conformal <- function(r, ...) {
   y <- rho*sin(r[,"lambda"])
   return(cbind(x=x, y=y))
 }
+

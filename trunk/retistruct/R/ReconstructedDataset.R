@@ -2,7 +2,8 @@
 ##' landmarks \code{Ss} in  spherical coordinates.
 ##'
 ##' @title Constructor for RecontructedDataset object
-##' @param r Object that of clases \code{reconstructedOutline} and \code{dataset}.
+##' @param r Object that of clases \code{reconstructedOutline} and
+##' \code{dataset}.
 ##' @param report Function used to report progress.
 ##' @return \code{\link{ReconstructedDataset}} object containing the input
 ##' information and the following modified and extra information:
@@ -324,26 +325,28 @@ getKR <- function(r) {
 ##' @param r \code{\link{ReconstructedDataset}} object
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
+##' @param axisdir Direction of axis (North pole) of sphere in external space
 ##' @param projection Projection in which to display object,
 ##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
-##' @param axisdir Direction of axis (North pole) of sphere in external space
+##' @param proj.centre Location of centre of projection as matrix with
+##' column names \code{phi} (elevation) and \code{lambda} (longitude).
 ##' @param lambdalim Limits of longitude (in degrees) to display
-##' @param lambda0 Central meridian to display
 ##' @param ... Other parameters.  The option \code{datapoints} causes
-##' datapoints to plotted (default \code{TRUE}).  The option
-##' \code{datapoint.means} causes datapoint means to be plotted
-##' (default \code{TRUE}).  The option \code{landmarks} causes
-##' landmarks to be plotted (default \code{TRUE}). 
+##'tapoints to plotted (default \code{TRUE}).  The option
+##'ode{datapoint.means} causes datapoint means to be plotted
+##'efault \code{TRUE}).  The option \code{landmarks} causes
+##'ndmarks to be plotted (default \code{TRUE}). 
 ##' @method projection reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-projection.reconstructedDataset <- function(r, 
-                                            transform=identity.transform,
-                                            projection=azimuthal.equalarea,
-                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
-                                            lambdalim=c(-180, 180),      # Limits of longitude
-                                            lambda0=0,                          # Central meridian
-                                            ...) {
+projection.reconstructedDataset <-
+  function(r, 
+           transform=identity.transform,
+           axisdir=cbind(phi=90, lambda=0),
+           projection=azimuthal.equalarea,
+           proj.centre=cbind(phi=0, lambda=0),
+           lambdalim=c(-180, 180),
+           ...) {
   NextMethod()
 
   args <- list(...)
@@ -360,7 +363,8 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(Dss)) {
         suppressWarnings(points(projection(rotate.axis(transform(Dss[[i]],
                                                                  phi0=r$phi0),
-                                                       axisdir*pi/180)),
+                                                       axisdir*pi/180),
+                                           proj.centre=pi/180*proj.centre),
                                 col=r$cols[[names(Dss)[i]]],
                                 pch=20, ...))
       }
@@ -374,7 +378,8 @@ projection.reconstructedDataset <- function(r,
       for (i in 1:length(Dss.mean)) {
         suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[i]],
                                                                  phi0=r$phi0),
-                                                       axisdir*pi/180)),
+                                                       axisdir*pi/180),
+                                           proj.centre=pi/180*proj.centre),
                                 bg=r$cols[[names(Dss.mean)[i]]], col="black",
                                 pch=23, cex=1.5, ...))
       }
@@ -391,7 +396,8 @@ projection.reconstructedDataset <- function(r,
         for(cs in css) {
           lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
                                        axisdir*pi/180),
-                           lambdalim=lambdalim*pi/180, lines=TRUE),
+                           lambdalim=lambdalim*pi/180, lines=TRUE,
+                           proj.centre=pi/180*proj.centre),
                 col=r$cols[[names(k)[i]]])
         }
         ## FIXME: contours need to be labelled
@@ -399,7 +405,8 @@ projection.reconstructedDataset <- function(r,
       ## Plot locations of highest contours
       for (i in 1:length(k)) {
         points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
-                                      axisdir*pi/180)),
+                                      axisdir*pi/180),
+                          proj.centre=pi/180*proj.centre),
                pch=22, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
@@ -415,7 +422,8 @@ projection.reconstructedDataset <- function(r,
         for(cs in css) {
           lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
                                        axisdir*pi/180),
-                           lambdalim=lambdalim*pi/180, lines=TRUE),
+                           lambdalim=lambdalim*pi/180, lines=TRUE,
+                           proj.centre=pi/180*proj.centre),
                 col=r$cols[[names(k)[i]]])
         }
         ## FIXME: contours need to be labelled
@@ -423,7 +431,8 @@ projection.reconstructedDataset <- function(r,
       ## Plot locations of highest contours
       for (i in 1:length(k)) {
         points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
-                                      axisdir*pi/180)),
+                                      axisdir*pi/180),
+                          proj.centre=pi/180*proj.centre),
                pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
       }
     }
@@ -440,7 +449,8 @@ projection.reconstructedDataset <- function(r,
                                                                 phi0=r$phi0),
                                                       axisdir*pi/180),
                                           lines=TRUE,
-                                          lambdalim=lambdalim*pi/180),
+                                          lambdalim=lambdalim*pi/180,
+                                          proj.centre=pi/180*proj.centre),
                                col=r$cols[[col]], ...))
         ## FIXME: Might want to put lines argument here
       }

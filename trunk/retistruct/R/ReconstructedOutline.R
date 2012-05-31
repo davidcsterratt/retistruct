@@ -427,11 +427,14 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' @param r \code{ReconstructedOutline} object
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
+##' @param axisdir Direction of axis (North pole) of sphere in
+##' external space as matrix with column names \code{phi} (elevation)
+##' and \code{lambda} (longitude).
 ##' @param projection Projection in which to display object,
 ##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
-##' @param axisdir Direction of axis (North pole) of sphere in external space
+##' @param proj.centre Location of centre of projection as matrix with
+##' column names \code{phi} (elevation) and \code{lambda} (longitude).
 ##' @param lambdalim Limits of longitude (in degrees) to display
-##' @param lambda0 Central meridian to display
 ##' @param philim Limits of latitude (in degrees) to display
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
@@ -440,23 +443,24 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param ... Other parameters, including graphics ones. The option
-##' \code{image} causes an image to be plotted if \code{TRUE}.
+##'{image} causes an image to be plotted if \code{TRUE}.
 ##' @method projection reconstructedOutline
 ##' @export
-projection.reconstructedOutline <- function(r,
-                                            transform=identity.transform,
-                                            projection=azimuthal.equalarea,
-                                            axisdir=cbind(phi=90, lambda=0), # Direction of axis
-                                            lambdalim=c(-180, 180),      # Limits of longitude
-                                            lambda0=0,                   # Central meridian
-                                            philim=c(-90, 90),           # Limits of lattitude
-                                            labels=c(0, 90, 180, 270),
-                                            show.grid=TRUE,
-                                            grid.col="gray",
-                                            grid.bg="transparent", 
-                                            grid.int.minor=15,
-                                            grid.int.major=45,
-                                            ...) {
+projection.reconstructedOutline <-
+  function(r,
+           transform=identity.transform,
+           axisdir=cbind(phi=90, lambda=0),
+           projection=azimuthal.equalarea,
+           proj.centre=cbind(phi=0, lambda=0),
+           lambdalim=c(-180, 180),
+           philim=c(-90, 90),          
+           labels=c(0, 90, 180, 270),
+           show.grid=TRUE,
+           grid.col="gray",
+           grid.bg="transparent", 
+           grid.int.minor=15,
+           grid.int.major=45,
+           ...) {
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
 
@@ -483,9 +487,11 @@ projection.reconstructedOutline <- function(r,
 
   ## Compute the minor and and major parallels to draw
   paras.min <- projection(pi/180*cbind(phi   =as.vector(outer(c(lambdas, NA)*0, phis.min, FUN="+")),
-                                       lambda=as.vector(outer(c(lambdas, NA), phis.min*0, FUN="+"))))
+                                       lambda=as.vector(outer(c(lambdas, NA), phis.min*0, FUN="+"))),
+                          proj.centre=pi/180*proj.centre)
   paras.maj <- projection(pi/180*cbind(phi   =as.vector(outer(c(lambdas, NA)*0, phis.maj, FUN="+")),
-                                       lambda=as.vector(outer(c(lambdas, NA), phis.maj*0, FUN="+"))))
+                                       lambda=as.vector(outer(c(lambdas, NA), phis.maj*0, FUN="+"))),
+                          proj.centre=pi/180*proj.centre)
 
   ## Lines of longitude (meridians)
 
@@ -502,9 +508,11 @@ projection.reconstructedOutline <- function(r,
 
   ## Compute the minor and and major meridians to draw
   merids.min <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.min*0, FUN="+")),
-                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+"))))
+                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.min, FUN="+"))),
+                           proj.centre=pi/180*proj.centre)
   merids.maj <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
-                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+"))))
+                                        lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+"))),
+                           proj.centre=pi/180*proj.centre)
   
   ## Set up the plot region
   xlim <- range(na.omit(rbind(paras.min, paras.maj))[,"x"])
@@ -548,7 +556,8 @@ projection.reconstructedOutline <- function(r,
     ## of corners of pixels.
     rc <- projection(rotate.axis(transform(ims, phi0=r$phi0),
                                  axisdir*pi/180),
-                     lambdalim=lambdalim*pi/180)
+                     lambdalim=lambdalim*pi/180,
+                     proj.centre=pi/180*proj.centre)
     xpos <- matrix(rc[,"x"], M+1, N+1)
     ypos <- matrix(rc[,"y"], M+1, N+1)
     
@@ -605,13 +614,14 @@ projection.reconstructedOutline <- function(r,
   ## "Home" position for a cyclops looking ahead
   ## r$axisdir = cbind(phi=0, lambda=-90)
   
-  lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE),
+  lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
+                   proj.centre=pi/180*proj.centre),
         col=getOption("TF.col"))
 
   ## Projection of optic axis
   oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0), phi0=r$phi0),
                         axisdir*pi/180)
-  points(projection(oa.rot),
+  points(projection(oa.rot, proj.centre=pi/180*proj.centre),
          pch="*", col=getOption("TF.col"), cex=2)
   
   ## Plot outline
@@ -621,7 +631,8 @@ projection.reconstructedOutline <- function(r,
     suppressWarnings(lines(projection(rotate.axis(transform(Ts, phi0=r$phi0),
                                                   axisdir*pi/180),
                                       lines=TRUE,
-                                      lambdalim=lambdalim*pi/180),
+                                      lambdalim=lambdalim*pi/180,
+                                      proj.centre=pi/180*proj.centre),
                            col=getOption("TF.col"), ...))
   }
   
@@ -640,9 +651,11 @@ projection.reconstructedOutline <- function(r,
       rs0 <- cbind(phi=r$phi0,     lambda=angles[1])
       rs  <- cbind(phi=r$phi0 + a, lambda=angles[1])
       rc0 <- projection(rotate.axis(transform(rs0, phi0=r$phi0),
-                                    axisdir*pi/180))
+                                    axisdir*pi/180),
+                        proj.centre=pi/180*proj.centre)
       rc  <- projection(rotate.axis(transform(rs, phi0=r$phi0),
-                                    axisdir*pi/180))
+                                    axisdir*pi/180),
+                        proj.centre=pi/180*proj.centre)
       return((vecnorm(rc - rc0) - label.fax*abs(diff(xlim)))^2)
     }
                                 ,interval=c(1, 20)*pi/180)
@@ -650,14 +663,15 @@ projection.reconstructedOutline <- function(r,
 
     ## Now plot the labels themselves. Phew!!
     rs <- cbind(phi=r$phi0 + lambda.label.off, lambda=angles)
-    rc <- projection(rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180))
+    rc <- projection(rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180),
+                     proj.centre=pi/180*proj.centre)
     text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
   }
 
   ## Lattitude Labels
   rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
-  rs <- cbind(phi=rlabels*pi/180, lambda=lambda0)
-  rc <- projection(rs)
+  rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
+  rc <- projection(rs, proj.centre=pi/180*proj.centre)
   text(rc[,"x"], rc[,"y"], rlabels, xpd=TRUE, adj=c(1, 1))
 }
 
