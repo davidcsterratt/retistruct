@@ -205,11 +205,21 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
   res <- 100
 
   ## Helper function to get kde as locations gs in spherical coordinates
-  get.kde <- function(gs, mu, kappa, res) {
+  get.kde <- function(gs, mu, kappa, res, crop=TRUE) {
     ## Make space for the kernel density estimates
     gk <- fhat(gs, mu, kappa)
 
-    gk[gs[,"phi"] > phi0] <- NA
+    ## If we're cropping, were going to eliminate pixels whos centres
+    ## lie outwith the outline altogether. If crop isn't set, there's
+    ## a wee margin, that ought to allow all contours to lie outwith
+    ## the outline.
+    if (crop) {
+      gk[gs[,"phi"] > phi0] <- NA
+    }
+    ## else {
+    ##  gk[gs[,"phi"] > phi0 + 2/res*(phi0+pi/2)] <- 0
+    ## }
+
     ## Put the estimates back into a matrix. The matrix is filled up
     ## column-wise, so the matrix elements should match the elements of
     ## gxs and gys
@@ -222,10 +232,11 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
   KDE <- list()
   if (length(Dss) > 0) {
     ## First create a grid in Cartesian coordinates with
-    ## area-preserving coords
-    gpa <- create.polar.cart.grid(TRUE, res, phi0)
+    ## area-preserving coords. The extra margin on the grid is needed
+    ## so that the contour lines are continuous round the edge.
+    gpa <- create.polar.cart.grid(TRUE, res, min(phi0 + 0.2*(phi0+pi/2), pi/2))
     ## And one without area-preserving coords
-    g   <- create.polar.cart.grid(FALSE, res, phi0)
+    g   <- create.polar.cart.grid(FALSE, res, min(phi0 + 0.2*(phi0+pi/2), pi/2))
 
     ## Check conversion
     ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
@@ -238,12 +249,20 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         kappa <- compute.conc(Dss[[i]])
         
         ## Now we've found the concentration, let's try to estimate
-        ## and display the density over our polar representation of
-        ## the data points
+        ## and display the density at grid points on an azimuthal
+        ## equidistant projection (f) and on an aziumuthal equal-area
+        ## projection (fpa).
         fpa <- get.kde(gpa$s, Dss[[i]], kappa, res)
         f  <-  get.kde(g$s,   Dss[[i]], kappa, res)
         maxs   <- gpa$s[which.max(fpa),,drop=FALSE]
-        
+
+        ## The above estimates are set to NA outwith the outline. For
+        ## the purposes of computing smooth contours, this causes
+        ## jagged edges, so we also get uncropped versions there the
+        ## density spreads outwith the outline.
+        fpau <- get.kde(gpa$s, Dss[[i]], kappa, res, crop=FALSE)
+        fu  <-  get.kde(g$s,   Dss[[i]], kappa, res, crop=FALSE)
+
         ## Determine the value of gk that encloses 0.95 of the
         ## density.  To compute the density, we need to know the
         ## area of each little square, which is why we have used the
@@ -263,11 +282,11 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
                          h=180/pi/sqrt(kappa),
                          flevels=flevels,
                          maxs=maxs,
-                         g=  list(xs=g$xs,   ys=g$ys,   f=f  ),
-                         gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa))
+                         g=  list(xs=g$xs,   ys=g$ys,   f=f  , fu=fu),
+                         gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa, fu=fpau))
 
         ## Get contours in Cartesian space
-        cc <- contourLines(gpa$xs, gpa$ys, fpa, levels=flevels)
+        cc <- contourLines(gpa$xs, gpa$ys, fpau, levels=flevels)
         cs <- list()
         ## Must be careful, as there is a core function called labels
         labels <- rep(NA, length(cc))
@@ -279,6 +298,8 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
             ccj <- cbind(x=cc[[j]]$x, y=cc[[j]]$y)
             ## Convert back to Spherical coordinates
             cs[[j]] <- polar.cart.to.sphere.spherical(ccj, TRUE)
+            ## Push any points outwith the outline back into it
+            cs[[j]][cs[[j]][,"phi"] > phi0, "phi"] <- phi0
             labels[j] <- vols[which(flevels==cc[[j]]$level)]
           }
         }
