@@ -390,6 +390,8 @@ spherical.to.polar.area <- function(phi, R=1) {
 ##' @author David Sterratt
 ##' @export
 sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
+  ## FIXME: This function should be deprecated in favour of
+  ## azimuthal.equalarea and azimuthal.equidistant in projections.R
   rho <- NULL
   if (pa)
     preserve <- "area"
@@ -426,6 +428,9 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
 ##' @author David Sterratt
 ##' @export
 polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
+  ## FIXME: This function should be deprecated in favour of as-yet
+  ## unwritten functions azimuthal.equalarea.inverse and
+  ## azimuthal.equidistant.inverse in projections.R
   rho <- NULL
   if (pa)
     preserve <- "area"
@@ -632,7 +637,7 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   return(X)
 }
 
-##' @title Create grid on projection of hemisphere onto plain
+##' @title Create grid on projection of hemisphere onto plane
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
 ##' @param res Resolution of grid
 ##' @param phi0 Value of \code{phi0} at edge of grid
