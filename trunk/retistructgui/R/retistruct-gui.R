@@ -324,7 +324,8 @@ getProjections <- function() {
   return(list("Azimuthal Equidistant"=azimuthal.equidistant,
               "Azimuthal Equal Area" =azimuthal.equalarea,
               "Azimuthal Conformal"  =azimuthal.conformal,
-              "Sinusoidal"           =sinusoidal))
+              "Sinusoidal"           =sinusoidal,
+              "Orthographic"         =orthographic))
 }
 
 getTransforms <- function() {
@@ -374,6 +375,7 @@ do.plot <- function() {
                transform=getTransforms()[[svalue(g.transform)]],
                projection=getProjections()[[svalue(g.projection)]],
                axisdir=cbind(phi=svalue(g.axis.el), lambda=svalue(g.axis.az)),
+               proj.centre=cbind(phi=svalue(g.pc.el), lambda=svalue(g.pc.az)),
                datapoint.contours=("Contours" %in% svalue(g.show)),
                grouped.contours=("Group Contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
@@ -485,6 +487,14 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.transform.frame <<- gframe("Transform", container=g.f2.row1)
   g.transform <<- gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
                                  action = NULL, container = g.transform.frame)
+  g.pc.frame <<- gframe("Projection centre", container=g.f2, horizontal=TRUE)
+  glabel("Elevation", container=g.pc.frame)
+  g.pc.el <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
+                      container=g.pc.frame)
+  glabel("Azimuth", container=g.pc.frame)
+  g.pc.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
+                      container=g.pc.frame)
+
   g.axisdir.frame <<- gframe("Axis direction", container=g.f2, horizontal=TRUE)
   glabel("Elevation", container=g.axisdir.frame)
   g.axis.el <<- gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
