@@ -247,7 +247,7 @@ circle <- function(n=12, L=NULL) {
   } else {
     angles <- (cumsum(L)-L[1])/sum(L)*2*pi
   }
-  return(cbind(cos(angles), sin(angles)))
+  return(cbind(x=cos(angles), y=sin(angles)))
 }
 
 ##' Find the interections of the plane defined by the normal \code{n} and the

@@ -1,6 +1,8 @@
 ##' @title Sinusoidal projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
-##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
+##' labelled \code{phi} (lattitude) and \code{lambda}
+##' (longitude). Alternatively string "boundary", indicating that
+##' boundary of projection should be drawn.
 ##' @param proj.centre Location of centre of projection as matrix with
 ##' column names \code{phi} (elevation) and \code{lambda}
 ##' (longitude). Currently only longitude is used by this function.
@@ -17,6 +19,9 @@
 ##' @export
 sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
                        lambdalim=NULL, lines=FALSE, ...) {
+  if (is.character(r) & identical(r, "boundary")) {
+    return(cbind(x=NA, y=NA))
+  }
   lambda0 <- proj.centre[1, "lambda"]
   x <- (r[,"lambda"] - lambda0)*cos(r[,"phi"])
   y <- r[,"phi"]
@@ -47,6 +52,9 @@ sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
 orthographic <- function(r,
                          proj.centre=cbind(phi=0, lambda=0),
                          ...) {
+  if (is.character(r) & identical(r, "boundary")) {
+    return(circle(360))
+  }
   lambda0 <- proj.centre[1, "lambda"]
   phi0    <- proj.centre[1, "phi"]
   
@@ -88,6 +96,9 @@ orthographic <- function(r,
 ##' University Press, Cambridge, UK.
 ##' @export
 azimuthal.equalarea <- function(r, ...) {
+  if (is.character(r) & identical(r, "boundary")) {
+    return(cbind(x=NA, y=NA))
+  }
   rho <- sqrt(2*(1 + sin(r[,"phi"])))
   x <- rho*cos(r[,"lambda"])
   y <- rho*sin(r[,"lambda"])
@@ -108,6 +119,9 @@ azimuthal.equalarea <- function(r, ...) {
 ##' \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}  
 ##' @export
 azimuthal.equidistant <- function(r, ...) {
+  if (is.character(r) & identical(r, "boundary")) {
+    return(cbind(x=NA, y=NA))
+  }
   rho <- pi/2 + r[,"phi"]
   x <- rho*cos(r[,"lambda"])
   y <- rho*sin(r[,"lambda"])
@@ -131,6 +145,9 @@ azimuthal.equidistant <- function(r, ...) {
 ##' University Press, Cambridge, UK.
 ##' @export
 azimuthal.conformal <- function(r, ...) {
+  if (is.character(r) & identical(r, "boundary")) {
+    return(cbind(x=NA, y=NA))
+  }
   rho <- tan(pi/4 + r[,"phi"]/2)
   x <- rho*cos(r[,"lambda"])
   y <- rho*sin(r[,"lambda"])

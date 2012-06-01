@@ -606,6 +606,10 @@ projection.reconstructedOutline <-
     ## Major lines of latitude on top of all minor lines
     lines(paras.maj,  col="black")
     lines(merids.maj, col="black")
+
+    ## Boundary of projection
+    boundary <- projection("boundary")
+    polygon(boundary[,"x"], boundary[,"y"], col="black")
   }
 
   ## Plot rim in visutopic space
