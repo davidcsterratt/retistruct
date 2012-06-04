@@ -233,7 +233,7 @@ h.open <- function(h, ...) {
   withCallingHandlers({
     a <<- retistruct.read.markup(a, error=message)
   }, warning=h.warning, error=h.warning)
-  svalue(g.dataset) <- a$dataset 
+  svalue(g.win) <- paste(version.string(), "-" ,a$dataset)
   svalue(g.phi0d)   <- a$phi0*180/pi
   svalue(g.eye)     <- a$side
   
@@ -413,6 +413,13 @@ h.warning <- function(e) {
   invokeRestart("muffleWarning")
 }
 
+version.string <- function() {
+  return(paste("Retistruct ",
+               packageDescription("retistruct", fields="Version"),
+               " (Revision ", retistruct.global.revision, ")",
+               sep=""))
+}
+
 ## The GUI itself
 retistruct <- function(guiToolkit="RGtk2") {
   options(guiToolkit=guiToolkit)
@@ -430,10 +437,7 @@ retistruct <- function(guiToolkit="RGtk2") {
   ##
   ## GUI Layout
   ## 
-  g.win <<- gwindow(paste("Retistruct ",
-                          packageDescription("retistruct", fields="Version"),
-                          " (Revision ", retistruct.global.revision, ")",
-                          sep=""))
+  g.win <<- gwindow(version.string())
 
   g.rows <<- ggroup(horizontal=FALSE, container=g.win)
   ## Toolbar in row 1
@@ -442,12 +446,6 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.reconstruct  <<- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
   g.toolbar <<- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
                          container=g.rows, style="both")
-
-  ## Name of dataset in row 2
-  g.dataset.row <<- ggroup(container=g.rows)
-  g.dataset <<- glabel("No dataset selected", anchor=0, container=g.dataset.row)
-  addSpring(g.dataset.row)
-  ## enabled(g.dataset) <<- FALSE
 
   ## Body of interface
   g.body <<- ggroup(container=g.rows)
