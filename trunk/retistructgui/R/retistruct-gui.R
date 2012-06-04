@@ -8,7 +8,7 @@ enable.group <- function(widgets, state=TRUE) {
 enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d, g.mark.od,
-                 g.phi0d, g.show, g.data, g.eye,
+                 g.phi0d, g.show, g.edit.show, g.data, g.eye,
                  g.print1, g.print2), state)
   if (state) 
     enable.group(c(g.mark.od), retistruct.potential.od(a))
@@ -245,6 +245,9 @@ h.open <- function(h, ...) {
   ## don't think there is no markup.
   if (is.null(r)) {
     svalue(g.show) <- unique(c("Markup", svalue(g.show)))
+    svalue(g.nb) <- 1                   # Set "Edit" tab
+  } else {
+    svalue(g.nb) <- 2                   # Set "View" tab
   }
 
   unsaved.data(FALSE)
@@ -267,7 +270,15 @@ h.reconstruct <- function(h, ...) {
 
 ## Handler for showing data
 h.show <- function(h, ...) {
-  do.plot()
+  if(!is.null(h$pageno)) {
+    if (h$pageno == 1) {
+      do.plot(markup=TRUE)
+    } else {
+      do.plot(markup=("Markup" %in% (svalue(g.show))))
+    }
+  } else {
+    do.plot()
+  }
 }
 
 ## Handler for flipping DV axis
@@ -335,12 +346,12 @@ getTransforms <- function() {
 }
 
 ## Plot in edit pane
-do.plot <- function() {
+do.plot <- function(markup=("Markup" %in% (svalue(g.show))) | (svalue(g.nb) == 1)) {
   
   if (is.null(r)) {
     r <- a
   }
-  if ("Strain" %in% svalue(g.show)) {   # Strain plot
+  if ("Strain" %in% svalue(g.edit.show)) {   # Strain plot
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
     flatplot(r, axt="n",
@@ -361,7 +372,7 @@ do.plot <- function() {
     flatplot(r, axt="n",
               datapoints=("Datapoints" %in% svalue(g.show)),
               landmarks=("Landmarks" %in% svalue(g.show)),
-              markup=("Markup" %in% svalue(g.show)),
+              markup=markup,
               stitch=("Stitch" %in% svalue(g.show)),
               grid=("Grid" %in% svalue(g.show)),
               mesh=FALSE,
@@ -441,8 +452,14 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## Body of interface
   g.body <<- ggroup(container=g.rows)
 
+  ## "Edit" and "View" tabs
+  g.nb <<- gnotebook(container=g.body, handler=h.show)
+  addHandlerChanged(g.nb, handler=h.show)
+  ## glabel("Edit", container=g.nb, label="Edit")
+  ## glabel("View", container=g.nb, label="View")
+  
   ## Tear editor down left side
-  g.editor <<- ggroup(horizontal = FALSE, container=g.body)
+  g.editor <<- ggroup(horizontal = FALSE, container=g.nb, label="Edit")
 
   g.add     <<- gbutton("Add tear",    handler=h.add,     container=g.editor)
   g.move    <<- gbutton("Move Point",  handler=h.move,    container=g.editor)
@@ -450,7 +467,7 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.mark.n  <<- gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
   g.mark.d  <<- gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
   g.mark.od <<- gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
-
+  
   ## Editting of data
   g.data.frame <<- gframe("Data", container=g.editor, horizontal=FALSE)
   g.data <<- gcheckboxgroup(c("Flip DV"),
@@ -466,44 +483,54 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.phi0d <<- gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
                    container=g.phi0d.frame)
 
+  g.edit.show.frame <<- gframe("Show", container=g.editor)
+  g.edit.show <<- gcheckboxgroup(c("Strain"),
+                            checked=c(FALSE),
+                            handler=h.show, container=g.edit.show.frame)
+  
   ## What to show
-  g.show.frame <<- gframe("Show", container=g.editor)
+  g.view <<- ggroup(horizontal=FALSE, container=g.nb, label="View")
+  g.show.frame <<- gframe("Show", container=g.view)
   g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints", "Means",
-                              "Landmarks", "Strain", "Contours", "Group Contours"),
-                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+                              "Landmarks", "Contours", "Group Contours"),
+                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
+  
   ## Graphs at right
   g.f1 <<- ggroup(horizontal = FALSE, container=g.body)
-  g.fd1 <<- ggraphics(expand=TRUE, ps=11, container=g.f1)
+  g.fd1 <<- ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
   d1 <<- dev.cur()
   g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
 
   g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
   g.f2.row1 <<- ggroup(horizontal = TRUE, container=g.f2)
-  g.projection.frame <<- gframe("Projection", container=g.f2.row1)
+
+  g.projection.frame <<- gframe("Projection", container=g.view)
   g.projection <<- gdroplist(names(getProjections()), selected = 1,  handler = h.show, 
                              action = NULL, container = g.projection.frame)
-  g.transform.frame <<- gframe("Transform", container=g.f2.row1)
-  g.transform <<- gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
-                                 action = NULL, container = g.transform.frame)
-  g.pc.frame <<- gframe("Projection centre", container=g.f2, horizontal=TRUE)
-  glabel("Elevation", container=g.pc.frame)
+  g.pc.frame <<- gframe("Projection centre", container=g.view, horizontal=TRUE)
+  glabel("El", container=g.pc.frame)
   g.pc.el <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.pc.frame)
-  glabel("Azimuth", container=g.pc.frame)
+  glabel("Az", container=g.pc.frame)
   g.pc.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.pc.frame)
 
-  g.axisdir.frame <<- gframe("Axis direction", container=g.f2, horizontal=TRUE)
-  glabel("Elevation", container=g.axisdir.frame)
+
+  g.transform.frame <<- gframe("Transform", container=g.view)
+  g.transform <<- gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
+                                 action = NULL, container = g.transform.frame)
+
+  g.axisdir.frame <<- gframe("Axis direction", container=g.view, horizontal=TRUE)
+  glabel("El", container=g.axisdir.frame)
   g.axis.el <<- gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.axisdir.frame)
-  glabel("Azimuth", container=g.axisdir.frame)
+  glabel("Az", container=g.axisdir.frame)
   g.axis.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.axisdir.frame)
   
-  g.fd2 <<- ggraphics(expand=TRUE, ps=11, container=g.f2)
+  g.fd2 <<- ggraphics(expand=TRUE, , width=500, height=500, ps=11, container=g.f2)
   d2 <<- dev.cur()
   g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
 
