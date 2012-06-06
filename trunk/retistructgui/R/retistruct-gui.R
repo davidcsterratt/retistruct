@@ -355,14 +355,14 @@ do.plot <- function(markup=("Markup" %in% (svalue(g.show))) | (svalue(g.nb) == 1
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
     flatplot(r, axt="n",
-              datapoints=FALSE,
-              landmarks=FALSE,
-              markup=FALSE,
-              stitch=FALSE,
-              grid=FALSE,
-              mesh=FALSE,
-              strain=TRUE,
-              scalebar=1)
+             datapoints=FALSE,
+             landmarks=FALSE,
+             markup=FALSE,
+             stitch=FALSE,
+             grid=FALSE,
+             mesh=FALSE,
+             strain=TRUE,
+             scalebar=1)
     dev.set(d2)
     par(mar=c(4.5, 4.5, 1, 0.5))
     lvsLplot(r)
@@ -370,25 +370,27 @@ do.plot <- function(markup=("Markup" %in% (svalue(g.show))) | (svalue(g.nb) == 1
     dev.set(d1)
     par(mar=c(0.5, 0.5, 0.5, 0.5))
     flatplot(r, axt="n",
-              datapoints=("Datapoints" %in% svalue(g.show)),
-              landmarks=("Landmarks" %in% svalue(g.show)),
-              markup=markup,
-              stitch=("Stitch" %in% svalue(g.show)),
-              grid=("Grid" %in% svalue(g.show)),
-              mesh=FALSE,
-              scalebar=1)
+             datapoints=("Points" %in% svalue(g.show)),
+             grouped=("Counts" %in% svalue(g.show)),
+             landmarks=("Landmarks" %in% svalue(g.show)),
+             markup=markup,
+             stitch=("Stitch" %in% svalue(g.show)),
+             grid=("Grid" %in% svalue(g.show)),
+             mesh=FALSE,
+             scalebar=1)
     dev.set(d2)
     par(mar=c(0.7, 0.7, 0.7, 0.7))
     projection(r,
-               datapoints=("Datapoints" %in% svalue(g.show)),
-               datapoint.means=("Means" %in% svalue(g.show)),
+               datapoints=("Points" %in% svalue(g.show)),
+               datapoint.means=("Point means" %in% svalue(g.show)),
                landmarks=("Landmarks" %in% svalue(g.show)),
                transform=getTransforms()[[svalue(g.transform)]],
                projection=getProjections()[[svalue(g.projection)]],
                axisdir=cbind(phi=svalue(g.axis.el), lambda=svalue(g.axis.az)),
                proj.centre=cbind(phi=svalue(g.pc.el), lambda=svalue(g.pc.az)),
-               datapoint.contours=("Contours" %in% svalue(g.show)),
-               grouped.contours=("Group Contours" %in% svalue(g.show)))
+               datapoint.contours=("Point contours" %in% svalue(g.show)),
+               grouped=("Counts" %in% svalue(g.show)),
+               grouped.contours=("Count contours" %in% svalue(g.show)))
     ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
       polartext(paste("OD displacement:",
@@ -451,12 +453,11 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.body <<- ggroup(container=g.rows)
 
   ## "Edit" and "View" tabs
-  g.nb <<- gnotebook(container=g.body, handler=h.show)
-  addHandlerChanged(g.nb, handler=h.show)
-  ## glabel("Edit", container=g.nb, label="Edit")
-  ## glabel("View", container=g.nb, label="View")
+  g.nb <<- gnotebook(container=g.body)
+
+  ## Edit tab
   
-  ## Tear editor down left side
+  ## Tear editor
   g.editor <<- ggroup(horizontal = FALSE, container=g.nb, label="Edit")
 
   g.add     <<- gbutton("Add tear",    handler=h.add,     container=g.editor)
@@ -481,32 +482,32 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.phi0d <<- gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
                    container=g.phi0d.frame)
 
+  ## Whether to show strain
   g.edit.show.frame <<- gframe("Show", container=g.editor)
   g.edit.show <<- gcheckboxgroup(c("Strain"),
-                            checked=c(FALSE),
-                            handler=h.show, container=g.edit.show.frame)
-  
+                                 checked=c(FALSE),
+                                 handler=h.show, container=g.edit.show.frame)
+
+  ## View Tab
+
   ## What to show
   g.view <<- ggroup(horizontal=FALSE, container=g.nb, label="View")
   g.show.frame <<- gframe("Show", container=g.view)
-  g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Datapoints", "Means",
-                              "Landmarks", "Contours", "Group Contours"),
-                            checked=c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+  g.show <<- gcheckboxgroup(c("Markup", "Stitch", "Grid", "Landmarks",
+                              "Points", "Point means", "Point contours",
+                              "Counts", "Count contours"),
+                            checked=c(TRUE, FALSE, FALSE, FALSE,
+                              FALSE, FALSE, FALSE,
+                              FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
-  
-  ## Graphs at right
-  g.f1 <<- ggroup(horizontal = FALSE, container=g.body)
-  g.fd1 <<- ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
-  d1 <<- dev.cur()
-  g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
-
-  g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
-  g.f2.row1 <<- ggroup(horizontal = TRUE, container=g.f2)
-
+  ## Projection type
   g.projection.frame <<- gframe("Projection", container=g.view)
-  g.projection <<- gdroplist(names(getProjections()), selected = 1,  handler = h.show, 
-                             action = NULL, container = g.projection.frame)
+  g.projection <<- gdroplist(names(getProjections()), selected=1,
+                             handler=h.show, 
+                             action=NULL, container=g.projection.frame)
+
+  ## Projection centre
   g.pc.frame <<- gframe("Projection centre", container=g.view, horizontal=TRUE)
   glabel("El", container=g.pc.frame)
   g.pc.el <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
@@ -515,11 +516,12 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.pc.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.pc.frame)
 
-
+  ## Transform
   g.transform.frame <<- gframe("Transform", container=g.view)
   g.transform <<- gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
                                  action = NULL, container = g.transform.frame)
 
+  ## Axis direction
   g.axisdir.frame <<- gframe("Axis direction", container=g.view, horizontal=TRUE)
   glabel("El", container=g.axisdir.frame)
   g.axis.el <<- gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
@@ -527,11 +529,21 @@ retistruct <- function(guiToolkit="RGtk2") {
   glabel("Az", container=g.axisdir.frame)
   g.axis.az <<- gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                       container=g.axisdir.frame)
-  
+
+  ## Graphs at right
+
+  ## Flat plot
+  g.f1 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.fd1 <<- ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
+  d1 <<- dev.cur()
+  g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
+
+  ## Projection
+  g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
   g.fd2 <<- ggraphics(expand=TRUE, , width=500, height=500, ps=11, container=g.f2)
   d2 <<- dev.cur()
   g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
-
+  
   ## Status bar
   ## g.statusbar <<- ggroup(container=g.rows)
   g.statusbar <<- gframe("", expand=TRUE, container=g.rows)
@@ -541,4 +553,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## Disable buttons initially
   unsaved.data(FALSE)
   enable.widgets(FALSE)
+
+  ## Have to add the hander to the notebook at the end, otherwise
+  ## there are complaints about various components not being defined.
+  addHandlerChanged(g.nb, handler=h.show)
 }
