@@ -358,6 +358,8 @@ getKR <- function(r) {
 ##' @param grouped.contours If \code{TRUE}, display contours around
 ##' the grouped data generated using Kernel Regression.
 ##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param ids IDs of groups of data within a dataset, returned using
+##' \code{\link{getIDs}}.
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedDataset
 ##' @author David Sterratt
@@ -375,19 +377,20 @@ projection.reconstructedDataset <-
            grouped=FALSE,
            grouped.contours=FALSE,
            landmarks=TRUE,
+           ids=getIDs(r),
            ...) {
   NextMethod()
 
   ## Datapoints
   if (datapoints) {
     Dss <- getDss(r)
-    if (length(Dss)) {
-      for (i in 1:length(Dss)) {
-        suppressWarnings(points(projection(rotate.axis(transform(Dss[[i]],
+    for (id in ids) {
+      if (!is.null(Dss[[id]])) {
+        suppressWarnings(points(projection(rotate.axis(transform(Dss[[id]],
                                                                  phi0=r$phi0),
                                                        axisdir*pi/180),
                                            proj.centre=pi/180*proj.centre),
-                                col=r$cols[[names(Dss)[i]]],
+                                col=r$cols[[id]],
                                 pch=20, ...))
       }
     }
@@ -396,13 +399,13 @@ projection.reconstructedDataset <-
   ## Mean datapoints
   if (datapoint.means) {
     Dss.mean <- getDssMean(r)
-    if (length(Dss.mean)) {
-      for (i in 1:length(Dss.mean)) {
-        suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[i]],
+    for (id in ids) {
+      if (!is.null(Dss.mean[[id]])) {
+        suppressWarnings(points(projection(rotate.axis(transform(Dss.mean[[id]],
                                                                  phi0=r$phi0),
                                                        axisdir*pi/180),
                                            proj.centre=pi/180*proj.centre),
-                                bg=r$cols[[names(Dss.mean)[i]]], col="black",
+                                bg=r$cols[[id]], col="black",
                                 pch=23, cex=1.5, ...))
       }
     }
@@ -411,16 +414,16 @@ projection.reconstructedDataset <-
   ## Groups
   if (grouped) {
     Gss <- getGss(r)
-    if (length(Gss)) {
-      for (i in 1:length(Gss)) {
-        rc <- projection(rotate.axis(transform(Gss[[i]][,c("phi", "lambda")],
+    for (id in ids) {
+      if (!is.null(Gss[[id]])) {
+        rc <- projection(rotate.axis(transform(Gss[[id]][,c("phi", "lambda")],
                                                phi0=r$phi0),
                                      axisdir*pi/180),
                          proj.centre=pi/180*proj.centre)
         
-        text(rc[,"x"], rc[,"y"], Gss[[i]][,3],
-              col=r$cols[[names(Gss)[i]]],
-              ...)
+        suppressWarnings(text(rc[,"x"], rc[,"y"], Gss[[id]][,3],
+             col=r$cols[[id]],
+             ...))
       }
     }
   }
@@ -428,25 +431,31 @@ projection.reconstructedDataset <-
   ## KDE
   if (datapoint.contours) {
     k <- getKDE(r)
-    if (length(k)) {
-      ## Plot contours
-      for (i in 1:length(k)) {
-        css <- k[[i]]$contours
+    for (id in ids) {
+      if (!is.null(k[[id]])) {
+        css <- k[[id]]$contours
         for(cs in css) {
-          lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
-                                       axisdir*pi/180),
-                           lambdalim=lambdalim*pi/180, lines=TRUE,
-                           proj.centre=pi/180*proj.centre),
-                col=r$cols[[names(k)[i]]])
+          suppressWarnings(lines(projection(rotate.axis(transform(cs,
+                                                                  phi0=r$phi0),
+                                                        axisdir*pi/180),
+                                            lambdalim=lambdalim*pi/180,
+                                            lines=TRUE,
+                                            proj.centre=pi/180*proj.centre),
+                                 col=r$cols[[id]]))
         }
         ## FIXME: contours need to be labelled
       }
-      ## Plot locations of highest contours
-      for (i in 1:length(k)) {
-        points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
-                                      axisdir*pi/180),
-                          proj.centre=pi/180*proj.centre),
-               pch=22, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
+    }
+
+    ## Plot locations of highest contours
+    for (id in ids) {
+      if (!is.null(k[[id]])) {
+        suppressWarnings(points(projection(rotate.axis(transform(k[[id]]$maxs,
+                                                                 phi0=r$phi0),
+                                                       axisdir*pi/180),
+                                           proj.centre=pi/180*proj.centre),
+                                pch=22, cex=1, lwd=1,
+                                col="black", bg=r$cols[[id]]))
       }
     }
   }
@@ -454,25 +463,30 @@ projection.reconstructedDataset <-
   ## KR
   if (grouped.contours) {
     k <- getKR(r)
-    if (length(k)) {
-      ## Plot contours
-      for (i in 1:length(k)) {
-        css <- k[[i]]$contours
+    for (id in ids) {
+      if (!is.null(k[[id]])) {
+        css <- k[[id]]$contours
         for(cs in css) {
-          lines(projection(rotate.axis(transform(cs, phi0=r$phi0),
-                                       axisdir*pi/180),
-                           lambdalim=lambdalim*pi/180, lines=TRUE,
-                           proj.centre=pi/180*proj.centre),
-                col=r$cols[[names(k)[i]]])
+          suppressWarnings(lines(projection(rotate.axis(transform(cs,
+                                                                  phi0=r$phi0),
+                                                        axisdir*pi/180),
+                                            lambdalim=lambdalim*pi/180,
+                                            lines=TRUE,
+                                            proj.centre=pi/180*proj.centre),
+                                 col=r$cols[[id]]))
         }
         ## FIXME: contours need to be labelled
       }
-      ## Plot locations of highest contours
-      for (i in 1:length(k)) {
-        points(projection(rotate.axis(transform(k[[i]]$maxs, phi0=r$phi0),
-                                      axisdir*pi/180),
-                          proj.centre=pi/180*proj.centre),
-               pch=23, cex=1, lwd=1, col="black", bg=r$cols[[names(k)[i]]])
+    }
+    ## Plot locations of highest contours
+    for (id in ids) {
+      if (!is.null(k[[id]])) {
+        suppressWarnings(points(projection(rotate.axis(transform(k[[id]]$maxs,
+                                                                 phi0=r$phi0),
+                                                       axisdir*pi/180),
+                                           proj.centre=pi/180*proj.centre),
+                                pch=23, cex=1, lwd=1,
+                                col="black", bg=r$cols[[id]]))
       }
     }
   }

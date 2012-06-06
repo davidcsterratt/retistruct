@@ -36,7 +36,6 @@ flatplot <- function(x, axt="n", ylim=NULL, ...) {
 flatplot.default <- function(x, axt="n", ylim=NULL, ...) {
 }
 
-
 ##' Generic function for plotting projections of objects.
 ##'
 ##' @title Plot projection of an object
@@ -54,7 +53,6 @@ projection <- function(r, ...) {
 projection.default <- function(r, ...) {
   plot.new()
 }
-
 
 ##' @export
 sphericalplot <- function(r, ...) {
@@ -122,7 +120,6 @@ getGss.default <- function(r) {
   return(NULL)
 }
 
-
 ##' Get spherical coordinates of landmarks.
 ##'
 ##' @title Get transformed spherical coordinates of landmarks.
@@ -164,3 +161,14 @@ getIms.default <- function(r) {
   return(NULL)
 }
 
+##' @title Get IDs of groups of data within a dataset
+##' @export
+##' @param r Object
+getIDs <- function(r) {
+  UseMethod("getIDs")
+}
+
+##' @export
+getIDs.default <- function(r) {
+  return(NULL)
+}

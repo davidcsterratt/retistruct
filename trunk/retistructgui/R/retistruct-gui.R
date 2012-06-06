@@ -249,7 +249,9 @@ h.open <- function(h, ...) {
   } else {
     svalue(g.nb) <- 2                   # Set "View" tab
   }
-
+  g.ids <<- gcheckboxgroup(getIDs(a), checked=rep(TRUE, length(getIDs(a))),
+                           handler=h.show, container=g.ids.frame)
+  
   unsaved.data(FALSE)
   enable.widgets(TRUE)
   do.plot()
@@ -376,6 +378,7 @@ do.plot <- function(markup=("Markup" %in% (svalue(g.show))) | (svalue(g.nb) == 1
              markup=markup,
              stitch=("Stitch" %in% svalue(g.show)),
              grid=("Grid" %in% svalue(g.show)),
+             ids=svalue(g.ids),
              mesh=FALSE,
              scalebar=1)
     dev.set(d2)
@@ -390,7 +393,8 @@ do.plot <- function(markup=("Markup" %in% (svalue(g.show))) | (svalue(g.nb) == 1
                proj.centre=cbind(phi=svalue(g.pc.el), lambda=svalue(g.pc.az)),
                datapoint.contours=("Point contours" %in% svalue(g.show)),
                grouped=("Counts" %in% svalue(g.show)),
-               grouped.contours=("Count contours" %in% svalue(g.show)))
+               grouped.contours=("Count contours" %in% svalue(g.show)),
+               ids=svalue(g.ids))
     ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
       polartext(paste("OD displacement:",
@@ -501,6 +505,9 @@ retistruct <- function(guiToolkit="RGtk2") {
                               FALSE, FALSE),
                             handler=h.show, container=g.show.frame)
 
+  ## Group IDs
+  g.ids.frame <<- gframe("IDs", container=g.view)
+  
   ## Projection type
   g.projection.frame <<- gframe("Projection", container=g.view)
   g.projection <<- gdroplist(names(getProjections()), selected=1,

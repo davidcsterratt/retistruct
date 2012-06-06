@@ -69,6 +69,15 @@ getLandmarkID <- function(d, name) {
   }
 }
 
+##' @title Get IDs of groups of data within a dataset
+##' @param r \code{\link{Dataset}} object
+##' @return Array of IDs
+##' @author David Sterratt
+##' @export
+getIDs.dataset <- function(r) {
+  return(names(r$Ds))
+}
+
 ##' @title Flat plot of Dataset
 ##' @param x \code{\link{Dataset}} object
 ##' @param axt whether to plot axes
@@ -76,31 +85,38 @@ getLandmarkID <- function(d, name) {
 ##' @param datapoints If \code{TRUE}, display data points.
 ##' @param grouped If \code{TRUE}, dipslay grouped data.
 ##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param ids IDs of groups of data within a dataset, returned using
+##' \code{\link{getIDs}}.
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method flatplot dataset
 ##' @author David Sterratt
 ##' @export
 flatplot.dataset <- function(x, axt="n", ylim=NULL,
-                        datapoints=TRUE,
-                        grouped=FALSE,
-                        landmarks=TRUE,
-                        ...) {
+                             datapoints=TRUE,
+                             grouped=FALSE,
+                             landmarks=TRUE,
+                             ids=getIDs(x),
+                             ...) {
   NextMethod()
   ## flatoutline(d, axt=axt, ylim=ylim, ...)
   if (datapoints) {
     with(x, {
-      for (name in names(Ds)) {
-        suppressWarnings(points(Ds[[name]][,1], Ds[[name]][,2],
-                                col=cols[[name]], pch=20, ...))
+      for (id in ids) {
+        if (!is.null(Ds[[id]])) {
+          suppressWarnings(points(Ds[[id]][,1], Ds[[id]][,2],
+                                  col=cols[[id]], pch=20, ...))
+        }
       }
     })
   }
   
   if (grouped) {
     with(x, {
-      for (name in names(Gs)) {
-        suppressWarnings(text(Gs[[name]][,1], Gs[[name]][,2], Gs[[name]][,3],
-                              col=cols[[name]],  ...))
+      for (id in ids) {
+        if (!is.null(Gs[[id]])) {
+          suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
+                                col=cols[[id]],  ...))
+        }
       }
     })
   }
