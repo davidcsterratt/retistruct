@@ -340,9 +340,7 @@ getKR <- function(r) {
   return(r$KR)
 }
 
-##' Plot projection of data points.
-##'
-##' @title Polar plot of reconstructed dataset
+##' @title Plot projection of reconstructed dataset
 ##' @param r \code{\link{ReconstructedDataset}} object
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
@@ -352,11 +350,15 @@ getKR <- function(r) {
 ##' @param proj.centre Location of centre of projection as matrix with
 ##' column names \code{phi} (elevation) and \code{lambda} (longitude).
 ##' @param lambdalim Limits of longitude (in degrees) to display
-##' @param ... Other parameters.  The option \code{datapoints} causes
-##'tapoints to plotted (default \code{TRUE}).  The option
-##'ode{datapoint.means} causes datapoint means to be plotted
-##'efault \code{TRUE}).  The option \code{landmarks} causes
-##'ndmarks to be plotted (default \code{TRUE}). 
+##' @param datapoints If \code{TRUE}, display data points.
+##' @param datapoint.means If \code{TRUE}, display Karcher mean of data points.
+##' @param datapoint.contours If \code{TRUE}, display contours around
+##' the data points generated using Kernel Density Estimation.
+##' @param grouped If \code{TRUE}, dipslay grouped data.
+##' @param grouped.contours If \code{TRUE}, display contours around
+##' the grouped data generated using Kernel Regression.
+##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedDataset
 ##' @author David Sterratt
 ##' @export
@@ -367,18 +369,17 @@ projection.reconstructedDataset <-
            projection=azimuthal.equalarea,
            proj.centre=cbind(phi=0, lambda=0),
            lambdalim=c(-180, 180),
+           datapoints=TRUE, 
+           datapoint.means=TRUE,
+           datapoint.contours=TRUE, 
+           grouped=FALSE,
+           grouped.contours=FALSE,
+           landmarks=TRUE,
            ...) {
   NextMethod()
 
-  args <- list(...)
-  plot.datapoints <- is.null(args$datapoints) || args$datapoints
-  plot.datapoint.means <- is.null(args$datapoint.means) || args$datapoint.means
-  plot.datapoint.contours <- is.null(args$datapoint.contours) || args$datapoint.contours
-  plot.grouped.contours <- is.null(args$grouped.contours) || args$grouped.contours
-  plot.landmarks <- is.null(args$landmarks) || args$landmarks
-
   ## Datapoints
-  if (plot.datapoints) {
+  if (datapoints) {
     Dss <- getDss(r)
     if (length(Dss)) {
       for (i in 1:length(Dss)) {
@@ -393,7 +394,7 @@ projection.reconstructedDataset <-
   }
 
   ## Mean datapoints
-  if (plot.datapoint.means) {
+  if (datapoint.means) {
     Dss.mean <- getDssMean(r)
     if (length(Dss.mean)) {
       for (i in 1:length(Dss.mean)) {
@@ -406,9 +407,26 @@ projection.reconstructedDataset <-
       }
     }
   }
+
+  ## Groups
+  if (grouped) {
+    Gss <- getGss(r)
+    if (length(Gss)) {
+      for (i in 1:length(Gss)) {
+        rc <- projection(rotate.axis(transform(Gss[[i]][,c("phi", "lambda")],
+                                               phi0=r$phi0),
+                                     axisdir*pi/180),
+                         proj.centre=pi/180*proj.centre)
+        
+        text(rc[,"x"], rc[,"y"], Gss[[i]][,3],
+              col=r$cols[[names(Gss)[i]]],
+              ...)
+      }
+    }
+  }
   
   ## KDE
-  if (plot.datapoint.contours) {
+  if (datapoint.contours) {
     k <- getKDE(r)
     if (length(k)) {
       ## Plot contours
@@ -432,9 +450,9 @@ projection.reconstructedDataset <-
       }
     }
   }
-
+  
   ## KR
-  if (plot.grouped.contours) {
+  if (grouped.contours) {
     k <- getKR(r)
     if (length(k)) {
       ## Plot contours
@@ -460,7 +478,7 @@ projection.reconstructedDataset <-
   }
 
   ## Landmarks
-  if (plot.landmarks) {
+  if (landmarks) {
     Sss <- getSss(r)
     if (length(Sss)) {
       for (i in 1:length(Sss)) {

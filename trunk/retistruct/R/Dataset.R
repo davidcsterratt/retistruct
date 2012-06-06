@@ -69,41 +69,50 @@ getLandmarkID <- function(d, name) {
   }
 }
 
-##' Plot flat \code{\link{Dataset}}. If the optional argument
-##' \code{datapoints} is \code{TRUE} the data points are displayed.
-##' If the optional argument \code{landmarks} is \code{TRUE} the
-##' landmarks are shown.
-##'
 ##' @title Flat plot of Dataset
 ##' @param x \code{\link{Dataset}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
-##' @param ... Other plotting parameters
+##' @param datapoints If \code{TRUE}, display data points.
+##' @param grouped If \code{TRUE}, dipslay grouped data.
+##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param ... Graphical parameters to pass to plotting functions
 ##' @method flatplot dataset
 ##' @author David Sterratt
 ##' @export
-flatplot.dataset <- function(x, axt="n", ylim=NULL, ...) {
-  args <- list(...)
-  plot.datapoints <- is.null(args$datapoints) || args$datapoints
-  plot.landmarks <- is.null(args$landmarks) || args$landmarks
-
+flatplot.dataset <- function(x, axt="n", ylim=NULL,
+                        datapoints=TRUE,
+                        grouped=FALSE,
+                        landmarks=TRUE,
+                        ...) {
   NextMethod()
-  ## flatplot.outline(d, axt=axt, ylim=ylim, ...)
-  if (plot.datapoints) {
+  ## flatoutline(d, axt=axt, ylim=ylim, ...)
+  if (datapoints) {
     with(x, {
-      for (col in names(Ds)) {
-        suppressWarnings(points(Ds[[col]][,1], Ds[[col]][,2],
-                                col=cols[[col]], pch=20, ...))
+      for (name in names(Ds)) {
+        suppressWarnings(points(Ds[[name]][,1], Ds[[name]][,2],
+                                col=cols[[name]], pch=20, ...))
       }
     })
   }
-  if (plot.landmarks) {
+  
+  if (grouped) {
+    with(x, {
+      for (name in names(Gs)) {
+        suppressWarnings(text(Gs[[name]][,1], Gs[[name]][,2], Gs[[name]][,3],
+                              col=cols[[name]],  ...))
+      }
+    })
+  }
+
+  if (landmarks) {
     with(x, {
       if (length(Ss) > 0) {
         for (i in 1:length(Ss)) {
           name <- names(Ss)[i]
           col <- ifelse(is.null(name) || (name==""), "default", name)
-          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2], col=cols[[col]], ...))
+          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2],
+                                 col=cols[[col]], ...))
         }
       }
     })
