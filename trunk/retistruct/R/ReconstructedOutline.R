@@ -609,7 +609,7 @@ projection.reconstructedOutline <-
 
     ## Boundary of projection
     boundary <- projection("boundary")
-    polygon(boundary[,"x"], boundary[,"y"], col="black")
+    polygon(boundary[,"x"], boundary[,"y"], border="black")
   }
 
   ## Plot rim in visutopic space
