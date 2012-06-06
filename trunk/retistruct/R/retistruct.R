@@ -127,7 +127,7 @@ retistruct.read.markup <- function(a, error=stop) {
     M.df <- read.csv(markupfile)
     ## Get strings out before converting to vector
     if ("side" %in% names(M.df)) {
-      a$side <- M.df[1,"side"]
+      a$side <- as.character(M.df[1,"side"])
     }
     ## Convert to vector
     M <- sapply(M.df, function(x) x)
@@ -215,6 +215,7 @@ retistruct.read.recdata <- function(o, cache=FALSE) {
         r <- ReconstructedDataset(r)
         r <- RetinalReconstructedDataset(r)
       }
+      r$dataset <- o$dataset
       return(r)
     }
   }
@@ -387,7 +388,7 @@ retistruct.export.matlab <- function(r) {
                Tss=name.list(getTss(r)),
                KDE=KDE,
                KR=KR,
-               side=r$side, DVflip=r$DVflip)
+               side=as.character(r$side), DVflip=r$DVflip)
     }
   }
 }
