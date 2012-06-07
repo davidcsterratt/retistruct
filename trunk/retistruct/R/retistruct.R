@@ -128,6 +128,11 @@ retistruct.read.markup <- function(a, error=stop) {
     ## Get strings out before converting to vector
     if ("side" %in% names(M.df)) {
       a$side <- as.character(M.df[1,"side"])
+      ## Make sure that side is a valid value
+      if (!(a$side %in% c("Left", "Right"))) {
+        a$side <- "Right"
+        warning("The side was neither Left nor Right; setting to Right.")
+      }
     }
     ## Convert to vector
     M <- sapply(M.df, function(x) x)
