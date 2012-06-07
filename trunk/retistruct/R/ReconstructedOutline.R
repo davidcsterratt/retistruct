@@ -464,20 +464,16 @@ projection.reconstructedOutline <-
   args <- list(...)
   plot.image <- is.null(args$image) || args$image
 
-  ## Azimuth/elevation of optic axis in visutopic space
-  ## Drager 
-  ## axisdir <- cbind(phi=35, lambda=60-90)
-
   ## Compute grid lines
 
   ## Lines of latitude (parallels)
 
   ## Determine the major and minor parallels
-  phis.maj <- unique(c(rev(seq(0           , philim[1], by=-grid.int.major)),
-                       seq(0,                philim[2], by= grid.int.major),
+  phis.maj <- unique(c(rev(seq(0, philim[1], by=-grid.int.major)),
+                       seq(0,     philim[2], by= grid.int.major),
                        philim[2]))
-  phis.min <- unique(c(rev(seq(0       , philim[1], by=-grid.int.minor)),
-                       seq(0,            philim[2], by= grid.int.minor),
+  phis.min <- unique(c(rev(seq(0, philim[1], by=-grid.int.minor)),
+                       seq(0,     philim[2], by= grid.int.minor),
                        philim[2]))
   phis.min <- setdiff(phis.min, phis.maj)
 
@@ -520,9 +516,9 @@ projection.reconstructedOutline <-
   plot(NA, NA, xlim=xlim, ylim=ylim,# xaxs="i", yaxs="i",
        type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
 
-  ## Plot an image.
+  ## Plot an image
 
-  ## Get the spherical coordinates of the corners of pixels.
+  ## Get the spherical coordinates of the corners of pixels
   ims <- getIms(r)
   if (plot.image && !is.null(ims)) {
     ## Reconstitute image from stored values of phi and lambda
@@ -535,7 +531,7 @@ projection.reconstructedOutline <-
     ## Downsample the image by first selecting rows and columns to
     ## look at
     max.proj.dim <- getOption("max.proj.dim")
-    by <-  ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
+    by <- ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
     Ms <- seq(1, M - (M %% by), by=by)
     Ns <- seq(1, N - (N %% by), by=by)
 
@@ -616,7 +612,7 @@ projection.reconstructedOutline <-
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
   rs.rot <- rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
-  ## r$axisdir = cbind(phi=0, lambda=-90)
+  ## r$axisdir = cbind(phi=0, lambda=0)
   
   lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
                    proj.centre=pi/180*proj.centre),

@@ -523,42 +523,44 @@ azel.to.sphere.colattitude <- function(r, r0) {
 ##' rotate.axis(r, r0)
 ##' @export
 rotate.axis <- function(r, r0) {
-  ## If we are not changing the longitude of the main axis, do nothing
-  if (r0[,"phi"]==pi/2) {
-    return(r)
-  }
   ## Find cartesian coordinates of points on sphere
   P <- sphere.spherical.to.sphere.cart(r[,"phi"], r[,"lambda"])
-  ## print(P)
-  
-  ## Rotate them about the equatorial axis through the 0 degrees meridian
-  ## (the x-axis)
-  dp <- pi/2 - r0[,"phi"]
-  ## print(dp)
-  P <- P %*% rbind(c(1, 0, 0),
-                   c(0,  cos(dp), sin(dp)),
-                   c(0, -sin(dp), cos(dp)))
-  ## print(P)
-  ## This will have taken the North pole to (0, -90). Hence we need to
-  ## rotate by another 90 degrees to get to where we want to.
-  
-  ## Then rotate about the z-axis
-  dl <- r0[,"lambda"] + pi/2
-  P <- P %*% rbind(c( cos(dl), sin(dl), 0),
-                   c(-sin(dl), cos(dl), 0),
-                   c(0, 0, 1))
-  ##  print(P)
-  colnames(P) <- c("X", "Y", "Z")
+
+  ## If we are not changing the longitude of the main axis, do nothing
+  ## apart from convert back to spherical coordinates, which has the
+  ## happy sideeffect of normalising the angles within the range (-pi,
+  ## pi].
+  if (r0[,"phi"] != pi/2) {
+    ## Rotate them about the equatorial axis through the 0 degrees meridian
+    ## (the x-axis)
+    dp <- pi/2 - r0[,"phi"]
+    P <- P %*% rbind(c(1, 0, 0),
+                     c(0,  cos(dp), sin(dp)),
+                     c(0, -sin(dp), cos(dp)))
+    ## This will have taken the North pole to (0, -90). Hence we need to
+    ## rotate by another 90 degrees to get to where we want to.
+    
+    ## Then rotate about the z-axis
+    dl <- r0[,"lambda"] + pi/2
+    P <- P %*% rbind(c( cos(dl), sin(dl), 0),
+                     c(-sin(dl), cos(dl), 0),
+                     c(0, 0, 1))
+    colnames(P) <- c("X", "Y", "Z")
+  }
   return(sphere.cart.to.sphere.spherical(P))
 }
 
 ##' @title Bring angle into range
-##' @param theta Angle to bring into range \code{(-pi, pi)}
+##' @param theta Angle to bring into range \code{[-pi, pi]}
 ##' @return Normalised angle
 ##' @author David Sterratt
 ##' @export
 normalise.angle <- function(theta) {
-  return(theta %% (2*pi) - pi)
+  i <- which((theta < -pi) | (theta > pi) & !is.na(theta))
+  if (length(i) > 0) {
+    theta[i] <- ((theta[i] + pi) %% (2*pi)) - pi
+  }
+  return(theta)
 }
 
 ##' On a sphere the central angle between two points is defined as the
