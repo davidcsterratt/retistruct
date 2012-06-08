@@ -233,9 +233,9 @@ h.open <- function(h, ...) {
   withCallingHandlers({
     a <<- retistruct.read.markup(a, error=message)
   }, warning=h.warning, error=h.warning)
-  svalue(g.win) <- paste(version.string(), "-" ,a$dataset)
-  svalue(g.phi0d)   <- a$phi0*180/pi
-  svalue(g.eye)     <- a$side
+  svalue(g.win)   <- paste(version.string(), "-" ,a$dataset)
+  svalue(g.phi0d) <- a$phi0*180/pi
+  svalue(g.eye)   <- a$side
   
   ## Read the reconstruction data
   withCallingHandlers({
