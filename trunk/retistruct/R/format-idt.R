@@ -303,26 +303,6 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
                OD="blue",
                default="orange")
 
-  ci <- (sys[,"COMPLETE"] == 1)
-  Gs <- list(green =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALGRE"]),
-             red   =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALRED"] + sys[,"TOTALDOU"]),
-             double=cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALDOU"]))
-
-  
-  ## Gs <- list(green =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
-  ##            red   =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
-  ##            double=cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALDOU"]))
-
-  ## Gs <- list(green=
-  ##            rbind(cbind(sys[ci, "XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
-  ##                  cbind(sys[!ci,"XGRIDCOO"], sys[!ci,"YGRIDCOO"], 0)),
-  ##            red=
-  ##            rbind(cbind(sys[ci, "XGRIDCOO"], sys[ci, "YGRIDCOO"], sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
-  ##                  cbind(sys[!ci,"XGRIDCOO"], sys[!ci,"YGRIDCOO"], 0)),
-  ##            double=
-  ##            rbind(cbind(sys[ci, "XGRIDCOO"], sys[ci, "YGRIDCOO"], sys[ci,"TOTALDOU"]),
-  ##                  cbind(sys[!ci,"XGRIDCOO"], sys[!ci,"YGRIDCOO"], 0)))
-
   ## Extract line data
   segs <- idt.map.to.segments(map)
 
@@ -363,20 +343,29 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
      stop("Unable to find a closed outline.")
   }
 
+  ## Get grouped data
+  ci <- (sys[,"COMPLETE"] == 1)
+  Gs <- list(green =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALGRE"]),
+             red   =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALRED"] + sys[,"TOTALDOU"]),
+             double=cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALDOU"]))
+  
   ## Remove incomplete points within convex hull of data
   Gs <- lapply(Gs, function(G) {
     ## Find convex hull of data
     ps <- na.omit(G[ci, c(1,2)])
-    ts <- convhulln(ps)
-    rem <- (point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1) & !ci
-    G <- G[-rem,]
+    if (nrow(ps) >= 3) {
+      ts <- convhulln(ps)
+      rem <- (point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1) & !ci
+      if (sum(rem) > 0) {
+        G <- G[-rem,]
+      }
+    }
+    return(G)
   })
   
   ## Remove points outwith outline
   Gs <- lapply(Gs, function(G) {
      G[point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1,]})
-
-
   
   d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
   a <- AnnotatedOutline(d)
