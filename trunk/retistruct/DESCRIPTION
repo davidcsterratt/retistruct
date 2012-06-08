@@ -17,7 +17,8 @@ Depends:
     RTriangle (>= 1.6-0.4),
     rgl,
     multicore,
-    png
+    png,
+    sp
 Collate:
     'AnnotatedOutline.R'
     'Dataset.R'
