@@ -1,4 +1,4 @@
-## Kernel density clustering 
+## Kernel density and kernel regression estimates 
 
 ##' @title Kernel density estimate on sphere using Fisherian density
 ##' with Cartesian coordinates
@@ -95,10 +95,10 @@ kde.compute.concentration <- function(mu) {
 ##' @author David Sterratt
 ##' @export
 kr.yhat <- function(r, mu, y, kappa) {
-    return(kr.yhat.cart(sphere.spherical.to.sphere.cart(r[,"phi"],  r[,"lambda"]),
-                         sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]),
-                         y,
-                         kappa))
+  return(kr.yhat.cart(sphere.spherical.to.sphere.cart(r[,"phi"],  r[,"lambda"]),
+                      sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]),
+                      y,
+                      kappa))
 }
 
 ##' @title Kernel regression on sphere using Fisherian density with
@@ -123,15 +123,6 @@ kr.yhat.cart <- function(r, mu, y, kappa) {
       stop("r does not have 3 columns")
     }
   }
-
-  ## n <- nrow(mu)
-  ## if (kappa < 1e-10) {
-  ## fac <- 1
-  ## } else {
-  ##    fac <- kappa/sinh(kappa)
-  ## }
-  ## fac/(4*pi*n)
-  
   ks <- exp(kappa*(outer(r[,1], mu[,1]) +
                    outer(r[,2], mu[,2]) +
                    outer(r[,3], mu[,3])))
