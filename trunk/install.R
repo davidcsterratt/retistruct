@@ -26,8 +26,8 @@ update.packages(Sys.getenv("R_LIBS_USER"))
 nmf <- "http://neuralmapformation.org/files"
 ## install.packages(file.path(nmf, "retistruct_0.5.1.tar.gz"))
 ## install.packages(file.path(nmf, "retistructgui_0.5.1.tar.gz"))
-install.packages("retistruct_0.5.2.tar.gz")
-install.packages("retistructgui_0.5.2.tar.gz")
+install.packages("retistruct_0.5.3.tar.gz")
+install.packages("retistructgui_0.5.3.tar.gz")
 
 library(retistructgui)
 retistruct()
