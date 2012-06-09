@@ -249,6 +249,7 @@ h.open <- function(h, ...) {
   } else {
     svalue(g.nb) <- 2                   # Set "View" tab
   }
+  delete(g.ids.frame, g.ids)
   g.ids <<- gcheckboxgroup(getIDs(a), checked=rep(TRUE, length(getIDs(a))),
                            handler=h.show, container=g.ids.frame)
   
@@ -507,6 +508,9 @@ retistruct <- function(guiToolkit="RGtk2") {
 
   ## Group IDs
   g.ids.frame <<- gframe("IDs", container=g.view)
+  g.ids <<- gcheckboxgroup("All", checked=TRUE,
+                           handler=h.show, container=g.ids.frame)
+
   
   ## Projection type
   g.projection.frame <<- gframe("Projection", container=g.view)
