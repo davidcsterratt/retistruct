@@ -73,6 +73,7 @@ getLandmarkID <- function(d, name) {
 ##' @param r \code{\link{Dataset}} object
 ##' @return Array of IDs
 ##' @author David Sterratt
+##' @method getIDs dataset
 ##' @export
 getIDs.dataset <- function(r) {
   return(names(r$Ds))
