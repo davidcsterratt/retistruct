@@ -321,7 +321,9 @@ print.bitmap <- function(d, file) {
 ## Print device d to file
 print.pdf <- function(d, file) {
   dev.set(d)
-  dev.print(pdf, file, width=6, height=6)
+  dev.print(pdf, file,
+            width=getOption("retistruct.print.pdf.width"),
+            height=getOption("retistruct.print.pdf.width"))
 }
 
 h.print.bitmap <- function(d, initialfilename) {
@@ -336,6 +338,18 @@ h.print.bitmap <- function(d, initialfilename) {
 }
 
 h.print.pdf <- function(d, initialfilename) {
+  g.pdf <- gbasicdialog(title="PDF options", 
+                        handler=function(h, ...) {
+                          options(retistruct.print.pdf.width=svalue(g.width))
+                        })
+
+  g.pdf.group <<- ggroup(container=g.pdf, horizontal=TRUE)
+  glabel("Width & height (inches)", container=g.pdf.group)
+  g.width <<- gedit(getOption("retistruct.print.pdf.width"),
+                    width=5, coerce.with=as.numeric,
+                    container=g.pdf.group)
+  visible(g.pdf, set=TRUE)
+
   curdir <- getwd()
   setwd(a$dataset)  
   gfile(type="save", text="Select a filename to save image to...",
