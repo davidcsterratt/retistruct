@@ -162,16 +162,17 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
 ##' @param x \code{\link{AnnotatedOutline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
+##' @param stitch If \code{TRUE}, plot stitch
 ##' @param ... Other plotting parameters
 ##' @method flatplot stitchedOutline
 ##' @author David Sterratt
 ##' @export
-flatplot.stitchedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.stitchedOutline <- function(x, axt="n", ylim=NULL,
+                                     stitch=TRUE,
+                                     ...) {
   NextMethod()
-  args <- list(...)
-  plot.stitch <- is.null(args$stitch) || args$stitch
 
-  if (plot.stitch) {
+  if (stitch) {
     with(x, {
       for (TF in TFset) {
         suppressWarnings(lines(P[TF,], col=getOption("TF.col"), ...))

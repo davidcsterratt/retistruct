@@ -290,23 +290,23 @@ ensureFixedPointInRim <- function(o) {
 }
 
 ##' Plot flat \code{\link{AnnotatedOutline}}. The user markup is
-##' displayed by default. To hide it supply the optional argument
-##' \code{markup=FALSE}.
+##' displayed by default. 
 ##'
 ##' @title Flat plot of AnnotatedOutline
 ##' @param x \code{\link{AnnotatedOutline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
+##' @param markup If \code{TRUE}, plot markup
 ##' @param ... Other plotting parameters
 ##' @method flatplot annotatedOutline
 ##' @author David Sterratt
 ##' @export
-flatplot.annotatedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.annotatedOutline <- function(x, axt="n", ylim=NULL,
+                                      markup=TRUE,
+                                      ...) {
   NextMethod()
-  args <- list(...)
-  plot.markup <- is.null(args$markup) || args$markup
 
-  if (plot.markup) {
+  if (markup) {
     with(x, {
       if (length(V0) > 0) {
         points(P[VF,,drop=FALSE], col=getOption("TF.col"), pch="+")

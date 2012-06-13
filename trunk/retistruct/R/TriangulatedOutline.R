@@ -165,11 +165,22 @@ TriangulatedOutline <- function(o, n=200,
   return(t)
 }
 
-flatplot.triangulatedOutline <- function(t, axt="n", ylim=NULL, ...) {
+##' Plot flat \code{\link{TriangulatedOutline}}.
+##'
+##' @title Flat plot of TriangulatedOutline
+##' @param t \code{\link{TriangulatedOutline}} object
+##' @param axt whether to plot axes
+##' @param ylim y-limits
+##' @param mesh If \code{TRUE}, plot mesh
+##' @param ... Other plotting parameters
+##' @method flatplot triangulatedOutline
+##' @author David Sterratt
+##' @export
+flatplot.triangulatedOutline <- function(t, axt="n", ylim=NULL,
+                                         mesh=TRUE,
+                                         ...) {
   NextMethod()
-  args <- list(...)
-  plot.mesh <- is.null(args$mesh) || args$mesh
 
-  if (plot.mesh) 
-    with(t, trimesh(T, P, col="grey", add=TRUE))  
+  if (mesh) 
+    with(t, trimesh(T, P, col="grey", add=TRUE))
 }
