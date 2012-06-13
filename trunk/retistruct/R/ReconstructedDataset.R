@@ -350,7 +350,7 @@ getKR <- function(r) {
 ##' @param proj.centre Location of centre of projection as matrix with
 ##' column names \code{phi} (elevation) and \code{lambda} (longitude).
 ##' @param lambdalim Limits of longitude (in degrees) to display
-##' @param datapoints If \code{TRUE}, display data points.
+##' @param datapoints If \code{TRUE}, display data points
 ##' @param datapoint.means If \code{TRUE}, display Karcher mean of data points.
 ##' @param datapoint.contours If \code{TRUE}, display contours around
 ##' the data points generated using Kernel Density Estimation.
@@ -515,18 +515,19 @@ projection.reconstructedDataset <-
 ##'
 ##' @title Spherical plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
+##' @param datapoints If \code{TRUE}, display data points
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method sphericalplot reconstructedDataset
 ##' @author David Sterratt
 ##' @export
-sphericalplot.reconstructedDataset <- function(r, ...) {
+sphericalplot.reconstructedDataset <- function(r,
+                                               datapoints=TRUE,
+                                               ...) {
   NextMethod()
 
-  args <- list(...)
-  plot.datapoints <- is.null(args$datapoints) || args$datapoints
   size <- r$R/10
   
-  if (plot.datapoints) {
+  if (datapoints) {
     Dsc <- r$Dsc
 
     for (i in 1:length(Dsc)) {
@@ -564,7 +565,7 @@ sphericalplot.reconstructedDataset <- function(r, ...) {
         y <- rbind(v1[,2], v2[,2], v3[,2])
         z <- rbind(v1[,3], v2[,3], v3[,3])
         triangles3d(outmag*x, outmag*y, outmag*z, color=r$cols[[names(Dsc)[i]]],
-                    pch=20, ...)
+                    pch=20)
       }
     }
   }

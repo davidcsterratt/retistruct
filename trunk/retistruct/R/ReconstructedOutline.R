@@ -329,18 +329,20 @@ getTss.reconstructedOutline <- function(r) {
 ##' @param x \code{\link{ReconstructedOutline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
+##' @param grid Whether or not to show the grid lines of
+##' lattitude and longitude
+##' @param strain Whether or not to show the strain
 ##' @param ... Other plotting parameters
 ##' @method flatplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
+flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
+                                          grid=TRUE,
+                                          strain=FALSE,
+                                          ...) {
   NextMethod()
 
-  args <- list(...)
-  plot.grid <-   is.null(args$grid) || args$grid
-  plot.strain <- !is.null(args$strain) && args$strain
-
-  if (plot.strain) {
+  if (strain) {
     o <- getStrains(x)
     palette(rainbow(100))
     scols <- strain.colours(o$flat$logstrain)
@@ -390,7 +392,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
     }
   }
   
-  if (plot.grid) {
+  if (grid) {
     grid.int.minor <- 15
     grid.int.major <- 45
     grid.maj.col <- getOption("grid.maj.col")
@@ -437,33 +439,32 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL, ...) {
 ##' @param lambdalim Limits of longitude (in degrees) to display
 ##' @param philim Limits of latitude (in degrees) to display
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
-##' @param show.grid Whether or not to show the grid lines of lattitude and longitude
+##' @param grid Whether or not to show the grid lines of
+##' lattitude and longitude
 ##' @param grid.col Colour of the minor grid lines
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
-##' @param ... Other parameters, including graphics ones. The option
-##'{image} causes an image to be plotted if \code{TRUE}.
+##' @param image If \code{TRUE}, show the image
+##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedOutline
 ##' @export
-projection.reconstructedOutline <-
-  function(r,
-           transform=identity.transform,
-           axisdir=cbind(phi=90, lambda=0),
-           projection=azimuthal.equalarea,
-           proj.centre=cbind(phi=0, lambda=0),
-           lambdalim=c(-180, 180),
-           philim=c(-90, 90),          
-           labels=c(0, 90, 180, 270),
-           show.grid=TRUE,
-           grid.col="gray",
-           grid.bg="transparent", 
-           grid.int.minor=15,
-           grid.int.major=45,
-           ...) {
-  args <- list(...)
-  plot.image <- is.null(args$image) || args$image
-
+projection.reconstructedOutline <- function(r,
+                                            transform=identity.transform,
+                                            axisdir=cbind(phi=90, lambda=0),
+                                            projection=azimuthal.equalarea,
+                                            proj.centre=cbind(phi=0, lambda=0),
+                                            lambdalim=c(-180, 180),
+                                            philim=c(-90, 90),          
+                                            labels=c(0, 90, 180, 270),
+                                            grid=TRUE,
+                                            grid.col="gray",
+                                            grid.bg="transparent", 
+                                            grid.int.minor=15,
+                                            grid.int.major=45,
+                                            image=TRUE,
+                                            ...) {
+  plot.image <- image
   ## Compute grid lines
 
   ## Lines of latitude (parallels)
@@ -594,7 +595,7 @@ projection.reconstructedOutline <-
   }
   
   ## Plot the grid
-  if (show.grid) {
+  if (grid) {
     ## Minor paralells and meridians
     lines(paras.min,  col=grid.col)
     lines(merids.min, col=grid.col)
@@ -680,16 +681,16 @@ projection.reconstructedOutline <-
 ##'
 ##' @title Spherical plot of reconstructed outline
 ##' @param r \code{reconstructedOutline} object
+##' @param strain If \code{TRUE}, plot the strain
+##' @param surf If \code{TRUE}, plot the surface
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method sphericalplot reconstructedOutline
 ##' @author David Sterratt
 ##' @export
-sphericalplot.reconstructedOutline <- function(r, ...) {
+sphericalplot.reconstructedOutline <- function(r,
+                                               strain=FALSE,
+                                               surf=TRUE, ...) {
   NextMethod()
-  
-  args <- list(...)
-  plot.strain <- !is.null(args$strain) && args$strain
-  plot.surf   <- is.null(args$surf)    ||  args$surf
   
   ## FIXME: This needs to be looked at with a view to replacing
   ## functions in plots.R
@@ -697,7 +698,7 @@ sphericalplot.reconstructedOutline <- function(r, ...) {
     ## Obtain Cartesian coordinates of points
     P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
 
-    if (plot.surf) {
+    if (surf) {
       ## Outer triangles
       fac <- 1.005
       triangles3d(matrix(fac*P[t(Tt[,c(2,1,3)]),1], nrow=3),
@@ -730,7 +731,7 @@ sphericalplot.reconstructedOutline <- function(r, ...) {
               fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
               lwd=3, color=getOption("TF.col"))
 
-    if (plot.strain) {
+    if (strain) {
       o <- getStrains(r)
       palette(rainbow(100))
       scols <- strain.colours(o$spherical$logstrain)

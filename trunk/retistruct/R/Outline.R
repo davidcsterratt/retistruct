@@ -28,27 +28,28 @@ Outline <- function(P, scale=NA, im=NULL) {
   return(o)
 }
 
-##' Plot flat \code{\link{Outline}}. If the optional argument
-##' \code{image} is \code{TRUE} the image (if it is present) is
-##' displayed behind the outline. If the optional argument
-##' \code{scalebar} is present and numeric, a scale bar of length
-##' \code{scalebar} mm is plotted. If \code{scalebar} is \code{FALSE}
-##' the scale bar is supressed, and by default a scale bar of 1mm is
-##' drawn.
+##' Plot flat \code{\link{Outline}}. 
 ##'
 ##' @title Flat plot of outline
 ##' @param x \code{\link{Outline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
+##' @param image  If \code{TRUE} the image (if it is present) is
+##' displayed behind the outline
+##' @param scalebar If  numeric and if the Outline has a \code{scale}
+##' field, a scale bar of length \code{scalebar} mm is plotted.  If
+##' \code{scalebar} is \code{FALSE} or there is no scale information
+##' in the \code{\link{Outline}} \code{x}  the scale bar is supressed.
 ##' @param ... Other plotting parameters
 ##' @method flatplot outline
 ##' @author David Sterratt
 ##' @export
-flatplot.outline <- function(x, axt="n", ylim=NULL, ...) {
-  args <- list(...)
-  plot.image <- is.null(args$image) || args$image
-  scalebar <- ifelse(!is.null(args$scalebar),
-                     args$scalebar, 1) # Default value of scalebar 1mm
+flatplot.outline <- function(x, axt="n", ylim=NULL,
+                             image=TRUE,
+                             scalebar=1,
+                             ...) {
+  plot.image <- image
+  ## If there is no scale information, don't present a scale bar
   scalebar <- ifelse(is.numeric(scalebar) && !is.null(x$scale), scalebar, FALSE)
 
   with(x, {
