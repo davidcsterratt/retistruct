@@ -339,6 +339,7 @@ retistruct.save.recdata <- function(r) {
     ## Save the derived data
     r$version <- recfile.version        # Datafile version
     r$KDE <- NULL                       # KDE is regenerated on loading
+    r$KR  <- NULL                       # KR is regenerated on loading
     if (!is.null(r)) {
       save(r, file=file.path(r$dataset, "r.Rdata"))
     }

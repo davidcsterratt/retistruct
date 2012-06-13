@@ -1,2 +1,2 @@
 ##' @export
-retistruct.global.revision <- 1112 
+retistruct.global.revision <- 1116 
