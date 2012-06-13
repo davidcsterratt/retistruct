@@ -273,6 +273,11 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
           f.sort <- sort(as.vector(fpa))
           js <- findInterval(vols/100, cumsum(f.sort)/sum(f.sort))
           flevels <- f.sort[js]
+          if (length(unique(flevels)) < length(flevels)) {
+            warning("The volume contours method has found duplicated levels - there is probably something wrong with the data.")
+            KDE[[i]] <- NULL
+            next
+          }
         } else {
           flevels <- vols/100*max(fpa)
         }
