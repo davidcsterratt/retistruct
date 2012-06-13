@@ -9,7 +9,8 @@ enable.widgets <- function(state) {
   enable.group(c(g.add, g.move, g.remove, g.reconstruct,
                  g.mark.n, g.mark.d, g.mark.od,
                  g.phi0d, g.show, g.edit.show, g.data, g.eye,
-                 g.print1, g.print2), state)
+                 g.print1, g.print2,
+                 g.print.pdf1, g.print.pdf2), state)
   if (state) 
     enable.group(c(g.mark.od), retistruct.potential.od(a))
   if (!retistruct.check.markup(a)) {
@@ -299,7 +300,7 @@ h.eye <- function(h, ...) {
 }
 
 ## Print device d to file
-print.image <- function(d, file) {
+print.bitmap <- function(d, file) {
   dev <- NULL
   if (grepl(".png$", file, ignore.case=TRUE)) 
     dev <- png
@@ -317,21 +318,48 @@ print.image <- function(d, file) {
   dev.print(dev, file, width=1000, height=1000)
 }
 
-h.print.image <- function(d, initialfilename) {
+## Print device d to file
+print.pdf <- function(d, file) {
+  dev.set(d)
+  dev.print(pdf, file, width=6, height=6)
+}
+
+h.print.bitmap <- function(d, initialfilename) {
+  curdir <- getwd()
   setwd(a$dataset)  
   gfile(type="save", text="Select a filename to save image to...",
         initialfilename=initialfilename,
         handler=function(h, ...) {
-          print.image(d, h$file)
+          print.bitmap(d, h$file)
         })
+  setwd(curdir)
+}
+
+h.print.pdf <- function(d, initialfilename) {
+  curdir <- getwd()
+  setwd(a$dataset)  
+  gfile(type="save", text="Select a filename to save image to...",
+        initialfilename=initialfilename,
+        handler=function(h, ...) {
+          print.pdf(d, h$file)
+        })
+  setwd(curdir)
 }
 
 h.print1 <- function(h, ...) {
-  h.print.image(d1, initialfilename="image-flat.png")
+  h.print.bitmap(d1, initialfilename="image-flat.png")
+}
+
+h.print.pdf1 <- function(h, ...) {
+  h.print.pdf(d1, initialfilename="image-flat.pdf")
 }
 
 h.print2 <- function(h, ...) {
-  h.print.image(d2, initialfilename="image-polar.png")
+  h.print.bitmap(d2, initialfilename="image-polar.png")
+}
+
+h.print.pdf2 <- function(h, ...) {
+  h.print.pdf(d2, initialfilename="image-polar.pdf")
 }
 
 getProjections <- function() {
@@ -544,16 +572,24 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## Graphs at right
 
   ## Flat plot
-  g.f1 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.f1 <<- ggroup(horizontal=FALSE, container=g.body)
+  ## Buttons
+  g.f1.buttons <<- ggroup(horizontal=TRUE, container=g.f1)
+  g.print1     <<- gbutton("Bitmap", handler=h.print1,     container=g.f1.buttons)
+  g.print.pdf1 <<- gbutton("PDF",    handler=h.print.pdf1, container=g.f1.buttons)
+  ## Device itself
   g.fd1 <<- ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
   d1 <<- dev.cur()
-  g.print1     <<- gbutton("Print", handler=h.print1, container=g.f1)
 
   ## Projection
-  g.f2 <<- ggroup(horizontal = FALSE, container=g.body)
+  g.f2 <<- ggroup(horizontal=FALSE, container=g.body)
+  ## Buttons  
+  g.f2.buttons <<- ggroup(horizontal=TRUE, container=g.f2)  
+  g.print2     <<- gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
+  g.print.pdf2 <<- gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
+  ## Device itself
   g.fd2 <<- ggraphics(expand=TRUE, , width=500, height=500, ps=11, container=g.f2)
   d2 <<- dev.cur()
-  g.print2     <<- gbutton("Print", handler=h.print2, container=g.f2)
   
   ## Status bar
   ## g.statusbar <<- ggroup(container=g.rows)
