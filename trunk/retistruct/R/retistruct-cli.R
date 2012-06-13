@@ -50,6 +50,8 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
 retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
                                    titrate=FALSE) {
   ## Processing
+  warn.opt <- getOption("warn")
+  options(warn=1)
   r <- retistruct.read.dataset(dataset)
   r <- retistruct.read.markup(r)
   r <- retistruct.reconstruct(r)
@@ -67,6 +69,7 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
   ## Export to matlab
   message("Exporting to matlab")
   retistruct.export.matlab(r)
+  options(warn=warn.opt)
 }
 
 ## retistruct.cli.basepath - generate a path based on the elided directory name
