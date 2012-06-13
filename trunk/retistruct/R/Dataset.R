@@ -112,14 +112,13 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
   }
   
   if (grouped) {
-    with(x, {
-      for (id in ids) {
-        if (!is.null(Gs[[id]])) {
-          suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
-                                col=cols[[id]],  ...))
-        }
+    Gs <- x$Gs
+    for (id in ids) {
+      if (!is.null(Gs[[id]])) {
+        suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
+                              col=x$cols[[id]],  ...))
       }
-    })
+    }
   }
 
   if (landmarks) {
