@@ -88,6 +88,7 @@ flatplot(r, grid=TRUE,
 mtext("Eii", adj=0, font=2, line=-0.9)
 
 ## Infer locations of datapoints in spherical coordinates
+r <- RetinalReconstructedOutline(r)
 r <- ReconstructedDataset(r)
 r <- RetinalReconstructedDataset(r)
 
