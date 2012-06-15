@@ -29,6 +29,7 @@ RetinalDataset <- function(d) {
 ##' @param ... Other plotting parameters
 ##' @method flatplot retinalDataset
 ##' @author David Sterratt
+##' @export
 flatplot.retinalDataset <- function(a, axt="n", ylim=NULL, ...) {
   if (a$DVflip) {
     if (is.null(ylim)) {
