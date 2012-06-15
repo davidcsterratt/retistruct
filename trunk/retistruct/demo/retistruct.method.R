@@ -3,7 +3,7 @@ par(mfrow=c(3, 3))
 par(mar=c(0.5, 0.5, 0.5, 0.5))
 
 ## Load the raw data
-dataset <- file.path(system.file(package = "retistruct"), "extdata", "GM114-4-RC")
+dataset <- file.path(system.file(package = "retistruct"), "extdata", "GM509/R-CONTRA")
 o <- retistruct.read.dataset(dataset)
 
 ## Load the human annotation of tears
