@@ -30,12 +30,12 @@ getIms.retinalReconstructedOutline <- function(r) {
   return(ims)
 }
 
-##' Get spherical coordinates of datapoints, transformed according to
-##' the values of \code{DVflip} and \code{side}.
+##' This flips the tears according to whether the retina is DV flipped or
+##' not.
 ##'
-##' @title Get transformed spherical coordinates of datapoints
+##' @title Get spherical coordinates of tears.
 ##' @param r \code{\link{RetinalReconstructedOutline}} object.
-##' @return \code{Dss}
+##' @return List of tears in spherical coordinates.
 ##' @method getTss retinalReconstructedOutline
 ##' @author David Sterratt
 ##' @export
