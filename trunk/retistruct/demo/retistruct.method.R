@@ -59,7 +59,7 @@ mtext("Di", adj=0, font=2, line=-0.9)
 
 sphericalplot(m, strain=TRUE, datapoints=FALSE)
 rgl.viewpoint(zoom=0.7)
-rgl.postscript("initial-projection.pdf", "pdf")
+rgl.postscript("initial-projection.svg", "svg")
 
 ## Optimise mapping - this takes a few minutes
 alpha <- 8
@@ -79,7 +79,7 @@ plot.new()
 mtext("Ei", adj=0, font=2, line=-0.9)
 
 sphericalplot(r, strain=TRUE, datapoints=FALSE)
-rgl.postscript("final-projection.pdf", "pdf")
+rgl.postscript("final-projection.svg", "svg")
 
 par(mfg=c(3, 2))
 flatplot(r, grid=TRUE, 
@@ -104,4 +104,4 @@ flatplot(r, grid=TRUE,
 mtext("Fii", adj=0, font=2, line=-0.9)
 
 ## Save to PDF
-dev.copy2pdf(file="retistruct-method.pdf", width=6.83, height=6.83)
+dev.print(pdf, file="retistruct-method.pdf", width=6.83, height=6.83)
