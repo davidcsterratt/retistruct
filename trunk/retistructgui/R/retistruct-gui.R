@@ -251,9 +251,11 @@ h.open <- function(h, ...) {
     svalue(g.nb) <- 2                   # Set "View" tab
   }
   delete(g.ids.frame, g.ids)
-  g.ids <<- gcheckboxgroup(getIDs(a), checked=rep(TRUE, length(getIDs(a))),
-                           handler=h.show, container=g.ids.frame)
-  
+  ids <- getIDs(a)
+  if (!is.null(ids)) {
+    g.ids <<- gcheckboxgroup(ids, checked=rep(TRUE, length(ids)),
+                             handler=h.show, container=g.ids.frame)
+  }
   unsaved.data(FALSE)
   enable.widgets(TRUE)
   do.plot()
