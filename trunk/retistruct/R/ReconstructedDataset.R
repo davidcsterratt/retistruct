@@ -80,6 +80,16 @@ ReconstructedDataset <- function(r, report=message) {
   return(d)
 }
 
+##' @title Get IDs of groups of data within a ReconstructedDataset
+##' @param r \code{\link{ReconstructedDataset}} object
+##' @return Array of IDs
+##' @author David Sterratt
+##' @method getIDs reconstructedDataset
+##' @export
+getIDs.reconstructedDataset <- function(r) {
+  return(names(r$Dss))
+}
+
 ##' Get spherical coordinates of datapoints.
 ##'
 ##' @title Get transformed spherical coordinates of datapoints
