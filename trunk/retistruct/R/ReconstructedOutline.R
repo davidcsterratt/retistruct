@@ -470,12 +470,14 @@ projection.reconstructedOutline <- function(r,
   ## Lines of latitude (parallels)
 
   ## Determine the major and minor parallels
-  phis.maj <- unique(c(rev(seq(0, philim[1], by=-grid.int.major)),
-                       seq(0,     philim[2], by= grid.int.major),
-                       philim[2]))
-  phis.min <- unique(c(rev(seq(0, philim[1], by=-grid.int.minor)),
-                       seq(0,     philim[2], by= grid.int.minor),
-                       philim[2]))
+  phis.maj <- seq(-90, 90, by=grid.int.major)
+  phis.maj <- c(philim[1],
+                phis.maj[(phis.maj > philim[1]) & (phis.maj < philim[2])],
+                philim[2])
+  phis.min <- seq(-90, 90, by=grid.int.minor)
+  phis.min <- c(philim[0],
+                phis.min[(phis.min > philim[1]) & (phis.min < philim[2])],
+                philim[2])
   phis.min <- setdiff(phis.min, phis.maj)
 
   ## Longitudes at which to draw lines; the smaller the by interval,
@@ -670,7 +672,8 @@ projection.reconstructedOutline <- function(r,
   }
 
   ## Lattitude Labels
-  rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
+  ## rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
+  rlabels <- phis.maj
   rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
   rc <- projection(rs, proj.centre=pi/180*proj.centre)
   text(rc[,"x"], rc[,"y"], rlabels, xpd=TRUE, adj=c(1, 1))
