@@ -45,8 +45,9 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw, Gs=NULL) {
 ##' @param name name to give landmark
 ##' @return New \code{dataset} object in which landmark is named
 ##' @author David Sterratt
+##' @method nameLandmark dataset
 ##' @export
-nameLandmark <- function(d, i, name) {
+nameLandmark.dataset <- function(d, i, name) {
   if (!is.na(i)) {
     new.names <- names(d$Ss)
     ## If this name already exists, replace it with ""
@@ -135,4 +136,9 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
   }
 }
 
-
+##' @export
+all.equal.dataset <- function(target, current) {
+  return((all.equal(target$Ds, current$Ds) == TRUE) &
+         (all.equal(target$Gs, current$Gs) == TRUE) &
+         (all.equal(target$Ss, current$Ss) == TRUE))
+}

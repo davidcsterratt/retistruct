@@ -172,3 +172,15 @@ getIDs <- function(r) {
 getIDs.default <- function(r) {
   return(NULL)
 }
+
+##' @export
+nameLandmark <- function(d, i, name) {
+  UseMethod("nameLandmark")
+}
+
+##' @export
+nameLandmark.default <- function(d, i, name) {
+  return(d)
+}
+
+

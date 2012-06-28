@@ -40,3 +40,23 @@ flatplot.retinalDataset <- function(a, axt="n", ylim=NULL, ...) {
   }
   NextMethod(ylim=ylim)
 }
+
+##' Name a landmark in a \code{dataset}. The name of element \code{i}
+##' of \code{Ss} is set to \code{name}, the name of any element that
+##' bore the name is set to "" and all other elements are unaltered.
+##'
+##' @title Name a landmark in a Dataset
+##' @param d \code{dataset} object
+##' @param i index of landmark to name
+##' @param name name to give landmark
+##' @return New \code{dataset} object in which landmark is named
+##' @author David Sterratt
+##' @method nameLandmark retinalDataset
+##' @export
+nameLandmark.retinalDataset <- function(d, i, name) {
+  d <- NextMethod()
+  if (!is.na(getLandmarkID(d, "OD"))) {
+    d$Ds[["OD"]] <- with(d, matrix(colMeans(Ss[[getLandmarkID(d, "OD")]]), 1, 2))
+  }
+  return(d)
+}
