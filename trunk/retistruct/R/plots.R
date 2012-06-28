@@ -24,4 +24,12 @@ polartext <- function(text) {
   mtext(text, 1, adj=1, line=-1)
 }
 
-
+##' @title Ancillary function to place labels
+##' @param panlabel Label text
+##' @param line Line on which to appear
+##' @author David Sterratt
+##' @export
+panlabel <- function(panlabel, line=-0.7) {
+  mtext(panlabel, side=3, adj=-par("plt")[1]/(par("plt")[2]-par("plt")[1]),
+        line=line, font=2, cex=1)
+}
