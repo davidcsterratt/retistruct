@@ -17,35 +17,40 @@ r.bad <- retistruct.reconstruct(r.bad)
 ## Plotting
 x11(width=12, height=6)
 par(mfrow=c(2, 4))
+## par(cex=1, ps=9)
 
 ## Good Retina
 par(mar=c(2.2, 2.2, 0.5, 0.5),
     mgp=c(1.1, 0.2, 0),
     tcl=-0.15)
 lvsLplot(r.good)
-mtext("A", adj=-0.2, font=2, line=-0.9)
+panlabel("A")
 
 par(mar=c(0.5, 0.5, 0.5, 0.5))
 flatplot(r.good, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=FALSE, landmarks=FALSE)
-mtext("B", adj=0, font=2, line=-0.9)
+panlabel("B")
+
 flatplot(r.good, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
-mtext("C", adj=0, font=2, line=-0.9)
+panlabel("C")
+
 projection(r.good, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
-mtext("D", adj=0, font=2, line=-0.9)
+panlabel("D")
 
 ## Bad Retina
 par(mar=c(2.2, 2.2, 0.5, 0.5))
 lvsLplot(r.bad)
-mtext("E", adj=-0.2, font=2, line=-0.9)
+panlabel("E")
 
 par(mar=c(0.5, 0.5, 0.5, 0.5))
 flatplot(r.bad, strain=TRUE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=FALSE, landmarks=FALSE)
-mtext("F", adj=0, font=2, line=-0.9)
+panlabel("F")
+
 flatplot(r.bad, strain=FALSE, mesh=FALSE, stitch=FALSE, markup=FALSE, datapoints=FALSE, grid=TRUE)
-mtext("G", adj=0, font=2, line=-0.9)
+panlabel("G")
+
 projection(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FALSE)
-mtext("H", adj=0, font=2, line=-0.9)
+panlabel("H")
 
 ## Printing
-## dev.copy2pdf(file="retistruct-good-bad.pdf", width=6.83, height=6.83/2)
+## dev.copy2eps(file="fig3-retistruct-good-bad.eps", width=6.83, height=6.83/2)
 
