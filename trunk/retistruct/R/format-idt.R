@@ -383,7 +383,7 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   
   ## Remove points outwith outline
   Gs <- lapply(Gs, function(G) {
-     G[point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1,,drop=FALSE]})
+    G[point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1,,drop=FALSE]})
   
   d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
   a <- AnnotatedOutline(d)
