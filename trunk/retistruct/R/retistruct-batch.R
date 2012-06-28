@@ -138,7 +138,8 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
   ## Go through datasets
   for (dataset in datasets) {
     message(paste("Reading", dataset))
-    suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset)))
+    suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset),
+                                                  check=FALSE))
     if (!is.null(r)) {
       dat <- data.frame(dataset=dataset,
                         E=n(r$opt$value),
@@ -216,7 +217,7 @@ retistruct.batch.get.titrations <- function(tldir=".", outputdir=tldir, ...) {
   datasets <- list.datasets(tldir)
   dat <- list()
   for (dataset in datasets) {
-    r <- retistruct.read.recdata(list(dataset=dataset))
+    r <- retistruct.read.recdata(list(dataset=dataset), check=FALSE)
     if (!is.null(r)) {
       dat <- c(dat, list(r$titration$dat))
     }
@@ -349,16 +350,20 @@ retistruct.batch.analyse.summary <- function(path) {
   dev.copy2pdf(file=file.path(path, "retistruct-phi0.pdf"), width=6.83/4, height=6.83/4)
 
   ## Plot of various things
-  par(mar=c(2.4, 2.3, 0.7, 0.2))
+  ## Figure 4 in PLoS paper
+  par(mar=c(2.4, 2.6, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 3))
+  par(cex=0.66)
+
+  ## Fig 4A: Histogram of goodness measure over all retinae
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
        xlab=expression(sqrt(italic(E)[L])), main="")
-  mtext("A", adj=-0.15, font=2, line=-0.7)
+  panlabel("A")
+  
+  ## Fig 4B: Boxplot of age for retinae of different ages
 
-  ## Plot of age versus goodness
   ## Find datasets containing ("Pxx")
-
   fage <- grepl("^.*(P\\d+).*$",  sdat$dataset)
   sdat$age <- sub("^.*P(\\d+).*$", "\\1", sdat$dataset)
   sdat$age <- sub(".*adult.*", "adult", sdat$age)
@@ -373,17 +378,23 @@ retistruct.batch.analyse.summary <- function(path) {
                      xaxt="n",
                      xlab="Postnatal day",
                      ylab=expression(sqrt(italic(E)[L]))))
-  mtext("B", adj=-0.15, font=2, line=-0.7)
+  panlabel("B")
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
 
+  ## Fig 4C: Locations of optic discs
   par(mar=c(1,1,0.7,1))
-  retistruct.batch.plot.ods(sdat)
-  mtext("C", adj=-0.05, font=2, line=-0.7)
+  retistruct.batch.plot.ods(subset(sdat, age=="A"))
+  panlabel("C")
   
   ## with(sdat, table(sqrt.E ~ age))
-  dev.copy2pdf(file=file.path(path, "retistruct-goodness.pdf"), width=6.83, height=6.83/3)
 
+  ## Print Fig. 4 to EPS file
+  ## dev.print(postscript, file=file.path(path, "fig4-retistruct-goodness.eps"),
+  ##           width=6.83, height=6.83/3,
+  ##           onefile=FALSE, horizontal=TRUE)
+  dev.copy2eps(file=file.path(path, "fig4-retistruct-goodness.eps"), width=6.83, height=6.83/3)
+  
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
@@ -407,7 +418,7 @@ retistruct.batch.analyse.summary <- function(path) {
   ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
   levels(sdat$age) <- sub("adult", "A", levels(sdat$age))
   ##  print(factor(sdat$age))
-  with(sdat, boxplot(h.red ~ age,
+  with(sdat, boxplot(kde.h.red ~ age,
                      xaxt="n",
                      xlab="Postnatal day",
                      ylab=expression(italic(h)[red])))
@@ -427,7 +438,7 @@ retistruct.batch.analyse.summary <- function(path) {
   sdat <- cbind(sdat, genotype="W")
   levels(sdat$genotype) <- c("W", "B")
   sdat[grep("GMB", sdat$dataset), "genotype"] <- "B"
-  kdat <- subset(sdat, h.red < 4)
+  kdat <- subset(sdat, kde.h.red < 4)
   
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
@@ -435,7 +446,7 @@ retistruct.batch.analyse.summary <- function(path) {
   par(mfcol=c(1, 1))
   print(kdat)
   
-  with(kdat, boxplot(h.red ~ genotype+age, col=c("white", "red"),
+  with(kdat, boxplot(kde.h.red ~ genotype+age, col=c("white", "red"),
                      ## xaxt="n",
                      xlab="Postnatal day",
                      ylab=expression(italic(h)[red])))
@@ -528,9 +539,9 @@ retistruct.batch.plot.ods <- function(summ) {
 
   summlm <- lm(OD.res ~ sqrt.E, summ)
   print(summary(summlm))
-  projection(r, datapoint.contours=FALSE)
-  ##with(summ, plot(sqrt.E, OD.res))
-  ##abline(summlm)
-  
-  return(r)
+  projection(r, datapoint.contours=FALSE, philim=c(-90, -60), grid.int.minor=5, grid.int.major=15)
+  ## x11()
+  ## with(summ, plot(sqrt.E, OD.res))
+  ## abline(summlm)
+  return(summ)
 }
