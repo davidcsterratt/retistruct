@@ -188,41 +188,41 @@ retistruct.check.markup <- function(o) {
 ##'
 ##' @title Read the reconstruction data from file
 ##' @param o Outline object containing \code{dataset} field
-##' @param cache If \code{TRUE} read dervied data such as the
-##' locations of data points in spherical cordinates (\code{Dss}) from
-##' \file{\var{dataset}/r.Rdata}. If \code{FALSE} this information
-##' will be regenerated. This is useful if analysis routines (e.g. the
-##' Kernel Density Estimation) change and the reconstruction algorithm
-##' hasn't changed.
+##' @param check If \code{TRUE} check that the base information in the
+##' reconstruction object is the same as the base data in source
+##' files.
 ##' @return If the reconstruction data exists, return a reconstruction
 ##' object, else return the outline object \code{o}.
 ##' @author David Sterratt
 ##' @export
-retistruct.read.recdata <- function(o, cache=FALSE) {
+retistruct.read.recdata <- function(o, check=TRUE) {
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
     load(recfile)                       # This puts r in the environment
+    ## If the algorithm in the codebase is newer than in the recdata
+    ## file, reject the recfile data
     if (is.null(r$version) || (r$version != recfile.version)) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
-    } else {
-      ## Overwrite and dataset information and generated derived
-      ## quantities
-      if (!cache) {
-        if (!inherits(o, "retinalReconstructedDataset") | is.null(r$Gs)) {
-          o <- tryCatch(retistruct.read.dataset(o$dataset),
-                        error=function(e) {warning(e); return(NULL)})
-          if (is.null(o)) { return(o) }
-        }
-        r$Ds <- o$Ds
-        r$Gs <- o$Gs
-        r$Ss <- o$Ss
-        r <- ReconstructedDataset(r)
-        r <- RetinalReconstructedDataset(r)
-      }
-      r$dataset <- o$dataset
-      return(r)
+      return(NULL)
     }
+    ## If the base data doesn't match the recfile data, reject the
+    ## recfile data
+    if (check) {
+      if (!all.equal(o, r)) {
+        unlink(recfile)
+        warning("The base data has changed since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
+        return(NULL)
+      } 
+    }
+    ## Otherwise regenerate data derived from dataset, such as KDE and
+    ## KR; this is not stored by retistruct.recdata.save()
+    r <- ReconstructedDataset(r)
+    r <- RetinalReconstructedDataset(r)
+
+    ## Make sure the dataset information isn't overwritten
+    r$dataset <- o$dataset
+    return(r)
   }
   return(NULL)
 }
@@ -268,9 +268,6 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
     } else {
       o$lambda0 <- pi
     }
-  }
-  if (!is.na(getLandmarkID(o, "OD"))) {
-    o$Ds[["OD"]] <- with(o, matrix(colMeans(Ss[[getLandmarkID(o, "OD")]]), 1, 2))
   }
 
   ## Now do folding itself
