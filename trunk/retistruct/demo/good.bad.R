@@ -15,9 +15,8 @@ r.bad <- retistruct.read.markup(r.bad)
 r.bad <- retistruct.reconstruct(r.bad)
 
 ## Plotting
-x11(width=12, height=6)
+x11(width=6.83, height=6.83/2)
 par(mfrow=c(2, 4))
-## par(cex=1, ps=9)
 
 ## Good Retina
 par(mar=c(2.2, 2.2, 0.5, 0.5),
@@ -52,5 +51,5 @@ projection(r.bad, datapoints=FALSE, datapoint.means=FALSE, datapoint.contours=FA
 panlabel("H")
 
 ## Printing
-## dev.copy2eps(file="fig3-retistruct-good-bad.eps", width=6.83, height=6.83/2)
+## dev.copy2eps(file="fig2-retistruct-good-bad.eps", width=6.83, height=6.83/2)
 
