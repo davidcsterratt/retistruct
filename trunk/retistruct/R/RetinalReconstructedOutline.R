@@ -57,10 +57,12 @@ projection.retinalReconstructedOutline <-
            ...) {
   philim <- c(-90, 90)
   colatitude <- FALSE
+  pole <- TRUE
   if (!(identical(projection, sinusoidal) |
         identical(projection, orthographic))) {
     philim <- c(-90, r$phi0*180/pi)
     colatitude <- TRUE
+    pole <- FALSE
   }
   if (r$side=="Right") {
     labels=c("N", "D", "T", "V")

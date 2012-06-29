@@ -447,6 +447,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' @param grid.int.major Interval between major grid lines in degrees
 ##' @param colatitude If \code{TRUE} have radial labels plotted with
 ##' respect to colatitude rather than latitude
+##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedOutline
@@ -464,7 +465,8 @@ projection.reconstructedOutline <- function(r,
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45,
-                                            colatitude,
+                                            colatitude=TRUE,
+                                            pole=FALSE,
                                             image=TRUE,
                                             ...) {
   plot.image <- image
@@ -624,12 +626,14 @@ projection.reconstructedOutline <- function(r,
                    proj.centre=pi/180*proj.centre),
         col=getOption("TF.col"))
 
-  ## Projection of optic axis
-  oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0), phi0=r$phi0),
-                        axisdir*pi/180)
-  points(projection(oa.rot, proj.centre=pi/180*proj.centre),
-         pch="*", col=getOption("TF.col"), cex=2)
-  
+  ## Projection of pole
+  if (pole) {
+    oa.rot <- rotate.axis(transform(cbind(phi=-pi/2, lambda=0), phi0=r$phi0),
+                          axisdir*pi/180)
+    points(projection(oa.rot, proj.centre=pi/180*proj.centre),
+           pch="*", col=getOption("TF.col"), cex=2)
+  }
+
   ## Plot outline
   Tss <- getTss(r)
   for (Ts in Tss) {
