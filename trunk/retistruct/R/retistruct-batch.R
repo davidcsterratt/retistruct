@@ -244,7 +244,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
 
   plot(NA, NA, xlim=range(dat[,,1], na.rm=TRUE), ylim=c(0, 0.2),
        xlab=expression(paste(phi[0] - hat(phi)[0])),
-       ylab=expression(paste(sqrt(E[L]) - sqrt(hat(E[L])))))
+       ylab=expression(paste(italic(e)[L] - hat(italic(e))[L])))
   for (i in 1:length(tdat)) {
     lines(dat[i,,1], dat[i,,2], col="#00000040")
   }
@@ -358,7 +358,7 @@ retistruct.batch.analyse.summary <- function(path) {
 
   ## Fig 4A: Histogram of goodness measure over all retinae
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
-       xlab=expression(sqrt(italic(E)[L])), main="")
+       xlab=expression(italic(e)[L]), main="")
   panlabel("A")
   
   ## Fig 4B: Boxplot of age for retinae of different ages
@@ -377,7 +377,7 @@ retistruct.batch.analyse.summary <- function(path) {
   with(sdat, boxplot(sqrt.E ~ age,
                      xaxt="n",
                      xlab="Postnatal day",
-                     ylab=expression(sqrt(italic(E)[L]))))
+                     ylab=expression(italic(e)[L])))
   panlabel("B")
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
@@ -393,7 +393,7 @@ retistruct.batch.analyse.summary <- function(path) {
   ## dev.print(postscript, file=file.path(path, "fig4-retistruct-goodness.eps"),
   ##           width=6.83, height=6.83/3,
   ##           onefile=FALSE, horizontal=TRUE)
-  dev.copy2eps(file=file.path(path, "fig4-retistruct-goodness.eps"), width=6.83, height=6.83/3)
+  dev.copy2eps(file=file.path(path, "fig3-retistruct-goodness.eps"), width=6.83, height=6.83/3)
   
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
