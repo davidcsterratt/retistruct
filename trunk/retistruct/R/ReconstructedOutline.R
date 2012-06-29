@@ -445,6 +445,8 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
+##' @param colatitude If \code{TRUE} have radial labels plotted with
+##' respect to colatitude rather than latitude
 ##' @param image If \code{TRUE}, show the image
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedOutline
@@ -462,6 +464,7 @@ projection.reconstructedOutline <- function(r,
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45,
+                                            colatitude,
                                             image=TRUE,
                                             ...) {
   plot.image <- image
@@ -676,7 +679,8 @@ projection.reconstructedOutline <- function(r,
   rlabels <- phis.maj
   rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
   rc <- projection(rs, proj.centre=pi/180*proj.centre)
-  text(rc[,"x"], rc[,"y"], rlabels, xpd=TRUE, adj=c(1, 1))
+  text(rc[,"x"], rc[,"y"], rlabels + ifelse(colatitude, 90, 0),
+       xpd=TRUE, adj=c(1, 1))
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just

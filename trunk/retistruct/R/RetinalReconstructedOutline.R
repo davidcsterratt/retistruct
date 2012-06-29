@@ -56,9 +56,11 @@ projection.retinalReconstructedOutline <-
            projection=azimuthal.equalarea,
            ...) {
   philim <- c(-90, 90)
+  colatitude <- FALSE
   if (!(identical(projection, sinusoidal) |
         identical(projection, orthographic))) {
     philim <- c(-90, r$phi0*180/pi)
+    colatitude <- TRUE
   }
   if (r$side=="Right") {
     labels=c("N", "D", "T", "V")
@@ -66,5 +68,6 @@ projection.retinalReconstructedOutline <-
     labels=c("T", "D", "N", "V")
   }
   NextMethod(philim=philim,
-             labels=labels)
+             labels=labels,
+             colatitude=TRUE)
 }
