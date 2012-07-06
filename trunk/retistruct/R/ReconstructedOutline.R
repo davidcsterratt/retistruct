@@ -125,7 +125,7 @@ ReconstructedOutline <- function(o,
   report("Transforming image...")
   r <- transform.image.reconstructedOutline(r)
   
-  report(paste("Mapping optimised. Error:", format(r$opt$value, 5),
+  report(paste("Mapping optimised. Deformation energy E:", format(r$opt$value, 5),
                ";", r$nflip, "flipped triangles."))
   class(r) <- addClass("reconstructedOutline", r)
   return(r)

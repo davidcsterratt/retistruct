@@ -285,7 +285,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
     if (!is.na(getLandmarkID(r, "OD"))) {
       r$EOD <- 90 + r$Dss[["OD"]][1,"phi"] * 180/pi
     }
-    report(paste("Mapping optimised. Error:", format(r$opt$value,5),
+    report(paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
                  ";", r$nflip, "flipped triangles. OD displacement:",
                  format(r$EOD, 2),
                  "degrees."))
