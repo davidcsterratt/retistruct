@@ -106,9 +106,11 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                           mess=as.character(sapply(ret, function(x) {return(x$mess)})),
                           time=sapply(ret, function(x) {return(n(x$time))})))
   ## Defensive output, unless anything goes wrong at the next stage
-  write.csv(dat, file.path(outputdir, "retistruct-batch-0.csv"))
+  write.csv(dat, file.path(outputdir, "retistruct-batch-out.csv"))
   
   summ <- retistruct.batch.summary(tldir)
+  write.csv(dat, file.path(outputdir, "retistruct-batch-summ.csv"))
+  
   dat <- merge(summ, dat, by="dataset", all=TRUE)
   write.csv(dat, file.path(outputdir, "retistruct-batch.csv"))
   return(dat)
@@ -219,7 +221,9 @@ retistruct.batch.get.titrations <- function(tldir=".", outputdir=tldir, ...) {
   for (dataset in datasets) {
     r <- retistruct.read.recdata(list(dataset=dataset), check=FALSE)
     if (!is.null(r)) {
-      dat <- c(dat, list(r$titration$dat))
+      ndat <- list(r$titration$dat)
+      names(ndat) <- dataset
+      dat <- c(dat, ndat)
     }
   }
   return(dat)
@@ -228,15 +232,30 @@ retistruct.batch.get.titrations <- function(tldir=".", outputdir=tldir, ...) {
 ##' @export
 retistruct.batch.plot.titrations <- function(tdat) {
   dat <- array(NA, dim=c(length(tdat), nrow(tdat[[1]]), 2))
+  summ <- NULL
   for (i in 1:length(tdat)) {
     d <- tdat[[i]]
-    if (min(d[,"sqrt.E"]) < 0.2) {
-      dat[i,,2] <- d[,"sqrt.E"] - min(d[,"sqrt.E"])
-      phi0dmin <- d[which.min(d[,"sqrt.E"]), "phi0d"]
-      dat[i,,1] <- d[,"phi0d"] - phi0dmin
+    phi0d <- d["phi0", "phi0d"]
+    if (!is.null(phi0d)) {
+      ## Ignore retinae whose rim angle is 0 - this is the default and
+      ## means that it probably hasn't been set properly
+      if ((phi0d != 0) & (min(d[,"sqrt.E"]) < 0.2)) {
+        dat[i,,2] <- d[,"sqrt.E"] - min(d[,"sqrt.E"])
+        phi0d.opt <- d[which.min(d[,"sqrt.E"]), "phi0d"]
+        dat[i,,1] <- d[,"phi0d"] - phi0d.opt
+
+        sqrt.E.opt <- d[which.min(d[,"sqrt.E"]), "sqrt.E"]
+        summ <- rbind(summ,
+                      data.frame(dataset=names(tdat)[i],
+                                 phi0d=d["phi0", "phi0d"] + 90,
+                                 sqrt.E=d["phi0", "sqrt.E"],
+                                 phi0d.opt=phi0d.opt + 90,
+                                 sqrt.E.opt=min(d[, "sqrt.E"])))
+      }
     }
   }
 
+  ## Do the detailed plot of all the lines
   par(mar=c(2.4, 3.2, 0.7, 0.2))
   par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 1))
@@ -250,8 +269,42 @@ retistruct.batch.plot.titrations <- function(tdat) {
   }
   mtext("C", adj=-0.2, font=2, line=-0.7)
   dev.copy2pdf(file=file.path("retistruct-titration.pdf"), width=6.83/3, height=6.83/4)
+
+  svg(file=file.path("fig4-retistruct-titration.svg"), width=6.83/3, height=6.83/6)
+
+  ## Plot of optimal rim lattitude versus the sub
+  par(mar=c(2.2, 2.9, 0.5, 0.4))
+  par(mgp=c(1.2, 0.3, 0), tcl=-0.3)
+  par(mfcol=c(1, 2))
+  par(cex=0.66)
+
+  with(summ, plot(phi0d.opt ~ phi0d, col="white",
+                  asp=1,
+                  xlab=expression(italic(phi)[0]),
+                  ylab=expression(hat(italic(phi))[0])))
+  with(summ, boxplot(phi0d.opt ~ round(phi0d), at=unique(sort(round(phi0d))),
+                      xaxt="n", add=TRUE))
+  abline(0,1)
+  abline( 10, 1, col="grey")
+  abline( 20, 1, col="grey")
+  abline(-10, 1, col="grey")
+  abline(-20, 1, col="grey")
+  panlabel("D")
   
-  return(dat)
+  with(summ, plot(sqrt.E.opt ~ sqrt.E,
+                  asp=1,
+                  xlab=expression(italic(e)[L]),
+                  ylab=expression(hat(italic(e))[L]),
+                  pch=".", cex=3))
+  abline(0,1)
+
+  panlabel("E")
+  dev.off()
+
+
+  with(summ, print(summary(1 - sqrt.E.opt/sqrt.E)))
+  
+  return(list(dat=dat, summ=summ))
 }
 
 ##' Recurse through a directory tree, determining whether the
@@ -266,7 +319,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
 retistruct.batch.export.matlab <- function(tldir=".") {
   datasets <- list.datasets(tldir)
   for (dataset in datasets) {
-    r <- retistruct.read.recdata(list(dataset=dataset))
+    r <- retistruct.read.recdata(list(dataset=dataset), check=FALSE)
     retistruct.export.matlab(r)
   }
 }
@@ -292,15 +345,23 @@ retistruct.batch.analyse.summary <- function(path) {
   N.outtime <- sum(na.omit(dat$status) == 1)
 
   ## Get successful reconstructions
-  sdat <- subset(dat, !is.na(sqrt.E) & status==0)
+  sdat <- subset(dat, status==0)
 
-  ## Get number of failures due to sqrt.E being too large
-  N.fail <- nrow(subset(sdat, sqrt.E >= sqrt.E.fail))
-  sdat <- subset(sdat, sqrt.E < sqrt.E.fail)
-
+  message("\nFAILURES")
   ## Get number of failures due to phi0d not being set
-  N.nophi <- nrow(subset(sdat, phi0d == 0))
-  sdat <- subset(sdat, phi0d != 0)
+  nophis <- subset(sdat, phi0d == 0 | is.na(phi0d))
+  N.nophi <- nrow(nophis)
+  message(paste("\n", nrow(nophis), "of", nrow(sdat), "retinae do not have the rim angle set:"))
+  print(nophis[,c("dataset", "phi0d")])
+  sdat <- subset(sdat, phi0d != 0 & !is.na(phi0d))
+  
+  ## Get number of failures due to sqrt.E being too large
+  failures <- subset(sdat, sqrt.E >= sqrt.E.fail)
+  N.fail <- nrow(failures)
+  failures <- failures[order(failures[,"sqrt.E"], decreasing=TRUE),]
+  message(paste(nrow(failures), "of", nrow(sdat), "retinae have e_L (sqrt.E) greater than", sqrt.E.fail, ":"))
+  print(failures[,c("dataset", "sqrt.E")])
+  sdat <- subset(sdat, sqrt.E < sqrt.E.fail)
   
   message("\nSTATISTICS")
   
@@ -323,9 +384,11 @@ retistruct.batch.analyse.summary <- function(path) {
   with.flips <- mean(sdat[,"nflip"] > 0) * 100
   
   message("\nOUTLIERS")
-  outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
+  ## outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
+  outliers <- subset(sdat, sqrt.E >  0.1)
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
-  ## print(outliers)
+  message(paste(nrow(outliers), "of", nrow(sdat), "retinae have e_L (sqrt.E) greater than 0.1:"))
+  print(outliers[,c("dataset", "sqrt.E")])
 
   ## Plot of optimal rim lattitude versus the sub
   par(mar=c(2.4, 2.8, 0.7, 0.2))
@@ -349,11 +412,12 @@ retistruct.batch.analyse.summary <- function(path) {
   mtext("B", adj=-0.3, font=2, line=-0.7)
   dev.copy2pdf(file=file.path(path, "retistruct-phi0.pdf"), width=6.83/4, height=6.83/4)
 
+  x11(width=6.83/2, height=6.83/4)
   ## Plot of various things
   ## Figure 4 in PLoS paper
   par(mar=c(2.4, 2.6, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
-  par(mfcol=c(1, 3))
+  par(mfcol=c(1, 2))
   par(cex=0.66)
 
   ## Fig 4A: Histogram of goodness measure over all retinae
@@ -381,11 +445,32 @@ retistruct.batch.analyse.summary <- function(path) {
   panlabel("B")
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
+  dev.print(svg, file=file.path(path, "fig3-retistruct-deformation.svg"), width=6.83/2, height=6.83/4)
 
-  ## Fig 4C: Locations of optic discs
-  par(mar=c(1,1,0.7,1))
-  retistruct.batch.plot.ods(subset(sdat, age=="A"))
+  ## Fig 4A-C: Locations of optic discs
+  x11(width=6.83/2, height=6.83/6)
+  par(mfcol=c(1, 3))
+  par(mar=c(0.7,0.7,0.7,0.7))
+  
+  retistruct.batch.plot.ods(subset(sdat, age=="A"),
+                            phi0d=subset(sdat, age=="A")[1, "phi0d"])
+  panlabel("A")
+
+  summ <- retistruct.batch.plot.ods(subset(sdat, age=="A"),
+                            phi0d=-60)
+  panlabel("B")
+
+  par(mar=c(2.4, 2.6, 0.7, 0.5))
+  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  
+  summlm <- lm(OD.res ~ sqrt.E, summ)
+  with(summ, plot(sqrt.E, OD.res,
+                  xlab=expression(italic(e)[L]),
+                  ylab=expression(italic(epsilon)[OD]),
+                  pch=20, col="blue"))
+  abline(summlm)
   panlabel("C")
+  dev.print(svg, file=file.path(path, "fig4-retistruct-ods.svg"), width=6.83/2, height=6.83/6)
   
   ## with(sdat, table(sqrt.E ~ age))
 
@@ -393,15 +478,14 @@ retistruct.batch.analyse.summary <- function(path) {
   ## dev.print(postscript, file=file.path(path, "fig4-retistruct-goodness.eps"),
   ##           width=6.83, height=6.83/3,
   ##           onefile=FALSE, horizontal=TRUE)
-  dev.copy2eps(file=file.path(path, "fig3-retistruct-goodness.eps"), width=6.83, height=6.83/3)
   
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 2))
 
-  hist(na.omit(sdat[,"h.red"]), breaks=seq(0, max(na.omit(sdat[,"h.red"])),
-                                  len=100),
+  hist(na.omit(sdat[,"kde.h.red"]),
+       breaks=seq(0, max(na.omit(sdat[,"kde.h.red"])), len=100),
        xlab=expression(italic(h)[red]), main="")
   mtext("A", adj=-0.15, font=2, line=-0.7)
 
@@ -444,7 +528,6 @@ retistruct.batch.analyse.summary <- function(path) {
   par(mar=c(2.4, 2.3, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 1))
-  print(kdat)
   
   with(kdat, boxplot(kde.h.red ~ genotype+age, col=c("white", "red"),
                      ## xaxt="n",
@@ -511,11 +594,11 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' datapoints 
 ##' @author David Sterratt
 ##' @export
-retistruct.batch.plot.ods <- function(summ) {
+retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
   ## Make a dummy retina
   o <- list()
   class(o) <- "reconstructedOutline"
-  o$phi0 <- -60*pi/180
+  o$phi0 <- phi0d*pi/180
   r <- ReconstructedDataset(o)
   summ <- subset(summ, age=="A")
   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
@@ -537,9 +620,7 @@ retistruct.batch.plot.ods <- function(summ) {
                                       r$Dss$OD[,"phi"],
                                       r$Dss$OD[,"lambda"])
 
-  summlm <- lm(OD.res ~ sqrt.E, summ)
-  print(summary(summlm))
-  projection(r, datapoint.contours=FALSE, philim=c(-90, -60), grid.int.minor=5, grid.int.major=15)
+  projection(r, datapoint.contours=FALSE, philim=c(-90, phi0d), ...)
   ## x11()
   ## with(summ, plot(sqrt.E, OD.res))
   ## abline(summlm)
