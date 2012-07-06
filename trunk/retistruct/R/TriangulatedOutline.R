@@ -182,5 +182,5 @@ flatplot.triangulatedOutline <- function(x, axt="n", ylim=NULL,
   NextMethod()
 
   if (mesh) 
-    with(t, trimesh(T, P, col="grey", add=TRUE))
+    with(x, trimesh(T, P, col="grey", add=TRUE))
 }
