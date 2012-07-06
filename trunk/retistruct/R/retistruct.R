@@ -216,9 +216,12 @@ retistruct.read.recdata <- function(o, check=TRUE) {
       } 
     }
     ## Otherwise regenerate data derived from dataset, such as KDE and
-    ## KR; this is not stored by retistruct.recdata.save()
-    r <- ReconstructedDataset(r)
-    r <- RetinalReconstructedDataset(r)
+    ## KR; this was not stored by retistruct.recdata.save()
+    ## FIXME: This should be deleted when recfile.version is next incremented
+    if (is.null(r$KDE) | is.null(r$KR)) {
+      r <- ReconstructedDataset(r)
+      r <- RetinalReconstructedDataset(r)
+    }
 
     ## Make sure the dataset information isn't overwritten
     r$dataset <- o$dataset
@@ -335,8 +338,6 @@ retistruct.save.recdata <- function(r) {
   if (!is.null(r$dataset)) {
     ## Save the derived data
     r$version <- recfile.version        # Datafile version
-    r$KDE <- NULL                       # KDE is regenerated on loading
-    r$KR  <- NULL                       # KR is regenerated on loading
     if (!is.null(r)) {
       save(r, file=file.path(r$dataset, "r.Rdata"))
     }
