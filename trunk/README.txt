@@ -1,4 +1,8 @@
-For the main installation instructions, see doc/retistruct-manual.pdf
+* For the main installation and user instructions, see
+  doc/retistruct-user-guide.pdf
+
+* For description of functions within the package, see
+  doc/retistruct-manual.pdf
 
 Troubleshooting
 ===============

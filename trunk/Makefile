@@ -6,7 +6,8 @@ RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
 
 dist: retistruct retistructgui
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
-	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) matlab  doc/retistruct-manual.pdf install.R install-gui.R README.txt -x '*/*.svn/*' -x 'matlab/images/*'
+	cp retistruct.Rcheck/retistruct-manual.pdf doc
+	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) matlab  doc/retistruct-user-guide.pdf install.R install-gui.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
 
 roxygen:
 	rm -f retistruct/man/*
