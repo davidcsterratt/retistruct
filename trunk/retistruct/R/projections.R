@@ -14,7 +14,7 @@
 ##' @return Two-column matrix with columns labelled \code{x} and
 ##' \code{y} of locations of projection of coordinates on plane
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
-##' \url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
+##' \url{http://mathworld.wolfram.com/SinusoidalProjection.html}
 ##' @author David Sterratt
 ##' @export
 sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
