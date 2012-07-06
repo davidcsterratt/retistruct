@@ -1,4 +1,4 @@
-For the main installation instructions, see retistruct-manual.pdf
+For the main installation instructions, see doc/retistruct-manual.pdf
 
 Troubleshooting
 ===============
