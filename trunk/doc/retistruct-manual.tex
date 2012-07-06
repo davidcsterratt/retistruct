@@ -76,7 +76,9 @@ http://www.r-project.org/. To install the GUI will be more complex.
 \end{verbatim}
    If all is well, you should be prompted to press \textbf{Return} a
    few times and Figure 1 from the manuscript will appear (drawing the
-   3D renditions takes some time).
+   3D renditions takes some time). There will be reports of warnings;
+   they are to do with printing the figures to files. You can view
+   them by typing \texttt{warnings()}.
  \item A further test produces Figure 2:
 \begin{verbatim}
    demo("low.high")
@@ -86,8 +88,12 @@ http://www.r-project.org/. To install the GUI will be more complex.
 \subsection{Install the \textsc{Retistruct} GUI}
 \label{retistruct-manual:sec:inst-retistr-gui}
 
+If the previous step works:
 \begin{enumerate}
-\item If the previous step works, from within R type:
+\item Close the R session by typing \texttt{q()} or \textbf{Ctrl-D}.
+\item Open a new R session in a directory containing the
+  \texttt{install-gui.R} and \texttt{retistruct\_0.x.x.tar.gz} files and
+  type:
 \begin{verbatim}
    source("install-gui.R")
 \end{verbatim}
