@@ -94,7 +94,7 @@ retistruct.cli.basepath <- function(dataset) {
 retistruct.cli.figure <- function(dataset,
                                   outputdir, device="pdf", width=6, height=6,
                                   res=100) {
-  suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset)))
+  suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset), check=FALSE))
   units <- NULL
   if (device!="pdf") {
     height <- height*res
