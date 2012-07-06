@@ -23,17 +23,17 @@ RetinalDataset <- function(d) {
 ##' \code{TRUE}, it flips the \emph{y}-axis.
 ##'
 ##' @title Flat plot of retinal dataset
-##' @param a \code{retinalDataset} object
+##' @param x \code{retinalDataset} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param ... Other plotting parameters
 ##' @method flatplot retinalDataset
 ##' @author David Sterratt
 ##' @export
-flatplot.retinalDataset <- function(a, axt="n", ylim=NULL, ...) {
-  if (a$DVflip) {
+flatplot.retinalDataset <- function(x, axt="n", ylim=NULL, ...) {
+  if (x$DVflip) {
     if (is.null(ylim)) {
-      ylim <- c(max(a$P[,2]), min(a$P[,2]))
+      ylim <- c(max(x$P[,2]), min(x$P[,2]))
     } else {
       ylim <- sort(ylim, TRUE)
     }

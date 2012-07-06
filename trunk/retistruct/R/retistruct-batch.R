@@ -590,6 +590,8 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' @title Superposed plot of ODs on polar axes
 ##' @param summ Summary object returned by
 ##' \code{\link{retistruct.batch.summary}}
+##' @param phi0d The rim angle for the plot
+##' @param ... Other parameters, passed to projection
 ##' @return A pseudo retina, in which the optic disks are treated as
 ##' datapoints 
 ##' @author David Sterratt

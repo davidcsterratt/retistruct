@@ -137,7 +137,7 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
 }
 
 ##' @export
-all.equal.dataset <- function(target, current) {
+all.equal.dataset <- function(target, current, ...) {
   return((all.equal(target$Ds, current$Ds) == TRUE) &
          (all.equal(target$Gs, current$Gs) == TRUE) &
          (all.equal(target$Ss, current$Ss) == TRUE))
