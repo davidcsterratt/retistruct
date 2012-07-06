@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 
 \title{\textsc{Retistruct} manual}
+\author{David C. Sterratt}
 
 \begin{document}
 
@@ -42,7 +43,21 @@ At the command line, enter:
 sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cran-rgl
 \end{verbatim}
 
-\subsection{Install the retistruct package}
+\subsubsection{Mac}
+\label{retistruct-manual:sec:mac}
+
+To install the core \textsc{Retistruct} package (without the GUI) you
+just need R for Mac, available from http://www.r-project.org/. To
+install the GUI with Mac can be more complex at present, depending on
+the version of the Mac OS. 
+
+\subsubsection{Windows}
+
+\emph{This is untested}, but to install the core \textsc{Retistruct} package (without
+the GUI) you \emph{should} just need R for Windows, available from
+http://www.r-project.org/. To install the GUI will be more complex.
+
+\subsection{Install the core \textsc{Retistruct} package}
 
 \begin{enumerate}
 \item Start \textsc{R}, in a directory containing the \texttt{install.R} and
@@ -54,6 +69,29 @@ sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cr
    The first time this runs, it should create a personal directory for
    R packages, and it will take a few minutes to install some required
    packages.
+ \item Test that it is working as follows (from within R)
+\begin{verbatim}
+   library(retistruct)
+   demo("retistruct.method")
+\end{verbatim}
+   If all is well, you should be prompted to press \textbf{Return} a
+   few times and Figure 1 from the manuscript will appear (drawing the
+   3D renditions takes some time).
+ \item A further test produces Figure 2:
+\begin{verbatim}
+   demo("low.high")
+\end{verbatim}
+\end{enumerate}
+
+\subsection{Install the \textsc{Retistruct} GUI}
+\label{retistruct-manual:sec:inst-retistr-gui}
+
+\begin{enumerate}
+\item If the previous step works, from within R type:
+\begin{verbatim}
+   source("install-gui.R")
+\end{verbatim}
+\item If all works, an interface window should appear.
 \end{enumerate}
 
 \section{Running \textsc{Retistruct}}
@@ -379,9 +417,9 @@ There are also some embryonic scripts to create polar plots:
       the Fisher density determined by the kernel fitting algorithm. \\
       \texttt{green\_h} & A pseudo-bandwidth parameter, the inverse
       of the square root of \texttt{kappa}. Units of degrees. \\
-      \texttt{green_maxs_phi} & Lattitude of maximum point of kernel
+      \texttt{green\_maxs\_phi} & Lattitude of maximum point of kernel
       estimate. \\
-      \texttt{green_maxs_lambda} & Longitude of maximum point of kernel
+      \texttt{green\_maxs\_lambda} & Longitude of maximum point of kernel
       estimate. \\
       \texttt{green\_g\_xs} \texttt{green\_g\_ys} \texttt{green\_g\_f}
       & Kernel density estimates on standard polar grid. This can be
