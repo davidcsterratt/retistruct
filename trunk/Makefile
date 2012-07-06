@@ -4,10 +4,10 @@ RETISTRUCT_SVN_REVISION1=$(shell echo $(RETISTRUCT_SVN_REVISION) + 1 | bc)
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
 RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
 
-dist: retistruct retistructgui
+dist: retistruct retistructgui check user-guide
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
 	cp retistruct.Rcheck/retistruct-manual.pdf doc
-	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) matlab  doc/retistruct-user-guide.pdf install.R install-gui.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
+	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R install-gui.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
 
 roxygen:
 	rm -f retistruct/man/*
@@ -33,6 +33,9 @@ install-retistructgui: retistructgui
 doc: retistruct
 	rm -f retistruct.pdf
 	R CMD Rd2dvi --pdf retistruct
+
+user-guide:
+	cd doc &&	pdflatex retistruct-user-guide.tex
 
 check:
 	R CMD check $(RETISTRUCT_PACKAGE)
