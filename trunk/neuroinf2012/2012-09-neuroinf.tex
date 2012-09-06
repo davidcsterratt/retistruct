@@ -34,7 +34,7 @@
 %\usepackage{garamond}
 
 \title{Retistruct: A package to reconstruct flattened retinae}
-\author{David C Sterratt$^1$, Daniel Nedergaard$^2$, David J Willshaw$^1$ and Ian D Thompson$^2$}
+\author{David C Sterratt$^1$, Daniel Lyngholm$^2$, David J Willshaw$^1$ and Ian D Thompson$^2$}
 \institute{$^1$Institute for Adaptive \& Neural Computation, School of
   Informatics, University of Edinburgh\\ $^2$MRC Centre for Developmental
   Neurobiology, King's College London} \date{Jul. 31th, 2007}
@@ -61,23 +61,18 @@
       \end{block}
 
       \begin{block}{A solution: retinal reconstruction}
-           \includegraphics[width=\linewidth]{folding}     
+        \includegraphics[width=\linewidth]{folding}     
 
-           Our ``Retistruct'' algorithm reconstructs retinal
-           flat-mounts by mapping them into a standard, spherical
-           retinal space.
+        Our ``Retistruct'' algorithm reconstructs retinal flat-mounts
+        by mapping them into a standard, spherical retinal space.
 
       \end{block}
 
-      \begin{block}{Method}
+      \begin{block}{Algorithm}
 
-        \includegraphics[width=\linewidth]{../paper/figures/fig1-retistruct-method}
+        \includegraphics[width=\linewidth]{fig1-retistruct-method}
 
-        This is achieved by: stitching the marked-up cuts of the
-        flat-mount outline; dividing the stitched outline into a mesh
-        whose vertices then are mapped onto a curtailed sphere; and
-        finally moving the vertices so as to minimise a
-        physically-inspired deformation energy function: 
+        Physically-inspired deformation energy function:
         \begin{displaymath}
           e_{\text L}=\sqrt{\frac 1{2|\mathcal{C}|\overline L}\sum _{i\in\mathcal{C}}\frac{(l_i-L_i)^2}{L_i}}
         \end{displaymath}
@@ -88,7 +83,7 @@
 
       \begin{block}{Low \& high deformation reconstructions}
 
-        \includegraphics[width=\linewidth]{../paper/figures/fig2-retistruct-low-high}     
+        \includegraphics[width=\linewidth]{fig2-retistruct-low-high}     
         \begin{itemize}
         \item  Algorithm applied to 297 flat-mounted retinae
         \item 288  reconstructed successfully
@@ -100,12 +95,67 @@
     \end{column}
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{column}{.37\linewidth}
+
+      \begin{block}{Eye muscle insertions}
+        Orient the retina relative to the nictitating membrane and
+        compare this to eye muscle insertions.
+
+        \includegraphics[width=\linewidth]{fig5-Muscles}     
+      \end{block}
+
+      \begin{block}{Projections to LGN}
+
+        \includegraphics[width=\linewidth]{fig5-retistruct-ipsi.png}     
+
+        Kernel Density Estimates and Kernel Regression estimates
+        computed using Fisherian density \citep{Fisher1953}; bandwidth
+        determined by cross-validation.
+      \end{block}
+
+      \begin{block}{Conversion to visuotopic coordinates}
+        \includegraphics[width=\linewidth]{fig6-retistruct-visuotopic.png}     
+        
+        \begin{itemize}
+      \item When retinal distribution of the ipsilateral ventrotemporal
+        crescent neurons is transformed into visuotopic space using
+        the optic axis coordinates of 64$^{\circ}$ azimuth and
+        22$^{\circ}$ elevation \citep{OommenStahl2008}, the
+        decussation line lines up with the vertical meridian.
+
+      \item Optic axis pointing to optic disc coordinates of
+        60$^{\circ}$ azimuth and 35$^{\circ}$ elevation
+        \citep{Drager1978} $\Rightarrow$ visual mismatch between
+        decussation lines.
+        \end{itemize}
+
+      \end{block}
+
+
+      \begin{block}{S-opsin distribution}
+        \includegraphics[width=\linewidth]{fig8-visuotopic-orientation}     
+
+        Optic axis orientation ($64^{\circ},22^{\circ}$)
+        $\Rightarrow$ dorsoventral boundary for S-opsin expressing
+        cones closely matches the horizontal meridian
+        (\citealp{HaverkampEtal2005}).
+
+      \end{block}
+
+
+
+    \end{column}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     \begin{column}{.25\linewidth}
 
 
       \begin{block}{Deformation statistics}
 
         \includegraphics[width=\linewidth]{fig3-deformations}     
+        
+        More residual deformation in younger, more delicate retinae.
+
       \end{block}
 
       \begin{block}{Effect of rim angle}
@@ -115,11 +165,11 @@
           stages of development, measure the distance $d_\mathrm{e}$
           from the back of the eye to the front of the cornea and the
           distance $d_\mathrm{r}$ from the back of the eye to the edge
-          of the retina
-        \item Colatitude (angle measured from the retinal pole)
-          $\varphi _0=\arccos (1-2d_{\text r}/d_{\text e})$ of the rim
-        \item Alternative approach: infer, for each individual retina,
-          the rim angle $\hat\varphi _0$ that minimises the deformation.
+          of the retina.
+        \item Rim colatitude (angle measured from the retinal pole)
+          $\varphi _0=\arccos (1-2d_{\text r}/d_{\text e})$
+        \item Alternative approach: infer, for each retina, the rim
+          angle $\hat\varphi _0$ that minimises the deformation.
         \item Maximum decrease in deformation is 19.1\%; mean
           improvement being 7.2\%.
         \item $\Rightarrow$ improvement does not justify adding
@@ -129,10 +179,8 @@
 
       \begin{block}{Validation using optic disc locations}
 
-        Inferred positions of optic discs from 72 adult reconstructed
-        retinae plotted on the same polar projection. 
 
-        \includegraphics[width=\linewidth]{../paper/figures/fig4-retistruct-ods}     
+        \includegraphics[width=\linewidth]{fig4-retistruct-ods}     
 
         $\Rightarrow$ the algorithm can estimate the position of a
         point on the intact retina to within 8$^{\circ}$ of arc (3.6\%
@@ -141,24 +189,28 @@
 
       \begin{block}{Retistruct package}
         \begin{itemize}
-        \item The reconstruction and transformation methods
+        \item Reconstruction and transformation methods
           implemented in R and will be freely available as an R
           package from http://retistruct.r-forge.r-project.org/
         \item Tested on GNU/Linux, but should also work in MacOS and
-          Windows
+          Windows.
         \item Data formats: coordinates of data points and retinal
           outline from an in-house camera-lucida setup, or bitmap
-          images with an outline marked up in ImageJ ROI format
+          images with an outline marked up in ImageJ ROI format.
         \item GUI interface to facilitate the marking-up of retinae
-          and displaying reconstructed retinae
+          and displaying reconstructed retinae.
         \end{itemize}
       \end{block}
 
 
       \begin{block}{\large References}
-        \small
+\setlength{\bibsep}{0pt}
+        \newcommand{\myshortjournaltitles}{}
         \bibliographystyle{myshort}
+        \small
+        \renewcommand{\bf}{\small\bfseries}
         \bibliography{../paper/nmf_morph}
+        \renewcommand{\bf}{\bfseries}
       \end{block}
 
 
@@ -183,59 +235,6 @@
 
 
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    \begin{column}{.37\linewidth}
-
-      \begin{block}{Eye muscle insertions}
-        Orient the retina relative to the nictitating membrane and
-        compare this to eye muscle insertions.
-
-                \includegraphics[width=\linewidth]{../paper/figures/fig7-retistruct-muscles}     
-      \end{block}
-
-      \begin{block}{Projections to LGN}
-
-        \includegraphics[width=\linewidth]{fig5-retistruct-ipsi.png}     
-      \end{block}
-
-      \begin{block}{Conversion to visuotopic coordinates}
-        \includegraphics[width=\linewidth]{../paper/figures/fig6-retistruct-visuotopic.png}     
-        
-        \begin{itemize}
-        \item Transform coordinates in reconstructed retinae to
-          visuotopic coordinates
-      \item Retinal distribution of the ipsilateral ventrotemporal
-        crescent neurons is transformed into visuotopic space using
-        the optic axis coordinates of 64$^{\circ}$ azimuth and
-        22$^{\circ}$ elevation \citep{OommenStahl2008}, and plotted in
-        an orthographic projection of the central visual field, the
-        decussation line lines up with the vertical meridian
-        (\textbf{C})
-      \item If, in contrast, the ipsilateral projection is projected
-        using the optic disc coordinates of 60$^{\circ}$ azimuth and
-        35$^{\circ}$ elevation \citep{Drager1978}, there is an evident
-        visual mismatch between the two decussation lines
-        (\textbf{D}).
-        \end{itemize}
-
-      \end{block}
-
-
-      \begin{block}{S-opsin}
-        \includegraphics[width=\linewidth]{../paper/figures/fig8-retistruct-sopsin}     
-
-        \begin{itemize}
-        \item Using these coordinates for the optic axis, the
-          dorsoventral boundary for S-opsin expressing cones closely
-          matches the horizontal meridian.
-        \end{itemize}
-      \end{block}
-
-
-
-    \end{column}
-
-
   \end{columns}
 
 
@@ -245,8 +244,8 @@
 
 \end{document}
 
-% LocalWords:  colliculus RashEtal oppo UptoEtal deve Delaunay KCL Nedergaard
+% LocalWords:  colliculus RashEtal oppo UptoEtal deve Delaunay KCL
 % LocalWords:  ANC Herrmann Willshaw Hennig Wellcome mystrings Retistruct MacOS
 % LocalWords:  ImageJ DJW IDT Eglen Uwe Drescher DL Hjorth Sarbicki LGN Eynon
 % LocalWords:  nictitating visuotopic ventrotemporal OommenStahl decussation
-% LocalWords:  Drager
+% LocalWords:  Drager HaverkampEtal
