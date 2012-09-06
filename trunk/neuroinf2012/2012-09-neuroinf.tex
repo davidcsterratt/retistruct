@@ -34,10 +34,12 @@
 %\usepackage{garamond}
 
 \title{Retistruct: A package to reconstruct flattened retinae}
-\author{David C Sterratt$^1$, Daniel Lyngholm$^2$, David J Willshaw$^1$ and Ian D Thompson$^2$}
+\author{David C.\ Sterratt$^1$, Daniel Lyngholm$^2$, David
+  J.\ Willshaw$^1$ and Ian D.\ Thompson$^2$}
 \institute{$^1$Institute for Adaptive \& Neural Computation, School of
-  Informatics, University of Edinburgh\\ $^2$MRC Centre for Developmental
-  Neurobiology, King's College London} \date{Jul. 31th, 2007}
+  Informatics, University of Edinburgh\\ $^2$MRC Centre for
+  Developmental Neurobiology, King's College London}
+\date{Jul. 31th, 2007}
 \begin{document}
 
 \begin{frame}{} 
@@ -72,12 +74,13 @@
 
         \includegraphics[width=\linewidth]{fig1-retistruct-method}
 
-        Physically-inspired deformation energy function:
+        Physically-inspired deformation depends on lengths $L_i$ and
+        $l_i$ of corresponding connections $i\in\mathcal{C}$ in
+        flattened and spherical retina:
         \begin{displaymath}
           e_{\text L}=\sqrt{\frac 1{2|\mathcal{C}|\overline L}\sum _{i\in\mathcal{C}}\frac{(l_i-L_i)^2}{L_i}}
         \end{displaymath}
-        $L_i$ and $l_i$ are lengths of corresponding connections
-        $i\in\mathcal{C}$ in flattened and spherical retina.
+        While moving vertices, extra term to prevent  triangles flipping.
       \end{block}
 
 
