@@ -6,9 +6,10 @@
 
 $domain=ereg_replace('[^\.]*\.(.*)$','\1',$_SERVER['HTTP_HOST']);
 $group_name=ereg_replace('([^\.]*)\..*$','\1',$_SERVER['HTTP_HOST']);
-$themeroot='r-forge.r-project.org/themes/rforge/'; ?>
+$themeroot='r-forge.r-project.org/themes/rforge/';
 
-<?xml version="1.0" encoding="UTF-8"?>
+echo '<?xml version="1.0" encoding="UTF-8"?>';
+?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -59,10 +60,6 @@ visual space. </li>
 <p><a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">This
     zip file contains version 0.5.5, including a user manual with
     full installation instructions.</a></p>
-
-<!--<p> The <strong>project summary page</strong> you can --
-  --find <a href="http://<?php echo $domain; ?>/projects/<?php echo --
-  --$group_name; ?>/"><strong>here</strong></a>. </p> -->
 
 <h2>Authors and funding</h2>
 
