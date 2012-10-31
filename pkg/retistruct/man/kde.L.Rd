@@ -1,0 +1,24 @@
+\name{kde.L}
+\alias{kde.L}
+\title{Estimate of the log likelihood of the points mu given a
+particular value of the concentration kappa}
+\usage{
+  kde.L(mu, kappa)
+}
+\arguments{
+  \item{mu}{Locations of data points in Cartesian
+  coordinates on unit sphere}
+
+  \item{kappa}{Concentration parameter}
+}
+\value{
+  Log likelihood of data
+}
+\description{
+  Estimate of the log likelihood of the points mu given a
+  particular value of the concentration kappa
+}
+\author{
+  David Sterratt
+}
+

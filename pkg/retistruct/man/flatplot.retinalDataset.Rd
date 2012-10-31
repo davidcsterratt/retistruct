@@ -1,0 +1,27 @@
+\name{flatplot.retinalDataset}
+\alias{flatplot.retinalDataset}
+\title{Flat plot of retinal dataset}
+\usage{
+  \method{flatplot}{retinalDataset} (x, axt = "n",
+    ylim = NULL, ...)
+}
+\arguments{
+  \item{x}{\code{retinalDataset} object}
+
+  \item{axt}{whether to plot axes}
+
+  \item{ylim}{y-limits}
+
+  \item{...}{Other plotting parameters}
+}
+\description{
+  Plot an retinal dataset. This basically is equivalent to
+  plotting a \code{dataset}, but may perform some
+  transformations to the date or plotting parameters. At
+  present, if \code{DVflip} is \code{TRUE}, it flips the
+  \emph{y}-axis.
+}
+\author{
+  David Sterratt
+}
+

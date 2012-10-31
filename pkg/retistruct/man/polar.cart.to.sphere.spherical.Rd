@@ -1,0 +1,32 @@
+\name{polar.cart.to.sphere.spherical}
+\alias{polar.cart.to.sphere.spherical}
+\title{Convert polar projection in Cartesian coordinates to
+spherical coordinates on sphere}
+\usage{
+  polar.cart.to.sphere.spherical(r, pa = FALSE,
+    preserve = "lattitude")
+}
+\arguments{
+  \item{r}{2-column Matrix of Cartesian coordinates of
+  points on polar projection. Column names should be
+  \code{x} and \code{y}}
+
+  \item{pa}{If \code{TRUE}, make this an area-preserving
+  projection}
+
+  \item{preserve}{Quantity to preserve locally in the
+  projection. Options are \code{lattitude}, \code{area} or
+  \code{angle}}
+}
+\value{
+  2-column Matrix of spherical coordinates of points on
+  sphere. Column names are \code{phi} and \code{lambda}.
+}
+\description{
+  This is the inverse of
+  \code{\link{sphere.spherical.to.polar.cart}}
+}
+\author{
+  David Sterratt
+}
+

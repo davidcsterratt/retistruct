@@ -1,0 +1,21 @@
+\name{getSss.retinalReconstructedDataset}
+\alias{getSss.retinalReconstructedDataset}
+\title{Get transformed spherical coordinates of datapoints}
+\usage{
+  \method{getSss}{retinalReconstructedDataset} (r)
+}
+\arguments{
+  \item{r}{\code{\link{RetinalReconstructedDataset}}
+  object.}
+}
+\value{
+  \code{Dss}
+}
+\description{
+  Get spherical coordinates of landmarks, transformed
+  according to the values of \code{DVflip} and \code{side}.
+}
+\author{
+  David Sterratt
+}
+

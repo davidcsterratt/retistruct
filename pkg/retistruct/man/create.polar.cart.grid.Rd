@@ -1,0 +1,29 @@
+\name{create.polar.cart.grid}
+\alias{create.polar.cart.grid}
+\title{Create grid on projection of hemisphere onto plane}
+\usage{
+  create.polar.cart.grid(pa, res, phi0)
+}
+\arguments{
+  \item{pa}{If \code{TRUE}, make this an area-preserving
+  projection}
+
+  \item{res}{Resolution of grid}
+
+  \item{phi0}{Value of \code{phi0} at edge of grid}
+}
+\value{
+  List containing: \item{\code{gs}}{Grid locations in
+  spherical coordinates} \item{\code{gc}}{Grid locations in
+  Cartesian coordinates on plane} \item{\code{xs}}{X grid
+  line locations in Cartesian coordinates on plane}
+  \item{\code{ys}}{Y grid line locations in Cartesian
+  coordinates on plane}
+}
+\description{
+  Create grid on projection of hemisphere onto plane
+}
+\author{
+  David Sterratt
+}
+

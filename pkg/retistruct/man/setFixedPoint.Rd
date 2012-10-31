@@ -1,0 +1,23 @@
+\name{setFixedPoint}
+\alias{setFixedPoint}
+\title{Set fixed point}
+\usage{
+  setFixedPoint(o, i0, name)
+}
+\arguments{
+  \item{o}{\code{\link{AnnotatedOutline}} object}
+
+  \item{i0}{Index of fixed point}
+
+  \item{name}{Name of fixed point}
+}
+\value{
+  New \code{\link{AnnotatedOutline}} object
+}
+\description{
+  Set fixed point
+}
+\author{
+  David Sterratt
+}
+

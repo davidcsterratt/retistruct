@@ -1,0 +1,33 @@
+\name{flatplot.outline}
+\alias{flatplot.outline}
+\title{Flat plot of outline}
+\usage{
+  \method{flatplot}{outline} (x, axt = "n", ylim = NULL,
+    image = TRUE, scalebar = 1, ...)
+}
+\arguments{
+  \item{x}{\code{\link{Outline}} object}
+
+  \item{axt}{whether to plot axes}
+
+  \item{ylim}{y-limits}
+
+  \item{image}{If \code{TRUE} the image (if it is present)
+  is displayed behind the outline}
+
+  \item{scalebar}{If numeric and if the Outline has a
+  \code{scale} field, a scale bar of length \code{scalebar}
+  mm is plotted.  If \code{scalebar} is \code{FALSE} or
+  there is no scale information in the
+  \code{\link{Outline}} \code{x} the scale bar is
+  supressed.}
+
+  \item{...}{Other plotting parameters}
+}
+\description{
+  Plot flat \code{\link{Outline}}.
+}
+\author{
+  David Sterratt
+}
+

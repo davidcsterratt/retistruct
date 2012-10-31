@@ -1,0 +1,34 @@
+\name{flatplot.dataset}
+\alias{flatplot.dataset}
+\title{Flat plot of Dataset}
+\usage{
+  \method{flatplot}{dataset} (x, axt = "n", ylim = NULL,
+    datapoints = TRUE, grouped = FALSE, landmarks = TRUE,
+    ids = getIDs(x), ...)
+}
+\arguments{
+  \item{x}{\code{\link{Dataset}} object}
+
+  \item{axt}{whether to plot axes}
+
+  \item{ylim}{y-limits}
+
+  \item{datapoints}{If \code{TRUE}, display data points.}
+
+  \item{grouped}{If \code{TRUE}, dipslay grouped data.}
+
+  \item{landmarks}{If \code{TRUE}, dipslay landmarks.}
+
+  \item{ids}{IDs of groups of data within a dataset,
+  returned using \code{\link{getIDs}}.}
+
+  \item{...}{Graphical parameters to pass to plotting
+  functions}
+}
+\description{
+  Flat plot of Dataset
+}
+\author{
+  David Sterratt
+}
+

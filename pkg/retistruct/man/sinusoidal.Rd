@@ -1,0 +1,42 @@
+\name{sinusoidal}
+\alias{sinusoidal}
+\title{Sinusoidal projection}
+\usage{
+  sinusoidal(r, proj.centre = cbind(phi = 0, lambda = 0),
+    lambdalim = NULL, lines = FALSE, ...)
+}
+\arguments{
+  \item{r}{Lattitude-longitude coordinates in a matrix with
+  columns labelled \code{phi} (lattitude) and \code{lambda}
+  (longitude). Alternatively string "boundary", indicating
+  that boundary of projection should be drawn.}
+
+  \item{proj.centre}{Location of centre of projection as
+  matrix with column names \code{phi} (elevation) and
+  \code{lambda} (longitude). Currently only longitude is
+  used by this function.}
+
+  \item{lambdalim}{Limits of longitude to plot}
+
+  \item{lines}{If this is \code{TRUE} create breaks of
+  \code{NA}s when lines cross the limits of longitude. This
+  prevents lines crossing the centre of the projection.}
+
+  \item{...}{Arguments not used by this projection.}
+}
+\value{
+  Two-column matrix with columns labelled \code{x} and
+  \code{y} of locations of projection of coordinates on
+  plane
+}
+\description{
+  Sinusoidal projection
+}
+\author{
+  David Sterratt
+}
+\references{
+  \url{http://en.wikipedia.org/wiki/Map_projection},
+  \url{http://mathworld.wolfram.com/SinusoidalProjection.html}
+}
+

@@ -1,0 +1,29 @@
+\name{kr.yhat.cart}
+\alias{kr.yhat.cart}
+\title{Kernel regression on sphere using Fisherian density with
+Cartesian coordinates}
+\usage{
+  kr.yhat.cart(r, mu, y, kappa)
+}
+\arguments{
+  \item{r}{Locations at which to estimate dependent
+  variables in Cartesian coordinates}
+
+  \item{mu}{Locations in Cartesian coordinates (independent
+  variables)}
+
+  \item{y}{Values at locations (dependent variables)}
+
+  \item{kappa}{Concentration parameter}
+}
+\value{
+  Estimates of dependent variables at locations \code{r}
+}
+\description{
+  Kernel regression on sphere using Fisherian density with
+  Cartesian coordinates
+}
+\author{
+  David Sterratt
+}
+

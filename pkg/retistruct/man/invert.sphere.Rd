@@ -1,0 +1,24 @@
+\name{invert.sphere}
+\alias{invert.sphere}
+\title{Invert sphere about its centre}
+\usage{
+  invert.sphere(r, ...)
+}
+\arguments{
+  \item{r}{Coordinates of points in spherical coordinates
+  represented as 2 column matrix with column names
+  \code{phi} (lattitude) and \code{lambda} (longitude).}
+
+  \item{...}{Other arguments}
+}
+\value{
+  Matrix in same format, but with \code{pi} added to lambda
+  and \code{phi} negated.
+}
+\description{
+  Invert sphere about its centre
+}
+\author{
+  David Sterratt
+}
+

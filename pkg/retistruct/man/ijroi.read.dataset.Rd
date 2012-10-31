@@ -1,0 +1,26 @@
+\name{ijroi.read.dataset}
+\alias{ijroi.read.dataset}
+\title{Read a retinal dataset in IJROI format}
+\usage{
+  ijroi.read.dataset(dataset)
+}
+\arguments{
+  \item{dataset}{Path to directory containing
+  \code{outline.roi}}
+}
+\value{
+  A \code{\link{RetinalDataset}} object
+}
+\description{
+  Read a retinal dataset in IJROI format. Each dataset is a
+  folder containing a file called \code{outline.roi} that
+  specifies the outline in X-Y coordinates. It may also
+  contain a file \code{datapoints.csv}, containing the
+  locations of data points; see
+  \code{\link{read.datapoints}} for the format of this
+  file.
+}
+\author{
+  David Sterratt
+}
+

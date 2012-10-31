@@ -1,0 +1,33 @@
+\name{flatplot.reconstructedOutline}
+\alias{flatplot.reconstructedOutline}
+\title{Flat plot of reconstructed outline}
+\usage{
+  \method{flatplot}{reconstructedOutline} (x, axt = "n",
+    ylim = NULL, grid = TRUE, strain = FALSE, ...)
+}
+\arguments{
+  \item{x}{\code{\link{ReconstructedOutline}} object}
+
+  \item{axt}{whether to plot axes}
+
+  \item{ylim}{y-limits}
+
+  \item{grid}{Whether or not to show the grid lines of
+  lattitude and longitude}
+
+  \item{strain}{Whether or not to show the strain}
+
+  \item{...}{Other plotting parameters}
+}
+\description{
+  Plot \code{\link{ReconstructedOutline}} object. This adds
+  a mesh of gridlines from the spherical retina (described
+  by points \code{phi}, \code{lambda} and triangulation
+  \code{Tt} and cutoff point \code{phi0}) onto a flattened
+  retina (described by points \code{P} and triangulation
+  \code{T}).
+}
+\author{
+  David Sterratt
+}
+

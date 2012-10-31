@@ -1,0 +1,20 @@
+\name{getGss.reconstructedDataset}
+\alias{getGss.reconstructedDataset}
+\title{Get grouped variable with locations in spherical coordinates.}
+\usage{
+  \method{getGss}{reconstructedDataset} (r)
+}
+\arguments{
+  \item{r}{\code{ReconstructedDataset} object.}
+}
+\value{
+  \code{Gss}
+}
+\description{
+  Get grouped variable with locations in spherical
+  coordinates.
+}
+\author{
+  David Sterratt
+}
+

@@ -1,0 +1,64 @@
+\name{projection.reconstructedDataset}
+\alias{projection.reconstructedDataset}
+\title{Plot projection of reconstructed dataset}
+\usage{
+  \method{projection}{reconstructedDataset} (r,
+    transform = identity.transform,
+    axisdir = cbind(phi = 90, lambda = 0),
+    projection = azimuthal.equalarea,
+    proj.centre = cbind(phi = 0, lambda = 0),
+    lambdalim = c(-180, 180), datapoints = TRUE,
+    datapoint.means = TRUE, datapoint.contours = TRUE,
+    grouped = FALSE, grouped.contours = FALSE,
+    landmarks = TRUE, ids = getIDs(r), ...)
+}
+\arguments{
+  \item{r}{\code{\link{ReconstructedDataset}} object}
+
+  \item{transform}{Transform function to apply to spherical
+  coordinates before rotation}
+
+  \item{axisdir}{Direction of axis (North pole) of sphere
+  in external space}
+
+  \item{projection}{Projection in which to display object,
+  e.g. \code{\link{azimuthal.equalarea}} or
+  \code{\link{sinusoidal}}}
+
+  \item{proj.centre}{Location of centre of projection as
+  matrix with column names \code{phi} (elevation) and
+  \code{lambda} (longitude).}
+
+  \item{lambdalim}{Limits of longitude (in degrees) to
+  display}
+
+  \item{datapoints}{If \code{TRUE}, display data points}
+
+  \item{datapoint.means}{If \code{TRUE}, display Karcher
+  mean of data points.}
+
+  \item{datapoint.contours}{If \code{TRUE}, display
+  contours around the data points generated using Kernel
+  Density Estimation.}
+
+  \item{grouped}{If \code{TRUE}, dipslay grouped data.}
+
+  \item{grouped.contours}{If \code{TRUE}, display contours
+  around the grouped data generated using Kernel
+  Regression.}
+
+  \item{landmarks}{If \code{TRUE}, dipslay landmarks.}
+
+  \item{ids}{IDs of groups of data within a dataset,
+  returned using \code{\link{getIDs}}.}
+
+  \item{...}{Graphical parameters to pass to plotting
+  functions}
+}
+\description{
+  Plot projection of reconstructed dataset
+}
+\author{
+  David Sterratt
+}
+

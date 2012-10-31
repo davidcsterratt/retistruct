@@ -1,0 +1,45 @@
+\name{Fcart}
+\alias{Fcart}
+\title{The deformation energy gradient function}
+\usage{
+  Fcart(P, C, L, T, A, R, alpha = 1, x0, nu = 1,
+    verbose = FALSE)
+}
+\arguments{
+  \item{P}{N-by-3 matrix of point coordinates}
+
+  \item{C}{The connectivity matrix}
+
+  \item{L}{Length of each edge in the flattened outline}
+
+  \item{T}{Triangulation in the flattened outline}
+
+  \item{A}{Area of each triangle in the flattened outline}
+
+  \item{R}{Radius of sphere}
+
+  \item{alpha}{Area penalty scaling coefficient}
+
+  \item{x0}{Area penalty cutoff coefficient}
+
+  \item{nu}{Power to which to raise area}
+
+  \item{verbose}{How much information to report}
+}
+\value{
+  A vector representing the derivative of the energy of
+  this particular configuration with respect to the
+  parameter vector
+}
+\description{
+  The function that computes the gradient of the energy (or
+  error) of the deformation of the mesh from the flat
+  outline to the sphere. This depends on the locations of
+  the points given in spherical coordinates. The function
+  is designed to take these as a vector that is received
+  from the \code{optim} function.
+}
+\author{
+  David Sterratt
+}
+

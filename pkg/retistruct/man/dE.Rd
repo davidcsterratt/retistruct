@@ -1,0 +1,62 @@
+\name{dE}
+\alias{dE}
+\title{The deformation energy gradient function}
+\usage{
+  dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0,
+    Nphi, N, alpha = 1, x0, nu = 1, verbose = FALSE)
+}
+\arguments{
+  \item{p}{Parameter vector of \code{phi} and
+  \code{lambda}}
+
+  \item{Cu}{The upper part of the connectivity matrix}
+
+  \item{C}{The connectivity matrix}
+
+  \item{L}{Length of each edge in the flattened outline}
+
+  \item{B}{Connectivity matrix}
+
+  \item{T}{Triangulation in the flattened outline}
+
+  \item{A}{Area of each triangle in the flattened outline}
+
+  \item{R}{Radius of the sphere}
+
+  \item{Rset}{Indicies of points on the rim}
+
+  \item{i0}{Index of fixed point on rim}
+
+  \item{phi0}{Lattitude at which sphere curtailed}
+
+  \item{lambda0}{Longitude of fixed points}
+
+  \item{Nphi}{Number of free values of \code{phi}}
+
+  \item{N}{Number of points in sphere}
+
+  \item{alpha}{Area penalty scaling coefficient}
+
+  \item{x0}{Area penalty cutoff coefficient}
+
+  \item{nu}{Power to which to raise area}
+
+  \item{verbose}{How much information to report}
+}
+\value{
+  A vector representing the derivative of the energy of
+  this particular configuration with respect to the
+  parameter vector
+}
+\description{
+  The function that computes the gradient of the energy (or
+  error) of the deformation of the mesh from the flat
+  outline to the sphere. This depends on the locations of
+  the points given in spherical coordinates. The function
+  is designed to take these as a vector that is received
+  from the \code{optim} function.
+}
+\author{
+  David Sterratt
+}
+

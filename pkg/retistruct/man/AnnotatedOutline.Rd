@@ -1,0 +1,21 @@
+\name{AnnotatedOutline}
+\alias{AnnotatedOutline}
+\title{Constructor for AnnotatedOutline object}
+\usage{
+  AnnotatedOutline(o)
+}
+\arguments{
+  \item{o}{\code{Outline} object}
+}
+\value{
+  AnnotatedOutline object, with extra fields for tears
+  (\code{V0}, \code{VF} and \code{VB}), lattitude of rim
+  \code{phi0} and index of fixed point \code{i0}.
+}
+\description{
+  Constructor for AnnotatedOutline object.
+}
+\author{
+  David Sterratt
+}
+

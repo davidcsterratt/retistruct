@@ -1,0 +1,20 @@
+\name{vecnorm}
+\alias{vecnorm}
+\title{Vector norm}
+\usage{
+  vecnorm(X)
+}
+\arguments{
+  \item{X}{Vector or matrix.}
+}
+\value{
+  If a vector, returns the 2-norm of the vector. If a
+  matrix, returns the 2-norm of each row of the matrix
+}
+\description{
+  Vector norm
+}
+\author{
+  David Sterratt
+}
+

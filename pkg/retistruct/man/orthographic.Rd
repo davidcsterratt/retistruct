@@ -1,0 +1,34 @@
+\name{orthographic}
+\alias{orthographic}
+\title{Orthographic projection}
+\usage{
+  orthographic(r, proj.centre = cbind(phi = 0, lambda = 0),
+    ...)
+}
+\arguments{
+  \item{r}{Lattitude-longitude coordinates in a matrix with
+  columns labelled \code{phi} (lattitude) and \code{lambda}
+  (longitude)}
+
+  \item{proj.centre}{Location of centre of projection as
+  matrix with column names \code{phi} (elevation) and
+  \code{lambda} (longitude).}
+
+  \item{...}{Arguments not used by this projectio.n}
+}
+\value{
+  Two-column matrix with columns labelled \code{x} and
+  \code{y} of locations of projection of coordinates on
+  plane
+}
+\description{
+  Orthographic projection
+}
+\author{
+  David Sterratt
+}
+\references{
+  \url{http://en.wikipedia.org/wiki/Map_projection},
+  \url{http://mathworld.wolfram.com/OrthographicProjection.html}
+}
+

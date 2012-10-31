@@ -1,0 +1,29 @@
+\name{retistruct.cli.figure}
+\alias{retistruct.cli.figure}
+\title{Print a figure to file}
+\usage{
+  retistruct.cli.figure(dataset, outputdir, device = "pdf",
+    width = 6, height = 6, res = 100)
+}
+\arguments{
+  \item{dataset}{Path to dataset to process}
+
+  \item{outputdir}{Directory in which to save any figures}
+
+  \item{device}{String representing device to print figures
+  to}
+
+  \item{width}{Width of figures in inches}
+
+  \item{height}{Height of figures in inches}
+
+  \item{res}{Resolution of figures in dpi (only applies to
+  bitmap devices)}
+}
+\description{
+  Print a figure to file
+}
+\author{
+  David Sterratt
+}
+

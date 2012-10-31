@@ -1,0 +1,21 @@
+\name{name.list}
+\alias{name.list}
+\title{Return a new version of the list in which any un-named elements
+have been given standardised names}
+\usage{
+  name.list(l)
+}
+\arguments{
+  \item{l}{the list with un-named elements}
+}
+\value{
+  The list with standardised names
+}
+\description{
+  Return a new version of the list in which any un-named
+  elements have been given standardised names
+}
+\author{
+  David Sterratt
+}
+

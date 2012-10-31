@@ -1,0 +1,20 @@
+\name{getDssMean.reconstructedDataset}
+\alias{getDssMean.reconstructedDataset}
+\title{Karcher mean of datapoints in spherical coordinates}
+\usage{
+  \method{getDssMean}{reconstructedDataset} (r)
+}
+\arguments{
+  \item{r}{\code{\link{ReconstructedDataset}} or
+  \code{\link{RetinalReconstructedDataset}} object.}
+}
+\value{
+  \code{Dss.mean}
+}
+\description{
+  Get Karcher mean of datapoints in spherical coordinates.
+}
+\author{
+  David Sterratt
+}
+

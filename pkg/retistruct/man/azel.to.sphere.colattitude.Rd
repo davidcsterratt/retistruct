@@ -1,0 +1,35 @@
+\name{azel.to.sphere.colattitude}
+\alias{azel.to.sphere.colattitude}
+\title{Convert azimuth-elevation coordinates to spherical coordinates}
+\usage{
+  azel.to.sphere.colattitude(r, r0)
+}
+\arguments{
+  \item{r}{Coordinates of points in azimuth-elevation
+  coordinates represented as 2 column matrix with column
+  names \code{alpha} (elevation) and \code{theta}
+  (azimuth).}
+
+  \item{r0}{Direction of the axis of the sphere on which to
+  project represented as a 2 column matrix of with column
+  names \code{alpha} (elevation) and \code{theta}
+  (azimuth).}
+}
+\value{
+  2-column matrix of spherical coordinates of points with
+  column names \code{psi} (colattidude) and \code{lambda}
+  (longitude).
+}
+\description{
+  Convert azimuth-elevation coordinates to spherical
+  coordinates
+}
+\examples{
+r0 <- cbind(alpha=0, theta=0)
+r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
+azel.to.sphere.colattitude(r, r0)
+}
+\author{
+  David Sterratt
+}
+

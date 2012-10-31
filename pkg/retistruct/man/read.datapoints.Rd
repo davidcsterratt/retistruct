@@ -1,0 +1,31 @@
+\name{read.datapoints}
+\alias{read.datapoints}
+\title{Read data points in CSV format}
+\usage{
+  read.datapoints(dataset)
+}
+\arguments{
+  \item{dataset}{Path to directory containing
+  \code{dataponts.csv}}
+}
+\value{
+  List containing \item{\code{Ds}}{List of sets of
+  datapoints. Each set comprises a 2-column matrix and each
+  set is named.} \item{\code{cols}}{List of colours for
+  each dataset. There is one element that corresponds to
+  each element of \code{Ds} and which bears the same name.}
+}
+\description{
+  Read data points from a file \code{dataponts.csv} in the
+  directory \code{dataset}. The CSV should contain two
+  columns for every dataset. Each pair of columns must
+  contain a unique name in the first cell of the first row
+  and a valid colour in the second cell of the first row.
+  In the remaining rows, the X coordinates of data points
+  should be in the first column and the Y coordinates
+  should be in the second column.
+}
+\author{
+  David Sterratt
+}
+

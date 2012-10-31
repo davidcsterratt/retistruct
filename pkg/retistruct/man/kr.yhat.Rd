@@ -1,0 +1,29 @@
+\name{kr.yhat}
+\alias{kr.yhat}
+\title{Kernel regression on sphere using Fisherian density with
+polar coordinates}
+\usage{
+  kr.yhat(r, mu, y, kappa)
+}
+\arguments{
+  \item{r}{Locations at which to estimate dependent
+  variables in polar coordinates}
+
+  \item{mu}{Locations in polar coordinates (independent
+  variables)}
+
+  \item{y}{Values at data points (dependent variables)}
+
+  \item{kappa}{Concentration parameter}
+}
+\value{
+  Estimates of dependent variables at locations \code{r}
+}
+\description{
+  Kernel regression on sphere using Fisherian density with
+  polar coordinates
+}
+\author{
+  David Sterratt
+}
+

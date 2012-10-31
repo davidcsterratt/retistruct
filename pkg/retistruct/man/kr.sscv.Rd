@@ -1,0 +1,27 @@
+\name{kr.sscv}
+\alias{kr.sscv}
+\title{Cross validation estimate of the least squares error of the
+points mu given a particular value of the concentration kappa}
+\usage{
+  kr.sscv(mu, y, kappa)
+}
+\arguments{
+  \item{mu}{Locations in Cartesian coordinates (independent
+  variables)}
+
+  \item{y}{Values at locations (dependent variables)}
+
+  \item{kappa}{Concentration parameter}
+}
+\value{
+  Least squares error
+}
+\description{
+  Cross validation estimate of the least squares error of
+  the points mu given a particular value of the
+  concentration kappa
+}
+\author{
+  David Sterratt
+}
+
