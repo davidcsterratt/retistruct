@@ -1,4 +1,4 @@
-RETISTRUCT_VERSION=$(shell grep Version retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
+RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
 RETISTRUCT_SVN_REVISION=$(shell svn info -R | grep "Revision:" | perl -p -e 's/Revision: //;' | sort -n -r | head -1)
 RETISTRUCT_SVN_REVISION1=$(shell echo $(RETISTRUCT_SVN_REVISION) + 1 | bc) 
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
@@ -10,17 +10,17 @@ dist: retistruct retistructgui check user-guide
 	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R install-gui.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
 
 roxygen:
-	rm -f retistruct/man/*
-	echo "library(roxygen2) ; roxygenize(\"retistruct\")" |	R --no-restore --slave
+	rm -f pkg/retistruct/man/*
+	echo "library(roxygen2) ; roxygenize(\"pkg/retistruct\")" |	R --no-restore --slave
 
 fix-revision:
-	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" retistruct/R/revision.R
+	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" pkg/retistruct/R/revision.R
 
 retistruct: fix-revision roxygen 
-	R CMD build retistruct
+	R CMD build pkg/retistruct
 
 retistructgui: retistruct
-	R CMD build retistructgui
+	R CMD build pkg/retistructgui
 
 install: install-retistruct install-retistructgui
 
@@ -45,5 +45,5 @@ revision:
 	@echo $(RETISTRUCT_SVN_REVISION1)
 
 clean:
-	rm -f retistruct/R/*~
-	rm -f matlab/*~
+	rm -f pkg/retistruct/R/*~
+	rm -f trunk/matlab/*~
