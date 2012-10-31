@@ -1,0 +1,176 @@
+
+R version 2.14.0 (2011-10-31)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(retistruct)
+Loading required package: geometry
+Loading required package: magic
+Loading required package: abind
+Loading required package: foreign
+Loading required package: R.matlab
+Loading required package: R.oo
+Loading required package: R.methodsS3
+R.methodsS3 v1.2.2 (2010-11-17) successfully loaded. See ?R.methodsS3 for help.
+R.oo v1.9.3 (2012-03-18) successfully loaded. See ?R.oo for help.
+
+Attaching package: 'R.oo'
+
+The following object(s) are masked from 'package:R.methodsS3':
+
+    throw.default
+
+The following object(s) are masked from 'package:methods':
+
+    getClass, getClasses, getMethods
+
+The following object(s) are masked from 'package:base':
+
+    attach, detach, gc, load, save
+
+R.matlab v1.5.2 (2011-11-02) successfully loaded. See ?R.matlab for help.
+
+Attaching package: 'R.matlab'
+
+The following object(s) are masked from 'package:base':
+
+    getOption, isOpen
+
+Loading required package: ttutils
+
+Attaching package: 'ttutils'
+
+The following object(s) are masked from 'package:R.oo':
+
+    check
+
+Loading required package: tripack
+Loading required package: RTriangle
+Loading required package: rgl
+Loading required package: multicore
+Loading required package: png
+Loading required package: akima
+> dataset <- file.path(system.file(package = "retistruct"), "extdata", "GM114-4-RC")
+> r <- retistruct.read.dataset(dataset)
+Adding old segment 1
+Storing new segment 1
+Adding old segment 2
+Adding old segment 3
+Adding old segment 4
+Adding old segment 5
+Adding old segment 6
+Adding old segment 7
+Adding old segment 8
+Intersection found. Old points:
+  -4820  -3251
+  -5350  -2811
+  -5330  -2831
+  -5910  -2191
+Point i+1 has been changed:
+  -4820  -3251
+  -5342.42857142854  -2817.28571428574
+  -5330  -2831
+  -5910  -2191
+  a= 0.059157261177596
+  l= 845.204781369019
+New points:
+  -4820  -3251
+  -5342.42857142854  -2817.28571428574
+  -5876.42402876306  -2228.0493475718
+  -5910  -2191
+Intersection found. Old points:
+  -5000  -721
+  -5150  -631
+  -5110  -651
+  -5370  -651
+Point i+1 has been changed:
+  -5000  -721
+  -5116.66666666666  -651.000000000001
+  -5110  -651
+  -5370  -651
+  a= 0.197368421052627
+  l= 253.333333333339
+New points:
+  -5000  -721
+  -5116.66666666666  -651.000000000001
+  -5320  -651
+  -5370  -651
+Storing new segment 2
+> r <- retistruct.read.recdata(r)
+Adding old segment 1
+Storing new segment 1
+Adding old segment 2
+Adding old segment 3
+Adding old segment 4
+Adding old segment 5
+Adding old segment 6
+Adding old segment 7
+Adding old segment 8
+Intersection found. Old points:
+  -4820  -3251
+  -5350  -2811
+  -5330  -2831
+  -5910  -2191
+Point i+1 has been changed:
+  -4820  -3251
+  -5342.42857142854  -2817.28571428574
+  -5330  -2831
+  -5910  -2191
+  a= 0.059157261177596
+  l= 845.204781369019
+New points:
+  -4820  -3251
+  -5342.42857142854  -2817.28571428574
+  -5876.42402876306  -2228.0493475718
+  -5910  -2191
+Intersection found. Old points:
+  -5000  -721
+  -5150  -631
+  -5110  -651
+  -5370  -651
+Point i+1 has been changed:
+  -5000  -721
+  -5116.66666666666  -651.000000000001
+  -5110  -651
+  -5370  -651
+  a= 0.197368421052627
+  l= 253.333333333339
+New points:
+  -5000  -721
+  -5116.66666666666  -651.000000000001
+  -5320  -651
+  -5370  -651
+Storing new segment 2
+Inferring coordinates of datapoints
+Inferring coordinates of grouped datapoints
+Inferring coordinates of landmarks
+> print(getDssMean(r))
+$green
+           phi    lambda
+phi -0.8094951 -3.086406
+
+$red
+           phi lambda
+phi -0.6824311  3.028
+
+$double
+           phi    lambda
+phi -0.7235144 -3.139753
+
+> Dss <- getDss(r)
+> Sss <- getSss(r)
+> Ims <- getIms(r)
+> 
