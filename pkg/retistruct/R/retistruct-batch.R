@@ -348,6 +348,10 @@ retistruct.batch.analyse.summary <- function(path) {
   sdat <- subset(dat, status==0)
 
   message("\nFAILURES")
+  cpufail <- dat[grepl("CPU", dat[,"mess"]),]
+  message(paste("\n", nrow(cpufail), "of", nrow(dat), "did not finish"))
+  print(cpufail[,c("dataset")])
+  
   ## Get number of failures due to phi0d not being set
   nophis <- subset(sdat, phi0d == 0 | is.na(phi0d))
   N.nophi <- nrow(nophis)
@@ -368,6 +372,7 @@ retistruct.batch.analyse.summary <- function(path) {
   message("sqrt.E")
   sqrt.E <- summary(sdat[,"sqrt.E"])
   print(sqrt.E)
+  message(paste("SD of sqrt.E is", sd(sdat[,"sqrt.E"]), "; sqrt.E mean + 2SDs is", mean(sdat[,"sqrt.E"]) + 2*sd(sdat[,"sqrt.E"])))
   message("mean.strain")
   mean.strain <- summary(sdat[,"mean.strain"])
   print(mean.strain)
@@ -389,28 +394,6 @@ retistruct.batch.analyse.summary <- function(path) {
   outliers <- outliers[order(outliers[,"sqrt.E"], decreasing=TRUE),]
   message(paste(nrow(outliers), "of", nrow(sdat), "retinae have e_L (sqrt.E) greater than 0.1:"))
   print(outliers[,c("dataset", "sqrt.E")])
-
-  ## Plot of optimal rim lattitude versus the sub
-  par(mar=c(2.4, 2.8, 0.7, 0.2))
-  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
-  par(mfcol=c(1, 1))
-  par(cex=0.66)
-  
-  ## Ignore retinae whose rim angle is 0 - this is the default and
-  ## means that it probably hasn't been set properly
-  with(sdat, plot(phi0d.opt ~ phi0d, col="white",
-                  asp=1,
-                  xlab=expression(italic(phi)[0]),
-                  ylab=expression(hat(italic(phi))[0])))
-  with(sdat, boxplot(phi0d.opt ~ round(phi0d), at=unique(sort(round(phi0d))),
-                     xaxt="n", add=TRUE))
-  abline(0,1)
-  abline( 10, 1, col="grey")
-  abline( 20, 1, col="grey")
-  abline(-10, 1, col="grey")
-  abline(-20, 1, col="grey")
-  mtext("B", adj=-0.3, font=2, line=-0.7)
-  dev.copy2pdf(file=file.path(path, "retistruct-phi0.pdf"), width=6.83/4, height=6.83/4)
 
   x11(width=6.83/2, height=6.83/4)
   ## Plot of various things
@@ -471,6 +454,7 @@ retistruct.batch.analyse.summary <- function(path) {
   abline(summlm)
   panlabel("C")
   dev.print(svg, file=file.path(path, "fig4-retistruct-ods.svg"), width=6.83/2, height=6.83/6)
+  print(summary(summlm))
   
   ## with(sdat, table(sqrt.E ~ age))
 
@@ -601,7 +585,11 @@ retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
   o <- list()
   class(o) <- "reconstructedOutline"
   o$phi0 <- phi0d*pi/180
-  r <- ReconstructedDataset(o)
+  r <- RetinalDataset(o)
+  r <- ReconstructedDataset(r)
+  r <- RetinalReconstructedDataset(r)
+  r <- RetinalReconstructedOutline(r)
+  r$side <- "Right"
   summ <- subset(summ, age=="A")
   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
   colnames(r$Dss$OD) <- c("phi", "lambda")
