@@ -6,7 +6,7 @@ enable.group <- function(widgets, state=TRUE) {
 }
 
 enable.widgets <- function(state) {
-  enable.group(c(g.add, g.move, g.remove, g.reconstruct,
+  enable.group(c(g.add, g.move, g.remove, g.reconstruct, g.properties,
                  g.mark.n, g.mark.d, g.mark.od,
                  g.phi0d, g.show, g.edit.show, g.data, g.eye,
                  g.print1, g.print2,
@@ -464,6 +464,34 @@ h.warning <- function(e) {
   invokeRestart("muffleWarning")
 }
 
+
+## Poperties dialogue
+h.properties <- function(h, ...) {
+  g.win <- gwindow("Properties",
+                   parent=g.win)
+  g.props <- ggroup(cont=g.win, horizontal=FALSE)
+  g.colours <- gframe("Colours", container=g.props, horizontal=FALSE)
+  
+  g.prop.dl <- function(name, property, container) {
+    g.prop.dl.group <- ggroup(container=container)
+    glabel(name, container=g.prop.dl.group)
+    g.dl <- gdroplist(palette(),
+                      selected=which(palette() == options(property)),
+                      container=g.prop.dl.group,
+                      handler=function(h, ...) {
+                        eval(parse(text=paste("options(", property, "=svalue(g.dl))")))
+                        do.plot()})
+  }
+
+  g.prop.dl("Outline colour", "outline.col", g.colours)
+  g.prop.dl("Stitch colour", "stitch.col", g.colours)
+  g.prop.dl("Major gridline colour", "grid.maj.col", g.colours)
+  g.prop.dl("Minor gridline colour", "grid.min.col", g.colours)
+
+  gbutton("Close", container=g.props,
+          handler = function(h,...) dispose(g.win))
+}
+
 version.string <- function() {
   return(paste("Retistruct ",
                packageDescription("retistruct", fields="Version"),
@@ -495,7 +523,11 @@ retistruct <- function(guiToolkit="RGtk2") {
   g.open         <<- gaction("Open", icon="open", handler=h.open)
   g.save         <<- gaction("Save", icon="save", handler=h.save)
   g.reconstruct  <<- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
-  g.toolbar <<- gtoolbar(list(open=g.open, save=g.save, reconstruct=g.reconstruct),
+  g.properties   <<- gaction("Properties", icon="properties", handler=h.properties)
+  g.toolbar <<- gtoolbar(list(open=g.open,
+                              save=g.save,
+                              reconstruct=g.reconstruct,
+                              options=g.properties),
                          container=g.rows, style="both")
 
   ## Body of interface
@@ -621,3 +653,4 @@ retistruct <- function(guiToolkit="RGtk2") {
   ## there are complaints about various components not being defined.
   addHandlerChanged(g.nb, handler=h.show)
 }
+
