@@ -5,7 +5,7 @@
   options(stitch.col="cyan")
   options(V.stitch.col="darkcyan")
   options(grid.maj.col="black")
-  options(grid.min.col="grey")
+  options(grid.min.col="gray")
   options(outline.col="black")
   options(contour.levels=c(5, 25, 50, 75, 95))
   options(max.proj.dim=400)
