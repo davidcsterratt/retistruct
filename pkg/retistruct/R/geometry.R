@@ -644,8 +644,8 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
 ##' @param res Resolution of grid
 ##' @param phi0 Value of \code{phi0} at edge of grid
 ##' @return List containing:
-##' \item{\code{gs}}{Grid locations in spherical coordinates}
-##' \item{\code{gc}}{Grid locations in Cartesian coordinates on plane}
+##' \item{\code{s}}{Grid locations in spherical coordinates}
+##' \item{\code{c}}{Grid locations in Cartesian coordinates on plane}
 ##' \item{\code{xs}}{X grid line locations in Cartesian coordinates on plane}
 ##' \item{\code{ys}}{Y grid line locations in Cartesian coordinates on plane}
 ##' @author David Sterratt
