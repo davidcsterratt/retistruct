@@ -13,6 +13,7 @@
 ##' \item{\code{time}}{The time take in seconds}
 ##' \item{\code{mess}}{Any error message}
 ##' @author David Sterratt
+##' @export
 retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
                            device="pdf", ...) {
   ## Return code
