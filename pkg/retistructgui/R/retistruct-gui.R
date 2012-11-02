@@ -517,7 +517,8 @@ retistruct <- function(guiToolkit="RGtk2") {
   r <<- NULL
 
   ## Path to extdata
-  extdata <- file.path(system.file(package = "retistructdemos"), "extdata")
+  extdata       <- file.path(system.file(package = "retistruct"), "extdata")
+  extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
   
   ##
   ## GUI Layout
@@ -531,32 +532,50 @@ retistruct <- function(guiToolkit="RGtk2") {
   mbl$Edit$Reconstruct$handler <- h.reconstruct
   mbl$Edit$Properties$handler <- h.properties
   mbl$Edit$Properties$handler <- h.properties
+  mbl$Demos$fig1 <-
+    gaction(label="Figure 1",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "GM509", "R-CONTRA")
+              h.open()
+            })
+  mbl$Demos$fig2low <-
+    gaction(label="Figure 2A-D: Low deformation",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "GMB530", "R-CONTRA")
+              h.open()
+            })
+  mbl$Demos$fig2high <-
+    gaction(label="Figure 2E-H: High deformation",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "GM182-4", "R-CONTRA")
+              h.open()
+            })
   mbl$Demos$SMI32$handler <- function(h, ...) {
-    a$dataset <<- file.path(extdata, "smi32")
+    a$dataset <<- file.path(extdata.demos, "smi32")
     h.open()
   }
   mbl$Demos$left.contra <-
     gaction(label="Figure 6 Left Contra",
             handler=function(h, ...) {
-              a$dataset <<- file.path(extdata, "Figure_6-data", "left-contra")
+              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-contra")
               h.open()
             })
   mbl$Demos$left.ipsi <-
     gaction(label="Figure 6 Left Ipsi",
             handler=function(h, ...) {
-              a$dataset <<- file.path(extdata, "Figure_6-data", "left-ipsi")
+              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-ipsi")
               h.open()
             })
   mbl$Demos$right.contra <-
     gaction(label="Figure 6 Right Contra",
             handler=function(h, ...) {
-              a$dataset <<- file.path(extdata, "Figure_6-data", "right-contra")
+              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-contra")
               h.open()
             })
   mbl$Demos$right.ipsi <-
     gaction(label="Figure 6 Right Ipsi",
             handler=function(h, ...) {
-              a$dataset <<- file.path(extdata, "Figure_6-data", "right-ipsi")
+              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-ipsi")
               h.open()
             })
   mbl$Help$About$handler <- function(h, ...) {
