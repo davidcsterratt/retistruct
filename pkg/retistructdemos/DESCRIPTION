@@ -1,0 +1,40 @@
+Package: retistructdemos
+Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
+License: CC BY-SA 2.0
+Title: Retinal reconstruction program demonstration data
+Author:  David C. Sterratt <david.c.sterratt@ed.ac.uk>, Daniel Lyngholm <daniel.lyngholm@kcl.ac.uk> 
+Description: Demo data for the Retistruct package
+Version: 0.5.6
+URL: http://retistruct.r-forge.r-project.org/
+Date: 2012-11-02
+Depends:    retistruct (>= 0.5.6)
+Collate:
+    'AnnotatedOutline.R'
+    'Dataset.R'
+    'fire.R'
+    'format-common.R'
+    'format-csv.R'
+    'format-idt.R'
+    'format-ijroi.R'
+    'generics.R'
+    'geometry.R'
+    'kernel-density.R'
+    'misc.R'
+    'Outline.R'
+    'plots.R'
+    'ReconstructedDataset.R'
+    'ReconstructedOutline.R'
+    'RetinalDataset.R'
+    'RetinalReconstructedDataset.R'
+    'RetinalReconstructedOutline.R'
+    'retistruct-batch.R'
+    'retistruct-cli.R'
+    'retistruct.R'
+    'revision.R'
+    'roiread.R'
+    'spheristruct.R'
+    'StitchedOutline.R'
+    'TriangulatedOutline.R'
+    'zzz.R'
+    'ray-tracing.R'
+    'projections.R'
