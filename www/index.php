@@ -57,12 +57,13 @@ visual space. </li>
 
 <h2>Installation and documentation</h2>
 
-<p>Instructions on how to install the latest version and use
-  retistruct are contained in
-  the <a href="retistruct-user-guide.pdf">User Guide</a>. The
-  installation contains a number of demonstration retinae, and
-  instructions for how to handle retinal flat-mount images in
-  Retistruct.</p>
+<p>Retistruct has been tested on GNU/Linux and Mac OS X 10.8. It may
+  also work on Windows, though this has not been tested. Instructions
+  on how to install the latest version and use retistruct are
+  contained in the <a href="retistruct-user-guide.pdf">User
+  Guide</a>. The installation contains a number of demonstration
+  retinae, and instructions for how to handle retinal flat-mount
+  images in Retistruct.</p>
 
 <p>For reference purposes,
   this <a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">
