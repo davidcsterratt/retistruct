@@ -204,11 +204,11 @@ h.save <- function(h, ...) {
 
 ## Handler for brining up a file dialogue to open a dataset
 ##
-## Changes the global objec r
+## Changes the global object r
 ##
 ## Produces a plot of the retina in device d1
 ## 
-h.open <- function(h, ...) {
+h.select <- function(h, ...) {
   curdir <- getwd()
   if (is.null(a$dataset)) {
     info = file.info(initial.dir)
@@ -224,7 +224,10 @@ h.open <- function(h, ...) {
           a$dataset <<- h$file
         })
   setwd(curdir)
+  h.open()
+}
 
+h.open <- function(h, ...) {
   ## Read the raw data
   withCallingHandlers({
     a <<- retistruct.read.dataset(a$dataset)
@@ -512,15 +515,56 @@ retistruct <- function(guiToolkit="RGtk2") {
 
   ## Reconstruction object
   r <<- NULL
+
+  ## Path to extdata
+  extdata <- file.path(system.file(package = "retistructdemos"), "extdata")
   
   ##
   ## GUI Layout
   ## 
   g.win <<- gwindow(version.string())
 
+  ## Menu in row 0
+  mbl <- list()
+  mbl$File$Open$handler <- h.open
+  mbl$File$Save$handler <- h.save
+  mbl$Edit$Reconstruct$handler <- h.reconstruct
+  mbl$Edit$Properties$handler <- h.properties
+  mbl$Edit$Properties$handler <- h.properties
+  mbl$Demos$SMI32$handler <- function(h, ...) {
+    a$dataset <<- file.path(extdata, "smi32")
+    h.open()
+  }
+  mbl$Demos$left.contra <-
+    gaction(label="Figure 6 Left Contra",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "Figure_6-data", "left-contra")
+              h.open()
+            })
+  mbl$Demos$left.ipsi <-
+    gaction(label="Figure 6 Left Ipsi",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "Figure_6-data", "left-ipsi")
+              h.open()
+            })
+  mbl$Demos$right.contra <-
+    gaction(label="Figure 6 Right Contra",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "Figure_6-data", "right-contra")
+              h.open()
+            })
+  mbl$Demos$right.ipsi <-
+    gaction(label="Figure 6 Right Ipsi",
+            handler=function(h, ...) {
+              a$dataset <<- file.path(extdata, "Figure_6-data", "right-ipsi")
+              h.open()
+            })
+
+  g.menu <<- gmenu(mbl, container=g.win)
+  
   g.rows <<- ggroup(horizontal=FALSE, container=g.win)
   ## Toolbar in row 1
-  g.open         <<- gaction("Open", icon="open", handler=h.open)
+  g.open         <<- gaction("Open", icon="open", handler=h.select)
   g.save         <<- gaction("Save", icon="save", handler=h.save)
   g.reconstruct  <<- gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
   g.properties   <<- gaction("Properties", icon="properties", handler=h.properties)
