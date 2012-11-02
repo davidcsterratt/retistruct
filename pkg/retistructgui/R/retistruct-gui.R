@@ -559,6 +559,11 @@ retistruct <- function(guiToolkit="RGtk2") {
               a$dataset <<- file.path(extdata, "Figure_6-data", "right-ipsi")
               h.open()
             })
+  mbl$Help$About$handler <- function(h, ...) {
+    gmessage("Retistruct was written by David Sterratt at the University of Edinburgh, and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for Developmental Neurobiology, KCL.
+
+This work was supported by a Programme Grant from the Wellcome Trust (G083305). ", title="About")
+  }
 
   g.menu <<- gmenu(mbl, container=g.win)
   

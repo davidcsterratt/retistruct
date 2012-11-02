@@ -1,0 +1,8 @@
+bibentry(bibtype = "Article",
+         title = "Standard anatomical and visual space for the mouse retina: computational reconstruction and transformation of flattened retinae with the Retistruct package",
+         author = personList(as.person("David C. Sterratt"),
+                             as.person("Daniel Lyngholm"),
+                             as.person("David J. Willshaw"),
+                             as.person("Ian D. Thompson")),
+         year = 2012,
+         journal = "PLoS Computational Biology")  
