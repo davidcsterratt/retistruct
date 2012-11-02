@@ -9,6 +9,7 @@
 \usepackage[british]{babel}
 \usepackage{tabularx}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 \title{\textsc{Retistruct} manual}
 \author{David C. Sterratt}
@@ -47,9 +48,19 @@ sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cr
 \label{retistruct-manual:sec:mac}
 
 To install the core \textsc{Retistruct} package (without the GUI) you
-just need R for Mac, available from http://www.r-project.org/. To
-install the GUI with Mac can be more complex at present, depending on
-the version of the Mac OS. 
+just need R for Mac, available from \href{http://www.r-project.org/}{http://www.r-project.org/}. 
+
+To install the GUI with Mac can be more complex at present, depending
+on the version of the Mac OS. The following instructions have been
+tested on Mac OS X 10.8:
+\begin{itemize}
+\item As well as R, install the following software:
+  \begin{itemize}
+  \item Xcode (free from App Store)
+  \item Xquartz (\href{http://xquartz.macosforge.org/}{http://xquartz.macosforge.org/})
+  \item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
+  \end{itemize}
+\end{itemize}
 
 \subsubsection{Windows}
 
@@ -97,8 +108,30 @@ If the previous step works:
 \begin{verbatim}
    source("install-gui.R")
 \end{verbatim}
-\item If all works, an interface window should appear.
+\item If all works, an interface window should appear. A number of
+  sets of demonstration data are available from the \textbf{Demo} menu item.
 \end{enumerate}
+
+% \section{A tutorial}
+% \label{retistruct-user-guide:sec:tutorial}
+
+% This is a tutorial using some sample data provided on the website. 
+
+% \begin{enumerate}
+% \item Download the data from
+%   \href{http://retistruct.r-forge.r-project.org/Figure_6-data.zip}{http://retistruct.r-forge.r-project.org/Figure\_6-data.zip}. This
+%   is the data that underlies Figure~6 of \cite{SterrattEtal2012}
+% \item Unpack the zip file. A directory \texttt{Figure\_6-data} will be created.
+% \item Start retistruct by first starting \textsc{R}. At the \textsc{R}
+%   prompt type:
+% \begin{verbatim}
+% > library(retistructgui)
+% > retistruct()
+% \end{verbatim}
+%   A window should appear.
+% \item Click on the \textbf{Open} icon and navigate to the
+%   \texttt{left-contra} directory in the \texttt{Figure\_6-data} directory.
+% \end{enumerate}
 
 \section{Running \textsc{Retistruct}}
 \label{manual:sec:running}
@@ -114,31 +147,35 @@ A window should appear.
 \subsection{Opening the files for a retina}
 \label{manual:sec:opening-files-retina}
 
-At present \textsc{Retistruct} can read files in three formats.
-
-\subsubsection{IDT format}
-\label{retistruct-manual:sec:idt-format}
-
-This is the format used in Ian Thompson's lab (see
-Appendix~\ref{manual:sec:reading-data}). These files are contained in
-a directory. To open the files corresponding to a retina, click on the
-open file icon, and navigate to the directory containing the
-\texttt{SYS} and \texttt{MAP} files. On opening this directory, the
-retinal outline should appear in the \textsc{Retistruct} window.
+There are a number of types of information associated with a
+flat-mount retina that \textsc{Retistruct} can process:
+\begin{itemize}
+\item The coordinates of the outline of the flattened retina
+\item An image of the flat-mount retina (optional)
+\item The coordinates of labelled data points within the flat-mount
+  retina (optional)
+\end{itemize}
+To import this information into \textsc{Retistruct}, for each retina,
+a directory should be created containing files with the above
+information, as will be described below.  At present there are three
+formats of directory that \textsc{Retistruct} can read.  Most users
+will probably find the the \textsc{ImageJ} ROI format most convenient.
 
 \subsubsection{\textsc{ImageJ} ROI format}
 \label{retistruct-manual:sec:ijroi-format}
 
 This format allows you to load images of retinae whose outlines have
-been marked up in \textsc{ImageJ}. To use this format:
+been marked up in \textsc{ImageJ}. To create the image and outline
+files for this format:
 \begin{enumerate}
+\item Create a directory to save the files created to.
 \item Open up \textsc{ImageJ} (or FIJI).
 \item Use \textbf{File$\rightarrow$Open} to open the image.
 \item Use \textbf{Image$\rightarrow$Scale} to down sample so that the
   resolution is less than 1000x1000. (This is not crucial, but will
   speed up things later.)
-\item Save the downsampled version of the image to the file name
-  \texttt{image.png}
+\item Save the down-sampled version of the image to the file name
+  \texttt{image.png} in the directory created in Step 1.
 \item Use the Polygon Tool
   (\includegraphics[height=\baselineskip]{poly}) to mark the edge of
   the retina. According to the \textsc{ImageJ}
@@ -158,21 +195,60 @@ been marked up in \textsc{ImageJ}. To use this format:
 \item Click on the \textbf{Save} button. In the \textbf{Save
 selection\dots} box that appears, enter the file name
 \texttt{outline.roi} and make sure this file is saved to the same
-directory as the \texttt{image.png} file.
+directory as the \texttt{image.png} file, i.e.\ the directory created
+in Step 1.
 \item Open \textsc{Retistruct}.
 \item Click on the \textbf{Open File} icon and select the directory
-containing \texttt{image.png} and \texttt{outline.roi}.
+containing \texttt{image.png} and \texttt{outline.roi}. The retinal
+image should now appear, with the outline shown. By default the
+outline is in black. If this isn't visible against the image, press
+the \textbf{Properties} button in the interface, and change the
+\textbf{Outline colour}.
 \end{enumerate}
 
-Optionally, the scale of the image can be specified by providing a
-file \texttt{scale.csv} in the same directory as the image and ROI
-files. This file should contain two lines, the first with the heading
-\texttt{Scale} and the second with the length of the side of a pixel
-in micrometres. For example:
+\paragraph{Specifying the scale} Optionally, the scale of the image
+can be specified by providing a file \texttt{scale.csv} in the same
+directory as the image and ROI files. This file should contain two
+lines, the first with the heading \texttt{Scale} and the second with
+the length of the side of a pixel in micrometres. For example:
 \begin{verbatim}
 "Scale"
 1.5
 \end{verbatim}
+
+\paragraph{Reading in data points}
+\label{retistruct-user-guide:sec:read-data-points}
+
+In general, the coordinates of data points are read in from a csv file
+called \texttt{datapoints.csv}. The two cells of the first line of the
+file contain the name of the group of data points and the colour that
+these should be displayed in \textsc{Retistruct}.  Marking up the
+points from the image in \textsc{ImageJ} will ensure that the
+coordinates are in the same system as those used for the image and the
+outline. To do this:
+\begin{enumerate}
+\item Open the image used for marking up the outline
+  (\texttt{image.png}) in \textsc{ImageJ}.
+\item Threshold the image
+  (\textbf{Image$\rightarrow$Adjust$\rightarrow$Threshold\dots} so
+  that the labelled points are visible.
+\item Select \textbf{Analyze$\rightarrow$Set Measurements\dots} and make
+  sure that \textbf{Centroid} is checked
+\item Select \textbf{Analyze$\rightarrow$Analyze Particles}. Make sure
+  that \textbf{Display results} and \textbf{Clear results} are
+  checked. Click on \textbf{OK}.
+\item A window entitled \textbf{Results} should appear. This contains
+  the X and Y coordinates of the detected points. In this window
+  select \textbf{File$\rightarrow$Save as\dots} and save the file as
+  \texttt{datapoints.csv}.
+\item Open this file with either \textsc{Excel} or \textsc{OpenOffice
+    Calc} and remove all the columns apart from the X and Y
+  columns. Replace the X with the name of the data set and the Y with
+  the colour it should be displayed in \textsc{Retistruct}.
+\item Save \texttt{datapoints.csv} in the retina's directory, along
+  with \texttt{outline.roi} (and \texttt{image.png} if an image is
+  desired).
+\end{enumerate}
 
 \subsubsection{CSV format}
 \label{retistruct-manual:sec:csv-format}
@@ -186,6 +262,16 @@ outline is contained in the two columns of a file called
 10,76,
 ...
 \end{verbatim}
+
+\subsubsection{IDT format}
+\label{retistruct-manual:sec:idt-format}
+
+This is the format used in Ian Thompson's lab (see
+Appendix~\ref{manual:sec:reading-data}). These files are contained in
+a directory. To open the files corresponding to a retina, click on the
+open file icon, and navigate to the directory containing the
+\texttt{SYS} and \texttt{MAP} files. On opening this directory, the
+retinal outline should appear in the \textsc{Retistruct} window.
 
 
 \subsection{The retinal display}
@@ -376,7 +462,7 @@ There are also some embryonic scripts to create polar plots:
 \texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
 
 \begin{table}
-  \begin{tabularx}{\linewidth}{lX}
+  \begin{tabularx}{\linewidth}{p{1.2in}X}
     \hline \texttt{phi0} & The latitude of the rim, expressed in
     radians
     \\
@@ -535,6 +621,13 @@ each directory there are two files:
 % plot.sys.map(sys, map)
 % \end{verbatim}
 
+\begin{thebibliography}{99}
+\bibitem{SterrattEtal2012}
+Sterratt DC, Lyngholm D, Willshaw DJ, Thompson ID (in press) Standard anatomical and visual space for the mouse retina:
+computational reconstruction and transformation of flattened
+retinae with the Retistruct package
+\newblock PLoS Comp. Biol.
+\end{thebibliography}
 
 \end{document}
 
@@ -549,3 +642,5 @@ each directory there are two files:
 % LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
 % LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV xs
 % LocalWords:  Metadata metadata datapoints polararea DssMean KDE ys
+%  LocalWords:  Ctrl gui OpenOffice Calc Karcher DssHullarea flevels
+%  LocalWords:  maxs Lattitude gpa Sterratt Lyngholm Willshaw PLoS
