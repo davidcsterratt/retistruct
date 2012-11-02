@@ -1,8 +1,13 @@
 RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
 RETISTRUCT_SVN_REVISION=$(shell svn info -R | grep "Revision:" | perl -p -e 's/Revision: //;' | sort -n -r | head -1)
 RETISTRUCT_SVN_REVISION1=$(shell echo $(RETISTRUCT_SVN_REVISION) + 1 | bc) 
+ifeq ("$(RETISTRUCT_SVN_REVISION)", "")
+	RETISTRUCT_SVN_REVISION=1000
+	RETISTRUCT_SVN_REVISION1=1000
+endif
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
 RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
+RETISTRUCTDEMOS_PACKAGE=retistructdemos_$(RETISTRUCT_VERSION).tar.gz
 
 dist: retistruct retistructgui check user-guide
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
@@ -19,16 +24,22 @@ fix-revision:
 retistruct: fix-revision roxygen 
 	R CMD build pkg/retistruct
 
-retistructgui: retistruct
+retistructgui: retistruct retistructdemos
 	R CMD build pkg/retistructgui
 
-install: install-retistruct install-retistructgui
+retistructdemos: retistruct
+	R CMD build pkg/retistructdemos
+
+install: install-retistruct  install-retistructdemos install-retistructgui
 
 install-retistruct: retistruct
 	R CMD INSTALL --latex $(RETISTRUCT_PACKAGE) 
 
 install-retistructgui: retistructgui
 	R CMD INSTALL --latex $(RETISTRUCTGUI_PACKAGE) 
+
+install-retistructdemos: retistructdemos
+	R CMD INSTALL --latex $(RETISTRUCTDEMOS_PACKAGE) 
 
 doc: retistruct
 	rm -f retistruct.pdf
