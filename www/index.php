@@ -59,7 +59,7 @@ visual space. </li>
 
 <p>Retistruct has been tested on GNU/Linux and Mac OS X 10.8. It may
   also work on Windows, though this has not been tested. Instructions
-  on how to install the latest version and use retistruct are
+  on how to install the latest version and use Retistruct are
   contained in the <a href="retistruct-user-guide.pdf">User
   Guide</a>. The installation contains a number of demonstration
   retinae, and instructions for how to handle retinal flat-mount
