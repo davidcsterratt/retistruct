@@ -73,6 +73,26 @@ code to read data directories contained by Retistruct.</p>
 <p>Access to the source code Subversion repository is available from
 the <a href="https://r-forge.r-project.org/projects/retistruct/">project page</a>.</p>
 
+<h2>Sample data</h2>
+
+<p>As well as the built-in demo data, there are some sample images to
+  practise on:<ol>
+  <li>Beginner: <a href="data/image.png">SMI-32 stained retina</a>. As described in
+  the <a href="retistruct-user-guide.pdf">User Guide</a>, the outline
+  can be marked up in <a href="http://rsb.info.nih.gov/ij/">ImageJ</a>
+  and imported into Retistruct.</li>
+  <li>More advanced: TIFF files
+  (<a href="data/left-5x-small.tif">left</a> and
+  <a href="data/right-5x-small.tif">right</a>), each containing a stack of three images
+  corresponding to Figure 6 of the manuscript: retinae labelled with
+  Fluoro-Emerald, Fluoro-Ruby and a brightfield image. As described in
+  the <a href="retistruct-user-guide.pdf">User Guide</a>,
+  use <a href="http://rsb.info.nih.gov/ij/">ImageJ</a> to mark up the
+  outline on the brightfield image, and then
+  use <a href="http://rsb.info.nih.gov/ij/">ImageJ's</a> particle
+  analyser to find the locations of the stained cells.</li>
+  </ol></p>
+
 <h2>Authors and funding</h2>
 
 <p>Retistruct was written
