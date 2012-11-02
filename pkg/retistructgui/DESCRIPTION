@@ -1,13 +1,12 @@
 Package: retistructgui
 Version: 0.5.6
 Date: 2012-11-01
-Title: Retinal reconstruction program
+Title: Retinal reconstruction program GUI
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Depends: R (>= 2.14.0), retistruct (>= 0.4.10), gWidgets, gWidgetsRGtk2,
-    cairoDevice
-Description: Program to reconstruct retinae from flattened retinae in
-    which there are incisions and tears
-License: file LICENSE
-URL: http://www.neuralmapformation.org
+    cairoDevice, retistructdemos
+Description: GUI for Retistruct package
+License: GPL-2
+URL: http://retistruct.r-forge.r-project.org/
 Collate:  'retistruct-gui.R' 'zzz.R'

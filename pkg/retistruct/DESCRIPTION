@@ -1,6 +1,6 @@
 Package: retistruct
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
-License: file LICENSE
+License: GPL-2
 Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Description: Program to reconstruct retinae from flattened retinae in
