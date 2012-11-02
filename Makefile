@@ -46,7 +46,7 @@ doc: retistruct
 	R CMD Rd2dvi --pdf retistruct
 
 user-guide:
-	cd doc &&	pdflatex retistruct-user-guide.tex
+	cd trunk/doc &&	pdflatex retistruct-user-guide.tex && cp retistruct-user-guide.pdf ../../www
 
 check:
 	R CMD check $(RETISTRUCT_PACKAGE)

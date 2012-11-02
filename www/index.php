@@ -55,11 +55,19 @@ visual space. </li>
       <li>A paper will be forthcoming.</li>
       </ul></p>
 
-<h2>Download</h2>
+<h2>Installation and documentation</h2>
 
-<p><a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">This
-    zip file contains version 0.5.5, including a user manual with
-    full installation instructions.</a></p>
+<p>Instructions on how to install the latest version and use
+  retistruct are contained in
+  the <a href="retistruct-user-guide.pdf">User Guide</a>. The
+  installation contains a number of demonstration retinae, and
+  instructions for how to handle retinal flat-mount images in
+  Retistruct.</p>
+
+<p>For reference purposes,
+  this <a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">
+  zip file</a> contains the review version of Retistruct and some
+  Matlab code to read data directories contained by Retistruct.</p>
 
 <h2>Authors and funding</h2>
 
