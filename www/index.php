@@ -17,7 +17,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
   <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Retistruct</title>
+	<title>Retistruct - computational reconstruction and transformation of flattened retinae</title>
   </head>
 
 <body>
@@ -57,13 +57,14 @@ visual space. </li>
 
 <h2>Installation and documentation</h2>
 
-<p>Retistruct has been tested on GNU/Linux and Mac OS X 10.8. It may
-also work on Windows, though this has not been tested. Instructions on
-how to install the latest version and use Retistruct are contained in
-the <a href="retistruct-user-guide.pdf">User Guide</a>. The
-installation contains a number of demonstration retinae, and
-instructions for how to handle retinal flat-mount images in
-Retistruct.</p>
+<p>Retistruct has been tested on GNU/Linux and Mac OS X 10.8. It does
+  not currently work on Windows, though this should be fairly easy to
+  fix. Instructions on how to install the latest version and use
+  Retistruct are contained in
+  the <a href="retistruct-user-guide.pdf">User Guide</a>. The
+  installation contains a number of demonstration retinae, and
+  instructions for how to handle retinal flat-mount images in
+  Retistruct.</p>
 
 <p>For reference purposes,
 this <a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">
