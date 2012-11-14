@@ -197,7 +197,7 @@ read.ijroi <- function(file, verbose=FALSE) {
   ## if (r$type %in% types[c("oval")]) {
 
   if (r$type %in% types["line"]) {
-    if (r$subtype %in% types("ARROW")) {
+    if (r$subtype %in% types["ARROW"]) {
       r$doubleHeaded <- (r$options & opts$DOUBLE_HEADED) !=0
       r$outline <- (r$options & opts$OUTLINE) !=0
       ##                     if (style>=Arrow.FILLED && style<=Arrow.OPEN)
