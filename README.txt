@@ -1,4 +1,20 @@
-* For the main installation and user instructions, see
+Installation
+============
+
+* To install the files provided with the PLoS Comp. Biol. paper, look
+  at the the user guide (doc/retistruct-user-guide.pdf) for how to
+  install R and dependencies, but do the installation from within R by
+  typing:
+
+    source("install.R")
+
+  and
+
+    source("install-gui.R")
+
+  instead of the source statements in the manual.
+
+* To install the latest version and for user instructions, see
   doc/retistruct-user-guide.pdf
 
 * For description of functions within the package, see
@@ -20,3 +36,4 @@ sudo apt-get install build-essential libgtk2.0-dev
 install.packages("cairoDevice")
 
 (See https://bugs.launchpad.net/ubuntu/+source/cairodevice/+bug/778804)
+
