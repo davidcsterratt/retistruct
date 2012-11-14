@@ -72,6 +72,10 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                              device="pdf", titrate=FALSE,
                              cpu.time.limit=3600,
                              mc.cores=getOption("cores")) {
+  if (!require("multicore")) install.packages("multicore")
+  if (!require("multicore")) {
+    stop("The multicore package is not available on this platform")
+  }
   ## Get datasets
   if (is.null(datasets)) {
     datasets <- list.datasets(tldir)

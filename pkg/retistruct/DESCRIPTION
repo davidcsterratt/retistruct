@@ -16,9 +16,10 @@ Depends:
     ttutils,
     RTriangle (>= 1.6-0.4),
     rgl,
-    multicore,
     png,
     sp
+Suggests:
+    multicore
 Collate:
     'AnnotatedOutline.R'
     'Dataset.R'
