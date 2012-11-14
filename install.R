@@ -12,13 +12,13 @@ if (!require("geometry"))      install.packages("geometry")
 if (!require("rgl"))           install.packages("rgl")
 if (!require("R.matlab"))      install.packages("R.matlab")
 if (!require("ttutils"))       install.packages("ttutils")
-if (!require("multicore"))     install.packages("multicore")
 if (!require("png"))           install.packages("png")
 if (!require("sp"))            install.packages("sp")
-## These lines needed while Triangle is only on R-Forge
-install.packages("RTriangle", repos="http://R-Forge.R-project.org")
+if (!require("RTriangle"))     install.packages("RTriangle")
+
 ## Updating packates may be necessary
 ## update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistruct_0.5.5.tar.gz")
+install.packages("retistruct_0.5.6.tar.gz")
+install.packages("retistructdemos_0.5.6.tar.gz")
 
