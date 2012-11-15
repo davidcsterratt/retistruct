@@ -593,10 +593,19 @@ projection.reconstructedOutline <- function(r,
     ## the longitude range in a pseudocylindrical projection. A simple
     ## way of doing this is to say that if a pixel is very large,
     ## don't plot it.
-    bigpx <- which(apply(impx[1:4,], 2,
-                         function(x) {max(x) - min(x)}) > 0.1*abs(diff(xlim)) |
-                   apply(impy[1:4,], 2,
-                         function(y) {max(y) - min(y)}) > 0.1*abs(diff(ylim)))
+    
+    ## This code is chronically slow, hence replacing with the
+    ## pmin/pmax version
+    ## bigpx <- which(apply(impx[1:4,], 2,
+    ##                      function(x) {max(x) - min(x)}) > 0.1*abs(diff(xlim)) |
+    ##                apply(impy[1:4,], 2,
+    ##                      function(y) {max(y) - min(y)}) > 0.1*abs(diff(ylim)))
+    bigpx <- which((pmax(impx[1,], impx[2,], impx[3,], impx[4,]) -
+                    pmin(impx[1,], impx[2,], impx[3,], impx[4,]) >
+                    0.1*abs(diff(xlim))) |
+                   (pmax(impy[1,], impy[2,], impy[3,], impy[4,]) -
+                    pmin(impy[1,], impy[2,], impy[3,], impy[4,]) >
+                    0.1*abs(diff(xlim))))
     immask[bigpx] <- FALSE
     
     ## Plot the polygon, masking as we go
