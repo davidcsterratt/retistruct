@@ -474,12 +474,13 @@ h.properties <- function(h, ...) {
                    parent=g.win)
   g.props <- ggroup(cont=g.win, horizontal=FALSE)
   g.colours <- gframe("Colours", container=g.props, horizontal=FALSE)
-  
+  cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow",
+            "gray")
   g.prop.dl <- function(name, property, container) {
     g.prop.dl.group <- ggroup(container=container)
     glabel(name, container=g.prop.dl.group)
-    g.dl <- gdroplist(palette(),
-                      selected=which(palette() == options(property)),
+    g.dl <- gdroplist(cols,
+                      selected=which(cols == options(property)),
                       container=g.prop.dl.group,
                       handler=function(h, ...) {
                         eval(parse(text=paste("options(", property, "=svalue(g.dl))")))
