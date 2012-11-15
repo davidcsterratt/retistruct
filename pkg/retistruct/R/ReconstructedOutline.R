@@ -448,6 +448,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' respect to colatitude rather than latitude
 ##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
+##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection reconstructedOutline
 ##' @export
@@ -466,6 +467,7 @@ projection.reconstructedOutline <- function(r,
                                             colatitude=TRUE,
                                             pole=FALSE,
                                             image=TRUE,
+                                            add=FALSE,
                                             ...) {
   plot.image <- image
   ## Compute grid lines
@@ -519,8 +521,11 @@ projection.reconstructedOutline <- function(r,
   ## Set up the plot region
   xlim <- range(na.omit(rbind(paras.min, paras.maj))[,"x"])
   ylim <- range(na.omit(rbind(paras.min, paras.maj))[,"y"])
-  plot(NA, NA, xlim=xlim, ylim=ylim,# xaxs="i", yaxs="i",
-       type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
+
+  if (!add) {
+    plot(NA, NA, xlim=xlim, ylim=ylim,# xaxs="i", yaxs="i",
+         type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
+  }
 
   ## Plot an image
 
