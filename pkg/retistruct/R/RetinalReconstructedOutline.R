@@ -5,12 +5,13 @@
 ##'
 ##' @title RetinalReconstructedOutline constructor
 ##' @param r Object that inherits \code{ReconstructedOutline}
+##' @param report Function used to report progress.
 ##' @return \code{RetinalReconstructedOutline} object. This does not
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt
 ##' @export
-RetinalReconstructedOutline <- function(r) {
+RetinalReconstructedOutline <- function(r, report=message) {
   if (!(inherits(r, "reconstructedOutline"))) {
     stop("Argument needs to inherit reconstructedOutline")
   }

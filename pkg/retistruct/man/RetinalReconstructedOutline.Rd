@@ -2,11 +2,13 @@
 \alias{RetinalReconstructedOutline}
 \title{RetinalReconstructedOutline constructor}
 \usage{
-  RetinalReconstructedOutline(r)
+  RetinalReconstructedOutline(r, report = message)
 }
 \arguments{
   \item{r}{Object that inherits
   \code{ReconstructedOutline}}
+
+  \item{report}{Function used to report progress.}
 }
 \value{
   \code{RetinalReconstructedOutline} object. This does not

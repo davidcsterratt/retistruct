@@ -2,11 +2,13 @@
 \alias{RetinalReconstructedDataset}
 \title{RetinalReconstructedDataset constructor}
 \usage{
-  RetinalReconstructedDataset(r)
+  RetinalReconstructedDataset(r, report = message)
 }
 \arguments{
   \item{r}{Object that inherits both
   \code{reconstructedDataset} and \code{dataset}.}
+
+  \item{report}{Function used to report progress.}
 }
 \value{
   \code{\link{RetinalReconstructedDataset}} object. This

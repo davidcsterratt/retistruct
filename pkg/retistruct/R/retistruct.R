@@ -290,8 +290,8 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
                  format(r$EOD, 2),
                  "degrees."))
         
-    r <- RetinalReconstructedOutline(r)
-    r <- RetinalReconstructedDataset(r)
+    r <- RetinalReconstructedOutline(r, report=report)
+    r <- RetinalReconstructedDataset(r, report=report)
     report("")
   }
   return(r)

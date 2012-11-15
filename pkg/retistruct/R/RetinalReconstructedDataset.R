@@ -6,18 +6,21 @@
 ##' @title RetinalReconstructedDataset constructor
 ##' @param r Object that inherits both \code{reconstructedDataset} and
 ##' \code{dataset}.
+##' @param report Function used to report progress.
 ##' @return \code{\link{RetinalReconstructedDataset}} object. This does not
 ##' contain any extra fields, but there are extra mthods dthat apply
 ##' to it.
 ##' @author David Sterratt
 ##' @export
-RetinalReconstructedDataset <- function(r) {
+RetinalReconstructedDataset <- function(r, report=message) {
   if (!(inherits(r, "reconstructedDataset") &
         inherits(r, "retinalDataset"))) {
     stop("Argument needs to inherit reconstructedDataset and retinalDataset")
   }
   class(r) <- addClass("retinalReconstructedDataset", r)
+  report("Computing KDE and contours of points")
   r$KDE <- getKDE(r)
+  report("Computing KR and contours of counts")
   r$KR <-  getKR(r)
   return(r)
 }
