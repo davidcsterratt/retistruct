@@ -441,7 +441,6 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param grid Whether or not to show the grid lines of
 ##' lattitude and longitude
-##' @param grid.col Colour of the minor grid lines
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
@@ -461,7 +460,6 @@ projection.reconstructedOutline <- function(r,
                                             philim=c(-90, 90),          
                                             labels=c(0, 90, 180, 270),
                                             grid=TRUE,
-                                            grid.col="gray",
                                             grid.bg="transparent", 
                                             grid.int.minor=15,
                                             grid.int.major=45,
@@ -600,16 +598,19 @@ projection.reconstructedOutline <- function(r,
     polygon(impx[,immask], impy[,immask],
             col=im[immask], border=im[immask])
   }
+
+  grid.maj.col <- getOption("grid.maj.col")
+  grid.min.col <- getOption("grid.min.col")
   
   ## Plot the grid
   if (grid) {
     ## Minor paralells and meridians
-    lines(paras.min,  col=grid.col)
-    lines(merids.min, col=grid.col)
+    lines(paras.min,  col=grid.min.col)
+    lines(merids.min, col=grid.min.col)
 
     ## Major lines of latitude on top of all minor lines
-    lines(paras.maj,  col="black")
-    lines(merids.maj, col="black")
+    lines(paras.maj,  col=grid.maj.col)
+    lines(merids.maj, col=grid.maj.col)
 
     ## Boundary of projection
     boundary <- projection("boundary")
@@ -684,7 +685,7 @@ projection.reconstructedOutline <- function(r,
   rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
   rc <- projection(rs, proj.centre=pi/180*proj.centre)
   text(rc[,"x"], rc[,"y"], rlabels + ifelse(colatitude, 90, 0),
-       xpd=TRUE, adj=c(1, 1))
+       xpd=TRUE, adj=c(1, 1), col=grid.maj.col)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just

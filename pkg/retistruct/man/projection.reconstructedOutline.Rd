@@ -9,9 +9,9 @@
     proj.centre = cbind(phi = 0, lambda = 0),
     lambdalim = c(-180, 180), philim = c(-90, 90),
     labels = c(0, 90, 180, 270), grid = TRUE,
-    grid.col = "gray", grid.bg = "transparent",
-    grid.int.minor = 15, grid.int.major = 45,
-    colatitude = TRUE, pole = FALSE, image = TRUE, ...)
+    grid.bg = "transparent", grid.int.minor = 15,
+    grid.int.major = 45, colatitude = TRUE, pole = FALSE,
+    image = TRUE, ...)
 }
 \arguments{
   \item{r}{\code{ReconstructedOutline} object}
@@ -41,8 +41,6 @@
 
   \item{grid}{Whether or not to show the grid lines of
   lattitude and longitude}
-
-  \item{grid.col}{Colour of the minor grid lines}
 
   \item{grid.bg}{Background colour of the grid}
 
