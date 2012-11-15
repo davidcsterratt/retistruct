@@ -11,7 +11,7 @@
     labels = c(0, 90, 180, 270), grid = TRUE,
     grid.bg = "transparent", grid.int.minor = 15,
     grid.int.major = 45, colatitude = TRUE, pole = FALSE,
-    image = TRUE, ...)
+    image = TRUE, add = FALSE, ...)
 }
 \arguments{
   \item{r}{\code{ReconstructedOutline} object}
@@ -56,6 +56,9 @@
   \item{pole}{If \code{TRUE} indicate the pole with a "*"}
 
   \item{image}{If \code{TRUE}, show the image}
+
+  \item{add}{If \code{TRUE}, don't draw axes; add to
+  existing plot.}
 
   \item{...}{Graphical parameters to pass to plotting
   functions}
