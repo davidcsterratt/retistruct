@@ -19,6 +19,6 @@ if (!require("RTriangle"))     install.packages("RTriangle")
 ## Updating packates may be necessary
 ## update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistruct_0.5.6.tar.gz")
-install.packages("retistructdemos_0.5.6.tar.gz")
+install.packages("retistruct_0.5.7.tar.gz")
+install.packages("retistructdemos_0.5.7.tar.gz")
 

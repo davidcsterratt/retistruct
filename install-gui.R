@@ -8,7 +8,7 @@ if (!require("cairoDevice"))   install.packages("cairoDevice")
 ## These lines needed while  Triangle and geometry only on R-Forge
 ## update.packages(Sys.getenv("R_LIBS_USER"))
 ## Now install retistruct
-install.packages("retistructgui_0.5.6.tar.gz")
+install.packages("retistructgui_0.5.7.tar.gz")
 
 library(retistructgui)
 retistruct()
