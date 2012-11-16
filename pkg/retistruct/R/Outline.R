@@ -57,19 +57,19 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
   with(x, {
     s <- which(!is.na(gb))                # source index
     d <- na.omit(gb)                      # destination index
-    
-    if (plot.image && !is.null(x$im)) {
-      xs <- 1:ncol(im)
-      ys <- 1:nrow(im)
-      plot(NA, NA, xlim=c(0, max(xs)), ylim=c(0, max(ys)), asp=1,
-           xaxt=axt, yaxt=axt, bty="n",
-           xlab="", ylab="")
-      ## rasterImage crashes on some systems, but not others.
-      rasterImage(im, 0, 0, ncol(im), nrow(im))
-    } else {
-      xs <- P[s,1]
-      ys <- P[s,2]
-      if (!add) {
+
+    if (!add) {
+      if (plot.image && !is.null(x$im)) {
+        xs <- 1:ncol(im)
+        ys <- 1:nrow(im)
+        plot(NA, NA, xlim=c(0, max(xs)), ylim=c(0, max(ys)), asp=1,
+             xaxt=axt, yaxt=axt, bty="n",
+             xlab="", ylab="")
+        ## rasterImage crashes on some systems, but not others.
+        rasterImage(im, 0, 0, ncol(im), nrow(im))
+      } else {
+        xs <- P[s,1]
+        ys <- P[s,2]
         suppressWarnings(plot(xs, ys, asp=1,
                               pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
                               bty="n", ylim=ylim,  ...))
@@ -79,7 +79,7 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
                               col=getOption("outline.col"), ...))
 
     ## Plot scalebar if required. scalebar is length in mm.
-    if (scalebar && !is.na(scale)) {
+    if (!add && scalebar && !is.na(scale)) {
       sby <- min(ys) - 0.02*(max(ys) - min(ys))
       sblen <- 1000*scalebar/(scale)
       lines(c(max(xs) - sblen, max(xs)),c(sby, sby), lwd=2)
