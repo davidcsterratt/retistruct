@@ -528,7 +528,7 @@ retistruct <- function(guiToolkit="RGtk2") {
 
   ## Menu in row 0
   mbl <- list()
-  mbl$File$Open$handler <- h.open
+  mbl$File$Open$handler <- h.select
   mbl$File$Save$handler <- h.save
   mbl$Edit$Reconstruct$handler <- h.reconstruct
   mbl$Edit$Properties$handler <- h.properties

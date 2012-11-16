@@ -47,8 +47,8 @@
   \item{\code{Tt}}{New triangulation}
 }
 \description{
-  econstruct outline into spherical surface. Reconstruction
-  proceeds in a number of stages:
+  Reconstruct outline into spherical surface.
+  Reconstruction proceeds in a number of stages:
 }
 \details{
   \enumerate{
