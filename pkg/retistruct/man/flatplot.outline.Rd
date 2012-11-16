@@ -3,7 +3,7 @@
 \title{Flat plot of outline}
 \usage{
   \method{flatplot}{outline} (x, axt = "n", ylim = NULL,
-    image = TRUE, scalebar = 1, ...)
+    image = TRUE, scalebar = 1, add = FALSE, ...)
 }
 \arguments{
   \item{x}{\code{\link{Outline}} object}
@@ -21,6 +21,9 @@
   there is no scale information in the
   \code{\link{Outline}} \code{x} the scale bar is
   supressed.}
+
+  \item{add}{If \code{TRUE}, don't draw axes; add to
+  existing plot.}
 
   \item{...}{Other plotting parameters}
 }

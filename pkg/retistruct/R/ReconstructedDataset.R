@@ -393,8 +393,12 @@ projection.reconstructedDataset <-
            grouped.contours=FALSE,
            landmarks=TRUE,
            ids=getIDs(r),
-           ...) {
-  NextMethod()
+           ...)
+{
+  ## This will call projection.reconstructedOutline(), but without
+  ## drawing a grid.  The grid will be drawn later, after all the data
+  ## has appeared..
+  NextMethod(grid=FALSE, pole=FALSE)
 
   ## Datapoints
   if (datapoints) {
@@ -421,7 +425,7 @@ projection.reconstructedDataset <-
                                                        axisdir*pi/180),
                                            proj.centre=pi/180*proj.centre),
                                 bg=r$cols[[id]], col="black",
-                                pch=23, cex=1.5, ...))
+                                pch=23, cex=1.5))
       }
     }
   }
@@ -431,14 +435,16 @@ projection.reconstructedDataset <-
     Gss <- getGss(r)
     for (id in ids) {
       if (!is.null(Gss[[id]])) {
-        rc <- projection(rotate.axis(transform(Gss[[id]][,c("phi", "lambda")],
-                                               phi0=r$phi0),
-                                     axisdir*pi/180),
-                         proj.centre=pi/180*proj.centre)
+        if (nrow(Gss[[id]]) > 0) {
+          rc <- projection(rotate.axis(transform(Gss[[id]][,c("phi", "lambda")],
+                                                 phi0=r$phi0),
+                                       axisdir*pi/180),
+                           proj.centre=pi/180*proj.centre)
         
-        suppressWarnings(text(rc[,"x"], rc[,"y"], Gss[[id]][,3],
-             col=r$cols[[id]],
-             ...))
+          suppressWarnings(text(rc[,"x"], rc[,"y"], Gss[[id]][,3],
+                                col=r$cols[[id]],
+                                ...))
+        }
       }
     }
   }
@@ -524,6 +530,11 @@ projection.reconstructedDataset <-
       }
     }
   }
+
+  ## This will call projection.reconstructedOutline() and will draw a
+  ## grid but not add an image. Thus the grid appears over the data.
+  NextMethod(add=TRUE,
+             image=FALSE)
 }
 
 ##' Draw a spherical plot of datapoints.

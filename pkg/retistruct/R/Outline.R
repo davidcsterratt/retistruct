@@ -40,6 +40,7 @@ Outline <- function(P, scale=NA, im=NULL) {
 ##' field, a scale bar of length \code{scalebar} mm is plotted.  If
 ##' \code{scalebar} is \code{FALSE} or there is no scale information
 ##' in the \code{\link{Outline}} \code{x}  the scale bar is supressed.
+##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param ... Other plotting parameters
 ##' @method flatplot outline
 ##' @author David Sterratt
@@ -47,6 +48,7 @@ Outline <- function(P, scale=NA, im=NULL) {
 flatplot.outline <- function(x, axt="n", ylim=NULL,
                              image=TRUE,
                              scalebar=1,
+                             add=FALSE,
                              ...) {
   plot.image <- image
   ## If there is no scale information, don't present a scale bar
@@ -67,9 +69,11 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
     } else {
       xs <- P[s,1]
       ys <- P[s,2]
-      suppressWarnings(plot(xs, ys, asp=1,
-                            pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
-                            bty="n", ylim=ylim,  ...))
+      if (!add) {
+        suppressWarnings(plot(xs, ys, asp=1,
+                              pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
+                              bty="n", ylim=ylim,  ...))
+      }
     }
     suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2],
                               col=getOption("outline.col"), ...))

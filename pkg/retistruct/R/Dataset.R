@@ -99,8 +99,11 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
                              landmarks=TRUE,
                              ids=getIDs(x),
                              ...) {
-  NextMethod()
-  ## flatoutline(d, axt=axt, ylim=ylim, ...)
+  ## This will call projection.reconstructedOutline(), and hence
+  ## Outline(), but without drawing a grid.  The grid will be drawn
+  ## later, after all the data has appeared.
+  NextMethod(grid=FALSE)
+
   if (datapoints) {
     with(x, {
       for (id in ids) {
@@ -116,8 +119,10 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
     Gs <- x$Gs
     for (id in ids) {
       if (!is.null(Gs[[id]])) {
-        suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
-                              col=x$cols[[id]],  ...))
+        if (nrow(Gs[[id]]) > 0) {
+          suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
+                                col=x$cols[[id]],  ...))
+        }
       }
     }
   }
@@ -134,6 +139,10 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
       }
     })
   }
+  ## This will call flatplot.reconstructedOutline() and will draw a
+  ## grid but not add an image. Thus the grid appears over the data.
+  NextMethod(add=TRUE,
+             image=FALSE)
 }
 
 ##' @export
