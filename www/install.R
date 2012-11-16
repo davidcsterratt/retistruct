@@ -1,4 +1,4 @@
-install.packages("retistruct",
-                 repos=c("http://cran.r-project.org",
-                         "http://neuralmapformation.org/R"),
-                 type="source")
+install.packages(c("retistruct", "retistructdemos"),
+                 repos=c("http://r-forge.r-project.org",
+                         "http://cran.r-project.org"))
+

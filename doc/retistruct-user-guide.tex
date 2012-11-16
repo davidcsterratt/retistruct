@@ -44,29 +44,22 @@ At the command line, enter:
 sudo apt-get install r-base-dev r-base-core r-cran-rgtk2 r-cran-cairodevice r-cran-rgl
 \end{verbatim}
 
-\subsubsection{Mac}
+\subsubsection{Mac OS X}
 \label{retistruct-manual:sec:mac}
 
-To install the core \textsc{Retistruct} package (without the GUI) you
-just need R for Mac, available from \href{http://www.r-project.org/}{http://www.r-project.org/}. 
-
-To install the GUI with Mac can be more complex at present, depending
-on the version of the Mac OS. The following instructions have been
-tested on Mac OS X 10.8:
+First install R for Mac OS X, available from
+\url{http://www.r-project.org/}. Under Mac OS X Leopard and Lion, this
+should be sufficient. Under Mac OS X 10.8 (Snow Leopard), it may be
+necessary to install the following external packages:
 \begin{itemize}
-\item As well as R, install the following software:
-  \begin{itemize}
-  \item Xcode (free from App Store)
-  \item Xquartz (\href{http://xquartz.macosforge.org/}{http://xquartz.macosforge.org/})
-  \item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
-  \end{itemize}
+\item Xcode (free from App Store)
+\item Xquartz (\href{http://xquartz.macosforge.org/}{http://xquartz.macosforge.org/})
+\item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
 \end{itemize}
 
-\subsubsection{Windows}
+\subsubsection{MS/Windows}
 
-\emph{This is untested}, but to install the core \textsc{Retistruct} package (without
-the GUI) you \emph{should} just need R for Windows, available from
-http://www.r-project.org/. To install the GUI will be more complex.
+First install R for MS/Windows, available from \url{http://www.r-project.org/}.
 
 \subsection{Install the core \textsc{Retistruct} package}
 
@@ -85,13 +78,17 @@ source("http://retistruct.r-forge.r-project.org/install.R")
    demo("retistruct.method")
 \end{verbatim}
    If all is well, you should be prompted to press \textbf{Return} a
-   few times and Figure 1 from the manuscript will appear (drawing the
-   3D renditions takes some time). There will be reports of warnings;
-   they are to do with printing the figures to files. You can view
-   them by typing \texttt{warnings()}.
- \item A further test produces Figure 2:
+   few times and Figure 1 from the paper \cite{SterrattEtal2012} will
+   appear (drawing the 3D renditions takes some time). There will be
+   reports of warnings; they are to do with printing the figures to
+   files. You can view them by typing \texttt{warnings()}.
+ \item A further test produces Figure~2:
 \begin{verbatim}
    demo("low.high")
+\end{verbatim}
+ \item A further (quite long-running) test produces Figure~6:
+\begin{verbatim}
+   demo("figure6")
 \end{verbatim}
 \end{enumerate}
 
@@ -104,6 +101,11 @@ If the previous step works:
 \begin{verbatim}
 source("http://retistruct.r-forge.r-project.org/install-gui.R")
 \end{verbatim}
+\item Under MS/Windows, there may be an  error message saying that
+  libatk-1.0-0.dll is missing from your computer. Click on
+  \textbf{OK}. Another message will appear, asking if you want to
+  install GTK+. Agree to this.  After this has finished, quit R
+  (without saving the workspace image) and restart.
 \item If all works, an interface window should appear. A number of
   sets of demonstration data are available from the \textbf{Demo} menu item.
 \end{enumerate}
@@ -637,6 +639,7 @@ retinae with the Retistruct package
 % LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
 % LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
 % LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV xs
-% LocalWords:  Metadata metadata datapoints polararea DssMean KDE ys
-%  LocalWords:  Ctrl gui OpenOffice Calc Karcher DssHullarea flevels
-%  LocalWords:  maxs Lattitude gpa Sterratt Lyngholm Willshaw PLoS
+% LocalWords:  Metadata metadata datapoints polararea DssMean KDE ys Xcode App
+%  LocalWords:  Ctrl gui OpenOffice Calc Karcher DssHullarea flevels Xquartz KR
+%  LocalWords:  maxs Lattitude gpa Sterratt Lyngholm Willshaw PLoS GTK retinae
+% LocalWords:  alt isn checkboxes Markup markup toolbar min max
