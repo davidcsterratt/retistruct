@@ -57,17 +57,16 @@ visual space. </li>
 
 <h2>Installation and documentation</h2>
 
-<p>Retistruct has been tested on GNU/Linux and Mac OS X 10.8. It does
-  not currently work on Windows, though this should be fairly easy to
-  fix. Instructions on how to install the latest version and use
-  Retistruct are contained in
+<p>Retistruct has been tested on GNU/Linux (Ubuntu 12.04) and Mac OS X
+  10.8, and Microsoft Windows Vista. Instructions on how to install
+  the latest version and use Retistruct are contained in
   the <a href="retistruct-user-guide.pdf">User Guide</a>. The
   installation contains a number of demonstration retinae, and
   instructions for how to handle retinal flat-mount images in
   Retistruct.</p>
 
 <p>For reference purposes,
-this <a href="http://www.neuralmapformation.org/retistruct_0.5.5.zip">
+this <a href="retistruct_0.5.7.zip">
 zip file</a> contains the review version of Retistruct and some Matlab
 code to read data directories contained by Retistruct.</p>
 
