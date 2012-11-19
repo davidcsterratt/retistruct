@@ -4,7 +4,6 @@ root <- system.file(package = "retistructdemos")
 
 options(contour.levels=c(25, 50, 75, 95))
 
-if (1) {
 dataset <- file.path(root, "extdata", "Figure_6-data", "left-contra")
 r <- retistruct.read.dataset(dataset)
 r <- retistruct.read.markup(r)
@@ -27,7 +26,6 @@ dataset <- file.path(root, "extdata", "Figure_6-data", "right-ipsi")
 r <- retistruct.read.dataset(dataset)
 r <- retistruct.read.markup(r)
 r.ri <- retistruct.reconstruct(r)
-}
 
 width <- 6.83
 height <- width*2/3
