@@ -47,12 +47,18 @@ is achieved by: stitching the marked-up cuts of the flat-mount
 outline; dividing the stitched outline into a mesh whose vertices then
 are mapped onto a curtailed sphere; and finally moving the vertices so
 as to minimise a physically-inspired deformation energy function. <ul>
+      <li>Full details are in the paper: Sterratt, D. C., Lyngholm,
+        D., Willshaw, D. J. and Thompson, I. D. (2013).  Standard
+        Anatomical and Visual Space for the Mouse Retina:
+        Computational Reconstruction and Transformation of Flattened
+        Retinae with the Retistruct
+        Package. <a=href"http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
+        Computational Biology</em> 9</a>.</li>
       <li><a href="2012-09-neuroinf.pdf">This poster</a>
 and <a href="http://www.youtube.com/watch?v=LpuqXo8NEOo">this YouTube
 video</a>, presented at the 2012 Neuroinformatics Meeting in Munich,
 has more details and examples of reconstructions and projections into
 visual space. </li>
-      <li>A paper will be forthcoming.</li>
       </ul></p>
 
 <h2>Installation and documentation</h2>
