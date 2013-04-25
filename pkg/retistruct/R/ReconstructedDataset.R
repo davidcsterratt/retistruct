@@ -166,6 +166,26 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
+##' Get Karcher mean of landmarks in spherical coordinates.
+##'
+##' @title Karcher mean of landmarks in spherical coordinates
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
+##' @return \code{Sss.mean}
+##' @method getSssMean reconstructedDataset
+##' @author David Sterratt
+##' @export
+getSssMean.reconstructedDataset <- function(r) {
+  Sss.mean <- list()
+  if (length(r$Sss)) {
+    for (i in 1:length(r$Sss)) {
+      km <- karcher.mean.sphere(r$Sss[[i]], na.rm=TRUE)
+      Sss.mean[[i]] <- cbind(phi=km["phi"], lambda=km["lambda"])
+    }
+  }
+  names(Sss.mean) <- names(r$Sss)
+  return(Sss.mean)
+}
+
 ##' @title Get kernel density estimate of data points
 ##' @param r \code{\link{ReconstructedDataset}} object
 ##' @return See \code{\link{compute.kernel.estimate}}

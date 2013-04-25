@@ -107,6 +107,28 @@ getSss.retinalReconstructedDataset <- function(r) {
   return(Sss)
 }
 
+##' Get Karcher mean of landmarks in spherical coordinates,
+##' transformed according to the values of \code{DVflip} and
+##' \code{side}.
+##'
+##' @title Get transformed spherical coordinates of Karcher mean of
+##' landmarks
+##' @param r \code{\link{RetinalReconstructedDataset}} object.
+##' @return \code{Sss.mean}
+##' @method getSssMean retinalReconstructedDataset
+##' @author David Sterratt
+getSssMean.retinalReconstructedDataset <- function(r) {
+  Sss.mean <- NextMethod()
+  if (length(Sss.mean) > 0) {
+    if (r$DVflip) {
+      for (i in 1:length(Sss.mean)) {
+        Sss.mean[[i]][,"lambda"] <- -Sss.mean[[i]][,"lambda"]
+      }
+    }
+  }
+  return(Sss.mean)
+}
+
 ##' @method projection retinalReconstructedDataset
 ##' @export
 projection.retinalReconstructedDataset <- function(r, ...) {

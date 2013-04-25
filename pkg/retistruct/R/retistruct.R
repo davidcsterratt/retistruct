@@ -283,7 +283,8 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
   if (!is.null(r)) {
     r <- ReconstructedDataset(r, report=report)
     if (!is.na(getLandmarkID(r, "OD"))) {
-      r$EOD <- 90 + r$Dss[["OD"]][1,"phi"] * 180/pi
+      SssMean <- getSssMean(r)
+      r$EOD <- 90 + SssMean[["OD"]][1,"phi"] * 180/pi
     }
     report(paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
                  ";", r$nflip, "flipped triangles. OD displacement:",

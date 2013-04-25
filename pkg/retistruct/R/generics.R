@@ -136,6 +136,23 @@ getSss.default <- function(r) {
   return(NULL)
 }
 
+##' Get Karcher mean of landmarks in spherical coordinates.
+##'
+##' @title Karcher mean of landmarks in spherical coordinates
+##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
+##' @return \code{Sss.mean}
+##' @author David Sterratt
+##' @export
+getSssMean <- function(r) {
+  UseMethod("getSssMean")
+}
+
+##' @export
+getSssMean.default <- function(r) {
+  return(NULL)
+}
+
+
 ##' @export
 getTss <- function(r) {
   UseMethod("getTss")
