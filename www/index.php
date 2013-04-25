@@ -52,7 +52,7 @@ as to minimise a physically-inspired deformation energy function. <ul>
         Anatomical and Visual Space for the Mouse Retina:
         Computational Reconstruction and Transformation of Flattened
         Retinae with the Retistruct
-        Package. <a=href"http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
+        Package. <a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
         Computational Biology</em> 9</a>.</li>
       <li><a href="2012-09-neuroinf.pdf">This poster</a>
 and <a href="http://www.youtube.com/watch?v=LpuqXo8NEOo">this YouTube
