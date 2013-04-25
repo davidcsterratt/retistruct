@@ -4,9 +4,9 @@ License: CC BY-SA 2.0
 Title: Retinal reconstruction program demonstration data
 Author:  David C. Sterratt <david.c.sterratt@ed.ac.uk>, Daniel Lyngholm <daniel.lyngholm@kcl.ac.uk> 
 Description: Demo data for the Retistruct package
-Version: 0.5.7
+Version: 0.5.8
 URL: http://retistruct.r-forge.r-project.org/
-Date: 2012-11-16
+Date: 2013-04-25
 Depends:    retistruct (>= 0.5.7)
 Collate:
     'AnnotatedOutline.R'
