@@ -136,11 +136,14 @@ getSss.default <- function(r) {
   return(NULL)
 }
 
-##' Get Karcher mean of landmarks in spherical coordinates.
+##' Get Karcher mean of landmarks in spherical coordinates. If applied
+##' to a \code{\link{RetinalReconstructedDataset}}, the coordinates
+##' are flipped if \code{DVflip} is \code{TRUE}.
 ##'
 ##' @title Karcher mean of landmarks in spherical coordinates
 ##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
-##' @return \code{Sss.mean}
+##' @return List of spherical coordinates, with one named element per
+##' landmark.
 ##' @author David Sterratt
 ##' @export
 getSssMean <- function(r) {
