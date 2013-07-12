@@ -12,7 +12,7 @@ list.datasets <- function(path='.', verbose=FALSE) {
   ## (a) list.files doesn't work recursively on all platforms and (b)
   ## in any case, it doesn't list directories when running recursively
   list.dirs <- function(path='.') {
-    files <- list.files(path, recursive=FALSE, full.name=TRUE)
+    files <- list.files(path, recursive=FALSE, full.names=TRUE)
     fi <- file.info(files)
     dirs <- row.names(fi[fi$isdir,])
     for (d in dirs) {
@@ -280,7 +280,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
   mtext("C", adj=-0.2, font=2, line=-0.7)
   dev.copy2pdf(file=file.path("retistruct-titration.pdf"), width=6.83/3, height=6.83/4)
 
-  svg(file=file.path("fig4-retistruct-titration.svg"), width=6.83/3, height=6.83/6)
+  svg(filename=file.path("fig4-retistruct-titration.svg"), width=6.83/3, height=6.83/6)
 
   ## Plot of optimal rim lattitude versus the sub
   par(mar=c(2.2, 2.9, 0.5, 0.4))
@@ -553,7 +553,7 @@ retistruct.batch.analyse.summary <- function(path) {
 ##' @author David Sterratt
 ##' @export
 retistruct.batch.analyse.summaries <- function(path) {
-  files <- list.files(path, recursive=FALSE, full.name=TRUE)
+  files <- list.files(path, recursive=FALSE, full.names=TRUE)
   fi <- file.info(files)
   dirs <- row.names(fi[fi$isdir,])
   out <- data.frame()
