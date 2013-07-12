@@ -1,4 +1,4 @@
 install.packages(c("retistructgui"),
-                 repos=c("http://r-forge.r-project.org",
+                 repos=c("http://www.neuralmapformation.org/R/",
                          "http://cran.r-project.org"))
 library(retistructgui)
