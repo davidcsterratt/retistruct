@@ -32,7 +32,7 @@ flatplot <- function(x, axt="n", ylim=NULL, ...) {
   UseMethod("flatplot")
 }
 
-##' @export
+##' @S3method flatplot default
 flatplot.default <- function(x, axt="n", ylim=NULL, ...) {
 }
 
@@ -49,7 +49,7 @@ projection <- function(r, ...) {
   UseMethod("projection")
 }
 
-##' @export
+##' @S3method projection default
 projection.default <- function(r, ...) {
   plot.new()
 }
@@ -59,7 +59,7 @@ sphericalplot <- function(r, ...) {
   UseMethod("sphericalplot")
 }
 
-##' @export
+##' @S3method sphericalplot default
 sphericalplot.default <- function(r, ...) {
   rgl.clear()
   rgl.bg(color="white")
@@ -70,7 +70,7 @@ lvsLplot <- function(r) {
   UseMethod("lvsLplot")
 }
 
-##' @export
+##' @S3method lvsLplot default
 lvsLplot.default <- function(r) {
 }
 
@@ -85,7 +85,7 @@ getDss <- function(r) {
   UseMethod("getDss")
 }
 
-##' @export
+##' @S3method getDss default
 getDss.default <- function(r) {
   return(NULL)
 }
@@ -101,7 +101,7 @@ getDssMean <- function(r) {
   UseMethod("getDssMean")
 }
 
-##' @export
+##' @S3method getDssMean default
 getDssMean.default <- function(r) {
   return(NULL)
 }
@@ -115,7 +115,7 @@ getGss <- function(r) {
   UseMethod("getGss")
 }
 
-##' @export
+##' @S3method getGss default
 getGss.default <- function(r) {
   return(NULL)
 }
@@ -131,7 +131,7 @@ getSss <- function(r) {
   UseMethod("getSss")
 }
 
-##' @export
+##' @S3method getSss default
 getSss.default <- function(r) {
   return(NULL)
 }
@@ -147,7 +147,7 @@ getSssMean <- function(r) {
   UseMethod("getSssMean")
 }
 
-##' @export
+##' @S3method getSssMean default
 getSssMean.default <- function(r) {
   return(NULL)
 }
@@ -158,7 +158,7 @@ getTss <- function(r) {
   UseMethod("getTss")
 }
 
-##' @export
+##' @S3method getTss default
 getTss.default <- function(r) {
   return(NULL)
 }
@@ -173,7 +173,7 @@ getIms <- function(r) {
   UseMethod("getIms")
 }
 
-##' @export
+##' @S3method getIms default
 getIms.default <- function(r) {
   return(NULL)
 }
@@ -185,7 +185,7 @@ getIDs <- function(r) {
   UseMethod("getIDs")
 }
 
-##' @export
+##' @S3method getIDs default
 getIDs.default <- function(r) {
   return(NULL)
 }
@@ -195,7 +195,7 @@ nameLandmark <- function(d, i, name) {
   UseMethod("nameLandmark")
 }
 
-##' @export
+##' @S3method nameLandmark default
 nameLandmark.default <- function(d, i, name) {
   return(d)
 }

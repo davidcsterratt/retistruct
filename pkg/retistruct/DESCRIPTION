@@ -48,6 +48,5 @@ Collate:
     'StitchedOutline.R'
     'TriangulatedOutline.R'
     'zzz.R'
-    'ray-tracing.R'
     'projections.R'
     'transformations.R'

@@ -145,7 +145,7 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
              image=FALSE)
 }
 
-##' @export
+##' @S3method all.equal dataset
 all.equal.dataset <- function(target, current, ...) {
   return((all.equal(target$Ds, current$Ds) == TRUE) &
          (all.equal(target$Gs, current$Gs) == TRUE) &
