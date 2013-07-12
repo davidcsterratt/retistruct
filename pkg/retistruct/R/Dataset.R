@@ -35,18 +35,7 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw, Gs=NULL) {
   return(d)
 }
 
-##' Name a landmark in a \code{dataset}. The name of element \code{i}
-##' of \code{Ss} is set to \code{name}, the name of any element that
-##' bore the name is set to "" and all other elements are unaltered.
-##'
-##' @title Name a landmark in a Dataset
-##' @param d \code{dataset} object
-##' @param i index of landmark to name
-##' @param name name to give landmark
-##' @return New \code{dataset} object in which landmark is named
-##' @author David Sterratt
-##' @method nameLandmark dataset
-##' @export
+##' @S3method nameLandmark dataset
 nameLandmark.dataset <- function(d, i, name) {
   if (!is.na(i)) {
     new.names <- names(d$Ss)

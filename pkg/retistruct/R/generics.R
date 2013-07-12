@@ -211,6 +211,18 @@ getIDs.default <- function(r) {
   return(NULL)
 }
 
+##' Name a landmark in a \code{\link{Dataset}}. The name of element
+##' \code{i} of \code{Ss} is set to \code{name}, the name of any
+##' element that bore the name is set to "" and all other elements are
+##' unaltered.
+##'
+##' @title Name a landmark in a Dataset
+##' @param d \code{\link{Dataset}} object
+##' @param i index of landmark to name
+##' @param name name to give landmark
+##' @return New \code{\link{Dataset}} object in which landmark is
+##' named
+##' @author David Sterratt
 ##' @export
 nameLandmark <- function(d, i, name) {
   UseMethod("nameLandmark")

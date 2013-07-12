@@ -41,15 +41,17 @@ flatplot.retinalDataset <- function(x, axt="n", ylim=NULL, ...) {
   NextMethod(ylim=ylim)
 }
 
-##' Name a landmark in a \code{dataset}. The name of element \code{i}
-##' of \code{Ss} is set to \code{name}, the name of any element that
-##' bore the name is set to "" and all other elements are unaltered.
+##' Name a landmark in a \code{\link{RetinalDataset}}. This does the
+##' same as the standard \code{\link{nameLandmark}}, but in addition,
+##' if there exists a landmark named "OD", this creates a set of
+##' points labelled "OD".
 ##'
-##' @title Name a landmark in a Dataset
-##' @param d \code{dataset} object
+##' @title Name a landmark in a RetinalDataset
+##' @param d \code{\link{RetinalDataset}} object
 ##' @param i index of landmark to name
 ##' @param name name to give landmark
-##' @return New \code{dataset} object in which landmark is named
+##' @return New \code{\link{RetinalDataset}} object in which landmark
+##' is named
 ##' @author David Sterratt
 ##' @method nameLandmark retinalDataset
 ##' @export
