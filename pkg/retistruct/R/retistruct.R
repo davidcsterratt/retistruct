@@ -1,4 +1,5 @@
 ## Global variables
+##' @title Version of reconstruction file data format
 ##' @export
 recfile.version <- 5      # Version of reconstruction file data format
 
