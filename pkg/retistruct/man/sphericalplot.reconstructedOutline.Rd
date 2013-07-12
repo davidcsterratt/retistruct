@@ -6,7 +6,7 @@
     strain = FALSE, surf = TRUE, ...)
 }
 \arguments{
-  \item{r}{\code{reconstructedOutline} object}
+  \item{r}{\code{\link{ReconstructedOutline}} object}
 
   \item{strain}{If \code{TRUE}, plot the strain}
 

@@ -54,6 +54,13 @@ projection.default <- function(r, ...) {
   plot.new()
 }
 
+##' Draw a spherical plot.
+##'
+##' @title Spherical plot of reconstructed outline
+##' @param r Object with class \code{\link{ReconstructedOutline}}
+##' and/or \code{\link{ReconstructedDataset}}
+##' @param ... Parameters depending on class of \code{r}
+##' @author David Sterratt
 ##' @export
 sphericalplot <- function(r, ...) {
   UseMethod("sphericalplot")

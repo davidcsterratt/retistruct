@@ -699,7 +699,7 @@ projection.reconstructedOutline <- function(r,
 ##' draws the mesh.
 ##'
 ##' @title Spherical plot of reconstructed outline
-##' @param r \code{reconstructedOutline} object
+##' @param r \code{\link{ReconstructedOutline}} object
 ##' @param strain If \code{TRUE}, plot the strain
 ##' @param surf If \code{TRUE}, plot the surface
 ##' @param ... Other graphics parameters -- not used at present
