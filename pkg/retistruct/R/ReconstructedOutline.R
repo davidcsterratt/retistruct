@@ -301,14 +301,7 @@ getIms.reconstructedOutline <- function(r) {
   return(r$ims)
 }
 
-##' Get spherical coordinates of tears.
-##'
-##' @title Get spherical coordinates of tears.
-##' @param r \code{reconstructedOutline} object.
-##' @return \code{Tss}
-##' @method getTss reconstructedOutline
-##' @author David Sterratt
-##' @export
+##' @S3method getTss reconstructedOutline
 getTss.reconstructedOutline <- function(r) {
   Tss <- list()
   for (TF in r$TFset) {

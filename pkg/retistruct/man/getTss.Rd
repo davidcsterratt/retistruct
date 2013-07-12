@@ -1,0 +1,23 @@
+\name{getTss}
+\alias{getTss}
+\title{Get spherical coordinates of tears.}
+\usage{
+  getTss(r)
+}
+\arguments{
+  \item{r}{\code{\link{ReconstructedOutline}} or
+  \code{\link{RetinalReconstructedOutline}} object.}
+}
+\value{
+  List of tears in spherical coordinates.
+}
+\description{
+  Get spherical coordinates of tears. If applied to a
+  \code{\link{RetinalReconstructedOutline}}, the tears are
+  flipped according to whether the retina is DV flipped or
+  not.
+}
+\author{
+  David Sterratt
+}
+

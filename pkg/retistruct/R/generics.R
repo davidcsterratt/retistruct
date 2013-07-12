@@ -152,7 +152,15 @@ getSssMean.default <- function(r) {
   return(NULL)
 }
 
-
+##' Get spherical coordinates of tears. If applied to a
+##' \code{\link{RetinalReconstructedOutline}}, the tears are flipped
+##' according to whether the retina is DV flipped or not.
+##'
+##' @title Get spherical coordinates of tears.
+##' @param r \code{\link{ReconstructedOutline}} or
+##' \code{\link{RetinalReconstructedOutline}} object.
+##' @return List of tears in spherical coordinates.
+##' @author David Sterratt
 ##' @export
 getTss <- function(r) {
   UseMethod("getTss")
