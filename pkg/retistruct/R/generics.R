@@ -65,6 +65,16 @@ sphericalplot.default <- function(r, ...) {
   rgl.bg(color="white")
 }
 
+
+##' Plot the fractional change in length of mesh edges. The length of
+##' each edge in the mesh in the reconstructed object is plotted
+##' against each edge in the spherical object. The points are
+##' colour-coded according to the amount of log strain each edge is
+##' under.
+##'
+##' @title Plot the fractional change in length of mesh edges
+##' @param r \code{\link{ReconstructedOutline}} object
+##' @author David Sterratt
 ##' @export
 lvsLplot <- function(r) {
   UseMethod("lvsLplot")
