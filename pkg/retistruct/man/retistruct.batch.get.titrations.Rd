@@ -1,0 +1,16 @@
+\name{retistruct.batch.get.titrations}
+\alias{retistruct.batch.get.titrations}
+\title{Get titrations from a directory of reconstructions}
+\usage{
+  retistruct.batch.get.titrations(tldir = ".")
+}
+\arguments{
+  \item{tldir}{The top level directory of the tree through
+  which to recurse. The files have to have been
+  reconstructed with the \code{titrate} option to
+  \code{\link{retistruct.batch}}}
+}
+\description{
+  Get titrations from a directory of reconstructions
+}
+
