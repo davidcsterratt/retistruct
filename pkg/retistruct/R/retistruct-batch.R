@@ -495,7 +495,6 @@ retistruct.batch.analyse.summary <- function(path) {
   ## print(sort(as.numeric(factor(sdat$age))))
   ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
   levels(sdat$age) <- sub("adult", "A", levels(sdat$age))
-  ##  print(factor(sdat$age))
   with(sdat, boxplot(kde.h.red ~ age,
                      xaxt="n",
                      xlab="Postnatal day",
@@ -508,11 +507,6 @@ retistruct.batch.analyse.summary <- function(path) {
   dev.copy2pdf(file=file.path(path, "retistruct-bandwidth.pdf"), width=4.5, height=3)
 
   ## More KDE analysis -- first ignore outliers
-
-##  genotype <- c()
-#
-##  genotype[!grep("GMB", sdat$dataset)] <- "WT"
-  
   sdat <- cbind(sdat, genotype="W")
   levels(sdat$genotype) <- c("W", "B")
   sdat[grep("GMB", sdat$dataset), "genotype"] <- "B"
@@ -524,7 +518,6 @@ retistruct.batch.analyse.summary <- function(path) {
   par(mfcol=c(1, 1))
   
   with(kdat, boxplot(kde.h.red ~ genotype+age, col=c("white", "red"),
-                     ## xaxt="n",
                      xlab="Postnatal day",
                      ylab=expression(italic(h)[red])))
   dev.copy2pdf(file=file.path(path, "retistruct-bandwidth-genotype.pdf"), width=12, height=8)
