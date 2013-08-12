@@ -318,7 +318,7 @@ flatplot.annotatedOutline <- function(x, axt="n", ylim=NULL,
              labels=1:length(V0), col=getOption("V.col"))
       }
       if (!is.null(names(i0))) {
-        text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1))
+        text(P[i0,1], P[i0,2], substr(names(i0)[1], 1, 1), col=V.col)
       }
     })
   }

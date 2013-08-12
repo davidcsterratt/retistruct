@@ -47,7 +47,7 @@ h.add <- function(h, ...) {
   svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                             identify.abort.text())
   dev.set(d1)
-  pids <- with(a, identify(P[,1], P[,2], n=3))
+  pids <- with(a, identify(P[,1], P[,2], n=3, col=getOption("TF.col")))
   withCallingHandlers({
     a <<- addTear(a, pids)
   }, warning=h.warning, error=h.warning)
@@ -480,18 +480,32 @@ h.properties <- function(h, ...) {
     g.prop.dl.group <- ggroup(container=container)
     glabel(name, container=g.prop.dl.group)
     g.dl <- gdroplist(cols,
-                      selected=which(cols == options(property)),
+                      selected=which(cols == options(property[1])),
                       container=g.prop.dl.group,
                       handler=function(h, ...) {
-                        eval(parse(text=paste("options(", property, "=svalue(g.dl))")))
+                        for (p in property) {
+                          eval(parse(text=paste("options(", p, "=svalue(g.dl))")))
+                        }
                         do.plot()})
   }
 
   g.prop.dl("Outline colour", "outline.col", g.colours)
+  g.prop.dl("Tear colour", c("TF.col", "TB.col", "V.col"), g.colours)
   g.prop.dl("Stitch colour", "stitch.col", g.colours)
   g.prop.dl("Major gridline colour", "grid.maj.col", g.colours)
   g.prop.dl("Minor gridline colour", "grid.min.col", g.colours)
 
+  g.printing <- gframe("Printing", container=g.props, horizontal=FALSE)
+  g.group <- ggroup(container=g.printing)
+  glabel("Maximum resolution of projection", container=g.group)
+  property <- "max.proj.dim"
+  g.max.proj.dim <- gedit(0, width=5, coerce.with=as.numeric,
+                          container=g.group,
+                          handler=function(h, ...) {
+                            eval(parse(text=paste("options(", property, "=svalue(g.max.proj.dim))")))
+                          })
+  svalue(g.max.proj.dim) <- getOption(property)
+  
   gbutton("Close", container=g.props,
           handler = function(h,...) dispose(g.win))
 }
