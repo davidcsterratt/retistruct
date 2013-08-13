@@ -719,7 +719,7 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.print2     <<- gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
   g.print.pdf2 <<- gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
   ## Device itself
-  g.fd2 <<- ggraphics(expand=TRUE, , width=500, height=500, ps=11, container=g.f2)
+  g.fd2 <<- ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f2)
   d2 <<- dev.cur()
   
   ## Status bar
