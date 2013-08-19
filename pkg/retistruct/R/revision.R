@@ -1,3 +1,3 @@
 ##' @title SVN global revision number of Retistruct package
 ##' @export
-retistruct.global.revision <- 1255 
+retistruct.global.revision <- 1259 
