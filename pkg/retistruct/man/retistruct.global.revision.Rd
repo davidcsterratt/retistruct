@@ -2,7 +2,7 @@
 \name{retistruct.global.revision}
 \alias{retistruct.global.revision}
 \title{SVN global revision number of Retistruct package}
-\format{num 1259}
+\format{num 1264}
 \usage{
   retistruct.global.revision
 }
