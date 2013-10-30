@@ -64,12 +64,15 @@ visual space. </li>
 <h2>Installation and documentation</h2>
 
 <p>Retistruct has been tested on GNU/Linux (Ubuntu 12.04) and Mac OS X
-  10.8, and Microsoft Windows Vista. Instructions on how to install
-  the latest version and use Retistruct are contained in
-  the <a href="retistruct-user-guide.pdf">User Guide</a>. The
-  installation contains a number of demonstration retinae, and
-  instructions for how to handle retinal flat-mount images in
-  Retistruct.</p>
+  10.8, and Microsoft Windows Vista. <strong>(Note that as of 30th
+  October 2013, it is not possible to install the graphical user
+  interface on MacOS X 10.9 (Mavericks). This is due to the RGtk2
+  package upon which the Retistruct GUI depends.)</strong>
+  Instructions on how to install the latest version and use Retistruct
+  are contained in the <a href="retistruct-user-guide.pdf">User
+  Guide</a>. The installation contains a number of demonstration
+  retinae, and instructions for how to handle retinal flat-mount
+  images in Retistruct.</p>
 
 <p>For reference purposes,
 this <a href="retistruct_0.5.7.zip">
