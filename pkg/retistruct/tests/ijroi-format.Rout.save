@@ -1,0 +1,46 @@
+
+R Under development (unstable) (2014-03-31 r65343) -- "Unsuffered Consequences"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(retistruct)
+> 
+> ## Test reading file with one row in datapoints.csv file
+> dataset <- file.path(system.file(package = "retistruct"), "extdata", "ijroi1")
+> r <- retistruct.read.dataset(dataset)
+> print(r$Ds)
+$marking
+        [,1]   [,2]
+[1,] 859.831 -341.7
+
+> 
+> ## Test reading file with two rows in datapoints.csv file
+> dataset <- file.path(system.file(package = "retistruct"), "extdata", "ijroi2")
+> r <- retistruct.read.dataset(dataset)
+> print(r$Ds)
+$marking
+        [,1]   [,2]
+[1,] 859.831 -341.7
+[2,]  43.000  477.0
+
+$testing
+     [,1] [,2]
+[1,]   23  468
+[2,]   23  457
+[3,]   65  466
+
+> 

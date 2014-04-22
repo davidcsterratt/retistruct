@@ -53,10 +53,14 @@ read.datapoints <- function(dataset) {
       ## Extract first two columns
       d <- dat[,1:2]
       dat <- dat[,-(1:2)]
+      names <- colnames(d)
 
       ## Convert strings to numeric. Suppress warnings as sapply
       ## complains about coercion to NA
-      suppressWarnings({d <- sapply(d, as.numeric)})
+      suppressWarnings({d <- sapply(d, as.numeric, USE.NAMES=FALSE)})
+      ## Force conversion to matrix, necessary when the data has only
+      ## one row
+      d <- matrix(d, ncol=2)
       
       ## Any strings (e.g. empty ones) that don't convert will be
       ## converted to NA. Get rid of these.
@@ -64,7 +68,6 @@ read.datapoints <- function(dataset) {
       attr(d, "na.action") <- NULL
 
       ## Add to lists with appropriate names
-      names <- colnames(d)
       
       D <- list(d)
       names(D) <- names[1]

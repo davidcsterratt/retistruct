@@ -5,9 +5,9 @@ Title: Retinal reconstruction program
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Description: Program to reconstruct retinae from flattened retinae in
     which there are incisions and tears
-Version: 0.5.8
+Version: 0.5.9
 URL: http://www.neuralmapformation.org
-Date: 2013-04-25
+Date: 2014-04-22
 Depends:
     R (>= 3.0.0),
     geometry (>= 0.2-1),
@@ -18,33 +18,3 @@ Depends:
     rgl,
     png,
     sp
-Collate:
-    'AnnotatedOutline.R'
-    'Dataset.R'
-    'fire.R'
-    'format-common.R'
-    'format-csv.R'
-    'format-idt.R'
-    'format-ijroi.R'
-    'generics.R'
-    'geometry.R'
-    'kernel-density.R'
-    'misc.R'
-    'Outline.R'
-    'plots.R'
-    'ReconstructedDataset.R'
-    'ReconstructedOutline.R'
-    'RetinalDataset.R'
-    'RetinalReconstructedDataset.R'
-    'RetinalReconstructedOutline.R'
-    'retistruct-batch.R'
-    'retistruct-cli.R'
-    'retistruct.R'
-    'revision.R'
-    'roiread.R'
-    'spheristruct.R'
-    'StitchedOutline.R'
-    'TriangulatedOutline.R'
-    'zzz.R'
-    'projections.R'
-    'transformations.R'
