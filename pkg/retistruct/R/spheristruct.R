@@ -713,13 +713,15 @@ flipped.triangles <- function(phi, lambda, Tt, R) {
 ##' @title Optimise mapping
 ##' @param r reconstructedOutline object
 ##' @param alpha Area penalty scaling coefficient
-##' @param x0 Area penalty cutoff coefficient
+##' @param x0 Area penalty cut-off coefficient
 ##' @param nu Power to which to raise area
 ##' @param method Method to pass to \code{optim}
 ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
-##' @param dev.flat Device handle for plotting grid to
-##' @param dev.polar Device handle for plotting ploar plot to
-##' @param control Control arguent to passt \code{optim}
+##' @param dev.flat Device handle for plotting flatplot updates to. If
+##' \code{NA} don't make any flat plots
+##' @param dev.polar Device handle for plotting polar plot updates
+##' to. If \code{NA} don't make any polar plots.
+##' @param control Control argument to pass to \code{optim}
 ##' @return reconstructedOutline object
 ##' @author David Sterratt
 ##' @export
@@ -790,7 +792,7 @@ optimiseMapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
     if (!is.na(dev.flat)) {
       dev.set(dev.flat)
       flatplot(r, grid=TRUE, strain=TRUE,
-                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
+               datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
     }
 
     if (!is.na(dev.polar)) {
