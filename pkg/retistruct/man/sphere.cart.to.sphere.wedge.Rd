@@ -1,0 +1,31 @@
+\name{sphere.cart.to.sphere.wedge}
+\alias{sphere.cart.to.sphere.wedge}
+\title{Convert from Cartesian to 'wedge' coordinates}
+\usage{
+sphere.cart.to.sphere.wedge(P, phi0, R = 1)
+}
+\arguments{
+  \item{P}{locations of points on sphere as N-by-3 matrix
+  with labelled columns "X", "Y" and "Z"}
+
+  \item{phi0}{rim angle as colatitude}
+
+  \item{R}{radius of sphere}
+}
+\value{
+2-column Matrix of 'wedge' coordinates of points on sphere.
+Column names are \code{phi} and \code{lambda}.
+}
+\description{
+Convert locations of points on sphere in 'wedge'
+coordinates (\var{psi}, \var{f}) to points in 3D cartesian
+space.  Wedges are defined by planes inclined at an angle
+\var{psi} running through a line between poles on the rim
+above the x axis.  \var{f} is the fractional distance along
+the circle defined by the intersection of this plane and
+the curtailed sphere.
+}
+\author{
+David Sterratt
+}
+
