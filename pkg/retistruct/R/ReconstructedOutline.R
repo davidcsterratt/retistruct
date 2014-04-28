@@ -349,18 +349,17 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
   ## points P and triangulation T). The gridline is described by a
   ## normal n to a plane and a distance to the plane. The intersection of
   ## the plane and the spehere is the gridline.
-  plot.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
+  get.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
     mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
 
     ## Take out rows that are not intersections. If a plane intersects
-    ## one side of a triangle and the opposing vertex, in the row
+    ## one edge of a triangle and the opposing vertex, in the row
     ## corresponding to the triangle, there will be a 0, a 1 and a
     ## value between 0 and 1. We get rid of the 1 in the
     ## following. Triangles in which one line is in the plane have mu
     ## values 0, 1 and NaN; we want to include these.
-    tri.int <- ((rowSums((mu >= 0) & (mu < 1)) == 2) |
-                apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
-
+    tri.int <- (rowSums((mu >= 0) & (mu <= 1), na.rm=TRUE) == 2) 
+    ## | apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
     if (any(tri.int)) {
       T  <- T[tri.int,,drop=FALSE]
       mu <- mu[tri.int,,drop=FALSE]
@@ -379,10 +378,14 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
       T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
       mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
 
-      P1 <- mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],]
-      P2 <- mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],]
-      suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
+      P <- cbind(mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],], 
+                 mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],])
+      # suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
+    } else {
+      P <- matrix(0, nrow=1, ncol=4)
     }
+    colnames(P) <- c("X1", "Y1", "X2", "Y2")
+    return(P)
   }
   
   if (grid) {
@@ -393,6 +396,8 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 
     phi0d <- x$phi0 * 180/pi
     
+    P <- matrix(0, nrow=1, ncol=4)
+    cols <- NULL
     Phis <- seq(-90, phi0d, by=grid.int.minor)
     Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
     for (Phi in Phis) {
@@ -401,7 +406,11 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
       } else {
         col <- grid.min.col
       }
-      with(x, plot.gridline.flat(P, T, phi, lambda, Tt, c(0,0,1), sin(Phi*pi/180), col=col, ...))
+      P1 <- get.gridline.flat(x$P, x$T, x$phi, x$lambda, x$Tt,
+                              c(0,0,1), sin(Phi*pi/180))
+      cols <- c(cols, rep(col, nrow(P1)))
+      P <- rbind(P, P1)
+
     }
     for (Lambda in Lambdas) {
       if (!(Lambda %% grid.int.major)) {
@@ -410,7 +419,13 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
         col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
-      with(x, plot.gridline.flat(P, T, phi, lambda, Tt, c(sin(Lambda),cos(Lambda),0), 0, col=col, ...))
+      P1 <- get.gridline.flat(x$P, x$T, x$phi, x$lambda, x$Tt,
+                              c(sin(Lambda),cos(Lambda),0), 0)
+      cols <- c(cols, rep(col, nrow(P1)))
+      P <- rbind(P, P1)
+    }
+    if (nrow(P) > 0) {
+      segments(P[,"X1"], P[,"Y1"], P[,"X2"], P[,"Y2"], col=cols)
     }
   }
 }
