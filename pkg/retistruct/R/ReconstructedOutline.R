@@ -396,7 +396,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 
     phi0d <- x$phi0 * 180/pi
     
-    P <- matrix(0, nrow=1, ncol=4)
+    P <- matrix(0, nrow=0, ncol=4)
     cols <- NULL
     Phis <- seq(-90, phi0d, by=grid.int.minor)
     Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
@@ -410,7 +410,6 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
                               c(0,0,1), sin(Phi*pi/180))
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
-
     }
     for (Lambda in Lambdas) {
       if (!(Lambda %% grid.int.major)) {
