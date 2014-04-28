@@ -394,7 +394,8 @@ retistruct.export.matlab <- function(r) {
                Tss=name.list(getTss(r)),
                KDE=KDE,
                KR=KR,
-               side=as.character(r$side), DVflip=r$DVflip)
+               side=as.character(r$side), DVflip=r$DVflip,
+               Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2)}))
     }
   }
 }
