@@ -254,7 +254,8 @@ circle <- function(n=12, L=NULL) {
 ##' distance \code{d} expressed as a fractional distance along the side of
 ##' each triangle.
 ##'
-##' @title Find the intersection of a plane with triangles on a sphere
+##' @title Find the intersection of a plane with edges of triangles on
+##' a sphere
 ##' @param phi Lattitude of grid points on sphere centred on origin.
 ##' @param lambda Longitude of grid points on sphere centred on origin.
 ##' @param T Triangulation
@@ -266,8 +267,8 @@ circle <- function(n=12, L=NULL) {
 ##' vertex 3. Column 2 gives the fractional distance from vertex 3 to
 ##' vertex 1. Column 2 gives the fractional distance from vertex 1 to
 ##' vertex 2. A value of \code{NaN} indicates that the corresponding
-##' side lies in the plane. A value of \code{Inf} indicates that the
-##' side lies parallel to the plane but outside it.
+##' edge lies in the plane. A value of \code{Inf} indicates that the
+##' edge lies parallel to the plane but outside it.
 ##' @author David Sterratt
 compute.intersections.sphere <- function(phi, lambda, T, n, d) {
   P <- cbind(cos(phi)*cos(lambda),
