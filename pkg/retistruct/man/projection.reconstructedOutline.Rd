@@ -2,16 +2,12 @@
 \alias{projection.reconstructedOutline}
 \title{Projection of a reconstructed outline}
 \usage{
-  \method{projection}{reconstructedOutline} (r,
-    transform = identity.transform,
-    axisdir = cbind(phi = 90, lambda = 0),
-    projection = azimuthal.equalarea,
-    proj.centre = cbind(phi = 0, lambda = 0),
-    lambdalim = c(-180, 180), philim = c(-90, 90),
-    labels = c(0, 90, 180, 270), grid = TRUE,
-    grid.bg = "transparent", grid.int.minor = 15,
-    grid.int.major = 45, colatitude = TRUE, pole = FALSE,
-    image = TRUE, add = FALSE, ...)
+\method{projection}{reconstructedOutline}(r, transform = identity.transform,
+  axisdir = cbind(phi = 90, lambda = 0), projection = azimuthal.equalarea,
+  proj.centre = cbind(phi = 0, lambda = 0), lambdalim = c(-180, 180),
+  philim = c(-90, 90), labels = c(0, 90, 180, 270), grid = TRUE,
+  grid.bg = "transparent", grid.int.minor = 15, grid.int.major = 45,
+  colatitude = TRUE, pole = FALSE, image = TRUE, add = FALSE, ...)
 }
 \arguments{
   \item{r}{\code{ReconstructedOutline} object}
@@ -64,9 +60,8 @@
   functions}
 }
 \description{
-  Draw a projection of a
-  \code{\link{ReconstructedOutline}}. This method sets up
-  the grid lines and the angular labels and draws the
-  image.
+Draw a projection of a \code{\link{ReconstructedOutline}}.
+This method sets up the grid lines and the angular labels
+and draws the image.
 }
 

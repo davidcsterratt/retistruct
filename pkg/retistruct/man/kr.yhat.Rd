@@ -3,7 +3,7 @@
 \title{Kernel regression on sphere using Fisherian density with
 polar coordinates}
 \usage{
-  kr.yhat(r, mu, y, kappa)
+kr.yhat(r, mu, y, kappa)
 }
 \arguments{
   \item{r}{Locations at which to estimate dependent
@@ -17,13 +17,13 @@ polar coordinates}
   \item{kappa}{Concentration parameter}
 }
 \value{
-  Estimates of dependent variables at locations \code{r}
+Estimates of dependent variables at locations \code{r}
 }
 \description{
-  Kernel regression on sphere using Fisherian density with
-  polar coordinates
+Kernel regression on sphere using Fisherian density with
+polar coordinates
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

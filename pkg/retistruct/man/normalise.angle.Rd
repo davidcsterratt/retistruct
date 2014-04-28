@@ -2,18 +2,18 @@
 \alias{normalise.angle}
 \title{Bring angle into range}
 \usage{
-  normalise.angle(theta)
+normalise.angle(theta)
 }
 \arguments{
   \item{theta}{Angle to bring into range \code{[-pi, pi]}}
 }
 \value{
-  Normalised angle
+Normalised angle
 }
 \description{
-  Bring angle into range
+Bring angle into range
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

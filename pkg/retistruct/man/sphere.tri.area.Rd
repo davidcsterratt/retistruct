@@ -2,13 +2,12 @@
 \alias{sphere.tri.area}
 \title{Area of triangles on a sphere}
 \source{
-  Wolfram MathWorld
-  \url{http://mathworld.wolfram.com/SphericalTriangle.html}
-  and
-  \url{http://mathworld.wolfram.com/SphericalExcess.html}
+Wolfram MathWorld
+\url{http://mathworld.wolfram.com/SphericalTriangle.html}
+and \url{http://mathworld.wolfram.com/SphericalExcess.html}
 }
 \usage{
-  sphere.tri.area(P, Pt)
+sphere.tri.area(P, Pt)
 }
 \arguments{
   \item{P}{2-column matrix of vertices of triangles given
@@ -20,11 +19,11 @@
   giving triangulation}
 }
 \value{
-  Vectors of areas of triangles in units of steradians
+Vectors of areas of triangles in units of steradians
 }
 \description{
-  This uses l'Hullier's theorem to compute the spherical
-  excess and hence the area of the spherical triangle.
+This uses l'Hullier's theorem to compute the spherical
+excess and hence the area of the spherical triangle.
 }
 \examples{
 ## Something that should be an eighth of a sphere, i.e. pi/2
@@ -46,6 +45,6 @@ Pt <- rbind(1:3, 4:6)
 print(sphere.tri.area(P, Pt))
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

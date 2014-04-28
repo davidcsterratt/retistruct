@@ -2,12 +2,13 @@
 \name{recfile.version}
 \alias{recfile.version}
 \title{Version of reconstruction file data format}
-\format{num 5}
+\format{\preformatted{ num 5
+}}
 \usage{
-  recfile.version
+recfile.version
 }
 \description{
-  Version of reconstruction file data format
+Version of reconstruction file data format
 }
 \keyword{datasets}
 

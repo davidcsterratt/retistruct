@@ -2,8 +2,7 @@
 \alias{Ecart}
 \title{The deformation energy function}
 \usage{
-  Ecart(P, Cu, L, T, A, R, alpha = 1, x0, nu = 1,
-    verbose = FALSE)
+Ecart(P, Cu, L, T, A, R, alpha = 1, x0, nu = 1, verbose = FALSE)
 }
 \arguments{
   \item{P}{N-by-3 matrix of point coordinates}
@@ -27,18 +26,18 @@
   \item{verbose}{How much information to report}
 }
 \value{
-  A single value, representing the energy of this
-  particular configuration
+A single value, representing the energy of this particular
+configuration
 }
 \description{
-  The function that computes the energy (or error) of the
-  deformation of the mesh from the flat outline to the
-  sphere. This depends on the locations of the points given
-  in spherical coordinates. The function is designed to
-  take these as a vector that is received from the
-  \code{optim} function.
+The function that computes the energy (or error) of the
+deformation of the mesh from the flat outline to the
+sphere. This depends on the locations of the points given
+in spherical coordinates. The function is designed to take
+these as a vector that is received from the \code{optim}
+function.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

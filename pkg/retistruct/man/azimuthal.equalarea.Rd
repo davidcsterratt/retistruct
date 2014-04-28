@@ -2,7 +2,7 @@
 \alias{azimuthal.equalarea}
 \title{Lambert azimuthal equal area projection}
 \usage{
-  azimuthal.equalarea(r, ...)
+azimuthal.equalarea(r, ...)
 }
 \arguments{
   \item{r}{2-column Matrix of spherical coordinates of
@@ -12,26 +12,25 @@
   \item{...}{Arguments not used by this projection.}
 }
 \value{
-  2-column Matrix of Cartesian coordinates of points on
-  polar projection. Column names should be \code{x} and
-  \code{y}.
+2-column Matrix of Cartesian coordinates of points on polar
+projection. Column names should be \code{x} and \code{y}.
 }
 \description{
-  Lambert azimuthal equal area projection
+Lambert azimuthal equal area projection
 }
 \note{
-  This is a special case with the point centred on the
-  projection being the South Pole. The Mathworld equations
-  are for the more general case.
+This is a special case with the point centred on the
+projection being the South Pole. The Mathworld equations
+are for the more general case.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 \references{
-  \url{http://en.wikipedia.org/wiki/Map_projection},
-  \url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
-  Fisher, N. I., Lewis, T., and Embleton, B. J. J. (1987).
-  Statistical analysis of spherical data. Cambridge
-  University Press, Cambridge, UK.
+\url{http://en.wikipedia.org/wiki/Map_projection},
+\url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
+Fisher, N. I., Lewis, T., and Embleton, B. J. J. (1987).
+Statistical analysis of spherical data. Cambridge
+University Press, Cambridge, UK.
 }
 

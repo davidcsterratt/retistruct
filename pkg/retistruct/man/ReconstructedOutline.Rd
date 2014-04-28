@@ -2,9 +2,8 @@
 \alias{ReconstructedOutline}
 \title{Reconstruct outline into spherical surface}
 \usage{
-  ReconstructedOutline(o, n = 500, alpha = 8, x0 = 0.5,
-    report = print, plot.3d = FALSE, dev.flat = NA,
-    dev.polar = NA)
+ReconstructedOutline(o, n = 500, alpha = 8, x0 = 0.5, report = print,
+  plot.3d = FALSE, dev.flat = NA, dev.polar = NA)
 }
 \arguments{
   \item{o}{\code{\link{AnnotatedOutline}} object,
@@ -36,44 +35,41 @@
   (default) means no plotting.}
 }
 \value{
-  \code{reconstructedOutline} object containing the input
-  information and the following modified and extra
-  information: \item{\code{P}}{New set of points in
-  flattened object} \item{\code{gf}}{New set of forward
-  pointers in flattened object} \item{\code{gb}}{New set of
-  backward pointers in flattened object}
-  \item{\code{phi}}{lattitude of new points on sphere}
-  \item{\code{lambda}}{longitude of new points on sphere}
-  \item{\code{Tt}}{New triangulation}
+\code{reconstructedOutline} object containing the input
+information and the following modified and extra
+information: \item{\code{P}}{New set of points in flattened
+object} \item{\code{gf}}{New set of forward pointers in
+flattened object} \item{\code{gb}}{New set of backward
+pointers in flattened object} \item{\code{phi}}{lattitude
+of new points on sphere} \item{\code{lambda}}{longitude of
+new points on sphere} \item{\code{Tt}}{New triangulation}
 }
 \description{
-  Reconstruct outline into spherical surface.
-  Reconstruction proceeds in a number of stages:
+Reconstruct outline into spherical surface. Reconstruction
+proceeds in a number of stages:
 }
 \details{
-  \enumerate{
+\enumerate{
 
-  \item The flat object is triangulated with at least
-  \code{n} triangles. This can introduce new vertices in
-  the rim.
+\item The flat object is triangulated with at least
+\code{n} triangles. This can introduce new vertices in the
+rim.
 
-  \item The triangulated object is stitched.
+\item The triangulated object is stitched.
 
-  \item The stitched object is triangulated again, but this
-  time it is not permitted to add extra vertices to the
-  rim.
+\item The stitched object is triangulated again, but this
+time it is not permitted to add extra vertices to the rim.
 
-  \item The corresponding points determined by the
-  stitching process are merged to form a new set of merged
-  points and a new triangulation.
+\item The corresponding points determined by the stitching
+process are merged to form a new set of merged points and a
+new triangulation.
 
-  \item The merged points are projected roughly to a
-  sphere.
+\item The merged points are projected roughly to a sphere.
 
-  \item The locations of the points on the sphere are moved
-  so as to minimise the energy function. }
+\item The locations of the points on the sphere are moved
+so as to minimise the energy function. }
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

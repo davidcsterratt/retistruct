@@ -2,12 +2,12 @@
 \alias{getIDs}
 \title{Get IDs of groups of data within a dataset}
 \usage{
-  getIDs(r)
+getIDs(r)
 }
 \arguments{
   \item{r}{Object}
 }
 \description{
-  Get IDs of groups of data within a dataset
+Get IDs of groups of data within a dataset
 }
 

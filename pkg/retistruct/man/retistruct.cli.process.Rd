@@ -2,8 +2,8 @@
 \alias{retistruct.cli.process}
 \title{Process a dataset, saving results to disk}
 \usage{
-  retistruct.cli.process(dataset, outputdir = NA,
-    device = "pdf", titrate = FALSE)
+retistruct.cli.process(dataset, outputdir = NA, device = "pdf",
+  titrate = FALSE)
 }
 \arguments{
   \item{dataset}{Path to dataset to process}
@@ -18,12 +18,12 @@
   saved.}
 }
 \description{
-  This function processes a \code{dataset}, saving the
-  reconstruction data and matlab export data to the
-  \code{dataset} directory and printing figures to
-  \code{outputdir}.
+This function processes a \code{dataset}, saving the
+reconstruction data and matlab export data to the
+\code{dataset} directory and printing figures to
+\code{outputdir}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

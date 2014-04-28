@@ -2,8 +2,8 @@
 \alias{flatplot.annotatedOutline}
 \title{Flat plot of AnnotatedOutline}
 \usage{
-  \method{flatplot}{annotatedOutline} (x, axt = "n",
-    ylim = NULL, markup = TRUE, ...)
+\method{flatplot}{annotatedOutline}(x, axt = "n", ylim = NULL,
+  markup = TRUE, ...)
 }
 \arguments{
   \item{x}{\code{\link{AnnotatedOutline}} object}
@@ -17,10 +17,10 @@
   \item{...}{Other plotting parameters}
 }
 \description{
-  Plot flat \code{\link{AnnotatedOutline}}. The user markup
-  is displayed by default.
+Plot flat \code{\link{AnnotatedOutline}}. The user markup
+is displayed by default.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

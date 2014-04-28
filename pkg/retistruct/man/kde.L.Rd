@@ -3,7 +3,7 @@
 \title{Estimate of the log likelihood of the points mu given a
 particular value of the concentration kappa}
 \usage{
-  kde.L(mu, kappa)
+kde.L(mu, kappa)
 }
 \arguments{
   \item{mu}{Locations of data points in Cartesian
@@ -12,13 +12,13 @@ particular value of the concentration kappa}
   \item{kappa}{Concentration parameter}
 }
 \value{
-  Log likelihood of data
+Log likelihood of data
 }
 \description{
-  Estimate of the log likelihood of the points mu given a
-  particular value of the concentration kappa
+Estimate of the log likelihood of the points mu given a
+particular value of the concentration kappa
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

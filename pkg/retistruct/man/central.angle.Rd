@@ -2,11 +2,10 @@
 \alias{central.angle}
 \title{Central angle between two points on a sphere}
 \source{
-  Wikipedia
-  \url{http://en.wikipedia.org/wiki/Central_angle}
+Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
 }
 \usage{
-  central.angle(phi1, lambda1, phi2, lambda2)
+central.angle(phi1, lambda1, phi2, lambda2)
 }
 \arguments{
   \item{phi1}{Lattitude of first point}
@@ -18,18 +17,17 @@
   \item{lambda2}{Longitude of secone point}
 }
 \value{
-  Central angle
+Central angle
 }
 \description{
-  On a sphere the central angle between two points is
-  defined as the angle whose vertex is the centre of the
-  sphere and that subtends the arc formed by the great
-  circle between the points. This function computes the
-  central angle for two points \eqn{(\phi_1,
-  \lambda_1)}{(phi1, lambda1)} and
-  \eqn{(\phi_2,\lambda_2)}{(phi2, lambda2)}.
+On a sphere the central angle between two points is defined
+as the angle whose vertex is the centre of the sphere and
+that subtends the arc formed by the great circle between
+the points. This function computes the central angle for
+two points \eqn{(\phi_1, \lambda_1)}{(phi1, lambda1)} and
+\eqn{(\phi_2,\lambda_2)}{(phi2, lambda2)}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

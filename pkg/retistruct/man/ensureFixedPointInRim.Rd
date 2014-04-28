@@ -2,20 +2,20 @@
 \alias{ensureFixedPointInRim}
 \title{Ensure that the fixed point is in the rim, not a tear}
 \usage{
-  ensureFixedPointInRim(o)
+ensureFixedPointInRim(o)
 }
 \arguments{
   \item{o}{\code{\link{AnnotatedOutline}} object}
 }
 \value{
-  o \code{\link{AnnotatedOutline}} object in which
-  \code{i0} may have been changed.
+o \code{\link{AnnotatedOutline}} object in which \code{i0}
+may have been changed.
 }
 \description{
-  Ensure that the fixed point \code{i0} is in the rim, not
-  a tear.
+Ensure that the fixed point \code{i0} is in the rim, not a
+tear.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

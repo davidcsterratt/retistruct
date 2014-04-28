@@ -2,21 +2,21 @@
 \alias{retistruct.potential.od}
 \title{Test for a potential optic disc}
 \usage{
-  retistruct.potential.od(o)
+retistruct.potential.od(o)
 }
 \arguments{
   \item{o}{Outline object}
 }
 \value{
-  \code{TRUE} if an optic disc may be present; \code{FALSE}
-  otherwise
+\code{TRUE} if an optic disc may be present; \code{FALSE}
+otherwise
 }
 \description{
-  Test the oputline object \code{o} for the prescense of
-  potential optice disc. This is done by checking that the
-  list of landmark lines \code{Ss} exists.
+Test the oputline object \code{o} for the prescense of
+potential optice disc. This is done by checking that the
+list of landmark lines \code{Ss} exists.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

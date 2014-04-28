@@ -2,8 +2,8 @@
 \alias{retistruct.reconstruct}
 \title{Reconstruct a retina}
 \usage{
-  retistruct.reconstruct(o, report = retistruct.report,
-    plot.3d = FALSE, dev.flat = NA, dev.polar = NA, ...)
+retistruct.reconstruct(o, report = retistruct.report, plot.3d = FALSE,
+  dev.flat = NA, dev.polar = NA, ...)
 }
 \arguments{
   \item{o}{\code{\link{AnnotatedOutline}} object}
@@ -22,15 +22,14 @@
   \code{\link{ReconstructedOutline}}}
 }
 \value{
-  Object of classes
-  \code{\link{RetinalReconstructedOutline}} and
-  \code{\link{RetinalReconstructedDataset}} that contains
-  all the reconstruction information
+Object of classes \code{\link{RetinalReconstructedOutline}}
+and \code{\link{RetinalReconstructedDataset}} that contains
+all the reconstruction information
 }
 \description{
-  Reconstruct a retina
+Reconstruct a retina
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

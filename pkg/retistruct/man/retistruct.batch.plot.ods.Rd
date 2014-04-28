@@ -2,7 +2,7 @@
 \alias{retistruct.batch.plot.ods}
 \title{Superposed plot of ODs on polar axes}
 \usage{
-  retistruct.batch.plot.ods(summ, phi0d, ...)
+retistruct.batch.plot.ods(summ, phi0d, ...)
 }
 \arguments{
   \item{summ}{Summary object returned by
@@ -13,13 +13,13 @@
   \item{...}{Other parameters, passed to projection}
 }
 \value{
-  A pseudo retina, in which the optic disks are treated as
-  datapoints
+A pseudo retina, in which the optic disks are treated as
+datapoints
 }
 \description{
-  Polar plot of ODs of a group of retinae.
+Polar plot of ODs of a group of retinae.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

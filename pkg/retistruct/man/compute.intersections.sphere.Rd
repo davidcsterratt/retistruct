@@ -2,7 +2,7 @@
 \alias{compute.intersections.sphere}
 \title{Find the intersection of a plane with triangles on a sphere}
 \usage{
-  compute.intersections.sphere(phi, lambda, T, n, d)
+compute.intersections.sphere(phi, lambda, T, n, d)
 }
 \arguments{
   \item{phi}{Lattitude of grid points on sphere centred on
@@ -18,22 +18,22 @@
   \item{d}{Distance of plane along normal from origin.}
 }
 \value{
-  Matrix with same dimensions as \code{T}. Each row gives
-  the intersection of the plane with the corresponding
-  triangle in \code{T}. Column 1 gives the fractional
-  distance from vertex 2 to vertex 3. Column 2 gives the
-  fractional distance from vertex 3 to vertex 1. Column 2
-  gives the fractional distance from vertex 1 to vertex 2.
-  A value of \code{NaN} indicates that the corresponding
-  side lies in the plane. A value of \code{Inf} indicates
-  that the side lies parallel to the plane but outside it.
+Matrix with same dimensions as \code{T}. Each row gives the
+intersection of the plane with the corresponding triangle
+in \code{T}. Column 1 gives the fractional distance from
+vertex 2 to vertex 3. Column 2 gives the fractional
+distance from vertex 3 to vertex 1. Column 2 gives the
+fractional distance from vertex 1 to vertex 2. A value of
+\code{NaN} indicates that the corresponding side lies in
+the plane. A value of \code{Inf} indicates that the side
+lies parallel to the plane but outside it.
 }
 \description{
-  Find the interections of the plane defined by the normal
-  \code{n} and the distance \code{d} expressed as a
-  fractional distance along the side of each triangle.
+Find the interections of the plane defined by the normal
+\code{n} and the distance \code{d} expressed as a
+fractional distance along the side of each triangle.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

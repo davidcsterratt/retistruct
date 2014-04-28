@@ -2,7 +2,7 @@
 \alias{Dataset}
 \title{Constructor for a \code{dataset} object.}
 \usage{
-  Dataset(o, dataset, Ds, Ss, cols, raw, Gs = NULL)
+Dataset(o, dataset, Ds, Ss, cols, raw, Gs = NULL)
 }
 \arguments{
   \item{o}{An \code{outline} object.}
@@ -34,12 +34,12 @@
   also be in the \code{cols} argument.}
 }
 \value{
-  A \code{dataset} object.
+A \code{dataset} object.
 }
 \description{
-  Constructor for a \code{dataset} object.
+Constructor for a \code{dataset} object.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

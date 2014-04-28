@@ -2,18 +2,18 @@
 \alias{getDss.reconstructedDataset}
 \title{Get transformed spherical coordinates of datapoints}
 \usage{
-  \method{getDss}{reconstructedDataset} (r)
+\method{getDss}{reconstructedDataset}(r)
 }
 \arguments{
   \item{r}{\code{ReconstructedDataset} object.}
 }
 \value{
-  \code{Dss}
+\code{Dss}
 }
 \description{
-  Get spherical coordinates of datapoints.
+Get spherical coordinates of datapoints.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

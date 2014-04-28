@@ -2,7 +2,7 @@
 \alias{computeTearRelationships}
 \title{Compute the parent relationships for a set of tears}
 \usage{
-  computeTearRelationships(o, V0, VB, VF)
+computeTearRelationships(o, V0, VB, VF)
 }
 \arguments{
   \item{o}{\code{AnnotatedOutline} object}
@@ -14,22 +14,22 @@
   \item{VF}{Forward vertices of tears}
 }
 \value{
-  List \item{\code{Rset}}{the set of points on the rim}
-  \item{\code{TFset}}{list containing indicies of points in
-  each foward tear} \item{\code{TBset}}{list containing
-  indicies of points in each backward tear}
-  \item{\code{h}}{correspondence mapping}
-  \item{\code{hf}}{correspondence mapping in forward
-  direction for points on boundary}
-  \item{\code{hb}}{correspondence mapping in backward
-  direction for points on boundary}
+List \item{\code{Rset}}{the set of points on the rim}
+\item{\code{TFset}}{list containing indicies of points in
+each foward tear} \item{\code{TBset}}{list containing
+indicies of points in each backward tear}
+\item{\code{h}}{correspondence mapping}
+\item{\code{hf}}{correspondence mapping in forward
+direction for points on boundary}
+\item{\code{hb}}{correspondence mapping in backward
+direction for points on boundary}
 }
 \description{
-  Compute the parent relationships for a potential set of
-  tears on an \code{AnnotatedOutline}. The function throws
-  an error if tears overlap.
+Compute the parent relationships for a potential set of
+tears on an \code{AnnotatedOutline}. The function throws an
+error if tears overlap.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

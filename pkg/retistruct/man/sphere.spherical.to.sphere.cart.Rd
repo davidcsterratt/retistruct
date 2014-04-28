@@ -2,7 +2,7 @@
 \alias{sphere.spherical.to.sphere.cart}
 \title{Convert from spherical to Cartesian coordinates}
 \usage{
-  sphere.spherical.to.sphere.cart(phi, lambda, R = 1)
+sphere.spherical.to.sphere.cart(phi, lambda, R = 1)
 }
 \arguments{
   \item{phi}{vector of lattitudes of N points}
@@ -12,14 +12,14 @@
   \item{R}{radius of sphere}
 }
 \value{
-  An N-by-3 matrix in which each row is the cartesian (X,
-  Y, Z) coordinates of each point
+An N-by-3 matrix in which each row is the cartesian (X, Y,
+Z) coordinates of each point
 }
 \description{
-  Convert locations of points on sphere in spherical
-  coordinates to points in 3D cartesian space
+Convert locations of points on sphere in spherical
+coordinates to points in 3D cartesian space
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

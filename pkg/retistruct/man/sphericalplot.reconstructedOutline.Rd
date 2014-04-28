@@ -2,8 +2,8 @@
 \alias{sphericalplot.reconstructedOutline}
 \title{Spherical plot of reconstructed outline}
 \usage{
-  \method{sphericalplot}{reconstructedOutline} (r,
-    strain = FALSE, surf = TRUE, ...)
+\method{sphericalplot}{reconstructedOutline}(r, strain = FALSE, surf = TRUE,
+  ...)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedOutline}} object}
@@ -16,10 +16,10 @@
   present}
 }
 \description{
-  Draw a spherical plot of reconstructed outline. This
-  method just draws the mesh.
+Draw a spherical plot of reconstructed outline. This method
+just draws the mesh.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

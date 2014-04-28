@@ -2,8 +2,8 @@
 \alias{flatplot.stitchedOutline}
 \title{Flat plot of AnnotatedOutline}
 \usage{
-  \method{flatplot}{stitchedOutline} (x, axt = "n",
-    ylim = NULL, stitch = TRUE, ...)
+\method{flatplot}{stitchedOutline}(x, axt = "n", ylim = NULL,
+  stitch = TRUE, ...)
 }
 \arguments{
   \item{x}{\code{\link{AnnotatedOutline}} object}
@@ -17,11 +17,11 @@
   \item{...}{Other plotting parameters}
 }
 \description{
-  Plot flat \code{\link{StitchedOutline}}. If the optional
-  argument \code{stitch} is \code{TRUE} the user markup is
-  displayed.
+Plot flat \code{\link{StitchedOutline}}. If the optional
+argument \code{stitch} is \code{TRUE} the user markup is
+displayed.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

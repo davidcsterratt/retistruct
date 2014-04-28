@@ -2,8 +2,7 @@
 \alias{orthographic}
 \title{Orthographic projection}
 \usage{
-  orthographic(r, proj.centre = cbind(phi = 0, lambda = 0),
-    ...)
+orthographic(r, proj.centre = cbind(phi = 0, lambda = 0), ...)
 }
 \arguments{
   \item{r}{Lattitude-longitude coordinates in a matrix with
@@ -17,18 +16,17 @@
   \item{...}{Arguments not used by this projectio.n}
 }
 \value{
-  Two-column matrix with columns labelled \code{x} and
-  \code{y} of locations of projection of coordinates on
-  plane
+Two-column matrix with columns labelled \code{x} and
+\code{y} of locations of projection of coordinates on plane
 }
 \description{
-  Orthographic projection
+Orthographic projection
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 \references{
-  \url{http://en.wikipedia.org/wiki/Map_projection},
-  \url{http://mathworld.wolfram.com/OrthographicProjection.html}
+\url{http://en.wikipedia.org/wiki/Map_projection},
+\url{http://mathworld.wolfram.com/OrthographicProjection.html}
 }
 

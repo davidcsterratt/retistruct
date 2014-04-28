@@ -2,18 +2,18 @@
 \alias{getIDs.reconstructedDataset}
 \title{Get IDs of groups of data within a ReconstructedDataset}
 \usage{
-  \method{getIDs}{reconstructedDataset} (r)
+\method{getIDs}{reconstructedDataset}(r)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedDataset}} object}
 }
 \value{
-  Array of IDs
+Array of IDs
 }
 \description{
-  Get IDs of groups of data within a ReconstructedDataset
+Get IDs of groups of data within a ReconstructedDataset
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

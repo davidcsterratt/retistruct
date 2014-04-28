@@ -2,7 +2,7 @@
 \alias{RetinalReconstructedDataset}
 \title{RetinalReconstructedDataset constructor}
 \usage{
-  RetinalReconstructedDataset(r, report = message)
+RetinalReconstructedDataset(r, report = message)
 }
 \arguments{
   \item{r}{Object that inherits both
@@ -11,17 +11,17 @@
   \item{report}{Function used to report progress.}
 }
 \value{
-  \code{\link{RetinalReconstructedDataset}} object. This
-  does not contain any extra fields, but there are extra
-  mthods dthat apply to it.
+\code{\link{RetinalReconstructedDataset}} object. This does
+not contain any extra fields, but there are extra mthods
+dthat apply to it.
 }
 \description{
-  Create an object that is specific to retinal datasets.
-  This contains methods that return datapoint and landmark
-  coordinates that have been transformed according to the
-  values of \code{DVflip} and \code{side}.
+Create an object that is specific to retinal datasets. This
+contains methods that return datapoint and landmark
+coordinates that have been transformed according to the
+values of \code{DVflip} and \code{side}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,7 +2,7 @@
 \alias{retistruct.read.recdata}
 \title{Read the reconstruction data from file}
 \usage{
-  retistruct.read.recdata(o, check = TRUE)
+retistruct.read.recdata(o, check = TRUE)
 }
 \arguments{
   \item{o}{Outline object containing \code{dataset} field}
@@ -12,16 +12,15 @@
   the base data in source files.}
 }
 \value{
-  If the reconstruction data exists, return a
-  reconstruction object, else return the outline object
-  \code{o}.
+If the reconstruction data exists, return a reconstruction
+object, else return the outline object \code{o}.
 }
 \description{
-  Given an outline object with a \code{dataset} field, read
-  the reconstruction data from the file
-  \file{\var{dataset}/r.Rdata}.
+Given an outline object with a \code{dataset} field, read
+the reconstruction data from the file
+\file{\var{dataset}/r.Rdata}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

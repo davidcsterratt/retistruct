@@ -2,19 +2,19 @@
 \alias{getDssHullarea}
 \title{Get area of convex hull around data points on sphere}
 \usage{
-  getDssHullarea(r)
+getDssHullarea(r)
 }
 \arguments{
   \item{r}{code{\link{ReconstructedDataset}} or
   \code{\link{RetinalReconstructedDataset}} object.}
 }
 \value{
-  Area in degress squared
+Area in degress squared
 }
 \description{
-  Get area of convex hull around data points on sphere
+Get area of convex hull around data points on sphere
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

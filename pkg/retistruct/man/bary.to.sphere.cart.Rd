@@ -3,7 +3,7 @@
 \title{Convert barycentric coordinates of points in mesh on sphere
 to cartesian coordinates}
 \usage{
-  bary.to.sphere.cart(phi, lambda, R, Tt, cb)
+bary.to.sphere.cart(phi, lambda, R, Tt, cb)
 }
 \arguments{
   \item{phi}{Lattitudes of mesh points}
@@ -19,17 +19,16 @@ to cartesian coordinates}
   the barycentric coordinates within that triangle}
 }
 \value{
-  An N-by-3 matrix of the Cartesian coordinates of the
-  points
+An N-by-3 matrix of the Cartesian coordinates of the points
 }
 \description{
-  Given a triangular mesh on a sphere described by mesh
-  locations (\code{phi}, \code{lambda}), a radius \code{R}
-  and a triangulation \code{Tt}, determine the Cartesian
-  coordinates of points \code{cb} given in barycentric
-  coordinates with respect to the mesh.
+Given a triangular mesh on a sphere described by mesh
+locations (\code{phi}, \code{lambda}), a radius \code{R}
+and a triangulation \code{Tt}, determine the Cartesian
+coordinates of points \code{cb} given in barycentric
+coordinates with respect to the mesh.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

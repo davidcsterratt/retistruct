@@ -2,8 +2,8 @@
 \alias{dE}
 \title{The deformation energy gradient function}
 \usage{
-  dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0,
-    Nphi, N, alpha = 1, x0, nu = 1, verbose = FALSE)
+dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N, alpha = 1, x0,
+  nu = 1, verbose = FALSE)
 }
 \arguments{
   \item{p}{Parameter vector of \code{phi} and
@@ -44,19 +44,19 @@
   \item{verbose}{How much information to report}
 }
 \value{
-  A vector representing the derivative of the energy of
-  this particular configuration with respect to the
-  parameter vector
+A vector representing the derivative of the energy of this
+particular configuration with respect to the parameter
+vector
 }
 \description{
-  The function that computes the gradient of the energy (or
-  error) of the deformation of the mesh from the flat
-  outline to the sphere. This depends on the locations of
-  the points given in spherical coordinates. The function
-  is designed to take these as a vector that is received
-  from the \code{optim} function.
+The function that computes the gradient of the energy (or
+error) of the deformation of the mesh from the flat outline
+to the sphere. This depends on the locations of the points
+given in spherical coordinates. The function is designed to
+take these as a vector that is received from the
+\code{optim} function.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

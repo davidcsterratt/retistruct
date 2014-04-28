@@ -2,20 +2,20 @@
 \alias{getGss}
 \title{Get grouped variable with locations in spherical coordinates.}
 \usage{
-  getGss(r)
+getGss(r)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedDataset}} or
   \code{\link{RetinalReconstructedDataset}} object.}
 }
 \value{
-  \code{Gss}
+\code{Gss}
 }
 \description{
-  Get grouped variable with locations in spherical
-  coordinates.
+Get grouped variable with locations in spherical
+coordinates.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

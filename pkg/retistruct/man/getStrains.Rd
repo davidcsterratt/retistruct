@@ -2,26 +2,25 @@
 \alias{getStrains}
 \title{Return strains edges are under in spherical retina}
 \usage{
-  getStrains(r)
+getStrains(r)
 }
 \arguments{
   \item{r}{A \code{\link{ReconstructedOutline}} object}
 }
 \value{
-  A list containing two data frames \code{flat} and
-  \code{spherical}. Each data frame contains for each edge
-  in the flat or spherical meshes: \item{\code{L}}{Length
-  of the edge in the flat outline } \item{\code{l}}{Length
-  of the corresponding edge on the sphere}
-  \item{\code{strain}}{The strain of each connection}
-  \item{\code{logstrain}}{The logarithmic strain of each
-  connection}
+A list containing two data frames \code{flat} and
+\code{spherical}. Each data frame contains for each edge in
+the flat or spherical meshes: \item{\code{L}}{Length of the
+edge in the flat outline } \item{\code{l}}{Length of the
+corresponding edge on the sphere} \item{\code{strain}}{The
+strain of each connection} \item{\code{logstrain}}{The
+logarithmic strain of each connection}
 }
 \description{
-  This function returns information about how edges on the
-  sphere have been deformed from their flat state.
+This function returns information about how edges on the
+sphere have been deformed from their flat state.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

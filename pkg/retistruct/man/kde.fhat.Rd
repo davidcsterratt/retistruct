@@ -3,7 +3,7 @@
 \title{Kernel density estimate on sphere using Fisherian density
 with polar coordinates}
 \usage{
-  kde.fhat(r, mu, kappa)
+kde.fhat(r, mu, kappa)
 }
 \arguments{
   \item{r}{Locations at which to estimate density in polar
@@ -14,13 +14,13 @@ with polar coordinates}
   \item{kappa}{Concentration parameter}
 }
 \value{
-  Vector of density estimates
+Vector of density estimates
 }
 \description{
-  Kernel density estimate on sphere using Fisherian density
-  with polar coordinates
+Kernel density estimate on sphere using Fisherian density
+with polar coordinates
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

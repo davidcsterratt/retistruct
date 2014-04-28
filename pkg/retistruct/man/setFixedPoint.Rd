@@ -2,7 +2,7 @@
 \alias{setFixedPoint}
 \title{Set fixed point}
 \usage{
-  setFixedPoint(o, i0, name)
+setFixedPoint(o, i0, name)
 }
 \arguments{
   \item{o}{\code{\link{AnnotatedOutline}} object}
@@ -12,12 +12,12 @@
   \item{name}{Name of fixed point}
 }
 \value{
-  New \code{\link{AnnotatedOutline}} object
+New \code{\link{AnnotatedOutline}} object
 }
 \description{
-  Set fixed point
+Set fixed point
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

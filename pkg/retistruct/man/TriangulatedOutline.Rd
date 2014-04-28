@@ -2,8 +2,7 @@
 \alias{TriangulatedOutline}
 \title{Triangulate outline}
 \usage{
-  TriangulatedOutline(o, n = 200,
-    suppress.external.steiner = FALSE)
+TriangulatedOutline(o, n = 200, suppress.external.steiner = FALSE)
 }
 \arguments{
   \item{o}{\code{\link{Outline}} object}
@@ -15,29 +14,28 @@
   maintain triangle quality.}
 }
 \value{
-  A \code{triangulatedOutline} object containing the
-  following fields: \item{\code{P}}{The set of new points,
-  with the existing points at the start}
-  \item{\code{T}}{The triangulation}
-  \item{\code{Cu}}{Unique set of M connections, as M*2
-  matrix} \item{\code{h}}{Correspondances mapping}
-  \item{\code{A}}{Array containing area of each triangle}
-  \item{\code{L}}{Length of each connection}
-  \item{\code{A.signed}}{Signed area of each triangle}
-  \item{\code{A.tot}}{Total area of outline}
-  \item{\code{gf}}{Forward pointers}
-  \item{\code{gb}}{Backward pointers}
-  \item{\code{S}}{Segments (from
-  \code{\link{triangulate}})} \item{\code{E}}{Edges (from
-  \code{\link{triangulate}})} \item{\code{EB}}{Edge
-  boundaries (from \code{\link{triangulate}})}
+A \code{triangulatedOutline} object containing the
+following fields: \item{\code{P}}{The set of new points,
+with the existing points at the start} \item{\code{T}}{The
+triangulation} \item{\code{Cu}}{Unique set of M
+connections, as M*2 matrix} \item{\code{h}}{Correspondances
+mapping} \item{\code{A}}{Array containing area of each
+triangle} \item{\code{L}}{Length of each connection}
+\item{\code{A.signed}}{Signed area of each triangle}
+\item{\code{A.tot}}{Total area of outline}
+\item{\code{gf}}{Forward pointers}
+\item{\code{gb}}{Backward pointers}
+\item{\code{S}}{Segments (from \code{\link{triangulate}})}
+\item{\code{E}}{Edges (from \code{\link{triangulate}})}
+\item{\code{EB}}{Edge boundaries (from
+\code{\link{triangulate}})}
 }
 \description{
-  Create a triangulation of the \code{Outline} object
-  \code{o}.  The minimum number of triangles in the
-  triangulation is specified by \code{n}.
+Create a triangulation of the \code{Outline} object
+\code{o}.  The minimum number of triangles in the
+triangulation is specified by \code{n}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,15 +2,12 @@
 \alias{projection.reconstructedDataset}
 \title{Plot projection of reconstructed dataset}
 \usage{
-  \method{projection}{reconstructedDataset} (r,
-    transform = identity.transform,
-    axisdir = cbind(phi = 90, lambda = 0),
-    projection = azimuthal.equalarea,
-    proj.centre = cbind(phi = 0, lambda = 0),
-    lambdalim = c(-180, 180), datapoints = TRUE,
-    datapoint.means = TRUE, datapoint.contours = TRUE,
-    grouped = FALSE, grouped.contours = FALSE,
-    landmarks = TRUE, ids = getIDs(r), ...)
+\method{projection}{reconstructedDataset}(r, transform = identity.transform,
+  axisdir = cbind(phi = 90, lambda = 0), projection = azimuthal.equalarea,
+  proj.centre = cbind(phi = 0, lambda = 0), lambdalim = c(-180, 180),
+  datapoints = TRUE, datapoint.means = TRUE, datapoint.contours = TRUE,
+  grouped = FALSE, grouped.contours = FALSE, landmarks = TRUE,
+  ids = getIDs(r), ...)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedDataset}} object}
@@ -56,9 +53,9 @@
   functions}
 }
 \description{
-  Plot projection of reconstructed dataset
+Plot projection of reconstructed dataset
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

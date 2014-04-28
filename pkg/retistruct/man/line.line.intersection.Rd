@@ -2,13 +2,12 @@
 \alias{line.line.intersection}
 \title{Determine intersection between two lines}
 \source{
-  Weisstein, Eric W. "Line-Line Intersection." From
-  MathWorld--A Wolfram Web Resource.
-  \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
+Weisstein, Eric W. "Line-Line Intersection." From
+MathWorld--A Wolfram Web Resource.
+\url{http://mathworld.wolfram.com/Line-LineIntersection.html}
 }
 \usage{
-  line.line.intersection(P1, P2, P3, P4,
-    interior.only = FALSE)
+line.line.intersection(P1, P2, P3, P4, interior.only = FALSE)
 }
 \arguments{
   \item{P1}{vector containing x,y coordinates of one end of
@@ -27,16 +26,15 @@
   intersections inside L1 and L2 should be returned.}
 }
 \value{
-  Vector containing x,y coordinates of intersection of L1
-  and L2.  If L1 and L2 are parallel, this is
-  infinite-valued.  If \code{interior.only} is \code{TRUE},
-  then when the intersection does not occur between P1 and
-  P2 and P3 and P4, a vector containing \code{NA}s is
-  returned.
+Vector containing x,y coordinates of intersection of L1 and
+L2.  If L1 and L2 are parallel, this is infinite-valued.
+If \code{interior.only} is \code{TRUE}, then when the
+intersection does not occur between P1 and P2 and P3 and
+P4, a vector containing \code{NA}s is returned.
 }
 \description{
-  Determine the intersection of two lines L1 and L2 in two
-  dimensions, using the formula described by Weisstein.
+Determine the intersection of two lines L1 and L2 in two
+dimensions, using the formula described by Weisstein.
 }
 \examples{
 ## Intersection of two intersecting lines
@@ -46,6 +44,6 @@ line.line.intersection(c(0, 0), c(1, 1), c(0, 1), c(1, 0))
 line.line.intersection(c(0, 0), c(0, 1), c(1, 0), c(1, 1))
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

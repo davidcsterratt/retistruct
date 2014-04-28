@@ -2,7 +2,7 @@
 \alias{flatplot}
 \title{Flat plot of object}
 \usage{
-  flatplot(x, axt = "n", ylim = NULL, ...)
+flatplot(x, axt = "n", ylim = NULL, ...)
 }
 \arguments{
   \item{x}{\code{\link{Outline}}, \code{\link{Dataset}} \&c
@@ -15,9 +15,9 @@
   \item{...}{Other plotting parameters}
 }
 \description{
-  Plot flat representation of object
+Plot flat representation of object
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,7 +2,7 @@
 \alias{rotate.axis}
 \title{Rotate axis of sphere}
 \usage{
-  rotate.axis(r, r0)
+rotate.axis(r, r0)
 }
 \arguments{
   \item{r}{Coordinates of points in spherical coordinates
@@ -15,16 +15,16 @@
   (longitude).}
 }
 \value{
-  2-column matrix of spherical coordinates of points with
-  column names \code{phi} (lattidude) and \code{lambda}
-  (longitude).
+2-column matrix of spherical coordinates of points with
+column names \code{phi} (lattidude) and \code{lambda}
+(longitude).
 }
 \description{
-  This rotates points on sphere by specifying the direction
-  its polar axis, i.e. the axis going through (90, 0),
-  should point after (a) a rotation about an axis through
-  the poins (0, 0) and (0, 180) and (b) rotation about the
-  original polar axis.
+This rotates points on sphere by specifying the direction
+its polar axis, i.e. the axis going through (90, 0), should
+point after (a) a rotation about an axis through the poins
+(0, 0) and (0, 180) and (b) rotation about the original
+polar axis.
 }
 \examples{
 r0 <- cbind(phi=0, lambda=-pi/2)
@@ -33,6 +33,6 @@ r <- cbind(phi=pi/2, lambda=0)
 rotate.axis(r, r0)
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

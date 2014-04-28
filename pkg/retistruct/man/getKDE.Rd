@@ -2,18 +2,18 @@
 \alias{getKDE}
 \title{Get kernel density estimate of data points}
 \usage{
-  getKDE(r)
+getKDE(r)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedDataset}} object}
 }
 \value{
-  See \code{\link{compute.kernel.estimate}}
+See \code{\link{compute.kernel.estimate}}
 }
 \description{
-  Get kernel density estimate of data points
+Get kernel density estimate of data points
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,8 +2,7 @@
 \alias{sphericalplot.reconstructedDataset}
 \title{Spherical plot of reconstructed outline}
 \usage{
-  \method{sphericalplot}{reconstructedDataset} (r,
-    datapoints = TRUE, ...)
+\method{sphericalplot}{reconstructedDataset}(r, datapoints = TRUE, ...)
 }
 \arguments{
   \item{r}{\code{reconstructedOutline} object}
@@ -14,9 +13,9 @@
   present}
 }
 \description{
-  Draw a spherical plot of datapoints.
+Draw a spherical plot of datapoints.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

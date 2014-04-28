@@ -2,12 +2,13 @@
 \name{retistruct.global.revision}
 \alias{retistruct.global.revision}
 \title{SVN global revision number of Retistruct package}
-\format{num 1264}
+\format{\preformatted{ num 1268
+}}
 \usage{
-  retistruct.global.revision
+retistruct.global.revision
 }
 \description{
-  SVN global revision number of Retistruct package
+SVN global revision number of Retistruct package
 }
 \keyword{datasets}
 

@@ -2,7 +2,7 @@
 \alias{compute.kernel.estimate}
 \title{Kernel estimate over grid}
 \usage{
-  compute.kernel.estimate(Dss, phi0, fhat, compute.conc)
+compute.kernel.estimate(Dss, phi0, fhat, compute.conc)
 }
 \arguments{
   \item{Dss}{List of datasets. The first two columns of
@@ -23,35 +23,35 @@
   of the concentration parameter kappa given the data.}
 }
 \value{
-  A list containing \item{\code{kappa}}{The concentration
-  parameter} \item{\code{h}}{A pseudo-bandwidth parameter,
-  the inverse of the square root of \code{kappa}. Units of
-  degrees.} \item{\code{flevels}}{Contour levels.}
-  \item{\code{labels}}{Labels of the contours.}
-  \item{\code{g}}{Raw density estimate drawn on
-  non-area-preserving projection. Comprises locations of
-  gridlines in Cartesian coordinates (\code{xs} and
-  \code{ys}), density estimates at these points, \code{f}
-  and location of maximum in Cartesian coordinates
-  (\code{max}).} \item{\code{gpa}}{Raw density estimate
-  drawn on area-preserving projection. Comprises same
-  elements as above.} \item{\code{contour.areas}}{Area of
-  each individual contour. One level may ahave more than
-  one contour; this shows the areas of all such contours.}
-  \item{\code{tot.contour.areas}}{Data frame containing the
-  total area within the contours at each level.}
+A list containing \item{\code{kappa}}{The concentration
+parameter} \item{\code{h}}{A pseudo-bandwidth parameter,
+the inverse of the square root of \code{kappa}. Units of
+degrees.} \item{\code{flevels}}{Contour levels.}
+\item{\code{labels}}{Labels of the contours.}
+\item{\code{g}}{Raw density estimate drawn on
+non-area-preserving projection. Comprises locations of
+gridlines in Cartesian coordinates (\code{xs} and
+\code{ys}), density estimates at these points, \code{f} and
+location of maximum in Cartesian coordinates (\code{max}).}
+\item{\code{gpa}}{Raw density estimate drawn on
+area-preserving projection. Comprises same elements as
+above.} \item{\code{contour.areas}}{Area of each individual
+contour. One level may ahave more than one contour; this
+shows the areas of all such contours.}
+\item{\code{tot.contour.areas}}{Data frame containing the
+total area within the contours at each level.}
 }
 \description{
-  Compute a kernel estimate over a grid and do a contour
-  analsysis of this estimate. The contour heights the
-  determined by finding heights that exclude a certain
-  fraction of the probability. For example, the 95% contour
-  is excludes 95% of the probability mass, and it should
-  enclose about 5% of the points. The contour levels are
-  specified by the \code{contour.levels} option; by default
-  they are \code{c(5, 25, 50, 75, 95)}.
+Compute a kernel estimate over a grid and do a contour
+analsysis of this estimate. The contour heights the
+determined by finding heights that exclude a certain
+fraction of the probability. For example, the 95% contour
+is excludes 95% of the probability mass, and it should
+enclose about 5% of the points. The contour levels are
+specified by the \code{contour.levels} option; by default
+they are \code{c(5, 25, 50, 75, 95)}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

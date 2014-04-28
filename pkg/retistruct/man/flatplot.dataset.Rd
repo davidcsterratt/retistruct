@@ -2,9 +2,8 @@
 \alias{flatplot.dataset}
 \title{Flat plot of Dataset}
 \usage{
-  \method{flatplot}{dataset} (x, axt = "n", ylim = NULL,
-    datapoints = TRUE, grouped = FALSE, landmarks = TRUE,
-    ids = getIDs(x), ...)
+\method{flatplot}{dataset}(x, axt = "n", ylim = NULL, datapoints = TRUE,
+  grouped = FALSE, landmarks = TRUE, ids = getIDs(x), ...)
 }
 \arguments{
   \item{x}{\code{\link{Dataset}} object}
@@ -26,9 +25,9 @@
   functions}
 }
 \description{
-  Flat plot of Dataset
+Flat plot of Dataset
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

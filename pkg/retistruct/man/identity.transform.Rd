@@ -2,7 +2,7 @@
 \alias{identity.transform}
 \title{The identity transformation}
 \usage{
-  identity.transform(r, ...)
+identity.transform(r, ...)
 }
 \arguments{
   \item{r}{Coordinates of points in spherical coordinates
@@ -12,12 +12,12 @@
   \item{...}{Other arguments}
 }
 \value{
-  Idendtical matrix
+Idendtical matrix
 }
 \description{
-  The identity transformation
+The identity transformation
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -3,7 +3,7 @@
 \title{Kernel regression on sphere using Fisherian density with
 Cartesian coordinates}
 \usage{
-  kr.yhat.cart(r, mu, y, kappa)
+kr.yhat.cart(r, mu, y, kappa)
 }
 \arguments{
   \item{r}{Locations at which to estimate dependent
@@ -17,13 +17,13 @@ Cartesian coordinates}
   \item{kappa}{Concentration parameter}
 }
 \value{
-  Estimates of dependent variables at locations \code{r}
+Estimates of dependent variables at locations \code{r}
 }
 \description{
-  Kernel regression on sphere using Fisherian density with
-  Cartesian coordinates
+Kernel regression on sphere using Fisherian density with
+Cartesian coordinates
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

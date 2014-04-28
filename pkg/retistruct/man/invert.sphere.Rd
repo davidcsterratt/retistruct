@@ -2,7 +2,7 @@
 \alias{invert.sphere}
 \title{Invert sphere about its centre}
 \usage{
-  invert.sphere(r, ...)
+invert.sphere(r, ...)
 }
 \arguments{
   \item{r}{Coordinates of points in spherical coordinates
@@ -12,13 +12,13 @@
   \item{...}{Other arguments}
 }
 \value{
-  Matrix in same format, but with \code{pi} added to lambda
-  and \code{phi} negated.
+Matrix in same format, but with \code{pi} added to lambda
+and \code{phi} negated.
 }
 \description{
-  Invert sphere about its centre
+Invert sphere about its centre
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

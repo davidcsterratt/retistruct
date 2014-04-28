@@ -2,8 +2,8 @@
 \alias{retistruct.cli}
 \title{Process a dataset with a time limit}
 \usage{
-  retistruct.cli(dataset, cpu.time.limit = Inf,
-    outputdir = NA, device = "pdf", ...)
+retistruct.cli(dataset, cpu.time.limit = Inf, outputdir = NA,
+  device = "pdf", ...)
 }
 \arguments{
   \item{dataset}{Path to dataset to process}
@@ -19,16 +19,16 @@
   \code{\link{retistruct.cli.process}}}
 }
 \value{
-  A list comprising \item{\code{status}}{0 for success, 1
-  for reaching \code{cpu.time.limit} and 2 for an unknown
-  error} \item{\code{time}}{The time take in seconds}
-  \item{\code{mess}}{Any error message}
+A list comprising \item{\code{status}}{0 for success, 1 for
+reaching \code{cpu.time.limit} and 2 for an unknown error}
+\item{\code{time}}{The time take in seconds}
+\item{\code{mess}}{Any error message}
 }
 \description{
-  This calls \code{\link{retistruct.cli.process}} with a
-  time limit specified by \code{cpu.time.limit}.
+This calls \code{\link{retistruct.cli.process}} with a time
+limit specified by \code{cpu.time.limit}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

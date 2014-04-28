@@ -3,8 +3,7 @@
 \title{Convert spherical coordinates on sphere to  polar
 projection in Cartesian coordinates}
 \usage{
-  sphere.spherical.to.polar.cart(r, pa = FALSE,
-    preserve = "lattitude")
+sphere.spherical.to.polar.cart(r, pa = FALSE, preserve = "lattitude")
 }
 \arguments{
   \item{r}{2-column Matrix of spherical coordinates of
@@ -19,15 +18,14 @@ projection in Cartesian coordinates}
   \code{angle}}
 }
 \value{
-  2-column Matrix of Cartesian coordinates of points on
-  polar projection. Column names should be \code{x} and
-  \code{y}
+2-column Matrix of Cartesian coordinates of points on polar
+projection. Column names should be \code{x} and \code{y}
 }
 \description{
-  This is the inverse of
-  \code{\link{polar.cart.to.sphere.spherical}}
+This is the inverse of
+\code{\link{polar.cart.to.sphere.spherical}}
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

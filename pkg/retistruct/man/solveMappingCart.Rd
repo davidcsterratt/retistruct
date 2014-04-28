@@ -2,9 +2,8 @@
 \alias{solveMappingCart}
 \title{Optimise mapping}
 \usage{
-  solveMappingCart(r, alpha = 4, x0 = 0.5, nu = 1,
-    method = "BFGS", plot.3d = FALSE, dev.flat = NA,
-    dev.polar = NA, ...)
+solveMappingCart(r, alpha = 4, x0 = 0.5, nu = 1, method = "BFGS",
+  plot.3d = FALSE, dev.flat = NA, dev.polar = NA, ...)
 }
 \arguments{
   \item{r}{reconstructedOutline object}
@@ -28,12 +27,12 @@
   \item{...}{Extra arguments to pass to \code{\link{fire}}}
 }
 \value{
-  reconstructedOutline object
+reconstructedOutline object
 }
 \description{
-  Optimise the mapping from the flat outline to the sphere
+Optimise the mapping from the flat outline to the sphere
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,7 +2,7 @@
 \alias{retistruct.batch.summary}
 \title{Extract summary data for a batch of reconstructions}
 \usage{
-  retistruct.batch.summary(tldir = ".", cache = TRUE)
+retistruct.batch.summary(tldir = ".", cache = TRUE)
 }
 \arguments{
   \item{tldir}{The top level directory of the tree through
@@ -12,14 +12,14 @@
   rather than generate on the fly (which is slower).}
 }
 \value{
-  Data frame containing summary data
+Data frame containing summary data
 }
 \description{
-  Recurse through a directory tree, determining whether the
-  directory contains valid derived data and extracting
-  summary data if it does.
+Recurse through a directory tree, determining whether the
+directory contains valid derived data and extracting
+summary data if it does.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

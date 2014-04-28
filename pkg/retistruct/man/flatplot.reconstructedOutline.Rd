@@ -2,8 +2,8 @@
 \alias{flatplot.reconstructedOutline}
 \title{Flat plot of reconstructed outline}
 \usage{
-  \method{flatplot}{reconstructedOutline} (x, axt = "n",
-    ylim = NULL, grid = TRUE, strain = FALSE, ...)
+\method{flatplot}{reconstructedOutline}(x, axt = "n", ylim = NULL,
+  grid = TRUE, strain = FALSE, ...)
 }
 \arguments{
   \item{x}{\code{\link{ReconstructedOutline}} object}
@@ -20,14 +20,14 @@
   \item{...}{Other plotting parameters}
 }
 \description{
-  Plot \code{\link{ReconstructedOutline}} object. This adds
-  a mesh of gridlines from the spherical retina (described
-  by points \code{phi}, \code{lambda} and triangulation
-  \code{Tt} and cutoff point \code{phi0}) onto a flattened
-  retina (described by points \code{P} and triangulation
-  \code{T}).
+Plot \code{\link{ReconstructedOutline}} object. This adds a
+mesh of gridlines from the spherical retina (described by
+points \code{phi}, \code{lambda} and triangulation
+\code{Tt} and cutoff point \code{phi0}) onto a flattened
+retina (described by points \code{P} and triangulation
+\code{T}).
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

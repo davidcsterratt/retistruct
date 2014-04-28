@@ -2,7 +2,7 @@
 \alias{removeTear}
 \title{Remove tear from an AnnotatedOutline}
 \usage{
-  removeTear(o, tid)
+removeTear(o, tid)
 }
 \arguments{
   \item{o}{\code{AnnotatedOutline} object}
@@ -11,12 +11,12 @@
   \code{whichTear()}}
 }
 \value{
-  \code{AnnotatedOutline} object
+\code{AnnotatedOutline} object
 }
 \description{
-  Remove tear from an AnnotatedOutline
+Remove tear from an AnnotatedOutline
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,7 +2,7 @@
 \alias{f}
 \title{Piecewise smooth function used in area penalty}
 \usage{
-  f(x, x0)
+f(x, x0)
 }
 \arguments{
   \item{x}{Main argument}
@@ -11,16 +11,15 @@
   function is zero.}
 }
 \value{
-  The value of the function.
+The value of the function.
 }
 \description{
-  Piecewise, smooth function that increases linearly with
-  negative arguments. \deqn{ f(x) = \left\{
-  \begin{array}{ll} -(x - x_0/2) & x < 0 \\
-  \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\ 0 & x \ge x_0
-  \end{array} \right. }
+Piecewise, smooth function that increases linearly with
+negative arguments. \deqn{ f(x) = \left\{ \begin{array}{ll}
+-(x - x_0/2) & x < 0 \\ \frac{1}{2x_0}(x - x_0)^2 & 0 < x
+<x_0 \\ 0 & x \ge x_0 \end{array} \right. }
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

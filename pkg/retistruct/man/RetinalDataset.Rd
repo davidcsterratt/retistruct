@@ -2,24 +2,23 @@
 \alias{RetinalDataset}
 \title{RetinalDataset constructor}
 \usage{
-  RetinalDataset(d)
+RetinalDataset(d)
 }
 \arguments{
   \item{d}{A \code{dataset} object}
 }
 \value{
-  An \code{retinalDataset} object. This contains all the
-  information from \code{d} plus:
-  \item{\code{DVflip}}{\code{TRUE} if the raw data is
-  flipped in the dorsoventral direction}
-  \item{\code{side}}{The side of the eye ("Left" or
-  "Right")}
+An \code{retinalDataset} object. This contains all the
+information from \code{d} plus:
+\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped
+in the dorsoventral direction} \item{\code{side}}{The side
+of the eye ("Left" or "Right")}
 }
 \description{
-  Construct an RetinalDataset that contains information
-  specific to the dataset in question.
+Construct an RetinalDataset that contains information
+specific to the dataset in question.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

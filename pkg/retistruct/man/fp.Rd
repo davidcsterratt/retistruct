@@ -2,7 +2,7 @@
 \alias{fp}
 \title{Piecewise smooth function used in area penalty}
 \usage{
-  fp(x, x0)
+fp(x, x0)
 }
 \arguments{
   \item{x}{Main argument}
@@ -11,12 +11,12 @@
   function is zero.}
 }
 \value{
-  The value of the function.
+The value of the function.
 }
 \description{
-  Derivative of \code{\link{f}}
+Derivative of \code{\link{f}}
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,7 +2,7 @@
 \alias{tri.area.signed}
 \title{"Signed area" of triangles on a plane}
 \usage{
-  tri.area.signed(P, Pt)
+tri.area.signed(P, Pt)
 }
 \arguments{
   \item{P}{2-column matrix of vertices of triangles}
@@ -11,14 +11,14 @@
   giving triangulation}
 }
 \value{
-  Vectors of signed areas of triangles. Positive sign
-  indicates points are anticlockwise direction; negative
-  indicates clockwise.
+Vectors of signed areas of triangles. Positive sign
+indicates points are anticlockwise direction; negative
+indicates clockwise.
 }
 \description{
-  "Signed area" of triangles on a plane
+"Signed area" of triangles on a plane
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

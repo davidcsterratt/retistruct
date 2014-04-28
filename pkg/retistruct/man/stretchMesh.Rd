@@ -2,7 +2,7 @@
 \alias{stretchMesh}
 \title{Stretch mesh}
 \usage{
-  stretchMesh(Cu, L, i.fix, P.fix)
+stretchMesh(Cu, L, i.fix, P.fix)
 }
 \arguments{
   \item{Cu}{Edge matrix}
@@ -14,12 +14,12 @@
   \item{P.fix}{Coordinates of fixed points}
 }
 \value{
-  New matrix of 2D point locations
+New matrix of 2D point locations
 }
 \description{
-  Stretch the mesh in the flat retina to a circular outline
+Stretch the mesh in the flat retina to a circular outline
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

@@ -2,35 +2,35 @@
 \alias{StitchedOutline}
 \title{Stitch together incisions and tears in an AnnotatedOutline}
 \usage{
-  StitchedOutline(a)
+StitchedOutline(a)
 }
 \arguments{
   \item{a}{\code{\link{AnnotatedOutline}} object}
 }
 \value{
-  \item{\code{Rset}}{the set of points on the rim}
-  \item{\code{i0}}{the index of the landmark}
-  \item{\code{P}}{a new set of meshpoints}
-  \item{\code{V0}}{indicies of the apex of each tear}
-  \item{\code{VF}}{indicies of the forward vertex of each
-  tear} \item{\code{VB}}{indicies of the backward vertex of
-  each tear} \item{\code{TFset}}{list containing indicies
-  of points in each foward tear} \item{\code{TBset}}{list
-  containing indicies of points in each backward tear}
-  \item{\code{gf}}{new forward pointer list}
-  \item{\code{gb}}{new backward pointer list}
-  \item{\code{h}}{correspondence mapping}
-  \item{\code{hf}}{correspondence mapping in forward
-  direction for points on boundary}
-  \item{\code{hb}}{correspondence mapping in backward
-  direction for points on boundary}
+\item{\code{Rset}}{the set of points on the rim}
+\item{\code{i0}}{the index of the landmark}
+\item{\code{P}}{a new set of meshpoints}
+\item{\code{V0}}{indicies of the apex of each tear}
+\item{\code{VF}}{indicies of the forward vertex of each
+tear} \item{\code{VB}}{indicies of the backward vertex of
+each tear} \item{\code{TFset}}{list containing indicies of
+points in each foward tear} \item{\code{TBset}}{list
+containing indicies of points in each backward tear}
+\item{\code{gf}}{new forward pointer list}
+\item{\code{gb}}{new backward pointer list}
+\item{\code{h}}{correspondence mapping}
+\item{\code{hf}}{correspondence mapping in forward
+direction for points on boundary}
+\item{\code{hb}}{correspondence mapping in backward
+direction for points on boundary}
 }
 \description{
-  This stitches together the incisions and tears by
-  inserting new points in the tears and creating
-  correspondences between new points.
+This stitches together the incisions and tears by inserting
+new points in the tears and creating correspondences
+between new points.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

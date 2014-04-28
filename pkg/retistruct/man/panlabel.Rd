@@ -2,7 +2,7 @@
 \alias{panlabel}
 \title{Ancillary function to place labels}
 \usage{
-  panlabel(panlabel, line = -0.7)
+panlabel(panlabel, line = -0.7)
 }
 \arguments{
   \item{panlabel}{Label text}
@@ -10,9 +10,9 @@
   \item{line}{Line on which to appear}
 }
 \description{
-  Ancillary function to place labels
+Ancillary function to place labels
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

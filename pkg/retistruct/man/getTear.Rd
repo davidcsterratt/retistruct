@@ -2,7 +2,7 @@
 \alias{getTear}
 \title{Return indicies of tear in AnnotatedOutline}
 \usage{
-  getTear(o, tid)
+getTear(o, tid)
 }
 \arguments{
   \item{o}{\code{AnnotatedOutline} object}
@@ -11,13 +11,13 @@
   \code{whichTear()}}
 }
 \value{
-  Vector of three point IDs, labelled with \code{V0},
-  \code{VF} and \code{VB}
+Vector of three point IDs, labelled with \code{V0},
+\code{VF} and \code{VB}
 }
 \description{
-  Return indicies of tear in AnnotatedOutline
+Return indicies of tear in AnnotatedOutline
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

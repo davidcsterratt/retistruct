@@ -2,7 +2,7 @@
 \alias{nameLandmark.retinalDataset}
 \title{Name a landmark in a RetinalDataset}
 \usage{
-  \method{nameLandmark}{retinalDataset} (d, i, name)
+\method{nameLandmark}{retinalDataset}(d, i, name)
 }
 \arguments{
   \item{d}{\code{\link{RetinalDataset}} object}
@@ -12,16 +12,16 @@
   \item{name}{name to give landmark}
 }
 \value{
-  New \code{\link{RetinalDataset}} object in which landmark
-  is named
+New \code{\link{RetinalDataset}} object in which landmark
+is named
 }
 \description{
-  Name a landmark in a \code{\link{RetinalDataset}}. This
-  does the same as the standard \code{\link{nameLandmark}},
-  but in addition, if there exists a landmark named "OD",
-  this creates a set of points labelled "OD".
+Name a landmark in a \code{\link{RetinalDataset}}. This
+does the same as the standard \code{\link{nameLandmark}},
+but in addition, if there exists a landmark named "OD",
+this creates a set of points labelled "OD".
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

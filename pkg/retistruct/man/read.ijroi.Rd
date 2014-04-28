@@ -2,7 +2,7 @@
 \alias{read.ijroi}
 \title{Read an ImageJ ROI file}
 \usage{
-  read.ijroi(file, verbose = FALSE)
+read.ijroi(file, verbose = FALSE)
 }
 \arguments{
   \item{file}{Name of ImageJ ROI file to read}
@@ -10,11 +10,11 @@
   \item{verbose}{Whether to report information}
 }
 \value{
-  A structure of class IJROI containing the ROI information
+A structure of class IJROI containing the ROI information
 }
 \description{
-  Read an ImageJ ROI file. This returns a structure
-  containing the ImageJ data.
+Read an ImageJ ROI file. This returns a structure
+containing the ImageJ data.
 }
 \examples{
 path <- file.path(system.file(package = "retistruct"), "extdata", "ijroi")
@@ -29,6 +29,6 @@ r <- read.ijroi(file.path(path, "oval.roi"))
 plot(r, TRUE)
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

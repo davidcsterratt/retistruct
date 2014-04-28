@@ -2,23 +2,22 @@
 \alias{getSssMean}
 \title{Karcher mean of landmarks in spherical coordinates}
 \usage{
-  getSssMean(r)
+getSssMean(r)
 }
 \arguments{
   \item{r}{\code{\link{ReconstructedDataset}} or
   \code{\link{RetinalReconstructedDataset}} object.}
 }
 \value{
-  List of spherical coordinates, with one named element per
-  landmark.
+List of spherical coordinates, with one named element per
+landmark.
 }
 \description{
-  Get Karcher mean of landmarks in spherical coordinates.
-  If applied to a
-  \code{\link{RetinalReconstructedDataset}}, the
-  coordinates are flipped if \code{DVflip} is \code{TRUE}.
+Get Karcher mean of landmarks in spherical coordinates. If
+applied to a \code{\link{RetinalReconstructedDataset}}, the
+coordinates are flipped if \code{DVflip} is \code{TRUE}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

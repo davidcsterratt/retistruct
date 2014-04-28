@@ -2,20 +2,20 @@
 \alias{checkTears}
 \title{Check that tears are all in the correct direction}
 \usage{
-  checkTears(o)
+checkTears(o)
 }
 \arguments{
   \item{o}{\code{AnnotatedOutline} object}
 }
 \value{
-  If all is OK, returns empty vector.  If not, returns
-  indicies of problematic tears.
+If all is OK, returns empty vector.  If not, returns
+indicies of problematic tears.
 }
 \description{
-  Given a tear matrix T with columns "V0", "VF", and "VB",
-  check that all tears are correct.
+Given a tear matrix T with columns "V0", "VF", and "VB",
+check that all tears are correct.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

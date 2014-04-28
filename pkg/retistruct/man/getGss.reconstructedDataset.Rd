@@ -2,19 +2,19 @@
 \alias{getGss.reconstructedDataset}
 \title{Get grouped variable with locations in spherical coordinates.}
 \usage{
-  \method{getGss}{reconstructedDataset} (r)
+\method{getGss}{reconstructedDataset}(r)
 }
 \arguments{
   \item{r}{\code{ReconstructedDataset} object.}
 }
 \value{
-  \code{Gss}
+\code{Gss}
 }
 \description{
-  Get grouped variable with locations in spherical
-  coordinates.
+Get grouped variable with locations in spherical
+coordinates.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

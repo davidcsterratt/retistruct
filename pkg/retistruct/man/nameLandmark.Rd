@@ -2,7 +2,7 @@
 \alias{nameLandmark}
 \title{Name a landmark in a Dataset}
 \usage{
-  nameLandmark(d, i, name)
+nameLandmark(d, i, name)
 }
 \arguments{
   \item{d}{\code{\link{Dataset}} object}
@@ -12,16 +12,15 @@
   \item{name}{name to give landmark}
 }
 \value{
-  New \code{\link{Dataset}} object in which landmark is
-  named
+New \code{\link{Dataset}} object in which landmark is named
 }
 \description{
-  Name a landmark in a \code{\link{Dataset}}. The name of
-  element \code{i} of \code{Ss} is set to \code{name}, the
-  name of any element that bore the name is set to "" and
-  all other elements are unaltered.
+Name a landmark in a \code{\link{Dataset}}. The name of
+element \code{i} of \code{Ss} is set to \code{name}, the
+name of any element that bore the name is set to "" and all
+other elements are unaltered.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

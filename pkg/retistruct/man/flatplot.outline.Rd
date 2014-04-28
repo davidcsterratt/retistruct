@@ -2,8 +2,8 @@
 \alias{flatplot.outline}
 \title{Flat plot of outline}
 \usage{
-  \method{flatplot}{outline} (x, axt = "n", ylim = NULL,
-    image = TRUE, scalebar = 1, add = FALSE, ...)
+\method{flatplot}{outline}(x, axt = "n", ylim = NULL, image = TRUE,
+  scalebar = 1, add = FALSE, ...)
 }
 \arguments{
   \item{x}{\code{\link{Outline}} object}
@@ -28,9 +28,9 @@
   \item{...}{Other plotting parameters}
 }
 \description{
-  Plot flat \code{\link{Outline}}.
+Plot flat \code{\link{Outline}}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 

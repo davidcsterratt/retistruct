@@ -2,7 +2,7 @@
 \alias{retistruct.batch.get.titrations}
 \title{Get titrations from a directory of reconstructions}
 \usage{
-  retistruct.batch.get.titrations(tldir = ".")
+retistruct.batch.get.titrations(tldir = ".")
 }
 \arguments{
   \item{tldir}{The top level directory of the tree through
@@ -11,6 +11,6 @@
   \code{\link{retistruct.batch}}}
 }
 \description{
-  Get titrations from a directory of reconstructions
+Get titrations from a directory of reconstructions
 }
 

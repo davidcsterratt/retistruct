@@ -2,20 +2,20 @@
 \alias{getDss.retinalReconstructedDataset}
 \title{Get transformed spherical coordinates of datapoints}
 \usage{
-  \method{getDss}{retinalReconstructedDataset} (r)
+\method{getDss}{retinalReconstructedDataset}(r)
 }
 \arguments{
   \item{r}{\code{\link{RetinalReconstructedDataset}}
   object.}
 }
 \value{
-  \code{Dss}
+\code{Dss}
 }
 \description{
-  Get spherical coordinates of datapoints, transformed
-  according to the values of \code{DVflip} and \code{side}.
+Get spherical coordinates of datapoints, transformed
+according to the values of \code{DVflip} and \code{side}.
 }
 \author{
-  David Sterratt
+David Sterratt
 }
 
