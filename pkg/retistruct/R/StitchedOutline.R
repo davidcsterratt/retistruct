@@ -163,37 +163,38 @@ stitch.insert.points <- function(P, V0, VF, VB, TFset, TBset, gf, gb, hf, hb, h,
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param stitch If \code{TRUE}, plot stitch
-##' @param ... Other plotting parameters
+##' @param lwd Line width
+##' @param ... Other parameters
 ##' @method flatplot stitchedOutline
 ##' @author David Sterratt
 ##' @export
 flatplot.stitchedOutline <- function(x, axt="n", ylim=NULL,
-                                     stitch=TRUE,
+                                     stitch=TRUE, lwd=1,
                                      ...) {
   NextMethod()
 
   if (stitch) {
     with(x, {
       for (TF in TFset) {
-        suppressWarnings(lines(P[TF,], col=getOption("TF.col"), ...))
+        lines(P[TF,], col=getOption("TF.col"), lwd=lwd)
       }
       for (TB in TBset) {
-        suppressWarnings(lines(P[TB,], col=getOption("TB.col"), ...))
+        lines(P[TB,], col=getOption("TB.col"), lwd=lwd)
       }
       for (j in 1:length(h)) {
         if (h[j] != j) {
-          suppressWarnings(lines(P[c(j, h[j]),], col=getOption("stitch.col"), ...))
+          lines(P[c(j, h[j]),], col=getOption("stitch.col"), lwd=lwd)
         }
       }
       
       for (j in 1:length(hf)) {
         if (hf[j] != j) {
-          suppressWarnings(lines(P[c(j, hf[j]),], col=getOption("stitch.col"), ...))
+          lines(P[c(j, hf[j]),], col=getOption("stitch.col"), lwd=lwd)
         }
       }
       for (j in 1:length(hb)) {
         if (hb[j] != j) {
-          suppressWarnings(lines(P[c(j, hb[j]),], col=getOption("V.stitch.col"), ...))
+          lines(P[c(j, hb[j]),], col=getOption("V.stitch.col"), lwd=lwd)
         }
       }
     })
