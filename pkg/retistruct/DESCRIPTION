@@ -18,3 +18,5 @@ Depends:
     rgl,
     png,
     sp
+Suggests:
+    testthat

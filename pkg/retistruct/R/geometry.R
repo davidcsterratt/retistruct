@@ -563,6 +563,63 @@ normalise.angle <- function(theta) {
   return(theta)
 }
 
+##' This in the inverse of \code{\link{sphere.cart.to.sphere.wedge}}
+##'
+##' @title Convert from 'wedge' to Cartesian coordinates
+##' @param psi vector of slice angles of N points
+##' @param f vector of fractional distances of N points
+##' @param phi0 rim angle as colatitude
+##' @param R radius of sphere 
+##' @return An N-by-3 matrix in which each row is the cartesian (X, Y,
+##' Z) coordinates of each point
+##' @export
+##' @author David Sterratt
+sphere.wedge.to.sphere.cart <- function(psi, f, phi0, R=1) {
+  r <- sqrt(sin(phi0)^2 + cos(phi0)^2*cos(psi)^2)
+  y0 <- -sin(psi)*cos(psi)*cos(phi0)
+  z0 <- -sin(psi)*sin(psi)*cos(phi0)
+  cot <- function(x) {1/tan(x)}
+  alpha0 <- acos(1/sqrt(1 + cot(phi0)^2*cos(psi)^2))
+  P <- cbind(R*r*cos(alpha0 - f*(pi + 2*alpha0)),
+             R*(y0 - r*sin(psi)*sin(alpha0 - f*(pi + 2*alpha0))),
+             R*(z0 + r*cos(psi)*sin(alpha0 - f*(pi + 2*alpha0))))
+  colnames(P) <- c("X", "Y", "Z")
+  return(P)
+}
+
+##' Convert locations of points on sphere in 'wedge' coordinates
+##' (\var{psi}, \var{f}) to points in 3D cartesian space.  Wedges are
+##' defined by planes inclined at an angle \var{psi} running through a
+##' line between poles on the rim above the x axis.  \var{f} is the
+##' fractional distance along the circle defined by the intersection
+##' of this plane and the curtailed sphere.
+##'
+##' @title Convert from Cartesian to 'wedge' coordinates
+##' @param P locations of points on sphere as N-by-3 matrix with
+##' labelled columns "X", "Y" and "Z"
+##' @param phi0 rim angle as colatitude
+##' @param R radius of sphere 
+##' @return 2-column Matrix of 'wedge' coordinates of points on
+##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @export
+##' @author David Sterratt
+sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
+  psi <- atan2(P[,"Y"], -cos(phi0) - P[,"Z"])
+  y0 <- -sin(psi)*cos(psi)*cos(phi0)
+  z0 <- -sin(psi)*sin(psi)*cos(phi0)
+  v <- -(P[,"Y"] - y0)*sin(psi) + (P[,"Z"] - z0)*cos(psi)
+  alpha <- atan2(v, P[,"X"])
+  ## Make sure angles in the second quadrant are negative
+  ## FIXME: we could avoid this by defining the angle \alpha differently
+  inds <- (alpha>pi/2) & (alpha<=pi)
+  alpha[inds] <- alpha[inds] - 2*pi
+  cot <- function(x) {1/tan(x)}
+  alpha0 <- acos(1/sqrt(1 + cot(phi0)^2*cos(psi)^2))
+  f <- (alpha0 - alpha)/(pi + 2*alpha0)
+  # return(cbind(psi=psi, f=f, v=v, alpha0, alpha, y0))
+  return(cbind(psi=psi, f=f))
+}
+
 ##' On a sphere the central angle between two points is defined as the
 ##' angle whose vertex is the centre of the sphere and that subtends
 ##' the arc formed by the great circle between the points. This
