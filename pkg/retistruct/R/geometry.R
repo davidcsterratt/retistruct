@@ -578,11 +578,11 @@ sphere.wedge.to.sphere.cart <- function(psi, f, phi0, R=1) {
   r <- sqrt(sin(phi0)^2 + cos(phi0)^2*cos(psi)^2)
   y0 <- -sin(psi)*cos(psi)*cos(phi0)
   z0 <- -sin(psi)*sin(psi)*cos(phi0)
-  cot <- function(x) {1/tan(x)}
-  alpha0 <- acos(1/sqrt(1 + cot(phi0)^2*cos(psi)^2))
-  P <- cbind(R*r*cos(alpha0 - f*(pi + 2*alpha0)),
-             R*(y0 - r*sin(psi)*sin(alpha0 - f*(pi + 2*alpha0))),
-             R*(z0 + r*cos(psi)*sin(alpha0 - f*(pi + 2*alpha0))))
+  alpha0 <- asin(sin(phi0)/r)
+  alpha <- alpha0 + f*(2*pi - 2*alpha0)
+  P <- cbind(R*r*sin(alpha),
+             R*(y0 - r*sin(psi)*cos(alpha)),
+             R*(z0 + r*cos(psi)*cos(alpha)))
   colnames(P) <- c("X", "Y", "Z")
   return(P)
 }
@@ -605,19 +605,23 @@ sphere.wedge.to.sphere.cart <- function(psi, f, phi0, R=1) {
 ##' @author David Sterratt
 sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
   psi <- atan2(P[,"Y"], -cos(phi0) - P[,"Z"])
+  psi[psi >  pi/2 + 1E-6] <- psi[psi >  pi/2 + 1E-6] - pi
+  psi[psi < -pi/2 - 1E-6] <- psi[psi < -pi/2 - 1E-6] + pi
+  r <- sqrt(sin(phi0)^2 + cos(phi0)^2*cos(psi)^2)
   y0 <- -sin(psi)*cos(psi)*cos(phi0)
   z0 <- -sin(psi)*sin(psi)*cos(phi0)
   v <- -(P[,"Y"] - y0)*sin(psi) + (P[,"Z"] - z0)*cos(psi)
-  alpha <- atan2(v, P[,"X"])
+  alpha <- atan2(P[,"X"], v)
   ## Make sure angles in the second quadrant are negative
   ## FIXME: we could avoid this by defining the angle \alpha differently
-  inds <- (alpha>pi/2) & (alpha<=pi)
-  alpha[inds] <- alpha[inds] - 2*pi
-  cot <- function(x) {1/tan(x)}
-  alpha0 <- acos(1/sqrt(1 + cot(phi0)^2*cos(psi)^2))
-  f <- (alpha0 - alpha)/(pi + 2*alpha0)
+  inds <- alpha<0
+  alpha[inds] <- alpha[inds] + 2*pi
+  alpha0 <- asin(sin(phi0)/r)
+  f <- (alpha - alpha0)/(2*pi - 2*alpha0)
   # return(cbind(psi=psi, f=f, v=v, alpha0, alpha, y0))
-  return(cbind(psi=psi, f=f))
+  Pw <- cbind(psi=psi, f=f)
+  rownames(Pw) <- NULL
+  return(Pw)
 }
 
 ##' On a sphere the central angle between two points is defined as the
