@@ -20,6 +20,22 @@ test_that("All points lie on sphere", {
   expect_that(rowSums(P^2), equals(rep(1, nrow(P))))
 })
 
+test_that("Some known coordinates are converted correctly", {
+  phi0 <- 135*pi/180
+  expect_that(sphere.wedge.to.sphere.cart(psi=0, f=0.5, phi0=phi0),
+              equals(rbind(c(X=0, Y=0, Z=-1))))
+  expect_that(sphere.wedge.to.sphere.cart(psi=pi/2, f=0.5, phi0=pi/2),
+              equals(rbind(c(X=0, Y=1, Z=0))))
+  expect_that(sphere.wedge.to.sphere.cart(psi=-pi/2, f=0.5, phi0=pi/2),
+              equals(rbind(c(X=0, Y=-1, Z=0))))
+  expect_that(sphere.wedge.to.sphere.cart(psi=-pi/2, f=0, phi0=pi/2),
+              equals(rbind(c(X=1, Y=0, Z=0))))
+  expect_that(sphere.wedge.to.sphere.cart(psi=0, f=0, phi0=pi/2),
+              equals(rbind(c(X=1, Y=0, Z=0))))
+  expect_that(sphere.wedge.to.sphere.cart(psi=0, f=1, phi0=pi/2),
+              equals(rbind(c(X=-1, Y=0, Z=0))))
+})
+
 test_that("Points convert back", {
   phi0 <- 135*pi/180
   gc <- grid.coords(phi0=phi0)
