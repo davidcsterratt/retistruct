@@ -395,7 +395,7 @@ retistruct.export.matlab <- function(r) {
                KDE=KDE,
                KR=KR,
                side=as.character(r$side), DVflip=r$DVflip,
-               Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2)}))
+               Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}))
     }
   }
 }

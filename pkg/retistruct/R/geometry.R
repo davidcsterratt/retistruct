@@ -605,7 +605,18 @@ sphere.wedge.to.sphere.cart <- function(psi, f, phi0, R=1) {
 ##' @export
 ##' @author David Sterratt
 sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
-  psi <- atan2(P[,"Y"], -cos(phi0) - P[,"Z"])
+  ## Test that points lie approximately on the unit sphere Note the
+  ## coordinates produced by bary.to.sphere.cart do not lie exactly on
+  ## a sphere; they lie on the triangles that approximate the sphere.
+  Rs <- sqrt(rowSums(P^2))
+  if (any(abs(Rs - R)/R > 0.1)) {
+    print(abs(Rs - R)/R)
+    stop("Points do not lie approximately on unit sphere")
+  }
+  ## Normalise to unit sphere
+  P <- P/Rs
+  ## Wedge angle, making sure this lies within [-pi/2, pi/2]
+  psi <- atan2(P[,"Y"], - cos(phi0) - P[,"Z"])
   psi[psi >  pi/2 + 1E-6] <- psi[psi >  pi/2 + 1E-6] - pi
   psi[psi < -pi/2 - 1E-6] <- psi[psi < -pi/2 - 1E-6] + pi
   r <- sqrt(sin(phi0)^2 + cos(phi0)^2*cos(psi)^2)
@@ -622,6 +633,11 @@ sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
   # return(cbind(psi=psi, f=f, v=v, alpha0, alpha, y0))
   Pw <- cbind(psi=psi, f=f)
   rownames(Pw) <- NULL
+  ## Check that f is in bounds
+  if (any(f > 1) || any(f < 0)) {
+    print(Pw)
+    stop("f is out of bounds")
+  }
   return(Pw)
 }
 
