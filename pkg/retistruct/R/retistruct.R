@@ -210,7 +210,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     ## If the base data doesn't match the recfile data, reject the
     ## recfile data
     if (check) {
-      if (!all.equal(o, r)) {
+      if (!isTRUE(all.equal(o, r))) {
         unlink(recfile)
         warning("The base data has changed since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
         return(NULL)
