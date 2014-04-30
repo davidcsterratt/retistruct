@@ -671,32 +671,43 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   if (na.rm) {
     x <- na.omit(x)
   }
-  if (nrow(x) == 0) {
-    return(x)
+  ## Default output values, if there x has zero rows
+  mu     <- c(phi=NA, lambda=NA)
+  sigma2 <- c(phi=NA, lambda=NA)
+  ## x has one row - needed to prevent crash
+  if (nrow(x) == 1) {
+    mu     <- c(x[1,])
+    sigma2 <- c(phi=NA, lambda=NA)
   }
-  ## Compute first estimate of mean by computing centroid in 3D and
-  ## then finding angle to this
-  P <- cbind(cos(x[,"phi"])*cos(x[,"lambda"]),
-             cos(x[,"phi"])*sin(x[,"lambda"]),
-             sin(x[,"phi"]))
-  N <- nrow(P)
-  P.mean <- apply(P, 2, mean)
-  phi.mean <-    asin(P.mean[3])
-  lambda.mean <- atan2(P.mean[2], P.mean[1])
+  ## x has more than one row
+  if (nrow(x) >= 2) {
+    ## Compute first estimate of mean by computing centroid in 3D and
+    ## then finding angle to this
+    P <- cbind(cos(x[,"phi"])*cos(x[,"lambda"]),
+               cos(x[,"phi"])*sin(x[,"lambda"]),
+               sin(x[,"phi"]))
+    N <- nrow(P)
+    P.mean <- apply(P, 2, mean)
+    phi.mean <-    asin(P.mean[3])
+    lambda.mean <- atan2(P.mean[2], P.mean[1])
 
-  ## Now minimise sum of squared distances
-  if (all(!is.nan(c(phi.mean, lambda.mean)))) {
-    opt <- optim(c(phi.mean, lambda.mean),
-                 function(p) { sum((central.angle(x[,"phi"], x[,"lambda"], p[1], p[2]))^2) })
-    mu <- opt$par
-    names(mu) <- c("phi", "lambda")
-    if (var) {
-      X <- list(mean=mu, var=opt$value/N)
+    ## Now minimise sum of squared distances
+    if (all(!is.nan(c(phi.mean, lambda.mean)))) {
+      opt <- optim(c(phi.mean, lambda.mean),
+                   function(p) { sum((central.angle(x[,"phi"], x[,"lambda"], p[1], p[2]))^2) })
+      mu <- opt$par
+      names(mu) <- c("phi", "lambda")
+      sigma2 <- opt$value/N
     } else {
-      X <- mu
+      mu <-     cbind(phi=NaN, lambda=NaN)
+      sigma2 <- cbind(phi=NaN, lambda=NaN)
     }
+  }
+  ## Assemble output
+  if (var) {
+    X <- list(mean=mu, var=sigma2)
   } else {
-    X <- cbind(phi=NaN, lambda=NaN)
+    X <- mu
   }
   return(X)
 }
