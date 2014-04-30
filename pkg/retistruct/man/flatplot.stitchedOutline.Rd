@@ -3,7 +3,7 @@
 \title{Flat plot of AnnotatedOutline}
 \usage{
 \method{flatplot}{stitchedOutline}(x, axt = "n", ylim = NULL,
-  stitch = TRUE, ...)
+  stitch = TRUE, lwd = 1, ...)
 }
 \arguments{
   \item{x}{\code{\link{AnnotatedOutline}} object}
@@ -14,7 +14,9 @@
 
   \item{stitch}{If \code{TRUE}, plot stitch}
 
-  \item{...}{Other plotting parameters}
+  \item{lwd}{Line width}
+
+  \item{...}{Other parameters}
 }
 \description{
 Plot flat \code{\link{StitchedOutline}}. If the optional

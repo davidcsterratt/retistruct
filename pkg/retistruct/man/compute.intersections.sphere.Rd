@@ -1,6 +1,7 @@
 \name{compute.intersections.sphere}
 \alias{compute.intersections.sphere}
-\title{Find the intersection of a plane with triangles on a sphere}
+\title{Find the intersection of a plane with edges of triangles on
+a sphere}
 \usage{
 compute.intersections.sphere(phi, lambda, T, n, d)
 }
@@ -24,8 +25,8 @@ in \code{T}. Column 1 gives the fractional distance from
 vertex 2 to vertex 3. Column 2 gives the fractional
 distance from vertex 3 to vertex 1. Column 2 gives the
 fractional distance from vertex 1 to vertex 2. A value of
-\code{NaN} indicates that the corresponding side lies in
-the plane. A value of \code{Inf} indicates that the side
+\code{NaN} indicates that the corresponding edge lies in
+the plane. A value of \code{Inf} indicates that the edge
 lies parallel to the plane but outside it.
 }
 \description{
