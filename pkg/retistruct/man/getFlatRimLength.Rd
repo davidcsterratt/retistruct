@@ -6,7 +6,7 @@
 getFlatRimLength(o)
 }
 \arguments{
-\item{\code{\link{AnnotatedOutline}}}{object}
+\item{o}{\code{\link{AnnotatedOutline}} object}
 }
 \value{
 The rim length
