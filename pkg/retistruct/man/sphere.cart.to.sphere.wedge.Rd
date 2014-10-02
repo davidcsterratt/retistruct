@@ -17,13 +17,13 @@ sphere.cart.to.sphere.wedge(P, phi0, R = 1)
 Column names are \code{phi} and \code{lambda}.
 }
 \description{
-Convert locations of points on sphere in 'wedge'
-coordinates (\var{psi}, \var{f}) to points in 3D cartesian
-space.  Wedges are defined by planes inclined at an angle
-\var{psi} running through a line between poles on the rim
-above the x axis.  \var{f} is the fractional distance along
-the circle defined by the intersection of this plane and
-the curtailed sphere.
+Convert points in 3D cartesian space to locations of points
+on sphere in 'wedge' coordinates (\var{psi}, \var{f}).
+Wedges are defined by planes inclined at an angle \var{psi}
+running through a line between poles on the rim above the x
+axis.  \var{f} is the fractional distance along the circle
+defined by the intersection of this plane and the curtailed
+sphere.
 }
 \author{
 David Sterratt

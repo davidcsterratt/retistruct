@@ -37,11 +37,12 @@ test_that("Some wedge coordinates are converted correctly", {
 })
 
 test_that("Some Cartesian coordinates are converted correctly", {
-  phi0 <- 135*pi/180
   expect_that(sphere.cart.to.sphere.wedge(rbind(c(X=0, Y=0, Z=-1)), phi0=pi/2),
               equals(rbind(c(psi=0, f=0.5))))
   expect_that(sphere.cart.to.sphere.wedge(rbind(c(X=0, Y=1, Z=0)), phi0=pi/2),
               equals(rbind(c(psi=pi/2, f=0.5))))
+  expect_that(sphere.cart.to.sphere.wedge(cbind(X=-1, Y=0, Z=0), phi0=pi/2)[1,"f"],
+              equals(c(f=1)))
 
 })
 
@@ -52,4 +53,14 @@ test_that("Points convert back", {
   Pc <- sphere.wedge.to.sphere.cart(gc[,"psi"], gc[,"f"], phi0=phi0)
   Pt <- sphere.cart.to.sphere.wedge(Pc, phi0=phi0)
   expect_that(Pt, equals(gc))
+})
+
+context("Checking dualwedge coordinates")
+test_that("Some Cartesian coordinates are converted correctly", {
+  expect_that(sphere.cart.to.sphere.dualwedge(rbind(c(X=0, Y=0, Z=-1)), phi0=pi/2),
+              equals(cbind(fx=0.5, fy=0.5)))
+  expect_that(sphere.cart.to.sphere.dualwedge(rbind(c(X=0, Y=1, Z=0)), phi0=pi/2),
+              equals(cbind(fx=0.5, fy=0)))
+  expect_that(sphere.cart.to.sphere.dualwedge(rbind(c(X=-1, Y=0, Z=0)), phi0=pi/2),
+              equals(cbind(fx=1, fy=0.5)))
 })

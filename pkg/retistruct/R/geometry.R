@@ -588,8 +588,8 @@ sphere.wedge.to.sphere.cart <- function(psi, f, phi0, R=1) {
   return(P)
 }
 
-##' Convert locations of points on sphere in 'wedge' coordinates
-##' (\var{psi}, \var{f}) to points in 3D cartesian space.  Wedges are
+##' Convert points in 3D cartesian space to locations of points on
+##' sphere in 'wedge' coordinates (\var{psi}, \var{f}).  Wedges are
 ##' defined by planes inclined at an angle \var{psi} running through a
 ##' line between poles on the rim above the x axis.  \var{f} is the
 ##' fractional distance along the circle defined by the intersection
@@ -640,6 +640,32 @@ sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
   }
   return(Pw)
 }
+
+##' Convert points in 3D cartesian space to locations of points on
+##' sphere in 'dualwedge' coordinates (\var{fx}, \var{fy}).  Wedges
+##' are defined by planes inclined at angle running through a line
+##' between poles on the rim above the x axis or the y-axis.  \var{fx}
+##' and \var{fy} are the fractional distances along the circle defined
+##' by the intersection of this plane and the curtailed sphere.
+##'
+##' @title Convert from Cartesian to 'dualwedge' coordinates
+##' @param P locations of points on sphere as N-by-3 matrix with
+##' labelled columns "X", "Y" and "Z"
+##' @param phi0 rim angle as colatitude
+##' @param R radius of sphere 
+##' @return 2-column Matrix of 'wedge' coordinates of points on
+##' sphere. Column names are \code{phi} and \code{lambda}.
+##' @export
+##' @author David Sterratt
+sphere.cart.to.sphere.dualwedge <- function(P, phi0, R=1) {
+  Pwx <- sphere.cart.to.sphere.wedge(P, phi0, R=R)
+  Pwy <- sphere.cart.to.sphere.wedge(cbind(X=P[,"Y"], Y=-P[,"X"], Z=P[,"Z"]),
+                                     phi0, R=R)
+  Pw <- cbind(fx=Pwx[,"f"], fy=Pwy[,"f"])
+  rownames(Pw) <- NULL
+  return(Pw)
+}
+
 
 ##' On a sphere the central angle between two points is defined as the
 ##' angle whose vertex is the centre of the sphere and that subtends
