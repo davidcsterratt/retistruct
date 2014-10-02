@@ -719,6 +719,7 @@ projection.reconstructedOutline <- function(r,
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method sphericalplot reconstructedOutline
 ##' @author David Sterratt
+##' @import rgl
 ##' @export
 sphericalplot.reconstructedOutline <- function(r,
                                                strain=FALSE,

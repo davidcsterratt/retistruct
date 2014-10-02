@@ -9,16 +9,16 @@ Version: 0.5.9
 URL: http://www.neuralmapformation.org
 Date: 2014-04-22
 Depends:
-    R (>= 3.0.0),
-    rgl
+    R (>= 3.0.0)
 Imports:
-    geometry (>= 0.2-1),
     foreign,
     RImageJROI,
     png,
     ttutils,
-    RTriangle (>= 1.6-0.4),
     sp,
+    geometry (>= 0.2-1),
+    RTriangle (>= 1.6-0.4),
+    rgl,
     R.matlab
 Suggests:
     testthat
