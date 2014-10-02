@@ -18,6 +18,7 @@ Depends:
     sp
 Imports:
     foreign,
+    RImageJROI,
     R.matlab
 Suggests:
     testthat

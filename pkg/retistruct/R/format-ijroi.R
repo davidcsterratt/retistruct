@@ -14,7 +14,7 @@ ijroi.checkDatadir <- function(dir=NULL) {
 ##' @author David Sterratt
 ijroi.read.dataset <- function(dataset) {
   ## Read the raw data
-  roi <- read.ijroi(file.path(dataset, "outline.roi"))
+  roi <- RImageJROI::read.ijroi(file.path(dataset, "outline.roi"))
   out <- roi$coords
 
   ## Read scale
@@ -50,7 +50,7 @@ ijroi.read.dataset <- function(dataset) {
   ## the Optic Disc
   od.file <- file.path(dataset, "od.roi")
   if (file.exists(od.file)) {
-    roi <- read.ijroi(od.file)
+    roi <- RImageJROI::read.ijroi(od.file)
     out <-  roi$coords
     offset <- ifelse(is.null(im), max(out[,2]), nrow(im))
     out[,2] <- offset - out[,2]

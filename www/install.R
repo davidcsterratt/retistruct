@@ -1,4 +1,4 @@
-install.packages(c("geometry", "R.matlab", "ttutils", "rgl", "png", "sp"), repos="http://cran.r-project.org")
+install.packages(c("geometry", "R.matlab", "ttutils", "rgl", "png", "sp", "RImageJROI"), repos="http://cran.r-project.org")
 install.packages(c("retistruct", "retistructdemos"),
                  repos=c("http://www.neuralmapformation.org/R/",
                          "http://cran.r-project.org",
