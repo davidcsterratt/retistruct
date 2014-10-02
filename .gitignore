@@ -1,0 +1,6 @@
+*.tar.gz
+*.zip
+*.Rcheck
+*.aux
+*.log
+*.out
