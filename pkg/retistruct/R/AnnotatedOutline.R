@@ -290,7 +290,7 @@ ensureFixedPointInRim <- function(o) {
 }
 
 ##' @title Get rim length of AnnotatedOutline
-##' @param \code{\link{AnnotatedOutline}} object
+##' @param o \code{\link{AnnotatedOutline}} object
 ##' @return The rim length 
 ##' @author David Sterratt
 ##' @export
