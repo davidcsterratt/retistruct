@@ -7,7 +7,7 @@ ifeq ("$(RETISTRUCT_SVN_REVISION)", "")
 endif
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
 RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
-RETISTRUCTDEMOS_PACKAGE=retistructdemos_$(RETISTRUCT_VERSION).tar.gz
+RETISTRUCTDEMOS_PACKAGE=retistructdemos_0.5.8.tar.gz
 
 dist: retistruct retistructgui check user-guide
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
