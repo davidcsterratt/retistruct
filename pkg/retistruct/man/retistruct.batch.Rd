@@ -1,6 +1,6 @@
 \name{retistruct.batch}
 \alias{retistruct.batch}
-\title{Batch operation using the multicore package}
+\title{Batch operation using the parallel package}
 \usage{
 retistruct.batch(tldir = ".", outputdir = tldir, datasets = NULL,
   device = "pdf", titrate = FALSE, cpu.time.limit = 3600,
@@ -32,7 +32,7 @@ retistruct.batch(tldir = ".", outputdir = tldir, datasets = NULL,
 }
 \description{
 This function reconstructs a number of datasets, using the
-R \code{multicore} package to distribute the reconstruction
+R \code{parallel} package to distribute the reconstruction
 of multiple datasets across CPUs. If \code{datasets} is not
 specified the function recurses through a directory tree
 starting at \code{tldir}, determining whether the directory

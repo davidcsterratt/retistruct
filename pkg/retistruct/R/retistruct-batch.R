@@ -47,13 +47,13 @@ list.datasets <- function(path='.', verbose=FALSE) {
 }
 
 ##' This function reconstructs a number of  datasets, using the R
-##' \code{multicore} package to distribute the reconstruction of
+##' \code{parallel} package to distribute the reconstruction of
 ##' multiple datasets across CPUs. If \code{datasets} is not specified
 ##' the function recurses through a directory tree starting at
 ##' \code{tldir}, determining whether the directory contains valid raw
 ##' data and markup, and performing the reconstruction if it does.
 ##'
-##' @title Batch operation using the multicore package
+##' @title Batch operation using the parallel package
 ##' @param tldir If datasets is not specified, the top level of the
 ##' directory tree through which to recurse in order to find datasets.
 ##' @param outputdir directory in which to dump a log file and images
@@ -72,10 +72,6 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                              device="pdf", titrate=FALSE,
                              cpu.time.limit=3600,
                              mc.cores=getOption("cores")) {
-  if (!require("multicore")) install.packages("multicore")
-  if (!require("multicore")) {
-    stop("The multicore package is not available on this platform")
-  }
   ## Get datasets
   if (is.null(datasets)) {
     datasets <- list.datasets(tldir)
@@ -83,7 +79,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
   message(paste("About to reconstruct", length(datasets), "datasets."))
 
   ## Function to pass to mclapply
-  multicore.call <- function(dataset) {
+  call <- function(dataset) {
     logfile <- file.path(outputdir,
                          paste(retistruct.cli.basepath(dataset),
                                ".log", sep=""))
@@ -96,7 +92,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
   }
 
   ## Run the reconstructions
-  ret <- mclapply(datasets, multicore.call, mc.preschedule=FALSE,
+  ret <- parallel::mclapply(datasets, call, mc.preschedule=FALSE,
                   mc.cores=mc.cores)
 
   ## Extract data from the return structures
