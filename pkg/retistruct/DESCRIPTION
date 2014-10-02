@@ -12,11 +12,12 @@ Depends:
     R (>= 3.0.0),
     geometry (>= 0.2-1),
     foreign,
-    R.matlab,
     ttutils,
     RTriangle (>= 1.6-0.4),
     rgl,
     png,
     sp
+Imports:
+    R.matlab
 Suggests:
     testthat

@@ -385,17 +385,17 @@ retistruct.export.matlab <- function(r) {
       message(paste("Saving", f))
       KDE <- unlist.kernel.estimate(getKDE(r))
       KR <-  unlist.kernel.estimate(getKR(r))
-      writeMat(f,
-               phi0=r$phi0*180/pi,
-               Dss=getDss(r),
-               DssMean=getDssMean(r),
-               DssHullarea=na.omit(getDssHullarea(r)),
-               Sss=name.list(getSss(r)),
-               Tss=name.list(getTss(r)),
-               KDE=KDE,
-               KR=KR,
-               side=as.character(r$side), DVflip=r$DVflip,
-               Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}))
+      R.matlab::writeMat(f,
+                         phi0=r$phi0*180/pi,
+                         Dss=getDss(r),
+                         DssMean=getDssMean(r),
+                         DssHullarea=na.omit(getDssHullarea(r)),
+                         Sss=name.list(getSss(r)),
+                         Tss=name.list(getTss(r)),
+                         KDE=KDE,
+                         KR=KR,
+                         side=as.character(r$side), DVflip=r$DVflip,
+                         Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}))
     }
   }
 }
