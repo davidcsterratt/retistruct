@@ -1,3 +1,4 @@
+library(rgl)
 ## Set up a 3x3 grid for plotting
 par(mfrow=c(3, 3))
 par(mar=c(0.5, 0.5, 0.5, 0.5))
