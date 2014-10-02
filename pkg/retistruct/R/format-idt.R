@@ -346,39 +346,34 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   ## Get grouped data
   ci <- (sys[,"COMPLETE"] == 1)
 
-  if (1) {
-    ## Method 1: Just keep data from complete squares. This has the
-    ## advantage of simplicity, but may lead to problems with
-    ## contouring if the data is not surrounded by enough 0s.
-    Gs <- list(green =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
-               red   =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
-               double=cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALDOU"]))
-    
-  } else {
-    ## Method 2: Remove data from incomplete squares within convex
-    ## hull of data. This has the advantage that 0s from incomplete
-    ## squares outwith the outline are retained. But it has potential
-    ## disadvantages in that it makes implicit assumptions, e.g. that
-    ## points lie within a neat convex hull. Note that if this method
-    ## is deleted, we can lose the dependence on the sp package, which
-    ## provides point.in.polygon().
-    Gs <- list(green =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALGRE"]),
-               red   =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALRED"] + sys[,"TOTALDOU"]),
-               double=cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALDOU"]))
-    
+  ## Method 1: Just keep data from complete squares. This has the
+  ## advantage of simplicity, but may lead to problems with
+  ## contouring if the data is not surrounded by enough 0s.
+  Gs <- list(green =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
+             red   =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
+             double=cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALDOU"]))
 
-    Gs <- lapply(Gs, function(G) {
-      ## Find convex hull of data
-      ps <- na.omit(G[ci, c(1,2)])
-      if (nrow(ps) >= 3) {
-        rem <- (sp::point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1) & !ci
-        if (sum(rem) > 0) {
-          G <- G[-rem,]
-        }
-      }
-      return(G)
-    })
-  }
+  ## ## Method 2: Remove data from incomplete squares within convex
+  ## ## hull of data. This has the advantage that 0s from incomplete
+  ## ## squares outwith the outline are retained. But it has potential
+  ## ## disadvantages in that it makes implicit assumptions, e.g. that
+  ## ## points lie within a neat convex hull. Note that if this method
+  ## ## is deleted, we can lose the dependence on the sp package, which
+  ## ## provides point.in.polygon().
+  ## Gs <- list(green =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALGRE"]),
+  ##            red   =cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALRED"] + sys[,"TOTALDOU"]),
+  ##            double=cbind(sys[,"XGRIDCOO"], sys[,"YGRIDCOO"], sys[,"TOTALDOU"]))
+  ## Gs <- lapply(Gs, function(G) {
+  ##   ## Find convex hull of data
+  ##   ps <- na.omit(G[ci, c(1,2)])
+  ##   if (nrow(ps) >= 3) {
+  ##     rem <- (sp::point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1) & !ci
+  ##     if (sum(rem) > 0) {
+  ##       G <- G[-rem,]
+  ##     }
+  ##   }
+  ##   return(G)
+  ## })
   
   ## Remove points outwith outline
   Gs <- lapply(Gs, function(G) {
