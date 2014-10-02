@@ -97,8 +97,8 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
     with(x, {
       for (id in ids) {
         if (!is.null(Ds[[id]])) {
-          suppressWarnings(points(Ds[[id]][,1], Ds[[id]][,2],
-                                  col=cols[[id]], pch=20, ...))
+          points(Ds[[id]][,1], Ds[[id]][,2],
+                 col=cols[[id]], pch=20)
         }
       }
     })
@@ -109,8 +109,8 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
     for (id in ids) {
       if (!is.null(Gs[[id]])) {
         if (nrow(Gs[[id]]) > 0) {
-          suppressWarnings(text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
-                                col=x$cols[[id]],  ...))
+          text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
+               col=x$cols[[id]])
         }
       }
     }
@@ -122,8 +122,8 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
         for (i in 1:length(Ss)) {
           name <- names(Ss)[i]
           col <- ifelse(is.null(name) || (name==""), "default", name)
-          suppressWarnings(lines(Ss[[i]][,1], Ss[[i]][,2],
-                                 col=cols[[col]], ...))
+          lines(Ss[[i]][,1], Ss[[i]][,2],
+                col=cols[[col]])
         }
       }
     })

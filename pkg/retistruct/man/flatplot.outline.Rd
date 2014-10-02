@@ -3,7 +3,7 @@
 \title{Flat plot of outline}
 \usage{
 \method{flatplot}{outline}(x, axt = "n", ylim = NULL, image = TRUE,
-  scalebar = 1, add = FALSE, ...)
+  scalebar = 1, add = FALSE, lwd.outline = 1, ...)
 }
 \arguments{
   \item{x}{\code{\link{Outline}} object}
@@ -24,6 +24,8 @@
 
   \item{add}{If \code{TRUE}, don't draw axes; add to
   existing plot.}
+
+  \item{lwd.outline}{Line width of outline}
 
   \item{...}{Other plotting parameters}
 }

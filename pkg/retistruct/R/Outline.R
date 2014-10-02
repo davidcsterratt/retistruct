@@ -34,13 +34,14 @@ Outline <- function(P, scale=NA, im=NULL) {
 ##' @param x \code{\link{Outline}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
-##' @param image  If \code{TRUE} the image (if it is present) is
+##' @param image If \code{TRUE} the image (if it is present) is
 ##' displayed behind the outline
 ##' @param scalebar If  numeric and if the Outline has a \code{scale}
 ##' field, a scale bar of length \code{scalebar} mm is plotted.  If
 ##' \code{scalebar} is \code{FALSE} or there is no scale information
 ##' in the \code{\link{Outline}} \code{x}  the scale bar is supressed.
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
+##' @param lwd.outline Line width of outline
 ##' @param ... Other plotting parameters
 ##' @method flatplot outline
 ##' @author David Sterratt
@@ -49,6 +50,7 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
                              image=TRUE,
                              scalebar=1,
                              add=FALSE,
+                             lwd.outline=1,
                              ...) {
   plot.image <- image
   ## If there is no scale information, don't present a scale bar
@@ -70,13 +72,13 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
       } else {
         xs <- P[s,1]
         ys <- P[s,2]
-        suppressWarnings(plot(xs, ys, asp=1,
-                              pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
-                              bty="n", ylim=ylim,  ...))
+        plot(xs, ys, asp=1,
+             pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
+             bty="n", ylim=ylim)
       }
     }
-    suppressWarnings(segments(P[s,1], P[s,2], P[d,1], P[d,2],
-                              col=getOption("outline.col"), ...))
+    segments(P[s,1], P[s,2], P[d,1], P[d,2],
+             col=getOption("outline.col"), lwd=lwd.outline)
 
     ## Plot scalebar if required. scalebar is length in mm.
     if (!add && scalebar && !is.na(scale)) {
