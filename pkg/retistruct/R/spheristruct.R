@@ -1,14 +1,15 @@
+## Return next index in path
+path.next <- function(i, g, h) {
+  return(ifelse(h[i]==i, g[i], h[i]))
+}
+
 ## Return sequence of indicies in path between i and j, governed by
 ## pointer vector p
 path <- function(i, j, g, h) {
   if (i == j) {
     return(i)
   } else {
-    if (h[i] == i) {
-      return(c(i, path(g[i], j, g, h)))
-    } else {
-      return(c(i, path(h[i], j, g, h)))
-    }
+    return(c(i, path(path.next(i, g, h), j, g, h)))
   }
 }
 

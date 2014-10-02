@@ -289,6 +289,17 @@ ensureFixedPointInRim <- function(o) {
   return(o)
 }
 
+##' @title Get rim length of AnnotatedOutline
+##' @param \code{\link{AnnotatedOutline}} object
+##' @return The rim length 
+##' @author David Sterratt
+##' @export
+getFlatRimLength <- function(o) {
+  suppressMessages(r <- computeTearRelationships(o, o$V0, o$VB, o$VF))
+  return(path.length(o$i0, path.next(o$i0, o$gf, r$hf), o$gf, r$hf, o$P) +
+         path.length(o$i0, path.next(o$i0, o$gf, r$hf), o$gb, r$hb, o$P))
+}
+
 ##' Plot flat \code{\link{AnnotatedOutline}}. The user markup is
 ##' displayed by default. 
 ##'
