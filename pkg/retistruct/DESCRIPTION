@@ -10,9 +10,9 @@ URL: http://www.neuralmapformation.org
 Date: 2014-04-22
 Depends:
     R (>= 3.0.0),
-    geometry (>= 0.2-1),
     rgl
 Imports:
+    geometry (>= 0.2-1),
     foreign,
     RImageJROI,
     png,
