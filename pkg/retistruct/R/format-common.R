@@ -20,7 +20,7 @@ read.image <- function(dataset) {
   imfile <- file.path(dataset, "image.png")
   if (file.exists(imfile)) {
     message("Reading image")
-    im <- as.raster(readPNG(imfile))
+    im <- as.raster(png::readPNG(imfile))
   }
   return(im)
 }

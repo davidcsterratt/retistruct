@@ -14,11 +14,11 @@ Depends:
     ttutils,
     RTriangle (>= 1.6-0.4),
     rgl,
-    png,
     sp
 Imports:
     foreign,
     RImageJROI,
+    png,
     R.matlab
 Suggests:
     testthat
