@@ -23,6 +23,7 @@
 ##' \item{\code{S}}{Segments (from \code{\link{triangulate}})}
 ##' \item{\code{E}}{Edges (from \code{\link{triangulate}})}
 ##' \item{\code{EB}}{Edge boundaries (from \code{\link{triangulate}})}
+##' @import ttutils 
 ##' @author David Sterratt
 ##' @export
 TriangulatedOutline <- function(o, n=200,
