@@ -13,7 +13,7 @@ idt.checkDatadir <- function(dir=NULL) {
 ## Function to read the file containing the systat file with the
 ## locations of the cell bodies in it
 idt.read.sys <- function(dir=NULL) {
-  read.systat(file.path(dir, "SYS.SYS"))
+  foreign::read.systat(file.path(dir, "SYS.SYS"))
 }
 
 ## SYS.MAP might be better to use
