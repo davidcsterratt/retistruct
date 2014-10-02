@@ -13,12 +13,12 @@ Depends:
     geometry (>= 0.2-1),
     ttutils,
     rgl,
-    sp
 Imports:
     foreign,
     RImageJROI,
     png,
     RTriangle (>= 1.6-0.4),
+    sp,
     R.matlab
 Suggests:
     testthat
