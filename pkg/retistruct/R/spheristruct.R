@@ -293,6 +293,10 @@ projectToSphere <- function(r) {
   for (i in 1:length(Rsett)) {
     L.Rsett[i] <- C[Rsett[i],Rsett[mod1(i+1, length(Rsett))]]
   }
+  ## Check that this length matches the length computed from the AnnotatedOutline
+  if (sum(L.Rsett) != getFlatRimLength(r)) {
+    stop("Internal error: Mismatch in rim lengths")
+  }
   ## Stretch mesh points to circle
   Ps <- stretchMesh(Cut, Lt, Rsett, circle(L=L.Rsett))
   x <- Ps[,1]
