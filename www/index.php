@@ -102,6 +102,24 @@ the <a href="https://r-forge.r-project.org/projects/retistruct/">project page</a
   analyser to find the locations of the stained cells.</li>
   </ol></p>
 
+<h2>Work using Retistruct</h2>
+
+<ul>
+<li>Flinn, J. M., Kakalec P., Tappero, R., Jones, B. and Lengyel,
+I. (2014) "Correlations in distribution and concentration of calcium,
+copper and iron with zinc in isolated extracellular deposits
+associated with age-related macular
+degeneration". <em>Metallomics</em>. <a href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
+10.1039/c4mt00058g</a>
+ </li>
+<li>Bleckert, A.,  Schwartz, G. W., Turner, M.H., Rieke, F., Wong,
+  R. O. L. (2014) "Visual space is represented by nonmatching topographies of
+  distinct mouse retinal ganglion cell types". <em>Current
+  Biology</em> <strong>24</strong>:
+  310-315.  <a href="http://dx.doi.org/10.1016/j.cub.2013.12.020">DOI: 10.1016/j.cub.2013.12.020</a>
+</li>
+</ul>
+
 <h2>Authors and funding</h2>
 
 <p>Retistruct was written
