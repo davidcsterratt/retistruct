@@ -5,7 +5,8 @@ Title: Retinal reconstruction program GUI
 Author: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
 Depends: R (>= 3.0.0), retistruct (>= 0.5.8), gWidgets, gWidgetsRGtk2,
-    cairoDevice, retistructdemos
+    cairoDevice
+Suggests: retistructdemos
 Description: GUI for Retistruct package
 License: GPL-2
 URL: http://retistruct.r-forge.r-project.org/
