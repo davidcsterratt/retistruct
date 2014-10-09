@@ -16,7 +16,7 @@ dist: retistruct retistructgui check user-guide
 
 roxygen:
 	rm -f pkg/retistruct/man/*
-	echo "if (!library(roxygen2, logical.return=TRUE)) {install.packages(\"roxygen2\"); library(roxygen2) } ; roxygenize(\"pkg/retistruct\")" |	R --no-restore --slave
+	echo "if (!library(roxygen2, logical.return=TRUE)) {install.packages(\"roxygen2\"); library(roxygen2) } ; roxygenize(\"pkg/retistruct\", clean=TRUE)" |	R --no-restore --slave
 
 fix-revision:
 	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- \"$(RETISTRUCT_GIT_COMMIT_HASH)\"/;" pkg/retistruct/R/revision.R
