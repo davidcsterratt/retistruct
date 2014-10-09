@@ -1,3 +1,3 @@
-##' @title SVN global revision number of Retistruct package
+##' @title Git short commit hash of Retistruct package
 ##' @export
-retistruct.global.revision <- 1316 
+retistruct.global.revision <- "72c7c84"

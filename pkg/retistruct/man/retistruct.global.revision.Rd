@@ -2,14 +2,14 @@
 \docType{data}
 \name{retistruct.global.revision}
 \alias{retistruct.global.revision}
-\title{SVN global revision number of Retistruct package}
-\format{\preformatted{ num 1316
+\title{Git short commit hash of Retistruct package}
+\format{\preformatted{ chr "72c7c84"
 }}
 \usage{
 retistruct.global.revision
 }
 \description{
-SVN global revision number of Retistruct package
+Git short commit hash of Retistruct package
 }
 \keyword{datasets}
 

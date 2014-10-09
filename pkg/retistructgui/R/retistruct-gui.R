@@ -511,10 +511,10 @@ h.properties <- function(h, ...) {
 }
 
 version.string <- function() {
-  return(paste("Retistruct ",
+  return(paste0("Retistruct ",
                packageDescription("retistruct", fields="Version"),
-               " (Revision ", retistruct.global.revision, ")",
-               sep=""))
+               " (Revision", retistruct.global.revision, " of ",
+               packageDescription("retistruct", fields="Date"), ")"))
 }
 
 ## The GUI itself

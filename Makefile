@@ -1,9 +1,9 @@
 RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
-RETISTRUCT_SVN_REVISION=$(shell git svn info | grep "Last Changed Rev:" | perl -p -e 's/Last Changed Rev: //;' | sort -n -r | head -1)
-RETISTRUCT_SVN_REVISION1=$(shell echo $(RETISTRUCT_SVN_REVISION) + 1 | bc) 
-ifeq ("$(RETISTRUCT_SVN_REVISION)", "")
-	RETISTRUCT_SVN_REVISION=1000
-	RETISTRUCT_SVN_REVISION1=1000
+# RETISTRUCT_SVN_VERSION=$(shell git svn info | grep "Last Changed Rev:" | perl -p -e 's/Last Changed Rev: //;' | sort -n -r | head -1)
+RETISTRUCT_GIT_COMMIT_HASH=$(shell git log --pretty="%h" HEAD^..HEAD)
+RETISTRUCT_GIT_AUTHORDATE=$(shell git log --date=short --pretty="%ad" HEAD^..HEAD)
+ifeq ("$(RETISTRUCT_GIT_COMMIT_HASH)", "")
+	RETISTRUCT_GIT_COMMIT_HASH=1000
 endif
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
 RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
@@ -19,7 +19,8 @@ roxygen:
 	echo "if (!library(roxygen2, logical.return=TRUE)) {install.packages(\"roxygen2\"); library(roxygen2) } ; roxygenize(\"pkg/retistruct\")" |	R --no-restore --slave
 
 fix-revision:
-	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- $(RETISTRUCT_SVN_REVISION1)/;" pkg/retistruct/R/revision.R
+	perl -p -i -e "s/^retistruct\.global\.revision.*/retistruct.global.revision <- \"$(RETISTRUCT_GIT_COMMIT_HASH)\"/;" pkg/retistruct/R/revision.R
+	perl -p -i -e "s/^Date:.*/Date: $(RETISTRUCT_GIT_AUTHORDATE)/;" pkg/retistruct/DESCRIPTION
 
 retistruct: fix-revision roxygen 
 	R CMD build pkg/retistruct
@@ -52,8 +53,7 @@ check:
 	R CMD check --as-cran $(RETISTRUCT_PACKAGE)
 
 revision:
-	@echo $(RETISTRUCT_SVN_REVISION)
-	@echo $(RETISTRUCT_SVN_REVISION1)
+	@echo $(RETISTRUCT_GIT_COMMIT_HASH)
 
 clean:
 	rm -f pkg/retistruct/R/*~
