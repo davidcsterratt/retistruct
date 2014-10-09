@@ -403,7 +403,7 @@ retistruct.batch.analyse.summary <- function(path) {
   message(paste(nrow(outliers), "of", nrow(sdat), "retinae have e_L (sqrt.E) greater than 0.1:"))
   print(outliers[,c("dataset", "sqrt.E")])
 
-  x11(width=6.83/2, height=6.83/4)
+  dev.new(width=6.83/2, height=6.83/4)
   ## Plot of various things
   ## Figure 4 in PLoS paper
   par(mar=c(2.4, 2.6, 0.7, 0.2))
@@ -439,7 +439,7 @@ retistruct.batch.analyse.summary <- function(path) {
   dev.print(svg, file=file.path(path, "fig3-retistruct-deformation.svg"), width=6.83/2, height=6.83/4)
 
   ## Fig 4A-C: Locations of optic discs
-  x11(width=6.83/2, height=6.83/6)
+  dev.new(width=6.83/2, height=6.83/6)
   par(mfcol=c(1, 3))
   par(mar=c(0.7,0.7,0.7,0.7))
   
@@ -612,7 +612,7 @@ retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
                                       r$Dss$OD[,"lambda"])
 
   projection(r, datapoint.contours=FALSE, philim=c(-90, phi0d), ...)
-  ## x11()
+  ## dev.new()
   ## with(summ, plot(sqrt.E, OD.res))
   ## abline(summlm)
   return(summ)
