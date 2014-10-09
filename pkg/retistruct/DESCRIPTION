@@ -21,4 +21,7 @@ Imports:
     rgl,
     R.matlab
 Suggests:
-    testthat
+    testthat,
+    gWidgetsRGtk2,
+    cairoDevice
+Roxygen: list(wrap = FALSE)
