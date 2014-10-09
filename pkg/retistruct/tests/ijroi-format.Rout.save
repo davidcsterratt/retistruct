@@ -1,13 +1,11 @@
 
-R Under development (unstable) (2014-03-31 r65343) -- "Unsuffered Consequences"
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
 Copyright (C) 2014 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
-
-  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -22,6 +20,10 @@ Type 'q()' to quit R.
 > ## Test reading file with one row in datapoints.csv file
 > dataset <- file.path(system.file(package = "retistruct"), "extdata", "ijroi1")
 > r <- retistruct.read.dataset(dataset)
+Reading datapoints
+Warning message:
+In read.scale(dataset) :
+  Scale file does not exist. Scale bar will not be set.
 > print(r$Ds)
 $marking
         [,1]   [,2]
@@ -31,6 +33,10 @@ $marking
 > ## Test reading file with two rows in datapoints.csv file
 > dataset <- file.path(system.file(package = "retistruct"), "extdata", "ijroi2")
 > r <- retistruct.read.dataset(dataset)
+Reading datapoints
+Warning message:
+In read.scale(dataset) :
+  Scale file does not exist. Scale bar will not be set.
 > print(r$Ds)
 $marking
         [,1]   [,2]
@@ -44,3 +50,6 @@ $testing
 [3,]   65  466
 
 > 
+> proc.time()
+   user  system elapsed 
+  2.043   0.062   2.094 
