@@ -517,14 +517,28 @@ version.string <- function() {
                packageDescription("retistruct", fields="Date"), ")"))
 }
 
-## The GUI itself
+##' @title Git short commit hash of Retistruct package
+##' @param guiToolkit
+##' @export
 retistruct <- function(guiToolkit="RGtk2") {
+  require.package <- function(pkg) {
+    if (!require(pkg, character.only=TRUE)) {
+      message(paste("Trying to install required package", pkg))
+      install.packages(pkg)
+      if (!require(pkg, character.only=TRUE)) {
+        stop(paste("Could not install", pkg))
+      }
+    }
+  }
+  require.package("gWidgetsRGtk2")
+  require.package("cairoDevice")
+    
   options(guiToolkit=guiToolkit)
 
   ## Global variables
   dataset <<- NULL                         # Directory of dataset
   initial.dir <<- "."
-
+  
   ## Annotation object
   a <<- NULL
 
