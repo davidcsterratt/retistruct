@@ -3,7 +3,7 @@
 \name{retistruct.global.revision}
 \alias{retistruct.global.revision}
 \title{SVN global revision number of Retistruct package}
-\format{\preformatted{ num 1000
+\format{\preformatted{ num 1316
 }}
 \usage{
 retistruct.global.revision

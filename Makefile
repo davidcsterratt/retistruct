@@ -1,5 +1,5 @@
 RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
-RETISTRUCT_SVN_REVISION=$(shell svn info -R | grep "Revision:" | perl -p -e 's/Revision: //;' | sort -n -r | head -1)
+RETISTRUCT_SVN_REVISION=$(shell git svn info | grep "Last Changed Rev:" | perl -p -e 's/Last Changed Rev: //;' | sort -n -r | head -1)
 RETISTRUCT_SVN_REVISION1=$(shell echo $(RETISTRUCT_SVN_REVISION) + 1 | bc) 
 ifeq ("$(RETISTRUCT_SVN_REVISION)", "")
 	RETISTRUCT_SVN_REVISION=1000
