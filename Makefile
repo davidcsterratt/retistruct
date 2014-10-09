@@ -49,7 +49,7 @@ user-guide:
 	cd doc &&	pdflatex retistruct-user-guide.tex && cp retistruct-user-guide.pdf ../www
 
 check:
-	R CMD check $(RETISTRUCT_PACKAGE)
+	R CMD check --as-cran $(RETISTRUCT_PACKAGE)
 
 revision:
 	@echo $(RETISTRUCT_SVN_REVISION)
