@@ -353,7 +353,7 @@ retistruct.batch.analyse.summary <- function(path) {
   N.outtime <- sum(na.omit(dat$status) == 1)
 
   ## Get successful reconstructions
-  sdat <- subset(dat, status==0)
+  sdat <- subset(dat, dat$status==0)
 
   message("\nFAILURES")
   cpufail <- dat[grepl("CPU", dat[,"mess"]),]
@@ -361,11 +361,11 @@ retistruct.batch.analyse.summary <- function(path) {
   print(cpufail[,c("dataset")])
   
   ## Get number of failures due to phi0d not being set
-  nophis <- subset(sdat, phi0d == 0 | is.na(phi0d))
+  nophis <- subset(sdat, sdat$phi0d == 0 | is.na(sdat$phi0d))
   N.nophi <- nrow(nophis)
   message(paste("\n", nrow(nophis), "of", nrow(sdat), "retinae do not have the rim angle set:"))
   print(nophis[,c("dataset", "phi0d")])
-  sdat <- subset(sdat, phi0d != 0 & !is.na(phi0d))
+  sdat <- subset(sdat, sdat$phi0d != 0 & !is.na(sdat$phi0d))
   
   ## Get number of failures due to sqrt.E being too large
   failures <- subset(sdat, sqrt.E >= sqrt.E.fail)
@@ -443,11 +443,11 @@ retistruct.batch.analyse.summary <- function(path) {
   par(mfcol=c(1, 3))
   par(mar=c(0.7,0.7,0.7,0.7))
   
-  retistruct.batch.plot.ods(subset(sdat, age=="A"),
-                            phi0d=subset(sdat, age=="A")[1, "phi0d"])
+  retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
+                            phi0d=subset(sdat, sdat$age=="A")[1, "phi0d"])
   panlabel("A")
 
-  summ <- retistruct.batch.plot.ods(subset(sdat, age=="A"),
+  summ <- retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
                             phi0d=-60)
   panlabel("B")
 
@@ -493,10 +493,10 @@ retistruct.batch.analyse.summary <- function(path) {
   ## print(sort(as.numeric(factor(sdat$age))))
   ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
   levels(sdat$age) <- sub("adult", "A", levels(sdat$age))
-  with(sdat, boxplot(kde.h.red ~ age,
-                     xaxt="n",
-                     xlab="Postnatal day",
-                     ylab=expression(italic(h)[red])))
+  boxplot(sdat$kde.h.red ~ sdat$age,
+          xaxt="n",
+          xlab="Postnatal day",
+          ylab=expression(italic(h)[red]))
   mtext("B", adj=-0.15, font=2, line=-0.7)
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
@@ -508,7 +508,7 @@ retistruct.batch.analyse.summary <- function(path) {
   sdat <- cbind(sdat, genotype="W")
   levels(sdat$genotype) <- c("W", "B")
   sdat[grep("GMB", sdat$dataset), "genotype"] <- "B"
-  kdat <- subset(sdat, kde.h.red < 4)
+  kdat <- subset(sdat, sdat$kde.h.red < 4)
   
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
@@ -591,7 +591,7 @@ retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
   r <- RetinalReconstructedDataset(r)
   r <- RetinalReconstructedOutline(r)
   r$side <- "Right"
-  summ <- subset(summ, age=="A")
+  summ <- subset(summ, summ$age=="A")
   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
   colnames(r$Dss$OD) <- c("phi", "lambda")
   r$cols["OD"] <- "blue"
