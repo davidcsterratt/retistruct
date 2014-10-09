@@ -107,7 +107,7 @@ getSss.retinalReconstructedDataset <- function(r) {
   return(Sss)
 }
 
-##' @S3method getSssMean retinalReconstructedDataset
+##' @export
 getSssMean.retinalReconstructedDataset <- function(r) {
   Sss.mean <- NextMethod()
   if (length(Sss.mean) > 0) {

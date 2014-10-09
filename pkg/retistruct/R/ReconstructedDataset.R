@@ -166,7 +166,7 @@ getSss.reconstructedDataset <- function(r) {
   return(r$Sss)
 }
 
-##' @S3method getSssMean reconstructedDataset
+##' @export
 getSssMean.reconstructedDataset <- function(r) {
   Sss.mean <- list()
   if (length(r$Sss)) {

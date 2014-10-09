@@ -301,7 +301,7 @@ getIms.reconstructedOutline <- function(r) {
   return(r$ims)
 }
 
-##' @S3method getTss reconstructedOutline
+##' @export
 getTss.reconstructedOutline <- function(r) {
   Tss <- list()
   for (TF in r$TFset) {
@@ -798,7 +798,7 @@ sphericalplot.reconstructedOutline <- function(r,
   })
 }
 
-##' @S3method lvsLplot reconstructedOutline
+##' @export
 lvsLplot.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70

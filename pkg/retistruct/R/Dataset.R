@@ -35,7 +35,7 @@ Dataset <- function(o, dataset, Ds, Ss, cols, raw, Gs=NULL) {
   return(d)
 }
 
-##' @S3method nameLandmark dataset
+##' @export
 nameLandmark.dataset <- function(d, i, name) {
   if (!is.na(i)) {
     new.names <- names(d$Ss)
@@ -134,7 +134,6 @@ flatplot.dataset <- function(x, axt="n", ylim=NULL,
              image=FALSE)
 }
 
-##' @S3method all.equal dataset
 all.equal.dataset <- function(target, current, ...) {
   return((all.equal(target$Ds, current$Ds) == TRUE) &
          (all.equal(target$Gs, current$Gs) == TRUE) &

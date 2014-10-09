@@ -31,7 +31,7 @@ getIms.retinalReconstructedOutline <- function(r) {
   return(ims)
 }
 
-##' @S3method getTss retinalReconstructedOutline
+##' @export
 getTss.retinalReconstructedOutline <- function(r) {
   Tss <- NextMethod()
   if (r$DVflip) {
