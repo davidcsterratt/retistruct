@@ -1,10 +1,10 @@
 Package: retistructdemos
 Maintainer: David C. Sterratt <david.c.sterratt@ed.ac.uk>
-License: CC BY-SA 2.0
+License: CC BY-SA 4.0
 Title: Retinal reconstruction program demonstration data
 Author:  David C. Sterratt <david.c.sterratt@ed.ac.uk>, Daniel Lyngholm <daniel.lyngholm@kcl.ac.uk> 
 Description: Demo data for the Retistruct package
-Version: 0.5.8
+Version: 0.5.9
 URL: http://retistruct.r-forge.r-project.org/
 Date: 2014-10-10
 Depends:    retistruct (>= 0.5.7)
