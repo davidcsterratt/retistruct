@@ -2,7 +2,6 @@
 ## a <- NULL
 ## d1 <- NULL
 ## d2 <- NULL
-## ##' @export
 ## dataset <- NULL
 ## g.add <- NULL
 ## g.axis.az <- NULL
