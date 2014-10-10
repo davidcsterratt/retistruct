@@ -517,10 +517,17 @@ version.string <- function() {
                packageDescription("retistruct", fields="Date"), ")"))
 }
 
-##' @title Git short commit hash of Retistruct package
-##' @param guiToolkit
+##' @title Start the Retistruct GUI
+##' @seealso gWidgets
 ##' @export
-retistruct <- function(guiToolkit="RGtk2") {
+retistruct <- function() {
+  ## TODO: It would be good to make it possible to set
+  ## guiToolkit=tcltk as an option to the function so that there is no
+  ## need to install gWidgetsRGtk2, which is problematic on a Mac
+  ##
+  ## @param guiToolkit The toolkit \code{gWidgets} toolkit that will
+  ## be ' used for the GUI
+  guiToolkit <- "RGtk2"
   require.package <- function(pkg) {
     if (!require(pkg, character.only=TRUE)) {
       message(paste("Trying to install required package", pkg))
@@ -530,7 +537,7 @@ retistruct <- function(guiToolkit="RGtk2") {
       }
     }
   }
-  require.package("gWidgetsRGtk2")
+  require.package(paste0("gWidgets", guiToolkit))
   require.package("cairoDevice")
     
   options(guiToolkit=guiToolkit)
