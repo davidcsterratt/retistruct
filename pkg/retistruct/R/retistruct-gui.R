@@ -1,3 +1,66 @@
+# Global variables
+## a <- NULL
+## d1 <- NULL
+## d2 <- NULL
+## ##' @export
+## dataset <- NULL
+## g.add <- NULL
+## g.axis.az <- NULL
+## g.axisdir.frame <- NULL
+## g.axis.el <- NULL
+## g.body <- NULL
+## g.data.frame <- NULL
+## g.data <- NULL
+## g.editor <- NULL
+## g.edit.show.frame <- NULL
+## g.edit.show <- NULL
+## g.eye.frame <- NULL
+## g.eye <- NULL
+## g.f1.buttons <- NULL
+## g.f1 <- NULL
+## g.f2.buttons <- NULL
+## g.f2 <- NULL
+## g.fd1 <- NULL
+## g.fd2 <- NULL
+## g.ids.frame <- NULL
+## g.ids <- NULL
+## g.mark.d <- NULL
+## g.mark.n <- NULL
+## g.mark.od <- NULL
+## g.menu <- NULL
+## g.move <- NULL
+## g.nb <- NULL
+## g.open <- NULL
+## g.pc.az <- NULL
+## g.pc.el <- NULL
+## g.pc.frame <- NULL
+## g.pdf.group <- NULL
+## g.phi0d.frame <- NULL
+## g.phi0d <- NULL
+## g.print1 <- NULL
+## g.print2 <- NULL
+## g.print.pdf1 <- NULL
+## g.print.pdf2 <- NULL
+## g.projection.frame <- NULL
+## g.projection <- NULL
+## g.properties <- NULL
+## g.reconstruct <- NULL
+## g.remove <- NULL
+## g.rows <- NULL
+## g.save <- NULL
+## g.show.frame <- NULL
+## g.show <- NULL
+## g.statusbar <- NULL
+## g.status <- NULL
+## g.toolbar <- NULL
+## g.transform.frame <- NULL
+## g.transform <- NULL
+## g.view <- NULL
+## g.width <- NULL
+## g.win <- NULL
+## initial.dir <- NULL
+## r <- NULL
+
 ## Convenience functions for handlers
 enable.group <- function(widgets, state=TRUE) {
   for (w in widgets) {
@@ -472,7 +535,7 @@ h.warning <- function(e) {
 h.properties <- function(h, ...) {
   g.win <- gwindow("Properties",
                    parent=g.win)
-  g.props <- ggroup(cont=g.win, horizontal=FALSE)
+  g.props <- ggroup(container=g.win, horizontal=FALSE)
   g.colours <- gframe("Colours", container=g.props, horizontal=FALSE)
   cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow",
             "gray")
