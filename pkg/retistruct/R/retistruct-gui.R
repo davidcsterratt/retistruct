@@ -649,7 +649,7 @@ retistruct <- function() {
               h.open()
             })
   mbl$Demos$SMI32$handler <- function(h, ...) {
-    a$dataset <<- file.path(extdata.demos, "smi32")
+    a$dataset <<- file.path(extdata, "smi32")
     h.open()
   }
   mbl$Demos$left.contra <-

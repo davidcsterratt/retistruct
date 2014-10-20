@@ -7,7 +7,7 @@ Description: Program to reconstruct retinae from flattened retinae in
     which there are incisions and tears
 Version: 0.5.9
 URL: http://retistruct.r-forge.r-project.org/
-Date: 2014-10-10
+Date: 2014-10-20
 Depends:
     R (>= 3.1.0)
 Imports:

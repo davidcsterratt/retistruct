@@ -6,7 +6,9 @@ ijroi.checkDatadir <- function(dir=NULL) {
 ##' containing a file called \code{outline.roi} that specifies the
 ##' outline in X-Y coordinates. It may also contain a file
 ##' \code{datapoints.csv}, containing the locations of data points;
-##' see \code{\link{read.datapoints}} for the format of this file.
+##' see \code{\link{read.datapoints}} for the format of this file. The
+##' folder may also contain a file \code{od.roi} specifying the
+##' coordinates of the optic disc.
 ##' 
 ##' @title Read a retinal dataset in IJROI format
 ##' @param dataset Path to directory containing \code{outline.roi}
@@ -52,7 +54,6 @@ ijroi.read.dataset <- function(dataset) {
   if (file.exists(od.file)) {
     roi <- RImageJROI::read.ijroi(od.file)
     out <-  roi$coords
-    offset <- ifelse(is.null(im), max(out[,2]), nrow(im))
     out[,2] <- offset - out[,2]
     Ss[["OD"]] <- out
   }

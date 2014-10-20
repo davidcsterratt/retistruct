@@ -16,7 +16,9 @@ Read a retinal dataset in IJROI format. Each dataset is a folder
 containing a file called \code{outline.roi} that specifies the
 outline in X-Y coordinates. It may also contain a file
 \code{datapoints.csv}, containing the locations of data points;
-see \code{\link{read.datapoints}} for the format of this file.
+see \code{\link{read.datapoints}} for the format of this file. The
+folder may also contain a file \code{od.roi} specifying the
+coordinates of the optic disc.
 }
 \author{
 David Sterratt

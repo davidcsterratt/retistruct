@@ -6,15 +6,17 @@ csv.checkDatadir <- function(dir=NULL) {
 ##' containing a file called outline.csv that specifies the outline in
 ##' X-Y coordinates. It may also contain a file \code{datapoints.csv},
 ##' containing the locations of data points; see
-##' \code{\link{read.datapoints}} for the format of this file.
+##' \code{\link{read.datapoints}} for the format of this file. The
+##' folder may also contain a file \code{od.csv} specifying the
+##' coordinates of the optic disc.
 ##' 
 ##' @title Read a retinal dataset in CSV format
 ##' @param dataset Path to directory containing \code{outline.csv}
-##' @return A \code{RetinalDataset} object
+##' @return A \code{\link{RetinalDataset}} object
 ##' @author David Sterratt
 csv.read.dataset <- function(dataset) {
   ## Read the raw data
-  out <- read.csv(file.path(dataset, "outline.csv"))
+  out <- as.matrix(read.csv(file.path(dataset, "outline.csv")))
 
   ## Read scale
   scale <- read.scale(dataset)
@@ -22,24 +24,37 @@ csv.read.dataset <- function(dataset) {
   ## If there is an image, read it
   im <- read.image(dataset)
 
+  ## ImageJ ROI format plots has the coordinate (0, 0) in the top
+  ## left.  We have the coordinate (0, 0) in the bottom left. We need
+  ## to transform P so that the outline appears in the correct
+  ## orientation.
+  P <- out
+  offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
+  P[,2] <- offset - P[,2]
+  
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each
-  ## group has to be a valid colour.
+  ## group has to be a valid colour. There are no datapoints in this
+  ## format, but we may have landmarks.
   Ds <- list()
-  cols <- list()
+  cols <- list(OD="blue",
+               default="orange")
   dat <- read.datapoints(dataset)
   Ds <- c(Ds, dat$Ds)
   cols <- c(cols, dat$cols)
+  Ds <- lapply(Ds, function(P) {cbind(P[,1], offset - P[,2])})
 
-  ## The outline (P) is the longest connected segment and the outline
-  ## is removed from the list of segments
-  P  <- out
-  if (!is.null(im)) {
-    message("Image present, so flipping P to align coordinates")
-    P[,2] <- nrow(im) - P[,2] + 1
-  }
   Ss <- list()
+
+  ## Read in an Optic Disc. FIXME: this should actually be marked as
+  ## the Optic Disc
+  od.file <- file.path(dataset, "od.csv")
+  if (file.exists(od.file)) {
+    out <-  as.matrix(read.csv(od.file))
+    out[,2] <- offset - out[,2]
+    Ss[["OD"]] <- out
+  }
   
   ## Create forward and backward pointers
   o <- Outline(P, scale, im)
@@ -55,4 +70,3 @@ csv.read.dataset <- function(dataset) {
   a <- RetinalDataset(a)
   return(a)
 }
-
