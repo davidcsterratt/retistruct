@@ -1,4 +1,5 @@
 RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e "s/Version: //;")
+RETISTRUCTDEMOS_VERSION=$(shell grep Version pkg/retistructdemos/DESCRIPTION | perl -p -e "s/Version: //;")
 # RETISTRUCT_SVN_VERSION=$(shell git svn info | grep "Last Changed Rev:" | perl -p -e 's/Last Changed Rev: //;' | sort -n -r | head -1)
 RETISTRUCT_GIT_COMMIT_HASH=$(shell git log --pretty="%h" HEAD^..HEAD)
 RETISTRUCT_GIT_AUTHORDATE=$(shell git log --date=short --pretty="%ad" HEAD^..HEAD)
@@ -6,13 +7,12 @@ ifeq ("$(RETISTRUCT_GIT_COMMIT_HASH)", "")
 	RETISTRUCT_GIT_COMMIT_HASH=1000
 endif
 RETISTRUCT_PACKAGE=retistruct_$(RETISTRUCT_VERSION).tar.gz
-RETISTRUCTGUI_PACKAGE=retistructgui_$(RETISTRUCT_VERSION).tar.gz
-RETISTRUCTDEMOS_PACKAGE=retistructdemos_0.5.8.tar.gz
+RETISTRUCTDEMOS_PACKAGE=retistructdemos_$(RETISTRUCTDEMOS_VERSION).tar.gz
 
-dist: retistruct retistructgui check user-guide
+dist: retistruct check user-guide
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
 	cp retistruct.Rcheck/retistruct-manual.pdf doc
-	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTGUI_PACKAGE) $(RETISTRUCTDEMOS_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R install-gui.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
+	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTDEMOS_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
 
 roxygen:
 	rm -f pkg/retistruct/man/*
@@ -25,19 +25,13 @@ fix-revision:
 retistruct: fix-revision roxygen 
 	R CMD build pkg/retistruct
 
-retistructgui: retistruct retistructdemos
-	R CMD build pkg/retistructgui
-
 retistructdemos: retistruct
 	R CMD build pkg/retistructdemos
 
-install: install-retistruct  install-retistructdemos install-retistructgui
+install: install-retistruct  install-retistructdemos
 
 install-retistruct: retistruct
 	R CMD INSTALL --latex $(RETISTRUCT_PACKAGE) 
-
-install-retistructgui: retistructgui
-	R CMD INSTALL --latex $(RETISTRUCTGUI_PACKAGE) 
 
 install-retistructdemos: retistructdemos
 	R CMD INSTALL --latex $(RETISTRUCTDEMOS_PACKAGE) 
