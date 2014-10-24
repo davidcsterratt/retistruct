@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\newcommand{\svninfo}{$ $Rev$ $, $ $Date$ $}
+\newcommand{\svninfo}{Date: 2014-10-24}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -384,88 +384,36 @@ reconstructed object.
 \label{manual:sec:saving-reconstr}
 
 To save the markup, click on the ``Save'' button in the toolbar. This
-saves various markup files to the directory containing the data files.
+saves various files to the directory containing the data files. When
+the files in the directory are opened again, all the markup
+information (cut locations, location of nasal point and rim angle) is
+loaded, and the reconstruction will also appear, unless there has been
+a major upgrade of the software, in which case the retina will need to
+be reconstructed using the ``Reconstruct retina'' button.
 
-\subsection{Running a batch of reconstructions}
-\label{manual:sec:runn-batch-reconstr}
+\subsection{Reading reconstruction data into R}
+\label{retistruct-user-guide:sec:reading-date-into}
 
-The \textsc{Retistruct} library can be used to reconstruct a batch of
-retinae which have been marked up. Suppose that the directory
-\texttt{retinae} contains a directory tree in which there are data
-directories containing \texttt{SYS} and \texttt{MAP} files and the
-saved markup files. In order to perform the reconstructions, we create
-a new directory \texttt{retinae/reconstructions}, and run the
-following sequence of commands in R:
+It can be useful to have access to the data underlying a
+reconstruction directly, for example to allow statistical analysis.
+To load saved date into R, type the following into R:
 \begin{verbatim}
-R
-> library(retistruct)
-> retistruct.batch(tldir='retinae', outputdir='retinae/reconstructions')
+r <- retistruct.read.recdata("/path/to/reconstruction/directory")
 \end{verbatim}
-This command will go through the \texttt{retinae} directory, looking
-for valid data directories. If it finds one, it sets about trying to
-reconstruct the retina. As it reconstructing each retina, it writes to
-log file in \texttt{retinae/reconstructions}. Once the reconstruction
-is complete, it saves a number of plots in this directory in PDF
-format. It also adds a line to a summary log file in
-\texttt{retinae/reconstructions} called
-\texttt{retistruct-batch.csv}. This file contains a number of columns:
-\begin{description}
-\item[\texttt{Dataset}] The directory of the data set
-\item[\texttt{Return}] The return value from the process
-\item[\texttt{Result}] A summary of the result, including if any
-  errors were returned
-\item[\texttt{E}] The total error  of the optimised reconstruction
-\item[\texttt{El}] The error due to purely to the lengths of links in
-  the optimised reconstruction
-\item[\texttt{nflip}] The number of flipped triangles
-\item[\texttt{EOD}] The distance of the Optic Disc from the inferred
-  centre of the retina, in degrees. If the OD has not been marked up,
-  this is \texttt{NA}.
-\end{description}
-
-\subsection{Exporting reconstruction data to \textsc{Matlab}}
-\label{retistruct-manual:sec:export-reconstr-data}
-
-To export the reconstruction data in a directory hierarchy in which
-\texttt{retistruct.batch()} has been run, run the following sequence
-of commands in R:
+The resulting object \texttt{r} contains various fields, which can be
+accessed using the R \texttt{\$} operator, e.g.
 \begin{verbatim}
-R
-> library(retistruct)
-> retistruct.batch.export.matlab(tldir='retinae')
+r$Dss$green
 \end{verbatim}
-This creates a file called \texttt{r.mat} in each directory in which
-there has been a successful reconstruction. To import this data into
-\textsc{Matlab}, cd into that directory, and type:
-\begin{verbatim}
-clear
-load r.mat
-\end{verbatim}
-This puts a number of variables into the workspace, as shown in
-Table~\ref{tab:matlab-export}.
+gives a list of the spherical co-ordinates of green labelled
+datapoints. See Table~\ref{tab:matlab-export} for a list of the most
+useful quantities. Other quantities (for example the locations of the
+mesh points in the flat and spherical retina) are also available. The
+documentation for \texttt{ReconstructedOutline},
+\texttt{ReconstructedDataset}, \texttt{getDss} and \texttt{getSss} in
+the user manual has more information about this.
 
-To produce a polar plot of data points, try the following code:
-\begin{verbatim}
-polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
-hold on
-polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
-hold off
-\end{verbatim}
-The radial axis indicates the latitude in degrees measured from the
-retinal pole.
-
-In the \texttt{matlab} subdirectory of the distribution, there are
-some scripts to produce polar polar plots, including the locations of
-tears and landmarks. To create PDF plots of all the retinae in a
-directory, try:
-\begin{verbatim}
-makefigures('retinae', 'output_directory')
-\end{verbatim}
-
-There are also some embryonic scripts to create polar plots:
-\texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
-
-\begin{table}
+\begin{table}[p]
   \begin{tabularx}{\linewidth}{p{1.2in}X}
     \hline \texttt{phi0} & The latitude of the rim, expressed in
     radians
@@ -542,9 +490,95 @@ There are also some embryonic scripts to create polar plots:
   \label{tab:matlab-export}
 \end{table}
 
+
+\subsection{Reading reconstruction data into \textsc{Matlab}}
+\label{retistruct-manual:sec:export-reconstr-data}
+
+By default when a reconstruction is saved, a subset of the data is
+stored in a file called \texttt{r.mat} in the same directory as the
+raw data and the markup. To import this data into \textsc{Matlab}, cd
+into that directory, and type:
+\begin{verbatim}
+clear
+load r.mat
+\end{verbatim}
+This puts a number of variables into the workspace, as shown in
+Table~\ref{tab:matlab-export}.
+
+To produce a polar plot of data points, try the following code:
+\begin{verbatim}
+polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
+hold on
+polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
+hold off
+\end{verbatim}
+The radial axis indicates the latitude in degrees measured from the
+retinal pole.
+
+In the \texttt{matlab} subdirectory of the distribution, there are
+some scripts to produce polar polar plots, including the locations of
+tears and landmarks. To create PDF plots of all the retinae in a
+directory, try:
+\begin{verbatim}
+makefigures('retinae', 'output_directory')
+\end{verbatim}
+
+There are also some embryonic scripts to create polar plots:
+\texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
+
+
+
+
+\subsection{Running a batch of reconstructions}
+\label{manual:sec:runn-batch-reconstr}
+
+The \textsc{Retistruct} library can be used to reconstruct a batch of
+retinae which have been marked up. Suppose that the directory
+\texttt{retinae} contains a directory tree in which there are data
+directories containing the raw outline, datapoint and image files and
+the saved markup files. In order to perform the reconstructions, we
+create a new directory \texttt{retinae/reconstructions}, and run the
+following sequence of commands in R:
+\begin{verbatim}
+R
+> library(retistruct)
+> retistruct.batch(tldir='retinae', outputdir='retinae/reconstructions')
+\end{verbatim}
+This command will go through the \texttt{retinae} directory, looking
+for valid data directories. If it finds one, it sets about trying to
+reconstruct the retina. As it reconstructing each retina, it writes to
+log file in \texttt{retinae/reconstructions}. Once the reconstruction
+is complete, it saves a number of plots in this directory in PDF
+format. It also adds a line to a summary log file in
+\texttt{retinae/reconstructions} called
+\texttt{retistruct-batch.csv}. This file contains a number of columns:
+\begin{description}
+\item[\texttt{Dataset}] The directory of the data set
+\item[\texttt{Return}] The return value from the process
+\item[\texttt{Result}] A summary of the result, including if any
+  errors were returned
+\item[\texttt{E}] The total error  of the optimised reconstruction
+\item[\texttt{El}] The error due to purely to the lengths of links in
+  the optimised reconstruction
+\item[\texttt{nflip}] The number of flipped triangles
+\item[\texttt{EOD}] The distance of the Optic Disc from the inferred
+  centre of the retina, in degrees. If the OD has not been marked up,
+  this is \texttt{NA}.
+\end{description}
+
+To export the reconstruction data in a directory hierarchy in which
+\texttt{retistruct.batch()} has been run, run the following sequence
+of commands in R:
+\begin{verbatim}
+R
+> library(retistruct)
+> retistruct.batch.export.matlab(tldir='retinae')
+\end{verbatim}
+
+
 \appendix
 
-\section{Data format}
+\section{The IDT Data format}
 \label{manual:sec:reading-data}
 
 \begin{table}
@@ -626,11 +660,11 @@ each directory there are two files:
 % \end{verbatim}
 
 \begin{thebibliography}{99}
-\bibitem{SterrattEtal2012}
-Sterratt DC, Lyngholm D, Willshaw DJ, Thompson ID (in press) Standard anatomical and visual space for the mouse retina:
-computational reconstruction and transformation of flattened
-retinae with the Retistruct package
-\newblock PLoS Comp. Biol.
+\bibitem{SterrattEtal2012} Sterratt DC, Lyngholm D, Willshaw DJ,
+  Thompson ID (2013) Standard anatomical and visual space for the
+  mouse retina: computational reconstruction and transformation of
+  flattened retinae with the Retistruct package \newblock PLoS
+  Comp. Biol. 9
 \end{thebibliography}
 
 \end{document}
