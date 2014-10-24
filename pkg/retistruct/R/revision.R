@@ -1,3 +1,3 @@
 ##' @title Git short commit hash of Retistruct package
 ##' @export
-retistruct.global.revision <- ""
+retistruct.global.revision <- "b30ef"
