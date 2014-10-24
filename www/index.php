@@ -79,8 +79,8 @@ this <a href="retistruct_0.5.7.zip">
 zip file</a> contains the review version of Retistruct and some Matlab
 code to read data directories contained by Retistruct.</p>
 
-<p>Access to the source code Subversion repository is available from
-the <a href="https://r-forge.r-project.org/projects/retistruct/">project page</a>.</p>
+<p>The source code can be checked out from 
+the <a href="https://r-forge.r-project.org/scm/?group_id=1436">R-forge subversion repository</a> or <a href="https://github.com/davidcsterratt/retistruct">Github</a>.</p>
 
 <h2>Sample data</h2>
 
@@ -101,6 +101,15 @@ the <a href="https://r-forge.r-project.org/projects/retistruct/">project page</a
   use <a href="http://rsb.info.nih.gov/ij/">ImageJ's</a> particle
   analyser to find the locations of the stained cells.</li>
   </ol></p>
+
+<h2>Problems?</h2>
+
+If you encounter issues using Retistruct please either:
+<ul>
+  <li><a href="https://github.com/davidcsterratt/retistruct/issues">Submit
+  an issue on Github</a></li>
+  <li><a href="mailto:david.c.sterratt@ed.ac.uk">Email David Sterratt</a></li>
+</ul>
 
 <h2>Work using Retistruct</h2>
 
