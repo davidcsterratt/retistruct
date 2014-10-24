@@ -1,7 +1,7 @@
 Retistruct
 ==========
 
-/computational reconstruction and transformation of flattened retinae/
+_computational reconstruction and transformation of flattened retinae_
 
 Retistruct is an R package to morph a flat surface with cuts (a
 dissected flat-mount retina) onto a curvilinear surface (the a
