@@ -12,7 +12,7 @@ RETISTRUCTDEMOS_PACKAGE=retistructdemos_$(RETISTRUCTDEMOS_VERSION).tar.gz
 dist: retistruct check user-guide
 	rm -f retistruct_$(RETISTRUCT_VERSION).zip
 	cp retistruct.Rcheck/retistruct-manual.pdf doc
-	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTDEMOS_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R README.txt  -x '*/*.svn/*' -x 'matlab/images/*'
+	zip -r retistruct_$(RETISTRUCT_VERSION).zip $(RETISTRUCT_PACKAGE) $(RETISTRUCTDEMOS_PACKAGE) matlab  doc/retistruct-user-guide.pdf doc/retistruct-manual.pdf install.R README.md  -x '*/*.svn/*' -x 'matlab/images/*'
 
 roxygen:
 	rm -f pkg/retistruct/man/*
