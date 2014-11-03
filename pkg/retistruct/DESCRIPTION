@@ -8,7 +8,7 @@ Description: Program to reconstruct retinae from flattened retinae in
 Version: 0.5.9
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2014-10-24
+Date: 2014-11-03
 Depends:
     R (>= 3.1.0)
 Imports:
@@ -24,5 +24,6 @@ Imports:
 Suggests:
     testthat,
     gWidgetsRGtk2,
+    gWidgets,
     cairoDevice
 Roxygen: list(wrap = FALSE)
