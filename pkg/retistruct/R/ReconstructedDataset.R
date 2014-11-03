@@ -141,7 +141,7 @@ getDssHullarea <- function(r) {
   Dss.hullarea <- list()
   if (length(r$Dss)) {
     for (i in 1:length(r$Dss)) {
-      if (nrow(r$Dss[[i]])) {
+      if (nrow(r$Dss[[i]]) >= 3) {
         Dsp <- sphere.spherical.to.polar.cart(r$Dss[[i]], pa=TRUE)
         Dspt <- delaunayn(Dsp)
         Dss.hullarea[[i]] <- sum(sphere.tri.area(r$Dss[[i]], Dspt))*(180/pi)^2
