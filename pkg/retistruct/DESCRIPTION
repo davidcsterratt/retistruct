@@ -1,6 +1,6 @@
 Package: retistruct
-License: GPL-3
-Title: Retinal reconstruction program
+License: CC BY-NC-SA 4.0
+Title: Retistruct - Retinal Reconstruction Program
 Authors@R: c(person("David C.", "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")))
@@ -9,7 +9,7 @@ Description: Program to reconstruct retinae from flattened retinae in
 Version: 0.5.9
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2014-12-01
+Date: 2014-12-02
 Depends:
     R (>= 3.1.0)
 Imports:
