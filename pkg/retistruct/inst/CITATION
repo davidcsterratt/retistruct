@@ -4,5 +4,9 @@ bibentry(bibtype = "Article",
                              as.person("Daniel Lyngholm"),
                              as.person("David J. Willshaw"),
                              as.person("Ian D. Thompson")),
-         year = 2012,
-         journal = "PLoS Computational Biology")  
+         year = 2013,
+         journal = "PLoS Computational Biology",
+         volume = 9,
+         pages = "e1002921",
+         number= 2,
+         url = "http://dx.doi.org/10.1371/journal.pcbi.1002921")
