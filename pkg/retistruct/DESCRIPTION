@@ -1,15 +1,19 @@
 Package: retistruct
 License: CC BY-NC-SA 4.0
-Title: Retistruct - Retinal Reconstruction Program
+Title: Retinal Reconstruction Program
 Authors@R: c(person("David C.", "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")))
-Description: Program to reconstruct retinae from flattened retinae in
-    which there are incisions and tears
-Version: 0.5.9
+Description: Retistruct reconstructs retinae by morphing a flat surface with
+    cuts (a dissected flat-mount retina) onto a curvilinear surface (the a
+    standard retinal shape). It can estimate the position of a point on the
+    intact adult retina to within 8 degrees of arc (3.6% of nasotemporal axis).
+    The coordinates in reconstructed retinae can be transformed to visuotopic
+    coordinates.
+Version: 0.5.10
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2014-12-02
+Date: 2014-12-03
 Depends:
     R (>= 3.1.0)
 Imports:

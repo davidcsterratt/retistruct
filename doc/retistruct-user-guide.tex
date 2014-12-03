@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\newcommand{\svninfo}{Retistruct version: 0.5.9 , Date: 2014-12-02}
+\newcommand{\svninfo}{Retistruct version: 0.5.9 , Date: 2014-12-03}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -68,7 +68,7 @@ First install R for MS/Windows, available from \url{http://www.r-project.org/}.
 \item Start \textsc{R}
  \item  Type:
 \begin{verbatim}
-source("http://retistruct.r-forge.r-project.org/install.R")
+install.packages("retistruct")
 \end{verbatim}
    The first time this runs, it should create a personal directory for
    R packages, and it will take a few minutes to install some required
@@ -100,10 +100,12 @@ If the previous step works:
 \begin{enumerate}
 \item Type:
 \begin{verbatim}
-source("http://retistruct.r-forge.r-project.org/install-gui.R")
+retistruct()
 \end{verbatim}
-\item Under MS/Windows, there may be an  error message saying that
-  libatk-1.0-0.dll is missing from your computer. Click on
+\item Some more packages will be downloaded -- this may take a
+  minute or so.
+\item If you are using MS/Windows, there may be an error message
+  saying that libatk-1.0-0.dll is missing from your computer. Click on
   \textbf{OK}. Another message will appear, asking if you want to
   install GTK+. Agree to this.  After this has finished, quit R
   (without saving the workspace image) and restart.
@@ -138,8 +140,8 @@ source("http://retistruct.r-forge.r-project.org/install-gui.R")
 To start the program, start \textsc{R}. At the \textsc{R} prompt type:
 
 \begin{verbatim}
-> library(retistructgui)
-> retistruct()
+library(retistruct)
+retistruct()
 \end{verbatim}
 A window should appear.
 

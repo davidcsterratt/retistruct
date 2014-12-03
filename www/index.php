@@ -53,7 +53,7 @@ as to minimise a physically-inspired deformation energy function. <ul>
         Computational Reconstruction and Transformation of Flattened
         Retinae with the Retistruct
         Package. <a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
-        Computational Biology</em> 9</a>.</li>
+        Computational Biology</em> 9:e1002921</a>.</li>
       <li><a href="2012-09-neuroinf.pdf">This poster</a>
 and <a href="http://www.youtube.com/watch?v=LpuqXo8NEOo">this YouTube
 video</a>, presented at the 2012 Neuroinformatics Meeting in Munich,
@@ -63,24 +63,46 @@ visual space. </li>
 
 <h2>Installation and documentation</h2>
 
-<p>Retistruct has been tested on GNU/Linux (Ubuntu 12.04) and Mac OS X
-  10.8, and Microsoft Windows Vista. <strong>(Note that as of 30th
+<p>Retistruct has been tested on GNU/Linux (Ubuntu 12.04), Mac OS X
+  10.8 and Microsoft Windows Vista. <strong>(Note that as of 30th
   October 2013, it is not possible to install the graphical user
   interface on MacOS X 10.9 (Mavericks). This is due to the RGtk2
-  package upon which the Retistruct GUI depends.)</strong>
-  Instructions on how to install the latest version and use Retistruct
-  are contained in the <a href="retistruct-user-guide.pdf">User
-  Guide</a>. The installation contains a number of demonstration
-  retinae, and instructions for how to handle retinal flat-mount
-  images in Retistruct.</p>
+  package upon which the Retistruct GUI depends.)</strong></p>
 
-<p>For reference purposes,
-this <a href="retistruct_0.5.7.zip">
-zip file</a> contains the review version of Retistruct and some Matlab
+<h3>Stable version</h3>
+
+<p>To install
+  the <a href="http://cran.r-project.org/web/packages/retistruct/index.html">stable
+  version of Retistruct hosted on CRAN</a>, follow the instructions in
+  the <a href="retistruct-user-guide.pdf">User Guide</a>. The
+  installation contains a number of demonstration retinae, and
+  instructions for how to handle retinal flat-mount images in
+  Retistruct.</p>
+
+<h3>Development version</h3>
+
+<p>The development version of Retistruct contains the most recent bug
+  fixes and improvements, but is not stable. Builds of the package are
+  usually <a href="https://r-forge.r-project.org/R/?group_id=1436">available
+  on R-forge</a> and can be installed using the R install command
+  given there. If the R-forge packages are not available, you will
+  have to build from the source code using <tt>R CMD build</tt>.</p>
+
+<h3>Source code</h3>
+
+<p>The source code can be checked out from
+the <a href="https://r-forge.r-project.org/scm/?group_id=1436">R-forge
+subversion repository</a>
+or <a href="https://github.com/davidcsterratt/retistruct">Github</a>.</p>
+
+<h3>Reference publication code</h3>
+
+<p>For reference purposes, this <a href="retistruct_0.5.7.zip"> zip
+file</a> contains the version of Retistruct that generated the
+reconstructions in Sterratt &amp;
+al. (2013; <a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
+Computational Biology</em> 9</a>). The file also contains some Matlab
 code to read data directories contained by Retistruct.</p>
-
-<p>The source code can be checked out from 
-the <a href="https://r-forge.r-project.org/scm/?group_id=1436">R-forge subversion repository</a> or <a href="https://github.com/davidcsterratt/retistruct">Github</a>.</p>
 
 <h2>Sample data</h2>
 
@@ -148,5 +170,13 @@ the <a href="http://www.wellcome.ac.uk">Wellcome Trust</a> (G083305).
 </body>
 </html>
 
-<!--  LocalWords:  Retistruct YouTube Sterratt Lyngholm MRC KCL
+<!--  LocalWords:  Retistruct YouTube Sterratt Lyngholm MRC KCL PLoS
+ -->
+<!--  LocalWords:  visuotopic Willshaw Ubuntu th MacOS RGtk CRAN CMD
+ -->
+<!--  LocalWords:  Github Matlab SMI ImageJ Fluoro brightfield DOI
+ -->
+<!--  LocalWords:  ImageJ's Kakalec Tappero Lengyel macular Bleckert
+ -->
+<!--  LocalWords:  Metallomics Rieke nonmatching
  -->
