@@ -314,6 +314,7 @@ sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
 ##' within that triangle
 ##' @return An N-by-3 matrix of the Cartesian coordinates of the points
 ##' @author David Sterratt
+##' @export
 bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
   ## Initialise output
   cc <- matrix(NA, nrow(cb$p), 3)
@@ -346,6 +347,7 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 ##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of
 ##' locations of points in spherical coordinates 
 ##' @author David Sterratt
+##' @export
 sphere.cart.to.sphere.spherical <- function(P, R=1) {
   return(cbind(phi   =asin(P[,"Z"]/R),
                lambda=atan2(P[,"Y"], P[,"X"])))
