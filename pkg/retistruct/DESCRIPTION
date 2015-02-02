@@ -13,7 +13,7 @@ Description: Retistruct reconstructs retinae by morphing a flat surface with
 Version: 0.5.10
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2015-01-26
+Date: 2015-02-02
 Depends:
     R (>= 3.1.0)
 Imports:
