@@ -4,7 +4,7 @@ Title: Retinal Reconstruction Program
 Authors@R: c(person("David C.", "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")))
-Description: Retistruct reconstructs retinae by morphing a flat surface with
+Description: Reconstructs retinae by morphing a flat surface with
     cuts (a dissected flat-mount retina) onto a curvilinear surface (the a
     standard retinal shape). It can estimate the position of a point on the
     intact adult retina to within 8 degrees of arc (3.6% of nasotemporal axis).
@@ -13,7 +13,7 @@ Description: Retistruct reconstructs retinae by morphing a flat surface with
 Version: 0.5.10
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2015-02-02
+Date: 2015-02-16
 Depends:
     R (>= 3.1.0)
 Imports:
