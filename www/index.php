@@ -64,10 +64,12 @@ visual space. </li>
 <h2>Installation and documentation</h2>
 
 <p>Retistruct has been tested on GNU/Linux (Ubuntu 12.04), Mac OS X
-  10.8 and Microsoft Windows Vista. <strong>(Note that as of 30th
-  October 2013, it is not possible to install the graphical user
-  interface on MacOS X 10.9 (Mavericks). This is due to the RGtk2
-  package upon which the Retistruct GUI depends.)</strong></p>
+  10.8 and Microsoft Windows Vista. Installing the graphical user
+  interface on Mac OS X 10.9 (Mavericks) and 10.10 (Yosemite) is
+  possible, but requires the GTK library to be installed
+  first; <a href="http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html">see
+  Chris von Csefalvay's instructions</a>.
+</p>
 
 <h3>Stable version</h3>
 
@@ -128,8 +130,7 @@ code to read data directories contained by Retistruct.</p>
 
 If you encounter issues using Retistruct please either:
 <ul>
-  <li><a href="https://github.com/davidcsterratt/retistruct/issues">Submit
-  an issue on Github</a></li>
+  <li><a href="https://github.com/davidcsterratt/retistruct/issues">Report a bug on Github</a></li>
   <li><a href="mailto:david.c.sterratt@ed.ac.uk">Email David Sterratt</a></li>
 </ul>
 
@@ -174,9 +175,11 @@ the <a href="http://www.wellcome.ac.uk">Wellcome Trust</a> (G083305).
  -->
 <!--  LocalWords:  visuotopic Willshaw Ubuntu th MacOS RGtk CRAN CMD
  -->
-<!--  LocalWords:  Github Matlab SMI ImageJ Fluoro brightfield DOI
+<!--  LocalWords:  Github Matlab SMI ImageJ Fluoro brightfield DOI al
  -->
 <!--  LocalWords:  ImageJ's Kakalec Tappero Lengyel macular Bleckert
  -->
-<!--  LocalWords:  Metallomics Rieke nonmatching
+<!--  LocalWords:  Metallomics Rieke nonmatching GTK von Csefalvay's
+ -->
+<!--  LocalWords:  Flinn Neurobiology Wellcome
  -->
