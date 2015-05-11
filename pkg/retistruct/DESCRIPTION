@@ -4,16 +4,11 @@ Title: Retinal Reconstruction Program
 Authors@R: c(person("David C.", "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")))
-Description: Reconstructs retinae by morphing a flat surface with
-    cuts (a dissected flat-mount retina) onto a curvilinear surface (the a
-    standard retinal shape). It can estimate the position of a point on the
-    intact adult retina to within 8 degrees of arc (3.6% of nasotemporal axis).
-    The coordinates in reconstructed retinae can be transformed to visuotopic
-    coordinates.
-Version: 0.5.10
+Description: Reconstructs retinae by morphing a flat surface with cuts (a dissected flat-mount retina) onto a curvilinear surface (the standard retinal shape). It can estimate the position of a point on the intact adult retina to within 8 degrees of arc (3.6% of nasotemporal axis). The coordinates in reconstructed retinae can be transformed to visuotopic coordinates.
+Version: 0.5.11
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2015-02-16
+Date: 2015-05-11
 Depends:
     R (>= 3.1.0)
 Imports:
