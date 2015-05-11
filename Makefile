@@ -38,12 +38,15 @@ install-retistructdemos: retistructdemos
 
 doc: retistruct
 	rm -f retistruct.pdf
-	R CMD Rd2dvi --pdf retistruct
+	R CMD Rd2pdf pkg/retistruct
 
 user-guide:
 	cd doc &&	pdflatex retistruct-user-guide.tex && cp retistruct-user-guide.pdf ../www
 
-check:
+deps:
+	echo "if (!library(devtools, logical.return=TRUE)) { install.packages(\"devtools\"); library(devtools) } ; devtools::install_deps(\"pkg/retistruct\")"  |	R --no-restore --slave
+
+check: deps
 	R CMD check --as-cran $(RETISTRUCT_PACKAGE)
 
 revision:
