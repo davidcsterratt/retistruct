@@ -4,8 +4,7 @@
 \name{retistruct.global.revision}
 \alias{retistruct.global.revision}
 \title{Git short commit hash of Retistruct package}
-\format{\preformatted{ chr "cb06db4"
-}}
+\format{\preformatted{ chr "d573ca8"}}
 \usage{
 retistruct.global.revision
 }
