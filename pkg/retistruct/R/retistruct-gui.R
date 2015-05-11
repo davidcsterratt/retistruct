@@ -35,7 +35,7 @@ retistruct <- function() {
   ##
   ## @param guiToolkit The toolkit \code{gWidgets} toolkit that will
   ## be ' used for the GUI
-  guiToolkit <- "tcltk"
+  guiToolkit <- "RGtk2"
   require.package <- function(pkg) {
     if (!require(pkg, character.only=TRUE)) {
       message(paste("Trying to install required package", pkg))
