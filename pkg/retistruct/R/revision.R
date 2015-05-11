@@ -1,3 +1,3 @@
 ##' @title Git short commit hash of Retistruct package
 ##' @export
-retistruct.global.revision <- "d573ca8"
+retistruct.global.revision <- "161d30e"
