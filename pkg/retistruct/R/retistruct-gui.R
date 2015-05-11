@@ -581,8 +581,7 @@ retistruct <- function() {
   version.string <- function() {
     return(paste0("Retistruct ",
                   packageDescription("retistruct", fields="Version"),
-                  " (Revision", retistruct.global.revision, " of ",
-                  packageDescription("retistruct", fields="Date"), ")"))
+                  " (", packageDescription("retistruct", fields="Date"), ")"))
   }
   
   ##
