@@ -23,7 +23,7 @@ Imports:
     R.matlab
 Suggests:
     testthat,
-    gWidgetsRGtk2,
-    gWidgets,
+    gWidgets2RGtk2,
+    gWidgets2,
     cairoDevice
 Roxygen: list(wrap = FALSE)
