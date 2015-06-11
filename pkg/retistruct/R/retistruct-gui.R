@@ -733,7 +733,8 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.projection.frame <- gWidgets2::gframe("Projection", container=g.view)
   g.projection <- gWidgets2::gcombobox(
     names(getProjections()), selected=1, editable=FALSE,
-    handler=h.show, action=NULL, 
+    handler=h.show, action=NULL,
+    ellipsize="none",
     container=g.projection.frame)
 
   ## Projection centre
@@ -749,6 +750,7 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.transform.frame <- gWidgets2::gframe("Transform", container=g.view)
   g.transform <- gWidgets2::gcombobox(
     names(getTransforms()), selected = 1, editable=FALSE,
+    ellipsize="none",
     handler = h.show, action = NULL, 
     container = g.transform.frame)
 
