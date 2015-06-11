@@ -37,7 +37,13 @@ retistruct <- function() {
   ## be used for the GUI
   guiToolkit <- "RGtk2"
   require.package <- function(pkg) {
-    if (!require(pkg, character.only=TRUE)) {
+    suggests<-tools::package.dependencies(installed.packages()["retistruct",], depLevel="Suggests")$retistruct
+    suggests <- suggests[suggests[,1] == pkg]
+    uptodate <- ifelse(is.na(suggests[2]),
+                       TRUE,
+                       eval(parse(text=paste("packageVersion(suggests[1])", suggests[2],  "suggests[3]"))))
+    if (!require(pkg, character.only=TRUE) | 
+        !uptodate) {
       message(paste("Trying to install required package", pkg))
       install.packages(pkg)
       if (!require(pkg, character.only=TRUE)) {
