@@ -397,11 +397,11 @@ retistruct <- function() {
   }
 
   ## Handler for printing to a bitmap
-  h.print.bitmap <- function(d, initialfilename) {
+  h.print.bitmap <- function(d, initial.filename) {
     curdir <- getwd()
     setwd(a$dataset)  
     gWidgets2::gfile(type="save", text="Select a filename to save image to...",
-          initialfilename=initialfilename,
+          initial.filename=initial.filename,
           handler=function(h, ...) {
             print.bitmap(d, h$file)
           })
@@ -409,7 +409,7 @@ retistruct <- function() {
   }
 
   ## Handler for printing to a pdf file
-  h.print.pdf <- function(d, initialfilename) {
+  h.print.pdf <- function(d, initial.filename) {
     h.width <- function(h, ...) {
       options(retistruct.print.pdf.width=gWidgets2::svalue(g.width))
     }
@@ -427,7 +427,7 @@ retistruct <- function() {
     curdir <- getwd()
     setwd(a$dataset)  
     gWidgets2::gfile(type="save", text="Select a filename to save image to...",
-          initialfilename=initialfilename,
+          initial.filename=initial.filename,
           handler=function(h, ...) {
             print.pdf(d, h$file)
           })
@@ -437,19 +437,19 @@ retistruct <- function() {
   ## Handlers for printing bitmaps and PDFs from the two graphics
   ## devices
   h.print1 <- function(h, ...) {
-    h.print.bitmap(d1, initialfilename="image-flat.png")
+    h.print.bitmap(d1, initial.filename="image-flat.png")
   }
 
   h.print.pdf1 <- function(h, ...) {
-    h.print.pdf(d1, initialfilename="image-flat.pdf")
+    h.print.pdf(d1, initial.filename="image-flat.pdf")
   }
 
   h.print2 <- function(h, ...) {
-    h.print.bitmap(d2, initialfilename="image-polar.png")
+    h.print.bitmap(d2, initial.filename="image-polar.png")
   }
 
   h.print.pdf2 <- function(h, ...) {
-    h.print.pdf(d2, initialfilename="image-polar.pdf")
+    h.print.pdf(d2, initial.filename="image-polar.pdf")
   }
 
   ## Get and name available projections
