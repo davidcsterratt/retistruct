@@ -603,7 +603,7 @@ retistruct <- function() {
   mbl <- list()
   mbl$File$Open <- gWidgets2::gaction(label="Open", handler=h.select)
   mbl$File$Save <- gWidgets2::gaction(label="Save", handler=h.save)
-  mbl$Edit$Reconstruct <- gWidgets2::gaction(label="Reconstruct", handler=h.reconstruct)
+  mbl$Edit$Reconstruct <- gWidgets2::gaction(label="Reconstruct retina", handler=h.reconstruct)
   mbl$Edit$Properties <- gWidgets2::gaction(label="Properties", handler=h.properties)
   mbl$Demos$fig1 <-
     gWidgets2::gaction(label="Figure 1",
