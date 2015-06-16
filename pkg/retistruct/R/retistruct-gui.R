@@ -669,7 +669,7 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   ## Toolbar in row 1
   g.open         <- gWidgets2::gaction("Open", icon="open", handler=h.select)
   g.save         <- gWidgets2::gaction("Save", icon="save", handler=h.save)
-  g.reconstruct  <- gWidgets2::gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
+  g.reconstruct  <- gWidgets2::gaction("Reconstuct retina", icon="execute", handler=h.reconstruct)
   g.properties   <- gWidgets2::gaction("Properties", icon="properties", handler=h.properties)
   g.toolbar <- gWidgets2::gtoolbar(list(open=g.open,
                              save=g.save,
