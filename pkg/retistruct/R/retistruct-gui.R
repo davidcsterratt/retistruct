@@ -268,7 +268,7 @@ retistruct <- function() {
 
   ## Handler for brining up a file dialogue to open a dataset
   ##
-  ## Changes the global object r
+  ## Changes the object a
   ##
   ## Produces a plot of the retina in device d1
   ## 
@@ -283,12 +283,12 @@ retistruct <- function() {
       setwd(a$dataset)
       setwd("..")
     } 
-    gWidgets2::gfile(type="selectdir", text="Select a directory...",
-          handler = function(h, ...) {
-            a$dataset <<- h$file
-          })
+    dirname <- gWidgets2::gfile(type="selectdir", text="Select a directory...")
+    if (length(dirname) > 0) {
+      a$dataset <<- dirname
+      h.open()
+    }
     setwd(curdir)
-    h.open()
   }
 
   ## Handler for opening a file
@@ -399,12 +399,13 @@ retistruct <- function() {
   ## Handler for printing to a bitmap
   h.print.bitmap <- function(d, initial.filename) {
     curdir <- getwd()
-    setwd(a$dataset)  
-    gWidgets2::gfile(type="save", text="Select a filename to save image to...",
-          initial.filename=initial.filename,
-          handler=function(h, ...) {
-            print.bitmap(d, h$file)
-          })
+    setwd(a$dataset)
+    fname <- gWidgets2::gfile(type="save",
+                              text="Select a filename to save image to...",
+                              initial.filename=initial.filename)
+    if (length(fname) > 0) {
+      print.bitmap(d, fname)
+    }
     setwd(curdir)
   }
 
@@ -426,11 +427,12 @@ retistruct <- function() {
 
     curdir <- getwd()
     setwd(a$dataset)  
-    gWidgets2::gfile(type="save", text="Select a filename to save image to...",
-          initial.filename=initial.filename,
-          handler=function(h, ...) {
-            print.pdf(d, h$file)
-          })
+    fname <- gWidgets2::gfile(type="save",
+                              text="Select a filename to save image to...",
+                              initial.filename=initial.filename)
+    if (length(fname) > 0) {
+      print.pdf(d, fname)
+    }
     setwd(curdir)
   }
 
