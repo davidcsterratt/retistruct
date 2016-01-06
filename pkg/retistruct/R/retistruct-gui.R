@@ -45,7 +45,7 @@ retistruct <- function() {
       }
     }
   }
-  require.package(paste0("gWidgets2", guiToolkit))
+  require.package(paste0("gWidgets", guiToolkit))
   require.package("cairoDevice")
   options(guiToolkit=guiToolkit)
   

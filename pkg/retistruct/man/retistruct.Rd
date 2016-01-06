@@ -15,6 +15,6 @@ contains variables in object.
 Start the Retistruct GUI
 }
 \seealso{
-gWidgets2
+gWidgets
 }
 
