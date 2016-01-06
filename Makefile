@@ -44,7 +44,7 @@ user-guide:
 	cd doc &&	pdflatex retistruct-user-guide.tex && cp retistruct-user-guide.pdf ../www
 
 deps:
-	echo "if (!library(devtools, logical.return=TRUE)) { install.packages(\"devtools\"); library(devtools) } ; devtools::install_deps(\"pkg/retistruct\")"  |	R --no-restore --slave
+	echo "if (!library(devtools, logical.return=TRUE)) { install.packages(\"devtools\"); library(devtools) } ; devtools::install_deps(\"pkg/retistruct\", dependencies=c(\"Depends\", \"Suggests\"))"  |	R --no-restore --slave
 
 check: deps
 	R CMD check --as-cran $(RETISTRUCT_PACKAGE)
