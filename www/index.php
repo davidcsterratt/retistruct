@@ -154,15 +154,20 @@ degeneration". <em>Metallomics</em>. <a href="http://dx.doi.org/10.1039/c4mt0005
 
 <h2>Updates</h2>
 
-<p>March 2015<a href="https://www.linkedin.com/profile/view?id=ADEAAApksKkBd9EgawB_-ysAEyLjdBeLVfT7jSU&authType=OPENLINK&authToken=cUTs&locale=en_US&srchid=1073122861452092899387&srchindex=1&srchtotal=30&trk=vsrp_people_res_name&trkInfo=VSRPsearchId%3A1073122861452092899387%2CVSRPtargetId%3A174370985%2CVSRPcmpt%3Aprimary%2CVSRPnm%3Atrue%2CauthType%3AOPENLINK">Brian
+<dl>
+  <dt>March 2015</dt>
+  <dd><a href="https://www.linkedin.com/profile/view?id=ADEAAApksKkBd9EgawB_-ysAEyLjdBeLVfT7jSU&authType=OPENLINK&authToken=cUTs&locale=en_US&srchid=1073122861452092899387&srchindex=1&srchtotal=30&trk=vsrp_people_res_name&trkInfo=VSRPsearchId%3A1073122861452092899387%2CVSRPtargetId%3A174370985%2CVSRPcmpt%3Aprimary%2CVSRPnm%3Atrue%2CauthType%3AOPENLINK">Brian
   Cohn</a> has pointed out a precursor paper to Retistruct, which we
-weren't aware of when developing Retistruct, or writing the paper:</p>
-<ul><li>
-Curcio, C.A., Sloan, K. R. and Meyers, D. (1989) "Computer methods for
-sampling, reconstruction, display and analysis of retinal whole
-mounts".
-<em>Vision Res.</em> 29(5):529-40. <a href="http://www.ncbi.nlm.nih.gov/pubmed/2603390">Pubmed</a>
-</li></ul>
+  weren't aware of when developing Retistruct, or writing the paper:
+    <ul><li>
+        Curcio, C.A., Sloan, K. R. and Meyers, D. (1989) "Computer methods for
+        sampling, reconstruction, display and analysis of retinal whole
+        mounts".
+        <em>Vision Res.</em> 29(5):529-40. <a href="http://www.ncbi.nlm.nih.gov/pubmed/2603390">Pubmed</a>
+      </li>
+    </ul>
+  </dd>
+</dl>
 
 <h2>Authors and funding</h2>
 
