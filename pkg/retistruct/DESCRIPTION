@@ -8,7 +8,7 @@ Description: Reconstructs retinae by morphing a flat surface with cuts (a dissec
 Version: 0.5.11
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2015-06-16
+Date: 2016-01-12
 Depends:
     R (>= 3.1.0)
 Imports:
