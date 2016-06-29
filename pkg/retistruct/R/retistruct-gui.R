@@ -1,5 +1,5 @@
 ##' @title Start the Retistruct GUI
-##' @seealso gWidgets
+##' @seealso gWidgets2
 ##' @return Object with \code{getData()} method to return
 ##' reconstructed retina data and environment \code{this} which
 ##' contains variables in object.
@@ -31,13 +31,19 @@ retistruct <- function() {
   
   ## TODO: It would be good to make it possible to set
   ## guiToolkit=tcltk as an option to the function so that there is no
-  ## need to install gWidgetsRGtk2, which is problematic on a Mac
+  ## need to install gWidgets2RGtk2, which is problematic on a Mac
   ##
-  ## @param guiToolkit The toolkit \code{gWidgets} toolkit that will
-  ## be ' used for the GUI
+  ## @param guiToolkit The toolkit \code{gWidgets2} toolkit that will
+  ## be used for the GUI
   guiToolkit <- "RGtk2"
   require.package <- function(pkg) {
-    if (!require(pkg, character.only=TRUE)) {
+    suggests<-tools::package.dependencies(installed.packages()["retistruct",], depLevel="Suggests")$retistruct
+    suggests <- suggests[suggests[,1] == pkg]
+    uptodate <- ifelse(is.na(suggests[2]),
+                       TRUE,
+                       eval(parse(text=paste("packageVersion(suggests[1])", suggests[2],  "suggests[3]"))))
+    if (!require(pkg, character.only=TRUE) | 
+        !uptodate) {
       message(paste("Trying to install required package", pkg))
       install.packages(pkg)
       if (!require(pkg, character.only=TRUE)) {
@@ -45,7 +51,7 @@ retistruct <- function() {
       }
     }
   }
-  require.package(paste0("gWidgets", guiToolkit))
+  require.package(paste0("gWidgets2", guiToolkit))
   require.package("cairoDevice")
   options(guiToolkit=guiToolkit)
   
@@ -55,7 +61,7 @@ retistruct <- function() {
 
   enable.group <- function(widgets, state=TRUE) {
     for (w in widgets) {
-      gWidgets::enabled(w) <- state
+      gWidgets2::enabled(w) <- state
     }
   }
 
@@ -81,7 +87,7 @@ retistruct <- function() {
 
   ## Function to report to set status
   set.status <- function(s) {
-    gWidgets::svalue(g.status) <- s
+    gWidgets2::svalue(g.status) <- s
   }
 
   ## Utility function
@@ -102,7 +108,7 @@ retistruct <- function() {
   h.add <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets::svalue(g.status) <- paste("Click on the three points of the tear in any order.",
+    gWidgets2::svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                               identify.abort.text())
     dev.set(d1)
     pids <- with(a, identify(P[,1], P[,2], n=3, col=getOption("TF.col")))
@@ -110,7 +116,7 @@ retistruct <- function() {
       a <<- addTear(a, pids)
     }, warning=h.warning, error=h.warning)
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
@@ -118,13 +124,13 @@ retistruct <- function() {
   h.remove <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets::svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
+    gWidgets2::svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                               identify.abort.text())
     dev.set(d1)
     id <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
     a <<- removeTear(a, whichTear(a, id))
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
@@ -134,7 +140,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     dev.set(d1)
     ## Find the intial point
-    gWidgets::svalue(g.status) <- paste("Click on apex or vertex to move.",
+    gWidgets2::svalue(g.status) <- paste("Click on apex or vertex to move.",
                               identify.abort.text())
     id1 <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
     
@@ -143,7 +149,7 @@ retistruct <- function() {
 
     ## If there is a tear in which it occurs, select a point to move it to
     if (!is.na(tid)) {
-      gWidgets::svalue(g.status) <- paste("Click on point to move it to.",
+      gWidgets2::svalue(g.status) <- paste("Click on point to move it to.",
                                 identify.abort.text())
 
       ## Label first point
@@ -167,7 +173,7 @@ retistruct <- function() {
 
     ## Display and cleanup
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
@@ -175,7 +181,7 @@ retistruct <- function() {
   h.mark.n <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets::svalue(g.status) <- paste("Click on nasal point.",
+    gWidgets2::svalue(g.status) <- paste("Click on nasal point.",
                               identify.abort.text())
     dev.set(d1)
     id <- with(a, identify(P[,1], P[,2], n=1))
@@ -183,7 +189,7 @@ retistruct <- function() {
       a <<- setFixedPoint(a, id, "Nasal")
     }, warning=h.warning, error=h.warning)
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
@@ -191,7 +197,7 @@ retistruct <- function() {
   h.mark.d <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets::svalue(g.status) <- paste("Click on dorsal point.",
+    gWidgets2::svalue(g.status) <- paste("Click on dorsal point.",
                               identify.abort.text())
     dev.set(d1)
     id <- with(a, identify(P[,1], P[,2], n=1))
@@ -199,7 +205,7 @@ retistruct <- function() {
       a <<- setFixedPoint(a, id, "Dorsal")
     }, warning=h.warning, error=h.warning)
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
@@ -207,7 +213,7 @@ retistruct <- function() {
   h.mark.od <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets::svalue(g.status) <- paste("Click on a point on the optic disc.",
+    gWidgets2::svalue(g.status) <- paste("Click on a point on the optic disc.",
                               identify.abort.text())
     dev.set(d1)
     ## Convert list of segments to a matrix of points
@@ -229,14 +235,14 @@ retistruct <- function() {
     ## Set "OD" landmark
     a <<- nameLandmark(a, i, "OD")
     do.plot()
-    gWidgets::svalue(g.status) <- ""
+    gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
   ## Handler for setting phi0d
   h.phi0d <- function(h, ...) {
     unsaved.data(TRUE)
-    v <- gWidgets::svalue(g.phi0d)
+    v <- gWidgets2::svalue(g.phi0d)
     if (v < -80) {
       v <- -89
     }
@@ -262,7 +268,7 @@ retistruct <- function() {
 
   ## Handler for brining up a file dialogue to open a dataset
   ##
-  ## Changes the global object r
+  ## Changes the object a
   ##
   ## Produces a plot of the retina in device d1
   ## 
@@ -277,12 +283,12 @@ retistruct <- function() {
       setwd(a$dataset)
       setwd("..")
     } 
-    gWidgets::gfile(type="selectdir", text="Select a directory...",
-          handler = function(h, ...) {
-            a$dataset <<- h$file
-          })
+    dirname <- gWidgets2::gfile(type="selectdir", text="Select a directory...")
+    if (length(dirname) > 0) {
+      a$dataset <<- dirname
+      h.open()
+    }
     setwd(curdir)
-    h.open()
   }
 
   ## Handler for opening a file
@@ -296,9 +302,9 @@ retistruct <- function() {
     withCallingHandlers({
       a <<- retistruct.read.markup(a, error=message)
     }, warning=h.warning, error=h.warning)
-    gWidgets::svalue(g.win)   <- paste(version.string(), "-" ,a$dataset)
-    gWidgets::svalue(g.phi0d) <- a$phi0*180/pi
-    gWidgets::svalue(g.eye)   <- a$side
+    gWidgets2::svalue(g.win)   <- paste(version.string(), "-" ,a$dataset)
+    gWidgets2::svalue(g.phi0d) <- a$phi0*180/pi
+    gWidgets2::svalue(g.eye)   <- a$side
     
     ## Read the reconstruction data
     withCallingHandlers({
@@ -307,15 +313,15 @@ retistruct <- function() {
     ## If there is no reconstruction data, show the markup so that we
     ## don't think there is no markup.
     if (is.null(r)) {
-      gWidgets::svalue(g.show) <- unique(c("Markup", gWidgets::svalue(g.show)))
-      gWidgets::svalue(g.nb) <- 1                   # Set "Edit" tab
+      gWidgets2::svalue(g.show) <- unique(c("Markup", gWidgets2::svalue(g.show)))
+      gWidgets2::svalue(g.nb) <- 1                   # Set "Edit" tab
     } else {
-      gWidgets::svalue(g.nb) <- 2                   # Set "View" tab
+      gWidgets2::svalue(g.nb) <- 2                   # Set "View" tab
     }
-    gWidgets::delete(g.ids.frame, g.ids)
+    gWidgets2::delete(g.ids.frame, g.ids)
     ids <- getIDs(a)
     if (!is.null(ids)) {
-      g.ids <<- gWidgets::gcheckboxgroup(ids, checked=rep(TRUE, length(ids)),
+      g.ids <<- gWidgets2::gcheckboxgroup(ids, checked=rep(TRUE, length(ids)),
                                handler=h.show, container=g.ids.frame)
     }
     unsaved.data(FALSE)
@@ -342,7 +348,7 @@ retistruct <- function() {
       if (h$pageno == 1) {
         do.plot(markup=TRUE)
       } else {
-        do.plot(markup=("Markup" %in% (gWidgets::svalue(g.show))))
+        do.plot(markup=("Markup" %in% (gWidgets2::svalue(g.show))))
       }
     } else {
       do.plot()
@@ -352,14 +358,14 @@ retistruct <- function() {
   ## Handler for flipping DV axis
   h.flipdv <- function(h, ...) {
     unsaved.data(TRUE)
-    a$DVflip <<- ("Flip DV" %in% gWidgets::svalue(g.data))
+    a$DVflip <<- ("Flip DV" %in% gWidgets2::svalue(g.data))
     do.plot()
   }
 
   ## Handler for dealing with data
   h.eye <- function(h, ...) {
     unsaved.data(TRUE)
-    a$side <<- gWidgets::svalue(g.eye)
+    a$side <<- gWidgets2::svalue(g.eye)
     do.plot()
   }
 
@@ -391,59 +397,61 @@ retistruct <- function() {
   }
 
   ## Handler for printing to a bitmap
-  h.print.bitmap <- function(d, initialfilename) {
+  h.print.bitmap <- function(d, initial.filename) {
     curdir <- getwd()
-    setwd(a$dataset)  
-    gWidgets::gfile(type="save", text="Select a filename to save image to...",
-          initialfilename=initialfilename,
-          handler=function(h, ...) {
-            print.bitmap(d, h$file)
-          })
+    setwd(a$dataset)
+    fname <- gWidgets2::gfile(type="save",
+                              text="Select a filename to save image to...",
+                              initial.filename=initial.filename)
+    if (length(fname) > 0) {
+      print.bitmap(d, fname)
+    }
     setwd(curdir)
   }
 
   ## Handler for printing to a pdf file
-  h.print.pdf <- function(d, initialfilename) {
+  h.print.pdf <- function(d, initial.filename) {
     h.width <- function(h, ...) {
-      options(retistruct.print.pdf.width=gWidgets::svalue(g.width))
+      options(retistruct.print.pdf.width=gWidgets2::svalue(g.width))
     }
-    g.pdf <- gWidgets::gbasicdialog(title="PDF options", 
+    g.pdf <- gWidgets2::gbasicdialog(title="PDF options", 
                           handler=h.width)
-    g.pdf.group <- gWidgets::ggroup(container=g.pdf, horizontal=TRUE)
-    gWidgets::glabel("Width & height (inches)", container=g.pdf.group)
-    g.width <- gWidgets::gedit(getOption("retistruct.print.pdf.width"),
+    g.pdf.group <- gWidgets2::ggroup(container=g.pdf, horizontal=TRUE)
+    gWidgets2::glabel("Width & height (inches)", container=g.pdf.group)
+    g.width <- gWidgets2::gedit(getOption("retistruct.print.pdf.width"),
                      width=5, coerce.with=as.numeric,
                      container=g.pdf.group)
 
 
-    gWidgets::visible(g.pdf, set=TRUE)
+    gWidgets2::visible(g.pdf, set=TRUE)
 
     curdir <- getwd()
     setwd(a$dataset)  
-    gWidgets::gfile(type="save", text="Select a filename to save image to...",
-          initialfilename=initialfilename,
-          handler=function(h, ...) {
-            print.pdf(d, h$file)
-          })
+    fname <- gWidgets2::gfile(type="save",
+                              text="Select a filename to save image to...",
+                              initial.filename=initial.filename)
+    if (length(fname) > 0) {
+      print.pdf(d, fname)
+    }
     setwd(curdir)
   }
 
   ## Handlers for printing bitmaps and PDFs from the two graphics
   ## devices
   h.print1 <- function(h, ...) {
-    h.print.bitmap(d1, initialfilename="image-flat.png")
+    h.print.bitmap(d1, initial.filename="image-flat.png")
   }
 
   h.print.pdf1 <- function(h, ...) {
-    h.print.pdf(d1, initialfilename="image-flat.pdf")
+    h.print.pdf(d1, initial.filename="image-flat.pdf")
   }
 
   h.print2 <- function(h, ...) {
-    h.print.bitmap(d2, initialfilename="image-polar.png")
+    h.print.bitmap(d2, initial.filename="image-polar.png")
   }
 
   h.print.pdf2 <- function(h, ...) {
-    h.print.pdf(d2, initialfilename="image-polar.pdf")
+    h.print.pdf(d2, initial.filename="image-polar.pdf")
   }
 
   ## Get and name available projections
@@ -463,12 +471,12 @@ retistruct <- function() {
   }
 
   ## Plot in edit pane
-  do.plot <- function(markup=("Markup" %in% (gWidgets::svalue(g.show))) | (gWidgets::svalue(g.nb) == 1)) {
+  do.plot <- function(markup=("Markup" %in% (gWidgets2::svalue(g.show))) | (gWidgets2::svalue(g.nb) == 1)) {
     
     if (is.null(r)) {
       r <- a
     }
-    if ("Strain" %in% gWidgets::svalue(g.edit.show)) {   # Strain plot
+    if ("Strain" %in% gWidgets2::svalue(g.edit.show)) {   # Strain plot
       dev.set(d1)
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
@@ -483,38 +491,40 @@ retistruct <- function() {
       dev.set(d2)
       par(mar=c(4.5, 4.5, 1, 0.5))
       lvsLplot(r)
+      sphericalplot(r, strain=TRUE, datapoints=FALSE)
     } else {
       dev.set(d1)
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
-               datapoints=("Points" %in% gWidgets::svalue(g.show)),
-               grouped=("Counts" %in% gWidgets::svalue(g.show)),
-               landmarks=("Landmarks" %in% gWidgets::svalue(g.show)),
+               datapoints=("Points" %in% gWidgets2::svalue(g.show)),
+               grouped=("Counts" %in% gWidgets2::svalue(g.show)),
+               landmarks=("Landmarks" %in% gWidgets2::svalue(g.show)),
                markup=markup,
-               stitch=("Stitch" %in% gWidgets::svalue(g.show)),
-               grid=("Grid" %in% gWidgets::svalue(g.show)),
-               ids=gWidgets::svalue(g.ids),
+               stitch=("Stitch" %in% gWidgets2::svalue(g.show)),
+               grid=("Grid" %in% gWidgets2::svalue(g.show)),
+               ids=gWidgets2::svalue(g.ids),
                mesh=FALSE,
                scalebar=1)
       dev.set(d2)
       par(mar=c(0.7, 0.7, 0.7, 0.7))
       projection(r,
-                 datapoints=("Points" %in% gWidgets::svalue(g.show)),
-                 datapoint.means=("Point means" %in% gWidgets::svalue(g.show)),
-                 landmarks=("Landmarks" %in% gWidgets::svalue(g.show)),
-                 transform=getTransforms()[[gWidgets::svalue(g.transform)]],
-                 projection=getProjections()[[gWidgets::svalue(g.projection)]],
-                 axisdir=cbind(phi=gWidgets::svalue(g.axis.el), lambda=gWidgets::svalue(g.axis.az)),
-                 proj.centre=cbind(phi=gWidgets::svalue(g.pc.el), lambda=gWidgets::svalue(g.pc.az)),
-                 datapoint.contours=("Point contours" %in% gWidgets::svalue(g.show)),
-                 grouped=("Counts" %in% gWidgets::svalue(g.show)),
-                 grouped.contours=("Count contours" %in% gWidgets::svalue(g.show)),
-                 ids=gWidgets::svalue(g.ids))
+                 datapoints=("Points" %in% gWidgets2::svalue(g.show)),
+                 datapoint.means=("Point means" %in% gWidgets2::svalue(g.show)),
+                 landmarks=("Landmarks" %in% gWidgets2::svalue(g.show)),
+                 transform=getTransforms()[[gWidgets2::svalue(g.transform)]],
+                 projection=getProjections()[[gWidgets2::svalue(g.projection)]],
+                 axisdir=cbind(phi=gWidgets2::svalue(g.axis.el), lambda=gWidgets2::svalue(g.axis.az)),
+                 proj.centre=cbind(phi=gWidgets2::svalue(g.pc.el), lambda=gWidgets2::svalue(g.pc.az)),
+                 datapoint.contours=("Point contours" %in% gWidgets2::svalue(g.show)),
+                 grouped=("Counts" %in% gWidgets2::svalue(g.show)),
+                 grouped.contours=("Count contours" %in% gWidgets2::svalue(g.show)),
+                 ids=gWidgets2::svalue(g.ids))
       ## FIXME: EOD not computed
       if (!is.null(r$EOD)) {
         polartext(paste("OD displacement:",
                         format(r$EOD, digits=3, nsmall=2), "deg"))
       }
+      sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
     dev.set(d1)
   }
@@ -524,36 +534,38 @@ retistruct <- function() {
   ## "Error in get(\"toolkit\", inherits = TRUE) : object 'toolkit' not found\n"
   ## error itself.
   h.error <- function(e) {
-    gWidgets::gmessage(e, title="Error", icon="error")
+    gWidgets2::gmessage(e, title="Error", icon="error")
     stop(e)
   }
 
   ## Warning message
   h.warning <- function(e) {
-    gWidgets::gmessage(e, title="Warning", icon="warning")
+    gWidgets2::gmessage(e, title="Warning", icon="warning")
     invokeRestart("muffleWarning")
   }
 
 
   ## Poperties dialogue
   h.properties <- function(h, ...) {
-    g.win <- gWidgets::gwindow("Properties",
+    g.win <- gWidgets2::gwindow("Properties",
                      parent=g.win)
-    g.props <- gWidgets::ggroup(container=g.win, horizontal=FALSE)
-    g.colours <- gWidgets::gframe("Colours", container=g.props, horizontal=FALSE)
+    g.props <- gWidgets2::ggroup(container=g.win, horizontal=FALSE)
+    g.colours <- gWidgets2::gframe("Colours", container=g.props, horizontal=FALSE)
     cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow",
               "gray")
     g.prop.dl <- function(name, property, container) {
-      g.prop.dl.group <- gWidgets::ggroup(container=container)
-      gWidgets::glabel(name, container=g.prop.dl.group)
-      g.dl <- gWidgets::gdroplist(cols,
-                        selected=which(cols == options(property[1])),
-                        container=g.prop.dl.group,
-                        handler=function(h, ...) {
-                          for (p in property) {
-                            eval(parse(text=paste("options(", p, "=gWidgets::svalue(g.dl))")))
-                          }
-                          do.plot()})
+      g.prop.dl.group <- gWidgets2::ggroup(container=container)
+      gWidgets2::glabel(name, container=g.prop.dl.group)
+      g.dl <- gWidgets2::gdroplist(
+        cols,
+        selected=which(cols == options(property[1])),
+        container=g.prop.dl.group,
+        expand=TRUE,
+        handler=function(h, ...) {
+          for (p in property) {
+            eval(parse(text=paste("options(", p, "=gWidgets2::svalue(g.dl))")))
+          }
+          do.plot()})
     }
 
     g.prop.dl("Outline colour", "outline.col", g.colours)
@@ -562,20 +574,20 @@ retistruct <- function() {
     g.prop.dl("Major gridline colour", "grid.maj.col", g.colours)
     g.prop.dl("Minor gridline colour", "grid.min.col", g.colours)
 
-    g.printing <- gWidgets::gframe("Printing", container=g.props, horizontal=FALSE)
-    g.group <- gWidgets::ggroup(container=g.printing)
-    gWidgets::glabel("Maximum resolution of projection", container=g.group)
+    g.printing <- gWidgets2::gframe("Printing", container=g.props, horizontal=FALSE)
+    g.group <- gWidgets2::ggroup(container=g.printing)
+    gWidgets2::glabel("Maximum resolution of projection", container=g.group)
     property <- "max.proj.dim"
-    g.max.proj.dim <- gWidgets::gedit(0, width=5, coerce.with=as.numeric,
+    g.max.proj.dim <- gWidgets2::gedit(0, width=5, coerce.with=as.numeric,
                             container=g.group,
                             handler=function(h, ...) {
                               eval(parse(text=paste("options(", property, "=gWidgets::svalue(g.max.proj.dim))")))
                               do.plot()
                             })
-    gWidgets::svalue(g.max.proj.dim) <- getOption(property)
+    gWidgets2::svalue(g.max.proj.dim) <- getOption(property)
     
-    gWidgets::gbutton("Close", container=g.props,
-            handler = function(h,...) gWidgets::dispose(g.win))
+    gWidgets2::gbutton("Close", container=g.props,
+            handler = function(h,...) gWidgets2::dispose(g.win))
   }
 
   ## Construct the version string
@@ -590,126 +602,131 @@ retistruct <- function() {
   ##
 
   ## Top level window
-  g.win <- gWidgets::gwindow(version.string())
+  g.win <- gWidgets2::gwindow(version.string())
 
   ## Menu in row 0
   mbl <- list()
-  mbl$File$Open$handler <- h.select
-  mbl$File$Save$handler <- h.save
-  mbl$Edit$Reconstruct$handler <- h.reconstruct
-  mbl$Edit$Properties$handler <- h.properties
-  mbl$Edit$Properties$handler <- h.properties
+  mbl$File$Open <- gWidgets2::gaction(label="Open", handler=h.select)
+  mbl$File$Save <- gWidgets2::gaction(label="Save", handler=h.save)
+  mbl$Edit$Reconstruct <- gWidgets2::gaction(label="Reconstruct retina", handler=h.reconstruct)
+  mbl$Edit$Properties <- gWidgets2::gaction(label="Properties", handler=h.properties)
   mbl$Demos$fig1 <-
-    gWidgets::gaction(label="Figure 1",
+    gWidgets2::gaction(label="Figure 1",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata, "GM509", "R-CONTRA")
               h.open()
             })
   mbl$Demos$fig2low <-
-    gWidgets::gaction(label="Figure 2A-D: Low deformation",
+    gWidgets2::gaction(label="Figure 2A-D: Low deformation",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata, "GMB530", "R-CONTRA")
               h.open()
             })
   mbl$Demos$fig2high <-
-    gWidgets::gaction(label="Figure 2E-H: High deformation",
+    gWidgets2::gaction(label="Figure 2E-H: High deformation",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata, "GM182-4", "R-CONTRA")
               h.open()
             })
-  mbl$Demos$SMI32$handler <- function(h, ...) {
-    a$dataset <<- file.path(extdata, "smi32")
-    h.open()
-  }
+  mbl$Demos$smi32 <- gWidgets2::gaction(
+    label="SMI32",
+    handler=function(h, ...) {
+      a$dataset <<- file.path(extdata, "smi32")
+      h.open()
+    })
   mbl$Demos$left.contra <-
-    gWidgets::gaction(label="Figure 6 Left Contra",
+    gWidgets2::gaction(label="Figure 6 Left Contra",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-contra")
               h.open()
             })
   mbl$Demos$left.ipsi <-
-    gWidgets::gaction(label="Figure 6 Left Ipsi",
+    gWidgets2::gaction(label="Figure 6 Left Ipsi",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-ipsi")
               h.open()
             })
   mbl$Demos$right.contra <-
-    gWidgets::gaction(label="Figure 6 Right Contra",
+    gWidgets2::gaction(label="Figure 6 Right Contra",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-contra")
               h.open()
             })
   mbl$Demos$right.ipsi <-
-    gWidgets::gaction(label="Figure 6 Right Ipsi",
+    gWidgets2::gaction(label="Figure 6 Right Ipsi",
             handler=function(h, ...) {
               a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-ipsi")
               h.open()
             })
-  mbl$Help$About$handler <- function(h, ...) {
-    gWidgets::gmessage("Retistruct was written by David Sterratt at the University of Edinburgh, and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for Developmental Neurobiology, KCL.
+  mbl$Help$About <- gWidgets2::gaction(
+    label="About",
+    handler=function(h, ...) {
+      gWidgets2::gmessage(
+        "Retistruct was written by David Sterratt at the University of Edinburgh, and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for Developmental Neurobiology, KCL.
 
-This work was supported by a Programme Grant from the Wellcome Trust (G083305). ", title="About")
-  }
+This work was supported by a Programme Grant from the Wellcome Trust (G083305). ",
+        title="About")
+  })
 
-  g.menu <- gWidgets::gmenu(mbl, container=g.win)
+  g.menu <- gWidgets2::gmenu(mbl, container=g.win)
   
-  g.rows <- gWidgets::ggroup(horizontal=FALSE, container=g.win)
+  g.rows <- gWidgets2::ggroup(horizontal=FALSE, container=g.win)
   ## Toolbar in row 1
-  g.open         <- gWidgets::gaction("Open", icon="open", handler=h.select)
-  g.save         <- gWidgets::gaction("Save", icon="save", handler=h.save)
-  g.reconstruct  <- gWidgets::gaction("Reconstuct retina", icon="polar", handler=h.reconstruct)
-  g.properties   <- gWidgets::gaction("Properties", icon="properties", handler=h.properties)
-  g.toolbar <- gWidgets::gtoolbar(list(open=g.open,
+  g.open         <- gWidgets2::gaction("Open", icon="open", handler=h.select)
+  g.save         <- gWidgets2::gaction("Save", icon="save", handler=h.save)
+  g.reconstruct  <- gWidgets2::gaction("Reconstuct retina", icon="execute", handler=h.reconstruct)
+  g.properties   <- gWidgets2::gaction("Properties", icon="properties", handler=h.properties)
+  g.toolbar <- gWidgets2::gtoolbar(list(open=g.open,
                              save=g.save,
                              reconstruct=g.reconstruct,
                              options=g.properties),
-                        container=g.rows, style="both")
+                        container=g.win, style="both")
 
   ## Body of interface
-  g.body <- gWidgets::ggroup(container=g.rows)
+  g.body <- gWidgets2::ggroup(container=g.rows)
 
   ## "Edit" and "View" tabs
-  g.nb <- gWidgets::gnotebook(container=g.body)
+  g.nb <- gWidgets2::gnotebook(container=g.body)
 
   ## Edit tab
   
   ## Tear editor
-  g.editor <- gWidgets::ggroup(horizontal = FALSE, container=g.nb, label="Edit")
+  g.editor <- gWidgets2::ggroup(horizontal = FALSE, container=g.nb, label="Edit")
 
-  g.add     <- gWidgets::gbutton("Add tear",    handler=h.add,     container=g.editor)
-  g.move    <- gWidgets::gbutton("Move Point",  handler=h.move,    container=g.editor)
-  g.remove  <- gWidgets::gbutton("Remove tear", handler=h.remove,  container=g.editor)
-  g.mark.n  <- gWidgets::gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
-  g.mark.d  <- gWidgets::gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
-  g.mark.od <- gWidgets::gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
+  g.add     <- gWidgets2::gbutton("Add tear",    handler=h.add,     container=g.editor)
+  g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
+  g.remove  <- gWidgets2::gbutton("Remove tear", handler=h.remove,  container=g.editor)
+  g.mark.n  <- gWidgets2::gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
+  g.mark.d  <- gWidgets2::gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
+  g.mark.od <- gWidgets2::gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
   
   ## Editting of data
-  g.data.frame <- gWidgets::gframe("Data", container=g.editor, horizontal=FALSE)
-  g.data <- gWidgets::gcheckboxgroup(c("Flip DV"),
+  g.data.frame <- gWidgets2::gframe("Data", container=g.editor, horizontal=FALSE)
+  g.data <- gWidgets2::gcheckboxgroup(c("Flip DV"),
                            checked=c(FALSE),
                            handler=h.flipdv, container=g.data.frame)
-  g.eye.frame <- gWidgets::gframe("Eye", container=g.editor, horizontal=FALSE)
-  g.eye <- gWidgets::gradio(c("Right", "Left"),
+  g.eye.frame <- gWidgets2::gframe("Eye", container=g.editor, horizontal=FALSE)
+  g.eye <- gWidgets2::gradio(c("Right", "Left"),
                   checked=c(FALSE),
                   handler=h.eye, container=g.eye.frame)
   
   ## Editing of phi0
-  g.phi0d.frame <- gWidgets::gframe("Phi0", container=g.editor)
-  g.phi0d <- gWidgets::gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
+  g.phi0d.frame <- gWidgets2::gframe("Phi0", container=g.editor)
+  g.phi0d <- gWidgets2::gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
                    container=g.phi0d.frame)
 
   ## Whether to show strain
-  g.edit.show.frame <- gWidgets::gframe("Show", container=g.editor)
-  g.edit.show <- gWidgets::gcheckboxgroup(c("Strain"),
+  g.edit.show.frame <- gWidgets2::gframe("Show", container=g.editor)
+  g.edit.show <- gWidgets2::gcheckboxgroup(c("Strain"),
                                 checked=c(FALSE),
                                 handler=h.show, container=g.edit.show.frame)
 
   ## View Tab
 
   ## What to show
-  g.view <- gWidgets::ggroup(horizontal=FALSE, container=g.nb, label="View")
-  g.show.frame <- gWidgets::gframe("Show", container=g.view)
-  g.show <- gWidgets::gcheckboxgroup(c("Markup", "Stitch", "Grid", "Landmarks",
+  g.view <- gWidgets2::ggroup(horizontal=FALSE, container=g.nb, label="View")
+  g.show.frame <- gWidgets2::gframe("Show", container=g.view)
+  g.show <- gWidgets2::gcheckboxgroup(c("Markup", "Stitch", "Grid", "Landmarks",
                              "Points", "Point means", "Point contours",
                              "Counts", "Count contours"),
                            checked=c(TRUE, FALSE, FALSE, FALSE,
@@ -718,67 +735,72 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
                            handler=h.show, container=g.show.frame)
 
   ## Group IDs
-  g.ids.frame <- gWidgets::gframe("IDs", container=g.view)
-  g.ids <- gWidgets::gcheckboxgroup("All", checked=TRUE,
+  g.ids.frame <- gWidgets2::gframe("IDs", container=g.view)
+  g.ids <- gWidgets2::gcheckboxgroup("All", checked=TRUE,
                           handler=h.show, container=g.ids.frame)
 
   
   ## Projection type
-  g.projection.frame <- gWidgets::gframe("Projection", container=g.view)
-  g.projection <- gWidgets::gdroplist(names(getProjections()), selected=1,
-                            handler=h.show, 
-                            action=NULL, container=g.projection.frame)
+  g.projection.frame <- gWidgets2::gframe("Projection", container=g.view)
+  g.projection <- gWidgets2::gcombobox(
+    names(getProjections()), selected=1, editable=FALSE,
+    handler=h.show, action=NULL,
+    ellipsize="none",
+    container=g.projection.frame)
 
   ## Projection centre
-  g.pc.frame <- gWidgets::gframe("Projection centre", container=g.view, horizontal=TRUE)
-  gWidgets::glabel("El", container=g.pc.frame)
-  g.pc.el <- gWidgets::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
+  g.pc.frame <- gWidgets2::gframe("Projection centre", container=g.view, horizontal=TRUE)
+  gWidgets2::glabel("El", container=g.pc.frame)
+  g.pc.el <- gWidgets2::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                    container=g.pc.frame)
-  gWidgets::glabel("Az", container=g.pc.frame)
-  g.pc.az <- gWidgets::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
+  gWidgets2::glabel("Az", container=g.pc.frame)
+  g.pc.az <- gWidgets2::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                    container=g.pc.frame)
 
   ## Transform
-  g.transform.frame <- gWidgets::gframe("Transform", container=g.view)
-  g.transform <- gWidgets::gdroplist(names(getTransforms()), selected = 1,  handler = h.show, 
-                           action = NULL, container = g.transform.frame)
+  g.transform.frame <- gWidgets2::gframe("Transform", container=g.view)
+  g.transform <- gWidgets2::gcombobox(
+    names(getTransforms()), selected = 1, editable=FALSE,
+    ellipsize="none",
+    handler = h.show, action = NULL, 
+    container = g.transform.frame)
 
   ## Axis direction
-  g.axisdir.frame <- gWidgets::gframe("Axis direction", container=g.view, horizontal=TRUE)
-  gWidgets::glabel("El", container=g.axisdir.frame)
-  g.axis.el <- gWidgets::gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
+  g.axisdir.frame <- gWidgets2::gframe("Axis direction", container=g.view, horizontal=TRUE)
+  gWidgets2::glabel("El", container=g.axisdir.frame)
+  g.axis.el <- gWidgets2::gedit("90", handler=h.show, width=5, coerce.with=as.numeric,
                      container=g.axisdir.frame)
-  gWidgets::glabel("Az", container=g.axisdir.frame)
-  g.axis.az <- gWidgets::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
+  gWidgets2::glabel("Az", container=g.axisdir.frame)
+  g.axis.az <- gWidgets2::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                      container=g.axisdir.frame)
 
   ## Graphs at right
 
   ## Flat plot
-  g.f1 <- gWidgets::ggroup(horizontal=FALSE, container=g.body)
+  g.f1 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body)
   ## Buttons
-  g.f1.buttons <- gWidgets::ggroup(horizontal=TRUE, container=g.f1)
-  g.print1     <- gWidgets::gbutton("Bitmap", handler=h.print1,     container=g.f1.buttons)
-  g.print.pdf1 <- gWidgets::gbutton("PDF",    handler=h.print.pdf1, container=g.f1.buttons)
+  g.f1.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f1)
+  g.print1     <- gWidgets2::gbutton("Bitmap", handler=h.print1,     container=g.f1.buttons)
+  g.print.pdf1 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf1, container=g.f1.buttons)
   ## Device itself
-  g.fd1 <- gWidgets::ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
+  g.fd1 <- gWidgets2::ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f1)
   d1 <- dev.cur()
 
   ## Projection
-  g.f2 <- gWidgets::ggroup(horizontal=FALSE, container=g.body)
+  g.f2 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body)
   ## Buttons  
-  g.f2.buttons <- gWidgets::ggroup(horizontal=TRUE, container=g.f2)  
-  g.print2     <- gWidgets::gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
-  g.print.pdf2 <- gWidgets::gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
+  g.f2.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f2)  
+  g.print2     <- gWidgets2::gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
+  g.print.pdf2 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
   ## Device itself
-  g.fd2 <- gWidgets::ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f2)
+  g.fd2 <- gWidgets2::ggraphics(expand=TRUE, width=500, height=500, ps=11, container=g.f2)
   d2 <- dev.cur()
   
   ## Status bar
   ## g.statusbar <- ggroup(container=g.rows)
-  g.statusbar <- gWidgets::gframe("", expand=TRUE, container=g.rows)
-  g.status <- gWidgets::glabel("", container=g.statusbar)
-  gWidgets::addSpring(g.statusbar)
+  g.statusbar <- gWidgets2::gframe("", expand=TRUE, container=g.rows)
+  g.status <- gWidgets2::glabel("", container=g.statusbar)
+  gWidgets2::addSpring(g.statusbar)
 
   ## Disable buttons initially
   unsaved.data(FALSE)
@@ -786,7 +808,7 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
 
   ## Have to add the hander to the notebook at the end, otherwise
   ## there are complaints about various components not being defined.
-  gWidgets::addHandlerChanged(g.nb, handler=h.show)
+  gWidgets2::addHandlerChanged(g.nb, handler=h.show)
 
   return(invisible(list(getData=getData, env=this)))
 }
