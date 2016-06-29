@@ -2,7 +2,7 @@ RETISTRUCT_VERSION=$(shell grep Version pkg/retistruct/DESCRIPTION | perl -p -e 
 RETISTRUCTDEMOS_VERSION=$(shell grep Version pkg/retistructdemos/DESCRIPTION | perl -p -e "s/Version: //;")
 # RETISTRUCT_SVN_VERSION=$(shell git svn info | grep "Last Changed Rev:" | perl -p -e 's/Last Changed Rev: //;' | sort -n -r | head -1)
 RETISTRUCT_GIT_COMMIT_HASH=$(shell git log --pretty="%h" HEAD^..HEAD)
-RETISTRUCT_GIT_AUTHORDATE=$(shell git log --date=short --pretty="%ad" HEAD^..HEAD)
+RETISTRUCT_GIT_AUTHORDATE=$(shell git log --date=short --pretty="%ad" HEAD^..HEAD | head -1)
 ifeq ("$(RETISTRUCT_GIT_COMMIT_HASH)", "")
 	RETISTRUCT_GIT_COMMIT_HASH=1000
 endif
