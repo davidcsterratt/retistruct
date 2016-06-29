@@ -491,6 +491,7 @@ retistruct <- function() {
       dev.set(d2)
       par(mar=c(4.5, 4.5, 1, 0.5))
       lvsLplot(r)
+      sphericalplot(r, strain=TRUE, datapoints=FALSE)
     } else {
       dev.set(d1)
       par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -523,6 +524,7 @@ retistruct <- function() {
         polartext(paste("OD displacement:",
                         format(r$EOD, digits=3, nsmall=2), "deg"))
       }
+      sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
     dev.set(d1)
   }
