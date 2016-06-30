@@ -1,5 +1,11 @@
 CHANGES IN VERSION 0.5.11 - Released 2016/??/??
 
+NEW FEATURES
+
+* The CSV input format can now take a file of counts (or "grouped") data
+  (https://github.com/davidcsterratt/retistruct/issues/7)
+  Thanks to Nicolas Nagoo for the report.
+
 BUG FIXES
 
 * 3D (RGL) plot now appears after reconstruction

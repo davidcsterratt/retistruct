@@ -16,8 +16,10 @@ A \code{\link{RetinalDataset}} object
 Read a retinal dataset in CSV format. Each dataset is a folder
 containing a file called outline.csv that specifies the outline in
 X-Y coordinates. It may also contain a file \code{datapoints.csv},
-containing the locations of data points; see
-\code{\link{read.datapoints}} for the format of this file. The
+containing the locations of data points and a file
+\code{datacounts.csv}, containing the locations of data counts;
+see \code{\link{read.datapoints}} and
+\code{\link{read.datacountss}} for the formats of these files. The
 folder may also contain a file \code{od.csv} specifying the
 coordinates of the optic disc.
 }

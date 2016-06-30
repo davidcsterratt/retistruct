@@ -5,8 +5,10 @@ csv.checkDatadir <- function(dir=NULL) {
 ##' Read a retinal dataset in CSV format. Each dataset is a folder
 ##' containing a file called outline.csv that specifies the outline in
 ##' X-Y coordinates. It may also contain a file \code{datapoints.csv},
-##' containing the locations of data points; see
-##' \code{\link{read.datapoints}} for the format of this file. The
+##' containing the locations of data points and a file
+##' \code{datacounts.csv}, containing the locations of data counts;
+##' see \code{\link{read.datapoints}} and
+##' \code{\link{read.datacountss}} for the formats of these files. The
 ##' folder may also contain a file \code{od.csv} specifying the
 ##' coordinates of the optic disc.
 ##' 
@@ -45,6 +47,7 @@ csv.read.dataset <- function(dataset) {
   cols <- c(cols, dat$cols)
   Ds <- lapply(Ds, function(P) {cbind(P[,1], offset - P[,2])})
 
+  ## Extract landmarks (currently optic disc)
   Ss <- list()
 
   ## Read in an Optic Disc. FIXME: this should actually be marked as
@@ -55,6 +58,17 @@ csv.read.dataset <- function(dataset) {
     out[,2] <- offset - out[,2]
     Ss[["OD"]] <- out
   }
+
+  ## Extract datapoints
+  ##
+  ## At present, for the plotting functions to work, the name of each
+  ## group has to be a valid colour. There are no datapoints in this
+  ## format, but we may have landmarks.
+  Gs <- list()
+  dat <- read.datacounts(dataset)
+  Gs <- c(Gs, dat$Gs)
+  cols <- c(cols, dat$cols)
+  Gs <- lapply(Gs, function(P) {cbind(P[,1], offset - P[,2], P[,3])})
   
   ## Create forward and backward pointers
   o <- Outline(P, scale, im)
@@ -65,7 +79,7 @@ csv.read.dataset <- function(dataset) {
   ##    stop("Unable to find a closed outline.")
   ## }
 
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(outline=out))
+  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(outline=out), Gs=Gs)
   a <- AnnotatedOutline(d)
   a <- RetinalDataset(a)
   return(a)

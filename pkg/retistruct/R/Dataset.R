@@ -66,7 +66,7 @@ getLandmarkID <- function(d, name) {
 ##' @method getIDs dataset
 ##' @export
 getIDs.dataset <- function(r) {
-  return(names(r$Ds))
+  return(c(names(r$Ds), names(r$Gs)))
 }
 
 ##' @title Flat plot of Dataset
