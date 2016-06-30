@@ -104,7 +104,7 @@ ReconstructedOutline <- function(o,
   ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
   r$nflip0 <- sum(ft$flipped)
   
-  report("Optimising mapping with no area constratint using BFGS...")
+  report("Optimising mapping with no area constraint using BFGS...")
   r <- optimiseMapping(r, alpha=0, x0=0, nu=1,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
@@ -113,11 +113,11 @@ ReconstructedOutline <- function(o,
                           dtmax=500, maxmove=1E2, tol=1e-5,
                           plot.3d=plot.3d,
                           dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with strong area constratint using BFGS...")
+  report("Optimising mapping with strong area constraint using BFGS...")
   r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=1,
                         plot.3d=plot.3d,
                         dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with weak area constratint using BFGS...")
+  report("Optimising mapping with weak area constraint using BFGS...")
   r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5,
                         plot.3d=plot.3d, 
                         dev.flat=dev.flat, dev.polar=dev.polar)
