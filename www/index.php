@@ -137,6 +137,18 @@ If you encounter issues using Retistruct please either:
 <h2>Work using Retistruct</h2>
 
 <ul>
+<li>Smodlaka, H. and Khamas, W. A. and Palmer, L. and Lui, B. and
+  Borovac, J. A. and Cohn, B. A. and Schmitz, L. (2016) "Eye Histology
+  and Ganglion Cell Topography of Northern Elephant Seals (Mirounga
+  angustirostris)" <em>Anat. Rec.
+  (Hoboken)</em> <strong>6</strong>:&nbsp;798-805. <a href="http://dx.doi.org/10.1002/ar.23342">DOI:
+  10.1002/ar.23342</a>
+</li>
+<li>Cohn, B. A. and Collin, S. P. and Wainwright, P. C. and Schmitz,
+  L. (2015) "Retinal topography maps in R: new tools for the analysis
+  and visualization of spatial retinal
+  data". <em>J. Vis.</em> <strong>15</strong>:&nbsp;19. <a href="http://dx.doi.org/10.1167/15.9.19">DOI:
+  10.1167/15.9.19</a></li>
 <li>Flinn, J. M., Kakalec P., Tappero, R., Jones, B. and Lengyel,
 I. (2014) "Correlations in distribution and concentration of calcium,
 copper and iron with zinc in isolated extracellular deposits
@@ -144,11 +156,12 @@ associated with age-related macular
 degeneration". <em>Metallomics</em>. <a href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
 10.1039/c4mt00058g</a>
  </li>
-<li>Bleckert, A.,  Schwartz, G. W., Turner, M.H., Rieke, F., Wong,
-  R. O. L. (2014) "Visual space is represented by nonmatching topographies of
-  distinct mouse retinal ganglion cell types". <em>Current
-  Biology</em> <strong>24</strong>:
-  310-315.  <a href="http://dx.doi.org/10.1016/j.cub.2013.12.020">DOI: 10.1016/j.cub.2013.12.020</a>
+<li>Bleckert, A., Schwartz, G. W., Turner, M.H., Rieke, F., Wong,
+  R. O. L. (2014) "Visual space is represented by nonmatching
+  topographies of distinct mouse retinal ganglion cell
+  types". <em>Current
+  Biology</em> <strong>24</strong>:&nbsp;310-315.  <a href="http://dx.doi.org/10.1016/j.cub.2013.12.020">DOI:
+  10.1016/j.cub.2013.12.020</a>
 </li>
 </ul>
 
