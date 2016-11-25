@@ -28,11 +28,12 @@ checkDatadir <- function(dir=NULL) {
 ##' the files in the directory.
 ##' 
 ##' @title Read a retinal dataset
-##' @param dataset Path to directory containing as SYS and MAP file
-##' @param ... Parameters passed to the format-specific functions. 
+##' @param dataset Path to directory containing the files
+##'   corresponding to each format.
+##' @param ... Parameters passed to the format-specific functions.
 ##' @return An object that of classes \code{\link{RetinalDataset}} and
-##' \code{\link{RetinalDataset}}. There may be extra fields too,
-##' depending on the format.
+##'   \code{\link{RetinalDataset}}. There may be extra fields too,
+##'   depending on the format.
 ##' @author David Sterratt
 ##' @export
 retistruct.read.dataset <- function(dataset, ...) {
