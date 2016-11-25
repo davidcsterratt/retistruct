@@ -10,7 +10,7 @@ read.scale <- function(dataset) {
       stop("Scale file has not been read correctly. Check it is in the correct format.")
     }
   } else {
-    warning("Scale file does not exist. Scale bar will not be set.")
+    warning("Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
   }
   return(scale)
 }

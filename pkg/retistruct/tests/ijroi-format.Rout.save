@@ -1,6 +1,6 @@
 
 R version 3.1.1 (2014-07-10) -- "Sock it to Me"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+Copyright (C) 2014, 2016 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -23,7 +23,7 @@ Type 'q()' to quit R.
 Reading datapoints
 Warning message:
 In read.scale(dataset) :
-  Scale file does not exist. Scale bar will not be set.
+  Scale file "scale.csv" does not exist. Scale bar will not be set.
 > print(r$Ds)
 $marking
         [,1]   [,2]
@@ -36,7 +36,7 @@ $marking
 Reading datapoints
 Warning message:
 In read.scale(dataset) :
-  Scale file does not exist. Scale bar will not be set.
+  Scale file "scale.csv" does not exist. Scale bar will not be set.
 > print(r$Ds)
 $marking
         [,1]   [,2]
