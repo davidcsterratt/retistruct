@@ -1,0 +1,622 @@
+\documentclass{article}
+
+\newcommand{\svninfo}{$ $Rev$ $, $ $Date$ $}
+\pagestyle{myheadings}
+\markboth{\svninfo}{\svninfo}
+
+\usepackage[a4paper,left=1in,right=1in,top=1in,bottom=1in,head=1in]{geometry}
+
+\usepackage[british]{babel}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{\textsc{Retistruct} Tutorial}
+\author{David C. Sterratt}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{myheadings}
+
+\section{Installation}
+\label{manual:sec:installation}
+
+\subsection{Install the necessary system packages}
+
+\subsubsection{Fedora Linux }
+
+As root,
+
+\begin{verbatim}
+yum install R-core
+yum install R-devel
+yum install gtk2
+yum install gtk2-devel
+yum install mesa-libGL-devel
+yum install mesa-libGLU-devel
+\end{verbatim}
+
+\subsubsection{Ubuntu Linux}
+At the command line, enter:
+
+\begin{verbatim}
+sudo apt-get install r-base r-cran-rgl libgtk2.0-dev
+\end{verbatim}
+% Need to install RGtk2 separately??
+
+\subsubsection{Mac OS X}
+\label{retistruct-manual:sec:mac}
+
+First install R for Mac OS X, available from
+\url{http://www.r-project.org/}. Under Mac OS X Leopard and Lion, this
+should be sufficient. Under Mac OS X 10.8 (Snow Leopard), it may be
+necessary to install the following external packages:
+\begin{itemize}
+\item Xcode (free from App Store)
+\item Xquartz (\href{http://xquartz.macosforge.org/}{http://xquartz.macosforge.org/})
+\item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
+\end{itemize}
+
+\subsubsection{MS/Windows}
+
+First install R for MS/Windows, available from \url{http://www.r-project.org/}.
+
+\subsection{Install the core \textsc{Retistruct} package}
+
+\begin{enumerate}
+\item Start \textsc{R}
+ \item  Type:
+\begin{verbatim}
+source("http://retistruct.r-forge.r-project.org/install.R")
+\end{verbatim}
+   The first time this runs, it should create a personal directory for
+   R packages, and it will take a few minutes to install some required
+   packages.
+ \item Test that it is working as follows (from within R)
+\begin{verbatim}
+   library(retistruct)
+   demo("retistruct.method")
+\end{verbatim}
+   If all is well, you should be prompted to press \textbf{Return} a
+   few times and Figure 1 from the paper \cite{SterrattEtal2012} will
+   appear (drawing the 3D renditions takes some time). There will be
+   reports of warnings; they are to do with printing the figures to
+   files. You can view them by typing \texttt{warnings()}.
+ \item A further test produces Figure~2:
+\begin{verbatim}
+   demo("low.high")
+\end{verbatim}
+ \item A further (quite long-running) test produces Figure~6:
+\begin{verbatim}
+   library(retistructdemos)
+   demo("figure6")
+\end{verbatim}
+\end{enumerate}
+
+\subsection{Install the \textsc{Retistruct} GUI}
+\label{retistruct-manual:sec:inst-retistr-gui}
+
+If the previous step works:
+\begin{enumerate}
+\item Type:
+\begin{verbatim}
+source("http://retistruct.r-forge.r-project.org/install-gui.R")
+\end{verbatim}
+\item Under MS/Windows, there may be an  error message saying that
+  libatk-1.0-0.dll is missing from your computer. Click on
+  \textbf{OK}. Another message will appear, asking if you want to
+  install GTK+. Agree to this.  After this has finished, quit R
+  (without saving the workspace image) and restart.
+\item An interface window may appear at this stage. In any case, move
+  to the next section.
+\end{enumerate}
+
+% \section{A tutorial}
+% \label{retistruct-user-guide:sec:tutorial}
+
+% This is a tutorial using some sample data provided on the website. 
+
+% \begin{enumerate}
+% \item Download the data from
+%   \href{http://retistruct.r-forge.r-project.org/Figure_6-data.zip}{http://retistruct.r-forge.r-project.org/Figure\_6-data.zip}. This
+%   is the data that underlies Figure~6 of \cite{SterrattEtal2012}
+% \item Unpack the zip file. A directory \texttt{Figure\_6-data} will be created.
+% \item Start retistruct by first starting \textsc{R}. At the \textsc{R}
+%   prompt type:
+% \begin{verbatim}
+% > library(retistruct)
+% > retistruct()
+% \end{verbatim}
+%   A window should appear.
+% \item Click on the \textbf{Open} icon and navigate to the
+%   \texttt{left-contra} directory in the \texttt{Figure\_6-data} directory.
+% \end{enumerate}
+
+\section{Running \textsc{Retistruct}}
+\label{manual:sec:running}
+
+To start the program, start \textsc{R}. At the \textsc{R} prompt type:
+
+\begin{verbatim}
+> library(retistruct)
+> retistruct()
+\end{verbatim}
+A window should appear. A number of sets of demonstration data are
+available from the \textbf{Demo} menu item.
+
+\subsection{Opening the files for a retina}
+\label{manual:sec:opening-files-retina}
+
+There are a number of types of information associated with a
+flat-mount retina that \textsc{Retistruct} can process:
+\begin{itemize}
+\item The coordinates of the outline of the flattened retina
+\item An image of the flat-mount retina (optional)
+\item The coordinates of labelled data points within the flat-mount
+  retina (optional)
+\end{itemize}
+To import this information into \textsc{Retistruct}, for each retina,
+a directory should be created containing files with the above
+information, as will be described below.  At present there are three
+formats of directory that \textsc{Retistruct} can read.  Most users
+will probably find the the \textsc{ImageJ} ROI format most convenient.
+
+\subsubsection{Reconstructing a retina using the \textsc{ImageJ} ROI format}
+\label{retistruct-manual:sec:ijroi-format}
+
+This format allows you to load images of retinae whose outlines have
+been marked up in \textsc{ImageJ}. To create the image and outline
+files for this format:
+\begin{enumerate}
+\item Create a directory to save the files created to.
+\item Download ``SMI-32 stained retina'' from
+  \url{http://retistruct.r-forge.r-project.org/}
+\item Open up \textsc{ImageJ} (or FIJI).
+\item Use \textbf{File$\rightarrow$Open} to open the image.
+\item Use \textbf{Image$\rightarrow$Scale} to down sample so that the
+  resolution is less than 1000x1000. (This is not crucial, but will
+  speed up things later.)
+\item Save the down-sampled version of the image to the file name
+  \texttt{image.png} in the directory created in Step 1.
+\item Use the Polygon Tool
+  (\includegraphics[height=\baselineskip]{poly}) to mark the edge of
+  the retina. According to the \textsc{ImageJ}
+  manual\footnote{http://rsbweb.nih.gov/ij/docs/tools.html}: ``To
+  create the selection, click repeatedly with the mouse to create line
+  segments. When finished, click in the small box at the starting
+  point (or double-click), and ImageJ automatically draws the last
+  segment.
+
+  The points that define a polygon selection can be moved or deleted,
+  and new points can be added. To delete a point, click on it with the
+  alt key down. To add a point, click on an existing point with the
+  shift key down.''
+\item Open the ROI manager by selecting
+\textbf{Analyze$\rightarrow$Tools$\rightarrow$ROI Manager}.
+\item Click on the \textbf{Add [t]} button.
+\item Click on the \textbf{More$\rightarrow$Save} button. In the \textbf{Save
+selection\dots} box that appears, enter the file name
+\texttt{outline.roi} and make sure this file is saved to the same
+directory as the \texttt{image.png} file, i.e.\ the directory created
+in Step 1.
+\item Open \textsc{Retistruct}.
+\item Click on the \textbf{Open File} icon and select the directory
+containing \texttt{image.png} and \texttt{outline.roi}. The retinal
+image should now appear, with the outline shown. By default the
+outline is in black. If this isn't visible against the image, press
+the \textbf{Properties} button in the interface (or select \textbf{Edit$\rightarrow$Properties}), and change the
+\textbf{Outline colour}.
+\item Mark up the tears by using the Tear editor:
+  \begin{description}
+\item[Add tear] To add a tear, click on this button, then click on
+  three points in turn which define a tear. The order in which the
+  points are added does not matter. Tears contained within a tear can
+  be marked up, but tears cannot cross over one another.
+\item[Move Point] To move one of the points defining a tear, click on
+  this button, then click on the point which you desire to move, then
+  click on the point to which it should be moved.
+\item[Remove tear] To remove a tear, click on this button, then click
+  on the apex of the tear (marked in cyan on the plot)
+  \end{description}
+\item Mark a point as the nasal pole by clicking on
+  \textbf{Mark Nasal}, then click on the point which is the nasal
+  pole.  If the nasal or dorsal pole has already been marked, the
+  marker is removed from the existing location. The nasal pole should
+  not be in a tear. If the nasal tear is placed within a tear, no
+  error is reported at this stage, but it will be reported later.
+\item Set the rim angle to 20 degrees above the ``equator'' by typing
+  ``20'' in the box marked \textbf{Phi0}
+\item Reconstruct the retina by clicking on the Reconstruct button or
+  selecting \textbf{Edit$\rightarrow$Reconstruct}
+\item Examine the deformation by selecting the box \textbf{Strain}
+  under ``Show''
+\item Uncheck this box, then click on the \textbf{View} tab.
+\item Now try playing with the \textbf{Projection} and
+  \textbf{Transform} boxes.
+\item To save the markup, click on the ``Save'' button in the
+  toolbar. This saves various markup files to the directory containing
+  the data files. 
+\end{enumerate}
+
+% \paragraph{Specifying the scale} Optionally, the scale of the image
+% can be specified by providing a file \texttt{scale.csv} in the same
+% directory as the image and ROI files. This file should contain two
+% lines, the first with the heading \texttt{Scale} and the second with
+% the length of the side of a pixel in micrometres. For example:
+% \begin{verbatim}
+% "Scale"
+% 1.5
+% \end{verbatim}
+
+% \paragraph{Reading in data points}
+% \label{retistruct-user-guide:sec:read-data-points}
+
+% In general, the coordinates of data points are read in from a csv file
+% called \texttt{datapoints.csv}. The two cells of the first line of the
+% file contain the name of the group of data points and the colour that
+% these should be displayed in \textsc{Retistruct}.  Marking up the
+% points from the image in \textsc{ImageJ} will ensure that the
+% coordinates are in the same system as those used for the image and the
+% outline. To do this:
+% \begin{enumerate}
+% \item Open the image used for marking up the outline
+%   (\texttt{image.png}) in \textsc{ImageJ}.
+% \item Threshold the image
+%   (\textbf{Image$\rightarrow$Adjust$\rightarrow$Threshold\dots} so
+%   that the labelled points are visible.
+% \item Select \textbf{Analyze$\rightarrow$Set Measurements\dots} and make
+%   sure that \textbf{Centroid} is checked
+% \item Select \textbf{Analyze$\rightarrow$Analyze Particles}. Make sure
+%   that \textbf{Display results} and \textbf{Clear results} are
+%   checked. Click on \textbf{OK}.
+% \item A window entitled \textbf{Results} should appear. This contains
+%   the X and Y coordinates of the detected points. In this window
+%   select \textbf{File$\rightarrow$Save as\dots} and save the file as
+%   \texttt{datapoints.csv}.
+% \item Open this file with either \textsc{Excel} or \textsc{OpenOffice
+%     Calc} and remove all the columns apart from the X and Y
+%   columns. Replace the X with the name of the data set and the Y with
+%   the colour it should be displayed in \textsc{Retistruct}.
+% \item Save \texttt{datapoints.csv} in the retina's directory, along
+%   with \texttt{outline.roi} (and \texttt{image.png} if an image is
+%   desired).
+% \end{enumerate}
+
+% \subsubsection{CSV format}
+% \label{retistruct-manual:sec:csv-format}
+
+% This is the same as the \textsc{ImageJ ROI} format, except that the
+% outline is contained in the two columns of a file called
+% \texttt{outline.csv}.  Each column should have a heading, e.g.:
+% \begin{verbatim}
+% "X", "Y"
+% 1,5
+% 10,76,
+% ...
+% \end{verbatim}
+
+% \subsubsection{IDT format}
+% \label{retistruct-manual:sec:idt-format}
+
+% This is the format used in Ian Thompson's lab (see
+% Appendix~\ref{manual:sec:reading-data}). These files are contained in
+% a directory. To open the files corresponding to a retina, click on the
+% open file icon, and navigate to the directory containing the
+% \texttt{SYS} and \texttt{MAP} files. On opening this directory, the
+% retinal outline should appear in the \textsc{Retistruct} window.
+
+% \subsection{Marking up the retina}
+% \label{manual:sec:opening-files-retina}
+
+
+% \subsection{Saving the markup and metadata}
+% \label{manual:sec:saving-markup}
+
+
+% \subsection{Reconstructing the retina}
+% \label{manual:sec:reconstr-retina}
+
+% To reconstruct the retina, click on the ``Reconstruct retina''
+% button. This causes a (lengthy) sequence of operations to be performed:
+% \begin{description}
+% \item[Stitching] Links between corresponding points on parts of the retinal
+%   outline  contained in tears are made.
+% \item[Triangulation] A triangular mesh is placed over the flattened retina
+% \item[Initial projection to sphere ] The mesh is projected roughly
+%   onto a sphere
+% \item[Optimisation] The locations of the mesh points on the hemisphere
+%   is adjusted so as to minimise a weighted sum of the squared
+%   differences between the lengths of links in the mesh on the
+%   hemisphere and on the flattened retina, whilst ensuring that as few
+%   triangles as possible are flipped.
+% \end{description}
+
+% At the end of the reconstruction process, a polar plot appears next to
+% the flattened retina. When ``Landmarks'' are shown, the location of
+% the cuts and tears in the polar coordinates can be seen.
+
+% When ``Strain'' is shown, the polar plot is replaced by a scatter plot of the
+% length of links in the reconstructed object versus the length on the
+% flattened object. The colours of the points indicate the degree of
+% expansion or compression from the flattened object to the
+% reconstructed object.
+
+% \subsection{Saving the reconstruction}
+% \label{manual:sec:saving-reconstr}
+
+% To save the markup, click on the ``Save'' button in the toolbar. This
+% saves various markup files to the directory containing the data files.
+
+% \subsection{Running a batch of reconstructions}
+% \label{manual:sec:runn-batch-reconstr}
+
+% The \textsc{Retistruct} library can be used to reconstruct a batch of
+% retinae which have been marked up. Suppose that the directory
+% \texttt{retinae} contains a directory tree in which there are data
+% directories containing \texttt{SYS} and \texttt{MAP} files and the
+% saved markup files. In order to perform the reconstructions, we create
+% a new directory \texttt{retinae/reconstructions}, and run the
+% following sequence of commands in R:
+% \begin{verbatim}
+% R
+% > library(retistruct)
+% > retistruct.batch(tldir='retinae', outputdir='retinae/reconstructions')
+% \end{verbatim}
+% This command will go through the \texttt{retinae} directory, looking
+% for valid data directories. If it finds one, it sets about trying to
+% reconstruct the retina. As it reconstructing each retina, it writes to
+% log file in \texttt{retinae/reconstructions}. Once the reconstruction
+% is complete, it saves a number of plots in this directory in PDF
+% format. It also adds a line to a summary log file in
+% \texttt{retinae/reconstructions} called
+% \texttt{retistruct-batch.csv}. This file contains a number of columns:
+% \begin{description}
+% \item[\texttt{Dataset}] The directory of the data set
+% \item[\texttt{Return}] The return value from the process
+% \item[\texttt{Result}] A summary of the result, including if any
+%   errors were returned
+% \item[\texttt{E}] The total error  of the optimised reconstruction
+% \item[\texttt{El}] The error due to purely to the lengths of links in
+%   the optimised reconstruction
+% \item[\texttt{nflip}] The number of flipped triangles
+% \item[\texttt{EOD}] The distance of the Optic Disc from the inferred
+%   centre of the retina, in degrees. If the OD has not been marked up,
+%   this is \texttt{NA}.
+% \end{description}
+
+% \subsection{Exporting reconstruction data to \textsc{Matlab}}
+% \label{retistruct-manual:sec:export-reconstr-data}
+
+% To export the reconstruction data in a directory hierarchy in which
+% \texttt{retistruct.batch()} has been run, run the following sequence
+% of commands in R:
+% \begin{verbatim}
+% R
+% > library(retistruct)
+% > retistruct.batch.export.matlab(tldir='retinae')
+% \end{verbatim}
+% This creates a file called \texttt{r.mat} in each directory in which
+% there has been a successful reconstruction. To import this data into
+% \textsc{Matlab}, cd into that directory, and type:
+% \begin{verbatim}
+% clear
+% load r.mat
+% \end{verbatim}
+% This puts a number of variables into the workspace, as shown in
+% Table~\ref{tab:matlab-export}.
+
+% To produce a polar plot of data points, try the following code:
+% \begin{verbatim}
+% polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
+% hold on
+% polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
+% hold off
+% \end{verbatim}
+% The radial axis indicates the latitude in degrees measured from the
+% retinal pole.
+
+% In the \texttt{matlab} subdirectory of the distribution, there are
+% some scripts to produce polar polar plots, including the locations of
+% tears and landmarks. To create PDF plots of all the retinae in a
+% directory, try:
+% \begin{verbatim}
+% makefigures('retinae', 'output_directory')
+% \end{verbatim}
+
+% There are also some embryonic scripts to create polar plots:
+% \texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
+
+% \begin{table}
+%   \begin{tabularx}{\linewidth}{p{1.2in}X}
+%     \hline \texttt{phi0} & The latitude of the rim, expressed in
+%     radians
+%     \\
+%     \texttt{Dss.green}, \texttt{Dss.red} & Locations of green (red)
+%     labelled cell bodies in spherical coordinates. The first column
+%     contains the latitude of each point, measured in radians. The
+%     second column contains the
+%     longitude of each point, measured in radians. \\
+%     \texttt{DssMean.green}, \texttt{DssMean.red} & Location of Karcher
+%     mean of green-labelled cell bodies in spherical coordinates. The
+%     first column contains the latitude of each point, measured in
+%     radians. The second column contains the
+%     longitude of each point, measured in radians. \\
+%     \texttt{DssHullarea.green}, \texttt{DssHullarea.red} & Area of
+%     convex hull of green (red) points on sphere. The convex hull is
+%     essentially a polygon drawn around data points. \\
+%     \texttt{Tss} & A structure in which each element contains
+%     spherical coordinates (in the same latitude-longitude format as
+%     above) of a tear. \\
+%     \texttt{Sss} & A structure in which each element contains
+%     spherical coordinates (in the same latitude-longitude format as
+%     above) of a landmark. \\
+%     \texttt{KDE} & An object containing information about Kernel
+%     Density Estimates of the locations of cell bodies.\\
+%     & \begin{tabular}{p{1.5in}p{3in}} \texttt{green\_flevels} &
+%       Contour heights, determined by finding heights that exclude a
+%       certain fraction of the probability. For example, the 95\%
+%       contour is excludes 95\% of the probability mass,
+%       and it should enclose about 5\% of the points. \\
+%       \texttt{green\_labels} & Contour labels. These give the label
+%       (e.g.\ 5, 25, 50, where these are the percentages above) of each
+%       contour. Note that there may be more than one contour at the
+%       same level, so this vector may contain more elements than
+%       \texttt{flevels}. The first element of \texttt{green\_labels}
+%       labels the contour whose coordinates are specified in
+%       \texttt{green\_contours1}, the second element of
+%       \texttt{green\_labels} relates to \texttt{green\_contours2} and
+%       so on. \\
+%       \texttt{green\_tot\_contour\_areas} & The total area in square
+%       degrees enclosed by each contour. This is a matrix with the
+%       first column giving the contour label (see above) and the
+%       next column giving the area. \\
+%       \texttt{green\_kappa} & The concentration parameter of
+%       the Fisher density determined by the kernel fitting algorithm. \\
+%       \texttt{green\_h} & A pseudo-bandwidth parameter, the inverse
+%       of the square root of \texttt{kappa}. Units of degrees. \\
+%       \texttt{green\_maxs\_phi} & Lattitude of maximum point of kernel
+%       estimate. \\
+%       \texttt{green\_maxs\_lambda} & Longitude of maximum point of kernel
+%       estimate. \\
+%       \texttt{green\_g\_xs} \texttt{green\_g\_ys} \texttt{green\_g\_f}
+%       & Kernel density estimates on standard polar grid. This can be
+%       plotted in MATLAB using the command
+%       \texttt{contour(KDE.green\_g\_xs, KDE.green\_g\_ys,
+%         KDE.green\_g\_f)}. \\
+%       \texttt{green\_gpa\_xs} \texttt{green\_gpa\_ys}
+%       \texttt{green\_gpa\_f} & Kernel density estimates on
+%       area-preserving polar grid. Plotted in MATLAB as above. \\
+%       \texttt{green\_contours1}, \texttt{green\_contours2\dots} &
+%       Coordinates of contours. See \texttt{green\_labels} above for
+%       more explanation. \\
+%       \texttt{green\_contour\_areas1},
+%       \texttt{green\_contour\_areas2\dots} & Area contained within each
+%       individual contour. See \texttt{green\_labels} above for more
+%       explanation.
+%     \end{tabular} \\
+%     \texttt{KR} & An object containing Kernel Regression estimates of the
+%     density of points, derived from the grouped data points. All
+%     fields correspond to \texttt{KDE} above.\\
+%     \hline
+%   \end{tabularx}
+%   \caption{Variables exported in the \texttt{r.mat} file.}
+%   \label{tab:matlab-export}
+% \end{table}
+
+% \appendix
+
+% \section{Data format}
+% \label{manual:sec:reading-data}
+
+% \begin{table}
+%   \begin{tabular}{ll}
+%     \hline
+%     \multicolumn{2}{c}{\textbf{FOR EACH BOUNDARY}} \\
+%     \hline
+%     \texttt{MAPNUM}   & id number of boundary \\  
+%     \texttt{MINLAT}   & min latitude      \\
+%     \texttt{MAXLAT}   & max latitude      \\
+%     \texttt{MINLON}   & min longitude     \\
+%     \texttt{MAXLON}   & max longitude     \\
+%     \texttt{LABLAT}   & latitude of label \\
+%     \texttt{LABLON}   & longitude of label\\
+%     \hline
+%     \multicolumn{2}{c}{\textbf{FOR EACH CELL}} \\
+%     \hline
+%     \texttt{XRED}     & $x$-coordinate if cell labelled red but not doubly\\
+%     \texttt{YRED}     & $y$-coordinate if cell labelled red but not doubly\\
+%     \texttt{XGREEN}   & $x$-coordinate if cell labelled green but not doubly\\
+%     \texttt{YGREEN}   & $y$-coordinate if cell labelled green but not doubly\\
+%     \texttt{XDOUBLE}  & $x$-coordinate if cell labelled doubly\\ 
+%     \texttt{YDOUBLE}  & $y$-coordinate if cell labelled doubly\\
+%     \texttt{XGRID}    & sample box cell is in \\
+%     \texttt{YGRID}    & sample box cell is in \\
+%     \texttt{PERIM}    & perimeter of cell \\
+%     \texttt{AREA}     & area of cell \\
+%     \hline
+%     \multicolumn{2}{c}{\textbf{ONE PER GRID BOX}} \\
+%     \hline
+%     \texttt{GRIDX}    & grid location of centre of sample box \\
+%     \texttt{GRIDY}    & grid location of centre of sample box \\
+%     \texttt{XGRIDCOO} & $x$-coordinate of centre of sample box \\
+%     \texttt{YGRIDCOO} & $y$-coordinate of centre of sample box \\
+%     \texttt{BOXSIZEX} & size (half width) of sample box in $x$-direction \\
+%     \texttt{BOXSIZEY} & size (half width) of sample box in $y$-direction \\
+%     \texttt{COMPLETE} & whether counting of sample has been completed\\
+%     \texttt{TOTALCEL} & total number of cells in this box\\
+%     \texttt{TOTALRED} & total number of red-only cells in this box\\
+%     \texttt{TOTALGRE} & total number of green-only cells in this box\\
+%     \texttt{TOTALDOU} & total number of double cells in this box\\
+%     \texttt{MEANPERI} & average perimeter of all cells \\
+%     \texttt{MEANAREA} & average area of all cells \\
+%   \end{tabular}
+%   \caption{Column headings of the \texttt{SYS.SYS} file.}
+%   \label{tab:data-format}
+% \end{table}
+
+% The data for each retina is stored in a separate directory. Within
+% each directory there are two files:
+% \begin{description}
+% \item[\texttt{SYS.SYS}] A table in SYSTAT format containing the
+%   coordinates of the red, green and doubly labelled cell bodies, and
+%   counts of labelled cell bodies within each grid box. The column
+%   headings shown in Table~\ref{tab:data-format}.  Each row of the
+%   table contains information only on a subset of the data, e.g.\ the
+%   coordinates of a red-labelled cell.
+% \item[\texttt{ALU.MAP}] A text file containing the coordinates of the
+%   map outline. The file comprises a number of sections, each starting
+%   with a single number, which is the number of lines to read in the
+%   next section. These lines have two numbers each, the $x$ and $y$
+%   coordinates of a vertex of the map outline.
+% \end{description}
+
+% % \section{Reading in and displaying data}
+% % \label{manual:sec:datafile-utils}
+
+% % All code is to be found in the \texttt{trunk/src} directory. The R
+% % program should be started from this directory in the following examples.
+
+% % To read in data use the functions in \texttt{datafile-utils.R}. Here
+% % is code to read in the data from a directory containing the
+% % \texttt{SYS.SYS} and \texttt{ALU.MAP} files, as detailed above:
+% % \begin{verbatim}
+% % source("datafile-utils.R")
+% % sys <- read.sys("/data/path/gm257-1-P8-C57BL6/")
+% % map <- read.map("/data/path/gm257-1-P8-C57BL6/")
+% % plot.sys.map(sys, map)
+% % \end{verbatim}
+
+\section{For more information and practice}
+\label{retistruct-tutorial:sec:more-inform-pract}
+
+\begin{itemize}
+\item Look at the Retistruct website \url{http://retistruct.r-forge.r-project.org/}
+\item Read the paper \cite{SterrattEtal2012}
+\end{itemize}
+
+\begin{thebibliography}{99}
+\bibitem{SterrattEtal2012}
+Sterratt DC, Lyngholm D, Willshaw DJ, Thompson ID (in press) Standard anatomical and visual space for the mouse retina:
+computational reconstruction and transformation of flattened
+retinae with the Retistruct package
+\newblock PLoS Comp. Biol.
+\end{thebibliography}
+
+\end{document}
+
+%%% Local Variables: 
+%%% TeX-PDF-mode: t
+%%% End: 
+
+% LocalWords:  MAPNUM MINLAT MAXLAT MINLON MAXLON LABLAT LABLON XRED YRED XGRID
+% LocalWords:  XGREEN YGREEN XDOUBLE labeled YGRID PERIM GRIDX GRIDY XGRIDCOO
+% LocalWords:  YGRIDCOO BOXSIZEX BOXSIZEY TOTALCEL TOTALRED TOTALGRE TOTALDOU
+% LocalWords:  MEANPERI MEANAREA SYS SYSTAT ALU src datafile utils myheadings
+% LocalWords:  Ubuntu retistruct Datapoints PDF csv Dataset nflip EOD YDOUBLE
+% LocalWords:  Matlab cd matlab lX Dss Tss Sss IDT ImageJ png Analyze roi DV xs
+% LocalWords:  Metadata metadata datapoints polararea DssMean KDE ys Xcode App
+%  LocalWords:  Ctrl gui OpenOffice Calc Karcher DssHullarea flevels Xquartz KR
+%  LocalWords:  maxs Lattitude gpa Sterratt Lyngholm Willshaw PLoS GTK retinae
+% LocalWords:  alt isn checkboxes Markup markup toolbar min max SMI
+%  LocalWords:  workspace Uncheck
