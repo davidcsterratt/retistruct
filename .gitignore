@@ -4,3 +4,14 @@
 *.aux
 *.log
 *.out
+*.so
+*.o
+doc/retistruct-manual.pdf
+doc/retistruct-user-guide.pdf
+doc/retistruct-tutorial.pdf
+doc/auto
+papers
+admin
+figures
+scripts
+debug
