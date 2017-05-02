@@ -95,6 +95,7 @@ retistruct.potential.od <- function(o) {
 ##' \item{phi0}{Angle of rim in degrees}
 ##' \item{DVflip}{Boolean variable indicating if DV axis has been flipped}
 ##' @author David Sterratt
+##' @importFrom utils read.csv 
 ##' @export
 retistruct.read.markup <- function(a, error=stop) {
   ## Return index in P of closest point to x
@@ -306,6 +307,7 @@ retistruct.reconstruct <- function(o, report=retistruct.report,
 ##' @title Save markup
 ##' @param a \code{\link{RetinalDataset}} object
 ##' @author David Sterratt
+##' @importFrom utils write.csv 
 ##' @export
 retistruct.save.markup <- function(a) {
   if (inherits(a, "retinalDataset")) {

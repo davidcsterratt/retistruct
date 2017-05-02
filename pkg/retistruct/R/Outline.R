@@ -45,6 +45,8 @@ Outline <- function(P, scale=NA, im=NULL) {
 ##' @param ... Other plotting parameters
 ##' @method flatplot outline
 ##' @author David Sterratt
+##' @importFrom stats na.omit
+##' @importFrom graphics lines plot segments
 ##' @export
 flatplot.outline <- function(x, axt="n", ylim=NULL,
                              image=TRUE,

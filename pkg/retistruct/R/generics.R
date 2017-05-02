@@ -51,7 +51,7 @@ projection <- function(r, ...) {
 
 ##' @export
 projection.default <- function(r, ...) {
-  plot.new()
+  graphics::plot.new()
 }
 
 ##' Draw a spherical plot.

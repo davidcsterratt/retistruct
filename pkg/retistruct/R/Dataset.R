@@ -81,6 +81,7 @@ getIDs.dataset <- function(r) {
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method flatplot dataset
 ##' @author David Sterratt
+##' @importFrom graphics points text
 ##' @export
 flatplot.dataset <- function(x, axt="n", ylim=NULL,
                              datapoints=TRUE,

@@ -8,7 +8,7 @@ csv.checkDatadir <- function(dir=NULL) {
 ##' containing the locations of data points and a file
 ##' \code{datacounts.csv}, containing the locations of data counts;
 ##' see \code{\link{read.datapoints}} and
-##' \code{\link{read.datacountss}} for the formats of these files. The
+##' \code{\link{read.datacounts}} for the formats of these files. The
 ##' folder may also contain a file \code{od.csv} specifying the
 ##' coordinates of the optic disc.
 ##' 

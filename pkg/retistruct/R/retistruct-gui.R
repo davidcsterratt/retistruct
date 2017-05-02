@@ -3,6 +3,8 @@
 ##' @return Object with \code{getData()} method to return
 ##' reconstructed retina data and environment \code{this} which
 ##' contains variables in object.
+##' @importFrom grDevices dev.cur dev.set
+##' @importFrom graphics identify
 ##' @export
 retistruct <- function() {
   ## This function is essentially the constructor for a class. The
@@ -37,7 +39,7 @@ retistruct <- function() {
   ## be used for the GUI
   guiToolkit <- "RGtk2"
   require.package <- function(pkg) {
-    suggests<-tools::package.dependencies(installed.packages()["retistruct",], depLevel="Suggests")$retistruct
+    suggests<-tools::package.dependencies(utils::installed.packages()["retistruct",], depLevel="Suggests")$retistruct
     suggests <- suggests[suggests[,1] == pkg]
     uptodate <- ifelse(is.na(suggests[2]),
                        TRUE,
@@ -45,7 +47,7 @@ retistruct <- function() {
     if (!require(pkg, character.only=TRUE) | 
         !uptodate) {
       message(paste("Trying to install required package", pkg))
-      install.packages(pkg)
+      utils::install.packages(pkg)
       if (!require(pkg, character.only=TRUE)) {
         stop(paste("Could not install", pkg))
       }
@@ -373,16 +375,16 @@ retistruct <- function() {
   print.bitmap <- function(d, file) {
     dev <- NULL
     if (grepl(".png$", file, ignore.case=TRUE)) 
-      dev <- png
+      dev <- grDevices::png
     if (grepl(".jpeg$", file, ignore.case=TRUE) ||
         grepl(".jpg$", file, ignore.case=TRUE))
-      dev <- jpeg
+      dev <- grDevices::jpeg
     if (grepl(".tif$", file, ignore.case=TRUE) ||
         grepl(".tiff$", file, ignore.case=TRUE))
-      dev <- tiff
+      dev <- grDevices::tiff
     if (is.null(dev)) {
       file <- paste(file, ".png")
-      dev <- png
+      dev <- grDevices::png
     }
     dev.set(d)
     dev.print(dev, file, width=1000, height=1000)
@@ -391,7 +393,7 @@ retistruct <- function() {
   ## Print device d to file
   print.pdf <- function(d, file) {
     dev.set(d)
-    dev.print(pdf, file,
+    dev.print(grDevices::pdf, file,
               width=getOption("retistruct.print.pdf.width"),
               height=getOption("retistruct.print.pdf.width"))
   }
@@ -593,8 +595,8 @@ retistruct <- function() {
   ## Construct the version string
   version.string <- function() {
     return(paste0("Retistruct ",
-                  packageDescription("retistruct", fields="Version"),
-                  " (", packageDescription("retistruct", fields="Date"), ")"))
+                  utils::packageDescription("retistruct", fields="Version"),
+                  " (", utils::packageDescription("retistruct", fields="Date"), ")"))
   }
   
   ##

@@ -758,12 +758,12 @@ optimiseMapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
   count <- 0
   while (opt$conv) {
     ## Optimise
-    opt <- optim(opt$p, E, gr=dE,
-                  method=method,
-                  T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
-                  alpha=alpha,  N=Nt, x0=x0, nu=nu,
-                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
-                  verbose=FALSE, control=control)
+    opt <- stats::optim(opt$p, E, gr=dE,
+                        method=method,
+                        T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                        alpha=alpha,  N=Nt, x0=x0, nu=nu,
+                        Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+                        verbose=FALSE, control=control)
     
     ## Report
     E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,

@@ -236,6 +236,7 @@ retistruct.batch.get.titrations <- function(tldir=".") {
 }
 
 ##' @title Plot titrations
+##' @importFrom grDevices dev.copy2pdf dev.off
 ##' @export
 ##' @param tdat Output of \code{\link{retistruct.batch.get.titrations}}
 retistruct.batch.plot.titrations <- function(tdat) {
@@ -338,6 +339,9 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##' @param path The path to the retistruct-batch.csv
 ##' @return list of various statistics
 ##' @author David Sterratt
+##' @importFrom grDevices dev.new dev.print svg
+##' @importFrom stats sd
+##' @importFrom graphics axis boxplot hist
 ##' @export
 retistruct.batch.analyse.summary <- function(path) {
   dat <- read.csv(file.path(path, "retistruct-batch.csv"))
@@ -454,7 +458,7 @@ retistruct.batch.analyse.summary <- function(path) {
   par(mar=c(2.4, 2.6, 0.7, 0.5))
   par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
   
-  summlm <- lm(OD.res ~ sqrt.E, summ)
+  summlm <- stats::lm(OD.res ~ sqrt.E, summ)
   with(summ, plot(sqrt.E, OD.res,
                   xlab=expression(italic(e)[L]),
                   ylab=expression(italic(epsilon)[OD]),

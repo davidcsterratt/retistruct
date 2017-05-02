@@ -328,6 +328,7 @@ getTss.reconstructedOutline <- function(r) {
 ##' @param ... Other plotting parameters
 ##' @method flatplot reconstructedOutline
 ##' @author David Sterratt
+##' @importFrom grDevices rainbow palette
 ##' @export
 flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
                                           grid=TRUE,
@@ -616,8 +617,8 @@ projection.reconstructedOutline <- function(r,
     immask[bigpx] <- FALSE
     
     ## Plot the polygon, masking as we go
-    polygon(impx[,immask], impy[,immask],
-            col=im[immask], border=im[immask])
+    graphics::polygon(impx[,immask], impy[,immask],
+                      col=im[immask], border=im[immask])
   }
 
   grid.maj.col <- getOption("grid.maj.col")
@@ -635,7 +636,7 @@ projection.reconstructedOutline <- function(r,
 
     ## Boundary of projection
     boundary <- projection("boundary")
-    polygon(boundary[,"x"], boundary[,"y"], border="black")
+    graphics::polygon(boundary[,"x"], boundary[,"y"], border="black")
   }
 
   ## Plot rim in visutopic space
@@ -679,7 +680,7 @@ projection.reconstructedOutline <- function(r,
     ## the desired fraction of the axes at which to plot the
     ## labels. This is done by this optimisation function.
     label.fax <- 0.02                   # Fraction of axis length from axes to plot labels
-    opt <- optimise(function(a) {
+    opt <- stats::optimise(function(a) {
       rs0 <- cbind(phi=r$phi0,     lambda=angles[1])
       rs  <- cbind(phi=r$phi0 + a, lambda=angles[1])
       rc0 <- projection(rotate.axis(transform(rs0, phi0=r$phi0),
@@ -799,6 +800,7 @@ sphericalplot.reconstructedOutline <- function(r,
 }
 
 ##' @export
+##' @importFrom graphics abline
 lvsLplot.reconstructedOutline <- function(r) {
   o <- getStrains(r)$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70

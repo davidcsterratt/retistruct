@@ -314,7 +314,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
                          gpa=list(xs=gpa$xs, ys=gpa$ys, f=fpa, fu=fpau))
 
         ## Get contours in Cartesian space
-        cc <- contourLines(gpa$xs, gpa$ys, fpau, levels=flevels)
+        cc <- grDevices::contourLines(gpa$xs, gpa$ys, fpau, levels=flevels)
         cs <- list()
         ## Must be careful, as there is a core function called labels
         labels <- rep(NA, length(cc))
@@ -335,8 +335,8 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
         KDE[[i]]$labels <- labels
         names(contour.areas) <- c()
         KDE[[i]]$contour.areas <- contour.areas
-        KDE[[i]]$tot.contour.areas <- aggregate(contour.areas ~ labels,
-                                                data.frame(labels, contour.areas), sum)
+        KDE[[i]]$tot.contour.areas <- stats::aggregate(contour.areas ~ labels,
+                                                       data.frame(labels, contour.areas), sum)
       }
     }
   }

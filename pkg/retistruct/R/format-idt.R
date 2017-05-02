@@ -110,7 +110,7 @@ idt.connect.segments <- function(segs, merge.rad=10) {
   ## Now create vector of neighbours of points n
   ## Each element is the index of the closest point
   ## (apart from the point itself) 
-  d <- as.matrix(dist(t(P), diag=TRUE))
+  d <- as.matrix(stats::dist(t(P), diag=TRUE))
   diag(d) <- NA
   n <- apply(d, 1, which.min)           # Find index of closest point
 

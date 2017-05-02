@@ -737,7 +737,7 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
 
     ## Now minimise sum of squared distances
     if (all(!is.nan(c(phi.mean, lambda.mean)))) {
-      opt <- optim(c(phi.mean, lambda.mean),
+      opt <- stats::optim(c(phi.mean, lambda.mean),
                    function(p) { sum((central.angle(x[,"phi"], x[,"lambda"], p[1], p[2]))^2) })
       mu <- opt$par
       names(mu) <- c("phi", "lambda")

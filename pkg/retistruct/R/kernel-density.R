@@ -79,8 +79,8 @@ kde.L <- function(mu, kappa) {
 ##' @export
 kde.compute.concentration <- function(mu) {
   mu.cart <- sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]) 
-  opt <- optimise(function(kappa) {kde.L(mu.cart, kappa)}, interval=c(0, 500),
-                  maximum=TRUE)
+  opt <- stats::optimise(function(kappa) {kde.L(mu.cart, kappa)}, interval=c(0, 500),
+                         maximum=TRUE)
   return(opt$maximum)
 }
 
@@ -159,7 +159,7 @@ kr.sscv <- function(mu, y, kappa) {
 ##' @export
 kr.compute.concentration <- function(mu, y) {
   mu.cart <- sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]) 
-  opt <- optimise(function(kappa) {kr.sscv(mu.cart, y, kappa)}, interval=c(0, 500),
-                  maximum=FALSE)
+  opt <- stats::optimise(function(kappa) {kr.sscv(mu.cart, y, kappa)}, interval=c(0, 500),
+                         maximum=FALSE)
   return(opt$minimum)
 }

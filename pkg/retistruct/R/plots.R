@@ -19,6 +19,7 @@ strain.colours <- function(x) {
 ##' @title Put text on the polar plot
 ##' @param text Test to place
 ##' @author David Sterratt
+##' @importFrom graphics mtext
 ##' @export
 polartext <- function(text) {
   mtext(text, 1, adj=1, line=-1)
