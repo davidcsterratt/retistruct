@@ -11,6 +11,9 @@ panlabel(panlabel, line = -0.7)
 
 \item{line}{Line on which to appear}
 }
+\description{
+Ancillary function to place labels
+}
 \author{
 David Sterratt
 }

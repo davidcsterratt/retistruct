@@ -1,4 +1,4 @@
-##' @title Sinusoidal projection
+##' Sinusoidal projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
 ##' labelled \code{phi} (lattitude) and \code{lambda}
 ##' (longitude). Alternatively string "boundary", indicating that
@@ -37,7 +37,7 @@ sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
   return(rc)
 }
 
-##' @title Orthographic projection
+##' Orthographic projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
 ##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
 ##' @param proj.centre Location of centre of projection as matrix with
@@ -79,7 +79,7 @@ orthographic <- function(r,
   return(rc)
 }
 
-##' @title Lambert azimuthal equal area projection
+##' Lambert azimuthal equal area projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @param ... Arguments not used by this projection.
@@ -105,7 +105,7 @@ azimuthal.equalarea <- function(r, ...) {
   return(cbind(x=x, y=y))
 }
 
-##' @title Azimuthal equidistant projection
+##' Azimuthal equidistant projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @param ... Arguments not used by this projection.
@@ -128,7 +128,7 @@ azimuthal.equidistant <- function(r, ...) {
   return(cbind(x=x, y=y))
 }
 
-##' @title Azimuthal conformal or stereographic or Wulff projection
+##' Azimuthal conformal or stereographic or Wulff projection
 ##' @param r 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @param ... Arguments not used by this projection.

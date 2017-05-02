@@ -1,5 +1,5 @@
 ## Global variables
-##' @title Version of reconstruction file data format
+##' Version of reconstruction file data format
 ##' @export
 recfile.version <- 5      # Version of reconstruction file data format
 
@@ -8,7 +8,7 @@ retistruct.report <- function(message, title="",...) {
   cat(paste(message, "\n", sep=""))
 }
 
-##' @title Check the whether  directory contains valid data 
+##' Check the whether  directory contains valid data 
 ##' @param dir Diectory to check.
 ##' @return  \code{TRUE} if \code{dir} contains valid data;
 ##' \code{FALSE} otherwise.
@@ -233,7 +233,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
   return(NULL)
 }
 
-##' @title Reconstruct a retina
+##' Reconstruct a retina
 ##' @param o \code{\link{AnnotatedOutline}} object
 ##' @param report Function to report progress
 ##' @param plot.3d If \code{TRUE} show progress in a 3D plot 

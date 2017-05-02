@@ -19,6 +19,9 @@ represented as a 2 column matrix of with column names \code{alpha}
 2-column matrix of spherical coordinates of points with
 column names \code{psi} (colattidude) and \code{lambda} (longitude).
 }
+\description{
+Convert azimuth-elevation coordinates to spherical coordinates
+}
 \examples{
 r0 <- cbind(alpha=0, theta=0)
 r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))

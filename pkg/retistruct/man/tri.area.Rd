@@ -15,6 +15,9 @@ triangulation}
 \value{
 Vectors of areas of triangles
 }
+\description{
+Area of triangles on a plane
+}
 \author{
 David Sterratt
 }

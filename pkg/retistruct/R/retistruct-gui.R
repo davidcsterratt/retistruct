@@ -1,4 +1,4 @@
-##' @title Start the Retistruct GUI
+##' Start the Retistruct GUI
 ##' @seealso gWidgets2
 ##' @return Object with \code{getData()} method to return
 ##' reconstructed retina data and environment \code{this} which

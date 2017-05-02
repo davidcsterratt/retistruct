@@ -12,6 +12,9 @@ getFlatRimLength(o)
 \value{
 The rim length
 }
+\description{
+Get rim length of AnnotatedOutline
+}
 \author{
 David Sterratt
 }

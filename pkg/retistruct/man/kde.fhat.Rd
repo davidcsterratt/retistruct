@@ -18,6 +18,10 @@ coordinates}
 \value{
 Vector of density estimates
 }
+\description{
+Kernel density estimate on sphere using Fisherian density
+with polar coordinates
+}
 \author{
 David Sterratt
 }

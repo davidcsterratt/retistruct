@@ -46,6 +46,9 @@ the grouped data generated using Kernel Regression.}
 
 \item{...}{Graphical parameters to pass to plotting functions}
 }
+\description{
+Plot projection of reconstructed dataset
+}
 \author{
 David Sterratt
 }

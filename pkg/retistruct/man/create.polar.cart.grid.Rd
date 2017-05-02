@@ -20,6 +20,9 @@ List containing:
 \item{\code{xs}}{X grid line locations in Cartesian coordinates on plane}
 \item{\code{ys}}{Y grid line locations in Cartesian coordinates on plane}
 }
+\description{
+Create grid on projection of hemisphere onto plane
+}
 \author{
 David Sterratt
 }

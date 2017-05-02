@@ -46,7 +46,7 @@ getDss.retinalReconstructedDataset <- function(r) {
 }
 
 
-##' @title Get grouped variable with locations in spherical coordinates.
+##' Get grouped variable with locations in spherical coordinates.
 ##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Gss}
 ##' @method getGss retinalReconstructedDataset

@@ -14,6 +14,9 @@ kr.compute.concentration(mu, y)
 \value{
 The optimal concentration
 }
+\description{
+Find the optimal concentration for a set of data
+}
 \author{
 David Sterratt
 }

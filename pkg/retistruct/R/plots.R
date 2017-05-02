@@ -2,7 +2,7 @@
 ## Utilities for plotting functions
 ## 
 
-##' @title Generate colours for strain plots
+##' Generate colours for strain plots
 ##' @param x Vector of values of log strain
 ##' @return Vector of colours corresponding to strains
 ##' @author David Sterratt
@@ -25,7 +25,7 @@ polartext <- function(text) {
   mtext(text, 1, adj=1, line=-1)
 }
 
-##' @title Ancillary function to place labels
+##' Ancillary function to place labels
 ##' @param panlabel Label text
 ##' @param line Line on which to appear
 ##' @author David Sterratt

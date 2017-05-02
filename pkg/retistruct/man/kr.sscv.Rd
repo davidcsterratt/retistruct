@@ -17,6 +17,10 @@ kr.sscv(mu, y, kappa)
 \value{
 Least squares error
 }
+\description{
+Cross validation estimate of the least squares error of the
+points mu given a particular value of the concentration kappa
+}
 \author{
 David Sterratt
 }

@@ -12,6 +12,9 @@ getGss(r)
 \value{
 \code{Gss}
 }
+\description{
+Get grouped variable with locations in spherical coordinates.
+}
 \author{
 David Sterratt
 }

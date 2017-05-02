@@ -12,6 +12,9 @@ strain.colours(x)
 \value{
 Vector of colours corresponding to strains
 }
+\description{
+Generate colours for strain plots
+}
 \author{
 David Sterratt
 }

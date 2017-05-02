@@ -20,6 +20,10 @@ Cartesian coordinates}
 \value{
 Estimates of dependent variables at locations \code{r}
 }
+\description{
+Kernel regression on sphere using Fisherian density with
+Cartesian coordinates
+}
 \author{
 David Sterratt
 }

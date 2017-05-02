@@ -12,6 +12,9 @@
 \value{
 Array of IDs
 }
+\description{
+Get IDs of groups of data within a dataset
+}
 \author{
 David Sterratt
 }

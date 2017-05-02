@@ -13,6 +13,9 @@ vecnorm(X)
 If a vector, returns the 2-norm  of the
 vector. If a matrix, returns the 2-norm of each row of the matrix
 }
+\description{
+Vector norm
+}
 \author{
 David Sterratt
 }

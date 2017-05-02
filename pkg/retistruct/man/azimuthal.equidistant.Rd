@@ -16,6 +16,9 @@ sphere. Column names are \code{phi} and \code{lambda}.}
 2-column Matrix of Cartesian coordinates of points on polar
 projection. Column names should be \code{x} and \code{y}.
 }
+\description{
+Azimuthal equidistant projection
+}
 \note{
 This is a special case with the point centred on the
 projection being the South Pole. The Mathworld equations are for

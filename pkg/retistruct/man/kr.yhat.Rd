@@ -20,6 +20,10 @@ polar coordinates}
 \value{
 Estimates of dependent variables at locations \code{r}
 }
+\description{
+Kernel regression on sphere using Fisherian density with
+polar coordinates
+}
 \author{
 David Sterratt
 }

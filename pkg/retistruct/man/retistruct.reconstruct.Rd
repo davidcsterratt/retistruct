@@ -28,6 +28,9 @@ Object of classes
 \code{\link{RetinalReconstructedDataset}} that contains all the
 reconstruction information
 }
+\description{
+Reconstruct a retina
+}
 \author{
 David Sterratt
 }

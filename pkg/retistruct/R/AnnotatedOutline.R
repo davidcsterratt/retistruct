@@ -252,7 +252,7 @@ checkTears <- function(o) {
   return(out)
 }
 
-##' @title Set fixed point
+##' Set fixed point
 ##' @param o \code{\link{AnnotatedOutline}} object
 ##' @param i0 Index of fixed point
 ##' @param name Name of fixed point
@@ -289,7 +289,7 @@ ensureFixedPointInRim <- function(o) {
   return(o)
 }
 
-##' @title Get rim length of AnnotatedOutline
+##' Get rim length of AnnotatedOutline
 ##' @param o \code{\link{AnnotatedOutline}} object
 ##' @return The rim length 
 ##' @author David Sterratt

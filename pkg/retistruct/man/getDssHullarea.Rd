@@ -12,6 +12,9 @@ getDssHullarea(r)
 \value{
 Area in degress squared
 }
+\description{
+Get area of convex hull around data points on sphere
+}
 \author{
 David Sterratt
 }

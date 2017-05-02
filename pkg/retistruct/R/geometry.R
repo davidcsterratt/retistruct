@@ -2,7 +2,7 @@
 ## Geometry functions
 ## 
 
-##' @title Vector norm
+##' Vector norm
 ##' @param X Vector or matrix. 
 ##' @return If a vector, returns the 2-norm  of the
 ##' vector. If a matrix, returns the 2-norm of each row of the matrix
@@ -16,7 +16,7 @@ vecnorm <- function(X) {
   }
 }
 
-##' @title "Signed area" of triangles on a plane
+##' "Signed area" of triangles on a plane
 ##' @param P 2-column matrix of vertices of triangles
 ##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
 ##' triangulation
@@ -34,7 +34,7 @@ tri.area.signed <- function(P, Pt) {
   return(0.5 * extprod3d(AB, BC)[,3])
 }
 
-##' @title Area of triangles on a plane
+##' Area of triangles on a plane
 ##' @param P 2-column matrix of vertices of triangles
 ##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
 ##' triangulation
@@ -458,7 +458,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
   return(cbind(phi=phi, lambda=lambda))
 }
 
-##' @title Convert azimuth-elevation coordinates to spherical coordinates
+##' Convert azimuth-elevation coordinates to spherical coordinates
 ##' @param r Coordinates of points in azimuth-elevation coordinates
 ##' represented as  2 column matrix with column names \code{alpha}
 ##' (elevation) and \code{theta} (azimuth).
@@ -553,7 +553,7 @@ rotate.axis <- function(r, r0) {
   return(sphere.cart.to.sphere.spherical(P))
 }
 
-##' @title Bring angle into range
+##' Bring angle into range
 ##' @param theta Angle to bring into range \code{[-pi, pi]}
 ##' @return Normalised angle
 ##' @author David Sterratt
@@ -756,7 +756,7 @@ karcher.mean.sphere <- function(x, na.rm=FALSE, var=FALSE) {
   return(X)
 }
 
-##' @title Create grid on projection of hemisphere onto plane
+##' Create grid on projection of hemisphere onto plane
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
 ##' @param res Resolution of grid
 ##' @param phi0 Value of \code{phi0} at edge of grid

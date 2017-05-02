@@ -17,6 +17,9 @@ Vectors of signed areas of triangles. Positive sign
 indicates points are anticlockwise direction; negative indicates
 clockwise.
 }
+\description{
+"Signed area" of triangles on a plane
+}
 \author{
 David Sterratt
 }

@@ -19,6 +19,9 @@ column names \code{phi} (elevation) and \code{lambda} (longitude).}
 Two-column matrix with columns labelled \code{x} and
 \code{y} of locations of projection of coordinates on plane
 }
+\description{
+Orthographic projection
+}
 \references{
 \url{http://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/OrthographicProjection.html}

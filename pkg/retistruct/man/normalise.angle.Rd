@@ -12,6 +12,9 @@ normalise.angle(theta)
 \value{
 Normalised angle
 }
+\description{
+Bring angle into range
+}
 \author{
 David Sterratt
 }

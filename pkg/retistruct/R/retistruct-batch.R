@@ -216,7 +216,7 @@ retistruct.batch.figures <- function(tldir=".", outputdir=tldir, ...) {
   }
 }
 
-##' @title Get titrations from a directory of reconstructions
+##' Get titrations from a directory of reconstructions
 ##' @export
 ##' @param tldir The top level directory of the tree through which to
 ##' recurse. The files have to have been reconstructed with the
@@ -235,7 +235,7 @@ retistruct.batch.get.titrations <- function(tldir=".") {
   return(dat)
 }
 
-##' @title Plot titrations
+##' Plot titrations
 ##' @importFrom grDevices dev.copy2pdf dev.off
 ##' @export
 ##' @param tdat Output of \code{\link{retistruct.batch.get.titrations}}

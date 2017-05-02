@@ -82,7 +82,7 @@ retistruct.cli.basepath <- function(dataset) {
   return(basepath)
 }
 
-##' @title Print a figure to file
+##' Print a figure to file
 ##' @param dataset Path to dataset to process 
 ##' @param outputdir Directory in which to save any figures
 ##' @param device String representing device to print figures to

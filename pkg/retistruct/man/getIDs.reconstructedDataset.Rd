@@ -12,6 +12,9 @@
 \value{
 Array of IDs
 }
+\description{
+Get IDs of groups of data within a ReconstructedDataset
+}
 \author{
 David Sterratt
 }

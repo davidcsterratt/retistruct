@@ -290,7 +290,7 @@ transform.image.reconstructedOutline <- function(r) {
   }
   return(r)
 }
-##' @title Get coordinates of corners of pixels of image in spherical
+##' Get coordinates of corners of pixels of image in spherical
 ##' coordinates 
 ##' @param r \code{\link{ReconstructedOutline}} object
 ##' @return Coordinates of corners of pixels in spherical coordinates 

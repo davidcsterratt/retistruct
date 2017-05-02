@@ -16,6 +16,9 @@ setFixedPoint(o, i0, name)
 \value{
 New \code{\link{AnnotatedOutline}} object
 }
+\description{
+Set fixed point
+}
 \author{
 David Sterratt
 }

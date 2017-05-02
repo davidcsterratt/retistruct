@@ -1,6 +1,6 @@
 ## Kernel density and kernel regression estimates 
 
-##' @title Kernel density estimate on sphere using Fisherian density
+##' Kernel density estimate on sphere using Fisherian density
 ##' with Cartesian coordinates
 ##' @param r Locations at which to estimate density in Cartesian
 ##' coordinates on unit sphere
@@ -34,7 +34,7 @@ kde.fhat.cart <- function(r, mu, kappa) {
                                          outer(r[,3], mu[,3])))))
 }
 
-##' @title Kernel density estimate on sphere using Fisherian density
+##' Kernel density estimate on sphere using Fisherian density
 ##' with polar coordinates
 ##' @param r Locations at which to estimate density in polar
 ##' coordinates
@@ -50,7 +50,7 @@ kde.fhat <- function(r, mu, kappa) {
 }
 
 
-##' @title Estimate of the log likelihood of the points mu given a
+##' Estimate of the log likelihood of the points mu given a
 ##' particular value of the concentration kappa
 ##' @param mu Locations of data points in Cartesian coordinates on
 ##' unit sphere
@@ -72,7 +72,7 @@ kde.L <- function(mu, kappa) {
   return(sum(sapply(1:nrow(mu), log.fhati)))
 }
 
-##' @title Find the optimal concentration for a set of data
+##' Find the optimal concentration for a set of data
 ##' @param mu Data in spherical coordinates
 ##' @return The optimal concentration
 ##' @author David Sterratt
@@ -84,7 +84,7 @@ kde.compute.concentration <- function(mu) {
   return(opt$maximum)
 }
 
-##' @title Kernel regression on sphere using Fisherian density with
+##' Kernel regression on sphere using Fisherian density with
 ##' polar coordinates
 ##' @param r Locations at which to estimate dependent variables in
 ##' polar coordinates
@@ -101,7 +101,7 @@ kr.yhat <- function(r, mu, y, kappa) {
                       kappa))
 }
 
-##' @title Kernel regression on sphere using Fisherian density with
+##' Kernel regression on sphere using Fisherian density with
 ##' Cartesian coordinates
 ##' @param r Locations at which to estimate dependent variables in
 ##' Cartesian coordinates
@@ -129,7 +129,7 @@ kr.yhat.cart <- function(r, mu, y, kappa) {
   return((ks%*% matrix(y, ncol=1))/rowSums(ks))
 }
 
-##' @title Cross validation estimate of the least squares error of the
+##' Cross validation estimate of the least squares error of the
 ##' points mu given a particular value of the concentration kappa
 ##' @param mu Locations in Cartesian coordinates (independent variables)
 ##' @param y Values at locations (dependent variables)
@@ -151,7 +151,7 @@ kr.sscv <- function(mu, y, kappa) {
   return(sum(sapply(1:nrow(mu), yhati.ss)))
 }
 
-##' @title Find the optimal concentration for a set of data
+##' Find the optimal concentration for a set of data
 ##' @param mu Locations in Cartesian coordinates (independent variables)
 ##' @param y Values at locations (dependent variables)
 ##' @return The optimal concentration

@@ -123,7 +123,7 @@ getDssMean.default <- function(r) {
   return(NULL)
 }
 
-##' @title Get grouped variable with locations in spherical coordinates.
+##' Get grouped variable with locations in spherical coordinates.
 ##' @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
 ##' @return \code{Gss}
 ##' @author David Sterratt
@@ -191,7 +191,7 @@ getTss.default <- function(r) {
   return(NULL)
 }
 
-##' @title Get coordinates of corners of pixels of image in spherical coordinates 
+##' Get coordinates of corners of pixels of image in spherical coordinates 
 ##' @param r \code{\link{ReconstructedOutline}} or
 ##' \code{\link{RetinalReconstructedOutline}} object
 ##' @return Coordinates of corners of pixels in spherical coordinates 
@@ -206,7 +206,7 @@ getIms.default <- function(r) {
   return(NULL)
 }
 
-##' @title Get IDs of groups of data within a dataset
+##' Get IDs of groups of data within a dataset
 ##' @export
 ##' @param r Object
 getIDs <- function(r) {

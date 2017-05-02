@@ -12,6 +12,9 @@ getKR(r)
 \value{
 See \code{\link{compute.kernel.estimate}}
 }
+\description{
+Get kernel regression estimate of grouped data points
+}
 \author{
 David Sterratt
 }

@@ -11,6 +11,9 @@ Object with \code{getData()} method to return
 reconstructed retina data and environment \code{this} which
 contains variables in object.
 }
+\description{
+Start the Retistruct GUI
+}
 \seealso{
 gWidgets2
 }

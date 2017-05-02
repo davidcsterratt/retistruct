@@ -13,6 +13,9 @@ checkDatadir(dir = NULL)
 \code{TRUE} if \code{dir} contains valid data;
 \code{FALSE} otherwise.
 }
+\description{
+Check the whether  directory contains valid data
+}
 \author{
 David Sterratt
 }

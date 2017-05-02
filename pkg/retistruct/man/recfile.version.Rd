@@ -8,4 +8,7 @@
 \usage{
 recfile.version
 }
+\description{
+Version of reconstruction file data format
+}
 \keyword{datasets}

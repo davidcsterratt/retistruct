@@ -21,6 +21,9 @@ retistruct.cli.figure(dataset, outputdir, device = "pdf", width = 6,
 \item{res}{Resolution of figures in dpi (only applies to bitmap
 devices)}
 }
+\description{
+Print a figure to file
+}
 \author{
 David Sterratt
 }

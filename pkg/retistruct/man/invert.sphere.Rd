@@ -17,6 +17,9 @@ represented as  2 column matrix with column names \code{phi}
 Matrix in same format, but with \code{pi} added to lambda
 and \code{phi} negated.
 }
+\description{
+Invert sphere about its centre
+}
 \author{
 David Sterratt
 }

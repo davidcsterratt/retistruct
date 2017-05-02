@@ -25,6 +25,9 @@
 
 \item{...}{Graphical parameters to pass to plotting functions}
 }
+\description{
+Flat plot of Dataset
+}
 \author{
 David Sterratt
 }

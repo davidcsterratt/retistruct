@@ -16,6 +16,10 @@ unit sphere}
 \value{
 Log likelihood of data
 }
+\description{
+Estimate of the log likelihood of the points mu given a
+particular value of the concentration kappa
+}
 \author{
 David Sterratt
 }

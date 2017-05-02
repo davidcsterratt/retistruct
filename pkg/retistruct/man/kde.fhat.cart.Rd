@@ -19,6 +19,10 @@ unit sphere}
 \value{
 Vector of density estimates
 }
+\description{
+Kernel density estimate on sphere using Fisherian density
+with Cartesian coordinates
+}
 \author{
 David Sterratt
 }

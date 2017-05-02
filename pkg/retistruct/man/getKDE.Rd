@@ -12,6 +12,9 @@ getKDE(r)
 \value{
 See \code{\link{compute.kernel.estimate}}
 }
+\description{
+Get kernel density estimate of data points
+}
 \author{
 David Sterratt
 }

@@ -16,6 +16,9 @@ represented as  2 column matrix with column names \code{phi}
 \value{
 Idendtical matrix
 }
+\description{
+The identity transformation
+}
 \author{
 David Sterratt
 }

@@ -29,6 +29,9 @@ crossing the centre of the projection.}
 Two-column matrix with columns labelled \code{x} and
 \code{y} of locations of projection of coordinates on plane
 }
+\description{
+Sinusoidal projection
+}
 \references{
 \url{http://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/SinusoidalProjection.html}

@@ -59,7 +59,7 @@ getLandmarkID <- function(d, name) {
   }
 }
 
-##' @title Get IDs of groups of data within a dataset
+##' Get IDs of groups of data within a dataset
 ##' @param r \code{\link{Dataset}} object
 ##' @return Array of IDs
 ##' @author David Sterratt
@@ -69,7 +69,7 @@ getIDs.dataset <- function(r) {
   return(c(names(r$Ds), names(r$Gs)))
 }
 
-##' @title Flat plot of Dataset
+##' Flat plot of Dataset
 ##' @param x \code{\link{Dataset}} object
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
