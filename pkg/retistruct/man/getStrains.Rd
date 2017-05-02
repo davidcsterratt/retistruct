@@ -24,4 +24,3 @@ have been deformed from their flat state.
 \author{
 David Sterratt
 }
-

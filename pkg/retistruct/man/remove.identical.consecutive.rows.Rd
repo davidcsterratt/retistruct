@@ -19,4 +19,3 @@ at different points in the matrix
 \author{
 David Sterratt
 }
-

@@ -41,4 +41,3 @@ how close points must be to count as the same point.
 \author{
 David Sterratt
 }
-

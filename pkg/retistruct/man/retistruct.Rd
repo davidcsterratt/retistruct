@@ -14,4 +14,3 @@ contains variables in object.
 \seealso{
 gWidgets2
 }
-

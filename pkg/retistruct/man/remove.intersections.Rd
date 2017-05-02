@@ -24,4 +24,3 @@ B'C' is l/2.
 \author{
 David Sterratt
 }
-

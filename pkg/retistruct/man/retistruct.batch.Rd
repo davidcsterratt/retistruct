@@ -39,4 +39,3 @@ data and markup, and performing the reconstruction if it does.
 \author{
 David Sterratt
 }
-

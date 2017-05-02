@@ -36,4 +36,3 @@ above.
 \author{
 David Sterratt
 }
-

@@ -57,4 +57,3 @@ respect to colatitude rather than latitude}
 Draw a projection of a \code{\link{ReconstructedOutline}}. This method sets up
 the grid lines and the angular labels and draws the image.
 }
-

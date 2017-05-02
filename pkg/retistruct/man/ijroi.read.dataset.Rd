@@ -24,4 +24,3 @@ coordinates of the optic disc.
 \author{
 David Sterratt
 }
-

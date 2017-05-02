@@ -24,4 +24,3 @@ Plot flat \code{\link{TriangulatedOutline}}.
 \author{
 David Sterratt
 }
-

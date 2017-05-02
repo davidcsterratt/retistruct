@@ -22,4 +22,3 @@ apex and vertcies of a cut and tear with the V0 (Apex), VF
 \author{
 David Sterratt
 }
-

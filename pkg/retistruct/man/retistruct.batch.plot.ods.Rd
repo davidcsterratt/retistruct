@@ -24,4 +24,3 @@ Polar plot of ODs of a group of retinae.
 \author{
 David Sterratt
 }
-

@@ -18,4 +18,3 @@ Extract statistics from the retistruct-batch.csv summary file
 \author{
 David Sterratt
 }
-

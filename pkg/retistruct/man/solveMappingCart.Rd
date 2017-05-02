@@ -35,4 +35,3 @@ Optimise the mapping from the flat outline to the sphere
 \author{
 David Sterratt
 }
-

@@ -19,4 +19,3 @@ Ensure that the fixed point \code{i0} is in the rim, not a tear.
 \author{
 David Sterratt
 }
-

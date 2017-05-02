@@ -26,4 +26,3 @@ these, at the expense of increasing the area a bit.
 \author{
 David Sterratt
 }
-

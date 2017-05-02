@@ -21,4 +21,3 @@ are flipped if \code{DVflip} is \code{TRUE}.
 \author{
 David Sterratt
 }
-

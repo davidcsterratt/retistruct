@@ -22,4 +22,3 @@ does.
 \author{
 David Sterratt
 }
-

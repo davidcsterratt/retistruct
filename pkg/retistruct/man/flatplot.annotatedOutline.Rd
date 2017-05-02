@@ -25,4 +25,3 @@ displayed by default.
 \author{
 David Sterratt
 }
-

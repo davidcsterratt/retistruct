@@ -23,4 +23,3 @@ Estimates of dependent variables at locations \code{r}
 \author{
 David Sterratt
 }
-

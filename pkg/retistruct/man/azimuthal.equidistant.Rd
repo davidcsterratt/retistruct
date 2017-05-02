@@ -21,11 +21,10 @@ This is a special case with the point centred on the
 projection being the South Pole. The Mathworld equations are for
 the more general case.
 }
-\author{
-David Sterratt
-}
 \references{
 \url{http://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}
 }
-
+\author{
+David Sterratt
+}

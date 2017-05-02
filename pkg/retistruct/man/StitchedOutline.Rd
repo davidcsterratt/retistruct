@@ -34,4 +34,3 @@ points.
 \author{
 David Sterratt
 }
-

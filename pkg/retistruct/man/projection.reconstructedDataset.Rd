@@ -49,4 +49,3 @@ the grouped data generated using Kernel Regression.}
 \author{
 David Sterratt
 }
-

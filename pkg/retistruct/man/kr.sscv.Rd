@@ -20,4 +20,3 @@ Least squares error
 \author{
 David Sterratt
 }
-

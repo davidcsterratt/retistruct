@@ -19,4 +19,3 @@ Log likelihood of data
 \author{
 David Sterratt
 }
-

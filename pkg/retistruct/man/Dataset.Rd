@@ -40,4 +40,3 @@ Constructor for a \code{dataset} object.
 \author{
 David Sterratt
 }
-

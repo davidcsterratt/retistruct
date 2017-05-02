@@ -31,4 +31,3 @@ reconstruction information
 \author{
 David Sterratt
 }
-

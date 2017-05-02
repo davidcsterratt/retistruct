@@ -20,4 +20,3 @@ and \code{phi} negated.
 \author{
 David Sterratt
 }
-

@@ -20,4 +20,3 @@ Derivative of \code{\link{f}}
 \author{
 David Sterratt
 }
-

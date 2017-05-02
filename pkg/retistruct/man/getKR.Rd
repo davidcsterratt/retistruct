@@ -15,4 +15,3 @@ See \code{\link{compute.kernel.estimate}}
 \author{
 David Sterratt
 }
-

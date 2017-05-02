@@ -27,4 +27,3 @@ of radius R.
 \author{
 David Sterratt
 }
-

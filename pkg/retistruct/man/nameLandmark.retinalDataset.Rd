@@ -26,4 +26,3 @@ points labelled "OD".
 \author{
 David Sterratt
 }
-

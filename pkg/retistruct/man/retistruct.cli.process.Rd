@@ -25,4 +25,3 @@ directory and printing figures to \code{outputdir}.
 \author{
 David Sterratt
 }
-

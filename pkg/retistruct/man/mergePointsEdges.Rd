@@ -39,4 +39,3 @@ indicies of the points linked by the edge.
 \author{
 David Sterratt
 }
-

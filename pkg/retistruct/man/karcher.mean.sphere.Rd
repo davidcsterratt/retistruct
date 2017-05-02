@@ -27,9 +27,6 @@ the point whose sum of squared Riemmann distances to the points is
 minimal. On a sphere using sphereical coordinates this distance
 can be computed using the formula for central angle.
 }
-\author{
-David Sterratt
-}
 \references{
 Heo, G. and Small, C. G. (2006). Form representations
 and means for landmarks: A survey and comparative
@@ -39,4 +36,6 @@ study. \emph{Computer Vision and Image Understanding},
 \seealso{
 \code{\link{central.angle}}
 }
-
+\author{
+David Sterratt
+}

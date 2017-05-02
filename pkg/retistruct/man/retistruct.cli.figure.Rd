@@ -24,4 +24,3 @@ devices)}
 \author{
 David Sterratt
 }
-

@@ -21,4 +21,3 @@ Return indicies of tear in AnnotatedOutline
 \author{
 David Sterratt
 }
-

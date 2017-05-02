@@ -15,4 +15,3 @@
 \author{
 David Sterratt
 }
-

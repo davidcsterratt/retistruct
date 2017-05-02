@@ -18,4 +18,3 @@ to files in matlab format named r.mat
 \author{
 David Sterratt
 }
-

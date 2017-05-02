@@ -24,4 +24,3 @@ points in 3D cartesian space
 \author{
 David Sterratt
 }
-

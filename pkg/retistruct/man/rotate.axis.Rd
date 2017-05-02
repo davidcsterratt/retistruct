@@ -34,4 +34,3 @@ rotate.axis(r, r0)
 \author{
 David Sterratt
 }
-

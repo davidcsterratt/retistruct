@@ -24,4 +24,3 @@ be displayed and \code{FALSE} for ones that should not.
 \author{
 David Sterratt
 }
-

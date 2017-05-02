@@ -27,4 +27,3 @@ This is the inverse of \code{\link{sphere.spherical.to.polar.cart}}
 \author{
 David Sterratt
 }
-

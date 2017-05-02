@@ -27,4 +27,3 @@ Plot flat \code{\link{StitchedOutline}}. If the optional argument
 \author{
 David Sterratt
 }
-

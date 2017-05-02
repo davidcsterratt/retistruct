@@ -72,4 +72,3 @@ minimise the energy function.
 \author{
 David Sterratt
 }
-

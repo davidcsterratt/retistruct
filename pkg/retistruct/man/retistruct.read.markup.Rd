@@ -47,4 +47,3 @@ swapping of \code{gf}  and \code{gb} and \code{VF} and \code{VB}.
 \author{
 David Sterratt
 }
-

@@ -18,4 +18,3 @@ Get spherical coordinates of landmarks.
 \author{
 David Sterratt
 }
-

@@ -48,4 +48,3 @@ print(sphere.tri.area(P, Pt))
 \author{
 David Sterratt
 }
-

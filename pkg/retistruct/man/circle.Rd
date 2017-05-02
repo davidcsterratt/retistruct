@@ -24,4 +24,3 @@ successive points being proportional to \code{L}.
 \author{
 David Sterratt
 }
-

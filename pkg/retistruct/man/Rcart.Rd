@@ -29,4 +29,3 @@ Lagrange integration rule
 \author{
 David Sterratt
 }
-

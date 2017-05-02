@@ -24,4 +24,3 @@ reconstruction data from the file \file{\var{dataset}/r.Rdata}.
 \author{
 David Sterratt
 }
-

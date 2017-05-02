@@ -19,4 +19,3 @@ Check that markup such as tears and the nasal or dorsal points are present.
 \author{
 David Sterratt
 }
-

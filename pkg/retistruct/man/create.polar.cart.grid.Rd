@@ -23,4 +23,3 @@ List containing:
 \author{
 David Sterratt
 }
-

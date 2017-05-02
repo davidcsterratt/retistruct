@@ -19,4 +19,3 @@ Idendtical matrix
 \author{
 David Sterratt
 }
-

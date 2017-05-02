@@ -27,4 +27,3 @@ the files in the directory.
 \author{
 David Sterratt
 }
-

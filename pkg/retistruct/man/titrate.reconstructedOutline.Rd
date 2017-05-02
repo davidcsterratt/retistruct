@@ -32,4 +32,3 @@ energy of the mapping in each case.
 \author{
 David Sterratt
 }
-

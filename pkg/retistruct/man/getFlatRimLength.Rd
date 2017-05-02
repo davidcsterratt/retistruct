@@ -15,4 +15,3 @@ The rim length
 \author{
 David Sterratt
 }
-

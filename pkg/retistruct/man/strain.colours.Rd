@@ -15,4 +15,3 @@ Vector of colours corresponding to strains
 \author{
 David Sterratt
 }
-

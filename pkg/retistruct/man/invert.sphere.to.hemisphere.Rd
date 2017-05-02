@@ -28,4 +28,3 @@ degrees (the equator).
 \author{
 David Sterratt
 }
-

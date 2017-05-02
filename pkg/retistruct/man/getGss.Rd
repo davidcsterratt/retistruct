@@ -15,4 +15,3 @@ getGss(r)
 \author{
 David Sterratt
 }
-

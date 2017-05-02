@@ -18,4 +18,3 @@ Get Karcher mean of datapoints in spherical coordinates.
 \author{
 David Sterratt
 }
-

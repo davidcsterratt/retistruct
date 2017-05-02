@@ -18,4 +18,3 @@ Vectors of areas of triangles
 \author{
 David Sterratt
 }
-

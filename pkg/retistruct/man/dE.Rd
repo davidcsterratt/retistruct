@@ -58,4 +58,3 @@ vector that is received from the \code{optim} function.
 \author{
 David Sterratt
 }
-

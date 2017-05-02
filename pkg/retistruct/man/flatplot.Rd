@@ -21,4 +21,3 @@ Plot flat representation of object
 \author{
 David Sterratt
 }
-

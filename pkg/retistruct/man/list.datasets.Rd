@@ -21,4 +21,3 @@ directories that appear to be valid.
 \author{
 David Sterratt
 }
-

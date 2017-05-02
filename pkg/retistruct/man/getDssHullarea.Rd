@@ -15,4 +15,3 @@ Area in degress squared
 \author{
 David Sterratt
 }
-

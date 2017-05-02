@@ -15,4 +15,3 @@ Normalised angle
 \author{
 David Sterratt
 }
-

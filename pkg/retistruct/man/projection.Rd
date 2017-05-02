@@ -19,4 +19,3 @@ Generic function for plotting projections of objects.
 \author{
 David Sterratt
 }
-

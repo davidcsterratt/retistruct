@@ -18,4 +18,3 @@ Get spherical coordinates of datapoints.
 \author{
 David Sterratt
 }
-

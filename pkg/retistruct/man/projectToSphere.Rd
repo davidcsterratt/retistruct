@@ -31,4 +31,3 @@ tries to get a good first approximation by using the function
 \author{
 David Sterratt
 }
-

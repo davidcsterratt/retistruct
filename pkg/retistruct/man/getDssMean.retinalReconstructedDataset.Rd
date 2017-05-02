@@ -21,4 +21,3 @@ transformed according to the values of \code{DVflip} and
 \author{
 David Sterratt
 }
-

@@ -27,4 +27,3 @@ azel.to.sphere.colattitude(r, r0)
 \author{
 David Sterratt
 }
-

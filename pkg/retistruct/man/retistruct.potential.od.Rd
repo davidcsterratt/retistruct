@@ -20,4 +20,3 @@ landmark lines \code{Ss} exists.
 \author{
 David Sterratt
 }
-

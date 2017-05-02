@@ -18,4 +18,3 @@ in the directory \code{r$dataset}.
 \author{
 David Sterratt
 }
-

@@ -29,4 +29,3 @@ of this plane and the curtailed sphere.
 \author{
 David Sterratt
 }
-

@@ -31,4 +31,3 @@ point \code{phi0}) onto a flattened retina (described by points
 \author{
 David Sterratt
 }
-

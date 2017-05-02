@@ -15,4 +15,3 @@ The optimal concentration
 \author{
 David Sterratt
 }
-

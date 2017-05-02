@@ -20,4 +20,3 @@ that all tears are correct.
 \author{
 David Sterratt
 }
-

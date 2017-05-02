@@ -21,4 +21,3 @@ according to whether the retina is DV flipped or not.
 \author{
 David Sterratt
 }
-

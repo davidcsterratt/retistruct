@@ -24,4 +24,3 @@ if it does.
 \author{
 David Sterratt
 }
-

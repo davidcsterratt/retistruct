@@ -9,4 +9,3 @@ retistruct.batch.plot.titrations(tdat)
 \arguments{
 \item{tdat}{Output of \code{\link{retistruct.batch.get.titrations}}}
 }
-

@@ -19,4 +19,3 @@ New \code{\link{AnnotatedOutline}} object
 \author{
 David Sterratt
 }
-

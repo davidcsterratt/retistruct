@@ -32,4 +32,3 @@ given in barycentric coordinates with respect to the mesh.
 \author{
 David Sterratt
 }
-

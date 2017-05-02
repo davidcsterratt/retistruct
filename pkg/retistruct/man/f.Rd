@@ -27,4 +27,3 @@ Piecewise, smooth function that increases linearly with negative arguments.
 \author{
 David Sterratt
 }
-

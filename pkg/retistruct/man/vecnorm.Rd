@@ -16,4 +16,3 @@ vector. If a matrix, returns the 2-norm of each row of the matrix
 \author{
 David Sterratt
 }
-

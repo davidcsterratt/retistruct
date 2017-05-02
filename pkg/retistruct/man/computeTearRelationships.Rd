@@ -34,4 +34,3 @@ overlap.
 \author{
 David Sterratt
 }
-

@@ -20,4 +20,3 @@ reconstruction directories.
 \author{
 David Sterratt
 }
-

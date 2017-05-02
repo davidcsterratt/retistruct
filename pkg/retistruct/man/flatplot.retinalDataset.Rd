@@ -24,4 +24,3 @@ the date or plotting parameters. At present, if \code{DVflip} is
 \author{
 David Sterratt
 }
-

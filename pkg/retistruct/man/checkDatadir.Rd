@@ -16,4 +16,3 @@ checkDatadir(dir = NULL)
 \author{
 David Sterratt
 }
-

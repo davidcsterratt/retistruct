@@ -36,4 +36,3 @@ each triangle.
 \author{
 David Sterratt
 }
-

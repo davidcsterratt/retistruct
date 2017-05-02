@@ -28,4 +28,3 @@
 \author{
 David Sterratt
 }
-

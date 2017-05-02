@@ -29,4 +29,3 @@ landmarks \code{Ss} in  spherical coordinates.
 \author{
 David Sterratt
 }
-

@@ -21,4 +21,3 @@ appears
 \author{
 David Sterratt
 }
-

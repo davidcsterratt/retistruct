@@ -19,4 +19,3 @@ the values of \code{DVflip} and \code{side}.
 \author{
 David Sterratt
 }
-

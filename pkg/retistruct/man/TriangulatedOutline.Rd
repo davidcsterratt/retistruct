@@ -40,4 +40,3 @@ minimum number of triangles in the triangulation is specified by
 \author{
 David Sterratt
 }
-

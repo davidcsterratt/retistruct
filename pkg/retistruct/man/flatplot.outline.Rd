@@ -34,4 +34,3 @@ Plot flat \code{\link{Outline}}.
 \author{
 David Sterratt
 }
-

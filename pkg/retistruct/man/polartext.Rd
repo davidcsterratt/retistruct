@@ -15,4 +15,3 @@ Place text at bottom right of \code{\link{projection}}
 \author{
 David Sterratt
 }
-

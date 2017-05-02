@@ -24,4 +24,3 @@ Stretch the mesh in the flat retina to a circular outline
 \author{
 David Sterratt
 }
-

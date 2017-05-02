@@ -24,4 +24,3 @@ to work properly.
 \author{
 David Sterratt
 }
-

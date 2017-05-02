@@ -25,4 +25,3 @@ This in the inverse of \code{\link{sphere.cart.to.sphere.wedge}}
 \author{
 David Sterratt
 }
-

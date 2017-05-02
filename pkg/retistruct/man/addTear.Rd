@@ -20,4 +20,3 @@ Add tear to an AnnotatedOutline
 \author{
 David Sterratt
 }
-

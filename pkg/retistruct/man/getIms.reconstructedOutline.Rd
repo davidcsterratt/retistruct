@@ -16,4 +16,3 @@ Coordinates of corners of pixels in spherical coordinates
 \author{
 David Sterratt
 }
-

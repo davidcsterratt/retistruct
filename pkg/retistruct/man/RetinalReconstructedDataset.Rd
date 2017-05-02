@@ -26,4 +26,3 @@ that have been transformed according to the values of
 \author{
 David Sterratt
 }
-

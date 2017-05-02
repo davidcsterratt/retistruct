@@ -20,4 +20,3 @@ clockwise.
 \author{
 David Sterratt
 }
-

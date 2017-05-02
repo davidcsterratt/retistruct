@@ -18,4 +18,3 @@ Save the reconstruction data in an object \code{r}  that inherits
 \author{
 David Sterratt
 }
-

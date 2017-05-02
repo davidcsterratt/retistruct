@@ -31,4 +31,3 @@ product of two sides of the triangle.
 \author{
 David Sterratt
 }
-

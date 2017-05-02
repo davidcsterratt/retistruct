@@ -26,4 +26,3 @@ unaltered.
 \author{
 David Sterratt
 }
-

@@ -32,4 +32,3 @@ specified by \code{cpu.time.limit}.
 \author{
 David Sterratt
 }
-

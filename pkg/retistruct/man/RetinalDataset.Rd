@@ -23,4 +23,3 @@ to the dataset in question.
 \author{
 David Sterratt
 }
-

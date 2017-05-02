@@ -21,4 +21,3 @@ Vector of density estimates
 \author{
 David Sterratt
 }
-

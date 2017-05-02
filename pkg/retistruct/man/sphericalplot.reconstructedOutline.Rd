@@ -23,4 +23,3 @@ draws the mesh.
 \author{
 David Sterratt
 }
-

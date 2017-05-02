@@ -20,4 +20,3 @@ Constructor for AnnotatedOutline object.
 \author{
 David Sterratt
 }
-

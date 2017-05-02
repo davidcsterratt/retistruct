@@ -19,4 +19,3 @@ Draw a spherical plot of datapoints.
 \author{
 David Sterratt
 }
-

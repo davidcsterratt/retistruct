@@ -30,4 +30,3 @@ Construct an outline object. This sanitises the input points
 \author{
 David Sterratt
 }
-

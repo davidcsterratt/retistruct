@@ -14,4 +14,3 @@ panlabel(panlabel, line = -0.7)
 \author{
 David Sterratt
 }
-

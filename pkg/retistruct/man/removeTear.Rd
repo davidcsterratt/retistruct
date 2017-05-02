@@ -20,4 +20,3 @@ Remove tear from an AnnotatedOutline
 \author{
 David Sterratt
 }
-

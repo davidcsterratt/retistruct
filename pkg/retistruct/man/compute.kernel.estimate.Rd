@@ -46,4 +46,3 @@ they are \code{c(5, 25, 50, 75, 95)}.
 \author{
 David Sterratt
 }
-

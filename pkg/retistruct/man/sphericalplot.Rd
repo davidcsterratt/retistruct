@@ -18,4 +18,3 @@ Draw a spherical plot.
 \author{
 David Sterratt
 }
-

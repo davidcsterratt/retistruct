@@ -11,4 +11,3 @@ retistruct.batch.get.titrations(tldir = ".")
 recurse. The files have to have been reconstructed with the
 \code{titrate} option to \code{\link{retistruct.batch}}}
 }
-

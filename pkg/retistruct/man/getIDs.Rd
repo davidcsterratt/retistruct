@@ -9,4 +9,3 @@ getIDs(r)
 \arguments{
 \item{r}{Object}
 }
-

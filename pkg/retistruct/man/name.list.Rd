@@ -20,4 +20,3 @@ have been given standardised names
 \author{
 David Sterratt
 }
-
