@@ -153,7 +153,7 @@ If you encounter issues using Retistruct please either:
 I. (2014) "Correlations in distribution and concentration of calcium,
 copper and iron with zinc in isolated extracellular deposits
 associated with age-related macular
-degeneration". <em>Metallomics</em>. <a href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
+degeneration". <em>Metallomics</em> <strong>6</strong>:&nbsp;1223-1228. <a href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
 10.1039/c4mt00058g</a>
  </li>
 <li>Bleckert, A., Schwartz, G. W., Turner, M.H., Rieke, F., Wong,
