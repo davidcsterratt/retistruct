@@ -4,7 +4,8 @@
 \alias{TriangulatedOutline}
 \title{Triangulate outline}
 \usage{
-TriangulatedOutline(o, n = 200, suppress.external.steiner = FALSE)
+TriangulatedOutline(o, n = 200, suppress.external.steiner = FALSE,
+  report = message)
 }
 \arguments{
 \item{o}{\code{\link{Outline}} object}
@@ -14,6 +15,8 @@ TriangulatedOutline(o, n = 200, suppress.external.steiner = FALSE)
 \item{suppress.external.steiner}{If \code{TRUE} prevent the
 addition of points in the outline. This happens to maintain
 triangle quality.}
+
+\item{report}{Function to report progress}
 }
 \value{
 A \code{triangulatedOutline} object containing the
