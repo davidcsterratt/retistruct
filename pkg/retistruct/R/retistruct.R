@@ -65,7 +65,7 @@ retistruct.potential.od <- function(o) {
 
 ##' Read the markup data contained in the files \file{markup.csv},
 ##' \file{P.csv} and \file{T.csv} in the directory \file{dataset},
-##' which is specified in the reconstruction object \code{r}. 
+##' which is specified in the reconstruction object \code{r}.
 ##'
 ##' The tear information is contained in the files \file{P.csv} and
 ##' \file{T.csv}. The first file contains the locations of outline
@@ -155,7 +155,7 @@ retistruct.read.markup <- function(a, error=stop) {
       a$DVflip <- M["DVflip"]
     }
   } else {
-    error("Markup file M.csv doesn't exist.")
+    error("Markup file markup.csv doesn't exist.")
   }
   
   ## Read in tearfile
