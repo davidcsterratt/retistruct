@@ -3,11 +3,6 @@
 ##' @export
 recfile.version <- 5      # Version of reconstruction file data format
 
-## Report function, with similar arguments to print
-retistruct.report <- function(message, title="",...) {
-  cat(paste(message, "\n", sep=""))
-}
-
 ##' Check the whether  directory contains valid data 
 ##' @param dir Diectory to check.
 ##' @return  \code{TRUE} if \code{dir} contains valid data;
@@ -248,7 +243,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 ##' reconstruction information
 ##' @author David Sterratt
 ##' @export
-retistruct.reconstruct <- function(o, report=retistruct.report,
+retistruct.reconstruct <- function(o, report=message,
                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
                                    ...) {
   ## Check that markup is there

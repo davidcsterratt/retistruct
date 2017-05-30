@@ -4,7 +4,7 @@
 \alias{retistruct.reconstruct}
 \title{Reconstruct a retina}
 \usage{
-retistruct.reconstruct(o, report = retistruct.report, plot.3d = FALSE,
+retistruct.reconstruct(o, report = message, plot.3d = FALSE,
   dev.flat = NA, dev.polar = NA, ...)
 }
 \arguments{
