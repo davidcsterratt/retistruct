@@ -49,16 +49,16 @@ StitchedOutline <- function(a) {
   
   ## Insert points on the backward tears corresponding to points on
   ## the forward tears
-  sF <-      stitch.insert.points(P, V0, VF, VB, TFset, TBset,
-                                               gf, gb, hf, hb, h,
-                                               "Forwards")
+  sF <-      suppressMessages(stitch.insert.points(P, V0, VF, VB, TFset, TBset,
+                                                   gf, gb, hf, hb, h,
+                                                   "Forwards"))
 
   ## Insert points on the forward tears corresponding to points on
   ## the backward tears
-  sB <- with(sF,
-             stitch.insert.points(P, V0, VB, VF, TBset, TFset,
-                                  gb, gf, hb, hf, h,
-                                  "Backwards"))
+  sB <- suppressMessages(with(sF,
+                              stitch.insert.points(P, V0, VB, VF, TBset, TFset,
+                                                   gb, gf, hb, hf, h,
+                                                   "Backwards")))
   ## Extract data from object
   P <- sB$P
   gf <- sB$gb
