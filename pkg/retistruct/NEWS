@@ -1,4 +1,4 @@
-CHANGES IN VERSION 0.5.11 - Released 2016/??/??
+CHANGES IN VERSION 0.5.11 - Released 2017/06/20
 
 NEW FEATURES
 
@@ -11,6 +11,9 @@ BUG FIXES
 * 3D (RGL) plot now appears after reconstruction
   (https://github.com/davidcsterratt/retistruct/issues/5)
   Thanks to Nicolas Nagoo for the report.
+
+* gWidgets2RGtk not found and package.dependencies() is deprecated
+  (https://github.com/davidcsterratt/retistruct/issues/12)
 
 CODE IMPROVEMENTS
 

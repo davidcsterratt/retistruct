@@ -48,3 +48,20 @@ name.list <- function(l) {
   }
   return(l)
 }
+
+##' Parse dependencies
+##' @param deps Text produced by, e.g., installed.packages()["packagename","Suggests"]
+##' @return Table with package column, relationship column and version number
+##' @author David Sterratt
+parse.dependencies <- function(deps) {
+  z <- unlist(strsplit(deps, ",\n", fixed = TRUE))
+  pat <- "^([^\\([:space:]]+)[[:space:]]*\\(([^\\)]+)\\).*"
+  deps <- cbind(sub(pat, "\\1", z), sub(pat, "\\2", z), NA)
+  noversion <- deps[, 1] == deps[, 2]
+  deps[noversion, 2] <- NA
+  pat <- "[[:space:]]*([[<>=]+)[[:space:]]+(.*)"
+  deps[!noversion, 2:3] <- c(sub(pat, "\\1", deps[!noversion, 2]),
+                             sub(pat, "\\2", deps[!noversion, 2]))
+  return(deps)
+}
+
