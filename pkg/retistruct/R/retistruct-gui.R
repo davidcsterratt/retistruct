@@ -717,8 +717,8 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   
   ## Editing of phi0
   g.phi0d.frame <- gWidgets2::gframe("Phi0", container=g.editor)
-  g.phi0d <- gWidgets2::gedit(0, handler=h.phi0d, width=5, coerce.with=as.numeric,
-                   container=g.phi0d.frame)
+  g.phi0d <- gWidgets2::gedit("0", handler=h.phi0d, width=5, coerce.with=as.numeric,
+                              container=g.phi0d.frame)
 
   ## Whether to show strain
   g.edit.show.frame <- gWidgets2::gframe("Show", container=g.editor)
