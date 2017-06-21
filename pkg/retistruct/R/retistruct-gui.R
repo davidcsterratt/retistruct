@@ -47,14 +47,21 @@ retistruct <- function() {
                          TRUE,
                          eval(parse(text=paste("packageVersion(suggests[1])", suggests[2],  "suggests[3]"))))
     }
-    if (!require(pkg, character.only=TRUE) | 
+    if (!suppressWarnings(require(pkg, character.only=TRUE)) | 
         !uptodate) {
       message(paste("Trying to install required package", pkg))
       utils::install.packages(pkg)
-      if (!require(pkg, character.only=TRUE)) {
+      if (!suppressWarnings(require(pkg, character.only=TRUE))) {
         stop(paste("Could not install", pkg))
       }
+      if (pkg=="RGtk2" & .Platform$OS.type=="windows") {
+        return(FALSE)
+      }
     }
+    return(TRUE)
+  }
+  if (!require.package(guiToolkit)) {
+    return("To finish install, restart R and type retistruct::retistruct")
   }
   require.package(paste0("gWidgets2", guiToolkit))
   require.package("cairoDevice")
