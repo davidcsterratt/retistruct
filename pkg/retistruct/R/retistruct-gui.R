@@ -5,6 +5,7 @@
 ##' contains variables in object.
 ##' @importFrom grDevices dev.cur dev.set
 ##' @importFrom graphics identify
+##' @importFrom utils packageVersion
 ##' @export
 retistruct <- function() {
   ## This function is essentially the constructor for a class. The
