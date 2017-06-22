@@ -574,7 +574,7 @@ retistruct <- function() {
     g.prop.dl <- function(name, property, container) {
       g.prop.dl.group <- gWidgets2::ggroup(container=container)
       gWidgets2::glabel(name, container=g.prop.dl.group)
-      g.dl <- gWidgets2::gdroplist(
+      g.dl <- gWidgets2::gcombobox(
         cols,
         selected=which(cols == options(property[1])),
         container=g.prop.dl.group,
