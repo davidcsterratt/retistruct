@@ -599,7 +599,7 @@ retistruct <- function() {
     g.max.proj.dim <- gWidgets2::gedit(0, width=5, coerce.with=as.numeric,
                             container=g.group,
                             handler=function(h, ...) {
-                              eval(parse(text=paste("options(", property, "=gWidgets::svalue(g.max.proj.dim))")))
+                              eval(parse(text=paste("options(", property, "=gWidgets2::svalue(g.max.proj.dim))")))
                               do.plot()
                             })
     gWidgets2::svalue(g.max.proj.dim) <- getOption(property)
