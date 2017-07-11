@@ -10,7 +10,7 @@ o <- retistruct.read.dataset(dataset)
 ## Load the human annotation of tears
 o <- retistruct.read.markup(o)
 
-## Make this a left eye to help with orientatio of points
+## Make this a left eye to help with orientation of points
 o$side="Left"
 
 ## Plot of raw data. Axes are reversed to improve comparison with
@@ -48,7 +48,7 @@ m <- projectToSphere(m)
 
 ## Plot the initial gridlines in 2D
 par(mfg=c(3, 3))
-flatplot(m, grid=TRUE, 
+flatplot(m, grid=TRUE,
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
           stitch=FALSE, strain=TRUE)
 mtext("Dii", adj=0, font=2, line=-0.9)
@@ -71,7 +71,7 @@ r <- solveMappingCart(m, alpha=0, x0=0, nu=1,
 r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
                         dtmax=500, maxmove=1E2, tol=1e-6,
                         plot.3d=FALSE)
-r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5, 
+r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5,
                       plot.3d=FALSE)
 
 ## Plot the final projection in 3D and on the grid
@@ -83,7 +83,7 @@ sphericalplot(r, strain=TRUE, datapoints=FALSE)
 rgl.postscript("final-projection.svg", "svg")
 
 par(mfg=c(3, 2))
-flatplot(r, grid=TRUE, 
+flatplot(r, grid=TRUE,
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
           stitch=FALSE, strain=TRUE)
 mtext("Eii", adj=0, font=2, line=-0.9)
@@ -99,7 +99,7 @@ projection(r, datapoints=TRUE, landmarks=TRUE, datapoint.contours=FALSE)
 mtext("Fi", adj=0, font=2, line=-0.9)
 
 par(mfg=c(3, 1))
-flatplot(r, grid=TRUE, 
+flatplot(r, grid=TRUE,
           datapoints=TRUE, landmarks=TRUE, mesh=FALSE, markup=FALSE,
           stitch=FALSE)
 mtext("Fii", adj=0, font=2, line=-0.9)
