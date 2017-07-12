@@ -65,6 +65,12 @@ retistruct <- function() {
     return("To finish install, restart R and type retistruct::retistruct")
   }
   require.package(paste0("gWidgets2", guiToolkit))
+  if ((guiToolkit == "RGtk2") &&
+      (packageVersion("gWidgets2RGtk2") == "1.0.5")) {
+    message("Error is likely with version 1.0.5 of gWidgets2RGtk2.")
+    message("Try installing using install.packages(\"gWidgets2RGtk2\") .")
+    message("You may quit and start R before doing this.")
+  }
   require.package("cairoDevice")
   options(guiToolkit=guiToolkit)
   
