@@ -6,15 +6,6 @@ RELEASE NOTES
   because there is no version of the RGtk2 package that works with
   earlier versions of R available on CRAN.
 
-* There is a bug in version 1.0.5 gWidgets2RGtk that prevents the GUI
-  working. If you encounter this problem, work around it by typing
-
-    install.packages("devtools")
-    devtools::install_github("jverzani/gWidgetsRGtk2")
-
-  in the R console and then running retistruct() again. More information at:
-  https://github.com/davidcsterratt/retistruct/issues/13
-
 NEW FEATURES
 
 * The CSV input format can now take a file of counts (or "grouped") data

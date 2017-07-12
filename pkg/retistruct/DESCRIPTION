@@ -12,7 +12,7 @@ Description: Reconstructs retinae by morphing a flat surface with cuts (a
 Version: 0.5.11
 URL: http://retistruct.r-forge.r-project.org/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2017-06-22
+Date: 2017-07-12
 Depends:
     R (>= 3.1.0)
 Imports:
@@ -27,7 +27,7 @@ Imports:
     R.matlab
 Suggests:
     testthat,
-    gWidgets2RGtk2 (>= 1.0.3),
+    gWidgets2RGtk2 (>= 1.0.6),
     gWidgets2 (>= 1.0.6),
     cairoDevice
 Roxygen: list(wrap = FALSE)
