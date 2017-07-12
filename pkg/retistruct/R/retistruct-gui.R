@@ -560,9 +560,7 @@ retistruct <- function() {
   ## Warning message
   h.warning <- function(e) {
     gWidgets2::gmessage(e, title="Warning", icon="warning")
-    invokeRestart("muffleWarning")
   }
-
 
   ## Poperties dialogue
   h.properties <- function(h, ...) {
