@@ -52,11 +52,12 @@ retistruct <- function() {
         !uptodate) {
       message(paste("Trying to install required package", pkg))
       utils::install.packages(pkg)
+      if (pkg=="RGtk2" & .Platform$OS.type=="windows") {
+        require("RGtk2")
+        return(FALSE)
+      }
       if (!suppressWarnings(require(pkg, character.only=TRUE))) {
         stop(paste("Could not install", pkg))
-      }
-      if (pkg=="RGtk2" & .Platform$OS.type=="windows") {
-        return(FALSE)
       }
     }
     return(TRUE)
