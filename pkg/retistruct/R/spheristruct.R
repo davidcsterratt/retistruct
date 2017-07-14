@@ -41,45 +41,6 @@ order.Rset <- function(Rset, gf, hf) {
   return(Rset)
 }
 
-## Convert a matrix containing on each line the indicies of the points
-## forming a segment, and convert this to two sets of ordered pointers
-segments2pointers <- function(S) {
-  g <- c()
-  j <- 1                                # Row of S
-  k <- 1                                # Column of S
-  while(nrow(S) > 0) {
-    i <- S[j,3-k]                       # i is index of the next point
-    g[S[j,k]] <- i                      # Set the pointer to i
-    S <- S[-j,,drop=FALSE]              # We have used this row of S
-    if (nrow(S) == 0) {
-      return(g)
-    }
-    j <- which(S[,1] == i)            # Is i in the first column of S?
-    if (length(j) > 1) {
-      stop("The segment list is not valid as it contains an element more than twice.")
-    }
-    if (length(j)) {              # If so, set the current column to 1
-      k <- 1
-    } else {
-      j <- which(S[,2] == i) # Otherwise, look for i in the second column
-      k <- 2
-      if (!length(j)) {
-        stop(paste("No matching index for point", i, "in S."))
-        return(NULL)
-      }
-    }
-  }
-  return(g)
-}
-
-## Convert a set of ordered pointers to a matrix containing on each
-## line the indicies of the points forming a segment
-pointers2segments <- function(g) {
-  S1 <- which(!is.na(g))
-  S2 <- g[S1]
-  return(cbind(S1, S2))
-}
-
 ##' This function creates merged and transformed versions (all
 ##' suffixed with \code{t}) of a number of existing variables, as well
 ##' as a matrix \code{Bt}, which maps a binary vector representation

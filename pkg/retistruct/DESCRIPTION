@@ -27,7 +27,7 @@ Imports:
     R.matlab
 Suggests:
     testthat,
-    gWidgets2RGtk2 (>= 1.0.3),
+    gWidgets2RGtk2 (>= 1.0.6),
     gWidgets2 (>= 1.0.6),
     cairoDevice
 Roxygen: list(wrap = FALSE)

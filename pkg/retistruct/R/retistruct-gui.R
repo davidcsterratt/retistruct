@@ -69,7 +69,8 @@ retistruct <- function() {
   if ((guiToolkit == "RGtk2") &&
       (packageVersion("gWidgets2RGtk2") == "1.0.5")) {
     message("Error is likely with version 1.0.5 of gWidgets2RGtk2.")
-    message("Try installing using devtools::install_github(\"jverzani/gWidgets2RGtk2\")")
+    message("Try installing using install.packages(\"gWidgets2RGtk2\") .")
+    message("You may quit and start R before doing this.")
   }
   require.package("cairoDevice")
   options(guiToolkit=guiToolkit)
@@ -560,9 +561,7 @@ retistruct <- function() {
   ## Warning message
   h.warning <- function(e) {
     gWidgets2::gmessage(e, title="Warning", icon="warning")
-    invokeRestart("muffleWarning")
   }
-
 
   ## Poperties dialogue
   h.properties <- function(h, ...) {
