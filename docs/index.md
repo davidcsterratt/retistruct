@@ -94,15 +94,14 @@ practise on:
   Guide</a>, use <a href="http://rsb.info.nih.gov/ij/">ImageJ</a> to
   mark up the outline on the brightfield image, and then use <a
   href="http://rsb.info.nih.gov/ij/">ImageJ's</a> particle analyser to
-  find the locations of the stained cells.</li> </ol></p>
+  find the locations of the stained cells.
 
 ## Problems?
 
 If you encounter issues using Retistruct please either:
 * <a href="https://github.com/davidcsterratt/retistruct/issues">Report
-  a bug on Github</a></li>
+  a bug on Github</a>
 * <a href="mailto:david.c.sterratt@ed.ac.uk">Email David Sterratt</a>
-
 
 ## Work using Retistruct
 
@@ -117,7 +116,7 @@ If you encounter issues using Retistruct please either:
   and visualization of spatial retinal data". <em>J. Vis.</em>
   <strong>15</strong>:&nbsp;19. <a
   href="http://dx.doi.org/10.1167/15.9.19">DOI:
-  10.1167/15.9.19</a><
+  10.1167/15.9.19</a>
 * Flinn, J. M., Kakalec P., Tappero, R.,
   Jones, B. and Lengyel, I. (2014) "Correlations in distribution and
   concentration of calcium, copper and iron with zinc in isolated
