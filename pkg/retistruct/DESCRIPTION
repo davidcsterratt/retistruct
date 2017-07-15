@@ -29,6 +29,7 @@ Suggests:
     testthat,
     gWidgets2RGtk2 (>= 1.0.6),
     gWidgets2 (>= 1.0.6),
-    cairoDevice
+    cairoDevice,
+    RGtk2
 Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1
