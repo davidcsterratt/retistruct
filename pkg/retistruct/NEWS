@@ -1,4 +1,4 @@
-CHANGES IN VERSION 0.5.11 - Released 2017/07/12
+CHANGES IN VERSION 0.5.11 - Released 2017/07/15
 
 RELEASE NOTES
 
@@ -6,7 +6,7 @@ RELEASE NOTES
   because there is no version of the RGtk2 package that works with
   earlier versions of R available on CRAN.
 
-* There is a bug in version 1.0.5 gWidgets2RGtk that prevents the GUI
+* There is a bug in version 1.0.5 of gWidgets2RGtk that prevents the GUI
   working. If you encounter this problem, work around it by typing
 
     install.packages("gWidgets2RGtk2")
@@ -32,6 +32,13 @@ BUG FIXES
 
 * gWidgets2::gdroplist is deprecated
   (https://github.com/davidcsterratt/retistruct/issues/10)
+
+* Test failed buiding on Windows i386
+  (https://github.com/davidcsterratt/retistruct/issues/14)
+
+* Issue with adding tears in retistruct
+  (https://github.com/davidcsterratt/retistruct/issues/11)
+  Thanks to https://github.com/sagewiltse for the report.
 
 CODE IMPROVEMENTS
 
