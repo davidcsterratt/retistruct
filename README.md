@@ -10,4 +10,4 @@ the intact adult retina to within 8° of arc (3.6% of nasotemporal
 axis). The coordinates in reconstructed retinae can be transformed to
 visuotopic coordinates.
 
-For full details go to the home page: http://retistruct.r-forge.r-project.org/
+For full details go to the home page: http://davidcsterratt.github.io/retistruct/
