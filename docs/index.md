@@ -7,21 +7,21 @@ layout: default
 ## computational reconstruction and transformation of flattened retinae
 
 Retistruct is an <a href="http://www.r-project.org">R</a> package to
- morph a flat surface with cuts (a dissected flat-mount retina) onto a
- curvilinear surface (the a standard retinal shape).  It can estimate
- the position of a point on the intact adult retina to within 8&deg;
- of arc (3.6% of nasotemporal axis). The coordinates in reconstructed
- retinae can be transformed to visuotopic coordinates.
+morph a flat surface with cuts (a dissected flat-mount retina) onto a
+curvilinear surface (the a standard retinal shape).  It can estimate
+the position of a point on the intact adult retina to within 8&deg; of
+arc (3.6% of nasotemporal axis). The coordinates in reconstructed
+retinae can be transformed to visuotopic coordinates.
 
 ## How Retistruct works
 
-<img src="retistruct.small.png" style="float: right">
+![Retistruct](images/retistruct-small.png){: style="float: right"}
 
-Reconstruction
-is achieved by: stitching the marked-up cuts of the flat-mount
-outline; dividing the stitched outline into a mesh whose vertices then
-are mapped onto a curtailed sphere; and finally moving the vertices so
-as to minimise a physically-inspired deformation energy function. 
+Reconstruction is achieved by: stitching the marked-up cuts of the
+flat-mount outline; dividing the stitched outline into a mesh whose
+vertices then are mapped onto a curtailed sphere; and finally moving
+the vertices so as to minimise a physically-inspired deformation
+energy function.
 
 * Full details are in the paper: Sterratt, D. C., Lyngholm, D.,
   Willshaw, D. J. and Thompson, I. D. (2013).  Standard Anatomical and
@@ -45,15 +45,14 @@ href="http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html">
 Chris von Csefalvay's instructions</a>.
 
 
-### Stable version<
+### Stable version
 
-To install the <a
-href="http://cran.r-project.org/web/packages/retistruct/index.html">stable
-version of Retistruct hosted on CRAN</a>, follow the instructions in
-the <a href="retistruct-user-guide.pdf">User Guide</a>. The
-installation contains a number of demonstration retinae, and
-instructions for how to handle retinal flat-mount images in
-Retistruct.
+To install the
+[stable version of Retistruct hosted on CRAN](https://cran.r-project.org/package=retistruct),
+follow the instructions in the
+[User Guide](retistruct-user-guide.pdf). The installation contains a
+number of demonstration retinae, and instructions for how to handle
+retinal flat-mount images in Retistruct.
 
 ### Development version
 
@@ -67,17 +66,14 @@ build from the source code using <tt>R CMD build</tt>.
 
 ### Source code
 
-The source code can be checked out from the <a
-href="https://r-forge.r-project.org/scm/?group_id=1436">R-forge
-subversion repository</a> or <a
-href="https://github.com/davidcsterratt/retistruct">Github</a>.
+The source code can be checked out from [Github](https://github.com/davidcsterratt/retistruct).
 
 ### Reference publication code
 
-For reference purposes, this <a href="retistruct_0.5.7.zip"> zip
-file</a> contains the version of Retistruct that generated the
-reconstructions in Sterratt &amp;
-al. (2013; <a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
+For reference purposes, this [zip file](retistruct_0.5.7.zip) contains
+the version of Retistruct that generated the reconstructions in
+Sterratt &amp; al. (2013; <a
+href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002921"><em>PLoS
 Computational Biology</em> 9</a>). The file also contains some Matlab
 code to read data directories contained by Retistruct.
 
@@ -85,11 +81,10 @@ code to read data directories contained by Retistruct.
 
 As well as the built-in demo data, there are some sample images to
 practise on:
-1. Beginner: <a href="data/image.png">SMI-32 stained retina</a>. As
-  described in the <a href="retistruct-user-guide.pdf">User Guide</a>,
-  the outline can be marked up in <a
-  href="http://rsb.info.nih.gov/ij/">ImageJ</a> and imported into
-  Retistruct.
+1. Beginner: [SMI-32 stained retina](data/image.png). As described in
+  the [User Guide](retistruct-user-guide.pdf), the outline can be
+  marked up in [ImageJ](http://rsb.info.nih.gov/ij/) and
+  imported into Retistruct.
 2. More advanced: TIFF files (<a
   href="data/left-5x-small.tif">left</a> and <a
   href="data/right-5x-small.tif">right</a>), each containing a stack
@@ -122,7 +117,8 @@ If you encounter issues using Retistruct please either:
   and visualization of spatial retinal data". <em>J. Vis.</em>
   <strong>15</strong>:&nbsp;19. <a
   href="http://dx.doi.org/10.1167/15.9.19">DOI:
-  10.1167/15.9.19</a></li> <li>Flinn, J. M., Kakalec P., Tappero, R.,
+  10.1167/15.9.19</a><
+* Flinn, J. M., Kakalec P., Tappero, R.,
   Jones, B. and Lengyel, I. (2014) "Correlations in distribution and
   concentration of calcium, copper and iron with zinc in isolated
   extracellular deposits associated with age-related macular
