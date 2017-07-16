@@ -2,7 +2,7 @@
 % Please edit documentation in R/spheristruct.R
 \name{flipped.triangles}
 \alias{flipped.triangles}
-\title{Determine indicies of triangles that are flipped}
+\title{Determine indices of triangles that are flipped}
 \usage{
 flipped.triangles(phi, lambda, Tt, R)
 }

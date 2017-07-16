@@ -2,7 +2,7 @@
 % Please edit documentation in R/spheristruct.R
 \name{flipped.triangles.cart}
 \alias{flipped.triangles.cart}
-\title{Determine indicies of triangles that are flipped}
+\title{Determine indices of triangles that are flipped}
 \usage{
 flipped.triangles.cart(P, Tt, R)
 }

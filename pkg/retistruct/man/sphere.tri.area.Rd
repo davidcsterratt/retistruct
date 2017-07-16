@@ -16,7 +16,7 @@ sphere.tri.area(P, Pt)
 spherical polar coordinates. Columns need to be labelled
 \code{phi} (lattidute) and \code{lambda} (longitude).}
 
-\item{Pt}{3-column matrix of indicies of rows of \code{P} giving
+\item{Pt}{3-column matrix of indices of rows of \code{P} giving
 triangulation}
 }
 \value{

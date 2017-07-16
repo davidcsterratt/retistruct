@@ -17,12 +17,12 @@ Adds following fields to input
 \item{\code{Ct}}{Transformed connection set}
 \item{\code{Cut}}{Transformed symmetric connection set}
 \item{\code{Bt}}{Transformed binary vector representation
-of edge indicies onto a binary vector representation of the
-indicies of the points linked by the edge}
+of edge indices onto a binary vector representation of the
+indices of the points linked by the edge}
 \item{\code{Lt}}{Transformed edge lengths}
 \item{\code{ht}}{Transformed correspondences}
 \item{\code{u}}{Indicies of unique points in untransformed space}
-\item{\code{U}}{Transformed indicies of unique points in untransformed space}
+\item{\code{U}}{Transformed indices of unique points in untransformed space}
 \item{\code{Rset}}{The set of points on the rim (which has been reoorded)}
 \item{\code{Rsett}}{Transformed set of points on rim}
 \item{\code{i0t}}{Transformed index of the landmark}
@@ -33,8 +33,8 @@ indicies of the points linked by the edge}
 This function creates merged and transformed versions (all
 suffixed with \code{t}) of a number of existing variables, as well
 as a matrix \code{Bt}, which maps a binary vector representation
-of edge indicies onto a binary vector representation of the
-indicies of the points linked by the edge.
+of edge indices onto a binary vector representation of the
+indices of the points linked by the edge.
 }
 \author{
 David Sterratt

@@ -2,17 +2,17 @@
 % Please edit documentation in R/AnnotatedOutline.R
 \name{labelTearPoints}
 \alias{labelTearPoints}
-\title{Label three outline point indicies as apicies and vertices of tear}
+\title{Label three outline point indices as apicies and vertices of tear}
 \usage{
 labelTearPoints(o, m)
 }
 \arguments{
 \item{o}{Outline object}
 
-\item{m}{the vector of three indicies}
+\item{m}{the vector of three indices}
 }
 \value{
-Vector of indicies labelled with V0, VF and VB
+Vector of indices labelled with V0, VF and VB
 }
 \description{
 Label a set of three unlabelled points supposed to refer to the
