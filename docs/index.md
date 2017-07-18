@@ -37,13 +37,12 @@ energy function.
 
 ## Installation and documentation
 
-Retistruct has been tested on GNU/Linux (Ubuntu 12.04), Mac OS X 10.8
-and Microsoft Windows Vista. Installing the graphical user interface
+Retistruct has been tested on GNU/Linux (Ubuntu 16.04), Mac OS X 10.8
+and Microsoft Windows 7. Installing the graphical user interface
 on Mac OS X 10.9 (Mavericks) and 10.10 (Yosemite) is possible, but
 requires the GTK library to be installed first; <a
 href="http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html">see
 Chris von Csefalvay's instructions</a>.
-
 
 ### Stable version
 
@@ -54,19 +53,11 @@ follow the instructions in the
 number of demonstration retinae, and instructions for how to handle
 retinal flat-mount images in Retistruct.
 
-### Development version
+### Development version and source code and 
 
 The development version of Retistruct contains the most recent bug
-fixes and improvements, but is not stable. Builds of the package are
-usually <a
-href="https://r-forge.r-project.org/R/?group_id=1436">available on
-R-forge</a> and can be installed using the R install command given
-there. If the R-forge packages are not available, you will have to
-build from the source code using <tt>R CMD build</tt>.
-
-### Source code
-
-The source code can be checked out from [Github](https://github.com/davidcsterratt/retistruct).
+fixes and improvements, but may not be stable. To install this follow the instructions on the Retistruct   
+[Github](https://github.com/davidcsterratt/retistruct) repository, where the source code can also be checked out.
 
 ### Reference publication code
 
