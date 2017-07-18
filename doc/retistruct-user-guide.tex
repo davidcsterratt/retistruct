@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\newcommand{\svninfo}{Retistruct version: 0.5.11 , Date: 2016-06-29}
+\newcommand{\svninfo}{Retistruct version: 0.5.11 , Date: 2017-07-15}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -24,7 +24,24 @@
 
 \subsection{Install the necessary system packages}
 
+\subsubsection{Ubuntu Linux}
+
+Follow the instructions at
+\url{https://cran.r-project.org/bin/linux/ubuntu/}
+to obtain the latest stable version of R. For example, for Ubuntu
+16.04 (Xenial) to download R from the Bristol UK mirror, enter the
+following in a terminal window:
+\begin{verbatim}
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+sudo apt-add-repository deb https://https://www.stats.bris.ac.uk/R/bin/linux/ubuntu xenial/
+sudo apt-get install r-base r-base-dev libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev
+\end{verbatim}
+% Need to install RGtk2 separately??
+
 \subsubsection{Fedora Linux }
+
+\emph{NOTE: these instructions have not been tested since at least
+  2015.}
 
 As root,
 
@@ -37,13 +54,6 @@ yum install mesa-libGL-devel
 yum install mesa-libGLU-devel
 \end{verbatim}
 
-\subsubsection{Ubuntu Linux}
-At the command line, enter:
-
-\begin{verbatim}
-sudo apt-get install r-base r-cran-rgl libgtk2.0-dev
-\end{verbatim}
-% Need to install RGtk2 separately??
 
 \subsubsection{Mac OS X}
 \label{retistruct-manual:sec:mac}
@@ -62,8 +72,7 @@ install the following external packages:
 
 \paragraph{Under Mac OS X 10.9 (Mavericks) or Mac OS X 10.10
   (Yosemite),}
-follow Chris von Csefalvay's instructions:
-\href{http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html}{http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html}.
+See this issue on Github: \url{https://github.com/davidcsterratt/retistruct/issues/4}
 
 \subsubsection{MS/Windows}
 
