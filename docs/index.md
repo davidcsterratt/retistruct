@@ -41,8 +41,8 @@ Retistruct has been tested on GNU/Linux (Ubuntu 16.04), Mac OS X 10.8
 and Microsoft Windows 7. Installing the graphical user interface
 on Mac OS X 10.9 (Mavericks) and 10.10 (Yosemite) is possible, but
 requires the GTK library to be installed first; <a
-href="http://chrisvoncsefalvay.com/2015/02/08/installing-gtk-on-mavericks.html">see
-Chris von Csefalvay's instructions</a>.
+href="https://github.com/davidcsterratt/retistruct/issues/4">see
+this issue on Github for more help</a>.
 
 ### Stable version
 
