@@ -53,13 +53,13 @@ follow the instructions in the
 number of demonstration retinae, and instructions for how to handle
 retinal flat-mount images in Retistruct.
 
-### Development version and source code and 
+### Development version and source code
 
 The development version of Retistruct contains the most recent bug
-fixes and improvements, but may not be stable. To install this follow the instructions on the Retistruct   
+fixes and improvements, but may not be stable. To install it follow the instructions on the Retistruct   
 [Github](https://github.com/davidcsterratt/retistruct) repository, where the source code can also be checked out.
 
-### Reference publication code
+### Reference publication codeVista
 
 For reference purposes, this [zip file](retistruct_0.5.7.zip) contains
 the version of Retistruct that generated the reconstructions in
