@@ -125,21 +125,16 @@ If you encounter issues using Retistruct please either:
 
 ## Updates
 
-<dl>
-  <dt>March 2015</dt>
-  <dd><a href="https://www.linkedin.com/profile/view?id=ADEAAApksKkBd9EgawB_-ysAEyLjdBeLVfT7jSU&authType=OPENLINK&authToken=cUTs&locale=en_US&srchid=1073122861452092899387&srchindex=1&srchtotal=30&trk=vsrp_people_res_name&trkInfo=VSRPsearchId%3A1073122861452092899387%2CVSRPtargetId%3A174370985%2CVSRPcmpt%3Aprimary%2CVSRPnm%3Atrue%2CauthType%3AOPENLINK">Brian
-  Cohn</a> has pointed out a precursor paper to Retistruct, which we
-  weren't aware of when developing Retistruct, or writing the paper:
-    <ul><li>
-        Curcio, C.A., Sloan, K. R. and Meyers, D. (1989) "Computer methods for
-        sampling, reconstruction, display and analysis of retinal whole
-        mounts".
-        <em>Vision Res.</em> 29(5):529-40. <a href="http://www.ncbi.nlm.nih.gov/pubmed/2603390">Pubmed</a>
-      </li>
-    </ul>
-  </dd>
-</dl>
+July 2017
+: Retistruct 0.5.11 is out. The CSV input format can now take a file of counts (or "grouped") data and there are a number of bug fixes; see the [NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS) for more information.
 
+March 2015
+:  [Brian Cohn](https://www.linkedin.com/profile/view?id=ADEAAApksKkBd9EgawB_-ysAEyLjdBeLVfT7jSU&authType=OPENLINK&authToken=cUTs&locale=en_US&srchid=1073122861452092899387&srchindex=1&srchtotal=30&trk=vsrp_people_res_name&trkInfo=VSRPsearchId%3A1073122861452092899387%2CVSRPtargetId%3A174370985%2CVSRPcmpt%3Aprimary%2CVSRPnm%3Atrue%2CauthType%3AOPENLINK) has pointed out a precursor paper to Retistruct, which we
+  weren't aware of when developing Retistruct, or writing the paper:
+  * Curcio, C.A., Sloan, K. R. and Meyers, D. (1989) "Computer methods for
+    sampling, reconstruction, display and analysis of retinal whole
+    mounts". _Vision Res._ 29(5):529-40. [Pubmed](http://www.ncbi.nlm.nih.gov/pubmed/2603390)
+    
 ## Authors and funding
 
 Retistruct was written by <a
