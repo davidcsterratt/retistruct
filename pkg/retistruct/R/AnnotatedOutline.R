@@ -7,6 +7,7 @@
 ##' (\code{V0}, \code{VF} and \code{VB}), lattitude of rim \code{phi0}
 ##' and index of fixed point \code{i0}.
 ##' @author David Sterratt
+##' @export
 AnnotatedOutline <- function(o){
   a <- o
   class(a) <- addClass("annotatedOutline", o)
@@ -124,9 +125,9 @@ computeTearRelationships <- function(o, V0, VB, VF) {
   i.parent <- rep(0, M)                 # Index of parent tear.
                                         # Is 0 if root otherwise
                                         # index of tear if in forward side
-                                        # or negative index if in backward side 
+                                        # or negative index if in backward side
   Rset <- na.omit(o$gf)
-  
+
   ## Create lists of forward and backward tears
   TFset <- list()
   TBset <- list()
@@ -142,7 +143,7 @@ computeTearRelationships <- function(o, V0, VB, VF) {
       Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
       Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
     }
-    
+
     ## Search for parent tears
     ## Go through all tears
     for (j in 1:M) {
@@ -271,7 +272,7 @@ setFixedPoint <- function(o, i0, name) {
 ##' @title Ensure that the fixed point is in the rim, not a tear
 ##' @param o \code{\link{AnnotatedOutline}} object
 ##' @return o \code{\link{AnnotatedOutline}} object in which \code{i0}
-##' may have been changed. 
+##' may have been changed.
 ##' @author David Sterratt
 ensureFixedPointInRim <- function(o) {
   suppressMessages(t <- computeTearRelationships(o, o$V0, o$VB, o$VF))
@@ -291,7 +292,7 @@ ensureFixedPointInRim <- function(o) {
 
 ##' Get rim length of AnnotatedOutline
 ##' @param o \code{\link{AnnotatedOutline}} object
-##' @return The rim length 
+##' @return The rim length
 ##' @author David Sterratt
 ##' @export
 getFlatRimLength <- function(o) {
@@ -301,7 +302,7 @@ getFlatRimLength <- function(o) {
 }
 
 ##' Plot flat \code{\link{AnnotatedOutline}}. The user markup is
-##' displayed by default. 
+##' displayed by default.
 ##'
 ##' @title Flat plot of AnnotatedOutline
 ##' @param x \code{\link{AnnotatedOutline}} object
@@ -334,4 +335,3 @@ flatplot.annotatedOutline <- function(x, axt="n", ylim=NULL,
     })
   }
 }
-

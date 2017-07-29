@@ -2,7 +2,7 @@
 % Please edit documentation in R/AnnotatedOutline.R
 \name{getTear}
 \alias{getTear}
-\title{Return indicies of tear in AnnotatedOutline}
+\title{Return indices of tear in AnnotatedOutline}
 \usage{
 getTear(o, tid)
 }
@@ -16,7 +16,7 @@ Vector of three point IDs, labelled with \code{V0},
 \code{VF} and \code{VB}
 }
 \description{
-Return indicies of tear in AnnotatedOutline
+Return indices of tear in AnnotatedOutline
 }
 \author{
 David Sterratt

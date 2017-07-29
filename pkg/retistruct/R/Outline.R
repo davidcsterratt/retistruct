@@ -13,6 +13,7 @@
 ##' \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
 ##' \item{\code{im}}{The image as a \code{raster} object}
 ##' \item{\code{scale}}{The length of one unit of \code{P} in micrometres}
+##' @export
 ##' @author David Sterratt
 Outline <- function(P, scale=NA, im=NULL) {
   o <- list()
@@ -28,7 +29,7 @@ Outline <- function(P, scale=NA, im=NULL) {
   return(o)
 }
 
-##' Plot flat \code{\link{Outline}}. 
+##' Plot flat \code{\link{Outline}}.
 ##'
 ##' @title Flat plot of outline
 ##' @param x \code{\link{Outline}} object
@@ -99,7 +100,7 @@ flatplot.outline <- function(x, axt="n", ylim=NULL,
 ##' @title Simplify an outline object by removing short edges
 ##' @param o \code{outline} object to simplify
 ##' @param min.frac.length the minumum length as a fraction of the
-##' total length of the outline. 
+##' total length of the outline.
 ##' @param plot whether to display plotting or not during simplification
 ##' @return Simlified \code{outline} object
 ##' @author David Sterratt
@@ -111,7 +112,7 @@ simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
   l <- vecnorm(v)                     # Length of each edge
   ## Compute outer products at each vertex
   e <- extprod3d(cbind(v[c(N, 1:(N-1)),], 0), cbind(v, 0))[,3]
-  
+
   ## Find short edges
   S <- l/sum(l) < min.frac.length
 
