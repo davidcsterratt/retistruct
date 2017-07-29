@@ -13,7 +13,7 @@
 ##' \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
 ##' \item{\code{im}}{The image as a \code{raster} object}
 ##' \item{\code{scale}}{The length of one unit of \code{P} in micrometres}
-##' export
+##' @export
 ##' @author David Sterratt
 Outline <- function(P, scale=NA, im=NULL) {
   o <- list()
