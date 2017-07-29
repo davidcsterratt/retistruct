@@ -56,8 +56,7 @@ retinal flat-mount images in Retistruct.
 ### Development version and source code
 
 The development version of Retistruct contains the most recent bug
-fixes and improvements, but may not be stable. To install it follow the instructions on the Retistruct   
-[Github](https://github.com/davidcsterratt/retistruct) repository, where the source code can also be checked out.
+fixes and improvements, but may not be stable. To install it follow the instructions on the Retistruct [Github](https://github.com/davidcsterratt/retistruct) repository, where the source code can also be checked out.
 
 ### Reference publication
 
