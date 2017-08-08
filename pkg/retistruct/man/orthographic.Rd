@@ -8,12 +8,12 @@ orthographic(r, proj.centre = cbind(phi = 0, lambda = 0), ...)
 }
 \arguments{
 \item{r}{Lattitude-longitude coordinates in a matrix with columns
-labelled \code{phi} (lattitude) and \code{lambda} (longitude)}
+labelled \code{phi} (latitude) and \code{lambda} (longitude)}
 
 \item{proj.centre}{Location of centre of projection as matrix with
 column names \code{phi} (elevation) and \code{lambda} (longitude).}
 
-\item{...}{Arguments not used by this projectio.n}
+\item{...}{Arguments not used by this projection.n}
 }
 \value{
 Two-column matrix with columns labelled \code{x} and

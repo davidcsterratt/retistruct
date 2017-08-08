@@ -8,15 +8,15 @@ to cartesian coordinates}
 bary.to.sphere.cart(phi, lambda, R, Tt, cb)
 }
 \arguments{
-\item{phi}{Lattitudes of mesh points}
+\item{phi}{Latitudes of mesh points}
 
 \item{lambda}{Longitudes of mesh points}
 
 \item{R}{Radius of sphere}
 
-\item{Tt}{Triagulation}
+\item{Tt}{Triangulation}
 
-\item{cb}{Object returned by tsearch containing information on the
+\item{cb}{Object returned by \link{tsearch} containing information on the
 triangle in which a point occurs and the barycentric coordinates
 within that triangle}
 }

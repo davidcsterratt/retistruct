@@ -10,13 +10,13 @@ Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
 central.angle(phi1, lambda1, phi2, lambda2)
 }
 \arguments{
-\item{phi1}{Lattitude of first point}
+\item{phi1}{Latitude of first point}
 
 \item{lambda1}{Longitude of first point}
 
-\item{phi2}{Lattitude of second point}
+\item{phi2}{Latitude of second point}
 
-\item{lambda2}{Longitude of secone point}
+\item{lambda2}{Longitude of second point}
 }
 \value{
 Central angle

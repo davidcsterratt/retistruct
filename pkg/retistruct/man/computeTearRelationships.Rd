@@ -18,7 +18,7 @@ computeTearRelationships(o, V0, VB, VF)
 \value{
 List
 \item{\code{Rset}}{the set of points on the rim}
-\item{\code{TFset}}{list containing indices of points in each foward tear}
+\item{\code{TFset}}{list containing indices of points in each forward tear}
 \item{\code{TBset}}{list containing indices of points in each backward tear}
 \item{\code{h}}{correspondence mapping}
 \item{\code{hf}}{correspondence mapping in forward direction for

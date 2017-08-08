@@ -14,7 +14,7 @@ ReconstructedOutline(o, n = 500, alpha = 8, x0 = 0.5, report = print,
 \item{\code{VF}}{indices of the forward vertex of each tear}
 \item{\code{VB}}{indices of the backward vertex of each tear}
 \item{\code{i0}}{index of the landmark on the rim}
-\item{\code{phi0}}{lattitude of rim of partial sphere}
+\item{\code{phi0}}{latitude of rim of partial sphere}
 \item{\code{lambda0}}{longitude of landmark on rim}
 }}
 
@@ -40,7 +40,7 @@ information and the following modified and extra information:
 \item{\code{P}}{New set of points in flattened object}
 \item{\code{gf}}{New set of forward pointers in flattened object}
 \item{\code{gb}}{New set of backward pointers in flattened object}
-\item{\code{phi}}{lattitude of new points on sphere}
+\item{\code{phi}}{latitude of new points on sphere}
 \item{\code{lambda}}{longitude of new points on sphere}
 \item{\code{Tt}}{New triangulation}
 }

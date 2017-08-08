@@ -9,20 +9,20 @@ rotate.axis(r, r0)
 \arguments{
 \item{r}{Coordinates of points in spherical coordinates
 represented as  2 column matrix with column names \code{phi}
-(lattitude) and \code{lambda} (longitude).}
+(latitude) and \code{lambda} (longitude).}
 
 \item{r0}{Direction of the polar axis of the sphere on which to project
 represented as a 2 column matrix of with column names \code{phi}
-(lattitude) and \code{lambda} (longitude).}
+(latitude) and \code{lambda} (longitude).}
 }
 \value{
 2-column matrix of spherical coordinates of points with
-column names \code{phi} (lattidude) and \code{lambda} (longitude).
+column names \code{phi} (latitude) and \code{lambda} (longitude).
 }
 \description{
 This rotates points on sphere by specifying the direction its
 polar axis, i.e. the axis going through (90, 0), should point
-after (a) a rotation about an axis through the poins (0, 0) and
+after (a) a rotation about an axis through the points (0, 0) and
 (0, 180) and (b) rotation about the original polar axis.
 }
 \examples{

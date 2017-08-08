@@ -51,7 +51,7 @@ tri.area <- function(P, Pt) {
 ##' @title Area of triangles on a sphere
 ##' @param P 2-column matrix of vertices of triangles given in
 ##' spherical polar coordinates. Columns need to be labelled
-##' \code{phi} (lattidute) and \code{lambda} (longitude).
+##' \code{phi} (latitude) and \code{lambda} (longitude).
 ##' @param Pt 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of areas of triangles in units of steradians
@@ -159,7 +159,7 @@ line.line.intersection <- function(P1, P2, P3, P4, interior.only=FALSE) {
   return(c(X, Y))
 }
 
-##' This is simlar to unique(), but spares rows which are duplicated, but 
+##' This is similar to unique(), but spares rows which are duplicated, but 
 ##' at different points in the matrix
 ##' 
 ##' @title Remove identical consecutive rows from a matrix
@@ -177,13 +177,13 @@ remove.identical.consecutive.rows <- function(P) {
 
 ##' Suppose segments AB and CD intersect.  Point B is replaced by the
 ##' intersection point, defined B'.  Point C is replaced by a point C'
-##' on the line B'D. The maxium distance of B'C' is given by the
+##' on the line B'D. The maximum distance of B'C' is given by the
 ##' parameter d. If the distance l B'D is less than 2d, the distance
 ##' B'C' is l/2.
 ##'
-##' @title Remove intersections between adjacent segements in a closed path
+##' @title Remove intersections between adjacent segments in a closed path
 ##' @param P The points, as a 2-column matrix
-##' @param d Criterion for maximum distance when points are inser
+##' @param d Criterion for maximum distance when points are inserted
 ##' @return A new closed path without intersections
 ##' @author David Sterratt
 ##' @export
@@ -250,13 +250,13 @@ circle <- function(n=12, L=NULL) {
   return(cbind(x=cos(angles), y=sin(angles)))
 }
 
-##' Find the interections of the plane defined by the normal \code{n} and the
+##' Find the intersections of the plane defined by the normal \code{n} and the
 ##' distance \code{d} expressed as a fractional distance along the side of
 ##' each triangle.
 ##'
 ##' @title Find the intersection of a plane with edges of triangles on
 ##' a sphere
-##' @param phi Lattitude of grid points on sphere centred on origin.
+##' @param phi Latitude of grid points on sphere centred on origin.
 ##' @param lambda Longitude of grid points on sphere centred on origin.
 ##' @param T Triangulation
 ##' @param n Normal of plane
@@ -284,7 +284,7 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ##' points in 3D cartesian space
 ##'
 ##' @title Convert from spherical to Cartesian coordinates
-##' @param phi vector of lattitudes of N points
+##' @param phi vector of latitudes of N points
 ##' @param lambda vector of longitudes of N points
 ##' @param R radius of sphere 
 ##' @return An N-by-3 matrix in which each row is the cartesian (X, Y,
@@ -305,11 +305,11 @@ sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
 ##'
 ##' @title Convert barycentric coordinates of points in mesh on sphere
 ##' to cartesian coordinates 
-##' @param phi Lattitudes of mesh points
+##' @param phi Latitudes of mesh points
 ##' @param lambda Longitudes of mesh points
 ##' @param R Radius of sphere 
-##' @param Tt Triagulation
-##' @param cb Object returned by tsearch containing information on the
+##' @param Tt Triangulation
+##' @param cb Object returned by \link{tsearch} containing information on the
 ##' triangle in which a point occurs and the barycentric coordinates
 ##' within that triangle
 ##' @return An N-by-3 matrix of the Cartesian coordinates of the points
@@ -344,7 +344,7 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 ##' @param P locations of points on sphere as N-by-3 matrix with
 ##' labelled columns "X", "Y" and "Z"
 ##' @param R radius of sphere 
-##' @return N-by-2 Matrix wtih columns ("phi" and "lambda") of
+##' @return N-by-2 Matrix with columns ("phi" and "lambda") of
 ##' locations of points in spherical coordinates 
 ##' @author David Sterratt
 ##' @export
@@ -368,9 +368,9 @@ sphere.cart.to.sphere.spherical <- function(P, R=1) {
 ##' \eqn{A=2\pi R^2(\sin(\phi_0)+1)=\pi\rho_0^2}. So
 ##' \eqn{\rho_0=R\sqrt{2(\sin\phi_0+1)}}, which agrees with the formula
 ##' above.
-##' @title Convert lattitude on sphere to radial variable in
+##' @title Convert latitude on sphere to radial variable in
 ##' area-preserving projection
-##' @param phi Lattitude
+##' @param phi Latitude
 ##' @param R Radius
 ##' @return Coordinate \code{rho} that has the dimensions of length
 ##' @author David Sterratt
@@ -386,7 +386,7 @@ spherical.to.polar.area <- function(phi, R=1) {
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
 ##' @param preserve Quantity to preserve locally in the
-##' projection. Options are \code{lattitude}, \code{area} or
+##' projection. Options are \code{latitude}, \code{area} or
 ##' \code{angle}
 ##' @return 2-column Matrix of Cartesian coordinates of points on polar
 ##' projection. Column names should be \code{x} and \code{y}
@@ -424,7 +424,7 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
 ##' polar projection. Column names should be \code{x} and \code{y}
 ##' @param pa If \code{TRUE}, make this an area-preserving projection
 ##' @param preserve Quantity to preserve locally in the
-##' projection. Options are \code{lattitude}, \code{area} or
+##' projection. Options are \code{latitude}, \code{area} or
 ##' \code{angle}
 ##' @return 2-column Matrix of spherical coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
@@ -466,7 +466,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
 ##' represented as a 2 column matrix of with column names \code{alpha}
 ##' (elevation) and \code{theta} (azimuth).
 ##' @return 2-column matrix of spherical coordinates of points with
-##' column names \code{psi} (colattidude) and \code{lambda} (longitude).
+##' column names \code{psi} (colatitude) and \code{lambda} (longitude).
 ##' @author David Sterratt
 ##' @examples
 ##' r0 <- cbind(alpha=0, theta=0)
@@ -507,17 +507,17 @@ azel.to.sphere.colattitude <- function(r, r0) {
 
 ##' This rotates points on sphere by specifying the direction its
 ##' polar axis, i.e. the axis going through (90, 0), should point
-##' after (a) a rotation about an axis through the poins (0, 0) and
+##' after (a) a rotation about an axis through the points (0, 0) and
 ##' (0, 180) and (b) rotation about the original polar axis.
 ##' @title Rotate axis of sphere
 ##' @param r Coordinates of points in spherical coordinates
 ##' represented as  2 column matrix with column names \code{phi}
-##' (lattitude) and \code{lambda} (longitude).
+##' (latitude) and \code{lambda} (longitude).
 ##' @param r0 Direction of the polar axis of the sphere on which to project
 ##' represented as a 2 column matrix of with column names \code{phi}
-##' (lattitude) and \code{lambda} (longitude).
+##' (latitude) and \code{lambda} (longitude).
 ##' @return 2-column matrix of spherical coordinates of points with
-##' column names \code{phi} (lattidude) and \code{lambda} (longitude).
+##' column names \code{phi} (latitude) and \code{lambda} (longitude).
 ##' @author David Sterratt
 ##' @examples
 ##' r0 <- cbind(phi=0, lambda=-pi/2)
@@ -677,10 +677,10 @@ sphere.cart.to.sphere.dualwedge <- function(P, phi0, R=1) {
 ##' lambda2)}.
 ##'
 ##' @title Central angle between two points on a sphere
-##' @param phi1 Lattitude of first point
+##' @param phi1 Latitude of first point
 ##' @param lambda1 Longitude of first point
-##' @param phi2 Lattitude of second point
-##' @param lambda2 Longitude of secone point
+##' @param phi2 Latitude of second point
+##' @param lambda2 Longitude of second point
 ##' @return Central angle
 ##' @source Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
 ##' @author David Sterratt
@@ -691,19 +691,19 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 
 ##' The Karcher mean of a set of points on a manifold is defined as
 ##' the point whose sum of squared Riemmann distances to the points is
-##' minimal. On a sphere using sphereical coordinates this distance
+##' minimal. On a sphere using spherical coordinates this distance
 ##' can be computed using the formula for central angle.
 ##'
 ##' @title Karcher mean on the sphere
 ##' @param x Matrix of points on sphere as N-by-2 matrix with labelled
-##' columns \\code{phi} (lattitude) and \code{lambda} (longitude)
+##' columns \\code{phi} (latitude) and \code{lambda} (longitude)
 ##' @param na.rm logical value indicating whether \code{NA} values should
 ##' be stripped before the computation proceeds.
 ##' @param var logical value indicating whether variance should be
 ##' returned too.
 ##' @return Vector of means with components named \code{phi} and
 ##' \code{lambda}. If \code{var} is \code{TRUE}, a list containing
-##' mean and varience in elements \code{mean} and \code{var}.
+##' mean and variance in elements \code{mean} and \code{var}.
 ##' @references Heo, G. and Small, C. G. (2006). Form representations
 ##' and means for landmarks: A survey and comparative
 ##' study. \emph{Computer Vision and Image Understanding},

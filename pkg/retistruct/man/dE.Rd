@@ -24,11 +24,11 @@ dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N, alpha = 1, x0,
 
 \item{R}{Radius of the sphere}
 
-\item{Rset}{Indicies of points on the rim}
+\item{Rset}{Indices of points on the rim}
 
 \item{i0}{Index of fixed point on rim}
 
-\item{phi0}{Lattitude at which sphere curtailed}
+\item{phi0}{Latitude at which sphere curtailed}
 
 \item{lambda0}{Longitude of fixed points}
 

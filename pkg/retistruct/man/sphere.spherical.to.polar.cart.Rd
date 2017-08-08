@@ -14,7 +14,7 @@ sphere. Column names are \code{phi} and \code{lambda}.}
 \item{pa}{If \code{TRUE}, make this an area-preserving projection}
 
 \item{preserve}{Quantity to preserve locally in the
-projection. Options are \code{lattitude}, \code{area} or
+projection. Options are \code{latitude}, \code{area} or
 \code{angle}}
 }
 \value{

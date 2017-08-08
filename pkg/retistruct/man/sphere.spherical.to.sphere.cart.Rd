@@ -7,7 +7,7 @@
 sphere.spherical.to.sphere.cart(phi, lambda, R = 1)
 }
 \arguments{
-\item{phi}{vector of lattitudes of N points}
+\item{phi}{vector of latitudes of N points}
 
 \item{lambda}{vector of longitudes of N points}
 

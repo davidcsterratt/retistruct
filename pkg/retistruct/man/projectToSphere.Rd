@@ -17,7 +17,7 @@ has been added with \code{\link{mergePointsEdges}}:
 \value{
 \code{reconstructedOutline} object containing the
 following extra information
-\item{\code{phi}}{Lattitude of mesh points.}
+\item{\code{phi}}{Latitude of mesh points.}
 \item{\code{lmabda}}{Longitude of mesh points.}
 \item{\code{R}}{Radius of sphere.}
 }

@@ -34,12 +34,12 @@ column names \code{phi} (elevation) and \code{lambda} (longitude).}
 \item{datapoint.contours}{If \code{TRUE}, display contours around
 the data points generated using Kernel Density Estimation.}
 
-\item{grouped}{If \code{TRUE}, dipslay grouped data.}
+\item{grouped}{If \code{TRUE}, display grouped data.}
 
 \item{grouped.contours}{If \code{TRUE}, display contours around
 the grouped data generated using Kernel Regression.}
 
-\item{landmarks}{If \code{TRUE}, dipslay landmarks.}
+\item{landmarks}{If \code{TRUE}, display landmarks.}
 
 \item{ids}{IDs of groups of data within a dataset, returned using
 \code{\link{getIDs}}.}

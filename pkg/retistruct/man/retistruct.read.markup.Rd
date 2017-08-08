@@ -13,9 +13,9 @@ retistruct.read.markup(a, error = stop)
 }
 \value{
 o \code{RetinalDataset} object
-\item{V0}{Indicies in \code{P} of apicies of tears}
-\item{VB}{Indicies in \code{P} of backward verticies of tears}
-\item{VF}{Indicies in \code{P} of backward verticies of tears}
+\item{V0}{Indices in \code{P} of apices of tears}
+\item{VB}{Indices in \code{P} of backward vertices of tears}
+\item{VF}{Indices in \code{P} of backward vertices of tears}
 \item{iN}{Index in \code{P} of nasal point, or \code{NA} if not marked}
 \item{iD}{Index in \code{P} of dorsal point, or \code{NA} if not marked}
 \item{iOD}{Index in \code{Ss} of optic disc }
@@ -31,13 +31,13 @@ which is specified in the reconstruction object \code{r}.
 The tear information is contained in the files \file{P.csv} and
 \file{T.csv}. The first file contains the locations of outline
 points that the tears were marked up on. The second file contains
-the indices of the apicies and backward and forward verticies of
+the indices of the apices and backward and forward vertices of
 each tear. It is necessary to have the file of points just in case
 the algorithm that determines \code{P} in
 \code{\link{retistruct.read.dataset}} has changed since the markup
 of the tears.
 
-The remaining information is contained  containted in the file
+The remaining information is contained  contained in the file
 \file{markup.csv}.
 
 If \code{DVflip} is specified, the locations of points \code{P}

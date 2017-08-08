@@ -11,7 +11,7 @@ AnnotatedOutline(o)
 }
 \value{
 AnnotatedOutline object, with extra fields for tears
-(\code{V0}, \code{VF} and \code{VB}), lattitude of rim \code{phi0}
+(\code{V0}, \code{VF} and \code{VB}), latitude of rim \code{phi0}
 and index of fixed point \code{i0}.
 }
 \description{

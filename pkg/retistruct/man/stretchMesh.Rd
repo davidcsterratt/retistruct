@@ -11,7 +11,7 @@ stretchMesh(Cu, L, i.fix, P.fix)
 
 \item{L}{Lengths in flat outline}
 
-\item{i.fix}{Indicies of fixed points}
+\item{i.fix}{Indices of fixed points}
 
 \item{P.fix}{Coordinates of fixed points}
 }

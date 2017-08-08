@@ -16,9 +16,9 @@
 
 \item{datapoints}{If \code{TRUE}, display data points.}
 
-\item{grouped}{If \code{TRUE}, dipslay grouped data.}
+\item{grouped}{If \code{TRUE}, display grouped data.}
 
-\item{landmarks}{If \code{TRUE}, dipslay landmarks.}
+\item{landmarks}{If \code{TRUE}, display landmarks.}
 
 \item{ids}{IDs of groups of data within a dataset, returned using
 \code{\link{getIDs}}.}

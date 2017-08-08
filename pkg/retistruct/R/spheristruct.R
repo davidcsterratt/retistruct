@@ -59,9 +59,9 @@ order.Rset <- function(Rset, gf, hf) {
 ##' indices of the points linked by the edge}
 ##' \item{\code{Lt}}{Transformed edge lengths}
 ##' \item{\code{ht}}{Transformed correspondences}
-##' \item{\code{u}}{Indicies of unique points in untransformed space}
+##' \item{\code{u}}{Indices of unique points in untransformed space}
 ##' \item{\code{U}}{Transformed indices of unique points in untransformed space}
-##' \item{\code{Rset}}{The set of points on the rim (which has been reoorded)}
+##' \item{\code{Rset}}{The set of points on the rim (which has been reordered)}
 ##' \item{\code{Rsett}}{Transformed set of points on rim}
 ##' \item{\code{i0t}}{Transformed index of the landmark}
 ##' \item{H}{mapping from edges onto corresponding edges}
@@ -167,7 +167,7 @@ mergePointsEdges <- function(t) {
 ##' @title Stretch mesh
 ##' @param Cu Edge matrix
 ##' @param L Lengths in flat outline
-##' @param i.fix Indicies of fixed points
+##' @param i.fix Indices of fixed points
 ##' @param P.fix Coordinates of fixed points
 ##' @return New matrix of 2D point locations
 ##' @author David Sterratt
@@ -221,7 +221,7 @@ stretchMesh <- function(Cu, L, i.fix, P.fix) {
 ##' \item{\code{A.tot}}{The area of the flat outline.}}
 ##' @return \code{reconstructedOutline} object containing the
 ##' following extra information
-##' \item{\code{phi}}{Lattitude of mesh points.}
+##' \item{\code{phi}}{Latitude of mesh points.}
 ##' \item{\code{lmabda}}{Longitude of mesh points.}
 ##' \item{\code{R}}{Radius of sphere.}
 ##' @author David Sterratt
@@ -240,7 +240,7 @@ projectToSphere <- function(r) {
   Nphi <- Nt - length(Rsett)
 
   ## From this we can infer what the radius should be from the formula
-  ## for the area of a sphere which is cut off at a lattitude of phi0
+  ## for the area of a sphere which is cut off at a latitude of phi0
   ## area = 2 * PI * R^2 * (sin(phi0)+1)
   R <- sqrt(A.tot/(2*pi*(sin(phi0)+1)))
 
@@ -367,9 +367,9 @@ fp <- function(x, x0) {
 ##' @param T Triangulation in the flattened outline
 ##' @param A Area of each triangle in the flattened outline
 ##' @param R Radius of the sphere
-##' @param Rset Indicies of points on the rim
+##' @param Rset Indices of points on the rim
 ##' @param i0 Index of fixed point on rim
-##' @param phi0 Lattitude at which sphere curtailed
+##' @param phi0 Latitude at which sphere curtailed
 ##' @param lambda0 Longitude of fixed points
 ##' @param Nphi Number of free values of \code{phi}
 ##' @param N Number of points in sphere
@@ -414,9 +414,9 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' @param T Triangulation in the flattened outline
 ##' @param A Area of each triangle in the flattened outline
 ##' @param R Radius of the sphere
-##' @param Rset Indicies of points on the rim
+##' @param Rset Indices of points on the rim
 ##' @param i0 Index of fixed point on rim
-##' @param phi0 Lattitude at which sphere curtailed
+##' @param phi0 Latitude at which sphere curtailed
 ##' @param lambda0 Longitude of fixed points
 ##' @param Nphi Number of free values of \code{phi}
 ##' @param N Number of points in sphere
@@ -599,7 +599,7 @@ Fcart <- function(P, C, L, T, A, R,
 ##' @title Restore points to spherical manifold
 ##' @param P Point positions as N-by-3 matrix
 ##' @param R Radius of sphere
-##' @param Rset Indicies of points on rim
+##' @param Rset Indices of points on rim
 ##' @param i0 Index of fixed point
 ##' @param phi0 Cutoff of curtailed sphere in radians
 ##' @param lambda0 Longitude of fixed point on rim
@@ -635,13 +635,13 @@ Rcart <- function(P, R, Rset, i0, phi0, lambda0) {
 ##' @param Tt Triangulation of points
 ##' @param R Radius of sphere
 ##' @return List containing:
-##' \item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+##' \item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
 ##' \item{\code{cents}}{Vectors of centres.}
 ##' \item{\code{areas}}{Areas of triangles.}
 ##' @author David Sterratt
 flipped.triangles.cart <- function(P, Tt, R) {
   ## Plot any flipped triangles
-  ## First find verticies and find centres and normals of the triangles
+  ## First find vertices and find centres and normals of the triangles
   P1 <- P[Tt[,1],]
   P2 <- P[Tt[,2],]
   P3 <- P[Tt[,3],]
@@ -661,12 +661,12 @@ flipped.triangles.cart <- function(P, Tt, R) {
 ##' product of two sides of the triangle.
 ##'
 ##' @title Determine indices of triangles that are flipped
-##' @param phi Vector of lattitudes of points
+##' @param phi Vector of latitudes of points
 ##' @param lambda Vector of longitudes of points
 ##' @param Tt Triangulation of points
 ##' @param R Radius of sphere
 ##' @return List containing:
-##' \item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+##' \item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
 ##' \item{\code{cents}}{Vectors of centres.}
 ##' \item{\code{areas}}{Areas of triangles.}
 ##' @author David Sterratt
@@ -789,7 +789,7 @@ optimiseMapping <- function(r, alpha=4, x0=0.5, nu=1, method="BFGS",
 ##' @param method Method to pass to \code{optim}
 ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
 ##' @param dev.flat Device handle for plotting grid to
-##' @param dev.polar Device handle for plotting ploar plot to
+##' @param dev.polar Device handle for plotting polar plot to
 ##' @param ... Extra arguments to pass to \code{\link{fire}}
 ##' @return reconstructedOutline object
 ##' @author David Sterratt

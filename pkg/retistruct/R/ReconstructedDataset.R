@@ -2,7 +2,7 @@
 ##' landmarks \code{Ss} in  spherical coordinates.
 ##'
 ##' @title Constructor for RecontructedDataset object
-##' @param r Object that of clases \code{reconstructedOutline} and
+##' @param r Object that of classes \code{reconstructedOutline} and
 ##' \code{dataset}.
 ##' @param report Function used to report progress.
 ##' @return \code{\link{ReconstructedDataset}} object containing the input
@@ -134,7 +134,7 @@ getDssMean.reconstructedDataset <- function(r) {
 
 ##' Get area of convex hull around data points on sphere
 ##' @param r code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
-##' @return Area in degress squared
+##' @return Area in degrees squared
 ##' @author David Sterratt
 ##' @export
 getDssHullarea <- function(r) {
@@ -191,7 +191,7 @@ getKDE <- function(r) {
   return(r$KDE)
 }
 
-##' Compute a kernel estimate over a grid and do a contour analsysis
+##' Compute a kernel estimate over a grid and do a contour analysis
 ##' of this estimate. The contour heights the determined by finding
 ##' heights that exclude a certain fraction of the probability. For
 ##' example, the 95% contour is excludes 95% of the probability mass,
@@ -202,7 +202,7 @@ getKDE <- function(r) {
 ##' @title Kernel estimate over grid
 ##' @param Dss List of datasets. The first two columns of each datasets
 ##' are coordinates of points on the sphere in spherical polar
-##' (lattitude, \code{phi}, and longitude, \code{lambda})
+##' (latitude, \code{phi}, and longitude, \code{lambda})
 ##' coordinates. In the case kernel smoothing, there is a third column
 ##' of values of dependent variables at those points.
 ##' @param phi0 Rim angle in radians
@@ -219,7 +219,7 @@ getKDE <- function(r) {
 ##' \item{\code{labels}}{Labels of the contours.}
 ##' \item{\code{g}}{Raw density estimate drawn on non-area-preserving projection. Comprises locations of gridlines in Cartesian coordinates (\code{xs} and \code{ys}), density estimates at these points, \code{f} and location of maximum in Cartesian coordinates (\code{max}).}
 ##' \item{\code{gpa}}{Raw density estimate drawn on area-preserving projection. Comprises same elements as above.}
-##' \item{\code{contour.areas}}{Area of each individual contour. One level may ahave more than one contour; this shows the areas of all such contours.}
+##' \item{\code{contour.areas}}{Area of each individual contour. One level may have more than one contour; this shows the areas of all such contours.}
 ##' \item{\code{tot.contour.areas}}{Data frame containing the total area within the contours at each level.}
 ##' @author David Sterratt
 ##' @export
@@ -382,10 +382,10 @@ getKR <- function(r) {
 ##' @param datapoint.means If \code{TRUE}, display Karcher mean of data points.
 ##' @param datapoint.contours If \code{TRUE}, display contours around
 ##' the data points generated using Kernel Density Estimation.
-##' @param grouped If \code{TRUE}, dipslay grouped data.
+##' @param grouped If \code{TRUE}, display grouped data.
 ##' @param grouped.contours If \code{TRUE}, display contours around
 ##' the grouped data generated using Kernel Regression.
-##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param landmarks If \code{TRUE}, display landmarks.
 ##' @param ids IDs of groups of data within a dataset, returned using
 ##' \code{\link{getIDs}}.
 ##' @param ... Graphical parameters to pass to plotting functions
@@ -586,7 +586,7 @@ sphericalplot.reconstructedDataset <- function(r,
 
         ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
 
-        ## Create the verticies of an equillateral triangle to plot
+        ## Create the vertices of an equillateral triangle to plot
         v1 <- Dc + size *  ax1/2
         v2 <- Dc + size * (-ax1/4 + sqrt(3)/4*ax2)
         v3 <- Dc + size * (-ax1/4 - sqrt(3)/4*ax2)

@@ -1,4 +1,4 @@
-##' This is an implmentation of the FIRE algorithm for structural
+##' This is an implementation of the FIRE algorithm for structural
 ##' relaxation put forward by Bitzek et al. (2006)
 ##' @title The FIRE algorithm
 ##' @param r Initial locations of particles
@@ -7,19 +7,19 @@
 ##' @param m Masses of points
 ##' @param dt Initial time step
 ##' @param maxmove Maximum distance to move in any time step
-##' @param dtmax Maxiumum time step
+##' @param dtmax Maximum time step
 ##' @param Nmin Number of steps after which to start increasing \code{dt}
 ##' @param finc Fractional increase in \code{dt} per time step
 ##' @param fdec Fractional decrease in \code{dt} after a stop
 ##' @param astart Starting value of \code{a} after a stop
 ##' @param fa Fraction of \code{a} to retain after each step
 ##' @param a Initial value of \code{a}
-##' @param nstep Maxiumum number of steps
+##' @param nstep Maximum number of steps
 ##' @param tol Tolerance - if RMS force is below this value, stop and
 ##' report convergence
 ##' @param verbose If \code{TRUE} report progress verbosely
 ##' @return List containing \code{x}, the positions of the points,
-##' \code{conv}, which is 0 if convergence as occured and 1 otherwise,
+##' \code{conv}, which is 0 if convergence as occurred and 1 otherwise,
 ##' and \code{frms}, the root mean square of the forces on the
 ##' particles.
 ##' @references Bitzek, E., Koskinen, P., G\"{a}hler, F., Moseler, M.,

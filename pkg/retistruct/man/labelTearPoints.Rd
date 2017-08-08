@@ -2,7 +2,7 @@
 % Please edit documentation in R/AnnotatedOutline.R
 \name{labelTearPoints}
 \alias{labelTearPoints}
-\title{Label three outline point indices as apicies and vertices of tear}
+\title{Label three outline point indices as apices and vertices of tear}
 \usage{
 labelTearPoints(o, m)
 }
@@ -16,7 +16,7 @@ Vector of indices labelled with V0, VF and VB
 }
 \description{
 Label a set of three unlabelled points supposed to refer to the
-apex and vertcies of a cut and tear with the V0 (Apex), VF
+apex and vertices of a cut and tear with the V0 (Apex), VF
 (forward vertex) and VB (backward vertex) labels.
 }
 \author{

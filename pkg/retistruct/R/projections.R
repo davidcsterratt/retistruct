@@ -1,6 +1,6 @@
 ##' Sinusoidal projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
-##' labelled \code{phi} (lattitude) and \code{lambda}
+##' labelled \code{phi} (latitude) and \code{lambda}
 ##' (longitude). Alternatively string "boundary", indicating that
 ##' boundary of projection should be drawn.
 ##' @param proj.centre Location of centre of projection as matrix with
@@ -39,10 +39,10 @@ sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
 
 ##' Orthographic projection
 ##' @param r Lattitude-longitude coordinates in a matrix with columns
-##' labelled \code{phi} (lattitude) and \code{lambda} (longitude)
+##' labelled \code{phi} (latitude) and \code{lambda} (longitude)
 ##' @param proj.centre Location of centre of projection as matrix with
 ##' column names \code{phi} (elevation) and \code{lambda} (longitude).
-##' @param ... Arguments not used by this projectio.n
+##' @param ... Arguments not used by this projection.n
 ##' @return Two-column matrix with columns labelled \code{x} and
 ##' \code{y} of locations of projection of coordinates on plane
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
@@ -87,7 +87,7 @@ orthographic <- function(r,
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt
 ##' @note This is a special case with the point centred on the
-##' projection being the South Pole. The Mathworld equations are for
+##' projection being the South Pole. The MathWorld equations are for
 ##' the more general case.
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
 ##' \url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
@@ -113,7 +113,7 @@ azimuthal.equalarea <- function(r, ...) {
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt
 ##' @note This is a special case with the point centred on the
-##' projection being the South Pole. The Mathworld equations are for
+##' projection being the South Pole. The MathWorld equations are for
 ##' the more general case.
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
 ##' \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}  
@@ -136,7 +136,7 @@ azimuthal.equidistant <- function(r, ...) {
 ##' projection. Column names should be \code{x} and \code{y}.
 ##' @author David Sterratt
 ##' @note This is a special case with the point centred on the
-##' projection being the South Pole. The Mathworld equations are for
+##' projection being the South Pole. The MathWorld equations are for
 ##' the more general case.
 ##' @references \url{http://en.wikipedia.org/wiki/Map_projection},
 ##' \url{http://mathworld.wolfram.com/StereographicProjection.html}

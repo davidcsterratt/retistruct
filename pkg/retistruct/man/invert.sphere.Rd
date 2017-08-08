@@ -9,7 +9,7 @@ invert.sphere(r, ...)
 \arguments{
 \item{r}{Coordinates of points in spherical coordinates
 represented as  2 column matrix with column names \code{phi}
-(lattitude) and \code{lambda} (longitude).}
+(latitude) and \code{lambda} (longitude).}
 
 \item{...}{Other arguments}
 }

@@ -16,7 +16,7 @@ StitchedOutline(a)
 \item{\code{V0}}{indices of the apex of each tear}
 \item{\code{VF}}{indices of the forward vertex of each tear}
 \item{\code{VB}}{indices of the backward vertex of each tear}
-\item{\code{TFset}}{list containing indices of points in each foward tear}
+\item{\code{TFset}}{list containing indices of points in each forward tear}
 \item{\code{TBset}}{list containing indices of points in each backward tear}
 \item{\code{gf}}{new forward pointer list}
 \item{\code{gb}}{new backward pointer list}

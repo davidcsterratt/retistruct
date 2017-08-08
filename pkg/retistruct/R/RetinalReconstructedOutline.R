@@ -7,7 +7,7 @@
 ##' @param r Object that inherits \code{ReconstructedOutline}
 ##' @param report Function used to report progress.
 ##' @return \code{RetinalReconstructedOutline} object. This does not
-##' contain any extra fields, but there are extra mthods dthat apply
+##' contain any extra fields, but there are extra methods that apply
 ##' to it.
 ##' @author David Sterratt
 ##' @export

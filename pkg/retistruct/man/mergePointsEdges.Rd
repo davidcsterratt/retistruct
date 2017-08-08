@@ -21,9 +21,9 @@ of edge indices onto a binary vector representation of the
 indices of the points linked by the edge}
 \item{\code{Lt}}{Transformed edge lengths}
 \item{\code{ht}}{Transformed correspondences}
-\item{\code{u}}{Indicies of unique points in untransformed space}
+\item{\code{u}}{Indices of unique points in untransformed space}
 \item{\code{U}}{Transformed indices of unique points in untransformed space}
-\item{\code{Rset}}{The set of points on the rim (which has been reoorded)}
+\item{\code{Rset}}{The set of points on the rim (which has been reordered)}
 \item{\code{Rsett}}{Transformed set of points on rim}
 \item{\code{i0t}}{Transformed index of the landmark}
 \item{H}{mapping from edges onto corresponding edges}

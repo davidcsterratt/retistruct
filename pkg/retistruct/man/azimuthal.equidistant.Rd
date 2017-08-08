@@ -21,7 +21,7 @@ Azimuthal equidistant projection
 }
 \note{
 This is a special case with the point centred on the
-projection being the South Pole. The Mathworld equations are for
+projection being the South Pole. The MathWorld equations are for
 the more general case.
 }
 \references{

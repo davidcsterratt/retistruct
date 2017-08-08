@@ -20,7 +20,7 @@ displayed behind the outline}
 \item{scalebar}{If  numeric and if the Outline has a \code{scale}
 field, a scale bar of length \code{scalebar} mm is plotted.  If
 \code{scalebar} is \code{FALSE} or there is no scale information
-in the \code{\link{Outline}} \code{x}  the scale bar is supressed.}
+in the \code{\link{Outline}} \code{x}  the scale bar is suppressed.}
 
 \item{add}{If \code{TRUE}, don't draw axes; add to existing plot.}
 

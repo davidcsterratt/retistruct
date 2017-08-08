@@ -11,7 +11,7 @@ Rcart(P, R, Rset, i0, phi0, lambda0)
 
 \item{R}{Radius of sphere}
 
-\item{Rset}{Indicies of points on rim}
+\item{Rset}{Indices of points on rim}
 
 \item{i0}{Index of fixed point}
 

@@ -8,10 +8,10 @@ reconstruction directories.}
 retistruct.batch.analyse.summaries(path)
 }
 \arguments{
-\item{path}{Directory containing recontstruction directories}
+\item{path}{Directory containing reconstruction directories}
 }
 \value{
-Data frame containg various statistics
+Data frame containing various statistics
 }
 \description{
 Extract statistics from a directory containing

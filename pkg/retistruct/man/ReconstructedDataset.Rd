@@ -7,7 +7,7 @@
 ReconstructedDataset(r, report = message)
 }
 \arguments{
-\item{r}{Object that of clases \code{reconstructedOutline} and
+\item{r}{Object that of classes \code{reconstructedOutline} and
 \code{dataset}.}
 
 \item{report}{Function used to report progress.}

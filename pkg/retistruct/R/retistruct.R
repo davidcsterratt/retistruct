@@ -4,7 +4,7 @@
 recfile.version <- 5      # Version of reconstruction file data format
 
 ##' Check the whether  directory contains valid data 
-##' @param dir Diectory to check.
+##' @param dir Directory to check.
 ##' @return  \code{TRUE} if \code{dir} contains valid data;
 ##' \code{FALSE} otherwise.
 ##' @author David Sterratt
@@ -42,8 +42,8 @@ retistruct.read.dataset <- function(dataset, ...) {
   stop("No valid dataset format detected.")
 }
 
-##' Test the oputline object \code{o} for the prescense of
-##' potential optice disc. This is done by checking that the list of
+##' Test the outline object \code{o} for the presence of
+##' potential optic disc. This is done by checking that the list of
 ##' landmark lines \code{Ss} exists.
 ##'
 ##' @title Test for a potential optic disc
@@ -65,13 +65,13 @@ retistruct.potential.od <- function(o) {
 ##' The tear information is contained in the files \file{P.csv} and
 ##' \file{T.csv}. The first file contains the locations of outline
 ##' points that the tears were marked up on. The second file contains
-##' the indices of the apicies and backward and forward verticies of
+##' the indices of the apices and backward and forward vertices of
 ##' each tear. It is necessary to have the file of points just in case
 ##' the algorithm that determines \code{P} in
 ##' \code{\link{retistruct.read.dataset}} has changed since the markup
 ##' of the tears.
 ##'
-##' The remaining information is contained  containted in the file
+##' The remaining information is contained  contained in the file
 ##' \file{markup.csv}.
 ##'
 ##' If \code{DVflip} is specified, the locations of points \code{P}
@@ -81,9 +81,9 @@ retistruct.potential.od <- function(o) {
 ##' @param a Dataset object, containing \code{dataset} path
 ##' @param error Function to run on error, by default \code{stop()}
 ##' @return o \code{RetinalDataset} object
-##' \item{V0}{Indicies in \code{P} of apicies of tears}
-##' \item{VB}{Indicies in \code{P} of backward verticies of tears}
-##' \item{VF}{Indicies in \code{P} of backward verticies of tears}
+##' \item{V0}{Indices in \code{P} of apices of tears}
+##' \item{VB}{Indices in \code{P} of backward vertices of tears}
+##' \item{VF}{Indices in \code{P} of backward vertices of tears}
 ##' \item{iN}{Index in \code{P} of nasal point, or \code{NA} if not marked}
 ##' \item{iD}{Index in \code{P} of dorsal point, or \code{NA} if not marked}
 ##' \item{iOD}{Index in \code{Ss} of optic disc }
@@ -296,7 +296,7 @@ retistruct.reconstruct <- function(o, report=message,
   return(r)
 }
 
-##' Save the makrup in the \code{\link{RetinalDataset}} \code{a} to a
+##' Save the markup in the \code{\link{RetinalDataset}} \code{a} to a
 ##' file called \code{markup.csv} in the directory \code{a$dataset}.
 ##'
 ##' @title Save markup

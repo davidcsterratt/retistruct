@@ -15,7 +15,7 @@ flipped.triangles.cart(P, Tt, R)
 }
 \value{
 List containing:
-\item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+\item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
 \item{\code{cents}}{Vectors of centres.}
 \item{\code{areas}}{Areas of triangles.}
 }

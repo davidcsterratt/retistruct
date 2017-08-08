@@ -23,7 +23,7 @@ titrate.reconstructedOutline(r, alpha = 8, x0 = 0.5, byd = 1,
 of \code{phi0} in \code{r}.}
 }
 \value{
-dat Output data frame
+Output data frame
 }
 \description{
 Try a range of values of phi0s in the reconstruction, recording the

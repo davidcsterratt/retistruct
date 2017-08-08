@@ -13,8 +13,8 @@ retistruct.potential.od(o)
 \code{TRUE} if an optic disc may be present; \code{FALSE} otherwise
 }
 \description{
-Test the oputline object \code{o} for the prescense of
-potential optice disc. This is done by checking that the list of
+Test the outline object \code{o} for the presence of
+potential optic disc. This is done by checking that the list of
 landmark lines \code{Ss} exists.
 }
 \author{

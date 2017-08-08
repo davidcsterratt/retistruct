@@ -24,7 +24,7 @@ following fields:
 \item{\code{P}}{The set of new points, with the existing points at the start}
 \item{\code{T}}{The triangulation}
 \item{\code{Cu}}{Unique set of M connections, as M*2 matrix}
-\item{\code{h}}{Correspondances mapping}
+\item{\code{h}}{Correspondences mapping}
 \item{\code{A}}{Array containing area of each triangle}
 \item{\code{L}}{Length of each connection}
 \item{\code{A.signed}}{Signed area of each triangle}

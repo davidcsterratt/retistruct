@@ -28,7 +28,7 @@
 ##' \item{\code{VF}}{indices of the forward vertex of each tear}
 ##' \item{\code{VB}}{indices of the backward vertex of each tear}
 ##' \item{\code{i0}}{index of the landmark on the rim}
-##' \item{\code{phi0}}{lattitude of rim of partial sphere}
+##' \item{\code{phi0}}{latitude of rim of partial sphere}
 ##' \item{\code{lambda0}}{longitude of landmark on rim}
 ##' }
 ##' @param n Number of points in triangulation.
@@ -45,7 +45,7 @@
 ##' \item{\code{P}}{New set of points in flattened object}
 ##' \item{\code{gf}}{New set of forward pointers in flattened object}
 ##' \item{\code{gb}}{New set of backward pointers in flattened object}
-##' \item{\code{phi}}{lattitude of new points on sphere}
+##' \item{\code{phi}}{latitude of new points on sphere}
 ##' \item{\code{lambda}}{longitude of new points on sphere}
 ##' \item{\code{Tt}}{New triangulation}
 ##' @author David Sterratt
@@ -143,7 +143,7 @@ ReconstructedOutline <- function(o,
 ##' \code{phi0} in \code{r}.
 ##' @param len.down How many increments to go up from starting value
 ##' of \code{phi0} in \code{r}.
-##' @return dat Output data frame
+##' @return Output data frame
 ##' @author David Sterratt
 ##' @export
 titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
@@ -220,7 +220,7 @@ getStrains <- function(r) {
   ## Original lengths in flattened outline is a vector with
   ## M elements, the number of rows of Cu
   L <- r$L
-  ## New lengths in reconstructed object is a vector wtih Mt < M
+  ## New lengths in reconstructed object is a vector with Mt < M
   ## elements, the number of rows of Cut
   lt <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
   ## For each connection in the flattened object, we want the length of
@@ -313,7 +313,7 @@ getTss.reconstructedOutline <- function(r) {
 }
 
 ##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
-##' of gridlines from the spherical retina (described by points
+##' of grid lines from the spherical retina (described by points
 ##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cutoff
 ##' point \code{phi0}) onto a flattened retina (described by points
 ##' \code{P} and triangulation \code{T}).
@@ -323,7 +323,7 @@ getTss.reconstructedOutline <- function(r) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param grid Whether or not to show the grid lines of
-##' lattitude and longitude
+##' latitude and longitude
 ##' @param strain Whether or not to show the strain
 ##' @param ... Other plotting parameters
 ##' @method flatplot reconstructedOutline
@@ -448,7 +448,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' @param philim Limits of latitude (in degrees) to display
 ##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
 ##' @param grid Whether or not to show the grid lines of
-##' lattitude and longitude
+##' latitude and longitude
 ##' @param grid.bg Background colour of the grid
 ##' @param grid.int.minor Interval between minor grid lines in degrees
 ##' @param grid.int.major Interval between major grid lines in degrees
@@ -701,7 +701,7 @@ projection.reconstructedOutline <- function(r,
     text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
   }
 
-  ## Lattitude Labels
+  ## Latitude Labels
   ## rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
   rlabels <- phis.maj
   rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])

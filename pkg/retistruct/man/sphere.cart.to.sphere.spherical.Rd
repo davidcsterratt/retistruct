@@ -13,7 +13,7 @@ labelled columns "X", "Y" and "Z"}
 \item{R}{radius of sphere}
 }
 \value{
-N-by-2 Matrix wtih columns ("phi" and "lambda") of
+N-by-2 Matrix with columns ("phi" and "lambda") of
 locations of points in spherical coordinates
 }
 \description{

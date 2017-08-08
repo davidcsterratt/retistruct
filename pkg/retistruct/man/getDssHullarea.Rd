@@ -10,7 +10,7 @@ getDssHullarea(r)
 \item{r}{code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.}
 }
 \value{
-Area in degress squared
+Area in degrees squared
 }
 \description{
 Get area of convex hull around data points on sphere

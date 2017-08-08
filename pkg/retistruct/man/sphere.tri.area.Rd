@@ -14,7 +14,7 @@ sphere.tri.area(P, Pt)
 \arguments{
 \item{P}{2-column matrix of vertices of triangles given in
 spherical polar coordinates. Columns need to be labelled
-\code{phi} (lattidute) and \code{lambda} (longitude).}
+\code{phi} (latitude) and \code{lambda} (longitude).}
 
 \item{Pt}{3-column matrix of indices of rows of \code{P} giving
 triangulation}

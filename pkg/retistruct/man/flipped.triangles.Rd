@@ -7,7 +7,7 @@
 flipped.triangles(phi, lambda, Tt, R)
 }
 \arguments{
-\item{phi}{Vector of lattitudes of points}
+\item{phi}{Vector of latitudes of points}
 
 \item{lambda}{Vector of longitudes of points}
 
@@ -17,7 +17,7 @@ flipped.triangles(phi, lambda, Tt, R)
 }
 \value{
 List containing:
-\item{\code{flipped}}{Indicies of in rows of \code{Tt} of flipped triangles.}
+\item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
 \item{\code{cents}}{Vectors of centres.}
 \item{\code{areas}}{Areas of triangles.}
 }

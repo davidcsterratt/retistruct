@@ -74,8 +74,8 @@ getIDs.dataset <- function(r) {
 ##' @param axt whether to plot axes
 ##' @param ylim y-limits
 ##' @param datapoints If \code{TRUE}, display data points.
-##' @param grouped If \code{TRUE}, dipslay grouped data.
-##' @param landmarks If \code{TRUE}, dipslay landmarks.
+##' @param grouped If \code{TRUE}, display grouped data.
+##' @param landmarks If \code{TRUE}, display landmarks.
 ##' @param ids IDs of groups of data within a dataset, returned using
 ##' \code{\link{getIDs}}.
 ##' @param ... Graphical parameters to pass to plotting functions

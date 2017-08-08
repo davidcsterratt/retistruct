@@ -11,7 +11,7 @@ read.datacounts(dataset)
 }
 \value{
 List containing
-\item{\code{Ds}}{List of sets of datacounts. Each set comprises a 2-column matrix and each set is named.}
+\item{\code{Ds}}{List of sets of data counts. Each set comprises a 2-column matrix and each set is named.}
 \item{\code{cols}}{List of colours for each dataset. There is one element that corresponds to each element of \code{Ds} and which bears the same name.}
 }
 \description{

@@ -14,7 +14,7 @@
 ##' \item{\code{P}}{The set of new points, with the existing points at the start}
 ##' \item{\code{T}}{The triangulation}
 ##' \item{\code{Cu}}{Unique set of M connections, as M*2 matrix}
-##' \item{\code{h}}{Correspondances mapping}
+##' \item{\code{h}}{Correspondences mapping}
 ##' \item{\code{A}}{Array containing area of each triangle}
 ##' \item{\code{L}}{Length of each connection}
 ##' \item{\code{A.signed}}{Signed area of each triangle}
@@ -127,7 +127,7 @@ TriangulatedOutline <- function(o, n=200,
           T1 <- setdiff(T[Tind[1],], Cu[i,])
           T2 <- setdiff(T[Tind[2],], Cu[i,])
           report(paste("Other points in triangles:", T1, T2))
-          ## Create a new point at the centroid of the four verticies
+          ## Create a new point at the centroid of the four vertices
           ## C1, C2, T1, T2
           p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
           P <- rbind(P, p)

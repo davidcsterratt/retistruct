@@ -21,7 +21,7 @@ fire(r, force, restraint, m = 1, dt = 0.1, maxmove = 100, dtmax = 1,
 
 \item{maxmove}{Maximum distance to move in any time step}
 
-\item{dtmax}{Maxiumum time step}
+\item{dtmax}{Maximum time step}
 
 \item{Nmin}{Number of steps after which to start increasing \code{dt}}
 
@@ -35,7 +35,7 @@ fire(r, force, restraint, m = 1, dt = 0.1, maxmove = 100, dtmax = 1,
 
 \item{a}{Initial value of \code{a}}
 
-\item{nstep}{Maxiumum number of steps}
+\item{nstep}{Maximum number of steps}
 
 \item{tol}{Tolerance - if RMS force is below this value, stop and
 report convergence}
@@ -44,12 +44,12 @@ report convergence}
 }
 \value{
 List containing \code{x}, the positions of the points,
-\code{conv}, which is 0 if convergence as occured and 1 otherwise,
+\code{conv}, which is 0 if convergence as occurred and 1 otherwise,
 and \code{frms}, the root mean square of the forces on the
 particles.
 }
 \description{
-This is an implmentation of the FIRE algorithm for structural
+This is an implementation of the FIRE algorithm for structural
 relaxation put forward by Bitzek et al. (2006)
 }
 \references{

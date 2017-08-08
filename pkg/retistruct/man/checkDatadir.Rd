@@ -7,7 +7,7 @@
 checkDatadir(dir = NULL)
 }
 \arguments{
-\item{dir}{Diectory to check.}
+\item{dir}{Directory to check.}
 }
 \value{
 \code{TRUE} if \code{dir} contains valid data;

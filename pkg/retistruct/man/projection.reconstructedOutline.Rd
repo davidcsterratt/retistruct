@@ -34,7 +34,7 @@ column names \code{phi} (elevation) and \code{lambda} (longitude).}
 \item{labels}{Vector of 4 labels to plot at 0, 90, 180 and 270 degrees}
 
 \item{grid}{Whether or not to show the grid lines of
-lattitude and longitude}
+latitude and longitude}
 
 \item{grid.bg}{Background colour of the grid}
 

@@ -17,7 +17,7 @@ represented as a 2 column matrix of with column names \code{alpha}
 }
 \value{
 2-column matrix of spherical coordinates of points with
-column names \code{psi} (colattidude) and \code{lambda} (longitude).
+column names \code{psi} (colatitude) and \code{lambda} (longitude).
 }
 \description{
 Convert azimuth-elevation coordinates to spherical coordinates

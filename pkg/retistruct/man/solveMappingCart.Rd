@@ -22,7 +22,7 @@ solveMappingCart(r, alpha = 4, x0 = 0.5, nu = 1, method = "BFGS",
 
 \item{dev.flat}{Device handle for plotting grid to}
 
-\item{dev.polar}{Device handle for plotting ploar plot to}
+\item{dev.polar}{Device handle for plotting polar plot to}
 
 \item{...}{Extra arguments to pass to \code{\link{fire}}}
 }

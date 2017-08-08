@@ -14,7 +14,7 @@ RetinalReconstructedDataset(r, report = message)
 }
 \value{
 \code{\link{RetinalReconstructedDataset}} object. This does not
-contain any extra fields, but there are extra mthods dthat apply
+contain any extra fields, but there are extra methods that apply
 to it.
 }
 \description{

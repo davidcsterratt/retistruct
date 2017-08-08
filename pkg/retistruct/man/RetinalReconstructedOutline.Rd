@@ -13,7 +13,7 @@ RetinalReconstructedOutline(r, report = message)
 }
 \value{
 \code{RetinalReconstructedOutline} object. This does not
-contain any extra fields, but there are extra mthods dthat apply
+contain any extra fields, but there are extra methods that apply
 to it.
 }
 \description{

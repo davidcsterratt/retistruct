@@ -2,13 +2,13 @@
 % Please edit documentation in R/geometry.R
 \name{spherical.to.polar.area}
 \alias{spherical.to.polar.area}
-\title{Convert lattitude on sphere to radial variable in
+\title{Convert latitude on sphere to radial variable in
 area-preserving projection}
 \usage{
 spherical.to.polar.area(phi, R = 1)
 }
 \arguments{
-\item{phi}{Lattitude}
+\item{phi}{Latitude}
 
 \item{R}{Radius}
 }

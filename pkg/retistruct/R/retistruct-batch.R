@@ -281,7 +281,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
 
   svg(filename=file.path("fig4-retistruct-titration.svg"), width=6.83/3, height=6.83/6)
 
-  ## Plot of optimal rim lattitude versus the sub
+  ## Plot of optimal rim latitude versus the sub
   par(mar=c(2.2, 2.9, 0.5, 0.4))
   par(mgp=c(1.2, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 2))
@@ -543,8 +543,8 @@ retistruct.batch.analyse.summary <- function(path) {
 ##'
 ##' @title Extract statistics from a directory containing
 ##' reconstruction directories. 
-##' @param path Directory containing recontstruction directories
-##' @return Data frame containg various statistics 
+##' @param path Directory containing reconstruction directories
+##' @return Data frame containing various statistics 
 ##' @author David Sterratt
 ##' @export
 retistruct.batch.analyse.summaries <- function(path) {

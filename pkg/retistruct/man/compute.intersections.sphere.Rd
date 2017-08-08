@@ -8,7 +8,7 @@ a sphere}
 compute.intersections.sphere(phi, lambda, T, n, d)
 }
 \arguments{
-\item{phi}{Lattitude of grid points on sphere centred on origin.}
+\item{phi}{Latitude of grid points on sphere centred on origin.}
 
 \item{lambda}{Longitude of grid points on sphere centred on origin.}
 
@@ -29,7 +29,7 @@ edge lies in the plane. A value of \code{Inf} indicates that the
 edge lies parallel to the plane but outside it.
 }
 \description{
-Find the interections of the plane defined by the normal \code{n} and the
+Find the intersections of the plane defined by the normal \code{n} and the
 distance \code{d} expressed as a fractional distance along the side of
 each triangle.
 }

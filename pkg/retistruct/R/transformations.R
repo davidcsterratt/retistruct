@@ -1,9 +1,9 @@
 ##' The identity transformation
 ##' @param r Coordinates of points in spherical coordinates
 ##' represented as  2 column matrix with column names \code{phi}
-##' (lattitude) and \code{lambda} (longitude).
+##' (latitude) and \code{lambda} (longitude).
 ##' @param ... Other arguments
-##' @return Idendtical matrix
+##' @return Identical matrix
 ##' @author David Sterratt
 ##' @export
 identity.transform <- function(r, ...) {
@@ -13,7 +13,7 @@ identity.transform <- function(r, ...) {
 ##' Invert sphere about its centre
 ##' @param r Coordinates of points in spherical coordinates
 ##' represented as  2 column matrix with column names \code{phi}
-##' (lattitude) and \code{lambda} (longitude).
+##' (latitude) and \code{lambda} (longitude).
 ##' @param ... Other arguments
 ##' @return Matrix in same format, but with \code{pi} added to lambda
 ##' and \code{phi} negated.
@@ -26,13 +26,13 @@ invert.sphere <- function(r, ...) {
 }
 
 ##' Invert image of a partial sphere and scale the longitude so that
-##' points at lattitude \code{phi0} is projected onto a longitude of 0
+##' points at latitude \code{phi0} is projected onto a longitude of 0
 ##' degrees (the equator).
 ##' @title Invert sphere to hemisphere
 ##' @param r Coordinates of points in spherical coordinates
 ##' represented as  2 column matrix with column names \code{phi}
-##' (lattitude) and \code{lambda} (longitude).
-##' @param phi0 The lattitude to map onto the equator
+##' (latitude) and \code{lambda} (longitude).
+##' @param phi0 The latitude to map onto the equator
 ##' @param ... Other arguments
 ##' @return Matrix in same format, but with \code{pi} added to lambda
 ##' and \code{phi} negated and scaled so that the longitude

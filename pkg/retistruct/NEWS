@@ -7,6 +7,11 @@ NEW FEATURES
   (https://github.com/davidcsterratt/retistruct/issues/17)
   Thanks to Brian Cohn for the report and the patch.
 
+BUG FIXES
+
+* Documentation has been spell checked using devtools::spell_check()
+  (https://github.com/davidcsterratt/retistruct/issues/19)
+
 CHANGES IN VERSION 0.5.11 - Released 2017/07/15
 
 RELEASE NOTES
