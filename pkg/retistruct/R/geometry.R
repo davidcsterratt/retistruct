@@ -18,7 +18,7 @@ vecnorm <- function(X) {
 
 ##' "Signed area" of triangles on a plane
 ##' @param P 2-column matrix of vertices of triangles
-##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' @param Pt 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of signed areas of triangles. Positive sign
 ##' indicates points are anticlockwise direction; negative indicates
@@ -36,7 +36,7 @@ tri.area.signed <- function(P, Pt) {
 
 ##' Area of triangles on a plane
 ##' @param P 2-column matrix of vertices of triangles
-##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' @param Pt 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of areas of triangles
 ##' @author David Sterratt
@@ -52,7 +52,7 @@ tri.area <- function(P, Pt) {
 ##' @param P 2-column matrix of vertices of triangles given in
 ##' spherical polar coordinates. Columns need to be labelled
 ##' \code{phi} (lattidute) and \code{lambda} (longitude).
-##' @param Pt 3-column matrix of indicies of rows of \code{P} giving
+##' @param Pt 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of areas of triangles in units of steradians
 ##' @source Wolfram MathWorld

@@ -3,7 +3,7 @@ path.next <- function(i, g, h) {
   return(ifelse(h[i]==i, g[i], h[i]))
 }
 
-## Return sequence of indicies in path between i and j, governed by
+## Return sequence of indices in path between i and j, governed by
 ## pointer vector p
 path <- function(i, j, g, h) {
   if (i == j) {
@@ -13,7 +13,7 @@ path <- function(i, j, g, h) {
   }
 }
 
-## Return sequence of indicies in path between i and j, governed by
+## Return sequence of indices in path between i and j, governed by
 ## pointer vector p
 path.length <- function(i, j, g, h, P) {
   if (any(is.na(c(i, j)))) {
@@ -44,8 +44,8 @@ order.Rset <- function(Rset, gf, hf) {
 ##' This function creates merged and transformed versions (all
 ##' suffixed with \code{t}) of a number of existing variables, as well
 ##' as a matrix \code{Bt}, which maps a binary vector representation
-##' of edge indicies onto a binary vector representation of the
-##' indicies of the points linked by the edge.
+##' of edge indices onto a binary vector representation of the
+##' indices of the points linked by the edge.
 ##' @title  Merge stitched points and edges 
 ##' @param t A \code{StitchedOutline} object in which points that have
 ##' been added by stitching have been triangulated
@@ -55,12 +55,12 @@ order.Rset <- function(Rset, gf, hf) {
 ##' \item{\code{Ct}}{Transformed connection set}
 ##' \item{\code{Cut}}{Transformed symmetric connection set}
 ##' \item{\code{Bt}}{Transformed binary vector representation
-##' of edge indicies onto a binary vector representation of the
-##' indicies of the points linked by the edge}
+##' of edge indices onto a binary vector representation of the
+##' indices of the points linked by the edge}
 ##' \item{\code{Lt}}{Transformed edge lengths}
 ##' \item{\code{ht}}{Transformed correspondences}
 ##' \item{\code{u}}{Indicies of unique points in untransformed space}
-##' \item{\code{U}}{Transformed indicies of unique points in untransformed space}
+##' \item{\code{U}}{Transformed indices of unique points in untransformed space}
 ##' \item{\code{Rset}}{The set of points on the rim (which has been reoorded)}
 ##' \item{\code{Rsett}}{Transformed set of points on rim}
 ##' \item{\code{i0t}}{Transformed index of the landmark}
@@ -76,11 +76,11 @@ mergePointsEdges <- function(t) {
   P <- t$P
   gf <- t$gf
   
-  ## Form the mapping from a new set of consecutive indicies
-  ## the existing indicies onto the existing indicies
+  ## Form the mapping from a new set of consecutive indices
+  ## the existing indices onto the existing indices
   u <- unique(h)
 
-  ## Transform the point set into the new indicies
+  ## Transform the point set into the new indices
   Pt  <- P[u,]
 
   ## Transform the point correspondance mapping to the new index space  
@@ -90,8 +90,8 @@ mergePointsEdges <- function(t) {
   }
 
   ## DOESN'T WORK
-  ## Form the inverse mapping from the existing indicies to the new
-  ## set of consecutive indicies
+  ## Form the inverse mapping from the existing indices to the new
+  ## set of consecutive indices
   ## uinv <- c()
   ## uinv[u] <- 1:length(u)
   ## ht <- uinv[h[u]]
@@ -99,7 +99,7 @@ mergePointsEdges <- function(t) {
   ## Transform the triangulation to the new index space
   Tt  <- matrix(ht[T], ncol=3)
 
-  ## Tansform the forward pointer into the new indicies
+  ## Tansform the forward pointer into the new indices
   gft <- ht[gf]
 
   ## Determine H, the mapping from edges onto corresponding edges
@@ -118,11 +118,11 @@ mergePointsEdges <- function(t) {
     }
   }
 
-  ## Form the mapping from a new set of consecutive edge indicies
-  ## onto the existing edge indicies
+  ## Form the mapping from a new set of consecutive edge indices
+  ## onto the existing edge indices
   U <- unique(H)
 
-  ## Transform the edge set into the new indicies
+  ## Transform the edge set into the new indices
   Cut <- Cut[U,]
 
   ## Transform the edge correspondance mapping to the new index space  
@@ -459,7 +459,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
   dE.dphi    <- rowSums(dE.dp * dp.dphi)
   dE.dlambda <- rowSums(dE.dp * dp.dlambda)
 
-  ## Return, omitting uncessary indicies
+  ## Return, omitting uncessary indices
   return(c(dE.dphi[-Rset], dE.dlambda[-i0]))
 }
 
@@ -630,7 +630,7 @@ Rcart <- function(P, R, Rset, i0, phi0, lambda0) {
 ##' the centre of each triangle and comparing this direction to vector
 ##' product of two sides of the triangle.
 ##'
-##' @title Determine indicies of triangles that are flipped
+##' @title Determine indices of triangles that are flipped
 ##' @param P Points in Cartesian coordinates
 ##' @param Tt Triangulation of points
 ##' @param R Radius of sphere
@@ -660,7 +660,7 @@ flipped.triangles.cart <- function(P, Tt, R) {
 ##' the centre of each triangle and comparing this direction to vector
 ##' product of two sides of the triangle.
 ##'
-##' @title Determine indicies of triangles that are flipped
+##' @title Determine indices of triangles that are flipped
 ##' @param phi Vector of lattitudes of points
 ##' @param lambda Vector of longitudes of points
 ##' @param Tt Triangulation of points

@@ -116,7 +116,7 @@ simplify.outline <- function(o, min.frac.length=0.001, plot=FALSE) {
   ## Find short edges
   S <- l/sum(l) < min.frac.length
 
-  ## Find indicies of points that can be removed.
+  ## Find indices of points that can be removed.
   ## They have to be concave or colinear (e<=0). And they need to border short edges
   i.rem <- which((e <= 0) & (S | (S[c(N, 1:(N-1))])))
 

@@ -24,9 +24,9 @@
 ##' @title Reconstruct outline into spherical surface
 ##' @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
 ##' \item{\code{P}}{outline points as N-by-2 matrix}
-##' \item{\code{V0}}{indicies of the apex of each tear}
-##' \item{\code{VF}}{indicies of the forward vertex of each tear}
-##' \item{\code{VB}}{indicies of the backward vertex of each tear}
+##' \item{\code{V0}}{indices of the apex of each tear}
+##' \item{\code{VF}}{indices of the forward vertex of each tear}
+##' \item{\code{VB}}{indices of the backward vertex of each tear}
 ##' \item{\code{i0}}{index of the landmark on the rim}
 ##' \item{\code{phi0}}{lattitude of rim of partial sphere}
 ##' \item{\code{lambda0}}{longitude of landmark on rim}
@@ -305,7 +305,7 @@ getIms.reconstructedOutline <- function(r) {
 getTss.reconstructedOutline <- function(r) {
   Tss <- list()
   for (TF in r$TFset) {
-    ## Convert indicies to the spherical frame of reference
+    ## Convert indices to the spherical frame of reference
     j <- r$ht[TF]
     Tss <- with(r, c(Tss, list(cbind(phi=phi[j], lambda=lambda[j]))))
   }

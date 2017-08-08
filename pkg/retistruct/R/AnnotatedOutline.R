@@ -24,10 +24,10 @@ AnnotatedOutline <- function(o){
 ##' apex and vertcies of a cut and tear with the V0 (Apex), VF
 ##' (forward vertex) and VB (backward vertex) labels.
 ##'
-##' @title Label three outline point indicies as apicies and vertices of tear
-##' @param m the vector of three indicies
+##' @title Label three outline point indices as apicies and vertices of tear
+##' @param m the vector of three indices
 ##' @param o Outline object
-##' @return Vector of indicies labelled with V0, VF and VB
+##' @return Vector of indices labelled with V0, VF and VB
 ##' @author David Sterratt
 ##' @export
 labelTearPoints <- function(o, m) {
@@ -81,9 +81,9 @@ whichTear <- function(o, pid) {
   return(tid)
 }
 
-##' Return indicies of tear in AnnotatedOutline
+##' Return indices of tear in AnnotatedOutline
 ##'
-##' @title Return indicies of tear in AnnotatedOutline
+##' @title Return indices of tear in AnnotatedOutline
 ##' @param o \code{AnnotatedOutline} object
 ##' @param tid Tear ID, which can be returned from \code{whichTear()}
 ##' @return Vector of three point IDs, labelled with \code{V0},
@@ -105,8 +105,8 @@ getTear <- function(o, tid) {
 ##' @param VF Forward vertices of tears
 ##' @return List
 ##' \item{\code{Rset}}{the set of points on the rim}
-##' \item{\code{TFset}}{list containing indicies of points in each foward tear}
-##' \item{\code{TBset}}{list containing indicies of points in each backward tear}
+##' \item{\code{TFset}}{list containing indices of points in each foward tear}
+##' \item{\code{TBset}}{list containing indices of points in each backward tear}
 ##' \item{\code{h}}{correspondence mapping}
 ##' \item{\code{hf}}{correspondence mapping in forward direction for
 ##'         points on boundary}
@@ -236,7 +236,7 @@ removeTear <- function(o, tid) {
 ##' @title Check that tears are all in the correct direction
 ##' @param o \code{AnnotatedOutline} object
 ##' @return If all is OK, returns empty vector.  If not, returns
-##' indicies of problematic tears.
+##' indices of problematic tears.
 ##' @author David Sterratt
 checkTears <- function(o) {
   out <- c()

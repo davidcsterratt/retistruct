@@ -10,9 +10,9 @@ ReconstructedOutline(o, n = 500, alpha = 8, x0 = 0.5, report = print,
 \arguments{
 \item{o}{\code{\link{AnnotatedOutline}} object, containing the following information:\describe{
 \item{\code{P}}{outline points as N-by-2 matrix}
-\item{\code{V0}}{indicies of the apex of each tear}
-\item{\code{VF}}{indicies of the forward vertex of each tear}
-\item{\code{VB}}{indicies of the backward vertex of each tear}
+\item{\code{V0}}{indices of the apex of each tear}
+\item{\code{VF}}{indices of the forward vertex of each tear}
+\item{\code{VB}}{indices of the backward vertex of each tear}
 \item{\code{i0}}{index of the landmark on the rim}
 \item{\code{phi0}}{lattitude of rim of partial sphere}
 \item{\code{lambda0}}{longitude of landmark on rim}

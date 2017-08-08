@@ -170,7 +170,7 @@ TriangulatedOutline <- function(o, n=200,
   return(t)
 }
 
-## Convert a matrix containing on each line the indicies of the points
+## Convert a matrix containing on each line the indices of the points
 ## forming a segment, and convert this to two sets of ordered pointers
 segments2pointers <- function(S) {
   g <- c()
@@ -202,7 +202,7 @@ segments2pointers <- function(S) {
 }
 
 ## Convert a set of ordered pointers to a matrix containing on each
-## line the indicies of the points forming a segment
+## line the indices of the points forming a segment
 pointers2segments <- function(g) {
   S1 <- which(!is.na(g))
   S2 <- g[S1]

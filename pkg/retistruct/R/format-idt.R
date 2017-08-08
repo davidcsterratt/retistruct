@@ -138,8 +138,8 @@ idt.connect.segments <- function(segs, merge.rad=10) {
         message(paste("Adding old segment", j))
       }
       
-      added[i] <- TRUE             # Ignore these indicies in the future
-      added[j] <- TRUE             # Ignore these indicies in the future
+      added[i] <- TRUE             # Ignore these indices in the future
+      added[j] <- TRUE             # Ignore these indices in the future
       i <- n[j]                    # Closest index in another segment
     }
       

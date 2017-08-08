@@ -65,7 +65,7 @@ retistruct.potential.od <- function(o) {
 ##' The tear information is contained in the files \file{P.csv} and
 ##' \file{T.csv}. The first file contains the locations of outline
 ##' points that the tears were marked up on. The second file contains
-##' the indicies of the apicies and backward and forward verticies of
+##' the indices of the apicies and backward and forward verticies of
 ##' each tear. It is necessary to have the file of points just in case
 ##' the algorithm that determines \code{P} in
 ##' \code{\link{retistruct.read.dataset}} has changed since the markup
@@ -102,7 +102,7 @@ retistruct.read.markup <- function(a, error=stop) {
   }
 
   ## Function to map old tears (M.old) and old points (P.old) onto new
-  ## points (P). It returns a new matrix of indicies (M).
+  ## points (P). It returns a new matrix of indices (M).
   convert.markup <- function(M.old, P.old, P) {
     M <- sapply(M.old, function(i) {
       ifelse(is.numeric(i), closest(P, P.old[i,]), i)
