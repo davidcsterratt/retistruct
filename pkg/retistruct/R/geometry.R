@@ -392,7 +392,7 @@ spherical.to.polar.area <- function(phi, R=1) {
 ##' projection. Column names should be \code{x} and \code{y}
 ##' @author David Sterratt
 ##' @export
-sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
+sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="latitude") {
   ## FIXME: This function should be deprecated in favour of
   ## azimuthal.equalarea and azimuthal.equidistant in projections.R
   rho <- NULL
@@ -406,7 +406,7 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
     ## rho = alpha*sqrt(2*(1+sin(phi))/(1-sin(phi)))
     rho <- sqrt(2*(1+sin(r[,"phi"]))/(1-sin(r[,"phi"])))
   }
-  if (preserve=="lattitude") {
+  if (preserve=="latitude") {
     rho <- pi/2 + r[,"phi"]
   }
   if (is.null(rho))
@@ -430,7 +430,7 @@ sphere.spherical.to.polar.cart <- function(r, pa=FALSE, preserve="lattitude") {
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @author David Sterratt
 ##' @export
-polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
+polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="latitude") {
   ## FIXME: This function should be deprecated in favour of as-yet
   ## unwritten functions azimuthal.equalarea.inverse and
   ## azimuthal.equidistant.inverse in projections.R
@@ -449,7 +449,7 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
     ## phi = asin((rho^2/alpha^2-2)/(rho^2/alphpa^2+2))
     phi <- asin((rho2 - 2)/(rho2 + 2))
   }
-  if (preserve=="lattitude") {
+  if (preserve=="latitude") {
     phi <- sqrt(rho2) - pi/2
   }
   if (is.null(phi))
@@ -471,9 +471,9 @@ polar.cart.to.sphere.spherical <- function(r, pa=FALSE, preserve="lattitude") {
 ##' @examples
 ##' r0 <- cbind(alpha=0, theta=0)
 ##' r <- rbind(r0, r0+c(1,0), r0-c(1,0), r0+c(0,1), r0-c(0,1))
-##' azel.to.sphere.colattitude(r, r0)
+##' azel.to.sphere.colatitude(r, r0)
 ##' @export
-azel.to.sphere.colattitude <- function(r, r0) {
+azel.to.sphere.colatitude <- function(r, r0) {
   ## Find Cartesian coordinates of aziumuth and elevation on sphere
   rc <- cbind(cos(r[,"alpha"])*sin(r[,"theta"]),
               cos(r[,"alpha"])*cos(r[,"theta"]),

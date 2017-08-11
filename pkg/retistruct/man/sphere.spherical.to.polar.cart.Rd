@@ -5,7 +5,7 @@
 \title{Convert spherical coordinates on sphere to  polar
 projection in Cartesian coordinates}
 \usage{
-sphere.spherical.to.polar.cart(r, pa = FALSE, preserve = "lattitude")
+sphere.spherical.to.polar.cart(r, pa = FALSE, preserve = "latitude")
 }
 \arguments{
 \item{r}{2-column Matrix of spherical coordinates of points on
