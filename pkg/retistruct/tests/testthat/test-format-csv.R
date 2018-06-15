@@ -1,6 +1,7 @@
+context("format csv")
 test_that("CSV format is read correctly", {
     dataset <- file.path(system.file(package = "retistruct"), "extdata", "smi32-csv")
-    r <- retistruct.read.dataset(dataset)
+    r <- expect_warning(retistruct.read.dataset(dataset), "Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
     ## Test that points are read in correctly 
     P <- as.matrix(read.csv(file.path(dataset, "P.csv")))
     attr(P, "dimnames") <- NULL
