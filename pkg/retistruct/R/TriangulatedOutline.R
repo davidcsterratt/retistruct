@@ -71,8 +71,14 @@ TriangulatedOutline <- function(o, n=200,
   P <- out$P
   S <- out$S
   if (!is.na(n)) {
+    ## In some outlines, suppressing external Steiner points can lead
+    ## to infinite numbers of points being added. We safeguard against
+    ## this by limiting the number to the number of triangles we would
+    ## like - this is perhaps arbitrary, but should mean the number of
+    ## points does not get much beyond 2n
     out <- RTriangle::triangulate(RTriangle::pslg(P=P, S=S), a=A.tot/n, q=20,
-                                  Y=suppress.external.steiner, j=TRUE, Q=TRUE)
+                                  Y=suppress.external.steiner, j=TRUE, Q=TRUE,
+                                  S=n)
   }
   if (any(P != out$P[1:nrow(P),])) {
     stop("Points changed in triangulation")
@@ -144,7 +150,9 @@ TriangulatedOutline <- function(o, n=200,
 
     ## Add the new points to the correspondances vector
     h <- c(h, (length(h)+1):nrow(P))
-
+    gf <- c(gf, rep(NA, nrow(P) - length(gf)))
+    gb <- c(gb, rep(NA, nrow(P) - length(gb)))
+    
     ## Create the edge matrix from the triangulation
     Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
     Cu <- Unique(Cu, TRUE)

@@ -39,33 +39,54 @@ StitchedOutline <- function(a) {
   V0 <- a$V0
   VF <- a$VF
   VB <- a$VB
-  TFset <- r$TFset
-  TBset <- r$TBset
   gf <- a$gf
   gb <- a$gb
   hf <- r$hf
   hb <- r$hb
   h <- r$h
-  
-  ## Insert points on the backward tears corresponding to points on
-  ## the forward tears
-  sF <-      suppressMessages(stitch.insert.points(P, V0, VF, VB, TFset, TBset,
-                                                   gf, gb, hf, hb, h,
-                                                   "Forwards"))
+  TFset <- r$TFset
+  TBset <- r$TBset
 
-  ## Insert points on the forward tears corresponding to points on
-  ## the backward tears
-  sB <- suppressMessages(with(sF,
-                              stitch.insert.points(P, V0, VB, VF, TBset, TFset,
-                                                   gb, gf, hb, hf, h,
-                                                   "Backwards")))
-  ## Extract data from object
-  P <- sB$P
-  gf <- sB$gb
-  gb <- sB$gf
-  hf <- sB$hb
-  hb <- sB$hf
-  h <- sB$h
+  if (0) {
+
+    ## Insert points on the backward tears corresponding to points on
+    ## the forward tears
+    sF <-      suppressMessages(stitch.insert.points(P, V0, VF, VB, TFset, TBset,
+                                                     gf, gb, hf, hb, h,
+                                                     "Forwards"))
+
+    ## Insert points on the forward tears corresponding to points on
+    ## the backward tears
+    sB <- suppressMessages(with(sF,
+                                stitch.insert.points(P, V0, VB, VF, TBset, TFset,
+                                                     gb, gf, hb, hf, h,
+                                                     "Backwards")))
+    ## Extract data from object
+    P <- sB$P
+    gf <- sB$gb
+    gb <- sB$gf
+    hf <- sB$hb
+    hb <- sB$hf
+    h <- sB$h
+
+  } else {
+    po <- list(P=P, gf=gf, gb=gb, hf=hf, hb=hb, h=1:nrow(P))
+    
+    for (i in 1:length(V0)) {
+      po <- stitch.paths(po$P,
+                         V0[i], VF[i], V0[i], VB[i],
+                         po$gf, po$gb,
+                         po$hf, po$hb,
+                         po$h,
+                         epsilon=0.001)
+    }
+    P <- po$P
+    gf <- po$gb
+    gb <- po$gf
+    hf <- po$hb
+    hb <- po$hf
+    h <- po$h
+  }
 
   ## Link up points on rim
   h[Rset] <- hf[Rset]

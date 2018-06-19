@@ -23,6 +23,7 @@ ReconstructedDataset <- function(r, report=message) {
   Dss <- list() # Datapoints on reconstructed sphere in spherical coordinates
   if (!is.null(r$Ds) & (length(r$Ds) > 0)) {
     for (name in names(r$Ds)) {
+      save(r, file="r.rData")
       Dsb[[name]] <- tsearchn(r$P, r$T, r$Ds[[name]])
       oo <- is.na(Dsb[[name]]$idx)     # Points outwith outline
       if (any(oo)) {
