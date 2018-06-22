@@ -1,9 +1,23 @@
-CHANGES IN VERSION 0.6.0 - Released 2018/06/19
+CHANGES IN VERSION 0.6.0 - Released 2018/06/xx
+
+BUG FIXES
+
+* Error unclear with infinite determinant in retistruct.reconstruct
+  (https://github.com/davidcsterratt/retistruct/issues/21)
+  Thanks to Brian Cohn for reporting this, and to Inmaculada Soldado
+  and Klaudia Szatko for reporting the same problem and contributing
+  an example that gave the same error.
 
 CODE IMPROVEMENTS
 
 * Major refactor of code to use R6 classes
   (https://github.com/davidcsterratt/retistruct/issues/25)
+
+* Stitching algorithm changed so it only creates new points when they
+  lie outwith tolerance a of an existing one. This prevent very short
+  lengths in triangulated outlines.
+  (https://github.com/davidcsterratt/retistruct/issues/21) This work
+  arose from the bug with the idefinite determinant (see above).
 
 CHANGES IN VERSION 0.5.12 - Released 2017/08/08
 

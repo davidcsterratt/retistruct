@@ -18,11 +18,9 @@
 ##' o$addTear(c(12, 1, 2))
 ##' flatplot(o)
 AnnotatedOutline <- R6Class("AnnotatedOutline",
-  inherit = Outline,
+  inherit = PathOutline,
   public = list(
     tears = NULL,
-    hf = NULL,
-    hb = NULL,
     initialize = function(...) {
       super$initialize(...)
       self$tears <- matrix(0, 0, 3)
@@ -266,23 +264,18 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ## Get rim length of AnnotatedOutline
     ## @param o \code{\link{AnnotatedOutline}} object
     ## @return The rim length 
-    getFlatRimLength = function(o) {
-      suppressMessages(r <- self$computeTearRelationships(self$V0, self$VB, self$VF))
-      return(path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gf, r$hf, self$P) +
-             path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gb, r$hb, self$P))
-    },
-    addPoints = function(P) {
-      pids <- super$addPoints(P)
-      ## For *new* points set forward and backward pointers
-      newpids <- pids
-      if (length(self$hf) > 0) {
-        newpids <- setdiff(pids, 1:length(self$hf))
-      }
-      if (length(newpids) > 0) {
-        self$hf[newpids] <- newpids
-        self$hb[newpids] <- newpids
-      }
-      return(pids)
+    ## Get rim lengths of AnnotatedOutline
+    ## @return The rim lengths
+    getRimLengths = function() {
+      ## Rim set
+      rs <- self$getRimSet()
+      ## Destination points
+      d <- self$nextPoint(rs)
+      ## Source and destination points have to be in rim set
+      s <- rs[d %in% rs]
+      d <- d[d %in% rs]
+      return(vecnorm(self$getPointsScaled()[d,] -
+                     self$getPointsScaled()[s,]))
     }
   )
 )

@@ -17,11 +17,13 @@ test_that("AnnotatedOutlines with tears work correctly", {
 
   ## Annotated outlines
   a <- AnnotatedOutline$new(P)
-
+  expect_equal(sum(a$getRimLengths()), 16)
+  
   ## Check triangulation works
   f <- TriangulatedFragment$new(a, n=NA)
   expect_equal(f$A.tot, 4 + 4*2)
-
+  expect_equal(sum(a$getRimLengths()), 16)
+  
   # If we ask for a non-existent tear, get NA
   expect_equal(NA, a$getTear(1))
   

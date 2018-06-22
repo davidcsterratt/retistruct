@@ -26,6 +26,7 @@ StitchedOutline <- R6Class("StitchedOutline",
   public = list(
     Rset = NULL,
     TFset = NULL,
+    epsilon = NA,
     initialize = function(...) {
       super$initialize(...)
       rs <- self$getRimSet()
@@ -33,8 +34,13 @@ StitchedOutline <- R6Class("StitchedOutline",
       self$hf[rs] <- rs
       self$hb <- rep(NA, nrow(self$P))
       self$hb[rs] <- rs
+      ## Theoretically the maximum tolerance should be half of the
+      ## minimum distance between points. We'll make it this, or 0.01%
+      ## of the total outline length, whichever is smaller.
+      self$epsilon <- min(min(self$getOutlineLengths())/4,
+                          sum(self$getRimLengths())*0.01/100)
     },
-    stitchTears = function() {
+        stitchTears = function() {
       r <- self$computeTearRelationships(self$tears)
 
       if (length(r$TFset) == 0) {
@@ -47,131 +53,28 @@ StitchedOutline <- R6Class("StitchedOutline",
         stop(paste("Fixed Point", self$i0, "is not in rim points:",
                    paste(self$Rset, collapse=", ")))
       }
-
-      V0 <- self$tears[,"V0"]
-      VF <- self$tears[,"VF"]
-      VB <- self$tears[,"VB"]
-      TFset <- r$TFset
-      TBset <- r$TBset
-      gf <- self$gf
-      gb <- self$gb
-      hf <- r$hf
-      hb <- r$hb
-      h <- r$h
       
-      ## Insert points on the backward tears corresponding to points on
-      ## the forward tears
-      sF <-     private$stitchInsertPoints(V0, VF, V0, VB, TFset, TBset,
-                                           gf, gb, hf, hb, h,
-                                           "Forwards")
-
-      ## Insert points on the forward tears corresponding to points on
-      ## the backward tears
-      sB <- with(sF,
-                 private$stitchInsertPoints(V0, VB, V0, VF, TBset, TFset,
-                                            gb, gf, hb, hf, h,
-                                            "Backwards"))
-      ## Extract data from object
-      self$gf <- sB$gb
-      self$gb <- sB$gf
-      self$hf <- sB$hb
-      self$hb <- sB$hf
-      h <- sB$h
-
+      self$hf <- r$hf
+      self$hb <- r$hb
+      self$h <- r$h
+      for (i in 1:nrow(self$tears)) {
+        self$stitchSubpaths(self$tears[i,"V0"], self$tears[i,"VF"],
+                            self$tears[i,"V0"], self$tears[i,"VB"],
+                            epsilon=self$epsilon)
+      }
+      
       ## Link up points on rim
-      h[self$Rset] <- hf[self$Rset]
+      self$h[self$Rset] <- self$hf[self$Rset]
       
       ## Make sure that there are no chains of correspondences
-      while (!all(h==h[h])) {
-        h <- h[h]
+      while (!all(self$h==self$h[self$h])) {
+        self$h <- self$h[self$h]
       }
-      self$h <- h
-      self$TFset <- TFset
-    }
-  ),
-  private = list(
-    ## Inner function responsible for inserting the points
-    stitchInsertPoints = function(VF0, VF1, VB0, VB1,
-                                  TFset, TBset,
-                                  gf, gb,
-                                  hf, hb, h,
-                                  dir,
-                                  stitchType="Tear") {
-      M <- length(VF0)                       # Number of tears
-      ## Iterate through tears to insert new points
-      for (j in 1:M) {
-        ## Compute the total path length along each side of the tear
-        Sf <- path.length(VF0[j], VF1[j], gf, hf, self$getPointsScaled())
-        Sb <- path.length(VB0[j], VB1[j], gb, hb, self$getPointsScaled())
-        message(paste(stitchType, j, ": Sf =", Sf, "; Sb =", Sb))
-
-        ## For each point in the forward path, create one in the backwards
-        ## path at the same fractional location
-        message(paste("  ", dir, " path", sep=""))
-        for (i in setdiff(TFset[[j]], c(VF0[j], VF1[j]))) {
-          sf <- path.length(VF0[j], i, gf, hf, self$getPointsScaled())
-          ## If the point isn't at the apex, insert a point
-          if (sf > 0) {
-            message(paste("    i =", i,
-                          "; sf/Sf =", sf/Sf,
-                          "; sf =", sf))
-            for (k in TBset[[j]]) {
-              sb <- path.length(VB0[j], k, gb, hb, self$getPointsScaled())
-              message(paste("      k =", format(k, width=4),
-                            "; sb/Sb =", sb/Sb,
-                            "; sb =", sb))
-              if (sb/Sb > sf/Sf) {
-                break;
-              }
-              k0 <- k
-              sb0 <- sb
-            }
-
-            ## If this point does already not point to another, create
-            ## a new point and link to it
-            if ((hf[i] == i)) {
-              f <- (sf/Sf*Sb - sb0)/(sb - sb0)
-              message(paste("      Creating new point: f =", f))
-              PXY <- self$getPoints()
-              p <-
-                (1 - f)*PXY[k0,] +
-                f*      PXY[k,]
-              ## Find the index of any row of P that matches p
-              n <- anyDuplicated(rbind(PXY, p),
-                                 fromLast=TRUE)
-              if (n == 0) {
-                ## If the point p doesn't exist
-                n <- self$addPoints(p) # n is Index of new point
-                ## Update forward and backward pointers
-                gb[n]     <- k
-                gf[n]     <- gf[k]
-                gb[gf[k]] <- n
-                gf[k]     <- n
-
-                ## Update correspondences
-                hf[n] <- n
-                hb[n] <- n
-                h[i] <- n
-                h[n] <- n
-                message(paste("      Point", i, "points to point", n))
-              } else {
-                message(paste("      Point", n, "already exists"))
-                h[i] <- n
-                h[n] <- n
-                message(paste("      Point", i, "points to point", n))
-              }
-            } else {
-              ## If not creating a point, set the point to point to the forward pointer 
-              h[i] <- hf[i]
-            }
-          }
-        } 
-      }
-      return(list(hf=hf, hb=hb, gf=gf, gb=gb, h=h))
+      ## self$h <- h
+      self$TFset <- r$TFset
     }
   )
 )
-
 
 ##' Plot flat \code{\link{StitchedOutline}}. If the optional argument
 ##' \code{stitch} is \code{TRUE} the user markup is displayed.

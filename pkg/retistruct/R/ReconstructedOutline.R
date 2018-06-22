@@ -323,7 +323,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       ## Check that this length matches the length computed from the AnnotatedOutline
       ## FIXME - this doesn't work for one retina - need to check why
-      ## if (sum(L.Rsett) != getFlatRimLength(r)) {
+      ## if (sum(L.Rsett) != sum(getRimLengths(r))) {
       ##  stop("Internal error: Mismatch in rim lengths")
       ## }
       ## Stretch mesh points to circle

@@ -111,6 +111,13 @@ Outline <- R6Class("Outline",
     getRimSet = function() {
       return(1:nrow(self$P))
     },
+    getOutlineSet = function() {
+      return(which(!is.na(self$gf)))
+    },
+    getOutlineLengths = function() {
+      return(vecnorm(self$getPointsScaled()[self$getOutlineSet(),] -
+                     self$getPointsScaled()[self$gf[self$getOutlineSet()],]))
+    },
     addFeatureSet = function(fs) {
       if (fs$type %in% self$getFeatureSetTypes()) {
         stop(paste("There is already a", fs$type, "attached to this outline"))
