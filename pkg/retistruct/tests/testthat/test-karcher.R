@@ -1,4 +1,4 @@
-context("Checking Karcher mean")
+context("Karcher mean")
 test_that("Karcher mean with zero-row gives correct output ", {
   expect_that(karcher.mean.sphere(matrix(NA, nrow=0, ncol=2)), equals(c(phi=NA, lambda=NA)))
   expect_that(karcher.mean.sphere(matrix(NA, nrow=0, ncol=2), var=TRUE), equals(list(mean=c(phi=NA, lambda=NA), var=c(phi=NA, lambda=NA))))

@@ -9,7 +9,7 @@ remove.intersections(P, d = 50)
 \arguments{
 \item{P}{The points, as a 2-column matrix}
 
-\item{d}{Criterion for maximum distance when points are inserted}
+\item{d}{Criterion for maximum distance when points are inser}
 }
 \value{
 A new closed path without intersections

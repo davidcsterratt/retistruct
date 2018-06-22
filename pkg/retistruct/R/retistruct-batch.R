@@ -156,14 +156,14 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
                         mean.dtheta=n(r$titration$Dtheta.mean),
                         phi0d=n(r$phi0*180/pi),
                         phi0d.opt=n(r$titration$phi0d.opt),
-                        L.rim=getFlatRimLength(r),
+                        L.rim=r$getFlatRimLength(),
                         A.tot=r$A.tot)
-      hullarea <- getDssHullarea(r)
+      hullarea <- r$getFeatureSet("PointSet")$getHullarea()
       if (length(hullarea) > 0) {
         dat <- data.frame(dat, hullarea=hullarea)
       }
       message(paste("Getting KDE"))
-      KDE <- getKDE(r)
+      KDE <- r$getFeatureSet("PointSet")$getKDE()
       if (length(KDE) > 0) {
         ## Get out bandwidths by going through each component of the KDE
         KDEdat <- lapply(KDE, function(x) {x$h})
@@ -177,6 +177,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
         }
       }
       message(paste("Getting KR"))
+      ## FIXME: Issue #25
       KR <- getKR(r)
       if (length(KR) > 0) {
         ## Get out bandwidths by going through each component of the KR

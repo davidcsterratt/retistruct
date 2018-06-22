@@ -16,7 +16,7 @@ bary.to.sphere.cart(phi, lambda, R, Tt, cb)
 
 \item{Tt}{Triangulation}
 
-\item{cb}{Object returned by \link{tsearch} containing information on the
+\item{cb}{Object returned by tsearch containing information on the
 triangle in which a point occurs and the barycentric coordinates
 within that triangle}
 }

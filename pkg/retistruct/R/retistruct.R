@@ -1,8 +1,3 @@
-## Global variables
-##' Version of reconstruction file data format
-##' @export
-recfile.version <- 5      # Version of reconstruction file data format
-
 ##' Check the whether  directory contains valid data 
 ##' @param dir Directory to check.
 ##' @return  \code{TRUE} if \code{dir} contains valid data;
@@ -10,6 +5,7 @@ recfile.version <- 5      # Version of reconstruction file data format
 ##' @author David Sterratt
 ##' @export
 checkDatadir <- function(dir=NULL) {
+  ## FIXME: enable all formats
   if (idt.checkDatadir(dir))   { return("idt") }
   if (csv.checkDatadir(dir))   { return("csv") }
   if (ijroi.checkDatadir(dir)) { return("ijroi") }
@@ -26,9 +22,7 @@ checkDatadir <- function(dir=NULL) {
 ##' @param dataset Path to directory containing the files
 ##'   corresponding to each format.
 ##' @param ... Parameters passed to the format-specific functions.
-##' @return An object that of classes \code{\link{RetinalDataset}} and
-##'   \code{\link{RetinalDataset}}. There may be extra fields too,
-##'   depending on the format.
+##' @return A \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
 ##' @export
 retistruct.read.dataset <- function(dataset, ...) {
@@ -104,7 +98,7 @@ retistruct.read.markup <- function(a, error=stop) {
   ## Function to map old tears (M.old) and old points (P.old) onto new
   ## points (P). It returns a new matrix of indices (M).
   convert.markup <- function(M.old, P.old, P) {
-    M <- sapply(M.old, function(i) {
+    M <- sapply(as.matrix(M.old), function(i) {
       ifelse(is.numeric(i), closest(P, P.old[i,]), i)
     })
     return(M)
@@ -115,7 +109,7 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(Pfile)) {
     P.old <- as.matrix(read.csv(Pfile))
   } else {
-    P.old <- a$P
+    P.old <- a$getPoints()
   }
   
   ## Read in markup file
@@ -135,16 +129,17 @@ retistruct.read.markup <- function(a, error=stop) {
     ## Convert to vector
     M <- sapply(M.df, function(x) x)
     if (!is.na(M["iD"])) {
-      M["iD"] <- convert.markup(M["iD"], P.old, a$P)
-      a <- setFixedPoint(a, M["iD"], "Dorsal")
+      M["iD"] <- convert.markup(M["iD"], P.old, a$getPoints())
+      a$setFixedPoint(M["iD"], "Dorsal")
     }
     if (!is.na(M["iN"])) {
-      M["iN"] <- convert.markup(M["iN"], P.old, a$P)
-      a <- setFixedPoint(a, M["iN"], "Nasal")
+      M["iN"] <- convert.markup(M["iN"], P.old, a$getPoints())
+      a$setFixedPoint(M["iN"], "Nasal")
     }
     a$phi0 <- M["phi0"]*pi/180
+    ## FIXME: implement landmarks
     if ("iOD" %in% names(M)) {
-      a <- nameLandmark(a, M["iOD"], "OD")
+      a$getFeatureSet("LandmarkSet")$setName(M["iOD"], "OD")
     }
     if ("DVflip" %in% names(M)) {
       a$DVflip <- M["DVflip"]
@@ -158,10 +153,12 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     cn <- colnames(T.old)
-    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$P), ncol=3)
+    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$getPoints()), ncol=3)
     colnames(T) <- cn
-    for (i in 1:nrow(T)) {
-      a <- addTear(a, T[i,])
+    if (nrow(T) > 0) {
+      for (i in 1:nrow(T)) {
+        a$addTear(T[i,])
+      }
     }
   } else {
     error("Tear file T.csv doesn't exist.")
@@ -199,7 +196,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     load(recfile)                       # This puts r in the environment
     ## If the algorithm in the codebase is newer than in the recdata
     ## file, reject the recfile data
-    if (is.null(r$version) || (r$version != recfile.version)) {
+    if (is.null(r$version) || (r$version != OutlineCommon$new()$version)) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
       return(NULL)
@@ -207,7 +204,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     ## If the base data doesn't match the recfile data, reject the
     ## recfile data
     if (check) {
-      if (!isTRUE(all.equal(o, r))) {
+      if (!isTRUE(all.equal(o, r$ol))) {
         unlink(recfile)
         warning("The base data has changed since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
         return(NULL)
@@ -217,8 +214,9 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     ## KR; this was not stored by retistruct.recdata.save()
     ## FIXME: This should be deleted when recfile.version is next incremented
     if (is.null(r$KDE) | is.null(r$KR)) {
-      r <- ReconstructedDataset(r)
-      r <- RetinalReconstructedDataset(r)
+      ## FIXME: Read KDE
+      ## r <- ReconstructedDataset(r)
+      ## r <- RetinalReconstructedDataset(r)
     }
 
     ## Make sure the dataset information isn't overwritten
@@ -229,18 +227,17 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 }
 
 ##' Reconstruct a retina
-##' @param o \code{\link{AnnotatedOutline}} object
+##' @param o \code{\link{RetinalOutline}} object with tear and
+##'   correspondence annotations
 ##' @param report Function to report progress
-##' @param plot.3d If \code{TRUE} show progress in a 3D plot 
+##' @param plot.3d If \code{TRUE} show progress in a 3D plot
 ##' @param dev.flat The ID of the device to which to plot the flat
-##' representation
+##'   representation
 ##' @param dev.polar The ID of the device to which to plot the polar
-##' representation
-##' @param ... Parameters to be passed to \code{\link{ReconstructedOutline}}
-##' @return Object of classes
-##' \code{\link{RetinalReconstructedOutline}} and
-##' \code{\link{RetinalReconstructedDataset}} that contains all the
-##' reconstruction information
+##'   representation
+##' @param ... Parameters to be passed to
+##'   \code{\link{RetinalReconstructedOutline}} constructor
+##' @return A \code{\link{RetinalReconstructedOutline}} object
 ##' @author David Sterratt
 ##' @export
 retistruct.reconstruct <- function(o, report=message,
@@ -252,7 +249,7 @@ retistruct.reconstruct <- function(o, report=message,
   }
 
   ## Check tears are valid
-  ct <- checkTears(o)
+  ct <- o$checkTears()
   if (length(ct)) {
     stop(paste("Invalid tears", toString(ct), "marked up. Fix using \"Move Point\"."))
   }
@@ -273,55 +270,55 @@ retistruct.reconstruct <- function(o, report=message,
 
   ## Now do folding itself
   r <- NULL
-  r <- ReconstructedOutline(o,
-                            report=report,
-                            plot.3d=plot.3d, dev.flat=dev.flat,
-                            dev.polar=dev.polar,
-                            ...)
+  r <- RetinalReconstructedOutline$new(o)
+  ## FIXME set report function
+  r$reconstruct(plot.3d=plot.3d, dev.flat=dev.flat,
+                dev.polar=dev.polar,
+                ...)
   if (!is.null(r)) {
-    r <- ReconstructedDataset(r, report=report)
-    if (!is.na(getLandmarkID(r, "OD"))) {
-      SssMean <- getSssMean(r)
-      r$EOD <- 90 + SssMean[["OD"]][1,"phi"] * 180/pi
-    }
-    report(paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
-                 ";", r$nflip, "flipped triangles. OD displacement:",
-                 format(r$EOD, 2),
-                 "degrees."))
+    ## r <- ReconstructedDataset(r, report=report)
+    ## if (!is.na(getLandmarkID(r, "OD"))) {
+    ##   SssMean <- getSssMean(r)
+    ##   r$EOD <- 90 + SssMean[["OD"]][1,"phi"] * 180/pi
+    ## }
+    ## report(paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
+    ##              ";", r$nflip, "flipped triangles. OD displacement:",
+    ##              format(r$EOD, 2),
+    ##              "degrees."))
         
-    r <- RetinalReconstructedOutline(r, report=report)
-    r <- RetinalReconstructedDataset(r, report=report)
+    ## r <- RetinalReconstructedOutline(r, report=report)
+    ## r <- RetinalReconstructedDataset(r, report=report)
     report("")
   }
   return(r)
 }
 
-##' Save the markup in the \code{\link{RetinalDataset}} \code{a} to a
+##' Save the markup in the \code{\link{RetinalOutline}} \code{a} to a
 ##' file called \code{markup.csv} in the directory \code{a$dataset}.
 ##'
 ##' @title Save markup
-##' @param a \code{\link{RetinalDataset}} object
+##' @param a \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
 ##' @importFrom utils write.csv 
 ##' @export
 retistruct.save.markup <- function(a) {
-  if (inherits(a, "retinalDataset")) {
-    with(a, {
-      ## Save the tear information and the outline
-      write.csv(cbind(V0, VB, VF), file.path(dataset, "T.csv"),
-                row.names=FALSE)
-      write.csv(P, file.path(dataset, "P.csv"), row.names=FALSE)
+  ## Save the tear information and the outline
+  write.csv(a$getTears(), file.path(a$dataset, "T.csv"),
+            row.names=FALSE)
+  write.csv(a$getPoints(), file.path(a$dataset, "P.csv"),
+            row.names=FALSE)
       
-      ## Save the dorsal and nasal locations and phi0 to markup.csv
-      iD <- ifelse(names(i0) == "Dorsal", i0, NA)
-      iN <- ifelse(names(i0) == "Nasal" , i0, NA)
-      iOD <- which(names(Ss)=="OD")
-      if (length(iOD)==0)
-        iOD <- NA
-      markup <- data.frame(iD=iD, iN=iN, phi0=phi0*180/pi, iOD=iOD, DVflip=DVflip, side=side)     
-      write.csv(markup, file.path(dataset, "markup.csv"), row.names=FALSE)
-    })
-  }
+  ## Save the dorsal and nasal locations and phi0 to markup.csv
+  i0 <- a$getFixedPoint()
+  iD <- ifelse(names(i0) == "Dorsal", i0, NA)
+  iN <- ifelse(names(i0) == "Nasal" , i0, NA)
+
+  Ss <- a$getFeatureSet("LandmarkSet")
+  iOD <- which(names(Ss) == "OD")
+  if (length(iOD) == 0)
+    iOD <- NA
+  markup <- data.frame(iD=iD, iN=iN, phi0=a$phi0*180/pi, iOD=iOD, DVflip=a$DVflip, side=a$side)     
+  write.csv(markup, file.path(a$dataset, "markup.csv"), row.names=FALSE)
 }
 
 
@@ -335,11 +332,11 @@ retistruct.save.markup <- function(a) {
 ##' @author David Sterratt
 ##' @export
 retistruct.save.recdata <- function(r) {
-  if (!is.null(r$dataset)) {
+  if (!is.null(r$ol$dataset)) {
     ## Save the derived data
-    r$version <- recfile.version        # Datafile version
+    ## r$version <- recfile.version        # Datafile version
     if (!is.null(r)) {
-      save(r, file=file.path(r$dataset, "r.Rdata"))
+      save(r, file=file.path(r$ol$dataset, "r.Rdata"))
     }
   }
 }
@@ -376,25 +373,29 @@ retistruct.export.matlab <- function(r) {
     }
     return(KDE)
   }
-  
+
   if (!is.null(r$dataset)) {
     if (!is.null(r)) {
       f <- file.path(r$dataset, "r.mat")
       message(paste("Saving", f))
-      KDE <- unlist.kernel.estimate(getKDE(r))
-      KR <-  unlist.kernel.estimate(getKR(r))
+      KDE <- unlist.kernel.estimate(r$getFeatureSet("PointSet")$getKDE())
+      ## FIXME: Issue #25: Implement KR
+      ## KR <-  unlist.kernel.estimate(getKR(r))
       R.matlab::writeMat(f,
                          phi0=r$phi0*180/pi,
-                         Dss=getDss(r),
-                         DssMean=getDssMean(r),
-                         DssHullarea=na.omit(getDssHullarea(r)),
-                         Sss=name.list(getSss(r)),
-                         Tss=name.list(getTss(r)),
+                         Dss=r$getFeatureSet("PointSet")$Ps,
+                         DssMean=r$getFeatureSet("PointSet")$getMean(),
+                         DssHullarea=na.omit(r$getFeatureSet("PointSet")$getHullarea()),
+                         Sss=name.list(r$getFeatureSet("PointSet")$Ps),
+                         Tss=name.list(r$getTearCoords()),
                          KDE=KDE,
-                         KR=KR,
+                         ## FIXME: Issue #25: Implement KR
+                         ## KR=KR,
                          side=as.character(r$side), DVflip=r$DVflip,
-                         Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}),
-                         Dsdw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.dualwedge(x, r$phi0 + pi/2, r$R)}))
+                         ## FIXME: Issue #25: Implement Wedge coords
+                         ## Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}),
+                         ## Dsdw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.dualwedge(x, r$phi0 + pi/2, r$R)})
+                         )
     }
   }
 }

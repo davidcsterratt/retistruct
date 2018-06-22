@@ -2,19 +2,17 @@
 % Please edit documentation in R/generics.R
 \name{projection}
 \alias{projection}
-\title{Plot projection of an object}
+\title{Plot projection of a reconstructed outline}
 \usage{
 projection(r, ...)
 }
 \arguments{
 \item{r}{Object such as a \code{\link{ReconstructedOutline}}}
 
-\item{...}{Other parameters; see
-\code{\link{projection.reconstructedOutline}} and
-\code{\link{projection.reconstructedDataset}}}
+\item{...}{Other plotting parameters}
 }
 \description{
-Generic function for plotting projections of objects.
+Plot projection of a reconstructed outline
 }
 \author{
 David Sterratt

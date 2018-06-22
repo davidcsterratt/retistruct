@@ -8,7 +8,8 @@ retistruct.reconstruct(o, report = message, plot.3d = FALSE,
   dev.flat = NA, dev.polar = NA, ...)
 }
 \arguments{
-\item{o}{\code{\link{AnnotatedOutline}} object}
+\item{o}{\code{\link{RetinalOutline}} object with tear and
+correspondence annotations}
 
 \item{report}{Function to report progress}
 
@@ -20,13 +21,11 @@ representation}
 \item{dev.polar}{The ID of the device to which to plot the polar
 representation}
 
-\item{...}{Parameters to be passed to \code{\link{ReconstructedOutline}}}
+\item{...}{Parameters to be passed to
+\code{\link{RetinalReconstructedOutline}} constructor}
 }
 \value{
-Object of classes
-\code{\link{RetinalReconstructedOutline}} and
-\code{\link{RetinalReconstructedDataset}} that contains all the
-reconstruction information
+A \code{\link{RetinalReconstructedOutline}} object
 }
 \description{
 Reconstruct a retina

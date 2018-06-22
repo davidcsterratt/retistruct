@@ -13,9 +13,7 @@ corresponding to each format.}
 \item{...}{Parameters passed to the format-specific functions.}
 }
 \value{
-An object that of classes \code{\link{RetinalDataset}} and
-  \code{\link{RetinalDataset}}. There may be extra fields too,
-  depending on the format.
+A \code{\link{RetinalOutline}} object
 }
 \description{
 Read a retinal dataset in one of three formats; for information on

@@ -21,7 +21,7 @@ List containing:
 }
 \description{
 In the projection of points onto the sphere, some triangles maybe
-flipped, i.e. in the wrong orientation.  This functions determines
+flipped, i.e. in the wrong orientation.  This function determines
 which triangles are flipped by computing the vector pointing to
 the centre of each triangle and comparing this direction to vector
 product of two sides of the triangle.

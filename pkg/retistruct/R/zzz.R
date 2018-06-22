@@ -7,6 +7,8 @@
   options(grid.maj.col="black")
   options(grid.min.col="gray")
   options(outline.col="black")
+  options(rimset.col="pink")
+  options(C.col="red")
   options(contour.levels=c(5, 25, 50, 75, 95))
   options(max.proj.dim=400)
   options(show.sphere=TRUE)

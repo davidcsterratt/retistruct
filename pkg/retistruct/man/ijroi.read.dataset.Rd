@@ -10,7 +10,7 @@ ijroi.read.dataset(dataset)
 \item{dataset}{Path to directory containing \code{outline.roi}}
 }
 \value{
-A \code{\link{RetinalDataset}} object
+A \code{\link{RetinalOutline}} object
 }
 \description{
 Read a retinal dataset in IJROI format. Each dataset is a folder

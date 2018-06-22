@@ -7,7 +7,7 @@
 tri.area(P, Pt)
 }
 \arguments{
-\item{P}{2-column matrix of vertices of triangles}
+\item{P}{3-column matrix of vertices of triangles}
 
 \item{Pt}{3-column matrix of indices of rows of \code{P} giving
 triangulation}

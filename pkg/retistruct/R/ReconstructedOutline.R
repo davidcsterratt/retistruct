@@ -22,298 +22,679 @@
 ##' }
 ##'
 ##' @title Reconstruct outline into spherical surface
-##' @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
-##' \item{\code{P}}{outline points as N-by-2 matrix}
-##' \item{\code{V0}}{indices of the apex of each tear}
-##' \item{\code{VF}}{indices of the forward vertex of each tear}
-##' \item{\code{VB}}{indices of the backward vertex of each tear}
-##' \item{\code{i0}}{index of the landmark on the rim}
-##' \item{\code{phi0}}{latitude of rim of partial sphere}
-##' \item{\code{lambda0}}{longitude of landmark on rim}
-##' }
-##' @param n Number of points in triangulation.
-##' @param alpha Area scaling coefficient
-##' @param x0 Area cutoff coefficient
-##' @param report Function used to report progress.
-##' @param plot.3d Whether to show 3D picture during optimisation.
-##' @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
-##' means no plotting.
-##' @param dev.polar Device display projection. Value of NA
-##' (default) means no plotting.
-##' @return \code{reconstructedOutline} object containing the input
-##' information and the following modified and extra information:
-##' \item{\code{P}}{New set of points in flattened object}
-##' \item{\code{gf}}{New set of forward pointers in flattened object}
-##' \item{\code{gb}}{New set of backward pointers in flattened object}
-##' \item{\code{phi}}{latitude of new points on sphere}
-##' \item{\code{lambda}}{longitude of new points on sphere}
-##' \item{\code{Tt}}{New triangulation}
+##' @importFrom geometry tsearch sph2cart
 ##' @author David Sterratt
-ReconstructedOutline <- function(o, 
-                                 n=500, alpha=8, x0=0.5,
-                                 report=print,
-                                 plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
-  ## Clear polar plot, if it's required
-  if (!is.na(dev.polar)) {
-    dev.set(dev.polar)
-    projection(o$phi0)
-  }
-  
-  report("Triangulating...")
-  t <- TriangulatedOutline(o, n=n)
-  if (!is.na(dev.flat)) {
-    dev.set(dev.flat)
-    flatplot(t)
-  }
-    
-  report("Stitching...")
-  s <- StitchedOutline(t)
-  if (!is.na(dev.flat)) {
-    dev.set(dev.flat)
-    flatplot(s, datapoints=FALSE)
-  }
+ReconstructedOutline <- R6Class("ReconstructedOutline",
+  inherit = OutlineCommon,
+  public = list(
+    ol = NULL,                            # Annotated outline
+    Pt = NULL,
+    Tt = NULL,
+    Ct = NULL,
+    Cut = NULL,
+    Bt = NULL,
+    Lt = NULL,
+    ht = NULL,
+    u = NULL,
+    U = NULL,
+    Rsett = NULL,
+    i0t = NULL,
+    H = NULL,
+    Ht = NULL,
+    phi0 = NULL,
+    R = NULL,
+    lambda0 = NULL,
+    lambda = NULL,
+    phi = NULL,
+    Ps = NULL,
+    n = 500,
+    alpha = 8,
+    x0 = 0.5,
+    nflip0 = NULL,
+    nflip = NULL,
+    opt = NULL,
+    E.tot = NULL,
+    E.l = NULL,
+    mean.strain = NULL,
+    mean.logstrain = NULL,
+    ims = NULL,
+    immask = NULL,
+    report = message,
+    ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
+    ## \item{\code{P}}{outline points as N-by-2 matrix}
+    ## \item{\code{V0}}{indices of the apex of each tear}
+    ## \item{\code{VF}}{indices of the forward vertex of each tear}
+    ## \item{\code{VB}}{indices of the backward vertex of each tear}
+    ## \item{\code{i0}}{index of the landmark on the rim}
+    ## \item{\code{phi0}}{latitude of rim of partial sphere}
+    ## \item{\code{lambda0}}{longitude of landmark on rim}
+    ## }
+    ## @param n Number of points in triangulation.
+    ## @param alpha Area scaling coefficient
+    ## @param x0 Area cutoff coefficient
+    ## @param plot.3d Whether to show 3D picture during optimisation.
+    ## @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
+    ## means no plotting.
+    ## @param dev.polar Device display projection. Value of NA
+    ## (default) means no plotting.
+    ## @return \code{reconstructedOutline} object containing the input
+    ## information and the following modified and extra information:
+    ## \item{\code{P}}{New set of points in flattened object}
+    ## \item{\code{gf}}{New set of forward pointers in flattened object}
+    ## \item{\code{gb}}{New set of backward pointers in flattened object}
+    ## \item{\code{phi}}{latitude of new points on sphere}
+    ## \item{\code{lambda}}{longitude of new points on sphere}
+    ## \item{\code{Tt}}{New triangulation}
+    initialize = function(ol,
+                          n=500, alpha=8, x0=0.5,
+                          plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
+      self$n <- n
+      self$alpha <- alpha
+      self$x0 <- x0
+      ol$triangulate()
+      ol$stitchTears()
+      ol$triangulate(suppress.external.steiner=TRUE)
+      if (length(ol$corrs)) {
+        ol$triangulate(suppress.external.steiner=TRUE)
+      }
+      ## Transform the rim set
+      ## ol$orderRset()
+      self$ol <- ol
+      self$phi0 <- ol$phi0
+      self$lambda0 <- ol$lambda0
 
-  report("Triangulating...")  
-  r <- TriangulatedOutline(s, n=n,
-                           suppress.external.steiner=TRUE)
-  
-  if (!is.na(dev.flat)) {
-    dev.set(dev.flat)
-    flatplot(r, datapoints=FALSE)
-  }
+      self$report("Merging points...")
+      self$mergePointsEdges()
 
-  report("Merging points...")
-  r <- mergePointsEdges(r)
-  
-  report("Projecting to sphere...")
-  r <- projectToSphere(r)
-  
-  if (!is.na(dev.flat)) {
-    ## Plot of initial gridlines
-    dev.set(dev.flat)
-      flatplot(r, grid=TRUE, strain=TRUE,
-                datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE)
-    
-    ## Initial plot in 3D space
-    if (plot.3d) {
-      sphericalplot(r)
+      self$report("Projecting to sphere...")
+      self$projectToSphere()
+    },
+    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
+
+      ##   ## Initial plot in 3D space
+      ##   if (plot.3d) {
+      ##     sphericalplot(r)
+      ##   }
+      ## }
+
+      ## Check for flipped triangles and record initial number
+      ft <- flipped.triangles(self$phi, self$lambda, self$Tt, self$R)
+      self$nflip0 <- sum(ft$flipped)
+
+      self$report("Optimising mapping with no area constraint using BFGS...")
+      self$optimiseMapping(alpha=0, x0=0, nu=1,
+                           plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar)
+      self$report("Optimising mapping with area constraint using FIRE...")
+      ## FIXME: Need to put in some better heuristics for scaling
+      ## maxmove, and perhaps other parameters
+      self$optimiseMappingCart(alpha=self$alpha, x0=self$x0, nu=1,
+                               dtmax=500, maxmove=0.002*sqrt(self$ol$A.tot),
+                               tol=1e-5,
+                               plot.3d=plot.3d,
+                               dev.flat=dev.flat, dev.polar=dev.polar)
+      self$report("Optimising mapping with strong area constraint using BFGS...")
+      self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=1,
+                           plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar)
+      self$report("Optimising mapping with weak area constraint using BFGS...")
+      self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=0.5,
+                           plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar)
+      
+      self$report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
+                        ";", self$nflip, "flipped triangles."))
+    },
+    ## This function creates merged and transformed versions (all
+    ## suffixed with \code{t}) of a number of existing variables, as well
+    ## as a matrix \code{Bt}, which maps a binary vector representation
+    ## of edge indices onto a binary vector representation of the
+    ## indices of the points linked by the edge.
+    ## @title  Merge stitched points and edges 
+    ## @param t A \code{StitchedOutline} object in which points that have
+    ## been added by stitching have been triangulated
+    ## @return Adds following fields to input
+    ## \item{\code{Pt}}{Transformed point locations}
+    ## \item{\code{Tt}}{Transformed triangulation}
+    ## \item{\code{Ct}}{Transformed connection set}
+    ## \item{\code{Cut}}{Transformed symmetric connection set}
+    ## \item{\code{Bt}}{Transformed binary vector representation
+    ## of edge indices onto a binary vector representation of the
+    ## indices of the points linked by the edge}
+    ## \item{\code{Lt}}{Transformed edge lengths}
+    ## \item{\code{ht}}{Transformed correspondences}
+    ## \item{\code{u}}{Indices of unique points in untransformed space}
+    ## \item{\code{U}}{Transformed indices of unique points in untransformed space}
+    ## \item{\code{Rset}}{The set of points on the rim (which has been reordered)}
+    ## \item{\code{Rsett}}{Transformed set of points on rim}
+    ## \item{\code{i0t}}{Transformed index of the landmark}
+    ## \item{H}{mapping from edges onto corresponding edges}
+    ## \item{Ht}{Transformed mapping from edges onto corresponding edges}
+    ## @author David Sterratt
+    ## @export
+    mergePointsEdges = function() {
+      h <- self$ol$h
+      T <- self$ol$T
+      Cu <- self$ol$Cu
+      L <- self$ol$L
+      P <- self$ol$getPointsScaled()
+      gf <- self$ol$gf
+      
+      ## Form the mapping from a new set of consecutive indices
+      ## the existing indices onto the existing indices
+      u <- unique(h)
+
+      ## Transform the point set into the new indices
+      Pt  <- P[u,]
+
+      ## Transform the point correspondance mapping to the new index space  
+      ht <- c()
+      for (i in 1:length(h)) {
+        ht[i] <- which(u == h[i])
+      }
+
+      ## DOESN'T WORK
+      ## Form the inverse mapping from the existing indices to the new
+      ## set of consecutive indices
+      ## uinv <- c()
+      ## uinv[u] <- 1:length(u)
+      ## ht <- uinv[h[u]]
+
+      ## Transform the triangulation to the new index space
+      Tt  <- matrix(ht[T], ncol=3)
+
+      ## Tansform the forward pointer into the new indices
+      gft <- ht[gf]
+
+      ## Determine H, the mapping from edges onto corresponding edges
+      Cut <- matrix(ht[Cu], ncol=2)
+      Cut <- t(apply(Cut, 1, sort))
+      M <- nrow(Cut)
+      H <- rep(0, M)
+      for (i in 1:M) {
+        if (!H[i]) {
+          H[i] <- i
+          for (j in i:M) {
+            if (identical(Cut[i,], Cut[j,])) {
+              H[j] <- i
+            }
+          }
+        }
+      }
+
+      ## Form the mapping from a new set of consecutive edge indices
+      ## onto the existing edge indices
+      U <- unique(H)
+
+      ## Transform the edge set into the new indices
+      Cut <- Cut[U,]
+
+      ## Transform the edge correspondance mapping to the new index space  
+      Ht <- c()
+      for (i in 1:length(H)) {
+        Ht[i] <- which(U == H[i])
+      }
+
+      ## Create the lengths of the merged edges by averaging
+      Lt <- c()
+      for (k in 1:length(U)) {
+        is <- which(Ht == k)
+        ## if (length(is)>1) {
+        ##   print(L[is])
+        ## }
+        Lt[k] <- mean(L[is])
+      }
+
+      ## Transform the rim set
+      Rset <- order.Rset(self$ol$getRimSet(), self$ol$gf, self$ol$h)
+      Rsett <- unique(ht[Rset])
+      i0t <- ht[self$ol$i0]
+
+      ## Create the symmetric connection set
+      Ct <- rbind(Cut, Cut[,2:1])
+
+      ## Matrix to map line segments onto the points they link
+      ## Bt <- Matrix(0, nrow(Pt), nrow(Ct), sparse=TRUE)
+      Bt <- matrix(0, nrow(Pt), nrow(Ct))
+      for (i in 1:nrow(Ct)) {
+        Bt[Ct[i,1],i] <- 1
+      }
+
+      self$Pt = Pt
+      self$Tt = Tt
+      self$Ct = Ct
+      self$Cut = Cut
+      self$Bt = Bt
+      self$Lt = Lt
+      self$ht = ht
+      self$u = u
+      self$U = U
+      self$Rsett = Rsett
+      self$i0t = i0t
+      self$H = H
+      self$Ht= Ht
+    },
+    ## This takes the mesh points from the flat outline and maps them to
+    ## the curtailed sphere. It uses the area of the flat outline and
+    ## \code{phi0} to determine the radius \code{R} of the sphere. It
+    ## tries to get a good first approximation by using the function
+    ## \code{\link{stretchMesh}}.
+    ##
+    ## @title Project mesh points in the flat outline onto a sphere
+    ## @param r \code{Outline} object to which the following information
+    ## has been added with \code{\link{mergePointsEdges}}:
+    ## \describe{
+    ## \item{\code{Pt}}{The mesh point coordinates.}
+    ## \item{\code{Rsett}}{The set of points on the rim.}
+    ## \item{\code{A.tot}}{The area of the flat outline.}}
+    ## @return \code{reconstructedOutline} object containing the
+    ## following extra information
+    ## \item{\code{phi}}{Latitude of mesh points.}
+    ## \item{\code{lmabda}}{Longitude of mesh points.}
+    ## \item{\code{R}}{Radius of sphere.}
+    ## @author David Sterratt
+    ## @export
+    projectToSphere = function() {
+      Rsett <- self$Rsett
+      i0t <- self$i0t
+      A.tot <- self$ol$A.tot
+      Cut <- self$Cut
+      Lt <- self$Lt
+      phi0 <- self$phi0
+      lambda0 <- self$lambda0
+      
+      Nt <- nrow(self$Pt)
+      Nphi <- Nt - length(Rsett)
+
+      ## From this we can infer what the radius should be from the formula
+      ## for the area of a sphere which is cut off at a latitude of phi0
+      ## area = 2 * PI * R^2 * (sin(phi0)+1)
+      R <- sqrt(A.tot/(2*pi*(sin(phi0)+1)))
+
+      ## Find lengths between successive points on rim
+      C <- matrix(NA, nrow(self$Pt), nrow(self$Pt))
+      for (i in 1:nrow(Cut)) {
+        C[Cut[i,1],Cut[i,2]] <- Lt[i]
+        C[Cut[i,2],Cut[i,1]] <- Lt[i]
+      }
+      L.Rsett <- rep(NA, length(Rsett))
+      for (i in 1:length(Rsett)) {
+        L.Rsett[i] <- C[Rsett[i],Rsett[mod1(i+1, length(Rsett))]]
+      }
+      ## Check that this length matches the length computed from the AnnotatedOutline
+      ## FIXME - this doesn't work for one retina - need to check why
+      ## if (sum(L.Rsett) != getFlatRimLength(r)) {
+      ##  stop("Internal error: Mismatch in rim lengths")
+      ## }
+      ## Stretch mesh points to circle
+      Ps <- stretchMesh(Cut, Lt, Rsett, circle(L=L.Rsett))
+      x <- Ps[,1]
+      y <- Ps[,2]
+      phi <- -pi/2 + sqrt(x^2 + y^2)*(phi0+pi/2)
+      phi[Rsett] <- phi0
+      lambda <- atan2(y, x)
+      lambda <- lambda - lambda[i0t] + lambda0
+
+      self$phi <- phi
+      self$lambda <- lambda
+      self$R <- R
+      self$phi0 <- phi0
+      self$lambda0 <- lambda0
+      self$Ps <- Ps
+    },
+    ## This function returns information about how edges on the sphere
+    ## have been deformed from their flat state.
+    ##
+    ## @title Return strains edges are under in spherical retina
+    ## @param r A \code{\link{ReconstructedOutline}} object
+    ## @return A list containing two data frames \code{flat} and \code{spherical}. 
+    ## Each data frame contains for each edge in the flat or spherical meshes:
+    ## \item{\code{L}}{Length of the edge in the flat outline }
+    ## \item{\code{l}}{Length of the corresponding edge on the sphere}
+    ## \item{\code{strain}}{The strain of each connection}
+    ## \item{\code{logstrain}}{The logarithmic strain of each connection}
+    ## @author David Sterratt
+    getStrains = function() {
+      ## Original lengths in flattened outline is a vector with
+      ## M elements, the number of rows of Cu
+      L <- self$ol$L
+      ## New lengths in reconstructed object is a vector with Mt < M
+      ## elements, the number of rows of Cut
+      lt <- compute.lengths(self$phi, self$lambda, self$Cut, self$R)
+      ## For each connection in the flattened object, we want the length of
+      ## the corresponding connection in the reconstructed object
+      ## The mapping Ht achieves this
+      l <- lt[self$Ht]
+      stretch <- l/L
+      strain <- stretch - 1
+      logstrain <- log(stretch)
+
+      ## Compute quantities in spherical retina too
+      Lt <- self$Lt
+      stretcht <- lt/Lt
+      straint <- stretcht - 1
+      logstraint <- log(stretcht)
+
+      return(list(flat=
+                    data.frame(L=L,  l=l,
+                               strain=strain,  logstrain=logstrain),
+                  spherical=
+                    data.frame(L=Lt, l=lt,
+                               strain=straint, logstrain=logstraint)))
+    },
+    ## Optimise the mapping from the flat outline to the sphere
+    ##
+    ## @title Optimise mapping
+    ## @param r reconstructedOutline object
+    ## @param alpha Area penalty scaling coefficient
+    ## @param x0 Area penalty cut-off coefficient
+    ## @param nu Power to which to raise area
+    ## @param method Method to pass to \code{optim}
+    ## @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+    ## @param dev.flat Device handle for plotting flatplot updates to. If
+    ## \code{NA} don't make any flat plots
+    ## @param dev.polar Device handle for plotting polar plot updates
+    ## to. If \code{NA} don't make any polar plots.
+    ## @param control Control argument to pass to \code{optim}
+    ## @return reconstructedOutline object
+    ## @author David Sterratt
+    ## @export
+    optimiseMapping = function(alpha=4, x0=0.5, nu=1, optim.method="BFGS",
+                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
+                                control=list()) {
+      phi <- self$phi
+      lambda <- self$lambda
+      R <- self$R
+      phi0 <- self$phi0
+      lambda0 <- self$lambda0
+      Tt <- self$Tt
+      A <- self$ol$A
+      Cut <- self$Cut
+      Ct <- self$Ct
+      Lt <- self$Lt
+      Bt <- self$Bt
+      Rsett <- self$Rsett
+      i0t <- self$i0t
+      Nt <- nrow(self$Pt)
+      Nphi <- Nt - length(Rsett)
+
+      ## Optimisation and plotting
+      opt <- list()
+      opt$p <- c(phi[-Rsett], lambda[-i0t])
+      opt$conv <- 1
+      count <- 0
+      while (opt$conv) {
+        ## Optimise
+        opt <- stats::optim(opt$p, E, gr=dE,
+                            method=optim.method,
+                            T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                            alpha=alpha,  N=Nt, x0=x0, nu=nu,
+                            Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
+                            verbose=FALSE, control=control)
+
+        ## Report
+        E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+                   alpha=alpha,  N=Nt, x0=x0, nu=nu,
+                   Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+        E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+                 alpha=0,  N=Nt, x0=x0, nu=nu,
+                 Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
+
+        ft <- flipped.triangles(phi, lambda, Tt, R)
+        nflip <- sum(ft$flipped)
+        message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        if (nflip) {
+          print(data.frame(rbind(id=which(ft$flipped),
+                                 A=A[ft$flipped],
+                                 a=ft$areas[ft$flipped])))
+        }
+
+        ## Decode p vector
+        phi          <- rep(phi0, Nt)
+        phi[-Rsett]  <- opt$p[1:Nphi]
+        lambda       <- rep(lambda0, Nt)
+        lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
+
+        ## Plot
+        if (plot.3d) {
+          sphericalplot(list(phi=phi, lambda=lambda, R=R,
+                             Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                        datapoints=FALSE)
+        }
+
+        if (!is.na(dev.flat)) {
+          dev.set(dev.flat)
+          flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
+                   datapoints=FALSE, landmarks=FALSE,
+                   image=FALSE)
+        }
+
+        if (!is.na(dev.polar)) {
+          ## Wipe any previous reconstruction of coordinates of pixels and feature sets
+          self$ims <- NULL
+          self$clearFeatureSets()
+          dev.set(dev.polar)
+          self$phi <- phi
+          self$lambda <- lambda
+          projection(self, mesh=TRUE, 
+                     datapoints=FALSE, landmarks=FALSE,
+                     image=FALSE)
+        }
+      }
+
+      self$phi <- phi
+      self$lambda <- lambda
+      self$opt <- opt
+      self$nflip <- sum(ft$flipped)
+      self$E.tot <- E.tot
+      self$E.l <- E.l
+      self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
+      self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
+    },
+    ## Optimise the mapping from the flat outline to the sphere
+    ##
+    ## @title Optimise mapping
+    ## @param r reconstructedOutline object
+    ## @param alpha Area penalty scaling coefficient
+    ## @param x0 Area penalty cutoff coefficient
+    ## @param nu Power to which to raise area
+    ## @param method Method to pass to \code{optim}
+    ## @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+    ## @param dev.flat Device handle for plotting grid to
+    ## @param dev.polar Device handle for plotting polar plot to
+    ## @param ... Extra arguments to pass to \code{\link{fire}}
+    ## @return reconstructedOutline object
+    ## @author David Sterratt
+    ## @export
+    optimiseMappingCart  = function(alpha=4, x0=0.5, nu=1, method="BFGS",
+                                 plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
+      phi <- self$phi
+      lambda <- self$lambda
+      R <- self$R
+      phi0 <- self$phi0
+      lambda0 <- self$lambda0
+      Tt <- self$Tt
+      A <- self$ol$A
+      Cut <- self$Cut
+      Ct <- self$Ct
+      Lt <- self$Lt
+      Bt <- self$Bt
+      Rsett <- self$Rsett
+      i0t <- self$i0t
+      Nt <- nrow(self$Pt)
+      Nphi <- Nt - length(Rsett)
+
+      ## Optimisation and plotting
+      opt <- list()
+      opt$x <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+      opt$conv <- 1
+
+      ## Compute "mass" for each node
+      minL <- rep(Inf, nrow(self$Pt))
+      for (i in 1:nrow(Cut)) {
+        minL[Cut[i,1]] <- min(minL[Cut[i,1]], Lt[i])
+        minL[Cut[i,2]] <- min(minL[Cut[i,2]], Lt[i])
+      }
+      m <- 1/minL
+      m <- m/mean(m)
+      count <- 50
+
+      while (opt$conv && count) {
+        ## Optimise
+        opt <- fire(opt$x,
+                    force=function(x) {Fcart(x, Ct, Lt, Tt, A, R, alpha, x0, nu)},
+                    restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
+                    dt=1,
+                    nstep=200,
+                    m=m, verbose=TRUE, ...)
+        count <- count - 1
+        ## Report
+        E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+                       alpha=alpha, x0=x0, nu=nu)
+        E.l <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+                     alpha=0, x0=x0, nu=0)
+
+        s <- sphere.cart.to.sphere.spherical(opt$x, R)
+        phi <-    s[,"phi"]
+        lambda <- s[,"lambda"]
+        ft <- flipped.triangles(phi, lambda, Tt, R)
+        nflip <- sum(ft$flipped)
+        message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        if (nflip) {
+          print(data.frame(rbind(id=which(ft$flipped),
+                                 A=A[ft$flipped],
+                                 a=ft$areas[ft$flipped])))
+        }
+
+        ## Plot
+        if (plot.3d) {
+          sphericalplot(list(phi=phi, lambda=lambda, R=R,
+                             Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                        datapoints=FALSE)
+        }
+
+        if (!is.na(dev.flat)) {
+          dev.set(dev.flat)
+          flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
+                   datapoints=FALSE, landmarks=FALSE,
+                   image=FALSE)
+        }
+
+        if (!is.na(dev.polar)) {
+          ## Wipe any previous reconstruction of coordinates of pixels and feature sets
+          self$ims <- NULL
+          self$clearFeatureSets()
+          dev.set(dev.polar)
+          self$phi <- phi
+          self$lambda <- lambda
+          projection(self, mesh=TRUE, 
+                     datapoints=FALSE, landmarks=FALSE,
+                     image=FALSE)
+        }
+      }
+
+      self$phi <- phi
+      self$lambda <- lambda
+      self$opt <- opt
+      self$nflip <- sum(ft$flipped)
+      self$E.tot <- E.tot
+      self$E.l <- E.l
+      self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
+      self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
+    },
+    ## Transform an image into the reconstructed space. The four corner
+    ## coordinates of each pixel are transformed into spherical
+    ## coordinates and a mask matrix with the same dimensions as
+    ## \code{im} is created. This has \code{TRUE} for pixels that should
+    ## be displayed and \code{FALSE} for ones that should not.
+    ##
+    ## @title Transform an image into the reconstructed space
+    ## @param r \code{reconstructedOutline} object
+    ## @return \code{reconstructedOutline} object with extra elements
+    ## \item{\code{ims}}{Coordinates of corners of pixes in spherical coordinates}
+    ## \item{\code{immask}}{Mask matrix with same dimensions as image \code{im}}
+    ## @author David Sterratt
+    transformImage = function() {
+      if (!is.null(self$ol$im)) {
+        ## Need to find the *boundaries* of pixels
+        N <- ncol(self$ol$im)
+        M <- nrow(self$ol$im)
+
+        ## Create grid coords of corners of pixels.  These run from the
+        ## top left of the image down each column of the image.
+        xs <- 0:N
+        ys <- M:0
+        ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid
+        Ix <- outer(ys*0, xs, FUN="+")
+        ## Ditto for y-coords
+        Iy <- outer(ys, xs*0, FUN="+")
+        ## Join to give (x, y) coordinates of all corners
+        I <- cbind(as.vector(Ix), as.vector(Iy))
+
+        ## Find Barycentric coordinates of corners of pixels
+
+        Ib <- tsearch(self$ol$getPoints()[,"X"], self$ol$getPoints()[,"Y"],
+                      self$ol$T, I[,1], I[,2], bary=TRUE)
+
+        ## Create mask depending on whether corners are in outline
+        idx <- matrix(Ib$idx, M+1, N+1)
+        self$immask <- (!is.na(idx[1:M    , 1:N    ]) &
+                        !is.na(idx[1:M    , 2:(N+1)]) &
+                        !is.na(idx[2:(M+1), 1:N    ]) &
+                        !is.na(idx[2:(M+1), 2:(N+1)]))
+
+        ## Find 3D coordinates of mesh points
+        Pc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
+        self$ims <- bary2sph(Ib, self$Tt, Pc)
+      }
+    },
+    ## Get coordinates of corners of pixels of image in spherical
+    ## coordinates
+    ## @param r \code{\link{ReconstructedOutline}} object
+    ## @return Coordinates of corners of pixels in spherical coordinates
+    ## @author David Sterratt
+    ## @method getIms reconstructedOutline
+    ## @export
+    getIms = function(r) {
+      if (is.null(self$ims)) {
+        self$report("Transforming image...")
+        ## Force garbage collection; not great practice, but this
+        ## procedure is imemory intensive for large images
+        gc()
+        self$transformImage()
+        gc()
+      }
+      return(self$ims)
+    },
+    ## @export
+    getTearCoords = function(r) {
+      Tss <- list()
+      for (TF in self$ol$TFset) {
+        ## Convert indices to the spherical frame of reference
+        j <- self$ht[TF]
+        Tss <- c(Tss, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
+      }
+      return(Tss)
+    },
+    getFeatureSet = function(type) {
+      type <- paste0("Reconstructed", type)
+      fs <- super$getFeatureSet(type)
+      if (is.null(fs)) {
+        self$reconstructFeatureSets()
+        fs <- super$getFeatureSet(type)
+      }
+      return(fs)
+    },
+    reconstructFeatureSets = function() {
+      self$featureSets <- lapply(self$ol$getFeatureSets(), function(x) x$reconstruct(self))
     }
-  }
+  )
+)
+                           
 
-  ## Check for flipped triangles and record initial number
-  ft <- with(r, flipped.triangles(phi, lambda, Tt, R))
-  r$nflip0 <- sum(ft$flipped)
-  
-  report("Optimising mapping with no area constraint using BFGS...")
-  r <- optimiseMapping(r, alpha=0, x0=0, nu=1,
-                        plot.3d=plot.3d, 
-                        dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with area constraint using FIRE...")
-  r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
-                          dtmax=500, maxmove=1E2, tol=1e-5,
-                          plot.3d=plot.3d,
-                          dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with strong area constraint using BFGS...")
-  r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=1,
-                        plot.3d=plot.3d,
-                        dev.flat=dev.flat, dev.polar=dev.polar)
-  report("Optimising mapping with weak area constraint using BFGS...")
-  r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5,
-                        plot.3d=plot.3d, 
-                        dev.flat=dev.flat, dev.polar=dev.polar)
-  
-  report("Transforming image...")
-  r <- transform.image.reconstructedOutline(r)
-  
-  report(paste("Mapping optimised. Deformation energy E:", format(r$opt$value, 5),
-               ";", r$nflip, "flipped triangles."))
-  class(r) <- addClass("reconstructedOutline", r)
-  return(r)
-}
-
-##' Try a range of values of phi0s in the reconstruction, recording the
-##' energy of the mapping in each case.
-##'
-##' @title Titrate values of phi0
-##' @param r \code{\link{ReconstructedOutline}} object
-##' @param alpha Area penalty scaling coefficient
-##' @param x0 Area cutoff coefficient
-##' @param byd Increments in degrees
-##' @param len.up How many increments to go up from starting value of
-##' \code{phi0} in \code{r}.
-##' @param len.down How many increments to go up from starting value
-##' of \code{phi0} in \code{r}.
-##' @return Output data frame
-##' @author David Sterratt
-##' @export
-titrate.reconstructedOutline <- function(r, alpha=8, x0=0.5, byd=1,
-                                         len.up=5, len.down=20) {
-  dat <- data.frame(phi0=r$phi0, sqrt.E=sqrt(r$E.l))
-
-  by <- byd*pi/180
-
-  ## Going up from phi0
-  message("Going up from phi0")
-  s <- r
-  sqrt.E.min <- sqrt(r$E.l)
-  r.opt <- r
-  phi0s <- r$phi0 + seq(by, by=by, len=len.up)
-  for (phi0 in phi0s)  {
-    message(paste("phi0 =", phi0*180/pi))
-    s$phi0 <- phi0
-    ## Stretch the mapping to help with optimisation
-    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
-    s <- optimiseMapping(s, alpha=alpha, x0=x0, nu=0.5,
-                          plot.3d=FALSE)
-    sqrt.E <- sqrt(s$E.l)
-    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
-    if (sqrt.E < sqrt.E.min) {
-      r.opt <- s
-    }
-  }
-
-  ## Going down from phi0
-  message("Going down from phi0")
-  s <- r
-  phi0s <- r$phi0 - seq(by, by=by, len=len.down)
-  for (phi0 in phi0s)  {
-    message(paste("phi0 =", phi0*180/pi))
-    s$phi0 <- phi0
-    ## Stretch the mapping to help with optimisation
-    s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
-    s <- optimiseMapping(s, alpha=alpha, x0=x0, nu=0.5,
-                          plot.3d=FALSE)
-    sqrt.E <- sqrt(s$E.l)
-    dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
-    if (sqrt.E < sqrt.E.min) {
-      r.opt <- s
-    }
-  }
-  dat$phi0d <- dat$phi0*180/pi
-  dat <- dat[order(dat$phi0d),]
-  phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
-
-  ## Find mean difference between grid points
-  ## First map range of original positions onto 
-  phi.adj <- -pi/2 + (r$phi + pi/2)*(phi0d.opt*pi/180+pi/2)/(r$phi0+pi/2)
-  Dtheta.mean <- mean(central.angle(phi.adj, r$lambda, r.opt$phi, r.opt$lambda)) * 180/pi
-  
-  return(list(dat=dat, phi0d.orig=r$phi0*180/pi,
-              phi0d.opt=phi0d.opt,
-              r.opt=r.opt,
-              Dtheta.mean=Dtheta.mean))
-}
-
-##' This function returns information about how edges on the sphere
-##' have been deformed from their flat state.
-##'
-##' @title Return strains edges are under in spherical retina
-##' @param r A \code{\link{ReconstructedOutline}} object
-##' @return A list containing two data frames \code{flat} and \code{spherical}. 
-##' Each data frame contains for each edge in the flat or spherical meshes:
-##' \item{\code{L}}{Length of the edge in the flat outline }
-##' \item{\code{l}}{Length of the corresponding edge on the sphere}
-##' \item{\code{strain}}{The strain of each connection}
-##' \item{\code{logstrain}}{The logarithmic strain of each connection}
-##' @author David Sterratt
-getStrains <- function(r) {
-  ## Original lengths in flattened outline is a vector with
-  ## M elements, the number of rows of Cu
-  L <- r$L
-  ## New lengths in reconstructed object is a vector with Mt < M
-  ## elements, the number of rows of Cut
-  lt <- compute.lengths(r$phi, r$lambda, r$Cut, r$R)
-  ## For each connection in the flattened object, we want the length of
-  ## the corresponding connection in the reconstructed object
-  ## The mapping Ht achieves this
-  l <- lt[r$Ht]
-  stretch <- l/L
-  strain <- stretch - 1
-  logstrain <- log(stretch)
-
-  ## Compute quantities in spherical retina too
-  Lt <- r$Lt
-  stretcht <- lt/Lt
-  straint <- stretcht - 1
-  logstraint <- log(stretcht)
-
-  return(list(flat=
-              data.frame(L=L,  l=l,
-                         strain=strain,  logstrain=logstrain),
-              spherical=
-              data.frame(L=Lt, l=lt,
-                         strain=straint, logstrain=logstraint)))
-}
-
-##' Transform an image into the reconstructed space. The four corner
-##' coordinates of each pixel are transformed into spherical
-##' coordinates and a mask matrix with the same dimensions as
-##' \code{im} is created. This has \code{TRUE} for pixels that should
-##' be displayed and \code{FALSE} for ones that should not.
-##'
-##' @title Transform an image into the reconstructed space
-##' @param r \code{reconstructedOutline} object
-##' @return \code{reconstructedOutline} object with extra elements
-##' \item{\code{ims}}{Coordinates of corners of pixes in spherical coordinates}
-##' \item{\code{immask}}{Mask matrix with same dimensions as image \code{im}}
-##' @author David Sterratt
-transform.image.reconstructedOutline <- function(r) {
-  if (!is.null(r$im)) {
-    ## Need to find the *boundaries* of pixels
-    N <- ncol(r$im)
-    M <- nrow(r$im)
-
-    ## Create grid coords of corners of pixels.  These run from the
-    ## top left of the image down each column of the image.
-    xs <- 0:N
-    ys <- M:0
-    ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid 
-    Ix <- outer(ys*0, xs, FUN="+")
-    ## Ditto for y-coords
-    Iy <- outer(ys, xs*0, FUN="+")
-    ## Join to give (x, y) coordinates of all corners
-    I  <- cbind(as.vector(Ix), as.vector(Iy))
-    
-    ## Find Barycentric coordinates of corners of pixels
-    Ib <- tsearchn(r$P, r$T, I)
-    
-    ## Create mask depending on whether corners are in outline
-    idx <- matrix(Ib$idx, M+1, N+1)
-    r$immask <- (!is.na(idx[1:M    , 1:N    ]) & 
-                 !is.na(idx[1:M    , 2:(N+1)]) &
-                 !is.na(idx[2:(M+1), 1:N    ]) &
-                 !is.na(idx[2:(M+1), 2:(N+1)]))
-    
-    ## Convert to spherical coordinates
-    Ic <- with(r, bary.to.sphere.cart(phi, lambda, R, Tt, Ib))
-    r$ims <- with(r, sphere.cart.to.sphere.spherical(Ic, R))
-  }
-  return(r)
-}
-##' Get coordinates of corners of pixels of image in spherical
-##' coordinates 
-##' @param r \code{\link{ReconstructedOutline}} object
-##' @return Coordinates of corners of pixels in spherical coordinates 
-##' @author David Sterratt
-##' @method getIms reconstructedOutline
-##' @export
-getIms.reconstructedOutline <- function(r) {
-  return(r$ims)
-}
-
-##' @export
-getTss.reconstructedOutline <- function(r) {
-  Tss <- list()
-  for (TF in r$TFset) {
-    ## Convert indices to the spherical frame of reference
-    j <- r$ht[TF]
-    Tss <- with(r, c(Tss, list(cbind(phi=phi[j], lambda=lambda[j]))))
-  }
-  return(Tss)
-}
 
 ##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
-##' of grid lines from the spherical retina (described by points
+##' of gridlines from the spherical retina (described by points
 ##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cutoff
 ##' point \code{phi0}) onto a flattened retina (described by points
 ##' \code{P} and triangulation \code{T}).
@@ -321,28 +702,33 @@ getTss.reconstructedOutline <- function(r) {
 ##' @title Flat plot of reconstructed outline
 ##' @param x \code{\link{ReconstructedOutline}} object
 ##' @param axt whether to plot axes
+##' @param xlim x-limits
 ##' @param ylim y-limits
 ##' @param grid Whether or not to show the grid lines of
 ##' latitude and longitude
 ##' @param strain Whether or not to show the strain
 ##' @param ... Other plotting parameters
-##' @method flatplot reconstructedOutline
+##' @method flatplot ReconstructedOutline
 ##' @author David Sterratt
 ##' @importFrom grDevices rainbow palette
 ##' @export
-flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
+flatplot.ReconstructedOutline <- function(x, axt="n",
+                                          xlim=NULL, ylim=NULL,
                                           grid=TRUE,
                                           strain=FALSE,
                                           ...) {
-  NextMethod()
+  ## NextMethod()
+  flatplot(x$ol, ...)
+
 
   if (strain) {
-    o <- getStrains(x)
+    o <- x$getStrains()
     palette(rainbow(100))
+    P <- x$ol$getPoints()
     scols <- strain.colours(o$flat$logstrain)
-    with(x, 
-         segments(P[Cu[,1],1], P[Cu[,1],2],
-                  P[Cu[,2],1], P[Cu[,2],2], col=round(scols)))
+    Cu <- x$ol$Cu
+    segments(P[Cu[,1],1], P[Cu[,1],2],
+             P[Cu[,2],1], P[Cu[,2],2], col=round(scols))
   }
   
   ## Plot a gridline from the spherical retina (described by points phi,
@@ -381,14 +767,14 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 
       P <- cbind(mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],], 
                  mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],])
-      # suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
+                                        # suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
     } else {
       P <- matrix(0, nrow=1, ncol=4)
     }
     colnames(P) <- c("X1", "Y1", "X2", "Y2")
     return(P)
   }
-  
+
   if (grid) {
     grid.int.minor <- 15
     grid.int.major <- 45
@@ -396,10 +782,10 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
     grid.min.col <- getOption("grid.min.col")
 
     phi0d <- x$phi0 * 180/pi
-    
+
     P <- matrix(0, nrow=0, ncol=4)
     cols <- NULL
-    Phis <- seq(-90, phi0d, by=grid.int.minor)
+    Phis <- setdiff(seq(-90, phi0d, by=grid.int.minor), phi0d)
     Lambdas <- seq(0, 180-grid.int.minor, by=grid.int.minor)
     for (Phi in Phis) {
       if ((!(Phi %% grid.int.major) || Phi == phi0d)) {
@@ -407,7 +793,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
       } else {
         col <- grid.min.col
       }
-      P1 <- get.gridline.flat(x$P, x$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(0,0,1), sin(Phi*pi/180))
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -419,7 +805,7 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
         col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
-      P1 <- get.gridline.flat(x$P, x$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(sin(Lambda),cos(Lambda),0), 0)
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -446,7 +832,8 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' column names \code{phi} (elevation) and \code{lambda} (longitude).
 ##' @param lambdalim Limits of longitude (in degrees) to display
 ##' @param philim Limits of latitude (in degrees) to display
-##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees 
+##' @param labels Vector of 4 labels to plot at 0, 90, 180 and 270 degrees
+##' @param mesh If \code{TRUE}, plot mesh
 ##' @param grid Whether or not to show the grid lines of
 ##' latitude and longitude
 ##' @param grid.bg Background colour of the grid
@@ -456,27 +843,31 @@ flatplot.reconstructedOutline <- function(x, axt="n", ylim=NULL,
 ##' respect to colatitude rather than latitude
 ##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
+##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed tears
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param ... Graphical parameters to pass to plotting functions
-##' @method projection reconstructedOutline
+##' @method projection ReconstructedOutline
 ##' @export
-projection.reconstructedOutline <- function(r,
+projection.ReconstructedOutline <- function(r,
                                             transform=identity.transform,
                                             axisdir=cbind(phi=90, lambda=0),
                                             projection=azimuthal.equalarea,
                                             proj.centre=cbind(phi=0, lambda=0),
                                             lambdalim=c(-180, 180),
-                                            philim=c(-90, 90),          
+                                            philim=c(-90, 90),
                                             labels=c(0, 90, 180, 270),
+                                            mesh=FALSE,
                                             grid=TRUE,
-                                            grid.bg="transparent", 
+                                            grid.bg="transparent",
                                             grid.int.minor=15,
                                             grid.int.major=45,
                                             colatitude=TRUE,
                                             pole=FALSE,
                                             image=TRUE,
+                                            markup=TRUE,
                                             add=FALSE,
                                             ...) {
+  Call <- match.call(expand.dots=TRUE)
   plot.image <- image
   ## Compute grid lines
 
@@ -525,105 +916,146 @@ projection.reconstructedOutline <- function(r,
   merids.maj <- projection(pi/180*cbind(phi   =as.vector(outer(c(phis, NA), lambdas.maj*0, FUN="+")),
                                         lambda=as.vector(outer(c(phis*0, NA), lambdas.maj, FUN="+"))),
                            proj.centre=pi/180*proj.centre)
-  
+
   ## Set up the plot region
   xlim <- range(na.omit(rbind(paras.min, paras.maj))[,"x"])
   ylim <- range(na.omit(rbind(paras.min, paras.maj))[,"y"])
 
   if (!add) {
     plot(NA, NA, xlim=xlim, ylim=ylim,# xaxs="i", yaxs="i",
-         type = "n", axes = FALSE, xlab = "", ylab = "", asp=1)
+         type = "n", axes = FALSE, xlab = "", ylab = "", asp=1,
+         main=Call$main, bg=Call$bg)
   }
 
   ## Plot an image
 
   ## Get the spherical coordinates of the corners of pixels
-  ims <- getIms(r)
-  if (plot.image && !is.null(ims)) {
-    ## Reconstitute image from stored values of phi and lambda
-    ## coordinates of corners of pixels
 
-    ## Get the size of the image
-    M <- nrow(r$im)
-    N <- ncol(r$im)
+  if (plot.image) {
+    ims <- r$getIms()
+    gc()
+    if (!is.null(ims)) {
+      ## Reconstitute image from stored values of phi and lambda
+      ## coordinates of corners of pixels
 
-    ## Downsample the image by first selecting rows and columns to
-    ## look at
-    max.proj.dim <- getOption("max.proj.dim")
-    by <- ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
-    Ms <- seq(1, M - (M %% by), by=by)
-    Ns <- seq(1, N - (N %% by), by=by)
+      ## Get the size of the image
+      M <- nrow(r$ol$im)
+      N <- ncol(r$ol$im)
 
-    ## Downsample the image
-    im <- r$im[Ms, Ns]
-    
-    ## Now need to do the more complex job of downsampling the matrix
-    ## containing the coordinates of the corners of pixels
-    imsmask <- matrix(FALSE, M+1, N+1)
-    imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
-    ims <- ims[imsmask,]
+      ## Downsample the image by first selecting rows and columns to
+      ## look at
+      max.proj.dim <- getOption("max.proj.dim")
+      by <- ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
+      Ms <- seq(1, M - (M %% by), by=by)
+      Ns <- seq(1, N - (N %% by), by=by)
 
-    ## Convenience variables for the new image sizes
-    M <- nrow(im)
-    N <- ncol(im)
-    
-    ## Transform the pixel coordinates and compute x and y positions
-    ## of corners of pixels.
-    rc <- projection(rotate.axis(transform(ims, phi0=r$phi0),
+      ## Downsample the image
+      ## This should not create a new version of the image
+      im <- r$ol$im
+      if (by > 1) {
+        message("Downsampling image by factor of ", by)
+        im <- r$ol$im[Ms, Ns]
+      }
+
+      ## Now need to do the more complex job of downsampling the matrix
+      ## containing the coordinates of the corners of pixels
+      if (by > 1) {
+        message("Downsampling pixel corner spherical coordinates by factor of ", by)
+        imsmask <- matrix(FALSE, M+1, N+1)
+        imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
+        ims <- ims[imsmask,]
+      }
+
+      ## Convenience variables for the new image sizes
+      M <- nrow(im)
+      N <- ncol(im)
+
+      ## Number of pixels to transform in one go
+      max.chunk.size <- 200*8000
+      ## Number of chunks
+      n.chunk <- as.integer(N*M/max.chunk.size) + 1
+      ## Numnber of columns in each chunk
+      Nc <- as.integer(N/n.chunk) + 1
+
+      for (i in 0:(n.chunk - 1)) {
+        message("Projecting chunk ", i + 1, "/", n.chunk)
+        ## Actual number of columns, since the last chunk may have a
+        ## different number of chunks to Nc
+        dN <- min((i + 1)*Nc, N) - i*Nc
+        ## Transform the pixel coordinates and compute x and y positions
+        ## of corners of pixels.
+        inds <- i*(M + 1)*Nc + (1:((M + 1)*(dN + 1)))
+        rc <- projection(
+          rotate.axis(
+            transform(ims[inds,],
+                      phi0=r$phi0),
+            axisdir*pi/180),
+          lambdalim=lambdalim*pi/180,
+          proj.centre=pi/180*proj.centre)
+
+        xpos <- matrix(rc[,"x"], M + 1, dN + 1)
+        ypos <- matrix(rc[,"y"], M + 1, dN + 1)
+
+        ## Convert these to format suitable for polygon()
+        impx <- rbind(as.vector(xpos[1:M    , 1:dN    ]),
+                      as.vector(xpos[1:M    , 2:(dN+1)]),
+                      as.vector(xpos[2:(M+1), 2:(dN+1)]),
+                      as.vector(xpos[2:(M+1), 1:dN    ]),
+                      NA)
+        impy <- rbind(as.vector(ypos[1:M    , 1:dN    ]),
+                      as.vector(ypos[1:M    , 2:(dN+1)]),
+                      as.vector(ypos[2:(M+1), 2:(dN+1)]),
+                      as.vector(ypos[2:(M+1), 1:dN   ]),
+                      NA)
+        ## Pixels outside the image should be masked. The mask is a matrix
+        ## the same size as the image, containing TRUE for pixels that
+        ## should be displayed and FALSE for those that should be
+        ## masked. It is computed by finding the corners of the poly-pixel
+        ## lie outwith the outline. These corners will have the coordinate
+        ## NA.  print("sum(!is.na(colSums(impx[1:4,])))")
+        ## print(sum(!is.na(colSums(impx[1:4,]))))
+        immask <- matrix(!is.na(colSums(impx[1:4,])), M, dN)
+
+        ## We want to get rid of any poly-pixels that cross either end of
+        ## the longitude range in a pseudocylindrical projection. A simple
+        ## way of doing this is to say that if a pixel is very large,
+        ## don't plot it.
+
+        ## This code is chronically slow, hence replacing with the
+        ## pmin/pmax version
+        ## bigpx <- which(apply(impx[1:4,], 2,
+        ##                      function(x) {max(x) - min(x)}) > 0.1*abs(diff(xlim)) |
+        ##                apply(impy[1:4,], 2,
+        ##                      function(y) {max(y) - min(y)}) > 0.1*abs(diff(ylim)))
+        bigpx <- which((pmax(impx[1,], impx[2,], impx[3,], impx[4,]) -
+                        pmin(impx[1,], impx[2,], impx[3,], impx[4,]) >
+                        0.1*abs(diff(xlim))) |
+                       (pmax(impy[1,], impy[2,], impy[3,], impy[4,]) -
+                        pmin(impy[1,], impy[2,], impy[3,], impy[4,]) >
+                        0.1*abs(diff(xlim))))
+        immask[bigpx] <- FALSE
+
+        ## Plot the polygon, masking as we go
+        graphics::polygon(impx[,immask], impy[,immask],
+                          col=im[1:M,i*Nc+(1:dN)][immask],
+                          border=im[1:M,i*Nc+(1:dN)][immask])
+      }
+    }
+  }
+
+  ## Plot the mesh
+  if (mesh) {
+    Pt <- projection(rotate.axis(transform(cbind(phi=r$phi, lambda=r$lambda),
+                                           phi0=r$phi0),
                                  axisdir*pi/180),
                      lambdalim=lambdalim*pi/180,
                      proj.centre=pi/180*proj.centre)
-    xpos <- matrix(rc[,"x"], M+1, N+1)
-    ypos <- matrix(rc[,"y"], M+1, N+1)
-    
-    ## Convert these to format suitable for polygon()
-    impx <- rbind(as.vector(xpos[1:M    , 1:N    ]),
-                  as.vector(xpos[1:M    , 2:(N+1)]),
-                  as.vector(xpos[2:(M+1), 2:(N+1)]),
-                  as.vector(xpos[2:(M+1), 1:N    ]),
-                  NA)
-    impy <- rbind(as.vector(ypos[1:M    , 1:N    ]),
-                  as.vector(ypos[1:M    , 2:(N+1)]),
-                  as.vector(ypos[2:(M+1), 2:(N+1)]),
-                  as.vector(ypos[2:(M+1), 1:N    ]),
-                  NA)
-
-    ## Pixels outside the image should be masked. The mask is a matrix
-    ## the same size as the image, containing TRUE for pixels that
-    ## should be displayed and FALSE for those that should be
-    ## masked. It is computed by finding the corners of the poly-pixel
-    ## lie outwith the outline. These corners will have the coordinate
-    ## NA.  print("sum(!is.na(colSums(impx[1:4,])))")
-    ## print(sum(!is.na(colSums(impx[1:4,]))))
-    immask <- matrix(!is.na(colSums(impx[1:4,])), M, N)
-    
-    ## We want to get rid of any poly-pixels that cross either end of
-    ## the longitude range in a pseudocylindrical projection. A simple
-    ## way of doing this is to say that if a pixel is very large,
-    ## don't plot it.
-    
-    ## This code is chronically slow, hence replacing with the
-    ## pmin/pmax version
-    ## bigpx <- which(apply(impx[1:4,], 2,
-    ##                      function(x) {max(x) - min(x)}) > 0.1*abs(diff(xlim)) |
-    ##                apply(impy[1:4,], 2,
-    ##                      function(y) {max(y) - min(y)}) > 0.1*abs(diff(ylim)))
-    bigpx <- which((pmax(impx[1,], impx[2,], impx[3,], impx[4,]) -
-                    pmin(impx[1,], impx[2,], impx[3,], impx[4,]) >
-                    0.1*abs(diff(xlim))) |
-                   (pmax(impy[1,], impy[2,], impy[3,], impy[4,]) -
-                    pmin(impy[1,], impy[2,], impy[3,], impy[4,]) >
-                    0.1*abs(diff(xlim))))
-    immask[bigpx] <- FALSE
-    
-    ## Plot the polygon, masking as we go
-    graphics::polygon(impx[,immask], impy[,immask],
-                      col=im[immask], border=im[immask])
+    trimesh(r$Tt, Pt, col="gray", add=TRUE)
   }
-
+  
   grid.maj.col <- getOption("grid.maj.col")
   grid.min.col <- getOption("grid.min.col")
-  
+
   ## Plot the grid
   if (grid) {
     ## Minor paralells and meridians
@@ -644,7 +1076,7 @@ projection.reconstructedOutline <- function(r,
   rs.rot <- rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
   ## r$axisdir = cbind(phi=0, lambda=0)
-  
+
   lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
                    proj.centre=pi/180*proj.centre),
         col=getOption("TF.col"))
@@ -657,18 +1089,20 @@ projection.reconstructedOutline <- function(r,
            pch="*", col=getOption("TF.col"), cex=2)
   }
 
-  ## Plot outline
-  Tss <- getTss(r)
-  for (Ts in Tss) {
-    ## Plot
-    suppressWarnings(lines(projection(rotate.axis(transform(Ts, phi0=r$phi0),
-                                                  axisdir*pi/180),
-                                      lines=TRUE,
-                                      lambdalim=lambdalim*pi/180,
-                                      proj.centre=pi/180*proj.centre),
-                           col=getOption("TF.col"), ...))
+  ## Plot tears
+  if (markup) {
+    Tss <- r$getTearCoords()
+    for (Ts in Tss) {
+      ## Plot
+      lines(projection(rotate.axis(transform(Ts, phi0=r$phi0),
+                                   axisdir*pi/180),
+                       lines=TRUE,
+                       lambdalim=lambdalim*pi/180,
+                       proj.centre=pi/180*proj.centre),
+            col=getOption("TF.col"), lwd=Call$lwd, lty=Call$lty)
+    }
   }
-  
+
   ## Longitude labels around rim - not on actual frame of reference!
   if (!is.null(labels)) {
     ## Longitudes (meridians) at which to plot at
@@ -710,121 +1144,31 @@ projection.reconstructedOutline <- function(r,
        xpd=TRUE, adj=c(1, 1), col=grid.maj.col)
 }
 
-##' Draw a spherical plot of reconstructed outline. This method just
-##' draws the mesh.
-##'
-##' @title Spherical plot of reconstructed outline
-##' @param r \code{\link{ReconstructedOutline}} object
-##' @param strain If \code{TRUE}, plot the strain
-##' @param surf If \code{TRUE}, plot the surface
-##' @param ... Other graphics parameters -- not used at present
-##' @method sphericalplot reconstructedOutline
-##' @author David Sterratt
-##' @import rgl
-##' @export
-sphericalplot.reconstructedOutline <- function(r,
-                                               strain=FALSE,
-                                               surf=TRUE, ...) {
-  NextMethod()
-  
-  ## FIXME: This needs to be looked at with a view to replacing
-  ## functions in plots.R
-  with(r, {
-    ## Obtain Cartesian coordinates of points
-    P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
-
-    if (surf) {
-      ## Outer triangles
-      fac <- 1.005
-      triangles3d(matrix(fac*P[t(Tt[,c(2,1,3)]),1], nrow=3),
-                  matrix(fac*P[t(Tt[,c(2,1,3)]),2], nrow=3),
-                  matrix(fac*P[t(Tt[,c(2,1,3)]),3], nrow=3),
-                  color="darkgrey", alpha=1)
-      
-      ## Inner triangles
-      triangles3d(matrix(P[t(Tt),1], nrow=3),
-                  matrix(P[t(Tt),2], nrow=3),
-                  matrix(P[t(Tt),3], nrow=3),
-                  color="white", alpha=1)
-    }
-    
-    ## Plot any flipped triangles
-    ft <- flipped.triangles(phi, lambda, Tt, R)
-    with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
-                      col="blue", size=5))
-
-    ## Shrink so that they appear inside the hemisphere
-    fac <- 0.997
-    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=getOption("TF.col"))
-    
-    fac <- 1.006
-    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=getOption("TF.col"))
-
-    if (strain) {
-      o <- getStrains(r)
-      palette(rainbow(100))
-      scols <- strain.colours(o$spherical$logstrain)
-
-      fac <- 0.999
-      P1 <- fac*P[Cut[,1],]
-      P2 <- fac*P[Cut[,2],]
-      
-      width <- 40
-      ## Compute displacement vector to make sure that strips are
-      ## parallel to surface of sphere
-      d <- extprod3d(P1, P2-P1)
-      d <- width/2*d/vecnorm(d)
-      PA <- P1 - d
-      PB <- P1 + d
-      PC <- P2 + d
-      PD <- P2 - d
-
-      ## This is a ridiculously inefficient way of drawing the strain,
-      ## but if you try presenting a color vector, it makes each line
-      ## multi-coloured. It has taking HOURS of fiddling round to
-      ## discover this! GRRRRRRRRRRRRRRRRR!
-      for (i in 1:nrow(PA)) {
-        quads3d(rbind(PA[i,1], PB[i,1], PC[i,1], PD[i,1]),
-                rbind(PA[i,2], PB[i,2], PC[i,2], PD[i,2]),
-                rbind(PA[i,3], PB[i,3], PC[i,3], PD[i,3]),
-                color=round(scols[i]), alpha=1)
-      }
-    }
-  })
-}
-
 ##' @export
 ##' @importFrom graphics abline
-lvsLplot.reconstructedOutline <- function(r) {
-  o <- getStrains(r)$spherical
+lvsLplot.ReconstructedOutline <- function(r, ...) {
+  Call <- match.call(expand.dots=TRUE)
+  o <- r$getStrains()$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70
   cols <- strain.colours(o$logstrain)
   L <- o$L
   l <- o$l
-  
-  if (!is.null(r$scale)) {
-    scale <- r$scale
-    if (!is.na(scale)) {
-      L <- L*scale
-      l <- l*scale
-    }
+  units <- r$ol$units
+  xlab <- expression(paste("Flat ", italic(L)))
+  ylab <- expression(paste("Reconstructed ", italic(l)))
+  if (!is.na(units)) {
+    xlab <- eval(substitute(expression(paste("Flat ", italic(L), " (", units1, ")")),
+                           list(units1=units)))
+    ylab <- eval(substitute(expression(paste("Reconstructed ", italic(l), " (",
+                                        units1, ")")),
+                            list(units1=units)))
   }
-
+  
+  
   plot(L, l, col=cols, pch=20,
        xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
-       xlab=ifelse(!is.na(scale),
-         expression(paste("Flat ", italic(L), " (", mu, "m)")),
-         expression(paste("Flat ", italic(L)))),
-       ylab=ifelse(!is.na(scale),
-         expression(paste("Reconstructed ", italic(l), " (", mu, "m)")),
-         expression(paste("Reconstructed ", italic(l)))),
-       asp=1)
+       xlab=xlab, ylab=ylab,
+       asp=1, main=Call$main)
   par(xpd=FALSE)
   abline(0, 1)
   abline(0, 0.75, col="blue")

@@ -7,10 +7,10 @@
 retistruct.save.markup(a)
 }
 \arguments{
-\item{a}{\code{\link{RetinalDataset}} object}
+\item{a}{\code{\link{RetinalOutline}} object}
 }
 \description{
-Save the markup in the \code{\link{RetinalDataset}} \code{a} to a
+Save the markup in the \code{\link{RetinalOutline}} \code{a} to a
 file called \code{markup.csv} in the directory \code{a$dataset}.
 }
 \author{

@@ -10,7 +10,7 @@ csv.read.dataset(dataset)
 \item{dataset}{Path to directory containing \code{outline.csv}}
 }
 \value{
-A \code{\link{RetinalDataset}} object
+A \code{\link{RetinalOutline}} object
 }
 \description{
 Read a retinal dataset in CSV format. Each dataset is a folder

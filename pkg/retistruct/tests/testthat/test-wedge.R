@@ -11,7 +11,7 @@ grid.coords <- function(grid.int.f=0.5, grid.int.psi=45,
   return(gc)
 }
 
-context("Checking wedge coordinates")
+context("Wedge coordinates")
 
 test_that("All points lie on sphere", {
   phi0 <- 135*pi/180
@@ -55,7 +55,7 @@ test_that("Points convert back", {
   expect_that(Pt, equals(gc))
 })
 
-context("Checking dualwedge coordinates")
+context("Dualwedge coordinates")
 test_that("Some Cartesian coordinates are converted correctly", {
   expect_that(sphere.cart.to.sphere.dualwedge(rbind(c(X=0, Y=0, Z=-1)), phi0=pi/2),
               equals(cbind(fx=0.5, fy=0.5)))

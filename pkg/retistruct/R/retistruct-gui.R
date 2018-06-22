@@ -3,7 +3,7 @@
 ##' @return Object with \code{getData()} method to return
 ##' reconstructed retina data and environment \code{this} which
 ##' contains variables in object.
-##' @importFrom grDevices dev.cur dev.set
+##' @importFrom grDevices dev.cur dev.set dev.print
 ##' @importFrom graphics identify
 ##' @importFrom utils packageVersion
 ##' @export
@@ -124,7 +124,7 @@ retistruct <- function() {
   ## Editting handlers
   ##
 
-  ## Handler for adding a point
+  ## Handler for adding a tear
   h.add <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
@@ -133,14 +133,14 @@ retistruct <- function() {
     dev.set(d1)
     pids <- with(a, identify(P[,1], P[,2], n=3, col=getOption("TF.col")))
     withCallingHandlers({
-      a <<- addTear(a, pids)
+      a$addTear(pids)
     }, warning=h.warning, error=h.warning)
     do.plot()
     gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
-  ## Handler for removing points
+  ## Handler for removing a tear
   h.remove <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
@@ -148,47 +148,48 @@ retistruct <- function() {
                               identify.abort.text())
     dev.set(d1)
     id <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
-    a <<- removeTear(a, whichTear(a, id))
+    a$removeTear(a$whichTear(id))
     do.plot()
     gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
   }
 
-  ## Handler for moving points
+  ## Handler for moving a point in a tear
   h.move <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
     dev.set(d1)
     ## Find the intial point
     gWidgets2::svalue(g.status) <- paste("Click on apex or vertex to move.",
-                              identify.abort.text())
-    id1 <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
+                                         identify.abort.text())
+    P <- a$getPoints()
+    id1 <- identify(P[,1], P[,2], n=1, plot=FALSE)
     
     ## Locate tear ID in which the point occurs
-    tid <- whichTear(a, id1)
+    tid <- a$whichTear(id1)
 
     ## If there is a tear in which it occurs, select a point to move it to
     if (!is.na(tid)) {
       gWidgets2::svalue(g.status) <- paste("Click on point to move it to.",
-                                identify.abort.text())
+                                           identify.abort.text())
 
       ## Label first point
-      with(a, points(P[id1,1], P[id1,2], col="yellow"))
+      points(P[id1,1], P[id1,2], col="yellow")
 
       ## Select second point
-      id2 <- with(a, identify(P[,1], P[,2], n=1))
+      id2 <- identify(P[,1], P[,2], n=1)
 
       ## Get point ids of exsiting tear
-      pids <- getTear(a, tid)
+      pids <- a$getTear(tid)
 
       ## Replace old point with desired new point
       if (length(id2)) pids[pids==id1] <- id2
 
       ## It is possible to get the apex and vertex mixed up when moving points.
       ## Fix any errors.
-      pids <- labelTearPoints(a, pids)
-      a <<- removeTear(a, tid)
-      a <<- addTear(a, pids)
+      pids <- a$labelTearPoints(pids)
+      a$removeTear(tid)
+      a$addTear(pids)
     }
 
     ## Display and cleanup
@@ -202,11 +203,12 @@ retistruct <- function() {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on nasal point.",
-                              identify.abort.text())
+                                         identify.abort.text())
     dev.set(d1)
-    id <- with(a, identify(P[,1], P[,2], n=1))
+    P <- a$getPoints()
+    id <- identify(P[,1], P[,2], n=1)
     withCallingHandlers({
-      a <<- setFixedPoint(a, id, "Nasal")
+      a$setFixedPoint(id, "Nasal")
     }, warning=h.warning, error=h.warning)
     do.plot()
     gWidgets2::svalue(g.status) <- ""
@@ -220,9 +222,10 @@ retistruct <- function() {
     gWidgets2::svalue(g.status) <- paste("Click on dorsal point.",
                               identify.abort.text())
     dev.set(d1)
-    id <- with(a, identify(P[,1], P[,2], n=1))
+    P <- a$getPoints()
+    id <- identify(P[,1], P[,2], n=1)
     withCallingHandlers({
-      a <<- setFixedPoint(a, id, "Dorsal")
+      a$setFixedPoint(id, "Dorsal")
     }, warning=h.warning, error=h.warning)
     do.plot()
     gWidgets2::svalue(g.status) <- ""
@@ -234,11 +237,12 @@ retistruct <- function() {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on a point on the optic disc.",
-                              identify.abort.text())
+                                         identify.abort.text())
     dev.set(d1)
     ## Convert list of segments to a matrix of points
     Sm <- NULL
-    for (S in a$Ss) {
+    Ss <- a$getFeatureSet("LandmarkSet")
+    for (S in Ss) {
       Sm <- rbind(Sm, S)
     }
 
@@ -248,12 +252,13 @@ retistruct <- function() {
     ## Idendify segment in which point appears
     i <- 0
     N <- 0
-    while (id > N && i < length(a$Ss)) {
+    while (id > N && i < length(Ss)) {
       i <- i + 1
-      N <- N +  nrow(a$Ss[[i]])
+      N <- N +  nrow(Ss[[i]])
     }
     ## Set "OD" landmark
-    a <<- nameLandmark(a, i, "OD")
+    ## FIXME: implement nameLandmark()
+    a$nameLandmark(a, i, "OD")
     do.plot()
     gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
@@ -282,6 +287,7 @@ retistruct <- function() {
     } else {
       retistruct.save.recdata(r)
     }
+    ## FIXME: enable export to matlab
     retistruct.export.matlab(r)
     unsaved.data(FALSE)
   }
@@ -327,9 +333,10 @@ retistruct <- function() {
     gWidgets2::svalue(g.eye)   <- a$side
     
     ## Read the reconstruction data
-    withCallingHandlers({
-      r <<- retistruct.read.recdata(a, check=TRUE)
-    }, warning=h.warning, error=h.error)
+    ## FIXME: Implement retistruct.read.recdata()
+    ## withCallingHandlers({
+    ##   r <<- retistruct.read.recdata(a, check=TRUE)
+    ## }, warning=h.warning, error=h.error)
     ## If there is no reconstruction data, show the markup so that we
     ## don't think there is no markup.
     if (is.null(r)) {
@@ -339,10 +346,10 @@ retistruct <- function() {
       gWidgets2::svalue(g.nb) <- 2                   # Set "View" tab
     }
     gWidgets2::delete(g.ids.frame, g.ids)
-    ids <- getIDs(a)
-    if (!is.null(ids)) {
+    ids <- a$getIDs()
+    if (length(ids) > 0) {
       g.ids <<- gWidgets2::gcheckboxgroup(ids, checked=rep(TRUE, length(ids)),
-                               handler=h.show, container=g.ids.frame)
+                                          handler=h.show, container=g.ids.frame)
     }
     unsaved.data(FALSE)
     enable.widgets(TRUE)
@@ -405,7 +412,7 @@ retistruct <- function() {
       dev <- grDevices::png
     }
     dev.set(d)
-    dev.print(dev, file, width=1000, height=1000)
+    dev.print(dev, file, width=getOption("max.proj.dim"), height=getOption("max.proj.dim"))
   }
 
   ## Print device d to file
@@ -538,6 +545,7 @@ retistruct <- function() {
                  datapoint.contours=("Point contours" %in% gWidgets2::svalue(g.show)),
                  grouped=("Counts" %in% gWidgets2::svalue(g.show)),
                  grouped.contours=("Count contours" %in% gWidgets2::svalue(g.show)),
+                 markup=markup,
                  ids=gWidgets2::svalue(g.ids))
       ## FIXME: EOD not computed
       if (!is.null(r$EOD)) {

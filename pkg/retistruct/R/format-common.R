@@ -1,13 +1,24 @@
 read.scale <- function(dataset) {
   ## If there is a scale file, read it
-  scale <- NA
+  scale <- c(Scale=NA, Units=NA)
   scfile <- file.path(dataset, "scale.csv")
   if (file.exists(scfile)) {
-    print("Reading scale file")
-    sc <- read.csv(file.path(dataset, "scale.csv"))
-    scale <- sc[1,1]
-    if (!is.numeric(scale)) {
+    message("Reading scale file")
+    sc <- read.csv(scfile)
+    valid.colnames <- c("Scale", "Units")
+    if (!all(colnames(sc) %in% valid.colnames)) {
+      stop(paste("Unknown column names",
+                 paste0("\"", setdiff(colnames(sc), valid.colnames), "\"",
+                        collapse=", "),
+                 "in", scfile, ". Valid column names:",
+                 paste(valid.colnames, collapse=", ")))
+    }
+    scale <- unlist(sc[1,])
+    if (!("Scale" %in% names(scale)) | !is.numeric(scale["Scale"])) {
       stop("Scale file has not been read correctly. Check it is in the correct format.")
+    }
+    if (!("Units" %in% names(scale))) {
+      scale["Units"] <- NA
     }
   } else {
     warning("Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
@@ -66,6 +77,7 @@ read.datapoints <- function(dataset) {
       ## converted to NA. Get rid of these.
       d <- na.omit(d)
       attr(d, "na.action") <- NULL
+      colnames(d) <- c("X", "Y")
 
       ## Add to lists with appropriate names
       
@@ -73,7 +85,7 @@ read.datapoints <- function(dataset) {
       names(D) <- names[1]
       Ds <- c(Ds, D)
 
-      col <- list(names[2])
+      col <- names[2]
       names(col) <- names[1]
       cols <- c(cols, col)
     }
@@ -92,7 +104,7 @@ read.datapoints <- function(dataset) {
 ##' @title Read data counts in CSV format
 ##' @param dataset Path to directory containing \code{dataponts.csv}
 ##' @return List containing
-##' \item{\code{Ds}}{List of sets of data counts. Each set comprises a 2-column matrix and each set is named.}
+##' \item{\code{Ds}}{List of sets of datacounts. Each set comprises a 2-column matrix and each set is named.}
 ##' \item{\code{cols}}{List of colours for each dataset. There is one element that corresponds to each element of \code{Ds} and which bears the same name.}
 ##' @author David Sterratt
 read.datacounts <- function(dataset) {

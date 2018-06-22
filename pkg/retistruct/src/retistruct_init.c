@@ -8,9 +8,11 @@
 */
 
 /* .Call calls */
+extern SEXP bary2sph(SEXP, SEXP, SEXP, SEXP);
 extern SEXP sum_force_components(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"bary2sph",             (DL_FUNC) &bary2sph,             4},
     {"sum_force_components", (DL_FUNC) &sum_force_components, 3},
     {NULL, NULL, 0}
 };

@@ -281,6 +281,7 @@ idt.segment.to.pointers <- function(P) {
 ##' \item{gb}{Backward pointers along the outline}
 ##' \item{Ds}{List of datapoints}
 ##' \item{Ss}{List of landmark lines}
+##' @importFrom stats sd
 ##' @author David Sterratt
 ##' @export
 idt.read.dataset <- function(dataset, d.close=0.25) {
@@ -292,11 +293,11 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   ##
   ## At present, for the plotting functions to work, the name of each
   ## group has to be a valid colour.
-  Ds <- list(green =cbind(na.omit(sys[,'XGREEN']), na.omit(sys[,'YGREEN'])),
+  Ds <- list(green =cbind(X=na.omit(sys[,'XGREEN']), Y=na.omit(sys[,'YGREEN'])),
              red   =cbind(
-               na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
-               na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
-             double=cbind(na.omit(sys[,'XDOUBLE']),na.omit(sys[,'YDOUBLE'])))
+               X=na.omit(c(sys[,'XDOUBLE'], sys[,'XRED'])),
+               Y=na.omit(c(sys[,'YDOUBLE'], sys[,'YRED']))),
+             double=cbind(X=na.omit(sys[,'XDOUBLE']), Y=na.omit(sys[,'YDOUBLE'])))
   cols <- list(green="green",
                red="red",
                double="yellow",
@@ -329,12 +330,11 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
     stop("Inconsistent BOXSIZEX; cannot determine scale")
   }
   bsx <- sapply(sys["BOXSIZEX"], mean, na.rm=TRUE)
-  scale <- bsx/200
-  names(scale) <- NULL
+  scale <- c(bsx/200)
   
   ## Create Outline object
-  o <- Outline(P, scale=scale)
-  o <- simplify.outline(o)
+  o <- RetinalOutline$new(P, scale=scale["Scale"], units=scale["Units"],
+                          dataset=dataset)
   
   ## Check that P is more-or-less closed
   if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
@@ -378,9 +378,9 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   ## Remove points outwith outline
   Gs <- lapply(Gs, function(G) {
     G[sp::point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1,,drop=FALSE]})
-  
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
-  a <- AnnotatedOutline(d)
-  a <- RetinalDataset(a)
-  return(a)
+
+  o$addFeatureSet(PointSet$new(data=Ds, cols=cols))
+  o$addFeatureSet(LandmarkSet$new(data=Ss, cols=cols))
+  ## d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
+  return(o)
 }

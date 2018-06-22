@@ -4,10 +4,12 @@
 \alias{lvsLplot}
 \title{Plot the fractional change in length of mesh edges}
 \usage{
-lvsLplot(r)
+lvsLplot(r, ...)
 }
 \arguments{
 \item{r}{\code{\link{ReconstructedOutline}} object}
+
+\item{...}{Other plotting parameters}
 }
 \description{
 Plot the fractional change in length of mesh edges. The length of

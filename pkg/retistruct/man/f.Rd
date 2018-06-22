@@ -15,7 +15,7 @@ f(x, x0)
 The value of the function.
 }
 \description{
-Piecewise, smooth function that increases linearly with negative arguments. 
+Piecewise, smooth function that increases linearly with negative arguments.
 \deqn{    f(x) = \left\{
        \begin{array}{ll}
          -(x - x_0/2) & x < 0 \\

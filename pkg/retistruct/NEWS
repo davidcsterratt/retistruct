@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.6.0 - Released 2018/06/19
+
+CODE IMPROVEMENTS
+
+* Major refactor of code to use R6 classes
+  (https://github.com/davidcsterratt/retistruct/issues/25)
+
 CHANGES IN VERSION 0.5.12 - Released 2017/08/08
 
 NEW FEATURES

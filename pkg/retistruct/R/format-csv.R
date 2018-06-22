@@ -14,7 +14,7 @@ csv.checkDatadir <- function(dir=NULL) {
 ##' 
 ##' @title Read a retinal dataset in CSV format
 ##' @param dataset Path to directory containing \code{outline.csv}
-##' @return A \code{\link{RetinalDataset}} object
+##' @return A \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
 csv.read.dataset <- function(dataset) {
   ## Read the raw data
@@ -25,7 +25,7 @@ csv.read.dataset <- function(dataset) {
   
   ## If there is an image, read it
   im <- read.image(dataset)
-
+  
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
   ## to transform P so that the outline appears in the correct
@@ -40,13 +40,14 @@ csv.read.dataset <- function(dataset) {
   ## group has to be a valid colour. There are no datapoints in this
   ## format, but we may have landmarks.
   Ds <- list()
-  cols <- list(OD="blue",
-               default="orange")
+
+  cols <- c(OD="blue",
+            default="orange")
   dat <- read.datapoints(dataset)
   Ds <- c(Ds, dat$Ds)
   cols <- c(cols, dat$cols)
-  Ds <- lapply(Ds, function(P) {cbind(P[,1], offset - P[,2])})
-
+  Ds <- lapply(Ds, function(P) {cbind(X=P[,1], Y=(offset - P[,2]))})
+  
   ## Extract landmarks (currently optic disc)
   Ss <- list()
 
@@ -56,6 +57,7 @@ csv.read.dataset <- function(dataset) {
   if (file.exists(od.file)) {
     out <-  as.matrix(read.csv(od.file))
     out[,2] <- offset - out[,2]
+    colnames(out) <- c("X", "Y")
     Ss[["OD"]] <- out
   }
 
@@ -71,16 +73,16 @@ csv.read.dataset <- function(dataset) {
   Gs <- lapply(Gs, function(P) {cbind(P[,1], offset - P[,2], P[,3])})
   
   ## Create forward and backward pointers
-  o <- Outline(P, scale, im)
-  o <- simplify.outline(o)
+  o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
+                          units=scale["Units"],
+                          dataset=dataset)
   
   ## Check that P is more-or-less closed
   ## if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
   ##    stop("Unable to find a closed outline.")
   ## }
 
-  d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(outline=out), Gs=Gs)
-  a <- AnnotatedOutline(d)
-  a <- RetinalDataset(a)
-  return(a)
+  o$addFeatureSet(PointSet$new(data=Ds, cols=cols))
+  o$addFeatureSet(LandmarkSet$new(data=Ss, cols=cols))
+  return(o)
 }

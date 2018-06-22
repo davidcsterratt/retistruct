@@ -7,13 +7,12 @@
 sphericalplot(r, ...)
 }
 \arguments{
-\item{r}{Object with class \code{\link{ReconstructedOutline}}
-and/or \code{\link{ReconstructedDataset}}}
+\item{r}{Object inheriting \code{\link{ReconstructedOutline}}}
 
 \item{...}{Parameters depending on class of \code{r}}
 }
 \description{
-Draw a spherical plot.
+Spherical plot of reconstructed outline
 }
 \author{
 David Sterratt
