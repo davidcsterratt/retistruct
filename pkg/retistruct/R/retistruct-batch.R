@@ -176,23 +176,23 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
           dat <- cbind(dat, KDEdat)
         }
       }
-      message(paste("Getting KR"))
-      ## FIXME: Issue #25
-      KR <- getKR(r)
-      if (length(KR) > 0) {
-        ## Get out bandwidths by going through each component of the KR
-        KRdat <- lapply(KR, function(x) {x$h})
-        names(KRdat) <- paste("kr.h.", names(KRdat), sep="")
-        dat <- cbind(dat, KRdat)
-        ## Get out contour areas by going through each component of the KR
-        for (name in names(KR)) {
-          KRdat <- as.list(KR[[name]]$tot.contour.areas[,"contour.areas"])
-          names(KRdat) <- paste("kr.c", KR[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
-          dat <- cbind(dat, KRdat)
-        }
-      }
+      ## FIXME: Issue #25: Kernel Regression
+      ## message(paste("Getting KR"))
+      ## KR <- getKR(r)
+      ## if (length(KR) > 0) {
+      ##   ## Get out bandwidths by going through each component of the KR
+      ##   KRdat <- lapply(KR, function(x) {x$h})
+      ##   names(KRdat) <- paste("kr.h.", names(KRdat), sep="")
+      ##   dat <- cbind(dat, KRdat)
+      ##   ## Get out contour areas by going through each component of the KR
+      ##   for (name in names(KR)) {
+      ##     KRdat <- as.list(KR[[name]]$tot.contour.areas[,"contour.areas"])
+      ##     names(KRdat) <- paste("kr.c", KR[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
+      ##     dat <- cbind(dat, KRdat)
+      ##   }
+      ## }
 
-      logdat <- merge(logdat, dat, all=TRUE)
+      ## logdat <- merge(logdat, dat, all=TRUE)
     }
   }
   return(logdat)
@@ -443,31 +443,34 @@ retistruct.batch.analyse.summary <- function(path) {
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
   dev.print(svg, file=file.path(path, "fig3-retistruct-deformation.svg"), width=6.83/2, height=6.83/4)
 
+  ## FIXME: Issue #25: Enable retistruct.batch.plot.ods()
   ## Fig 4A-C: Locations of optic discs
-  dev.new(width=6.83/2, height=6.83/6)
-  par(mfcol=c(1, 3))
-  par(mar=c(0.7,0.7,0.7,0.7))
-  
-  retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
-                            phi0d=subset(sdat, sdat$age=="A")[1, "phi0d"])
-  panlabel("A")
+  ## dev.new(width=6.83/2, height=6.83/6)
+  ## par(mfcol=c(1, 3))
+  ## par(mar=c(0.7,0.7,0.7,0.7))
 
-  summ <- retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
-                            phi0d=-60)
-  panlabel("B")
+  ## FIXME: Issue #25: Enable retistruct.batch.plot.ods()
+  ## retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
+  ##                           phi0d=subset(sdat, sdat$age=="A")[1, "phi0d"])
+  ## panlabel("A")
 
-  par(mar=c(2.4, 2.6, 0.7, 0.5))
-  par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
+  ## FIXME: Issue #25: Enable retistruct.batch.plot.ods()
+  ## summ <- retistruct.batch.plot.ods(subset(sdat, sdat$age=="A"),
+  ##                          phi0d=-60)
+  ## panlabel("B")
+
+  ## par(mar=c(2.4, 2.6, 0.7, 0.5))
+  ## par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
   
-  summlm <- stats::lm(OD.res ~ sqrt.E, summ)
-  with(summ, plot(sqrt.E, OD.res,
-                  xlab=expression(italic(e)[L]),
-                  ylab=expression(italic(epsilon)[OD]),
-                  pch=20, col="blue"))
-  abline(summlm)
-  panlabel("C")
-  dev.print(svg, file=file.path(path, "fig4-retistruct-ods.svg"), width=6.83/2, height=6.83/6)
-  print(summary(summlm))
+  ## summlm <- stats::lm(OD.res ~ sqrt.E, summ)
+  ## with(summ, plot(sqrt.E, OD.res,
+  ##                 xlab=expression(italic(e)[L]),
+  ##                 ylab=expression(italic(epsilon)[OD]),
+  ##                 pch=20, col="blue"))
+  ## abline(summlm)
+  ## panlabel("C")
+  ## dev.print(svg, file=file.path(path, "fig4-retistruct-ods.svg"), width=6.83/2, height=6.83/6)
+  ## print(summary(summlm))
   
   ## with(sdat, table(sqrt.E ~ age))
 
@@ -586,39 +589,42 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' datapoints 
 ##' @author David Sterratt
 ##' @export
-retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
-  ## Make a dummy retina
-  o <- list()
-  class(o) <- "reconstructedOutline"
-  o$phi0 <- phi0d*pi/180
-  r <- RetinalDataset(o)
-  r <- ReconstructedDataset(r)
-  r <- RetinalReconstructedDataset(r)
-  r <- RetinalReconstructedOutline(r)
-  r$side <- "Right"
-  summ <- subset(summ, summ$age=="A")
-  r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
-  colnames(r$Dss$OD) <- c("phi", "lambda")
-  r$cols["OD"] <- "blue"
-  
-  km <- karcher.mean.sphere(r$Dss$OD, na.rm=TRUE, var=TRUE)
-  message(nrow(summ), " points")
-  message("Mean: Lat ", format(km$mean["phi"]*180/pi, digits=3),
-          " Long ", format(km$mean["lambda"]*180/pi, digits=3),
-          " ; SD: ", format(sqrt(km$var)*180/pi, digits=3))
-  message("Mean location is ", 180/pi*central.angle(km$mean["phi"],
-                                      km$mean["lambda"],
-                                      -pi/2,
-                                      0),  " away from geometric centre")
-  
-  summ$OD.res <- 180/pi*central.angle(km$mean["phi"],
-                                      km$mean["lambda"],
-                                      r$Dss$OD[,"phi"],
-                                      r$Dss$OD[,"lambda"])
+##'
+## FIXME: Issue #25: Enable retistruct.batch.plot.ods()
+## retistruct.batch.plot.ods <- function(summ, phi0d, ...) {
 
-  projection(r, datapoint.contours=FALSE, philim=c(-90, phi0d), ...)
-  ## dev.new()
-  ## with(summ, plot(sqrt.E, OD.res))
-  ## abline(summlm)
-  return(summ)
-}
+##   ## Make a dummy retina
+##   o <- list()
+##   class(o) <- "reconstructedOutline"
+##   o$phi0 <- phi0d*pi/180
+##   r <- RetinalDataset(o)
+##   r <- ReconstructedDataset(r)
+##   r <- RetinalReconstructedDataset(r)
+##   r <- RetinalReconstructedOutline(r)
+##   r$side <- "Right"
+##   summ <- subset(summ, summ$age=="A")
+##   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
+##   colnames(r$Dss$OD) <- c("phi", "lambda")
+##   r$cols["OD"] <- "blue"
+  
+##   km <- karcher.mean.sphere(r$Dss$OD, na.rm=TRUE, var=TRUE)
+##   message(nrow(summ), " points")
+##   message("Mean: Lat ", format(km$mean["phi"]*180/pi, digits=3),
+##           " Long ", format(km$mean["lambda"]*180/pi, digits=3),
+##           " ; SD: ", format(sqrt(km$var)*180/pi, digits=3))
+##   message("Mean location is ", 180/pi*central.angle(km$mean["phi"],
+##                                       km$mean["lambda"],
+##                                       -pi/2,
+##                                       0),  " away from geometric centre")
+  
+##   summ$OD.res <- 180/pi*central.angle(km$mean["phi"],
+##                                       km$mean["lambda"],
+##                                       r$Dss$OD[,"phi"],
+##                                       r$Dss$OD[,"lambda"])
+
+##   projection(r, datapoint.contours=FALSE, philim=c(-90, phi0d), ...)
+##   ## dev.new()
+##   ## with(summ, plot(sqrt.E, OD.res))
+##   ## abline(summlm)
+##   return(summ)
+## }

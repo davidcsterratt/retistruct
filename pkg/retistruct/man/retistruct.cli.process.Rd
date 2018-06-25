@@ -4,8 +4,7 @@
 \alias{retistruct.cli.process}
 \title{Process a dataset, saving results to disk}
 \usage{
-retistruct.cli.process(dataset, outputdir = NA, device = "pdf",
-  titrate = FALSE)
+retistruct.cli.process(dataset, outputdir = NA, device = "pdf")
 }
 \arguments{
 \item{dataset}{Path to dataset to process}
@@ -13,9 +12,6 @@ retistruct.cli.process(dataset, outputdir = NA, device = "pdf",
 \item{outputdir}{Directory in which to save any figures}
 
 \item{device}{String representing device to print figures to}
-
-\item{titrate}{If \code{TRUE} add output of
-\code{\link{titrate.reconstructedOutline}}  to object saved.}
 }
 \description{
 This function processes a \code{dataset}, saving the

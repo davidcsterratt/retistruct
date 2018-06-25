@@ -322,13 +322,12 @@ retistruct.save.markup <- function(a) {
 }
 
 
-##' Save the reconstruction data in an object \code{r}  that inherits
-##' \code{\link{ReconstructedDataset}} and
-##' \code{\link{ReconstructedOutline}}  to a file called
+##' Save the reconstruction data in an object \code{r} of class
+##' \code{\link{RetinalReconstructedOutline}} to a file called
 ##' \code{r.Rdata} in the directory \code{r$dataset}.
 ##'
 ##' @title Save reconstruction data
-##' @param r \code{\link{ReconstructedDataset}} object
+##' @param r \code{\link{RetinalReconstructedOutline}} object
 ##' @author David Sterratt
 ##' @export
 retistruct.save.recdata <- function(r) {
@@ -341,13 +340,12 @@ retistruct.save.recdata <- function(r) {
   }
 }
 
-##' Save as a MATLAB object certain fields  of an object \code{r}
-##' that inherits \code{\link{ReconstructedDataset}} and
-##' \code{\link{ReconstructedOutline}}  to a file called \code{r.mat}
-##' in the directory \code{r$dataset}.
+##' Save as a MATLAB object certain fields of an object \code{r} of
+##' class\code{\link{RetinalReconstructedOutline}} to a file called
+##' \code{r.mat} in the directory \code{r$dataset}.
 ##'
 ##' @title Save reconstruction data in MATLAB format
-##' @param r \code{\link{ReconstructedDataset}} object
+##' @param r \code{\link{RetinalReconstructedOutline}} object
 ##' @author David Sterratt
 ##' @export
 retistruct.export.matlab <- function(r) {

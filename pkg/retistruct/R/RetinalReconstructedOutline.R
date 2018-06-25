@@ -43,6 +43,7 @@ projection.RetinalReconstructedOutline <-
            projection=azimuthal.equalarea,
            axisdir=cbind(phi=90, lambda=0),
            proj.centre=cbind(phi=0, lambda=0),
+           lambdalim=c(-180, 180),
            datapoints=TRUE,
            datapoint.means=TRUE,
            datapoint.contours=FALSE,
