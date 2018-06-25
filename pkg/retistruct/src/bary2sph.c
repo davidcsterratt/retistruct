@@ -41,7 +41,7 @@ SEXP bary2sph(SEXP sidx, SEXP sb, SEXP sT, SEXP sP) {
   PROTECT(sPs = allocMatrix(REALSXP, Nb, 2));
   double *xPs = REAL(sPs);
 
-  int i, j, k;
+  int i, j;
   int T;
   double X[3], Y[3], Z[3];
   double beta[3];
