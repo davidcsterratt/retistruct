@@ -4,10 +4,12 @@
 \alias{ijroi.read.dataset}
 \title{Read a retinal dataset in IJROI format}
 \usage{
-ijroi.read.dataset(dataset)
+ijroi.read.dataset(dataset, report = report)
 }
 \arguments{
 \item{dataset}{Path to directory containing \code{outline.roi}}
+
+\item{report}{Function to report progress}
 }
 \value{
 A \code{\link{RetinalOutline}} object

@@ -267,6 +267,7 @@ idt.segment.to.pointers <- function(P) {
 ##' 
 ##' @title Read one of the Thompson lab's retinal datasets
 ##' @param dataset Path to directory containing as SYS and MAP file
+##' @param report Function to report progress
 ##' @param d.close Maximum distance between points for them to count
 ##' as the same point. This is expressed as a fraction of the width of
 ##' the outline.
@@ -284,7 +285,7 @@ idt.segment.to.pointers <- function(P) {
 ##' @importFrom stats sd
 ##' @author David Sterratt
 ##' @export
-idt.read.dataset <- function(dataset, d.close=0.25) {
+idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
   ## Read the raw data
   map <- idt.read.map(dataset)
   sys <- idt.read.sys(dataset)
@@ -334,7 +335,7 @@ idt.read.dataset <- function(dataset, d.close=0.25) {
   
   ## Create Outline object
   o <- RetinalOutline$new(P, scale=scale["Scale"], units=scale["Units"],
-                          dataset=dataset)
+                          dataset=dataset, report=report)
   
   ## Check that P is more-or-less closed
   if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {

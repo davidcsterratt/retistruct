@@ -1,9 +1,9 @@
-read.scale <- function(dataset) {
+read.scale <- function(dataset, report=message) {
   ## If there is a scale file, read it
   scale <- c(Scale=NA, Units=NA)
   scfile <- file.path(dataset, "scale.csv")
   if (file.exists(scfile)) {
-    message("Reading scale file")
+    report("Reading scale file")
     sc <- read.csv(scfile)
     valid.colnames <- c("Scale", "Units")
     if (!all(colnames(sc) %in% valid.colnames)) {
@@ -26,11 +26,11 @@ read.scale <- function(dataset) {
   return(scale)
 }
 
-read.image <- function(dataset) {
+read.image <- function(dataset, report=message) {
   im <- NULL
   imfile <- file.path(dataset, "image.png")
   if (file.exists(imfile)) {
-    message("Reading image")
+    report("Reading image")
     im <- grDevices::as.raster(png::readPNG(imfile))
   }
   return(im)

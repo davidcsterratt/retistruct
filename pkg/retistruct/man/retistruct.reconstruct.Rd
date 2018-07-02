@@ -4,14 +4,15 @@
 \alias{retistruct.reconstruct}
 \title{Reconstruct a retina}
 \usage{
-retistruct.reconstruct(o, report = message, plot.3d = FALSE,
-  dev.flat = NA, dev.polar = NA, ...)
+retistruct.reconstruct(o, report = NULL, plot.3d = FALSE, dev.flat = NA,
+  dev.polar = NA, debug = FALSE, ...)
 }
 \arguments{
 \item{o}{\code{\link{RetinalOutline}} object with tear and
 correspondence annotations}
 
-\item{report}{Function to report progress}
+\item{report}{Function to report progress. Set to \code{FALSE} for
+no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}}
 
 \item{plot.3d}{If \code{TRUE} show progress in a 3D plot}
 
@@ -20,6 +21,8 @@ representation}
 
 \item{dev.polar}{The ID of the device to which to plot the polar
 representation}
+
+\item{debug}{If \code{TRUE} print extra debugging output}
 
 \item{...}{Parameters to be passed to
 \code{\link{RetinalReconstructedOutline}} constructor}

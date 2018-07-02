@@ -59,7 +59,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     mean.logstrain = NULL,
     ims = NULL,
     immask = NULL,
-    report = message,
+    report = NULL,
+    debug = NULL,
     ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
     ## \item{\code{P}}{outline points as N-by-2 matrix}
     ## \item{\code{V0}}{indices of the apex of each tear}
@@ -77,6 +78,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## means no plotting.
     ## @param dev.polar Device display projection. Value of NA
     ## (default) means no plotting.
+    ## @param report Function to report progress.
+    ## @param debug If \code{TRUE} print extra debugging output
     ## @return \code{reconstructedOutline} object containing the input
     ## information and the following modified and extra information:
     ## \item{\code{P}}{New set of points in flattened object}
@@ -87,10 +90,17 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## \item{\code{Tt}}{New triangulation}
     initialize = function(ol,
                           n=500, alpha=8, x0=0.5,
-                          plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
+                          plot.3d=FALSE, dev.flat=NA, dev.polar=NA, report=NULL,
+                          debug=FALSE) {
       self$n <- n
       self$alpha <- alpha
       self$x0 <- x0
+      if (is.null(report)) {
+        self$report <- ol$report
+      } else {
+        self$report <- report
+      }
+      self$debug <- debug
       ol$triangulate()
       ol$stitchTears()
       ol$triangulate(suppress.external.steiner=TRUE)
@@ -442,8 +452,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         ft <- flipped.triangles(phi, lambda, Tt, R)
         nflip <- sum(ft$flipped)
-        message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
-        if (nflip) {
+        self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        if (nflip & self$debug) {
           print(data.frame(rbind(id=which(ft$flipped),
                                  A=A[ft$flipped],
                                  a=ft$areas[ft$flipped])))
@@ -546,7 +556,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                     restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                     dt=1,
                     nstep=200,
-                    m=m, verbose=TRUE, ...)
+                    m=m, verbose=TRUE, report=self$report, ...)
         count <- count - 1
         ## Report
         E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
@@ -559,7 +569,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         lambda <- s[,"lambda"]
         ft <- flipped.triangles(phi, lambda, Tt, R)
         nflip <- sum(ft$flipped)
-        message(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip) {
           print(data.frame(rbind(id=which(ft$flipped),
                                  A=A[ft$flipped],
@@ -953,14 +963,14 @@ projection.ReconstructedOutline <- function(r,
       ## This should not create a new version of the image
       im <- r$ol$im
       if (by > 1) {
-        message("Downsampling image by factor of ", by)
+        r$report("Downsampling image by factor of ", by)
         im <- r$ol$im[Ms, Ns]
       }
 
       ## Now need to do the more complex job of downsampling the matrix
       ## containing the coordinates of the corners of pixels
       if (by > 1) {
-        message("Downsampling pixel corner spherical coordinates by factor of ", by)
+        r$report("Downsampling pixel corner spherical coordinates by factor of ", by)
         imsmask <- matrix(FALSE, M+1, N+1)
         imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
         ims <- ims[imsmask,]
@@ -978,7 +988,7 @@ projection.ReconstructedOutline <- function(r,
       Nc <- as.integer(N/n.chunk) + 1
 
       for (i in 0:(n.chunk - 1)) {
-        message("Projecting chunk ", i + 1, "/", n.chunk)
+        r$report("Projecting chunk ", i + 1, "/", n.chunk)
         ## Actual number of columns, since the last chunk may have a
         ## different number of chunks to Nc
         dN <- min((i + 1)*Nc, N) - i*Nc

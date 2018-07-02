@@ -14,9 +14,10 @@ csv.checkDatadir <- function(dir=NULL) {
 ##' 
 ##' @title Read a retinal dataset in CSV format
 ##' @param dataset Path to directory containing \code{outline.csv}
+##' @param report Function to report progress
 ##' @return A \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
-csv.read.dataset <- function(dataset) {
+csv.read.dataset <- function(dataset, report=message) {
   ## Read the raw data
   out <- as.matrix(read.csv(file.path(dataset, "outline.csv")))
 
@@ -24,7 +25,7 @@ csv.read.dataset <- function(dataset) {
   scale <- read.scale(dataset)
   
   ## If there is an image, read it
-  im <- read.image(dataset)
+  im <- read.image(dataset, report=report)
   
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
@@ -75,7 +76,7 @@ csv.read.dataset <- function(dataset) {
   ## Create forward and backward pointers
   o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
                           units=scale["Units"],
-                          dataset=dataset)
+                          dataset=dataset, report=report)
   
   ## Check that P is more-or-less closed
   ## if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {

@@ -4,10 +4,12 @@
 \alias{idt.read.dataset}
 \title{Read one of the Thompson lab's retinal datasets}
 \usage{
-idt.read.dataset(dataset, d.close = 0.25)
+idt.read.dataset(dataset, report = message, d.close = 0.25)
 }
 \arguments{
 \item{dataset}{Path to directory containing as SYS and MAP file}
+
+\item{report}{Function to report progress}
 
 \item{d.close}{Maximum distance between points for them to count
 as the same point. This is expressed as a fraction of the width of

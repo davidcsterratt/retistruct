@@ -4,11 +4,14 @@
 \alias{retistruct.read.dataset}
 \title{Read a retinal dataset}
 \usage{
-retistruct.read.dataset(dataset, ...)
+retistruct.read.dataset(dataset, report = message, ...)
 }
 \arguments{
 \item{dataset}{Path to directory containing the files
 corresponding to each format.}
+
+\item{report}{Function to report progress. Set to \code{FALSE} for
+no reporting.}
 
 \item{...}{Parameters passed to the format-specific functions.}
 }

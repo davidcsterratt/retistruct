@@ -12,9 +12,10 @@ ijroi.checkDatadir <- function(dir=NULL) {
 ##' 
 ##' @title Read a retinal dataset in IJROI format
 ##' @param dataset Path to directory containing \code{outline.roi}
+##' @param report Function to report progress
 ##' @return A \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
-ijroi.read.dataset <- function(dataset) {
+ijroi.read.dataset <- function(dataset, report=report) {
   ## Read the raw data
   roi <- RImageJROI::read.ijroi(file.path(dataset, "outline.roi"))
   out <- roi$coords
@@ -23,7 +24,7 @@ ijroi.read.dataset <- function(dataset) {
   scale <- read.scale(dataset)
   
   ## If there is an image, read it
-  im <- read.image(dataset)
+  im <- read.image(dataset, report=report)
 
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
@@ -64,7 +65,7 @@ ijroi.read.dataset <- function(dataset) {
   ## Create forward and backward pointers
   o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
                           units=scale["Units"],
-                          dataset=dataset)
+                          dataset=dataset, report=report)
   
   ## Check that P is more-or-less closed
   ## if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {

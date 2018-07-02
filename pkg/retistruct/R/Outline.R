@@ -22,8 +22,8 @@ Outline <- R6Class("Outline",
     h=NULL,
     im=NULL,
     dm=NULL,
-    report = message,
-    initialize=function(P=NULL, scale=NA, im=NULL, units=NA) {
+    report = NULL,
+    initialize=function(P=NULL, scale=NA, im=NULL, units=NA, report=message) {
       self$P <- matrix(0, 0, 2)
       colnames(self$P) <- c("X", "Y")
       self$im <- im
@@ -35,6 +35,7 @@ Outline <- R6Class("Outline",
         pids <- self$addPoints(fragment$P)
         self$mapFragment(fragment, pids)
       }
+      self$report <- report
     },
     replaceImage = function(im) {
       self$im <- im

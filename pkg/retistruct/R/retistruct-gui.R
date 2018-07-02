@@ -106,8 +106,8 @@ retistruct <- function() {
   }
 
   ## Function to report to set status
-  set.status <- function(s) {
-    gWidgets2::svalue(g.status) <- s
+  set.status <- function(...) {
+    gWidgets2::svalue(g.status) <- paste0(...)
   }
 
   ## Utility function
@@ -321,7 +321,7 @@ retistruct <- function() {
   h.open <- function(h, ...) {
     ## Read the raw data
     withCallingHandlers({
-      a <<- retistruct.read.dataset(a$dataset)
+      a <<- retistruct.read.dataset(a$dataset, report=FALSE)
     }, warning=h.warning, error=h.error)
     
     ## Read the markup
@@ -367,6 +367,7 @@ retistruct <- function() {
     }, warning=h.warning, error=h.warning)  
     enable.widgets(TRUE)
     do.plot()
+    set.status("")
   }
 
   ## Handler for showing data
@@ -555,6 +556,7 @@ retistruct <- function() {
       sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
     dev.set(d1)
+    set.status("")
   }
 
   ## It would be nice to have error messages displayed graphically.

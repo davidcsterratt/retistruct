@@ -1,4 +1,4 @@
-CHANGES IN VERSION 0.6.0 - Released 2018/06/xx
+CHANGES IN VERSION 0.6.0 - Released 2018/07/xx
 
 BUG FIXES
 
@@ -18,6 +18,12 @@ CODE IMPROVEMENTS
   lengths in triangulated outlines.
   (https://github.com/davidcsterratt/retistruct/issues/21) This work
   arose from the bug with the idefinite determinant (see above).
+
+NEW FEATURES
+
+* It is now possible to have completely silent operation
+  (https://github.com/davidcsterratt/retistruct/issues/22)
+  Thanks to Brian Cohn for the suggestion
 
 CHANGES IN VERSION 0.5.12 - Released 2017/08/08
 

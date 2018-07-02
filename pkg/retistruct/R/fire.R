@@ -18,6 +18,7 @@
 ##' @param tol Tolerance - if RMS force is below this value, stop and
 ##' report convergence
 ##' @param verbose If \code{TRUE} report progress verbosely
+##' @param report Function to report progress when \code{verbose} is \code{TRUE}
 ##' @return List containing \code{x}, the positions of the points,
 ##' \code{conv}, which is 0 if convergence as occurred and 1 otherwise,
 ##' and \code{frms}, the root mean square of the forces on the
@@ -28,7 +29,7 @@
 ##' @author David Sterratt
 fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
                  Nmin=5, finc=1.1, fdec=0.5, astart=0.1, fa=0.99, a=0.1,
-                 nstep=100, tol=0.00001, verbose=FALSE) {
+                 nstep=100, tol=0.00001, verbose=FALSE, report=message) {
   Nsteps <- 0
   conv <- 1
   # Initialise velocity
@@ -84,10 +85,10 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
     r <- restraint(r)
   }
   if (verbose) {
-    message(paste("FIRE: ", nstop, " stops. ",
+    report(paste("FIRE: ", nstop, " stops. ",
                   nmaxmove, "hits of maxmove. ",
                   ndtmax, "hits of dtmax."))
-    message("Frms = ", frms, "; Ftanrms = ", ftanrms)
+    report("Frms = ", frms, "; Ftanrms = ", ftanrms)
   }
   return(list(x=r, conv=conv, frms=frms))
 }

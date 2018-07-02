@@ -21,17 +21,26 @@ checkDatadir <- function(dir=NULL) {
 ##' @title Read a retinal dataset
 ##' @param dataset Path to directory containing the files
 ##'   corresponding to each format.
+##' @param report Function to report progress. Set to \code{FALSE} for
+##'   no reporting.
 ##' @param ... Parameters passed to the format-specific functions.
 ##' @return A \code{\link{RetinalOutline}} object
 ##' @author David Sterratt
 ##' @export
-retistruct.read.dataset <- function(dataset, ...) {
+retistruct.read.dataset <- function(dataset, report=message, ...) {
   ## Check to see if dataset is valid
   type <- checkDatadir(dataset)
   
-  if (type=="idt")   { return(idt.read.dataset(dataset, ...))}
-  if (type=="csv")   { return(csv.read.dataset(dataset, ...))}
-  if (type=="ijroi") { return(ijroi.read.dataset(dataset, ...))}
+  if (!is.function(report)) {
+    if (report != FALSE) {
+      stop("report must be FALSE or a function")
+    }
+    report <- function(...) {}
+  }
+
+  if (type=="idt")   { return(idt.read.dataset(dataset, report, ...))}
+  if (type=="csv")   { return(csv.read.dataset(dataset, report, ...))}
+  if (type=="ijroi") { return(ijroi.read.dataset(dataset, report, ...))}
 
   stop("No valid dataset format detected.")
 }
@@ -229,20 +238,22 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 ##' Reconstruct a retina
 ##' @param o \code{\link{RetinalOutline}} object with tear and
 ##'   correspondence annotations
-##' @param report Function to report progress
+##' @param report Function to report progress. Set to \code{FALSE} for
+##'   no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}
 ##' @param plot.3d If \code{TRUE} show progress in a 3D plot
 ##' @param dev.flat The ID of the device to which to plot the flat
 ##'   representation
 ##' @param dev.polar The ID of the device to which to plot the polar
 ##'   representation
+##' @param debug If \code{TRUE} print extra debugging output
 ##' @param ... Parameters to be passed to
 ##'   \code{\link{RetinalReconstructedOutline}} constructor
 ##' @return A \code{\link{RetinalReconstructedOutline}} object
 ##' @author David Sterratt
 ##' @export
-retistruct.reconstruct <- function(o, report=message,
+retistruct.reconstruct <- function(o, report=NULL,
                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                                   ...) {
+                                   debug=FALSE, ...) {
   ## Check that markup is there
   if (!retistruct.check.markup(o)) {
     stop("Neither dorsal nor nasal pole specified")
@@ -270,7 +281,7 @@ retistruct.reconstruct <- function(o, report=message,
 
   ## Now do folding itself
   r <- NULL
-  r <- RetinalReconstructedOutline$new(o)
+  r <- RetinalReconstructedOutline$new(o, report=report, debug=debug)
   ## FIXME set report function
   r$reconstruct(plot.3d=plot.3d, dev.flat=dev.flat,
                 dev.polar=dev.polar,
@@ -288,7 +299,7 @@ retistruct.reconstruct <- function(o, report=message,
         
     ## r <- RetinalReconstructedOutline(r, report=report)
     ## r <- RetinalReconstructedDataset(r, report=report)
-    report("")
+    r$report("")
   }
   return(r)
 }
