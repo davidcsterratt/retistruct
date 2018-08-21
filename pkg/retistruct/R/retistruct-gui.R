@@ -131,7 +131,8 @@ retistruct <- function() {
     gWidgets2::svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                               identify.abort.text())
     dev.set(d1)
-    pids <- with(a, identify(P[,1], P[,2], n=3, col=getOption("TF.col")))
+    P <- a$getPoints()
+    pids <- identify(P[,"X"], P[,"Y"], n=3, col=getOption("TF.col"))
     withCallingHandlers({
       a$addTear(pids)
     }, warning=h.warning, error=h.warning)
@@ -147,7 +148,8 @@ retistruct <- function() {
     gWidgets2::svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                               identify.abort.text())
     dev.set(d1)
-    id <- with(a, identify(P[,1], P[,2], n=1, plot=FALSE))
+    P <- a$getPoints()
+    id <- identify(P[,"X"], P[,"Y"], n=1, plot=FALSE)
     a$removeTear(a$whichTear(id))
     do.plot()
     gWidgets2::svalue(g.status) <- ""
@@ -163,7 +165,7 @@ retistruct <- function() {
     gWidgets2::svalue(g.status) <- paste("Click on apex or vertex to move.",
                                          identify.abort.text())
     P <- a$getPoints()
-    id1 <- identify(P[,1], P[,2], n=1, plot=FALSE)
+    id1 <- identify(P[,"X"], P[,"Y"], n=1, plot=FALSE)
     
     ## Locate tear ID in which the point occurs
     tid <- a$whichTear(id1)
@@ -177,7 +179,7 @@ retistruct <- function() {
       points(P[id1,1], P[id1,2], col="yellow")
 
       ## Select second point
-      id2 <- identify(P[,1], P[,2], n=1)
+      id2 <- identify(P[,"X"], P[,"Y"], n=1)
 
       ## Get point ids of exsiting tear
       pids <- a$getTear(tid)
@@ -206,7 +208,7 @@ retistruct <- function() {
                                          identify.abort.text())
     dev.set(d1)
     P <- a$getPoints()
-    id <- identify(P[,1], P[,2], n=1)
+    id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
       a$setFixedPoint(id, "Nasal")
     }, warning=h.warning, error=h.warning)
@@ -223,7 +225,7 @@ retistruct <- function() {
                               identify.abort.text())
     dev.set(d1)
     P <- a$getPoints()
-    id <- identify(P[,1], P[,2], n=1)
+    id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
       a$setFixedPoint(id, "Dorsal")
     }, warning=h.warning, error=h.warning)
