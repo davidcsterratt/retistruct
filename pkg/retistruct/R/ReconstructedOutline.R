@@ -635,24 +635,23 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         xs <- 0:N
         ys <- M:0
         ## x-coords of pixel corners, arranged in (N+1) by (M+1) grid
-        Ix <- outer(ys*0, xs, FUN="+")
         ## Ditto for y-coords
-        Iy <- outer(ys, xs*0, FUN="+")
-        ## Join to give (x, y) coordinates of all corners
-        I <- cbind(as.vector(Ix), as.vector(Iy))
+        I <- cbind(as.vector(outer(ys*0, xs, FUN="+")),
+                   as.vector(outer(ys, xs*0, FUN="+")))
 
         ## Find Barycentric coordinates of corners of pixels
-
         Ib <- tsearch(self$ol$getPoints()[,"X"], self$ol$getPoints()[,"Y"],
                       self$ol$T, I[,1], I[,2], bary=TRUE)
-
+        rm(I)
+        gc()
         ## Create mask depending on whether corners are in outline
         idx <- matrix(Ib$idx, M+1, N+1)
         self$immask <- (!is.na(idx[1:M    , 1:N    ]) &
                         !is.na(idx[1:M    , 2:(N+1)]) &
                         !is.na(idx[2:(M+1), 1:N    ]) &
                         !is.na(idx[2:(M+1), 2:(N+1)]))
-
+        rm(idx)
+        gc()
         ## Find 3D coordinates of mesh points
         Pc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
         self$ims <- bary2sph(Ib, self$Tt, Pc)
