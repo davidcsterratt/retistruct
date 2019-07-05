@@ -1188,3 +1188,92 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
   text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
                pos=2)
 }
+
+##' Draw a spherical plot of reconstructed outline. This method just
+##' draws the mesh.
+##'
+##' @title Spherical plot of reconstructed outline
+##' @param r \code{\link{ReconstructedOutline}} object
+##' @param strain If \code{TRUE}, plot the strain
+##' @param surf If \code{TRUE}, plot the surface
+##' @param ... Other graphics parameters -- not used at present
+##' @method sphericalplot reconstructedOutline
+##' @author David Sterratt
+##' @import rgl
+##' @export
+sphericalplot.reconstructedOutline <- function(r,
+                                               strain=FALSE,
+                                               surf=TRUE, ...) {
+  NextMethod()
+  
+  ## FIXME: This needs to be looked at with a view to replacing
+  ## functions in plots.R
+  with(r, {
+    ## Obtain Cartesian coordinates of points
+    P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+
+    if (surf) {
+      ## Outer triangles
+      fac <- 1.005
+      triangles3d(matrix(fac*P[t(Tt[,c(2,1,3)]),1], nrow=3),
+                  matrix(fac*P[t(Tt[,c(2,1,3)]),2], nrow=3),
+                  matrix(fac*P[t(Tt[,c(2,1,3)]),3], nrow=3),
+                  color="darkgrey", alpha=1)
+      
+      ## Inner triangles
+      triangles3d(matrix(P[t(Tt),1], nrow=3),
+                  matrix(P[t(Tt),2], nrow=3),
+                  matrix(P[t(Tt),3], nrow=3),
+                  color="white", alpha=1)
+    }
+    
+    ## Plot any flipped triangles
+    ft <- flipped.triangles(phi, lambda, Tt, R)
+    with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
+                      col="blue", size=5))
+
+    ## Shrink so that they appear inside the hemisphere
+    fac <- 0.997
+    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+              lwd=3, color=getOption("TF.col"))
+    
+    fac <- 1.006
+    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+              lwd=3, color=getOption("TF.col"))
+
+    if (strain) {
+      o <- getStrains(r)
+      palette(rainbow(100))
+      scols <- strain.colours(o$spherical$logstrain)
+
+      fac <- 0.999
+      P1 <- fac*P[Cut[,1],]
+      P2 <- fac*P[Cut[,2],]
+      
+      width <- 40
+      ## Compute displacement vector to make sure that strips are
+      ## parallel to surface of sphere
+      d <- extprod3d(P1, P2-P1)
+      d <- width/2*d/vecnorm(d)
+      PA <- P1 - d
+      PB <- P1 + d
+      PC <- P2 + d
+      PD <- P2 - d
+
+      ## This is a ridiculously inefficient way of drawing the strain,
+      ## but if you try presenting a color vector, it makes each line
+      ## multi-coloured. It has taking HOURS of fiddling round to
+      ## discover this! GRRRRRRRRRRRRRRRRR!
+      for (i in 1:nrow(PA)) {
+        quads3d(rbind(PA[i,1], PB[i,1], PC[i,1], PD[i,1]),
+                rbind(PA[i,2], PB[i,2], PC[i,2], PD[i,2]),
+                rbind(PA[i,3], PB[i,3], PC[i,3], PD[i,3]),
+                color=round(scols[i]), alpha=1)
+      }
+    }
+  })
+}
