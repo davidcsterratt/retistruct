@@ -519,6 +519,7 @@ retistruct <- function() {
                datapoint.contours=("Point contours" %in% gWidgets2::svalue(g.show)),
                grouped=("Counts" %in% gWidgets2::svalue(g.show)),
                grouped.contours=("Count contours" %in% gWidgets2::svalue(g.show)),
+               grid=("Grid" %in% gWidgets2::svalue(g.show)),
                markup=markup,
                ids=gWidgets2::svalue(g.ids),
                max.proj.dim=max.proj.dim)
