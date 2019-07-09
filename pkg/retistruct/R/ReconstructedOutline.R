@@ -987,7 +987,7 @@ projection.ReconstructedOutline <- function(r,
       ## Numnber of columns in the first B-1 blocks
       C <- floor(N/B)
       ## In the Bth block there will be N-(B-1)*C columns
-      print(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
+      ## print(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
       
       ## Number of columns in block k
       Ck <- C
