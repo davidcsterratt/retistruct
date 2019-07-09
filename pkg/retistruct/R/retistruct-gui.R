@@ -374,14 +374,21 @@ retistruct <- function() {
 
   ## Handler for showing data
   h.show <- function(h, ...) {
-    if(!is.null(h$pageno)) {
-      if (h$pageno == 1) {
-        do.plot(markup=TRUE)
-      } else {
-        do.plot(markup=("Markup" %in% (gWidgets2::svalue(g.show))))
-      }
+    tab <<- "Edit"
+    if (!is.null(h$page.no)) {
+      ## h$page.no is set when the notebook handler is called
+      ## print(paste("h.show: pageno:", h$page.no))
+      if (h$page.no == 2) { tab <<- "View" }
     } else {
-      do.plot()
+      ## Notebook not active
+      ## print(paste("h.show: g.nb:", gWidgets2::svalue(g.nb)))
+      if (gWidgets2::svalue(g.nb) == 2) { tab <<- "View" }
+    }
+    ## print(paste(tab, "Tab"))
+    if (tab == "Edit") {
+      do.plot(markup=TRUE)
+    } else {
+      do.plot(markup=("Markup" %in% (gWidgets2::svalue(g.show))))
     }
   }
 
@@ -532,12 +539,12 @@ retistruct <- function() {
   }  
   
   ## Plot in edit pane
-  do.plot <- function(markup=("Markup" %in% (gWidgets2::svalue(g.show))) | (gWidgets2::svalue(g.nb) == 1)) {
+  do.plot <- function(markup=("Markup" %in% (gWidgets2::svalue(g.show)))) {
     
     if (is.null(r)) {
       r <- a
     }
-    if ("Strain" %in% gWidgets2::svalue(g.edit.show)) {   # Strain plot
+    if (("Strain" %in% gWidgets2::svalue(g.edit.show)) & (tab == "Edit")) {   # Strain plot
       dev.set(d1)
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
@@ -736,6 +743,8 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
 
   ## "Edit" and "View" tabs
   g.nb <- gWidgets2::gnotebook(container=g.body)
+  ## Keep track of state in global variable, which can be "Edit" or "View"
+  tab <- "Edit"
 
   ## Edit tab
   
