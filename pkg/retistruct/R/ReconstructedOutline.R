@@ -875,6 +875,7 @@ projection.ReconstructedOutline <- function(r,
                                             image=TRUE,
                                             markup=TRUE,
                                             add=FALSE,
+                                            max.proj.dim=getOption("max.proj.dim"),
                                             ...) {
   Call <- match.call(expand.dots=TRUE)
   plot.image <- image
@@ -953,7 +954,6 @@ projection.ReconstructedOutline <- function(r,
 
       ## Downsample the image by first selecting rows and columns to
       ## look at
-      max.proj.dim <- getOption("max.proj.dim")
       by <- ceiling(max(N, M)/max.proj.dim) # Number of pixels to merge
       Ms <- seq(1, M - (M %% by), by=by)
       Ns <- seq(1, N - (N %% by), by=by)
@@ -979,21 +979,38 @@ projection.ReconstructedOutline <- function(r,
       M <- nrow(im)
       N <- ncol(im)
 
-      ## Number of pixels to transform in one go
-      max.chunk.size <- 200*8000
-      ## Number of chunks
-      n.chunk <- as.integer(N*M/max.chunk.size) + 1
-      ## Numnber of columns in each chunk
-      Nc <- as.integer(N/n.chunk) + 1
-
-      for (i in 0:(n.chunk - 1)) {
-        r$report("Projecting chunk ", i + 1, "/", n.chunk)
-        ## Actual number of columns, since the last chunk may have a
-        ## different number of chunks to Nc
-        dN <- min((i + 1)*Nc, N) - i*Nc
+      ## Target size of of block, i.e. the number of pixels to
+      ## transform in one go
+      S <- 200*200 # 200*8000
+      ## Number of blocks
+      B <- ceiling(N*M/S)
+      ## Numnber of columns in the first B-1 blocks
+      C <- floor(N/B)
+      ## In the Bth block there will be N-(B-1)*C columns
+      print(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
+      
+      ## Number of columns in block k
+      Ck <- C
+      for (k in 1:B) {
+        r$report("Projecting block ", k, "/", B)
+        ## Actual number of columns, since the last block may have a
+        ## different number of chunks to C
+        if (k == B) {
+          Ck <- N - (B - 1)*C
+        }
+        ## Index of leftmost column of image matrix needed
+        j0 <- (k - 1)*C + 1
+        ## Index of rightmost column of image matrix needed
+        j1 <- (k - 1)*C + Ck
+      
         ## Transform the pixel coordinates and compute x and y positions
         ## of corners of pixels.
-        inds <- i*(M + 1)*Nc + (1:((M + 1)*(dN + 1)))
+        ## inds <- (k - 1)*(M + 1)*C + (1:((M + 1)*(Ci + 1)))
+        l0 <-  (j0 - 1)*(M + 1) + 1
+        l1 <- j1*(M + 1) + (M + 1)
+        print(paste("k =", k, "; Ck =", Ck, "; j0 =", j0, "; j1 =", j1,
+                    "; l0 =", l0, "; l1 =", l1))
+        inds <- l0:l1
         rc <- projection(
           rotate.axis(
             transform(ims[inds,],
@@ -1002,19 +1019,19 @@ projection.ReconstructedOutline <- function(r,
           lambdalim=lambdalim*pi/180,
           proj.centre=pi/180*proj.centre)
 
-        xpos <- matrix(rc[,"x"], M + 1, dN + 1)
-        ypos <- matrix(rc[,"y"], M + 1, dN + 1)
+        xpos <- matrix(rc[,"x"], M + 1, Ck + 1)
+        ypos <- matrix(rc[,"y"], M + 1, Ck + 1)
 
         ## Convert these to format suitable for polygon()
-        impx <- rbind(as.vector(xpos[1:M    , 1:dN    ]),
-                      as.vector(xpos[1:M    , 2:(dN+1)]),
-                      as.vector(xpos[2:(M+1), 2:(dN+1)]),
-                      as.vector(xpos[2:(M+1), 1:dN    ]),
+        impx <- rbind(as.vector(xpos[1:M    , 1:Ck    ]),
+                      as.vector(xpos[1:M    , 2:(Ck+1)]),
+                      as.vector(xpos[2:(M+1), 2:(Ck+1)]),
+                      as.vector(xpos[2:(M+1), 1:Ck    ]),
                       NA)
-        impy <- rbind(as.vector(ypos[1:M    , 1:dN    ]),
-                      as.vector(ypos[1:M    , 2:(dN+1)]),
-                      as.vector(ypos[2:(M+1), 2:(dN+1)]),
-                      as.vector(ypos[2:(M+1), 1:dN   ]),
+        impy <- rbind(as.vector(ypos[1:M    , 1:Ck    ]),
+                      as.vector(ypos[1:M    , 2:(Ck+1)]),
+                      as.vector(ypos[2:(M+1), 2:(Ck+1)]),
+                      as.vector(ypos[2:(M+1), 1:Ck   ]),
                       NA)
         ## Pixels outside the image should be masked. The mask is a matrix
         ## the same size as the image, containing TRUE for pixels that
@@ -1023,7 +1040,7 @@ projection.ReconstructedOutline <- function(r,
         ## lie outwith the outline. These corners will have the coordinate
         ## NA.  print("sum(!is.na(colSums(impx[1:4,])))")
         ## print(sum(!is.na(colSums(impx[1:4,]))))
-        immask <- matrix(!is.na(colSums(impx[1:4,])), M, dN)
+        immask <- matrix(!is.na(colSums(impx[1:4,])), M, Ck)
 
         ## We want to get rid of any poly-pixels that cross either end of
         ## the longitude range in a pseudocylindrical projection. A simple
@@ -1046,8 +1063,8 @@ projection.ReconstructedOutline <- function(r,
 
         ## Plot the polygon, masking as we go
         graphics::polygon(impx[,immask], impy[,immask],
-                          col=im[1:M,i*Nc+(1:dN)][immask],
-                          border=im[1:M,i*Nc+(1:dN)][immask])
+                          col=im[1:M,(k-1)*C+(1:Ck)][immask],
+                          border=im[1:M,(k-1)*C+(1:Ck)][immask])
       }
     }
   }
