@@ -24,7 +24,7 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
     getMean = function() {
       Dss.mean <- list()
       for (id in self$getIDs()) {
-        km <- karcher.mean.sphere(self$getPoints(id), na.rm=TRUE)
+        km <- karcher.mean.sphere(self$getFeature(id), na.rm=TRUE)
         Dss.mean[[id]] <- cbind(phi=km["phi"], lambda=km["lambda"])
       }
       return(Dss.mean)
@@ -36,10 +36,10 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
     getHullarea = function() {
       Dss.hullarea <- list()
       for (id in self$getIDs()) {
-        if (nrow(self$getPoints(id)) >= 3) {
-          Dsp <- sphere.spherical.to.polar.cart(self$getPoints(id), pa=TRUE)
+        if (nrow(self$getFeature(id)) >= 3) {
+          Dsp <- sphere.spherical.to.polar.cart(self$getFeature(id), pa=TRUE)
           Dspt <- suppressMessages(delaunayn(Dsp))
-          Dss.hullarea[[id]] <- sum(sphere.tri.area(self$getPoints(id), Dspt))*(180/pi)^2
+          Dss.hullarea[[id]] <- sum(sphere.tri.area(self$getFeature(id), Dspt))*(180/pi)^2
         } else {
           Dss.hullarea[[id]] <- NA
         }
@@ -54,7 +54,7 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
       if (is.null(self$KDE)) {
         Dss <- list()
         for (id in self$getIDs()) {
-          Dss[[id]] <- self$getPoints(id)
+          Dss[[id]] <- self$getFeature(id)
         }
         self$KDE <- compute.kernel.estimate(Dss, self$ro$phi0, kde.fhat, kde.compute.concentration)
       }

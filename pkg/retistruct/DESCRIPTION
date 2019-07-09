@@ -33,4 +33,4 @@ Suggests:
     cairoDevice,
     RGtk2
 Roxygen: list(wrap = FALSE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

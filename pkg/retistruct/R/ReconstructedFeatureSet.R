@@ -51,7 +51,7 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
     getIDs = function() {
       return(names(self$Ps))
     },
-    getPoints = function(name) {
+    getFeature = function(name) {
       if (is.na(self$getID(name))) {
         return(NULL)
       }

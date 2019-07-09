@@ -21,8 +21,8 @@ LandmarkSet <- R6Class("LandmarkSet",
 
 flatplot.LandmarkSet <- function(x, ids=x$getIDs(), ...) {
   for (id in ids) {
-    if (!is.null(x$getPoints(id))) {
-      lines(x$getPoints(id)[,"X"], x$getPoints(id)[,"Y"],
+    if (!is.null(x$getFeature(id))) {
+      lines(x$getFeature(id)[,"X"], x$getFeature(id)[,"Y"],
             col=x$getCol(id))
     }
   }

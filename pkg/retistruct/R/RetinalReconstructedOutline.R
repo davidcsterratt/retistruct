@@ -112,7 +112,7 @@ projection.RetinalReconstructedOutline <-
       if (!is.null(fs)) {
         projection.ReconstructedLandmarkSet(fs,
                                             projection=projection,
-                                            phi0=r$phi0, ...)
+                                            phi0=r$phi0, ids=ids, ...)
       }
     }
 

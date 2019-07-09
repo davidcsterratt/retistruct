@@ -57,11 +57,14 @@ FeatureSet <- R6Class("FeatureSet",
         names(self$data) <- new.names
       }
     },
-    getPoints = function(name) {
+    getFeature = function(name) {
       if (is.na(self$getID(name))) {
         return(NULL)
       }
       return(self$data[[name]][,c("X", "Y")])
+    },
+    getFeatures = function() {
+      return(self$data)
     },
     getCol = function(id) {
       if (id %in% names(self$cols)) {

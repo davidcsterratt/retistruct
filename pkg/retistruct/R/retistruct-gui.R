@@ -92,7 +92,7 @@ retistruct <- function() {
                    g.print1, g.print2,
                    g.print.pdf1, g.print.pdf2), state)
     if (state) 
-      enable.group(c(g.mark.od), retistruct.potential.od(a))
+      enable.group(c(g.mark.od), length(a$getFeatureSet("LandmarkSet")$getIDs() > 0))
     if (!retistruct.check.markup(a)) {
       enable.group(c(g.reconstruct), FALSE)
     }
@@ -243,7 +243,8 @@ retistruct <- function() {
     dev.set(d1)
     ## Convert list of segments to a matrix of points
     Sm <- NULL
-    Ss <- a$getFeatureSet("LandmarkSet")
+    fs <- a$getFeatureSet("LandmarkSet")
+    Ss <- fs$getFeatures()
     for (S in Ss) {
       Sm <- rbind(Sm, S)
     }
@@ -251,7 +252,7 @@ retistruct <- function() {
     ## Identify a point
     id <- identify(Sm[,1], Sm[,2], n=1)
     
-    ## Idendify segment in which point appears
+    ## Identify segment in which point appears
     i <- 0
     N <- 0
     while (id > N && i < length(Ss)) {
@@ -260,7 +261,18 @@ retistruct <- function() {
     }
     ## Set "OD" landmark
     ## FIXME: implement nameLandmark()
-    a$nameLandmark(a, i, "OD")
+    fs$setName(i, "OD")
+
+    ## Update IDs panel
+    checked <- a$getIDs() %in% c(svalue(g.ids), "OD")
+    gWidgets2::delete(g.ids.frame, g.ids)
+    ids <- a$getIDs()
+    if (length(ids) > 0) {
+      g.ids <<- gWidgets2::gcheckboxgroup(ids, checked=checked,
+                                          handler=h.show,
+                                          container=g.ids.frame)
+    }
+    
     do.plot()
     gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
@@ -787,9 +799,9 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.show <- gWidgets2::gcheckboxgroup(c("Markup", "Stitch", "Grid", "Landmarks",
                              "Points", "Point means", "Point contours",
                              "Counts", "Count contours"),
-                           checked=c(TRUE, FALSE, FALSE, FALSE,
-                             FALSE, FALSE, FALSE,
-                             FALSE, FALSE),
+                           checked=c(TRUE, FALSE, FALSE, TRUE,
+                             TRUE, FALSE, FALSE,
+                             TRUE, FALSE),
                            handler=h.show, container=g.show.frame)
 
   ## Group IDs

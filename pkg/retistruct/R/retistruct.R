@@ -45,22 +45,6 @@ retistruct.read.dataset <- function(dataset, report=message, ...) {
   stop("No valid dataset format detected.")
 }
 
-##' Test the outline object \code{o} for the presence of
-##' potential optic disc. This is done by checking that the list of
-##' landmark lines \code{Ss} exists.
-##'
-##' @title Test for a potential optic disc
-##' @param o Outline object
-##' @return \code{TRUE} if an optic disc may be present; \code{FALSE} otherwise
-##' @author David Sterratt
-##' @export
-retistruct.potential.od <- function(o) {
-  if (inherits(o, "dataset")) {
-    return(with(o, exists("Ss")) && is.list(o$Ss) && (length(o$Ss) > 0))
-  }
-  return(FALSE)
-}
-
 ##' Read the markup data contained in the files \file{markup.csv},
 ##' \file{P.csv} and \file{T.csv} in the directory \file{dataset},
 ##' which is specified in the reconstruction object \code{r}.
@@ -324,8 +308,7 @@ retistruct.save.markup <- function(a) {
   iD <- ifelse(names(i0) == "Dorsal", i0, NA)
   iN <- ifelse(names(i0) == "Nasal" , i0, NA)
 
-  Ss <- a$getFeatureSet("LandmarkSet")
-  iOD <- which(names(Ss) == "OD")
+  iOD <- a$getFeatureSet("LandmarkSet")$getID("OD")
   if (length(iOD) == 0)
     iOD <- NA
   markup <- data.frame(iD=iD, iN=iN, phi0=a$phi0*180/pi, iOD=iOD, DVflip=a$DVflip, side=a$side)     

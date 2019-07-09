@@ -4,8 +4,8 @@
 \alias{retistruct.reconstruct}
 \title{Reconstruct a retina}
 \usage{
-retistruct.reconstruct(o, report = NULL, plot.3d = FALSE, dev.flat = NA,
-  dev.polar = NA, debug = FALSE, ...)
+retistruct.reconstruct(o, report = NULL, plot.3d = FALSE,
+  dev.flat = NA, dev.polar = NA, debug = FALSE, ...)
 }
 \arguments{
 \item{o}{\code{\link{RetinalOutline}} object with tear and
