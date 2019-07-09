@@ -399,7 +399,7 @@ retistruct <- function() {
     do.plot()
   }
 
-  ## Print device d to file
+  ## Print device or function d to file
   print.bitmap <- function(d, file) {
     dev <- NULL
     if (grepl(".png$", file, ignore.case=TRUE)) 
@@ -414,8 +414,14 @@ retistruct <- function() {
       file <- paste(file, ".png")
       dev <- grDevices::png
     }
-    dev.set(d)
-    dev.print(dev, file, width=getOption("max.proj.dim"), height=getOption("max.proj.dim"))
+    if (is.function(d)) {
+      dev(file, width=getOption("max.proj.dim"), height=getOption("max.proj.dim"))
+      d(max.proj.dim=getOption("max.proj.dim"))
+      dev.off()
+    } else {
+      dev.set(d)
+      dev.print(dev, file, width=getOption("max.proj.dim"), height=getOption("max.proj.dim"))
+    }
   }
 
   ## Print device d to file
@@ -477,7 +483,7 @@ retistruct <- function() {
   }
 
   h.print2 <- function(h, ...) {
-    h.print.bitmap(d2, initial.filename="image-polar.png")
+    h.print.bitmap(plotProjection, initial.filename="image-polar.png")
   }
 
   h.print.pdf2 <- function(h, ...) {
@@ -500,6 +506,30 @@ retistruct <- function() {
                 "Invert to hemisphere"=invert.sphere.to.hemisphere))
   }
 
+  plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
+                             markup=("Markup" %in% (gWidgets2::svalue(g.show)))) {
+    projection(r,
+               datapoints=("Points" %in% gWidgets2::svalue(g.show)),
+               datapoint.means=("Point means" %in% gWidgets2::svalue(g.show)),
+               landmarks=("Landmarks" %in% gWidgets2::svalue(g.show)),
+               transform=getTransforms()[[gWidgets2::svalue(g.transform)]],
+               projection=getProjections()[[gWidgets2::svalue(g.projection)]],
+               axisdir=cbind(phi=gWidgets2::svalue(g.axis.el), lambda=gWidgets2::svalue(g.axis.az)),
+               proj.centre=cbind(phi=gWidgets2::svalue(g.pc.el), lambda=gWidgets2::svalue(g.pc.az)),
+               datapoint.contours=("Point contours" %in% gWidgets2::svalue(g.show)),
+               grouped=("Counts" %in% gWidgets2::svalue(g.show)),
+               grouped.contours=("Count contours" %in% gWidgets2::svalue(g.show)),
+               markup=markup,
+               ids=gWidgets2::svalue(g.ids),
+               max.proj.dim=max.proj.dim)
+    
+    ## FIXME: EOD not computed
+    if (!is.null(r$EOD)) {
+      polartext(paste("OD displacement:",
+                      format(r$EOD, digits=3, nsmall=2), "deg"))
+    }
+  }  
+  
   ## Plot in edit pane
   do.plot <- function(markup=("Markup" %in% (gWidgets2::svalue(g.show))) | (gWidgets2::svalue(g.nb) == 1)) {
     
@@ -537,24 +567,7 @@ retistruct <- function() {
                scalebar=1)
       dev.set(d2)
       par(mar=c(0.7, 0.7, 0.7, 0.7))
-      projection(r,
-                 datapoints=("Points" %in% gWidgets2::svalue(g.show)),
-                 datapoint.means=("Point means" %in% gWidgets2::svalue(g.show)),
-                 landmarks=("Landmarks" %in% gWidgets2::svalue(g.show)),
-                 transform=getTransforms()[[gWidgets2::svalue(g.transform)]],
-                 projection=getProjections()[[gWidgets2::svalue(g.projection)]],
-                 axisdir=cbind(phi=gWidgets2::svalue(g.axis.el), lambda=gWidgets2::svalue(g.axis.az)),
-                 proj.centre=cbind(phi=gWidgets2::svalue(g.pc.el), lambda=gWidgets2::svalue(g.pc.az)),
-                 datapoint.contours=("Point contours" %in% gWidgets2::svalue(g.show)),
-                 grouped=("Counts" %in% gWidgets2::svalue(g.show)),
-                 grouped.contours=("Count contours" %in% gWidgets2::svalue(g.show)),
-                 markup=markup,
-                 ids=gWidgets2::svalue(g.ids))
-      ## FIXME: EOD not computed
-      if (!is.null(r$EOD)) {
-        polartext(paste("OD displacement:",
-                        format(r$EOD, digits=3, nsmall=2), "deg"))
-      }
+      plotProjection(max.proj.dim=400, markup=markup)
       sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
     dev.set(d1)
@@ -606,15 +619,20 @@ retistruct <- function() {
 
     g.printing <- gWidgets2::gframe("Printing", container=g.props, horizontal=FALSE)
     g.group <- gWidgets2::ggroup(container=g.printing)
-    gWidgets2::glabel("Maximum resolution of projection", container=g.group)
+    gWidgets2::glabel("Maximum width of projection", container=g.group)
     property <- "max.proj.dim"
-    g.max.proj.dim <- gWidgets2::gedit(0, width=5, coerce.with=as.numeric,
-                            container=g.group,
-                            handler=function(h, ...) {
-                              eval(parse(text=paste("options(", property, "=gWidgets2::svalue(g.max.proj.dim))")))
-                              do.plot()
-                            })
-    gWidgets2::svalue(g.max.proj.dim) <- getOption(property)
+    g.max.proj.dim <- gWidgets2::gedit(
+                                   getOption(property),
+                                   width=5, coerce.with=as.numeric,
+                                   container=g.group)
+    h.max.proj.dim <- function(h, ...) {
+      eval(parse(text=paste("options(", property, "=gWidgets2::svalue(g.max.proj.dim))")))
+    }
+    gWidgets2::addHandlerKeystroke(g.max.proj.dim, handler=h.max.proj.dim)
+    gWidgets2::addHandlerBlur(g.max.proj.dim, handler=h.max.proj.dim)
+
+    gWidgets2::glabel("pixels", container=g.group)
+    ## gWidgets2::svalue(g.max.proj.dim) <- getOption(property)
     
     gWidgets2::gbutton("Close", container=g.props,
             handler = function(h,...) gWidgets2::dispose(g.win))
