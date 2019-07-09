@@ -301,7 +301,6 @@ retistruct <- function() {
     } else {
       retistruct.save.recdata(r)
     }
-    ## FIXME: enable export to matlab
     retistruct.export.matlab(r)
     unsaved.data(FALSE)
   }
@@ -370,6 +369,17 @@ retistruct <- function() {
     do.plot()
   }
 
+  h.retistructdemos <- function(dir1="Figure_6-data", dir2="left-ipsi", ...) {
+    dataset <- file.path(extdata.demos, dir1, dir2)
+    print(dataset)
+    if (!file.exists(dataset)) {
+      gWidgets2::gmessage("Install the retistructdemos package using devtools::install_github(\"davidcsterratt/retistruct/pkg/retistructdemos\")", title="Demo not installed", icon="error")
+    } else {
+      a$dataset <<- dataset
+      h.open()
+    }
+  }
+  
   ## Handler to start reconstructing the retina
   h.reconstruct <- function(h, ...) {
     unsaved.data(TRUE)
@@ -704,28 +714,24 @@ retistruct <- function() {
     })
   mbl$Demos$left.contra <-
     gWidgets2::gaction(label="Figure 6 Left Contra",
-            handler=function(h, ...) {
-              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-contra")
-              h.open()
-            })
+                       handler=function(h, ...) {
+                         h.retistructdemos("Figure_6-data", "left-contra")
+                       })
   mbl$Demos$left.ipsi <-
     gWidgets2::gaction(label="Figure 6 Left Ipsi",
-            handler=function(h, ...) {
-              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "left-ipsi")
-              h.open()
-            })
+                       handler=function(h, ...) {
+                         h.retistructdemos("Figure_6-data", "left-ipsi")
+                       })
   mbl$Demos$right.contra <-
     gWidgets2::gaction(label="Figure 6 Right Contra",
-            handler=function(h, ...) {
-              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-contra")
-              h.open()
-            })
+                       handler=function(h, ...) {
+                         h.retistructdemos("Figure_6-data", "right-contra")
+                       })
   mbl$Demos$right.ipsi <-
     gWidgets2::gaction(label="Figure 6 Right Ipsi",
-            handler=function(h, ...) {
-              a$dataset <<- file.path(extdata.demos, "Figure_6-data", "right-ipsi")
-              h.open()
-            })
+                       handler=function(h, ...) {
+                         h.retistructdemos("Figure_6-data", "right-ipsi")
+                       })
   mbl$Help$About <- gWidgets2::gaction(
     label="About",
     handler=function(h, ...) {

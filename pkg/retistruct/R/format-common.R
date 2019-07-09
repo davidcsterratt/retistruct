@@ -13,7 +13,7 @@ read.scale <- function(dataset, report=message) {
                  "in", scfile, ". Valid column names:",
                  paste(valid.colnames, collapse=", ")))
     }
-    scale <- unlist(sc[1,])
+    scale <- as.matrix(sc)[1,]
     if (!("Scale" %in% names(scale)) | !is.numeric(scale["Scale"])) {
       stop("Scale file has not been read correctly. Check it is in the correct format.")
     }
