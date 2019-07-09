@@ -5,7 +5,7 @@ test_that("FeatureSets work correctly", {
   cols <- "blue"
   fs <- PointSet$new(data=Ds, cols=cols)
   expect_equal(fs$getIDs(), "a")
-  expect_equal(fs$getPoints("a"), Ds[[1]])
+  expect_equal(fs$getFeature("a"), Ds[[1]])
   
   ## If matrix columnames are not X and Y, an error should be thrown
   Ds <- list(a = cbind(x=1:10, y=1:10))

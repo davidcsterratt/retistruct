@@ -854,6 +854,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
 ##' @param image If \code{TRUE}, show the image
 ##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed tears
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
+##' @param max.proj.dim Maximum width of the image created in pixels
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection ReconstructedOutline
 ##' @export

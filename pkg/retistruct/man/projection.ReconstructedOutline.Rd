@@ -57,6 +57,8 @@ respect to colatitude rather than latitude}
 
 \item{add}{If \code{TRUE}, don't draw axes; add to existing plot.}
 
+\item{max.proj.dim}{Maximum width of the image created in pixels}
+
 \item{...}{Graphical parameters to pass to plotting functions}
 }
 \description{

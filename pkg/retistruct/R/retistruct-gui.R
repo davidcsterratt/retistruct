@@ -264,7 +264,7 @@ retistruct <- function() {
     fs$setName(i, "OD")
 
     ## Update IDs panel
-    checked <- a$getIDs() %in% c(svalue(g.ids), "OD")
+    checked <- a$getIDs() %in% c(gWidgets2::svalue(g.ids), "OD")
     gWidgets2::delete(g.ids.frame, g.ids)
     ids <- a$getIDs()
     if (length(ids) > 0) {
