@@ -55,23 +55,25 @@ list.datasets <- function(path='.', verbose=FALSE) {
 ##'
 ##' @title Batch operation using the parallel package
 ##' @param tldir If datasets is not specified, the top level of the
-##' directory tree through which to recurse in order to find datasets.
+##'   directory tree through which to recurse in order to find
+##'   datasets.
 ##' @param outputdir directory in which to dump a log file and images
 ##' @param datasets Vector of dataset directories to reconstruct
 ##' @param device string indicating what type of graphics output
-##' required. Options are "pdf" and "png".
+##'   required. Options are \code{"pdf"} and \code{"png"}.
 ##' @param titrate Whether to "titrate" the reconstruction for
-##' different values of \code{phi0}. See \code{titrate.reconstructedOutline}.
+##'   different values of \code{phi0}. See
+##'   \code{titrate.reconstructedOutline}.
 ##' @param cpu.time.limit amount of CPU after which to terminate the
-##' process
-##' @param mc.cores The number of cores to use. Defaults to the total
-##' number available.
+##'   process
+##' @param mc.cores The number of cores to use. Defaults to the value
+##'   given by the option \code{mc.cores}
 ##' @author David Sterratt
 ##' @export
 retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL, 
                              device="pdf", titrate=FALSE,
                              cpu.time.limit=3600,
-                             mc.cores=getOption("cores")) {
+                             mc.cores=getOption("mc.cores", 2L)) {
   ## Get datasets
   if (is.null(datasets)) {
     datasets <- list.datasets(tldir)
@@ -87,13 +89,15 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
     flog <- file(logfile, open="wt")
     sink(flog)
     sink(flog, type="message")
-    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device,
-                          titrate=titrate))
+    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device
+                          ## ,
+                          ## titrate=titrate   ## FIXME: Issue #25: Titration
+                          ))
   }
 
   ## Run the reconstructions
   ret <- parallel::mclapply(datasets, call, mc.preschedule=FALSE,
-                  mc.cores=mc.cores)
+                            mc.cores=mc.cores)
 
   ## Extract data from the return structures
   ## Function to replace NULL with NA - needed for creating data frames
@@ -156,8 +160,8 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
                         mean.dtheta=n(r$titration$Dtheta.mean),
                         phi0d=n(r$phi0*180/pi),
                         phi0d.opt=n(r$titration$phi0d.opt),
-                        L.rim=r$getFlatRimLength(),
-                        A.tot=r$A.tot)
+                        L.rim=sum(r$ol$getRimLengths()),
+                        A.tot=r$ol$A.tot)
       hullarea <- r$getFeatureSet("PointSet")$getHullarea()
       if (length(hullarea) > 0) {
         dat <- data.frame(dat, hullarea=hullarea)
@@ -176,23 +180,23 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
           dat <- cbind(dat, KDEdat)
         }
       }
-      ## FIXME: Issue #25: Kernel Regression
-      ## message(paste("Getting KR"))
-      ## KR <- getKR(r)
-      ## if (length(KR) > 0) {
-      ##   ## Get out bandwidths by going through each component of the KR
-      ##   KRdat <- lapply(KR, function(x) {x$h})
-      ##   names(KRdat) <- paste("kr.h.", names(KRdat), sep="")
-      ##   dat <- cbind(dat, KRdat)
-      ##   ## Get out contour areas by going through each component of the KR
-      ##   for (name in names(KR)) {
-      ##     KRdat <- as.list(KR[[name]]$tot.contour.areas[,"contour.areas"])
-      ##     names(KRdat) <- paste("kr.c", KR[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
-      ##     dat <- cbind(dat, KRdat)
-      ##   }
-      ## }
 
-      ## logdat <- merge(logdat, dat, all=TRUE)
+      message(paste("Getting KR"))
+      KR <- r$getFeatureSet("CountSet")$getKR()
+      if (length(KR) > 0) {
+        ## Get out bandwidths by going through each component of the KR
+        KRdat <- lapply(KR, function(x) {x$h})
+        names(KRdat) <- paste("kr.h.", names(KRdat), sep="")
+        dat <- cbind(dat, KRdat)
+        ## Get out contour areas by going through each component of the KR
+        for (name in names(KR)) {
+          KRdat <- as.list(KR[[name]]$tot.contour.areas[,"contour.areas"])
+          names(KRdat) <- paste("kr.c", KR[[name]]$tot.contour.areas[,"labels"], "." , name, sep="")
+          dat <- cbind(dat, KRdat)
+        }
+      }
+
+      logdat <- merge(logdat, dat, all=TRUE)
     }
   }
   return(logdat)
@@ -318,10 +322,10 @@ retistruct.batch.plot.titrations <- function(tdat) {
 }
 
 ##' Recurse through a directory tree, determining whether the
-##' directory contains valid derived data and converting r.rData files
-##' to files in matlab format named r.mat
+##' directory contains valid derived data and converting
+##' \file{r.rData} files to files in MATLAB format named \file{r.mat}
 ##'
-##' @title Export data from reconstruction data files to matlab
+##' @title Export data from reconstruction data files to MATLAB
 ##' @param tldir The top level of the directory tree through which to
 ##' recurse
 ##' @author David Sterratt
@@ -429,7 +433,7 @@ retistruct.batch.analyse.summary <- function(path) {
   sdat$age <- sub(".*adult.*", "adult", sdat$age)
   sdat$age[grepl(".{6}", sdat$age)] <- NA
   sdat$age <- ordered(sdat$age, c(unique(sort(as.numeric(sdat$age))), "adult"))
-  ## print(factor(sdat$age))
+  ## factor(sdat$age))
   ## print(sort(as.numeric(factor(sdat$age))))
   ## levels(sdat$age) <- sub("(\\d+)", "P\\1", levels(sdat$age))
   levels(sdat$age) <- sub("adult", "A", levels(sdat$age))

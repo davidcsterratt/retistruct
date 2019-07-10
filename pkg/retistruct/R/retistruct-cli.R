@@ -37,7 +37,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
 }
 
 ##' This function processes a \code{dataset}, saving the
-##' reconstruction data and matlab export data to the \code{dataset}
+##' reconstruction data and MATLAB export data to the \code{dataset}
 ##' directory and printing figures to \code{outputdir}.
 ##'
 ##' @title Process a dataset, saving results to disk
