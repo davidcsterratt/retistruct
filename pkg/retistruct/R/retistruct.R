@@ -184,6 +184,7 @@ retistruct.check.markup <- function(o) {
 ##' @author David Sterratt
 ##' @export
 retistruct.read.recdata <- function(o, check=TRUE) {
+  r <- NULL
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
     load(recfile)                       # This puts r in the environment
