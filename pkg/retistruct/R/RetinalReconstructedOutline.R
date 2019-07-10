@@ -12,6 +12,7 @@
 RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
   inherit = ReconstructedOutline,
   public = list(
+    EOD = NULL,
     ## @method getIms retinalReconstructedOutline
     ## @export
     getIms = function() {
@@ -31,6 +32,14 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
         }
       }
       return(Tss)
+    },
+    reconstruct = function(...) {
+      super$reconstruct(...)
+      OD <- self$getFeatureSet("LandmarkSet")$getFeature("OD")
+      if (!is.null(OD)) {
+        ODmean <- karcher.mean.sphere(OD)
+        self$EOD <- 90 + ODmean["phi"] * 180/pi
+      }
     }
   )
 )
@@ -116,6 +125,16 @@ projection.RetinalReconstructedOutline <-
       }
     }
 
+    if (grouped) {
+      message("Plotting counts")
+      fs <- r$getFeatureSet("CountSet")
+      if (!is.null(fs)) {
+        projection.ReconstructedCountSet(fs,
+                                         projection=projection,
+                                         phi0=r$phi0, ids=ids, ...)
+      }
+    }
+    
     ## KDE
     if (datapoint.contours) {
       fs <- r$getFeatureSet("PointSet")

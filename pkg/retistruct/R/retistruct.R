@@ -271,19 +271,16 @@ retistruct.reconstruct <- function(o, report=NULL,
                 dev.polar=dev.polar,
                 ...)
   if (!is.null(r)) {
-    ## r <- ReconstructedDataset(r, report=report)
-    ## if (!is.na(getLandmarkID(r, "OD"))) {
-    ##   SssMean <- getSssMean(r)
-    ##   r$EOD <- 90 + SssMean[["OD"]][1,"phi"] * 180/pi
-    ## }
-    ## report(paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
-    ##              ";", r$nflip, "flipped triangles. OD displacement:",
-    ##              format(r$EOD, 2),
-    ##              "degrees."))
-        
-    ## r <- RetinalReconstructedOutline(r, report=report)
-    ## r <- RetinalReconstructedDataset(r, report=report)
-    r$report("")
+    repstr <- paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
+                    ";", r$nflip, "flipped triangles.")
+    if (is.null(r$EOD)) {
+      repstr <- paste(repstr, "OD not marked up.")
+    } else {
+      repstr <- paste(repstr, "OD displacement:",
+                      format(r$EOD, 2),
+                      "degrees.")
+    }
+    r$report(repstr)      
   }
   return(r)
 }

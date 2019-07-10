@@ -553,7 +553,6 @@ retistruct <- function() {
                ids=gWidgets2::svalue(g.ids),
                max.proj.dim=max.proj.dim)
     
-    ## FIXME: EOD not computed
     if (!is.null(r$EOD)) {
       polartext(paste("OD displacement:",
                       format(r$EOD, digits=3, nsmall=2), "deg"))
