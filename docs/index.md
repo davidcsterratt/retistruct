@@ -124,6 +124,16 @@ If you encounter issues using Retistruct please either:
 
 ## Updates
 
+July 2019
+: Retistruct 0.6.0 is out. The big change in this version is a
+complete refactor of the code, which should enable future enhancements
+to happen more quickly. The stitching algorithm is improved. There are
+major improvments in image rendering, which should be a lot faster
+thanks to the tsearch algorithm in 0.4.x of the geometry package, and
+able to deal with high-resolution images. See the
+[NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS)
+for more information.
+
 July 2017
 : Retistruct 0.5.11 is out. The CSV input format can now take a file of counts (or "grouped") data and there are a number of bug fixes; see the [NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS) for more information.
 
@@ -143,9 +153,16 @@ tested by Daniel Lyngholm and Ian Thompson at the <a
 href="http://www.kcl.ac.uk/depsta/biomedical/mrc/">MRC Centre for
 Developmental Neurobiology, KCL</a>.
 
-This work was supported by a Programme Grant from the <a
-href="http://www.wellcome.ac.uk">Wellcome Trust</a> (G083305).
+The development of the initial version of Retistruct was supported by
+a Programme Grant from the UK <a
+href="http://www.wellcome.ac.uk">Wellcome Trust</a> (G083305) from
+2008-2013.
 
+Improvements to image handing and refactoring the code (released in
+v0.6.0) were supported by The Jackson Laboratory (Bar Harbor, ME, USA)
+Scientific Services Innovation Fund from 2016-2017 and an NIH R21
+grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+Laboratory.
 
 <!--  LocalWords:  Retistruct retistruct Sterratt Willshaw Blog blog
  -->

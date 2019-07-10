@@ -31,7 +31,6 @@ Roadmap
 
 Here are a number of improvements on the horizon. Retistruct is not my main work at present, so improvements may take some time. Nevertheless, if there's something you'd like implemented, please let me know.
 
-* v0.6.x: Major refactor using R6 classes, much improved stitching algorithm
 * v0.7.x: Automatic rim angle determination
 
 Funding Acknowldegements
