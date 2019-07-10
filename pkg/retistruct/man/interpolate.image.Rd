@@ -10,7 +10,7 @@ interpolate.image(im, P, invert.y = FALSE)
 \item{im}{image to interpolate}
 
 \item{P}{N by 2 matrix of x, y values at which to interpolate. x
-is in range [0, ncol(im)] and y is in range [0, nrow(im)]}
+is in range \code{[0, ncol(im)]} and y is in range \code{[0, nrow(im)]}}
 
 \item{invert.y}{If \code{FALSE} (the default), the y coordinate is
 zero at the top of the image. \code{TRUE} the zero y coordinate

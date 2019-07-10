@@ -2,25 +2,25 @@
 % Please edit documentation in R/geometry.R
 \name{sphere.cart.to.sphere.dualwedge}
 \alias{sphere.cart.to.sphere.dualwedge}
-\title{Convert from Cartesian to 'dualwedge' coordinates}
+\title{Convert from Cartesian to \sQuote{dual-wedge} coordinates}
 \usage{
 sphere.cart.to.sphere.dualwedge(P, phi0, R = 1)
 }
 \arguments{
 \item{P}{locations of points on sphere as N-by-3 matrix with
-labelled columns "X", "Y" and "Z"}
+labelled columns \code{X}, \code{Y} and \code{Z}}
 
 \item{phi0}{rim angle as colatitude}
 
 \item{R}{radius of sphere}
 }
 \value{
-2-column Matrix of 'wedge' coordinates of points on
+2-column Matrix of \sQuote{wedge} coordinates of points on
 sphere. Column names are \code{phi} and \code{lambda}.
 }
 \description{
 Convert points in 3D cartesian space to locations of points on
-sphere in 'dualwedge' coordinates (\var{fx}, \var{fy}).  Wedges
+sphere in \sQuote{dual-wedge} coordinates (\var{fx}, \var{fy}).  Wedges
 are defined by planes inclined at angle running through a line
 between poles on the rim above the x axis or the y-axis.  \var{fx}
 and \var{fy} are the fractional distances along the circle defined

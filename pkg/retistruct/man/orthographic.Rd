@@ -7,7 +7,7 @@
 orthographic(r, proj.centre = cbind(phi = 0, lambda = 0), ...)
 }
 \arguments{
-\item{r}{Lattitude-longitude coordinates in a matrix with columns
+\item{r}{Latitude-longitude coordinates in a matrix with columns
 labelled \code{phi} (latitude) and \code{lambda} (longitude)}
 
 \item{proj.centre}{Location of centre of projection as matrix with

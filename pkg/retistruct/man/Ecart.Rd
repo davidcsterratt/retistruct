@@ -21,7 +21,7 @@ Ecart(P, Cu, L, T, A, R, alpha = 1, x0, nu = 1, verbose = FALSE)
 
 \item{alpha}{Area penalty scaling coefficient}
 
-\item{x0}{Area penalty cutoff coefficient}
+\item{x0}{Area penalty cut-off coefficient}
 
 \item{nu}{Power to which to raise area}
 

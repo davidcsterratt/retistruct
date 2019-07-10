@@ -59,7 +59,7 @@ tri.area <- function(P, Pt) {
   return(abs(tri.area.signed(P, Pt)))
 }
 
-##' This uses l'Hullier's theorem to compute the spherical excess and
+##' This uses L'Hullier's theorem to compute the spherical excess and
 ##' hence the area of the spherical triangle.
 ##' 
 ##' @title Area of triangles on a sphere
@@ -204,9 +204,10 @@ remove.identical.consecutive.rows <- function(P) {
 ##' parameter d. If the distance l B'D is less than 2d, the distance
 ##' B'C' is l/2.
 ##'
-##' @title Remove intersections between adjacent segments in a closed path
+##' @title Remove intersections between adjacent segments in a closed
+##'   path
 ##' @param P The points, as a 2-column matrix
-##' @param d Criterion for maximum distance when points are inser
+##' @param d Criterion for maximum distance when points are inserted
 ##' @return A new closed path without intersections
 ##' @author David Sterratt
 ##' @export
@@ -669,18 +670,18 @@ sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
 }
 
 ##' Convert points in 3D cartesian space to locations of points on
-##' sphere in 'dualwedge' coordinates (\var{fx}, \var{fy}).  Wedges
+##' sphere in \sQuote{dual-wedge} coordinates (\var{fx}, \var{fy}).  Wedges
 ##' are defined by planes inclined at angle running through a line
 ##' between poles on the rim above the x axis or the y-axis.  \var{fx}
 ##' and \var{fy} are the fractional distances along the circle defined
 ##' by the intersection of this plane and the curtailed sphere.
 ##'
-##' @title Convert from Cartesian to 'dualwedge' coordinates
+##' @title Convert from Cartesian to \sQuote{dual-wedge} coordinates
 ##' @param P locations of points on sphere as N-by-3 matrix with
-##' labelled columns "X", "Y" and "Z"
+##' labelled columns \code{X}, \code{Y} and \code{Z}
 ##' @param phi0 rim angle as colatitude
 ##' @param R radius of sphere 
-##' @return 2-column Matrix of 'wedge' coordinates of points on
+##' @return 2-column Matrix of \sQuote{wedge} coordinates of points on
 ##' sphere. Column names are \code{phi} and \code{lambda}.
 ##' @export
 ##' @author David Sterratt
@@ -715,7 +716,7 @@ central.angle <- function(phi1, lambda1, phi2, lambda2) {
 }
 
 ##' The Karcher mean of a set of points on a manifold is defined as
-##' the point whose sum of squared Riemmann distances to the points is
+##' the point whose sum of squared Riemann distances to the points is
 ##' minimal. On a sphere using spherical coordinates this distance
 ##' can be computed using the formula for central angle.
 ##'
@@ -811,7 +812,7 @@ create.polar.cart.grid <- function(pa, res, phi0) {
   return(list(s=gs, c=gc, xs=xs, ys=ys))
 }
 
-##' Arclength of a parabola y=x^2/4f
+##' Arc length of a parabola y=x^2/4f
 ##' @param x1 x co-ordinate of start of arc
 ##' @param x2 x co-ordinate of end of arc
 ##' @param f focal length of parabola
@@ -826,7 +827,7 @@ parabola.arclength <- function(x1, x2, f) {
   return(s)
 }
 
-##' Inverse arclength of a parabola y=x^2/4f
+##' Inverse arc length of a parabola y=x^2/4f
 ##' @param x1 co-ordinate of start of arc
 ##' @param s length of parabola arc to follow
 ##' @param f focal length of parabola

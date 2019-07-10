@@ -1,5 +1,5 @@
 ##' Sinusoidal projection
-##' @param r Lattitude-longitude coordinates in a matrix with columns
+##' @param r Latitude-longitude coordinates in a matrix with columns
 ##' labelled \code{phi} (latitude) and \code{lambda}
 ##' (longitude). Alternatively string "boundary", indicating that
 ##' boundary of projection should be drawn.
@@ -38,7 +38,7 @@ sinusoidal <- function(r, proj.centre=cbind(phi=0, lambda=0),
 }
 
 ##' Orthographic projection
-##' @param r Lattitude-longitude coordinates in a matrix with columns
+##' @param r Latitude-longitude coordinates in a matrix with columns
 ##' labelled \code{phi} (latitude) and \code{lambda} (longitude)
 ##' @param proj.centre Location of centre of projection as matrix with
 ##' column names \code{phi} (elevation) and \code{lambda} (longitude).

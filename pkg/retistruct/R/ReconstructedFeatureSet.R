@@ -1,5 +1,5 @@
 ##' ReconstructedFeatureSet class
-##' Initialised with a FeatureSet (fs) and an ReconstructedOutline (ro) object
+##' Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object
 ##' @return A \code{ReconstructedFeatureSet} object.
 ##' @author David Sterratt
 ##' @export

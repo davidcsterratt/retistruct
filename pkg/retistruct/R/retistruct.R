@@ -75,7 +75,7 @@ retistruct.read.dataset <- function(dataset, report=message, ...) {
 ##' \item{iD}{Index in \code{P} of dorsal point, or \code{NA} if not marked}
 ##' \item{iOD}{Index in \code{Ss} of optic disc }
 ##' \item{phi0}{Angle of rim in degrees}
-##' \item{DVflip}{Boolean variable indicating if DV axis has been flipped}
+##' \item{DVflip}{Boolean variable indicating if dorsoventral (DV) axis has been flipped}
 ##' @author David Sterratt
 ##' @importFrom utils read.csv 
 ##' @export
@@ -339,7 +339,7 @@ retistruct.save.recdata <- function(r) {
 ##' @title Save reconstruction data in MATLAB format
 ##' @param r \code{\link{RetinalReconstructedOutline}} object
 ##' @param filename Filename of output file. If not specified, is
-##'   \code{r.mat} in the same directory as thie input files
+##'   \code{r.mat} in the same directory as the input files
 ##' @author David Sterratt
 ##' @export
 retistruct.export.matlab <- function(r, filename=NULL) {

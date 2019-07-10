@@ -6,27 +6,29 @@
 \usage{
 retistruct.batch(tldir = ".", outputdir = tldir, datasets = NULL,
   device = "pdf", titrate = FALSE, cpu.time.limit = 3600,
-  mc.cores = getOption("cores"))
+  mc.cores = getOption("mc.cores", 2L))
 }
 \arguments{
 \item{tldir}{If datasets is not specified, the top level of the
-directory tree through which to recurse in order to find datasets.}
+directory tree through which to recurse in order to find
+datasets.}
 
 \item{outputdir}{directory in which to dump a log file and images}
 
 \item{datasets}{Vector of dataset directories to reconstruct}
 
 \item{device}{string indicating what type of graphics output
-required. Options are "pdf" and "png".}
+required. Options are \code{"pdf"} and \code{"png"}.}
 
 \item{titrate}{Whether to "titrate" the reconstruction for
-different values of \code{phi0}. See \code{titrate.reconstructedOutline}.}
+different values of \code{phi0}. See
+\code{titrate.reconstructedOutline}.}
 
 \item{cpu.time.limit}{amount of CPU after which to terminate the
 process}
 
-\item{mc.cores}{The number of cores to use. Defaults to the total
-number available.}
+\item{mc.cores}{The number of cores to use. Defaults to the value
+given by the option \code{mc.cores}}
 }
 \description{
 This function reconstructs a number of  datasets, using the R

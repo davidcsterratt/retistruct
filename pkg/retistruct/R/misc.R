@@ -36,10 +36,10 @@ stdnames <- function(l) {
   return(ll)
 }
 
-##' Return a new version of the list in which any un-named elements
+##' Return a new version of the list in which any unnamed elements
 ##' have been given standardised names
 ##' 
-##' @param l the list with un-named elements 
+##' @param l the list with unnamed elements 
 ##' @return The list with standardised names
 ##' @author David Sterratt
 name.list <- function(l) {
@@ -50,7 +50,7 @@ name.list <- function(l) {
 }
 
 ##' Parse dependencies
-##' @param deps Text produced by, e.g., installed.packages()["packagename","Suggests"]
+##' @param deps Text produced by, e.g., \code{installed.packages()["packagename","Suggests"]}
 ##' @return Table with package column, relationship column and version number
 ##' @author David Sterratt
 parse.dependencies <- function(deps) {
@@ -68,7 +68,7 @@ parse.dependencies <- function(deps) {
 ##' Interpolate values in image
 ##' @param im image to interpolate
 ##' @param P N by 2 matrix of x, y values at which to interpolate. x
-##'   is in range [0, ncol(im)] and y is in range [0, nrow(im)]
+##'   is in range \code{[0, ncol(im)]} and y is in range \code{[0, nrow(im)]}
 ##' @param invert.y If \code{FALSE} (the default), the y coordinate is
 ##'   zero at the top of the image. \code{TRUE} the zero y coordinate
 ##'   is at the bottom.

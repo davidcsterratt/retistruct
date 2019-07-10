@@ -74,7 +74,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## }
     ## @param n Number of points in triangulation.
     ## @param alpha Area scaling coefficient
-    ## @param x0 Area cutoff coefficient
+    ## @param x0 Area cut-off coefficient
     ## @param plot.3d Whether to show 3D picture during optimisation.
     ## @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
     ## means no plotting.
@@ -508,7 +508,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## @title Optimise mapping
     ## @param r reconstructedOutline object
     ## @param alpha Area penalty scaling coefficient
-    ## @param x0 Area penalty cutoff coefficient
+    ## @param x0 Area penalty cut-off coefficient
     ## @param nu Power to which to raise area
     ## @param method Method to pass to \code{optim}
     ## @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
@@ -706,7 +706,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
 ##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
 ##' of gridlines from the spherical retina (described by points
-##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cutoff
+##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cut-off
 ##' point \code{phi0}) onto a flattened retina (described by points
 ##' \code{P} and triangulation \code{T}).
 ##'
@@ -1011,8 +1011,8 @@ projection.ReconstructedOutline <- function(r,
         ## inds <- (k - 1)*(M + 1)*C + (1:((M + 1)*(Ci + 1)))
         l0 <-  (j0 - 1)*(M + 1) + 1
         l1 <- j1*(M + 1) + (M + 1)
-        print(paste("k =", k, "; Ck =", Ck, "; j0 =", j0, "; j1 =", j1,
-                    "; l0 =", l0, "; l1 =", l1))
+        ## print(paste("k =", k, "; Ck =", Ck, "; j0 =", j0, "; j1 =", j1,
+        ##             "; l0 =", l0, "; l1 =", l1))
         inds <- l0:l1
         rc <- projection(
           rotate.axis(

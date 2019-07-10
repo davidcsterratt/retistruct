@@ -15,7 +15,7 @@ Rcart(P, R, Rset, i0, phi0, lambda0)
 
 \item{i0}{Index of fixed point}
 
-\item{phi0}{Cutoff of curtailed sphere in radians}
+\item{phi0}{Cut-off of curtailed sphere in radians}
 
 \item{lambda0}{Longitude of fixed point on rim}
 }

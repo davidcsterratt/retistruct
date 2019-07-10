@@ -8,7 +8,7 @@ sinusoidal(r, proj.centre = cbind(phi = 0, lambda = 0),
   lambdalim = NULL, lines = FALSE, ...)
 }
 \arguments{
-\item{r}{Lattitude-longitude coordinates in a matrix with columns
+\item{r}{Latitude-longitude coordinates in a matrix with columns
 labelled \code{phi} (latitude) and \code{lambda}
 (longitude). Alternatively string "boundary", indicating that
 boundary of projection should be drawn.}

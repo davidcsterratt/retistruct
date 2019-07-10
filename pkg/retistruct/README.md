@@ -1,4 +1,4 @@
-Funding Acknowldegements
+Funding Acknowledgements
 ========================
 
 The development of the initial version of Retistruct was supported by

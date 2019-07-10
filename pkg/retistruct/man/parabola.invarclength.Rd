@@ -2,7 +2,7 @@
 % Please edit documentation in R/geometry.R
 \name{parabola.invarclength}
 \alias{parabola.invarclength}
-\title{Inverse arclength of a parabola y=x^2/4f}
+\title{Inverse arc length of a parabola y=x^2/4f}
 \usage{
 parabola.invarclength(x1, s, f)
 }
@@ -17,7 +17,7 @@ parabola.invarclength(x1, s, f)
 x co-ordinate of end of arc
 }
 \description{
-Inverse arclength of a parabola y=x^2/4f
+Inverse arc length of a parabola y=x^2/4f
 }
 \author{
 David Sterratt

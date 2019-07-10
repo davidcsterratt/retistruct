@@ -38,7 +38,7 @@ dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N, alpha = 1,
 
 \item{alpha}{Area penalty scaling coefficient}
 
-\item{x0}{Area penalty cutoff coefficient}
+\item{x0}{Area penalty cut-off coefficient}
 
 \item{nu}{Power to which to raise area}
 

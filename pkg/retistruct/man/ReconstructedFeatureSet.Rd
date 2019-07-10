@@ -3,20 +3,18 @@
 \docType{data}
 \name{ReconstructedFeatureSet}
 \alias{ReconstructedFeatureSet}
-\title{ReconstructedFeatureSet class}
+\title{ReconstructedFeatureSet class
+Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object}
 \format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{
 ReconstructedFeatureSet
 }
 \value{
-An \code{ReconstructedFeatureSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
+A \code{ReconstructedFeatureSet} object.
 }
 \description{
 ReconstructedFeatureSet class
+Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object
 }
 \author{
 David Sterratt

@@ -94,7 +94,7 @@ compute.areas <- function(phi, lambda, T, R) {
 ##'
 ##' @title Piecewise smooth function used in area penalty
 ##' @param x Main argument
-##' @param x0 The cutoff parameter. Above this value the function is zero.
+##' @param x0 The cut-off parameter. Above this value the function is zero.
 ##' @return The value of the function.
 ##' @author David Sterratt
 f <- function(x, x0) {
@@ -115,7 +115,7 @@ f <- function(x, x0) {
 ##'
 ##' @title Piecewise smooth function used in area penalty
 ##' @param x Main argument
-##' @param x0 The cutoff parameter. Above this value the function is zero.
+##' @param x0 The cut-off parameter. Above this value the function is zero.
 ##' @return The value of the function.
 ##' @author David Sterratt
 fp <- function(x, x0) {
@@ -154,7 +154,7 @@ fp <- function(x, x0) {
 ##' @param Nphi Number of free values of \code{phi}
 ##' @param N Number of points in sphere
 ##' @param alpha Area scaling coefficient
-##' @param x0 Area cutoff coefficient
+##' @param x0 Area cut-off coefficient
 ##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A single value, representing the energy of this particular
@@ -201,7 +201,7 @@ E <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' @param Nphi Number of free values of \code{phi}
 ##' @param N Number of points in sphere
 ##' @param alpha Area penalty scaling coefficient
-##' @param x0 Area penalty cutoff coefficient
+##' @param x0 Area penalty cut-off coefficient
 ##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A vector representing the derivative of the energy of this
@@ -257,7 +257,7 @@ dE <- function(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N,
 ##' @param A Area of each triangle in the flattened outline
 ##' @param R Radius of sphere
 ##' @param alpha Area penalty scaling coefficient
-##' @param x0 Area penalty cutoff coefficient
+##' @param x0 Area penalty cut-off coefficient
 ##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A single value, representing the energy of this particular
@@ -306,7 +306,7 @@ Ecart <- function(P, Cu, L, T, A, R,
 ##' @param A Area of each triangle in the flattened outline
 ##' @param R Radius of sphere
 ##' @param alpha Area penalty scaling coefficient
-##' @param x0 Area penalty cutoff coefficient
+##' @param x0 Area penalty cut-off coefficient
 ##' @param nu Power to which to raise area
 ##' @param verbose How much information to report
 ##' @return A vector representing the derivative of the energy of this
@@ -381,7 +381,7 @@ Fcart <- function(P, C, L, T, A, R,
 ##' @param R Radius of sphere
 ##' @param Rset Indices of points on rim
 ##' @param i0 Index of fixed point
-##' @param phi0 Cutoff of curtailed sphere in radians
+##' @param phi0 Cut-off of curtailed sphere in radians
 ##' @param lambda0 Longitude of fixed point on rim
 ##' @return Points projected back onto sphere
 ##' @author David Sterratt

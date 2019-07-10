@@ -11,7 +11,7 @@ StitchedOutline
 \value{
 \item{\code{Rset}}{the set of points on the rim}
 \item{\code{i0}}{the index of the landmark}
-\item{\code{P}}{a new set of meshpoints}
+\item{\code{P}}{a new set of mesh points}
 \item{\code{V0}}{indices of the apex of each tear}
 \item{\code{VF}}{indices of the forward vertex of each tear}
 \item{\code{VB}}{indices of the backward vertex of each tear}

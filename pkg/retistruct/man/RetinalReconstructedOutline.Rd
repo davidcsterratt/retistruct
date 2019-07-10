@@ -15,7 +15,7 @@ to it.
 }
 \description{
 Create an object that is specific to retinal datasets. This
-contains methods that return datapoint and landmark coordinates
+contains methods that return data point and landmark coordinates
 that have been transformed according to the values of
 \code{DVflip} and \code{side}.
 }

@@ -20,7 +20,7 @@ o \code{RetinalDataset} object
 \item{iD}{Index in \code{P} of dorsal point, or \code{NA} if not marked}
 \item{iOD}{Index in \code{Ss} of optic disc }
 \item{phi0}{Angle of rim in degrees}
-\item{DVflip}{Boolean variable indicating if DV axis has been flipped}
+\item{DVflip}{Boolean variable indicating if dorsoventral (DV) axis has been flipped}
 }
 \description{
 Read the markup data contained in the files \file{markup.csv},

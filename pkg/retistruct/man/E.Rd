@@ -38,7 +38,7 @@ E(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N, alpha = 1,
 
 \item{alpha}{Area scaling coefficient}
 
-\item{x0}{Area cutoff coefficient}
+\item{x0}{Area cut-off coefficient}
 
 \item{nu}{Power to which to raise area}
 

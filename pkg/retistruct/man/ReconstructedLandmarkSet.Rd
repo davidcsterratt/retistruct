@@ -9,11 +9,8 @@
 ReconstructedLandmarkSet
 }
 \value{
-An \code{ReconstructedLandmarkSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
+An \code{ReconstructedLandmarkSet} object, which inherits
+  from ReconstructedFeatureSet
 }
 \description{
 ReconstructedLandmarkSet class

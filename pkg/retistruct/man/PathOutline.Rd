@@ -23,7 +23,7 @@ indexed by \code{VF1}. The other is stitched in the backward
 direction from \code{VB0} to \code{VB1}. Each point in the subpath
 is linked to points in the opposing pathway at an equal or
 near-equal fraction along. If a point exists in the opposing
-pathway wihtin a distance \code{epsilon} of the projection, this
+pathway within a distance \code{epsilon} of the projection, this
 point is connected. If no point exists within this tolerance, a
 new point is created.
 }

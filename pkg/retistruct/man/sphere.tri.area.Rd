@@ -23,7 +23,7 @@ triangulation}
 Vectors of areas of triangles in units of steradians
 }
 \description{
-This uses l'Hullier's theorem to compute the spherical excess and
+This uses L'Hullier's theorem to compute the spherical excess and
 hence the area of the spherical triangle.
 }
 \examples{

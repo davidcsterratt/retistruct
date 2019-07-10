@@ -1,5 +1,5 @@
 ##' Create an object that is specific to retinal datasets. This
-##' contains methods that return datapoint and landmark coordinates
+##' contains methods that return data point and landmark coordinates
 ##' that have been transformed according to the values of
 ##' \code{DVflip} and \code{side}.
 ##'
@@ -38,7 +38,7 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
       OD <- self$getFeatureSet("LandmarkSet")$getFeature("OD")
       if (!is.null(OD)) {
         ODmean <- karcher.mean.sphere(OD)
-        self$EOD <- 90 + ODmean["phi"] * 180/pi
+        self$EOD <- 90 + ODmean["phi"]*180/pi
       }
     },
     featureSetTransform = function(Ps) {
@@ -51,7 +51,7 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
 )
 
 ##' Plot projection of reconstructed dataset
-##' @param r \code{\link{ReconstructedDataset}} object
+##' @param r \code{\link{RetinalReconstructedOutline}} object
 ##' @param transform Transform function to apply to spherical coordinates
 ##' before rotation
 ##' @param projection Projection in which to display object,
@@ -72,7 +72,7 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
 ##' @param grid If \code{TRUE}, show grid lines
 ##' @param image If \code{TRUE}, show the reconstructed image
 ##' @param ids IDs of groups of data within a dataset, returned using
-##' \code{\link{getIDs}}.
+##' \code{getIDs}.
 ##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection RetinalReconstructedOutline
 ##' @export

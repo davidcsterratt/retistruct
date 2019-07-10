@@ -7,7 +7,7 @@
 parse.dependencies(deps)
 }
 \arguments{
-\item{deps}{Text produced by, e.g., installed.packages()["packagename","Suggests"]}
+\item{deps}{Text produced by, e.g., \code{installed.packages()["packagename","Suggests"]}}
 }
 \value{
 Table with package column, relationship column and version number

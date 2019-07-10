@@ -145,8 +145,8 @@ plot.Outline <- function(x, ...) {
 ##' @param scalebar If  numeric and if the Outline has a \code{scale}
 ##' field, a scale bar of length \code{scalebar} mm is plotted.  If
 ##' \code{scalebar} is \code{FALSE} or there is no scale information
-##' in the \code{\link{Outline}} \code{x}  the scale bar is suppressed.
-##' @param rimset If \code{TRUE}, plot the points computed to be in the rim in the colour specified by the option rimset.col
+##' in the \code{\link{Outline}} \code{x} the scale bar is suppressed.
+##' @param rimset If \code{TRUE}, plot the points computed to be in the rim in the colour specified by the option \code{rimset.col}
 ##' @param pids If \code{TRUE}, plot point IDs
 ##' @param pid.joggle Amount to joggle point IDs by randomly
 ##' @param lwd.outline Line width of outline

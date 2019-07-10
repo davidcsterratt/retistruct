@@ -23,7 +23,7 @@ mean and variance in elements \code{mean} and \code{var}.
 }
 \description{
 The Karcher mean of a set of points on a manifold is defined as
-the point whose sum of squared Riemmann distances to the points is
+the point whose sum of squared Riemann distances to the points is
 minimal. On a sphere using spherical coordinates this distance
 can be computed using the formula for central angle.
 }

@@ -26,7 +26,7 @@ latitude and longitude}
 \description{
 Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
 of gridlines from the spherical retina (described by points
-\code{phi}, \code{lambda} and triangulation \code{Tt} and cutoff
+\code{phi}, \code{lambda} and triangulation \code{Tt} and cut-off
 point \code{phi0}) onto a flattened retina (described by points
 \code{P} and triangulation \code{T}).
 }

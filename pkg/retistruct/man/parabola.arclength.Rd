@@ -2,7 +2,7 @@
 % Please edit documentation in R/geometry.R
 \name{parabola.arclength}
 \alias{parabola.arclength}
-\title{Arclength of a parabola y=x^2/4f}
+\title{Arc length of a parabola y=x^2/4f}
 \usage{
 parabola.arclength(x1, x2, f)
 }
@@ -17,7 +17,7 @@ parabola.arclength(x1, x2, f)
 length of parabola arc
 }
 \description{
-Arclength of a parabola y=x^2/4f
+Arc length of a parabola y=x^2/4f
 }
 \author{
 David Sterratt
