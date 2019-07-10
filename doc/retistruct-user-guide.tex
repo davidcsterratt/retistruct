@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\newcommand{\svninfo}{Retistruct version: 0.5.11 , Date: 2017-07-15}
+\newcommand{\svninfo}{Retistruct version: 0.6.0 , Date: 2019-07-09}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -434,21 +434,22 @@ the user manual has more information about this.
 \begin{table}[p]
   \begin{tabularx}{\linewidth}{p{1.2in}X}
     \hline \texttt{phi0} & The latitude of the rim, expressed in
-    radians
+    degrees
     \\
-    \texttt{Dss.green}, \texttt{Dss.red} & Locations of green (red)
-    labelled cell bodies in spherical coordinates. The first column
+    \texttt{Dss} & Structure containing locations of labelled cell bodies in spherical coordinates. The first column
     contains the latitude of each point, measured in radians. The
     second column contains the
     longitude of each point, measured in radians. \\
-    \texttt{DssMean.green}, \texttt{DssMean.red} & Location of Karcher
+    \texttt{DssMean} & Location of Karcher
     mean of green-labelled cell bodies in spherical coordinates. The
     first column contains the latitude of each point, measured in
     radians. The second column contains the
-    longitude of each point, measured in radians. \\
-    \texttt{DssHullarea.green}, \texttt{DssHullarea.red} & Area of
-    convex hull of green (red) points on sphere. The convex hull is
-    essentially a polygon drawn around data points. \\
+    longitude of each point, measured in radians. A value of
+                            $-2147483648$ corresponds to NA in R. \\
+    \texttt{DssHullarea}, & Structure containing area of
+    convex hull of points on sphere. The convex hull is
+    essentially a polygon drawn around data points. A value of
+                            $-2147483648$ corresponds to NA in R. \\
     \texttt{Tss} & A structure in which each element contains
     spherical coordinates (in the same latitude-longitude format as
     above) of a tear. \\
