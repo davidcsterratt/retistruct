@@ -350,9 +350,9 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
   ## Method 1: Just keep data from complete squares. This has the
   ## advantage of simplicity, but may lead to problems with
   ## contouring if the data is not surrounded by enough 0s.
-  Gs <- list(green =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALGRE"]),
-             red   =cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
-             double=cbind(sys[ci,"XGRIDCOO"], sys[ci,"YGRIDCOO"], sys[ci,"TOTALDOU"]))
+  Gs <- list(green =cbind(X=sys[ci,"XGRIDCOO"], Y=sys[ci,"YGRIDCOO"], C=sys[ci,"TOTALGRE"]),
+             red   =cbind(X=sys[ci,"XGRIDCOO"], Y=sys[ci,"YGRIDCOO"], C=sys[ci,"TOTALRED"] + sys[ci,"TOTALDOU"]),
+             double=cbind(X=sys[ci,"XGRIDCOO"], Y=sys[ci,"YGRIDCOO"], C=sys[ci,"TOTALDOU"]))
 
   ## ## Method 2: Remove data from incomplete squares within convex
   ## ## hull of data. This has the advantage that 0s from incomplete
@@ -382,6 +382,7 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
 
   o$addFeatureSet(PointSet$new(data=Ds, cols=cols))
   o$addFeatureSet(LandmarkSet$new(data=Ss, cols=cols))
+  o$addFeatureSet(CountSet$new(data=Gs, cols=cols))
   ## d <- Dataset(o, dataset, Ds, Ss, cols=cols, raw=list(map=map, sys=sys), Gs=Gs)
   return(o)
 }

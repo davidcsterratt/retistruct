@@ -37,17 +37,12 @@ flatplot.RetinalOutline <- function(x, axt="n", ylim=NULL,
     }
   }
   
-  ## if (grouped) {
-  ##   Gs <- x$Gs
-  ##   for (id in ids) {
-  ##     if (!is.null(Gs[[id]])) {
-  ##       if (nrow(Gs[[id]]) > 0) {
-  ##         text(Gs[[id]][,1], Gs[[id]][,2], Gs[[id]][,3],
-  ##              col=x$cols[[id]])
-  ##       }
-  ##     }
-  ##   }
-  ## }
+  if (grouped) {
+    fs <- x$getFeatureSet("CountSet")
+    if (!is.null(fs)) {
+      flatplot(fs, ...)
+    }
+  }
 
   if (landmarks) {
     fs <- x$getFeatureSet("LandmarkSet")

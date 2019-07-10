@@ -39,21 +39,23 @@ test_that("FeatureSets work correctly when read from file", {
   dataset <- file.path(system.file(package = "retistruct"), "extdata", "GM114-4-RC")
   a <- retistruct.read.dataset(dataset)
   a <- retistruct.read.markup(a)
-  ## A point set and a Landmark set should be returned
-  expect_equal(length(a$getFeatureSets()), 2)
-  expect_equal(a$getFeatureSetTypes(), c("PointSet", "LandmarkSet"))
+  ## A PointSet a LandmarkSet and a CountSet should be returned
+  expect_equal(length(a$getFeatureSets()), 3)
+  expect_equal(a$getFeatureSetTypes(), c("PointSet", "LandmarkSet", "CountSet"))
   expect_true(inherits(a$getFeatureSet("PointSet"), "PointSet"))
   expect_true(inherits(a$getFeatureSet("LandmarkSet"), "LandmarkSet"))
+  expect_true(inherits(a$getFeatureSet("CountSet"), "CountSet"))
 
   r <- retistruct.reconstruct(a)
   ## FIXME - get retistruct.read.recdata() working
   ## r <- retistruct.read.recdata(a)
 
-  ## A point set and a Landmark set should be returned
+  ## A ReconstructedPointSet a ReconstructedLandmarkSet and a ReconstructedCountSet should be returned
+  expect_equal(length(r$getFeatureSets()), 3)
+  expect_equal(r$getFeatureSetTypes(), c("ReconstructedPointSet", "ReconstructedLandmarkSet", "ReconstructedCountSet"))
   expect_true(inherits(r$getFeatureSet("PointSet"), "ReconstructedPointSet"))
   expect_true(inherits(r$getFeatureSet("LandmarkSet"), "ReconstructedLandmarkSet"))
-  expect_equal(length(r$getFeatureSets()), 2)
-  expect_equal(r$getFeatureSetTypes(), c("ReconstructedPointSet", "ReconstructedLandmarkSet"))
+  expect_true(inherits(r$getFeatureSet("CountSet"), "ReconstructedCountSet"))
 
   ## Retistruct v0.5.x and earlier: Dss <- getDss(r)
   Dss <- r

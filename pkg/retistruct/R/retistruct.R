@@ -364,29 +364,25 @@ retistruct.export.matlab <- function(r) {
     return(KDE)
   }
 
-  if (!is.null(r$dataset)) {
-    if (!is.null(r)) {
-      f <- file.path(r$dataset, "r.mat")
-      message(paste("Saving", f))
-      KDE <- unlist.kernel.estimate(r$getFeatureSet("PointSet")$getKDE())
-      ## FIXME: Issue #25: Implement KR
-      ## KR <-  unlist.kernel.estimate(getKR(r))
-      R.matlab::writeMat(f,
-                         phi0=r$phi0*180/pi,
-                         Dss=r$getFeatureSet("PointSet")$Ps,
-                         DssMean=r$getFeatureSet("PointSet")$getMean(),
-                         DssHullarea=na.omit(r$getFeatureSet("PointSet")$getHullarea()),
-                         Sss=name.list(r$getFeatureSet("PointSet")$Ps),
-                         Tss=name.list(r$getTearCoords()),
-                         KDE=KDE,
-                         ## FIXME: Issue #25: Implement KR
-                         ## KR=KR,
-                         side=as.character(r$side), DVflip=r$DVflip,
-                         ## FIXME: Issue #25: Implement Wedge coords
-                         ## Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}),
-                         ## Dsdw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.dualwedge(x, r$phi0 + pi/2, r$R)})
-                         )
-    }
+  if (!is.null(r)) {
+    filename <- file.path(r$ol$dataset, "r.mat")
+    message(paste("Saving", filename))
+    KDE <- unlist.kernel.estimate(r$getFeatureSet("PointSet")$getKDE())
+    KR <-  unlist.kernel.estimate(getKR(r))
+    R.matlab::writeMat(filename,
+                       phi0=r$ol$phi0*180/pi,
+                       Dss=r$getFeatureSet("PointSet")$Ps,
+                       DssMean=r$getFeatureSet("PointSet")$getMean(),
+                       DssHullarea=r$getFeatureSet("PointSet")$getHullarea(),
+                       Sss=r$getFeatureSet("PointSet")$Ps,
+                       Tss=r$getTearCoords(),
+                       KDE=KDE,
+                       KR=KR,
+                       side=as.character(r$ol$side), DVflip=r$ol$DVflip
+                       ## FIXME: Issue #25: Implement Wedge coords
+                       ## Dsw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.wedge(x, r$phi0 + pi/2, r$R)}),
+                       ## Dsdw=lapply(r$Dsc, function(x) {sphere.cart.to.sphere.dualwedge(x, r$phi0 + pi/2, r$R)})
+                       )
   }
 }
 

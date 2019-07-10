@@ -44,6 +44,30 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
   )
 )
 
+##' Plot projection of reconstructed dataset
+##' @param r \code{\link{ReconstructedDataset}} object
+##' @param transform Transform function to apply to spherical coordinates
+##' before rotation
+##' @param projection Projection in which to display object,
+##' e.g. \code{\link{azimuthal.equalarea}} or \code{\link{sinusoidal}}
+##' @param axisdir Direction of axis (North pole) of sphere in external space
+##' @param proj.centre Location of centre of projection as matrix with
+##' column names \code{phi} (elevation) and \code{lambda} (longitude).
+##' @param lambdalim Limits of longitude (in degrees) to display
+##' @param datapoints If \code{TRUE}, display data points
+##' @param datapoint.means If \code{TRUE}, display Karcher mean of data points.
+##' @param datapoint.contours If \code{TRUE}, display contours around
+##' the data points generated using Kernel Density Estimation.
+##' @param grouped If \code{TRUE}, display grouped data.
+##' @param grouped.contours If \code{TRUE}, display contours around
+##' the grouped data generated using Kernel Regression.
+##' @param landmarks If \code{TRUE}, display landmarks.
+##' @param mesh If \code{TRUE}, display the triangular mesh used in reconstruction
+##' @param grid If \code{TRUE}, show grid lines
+##' @param image If \code{TRUE}, show the reconstructed image
+##' @param ids IDs of groups of data within a dataset, returned using
+##' \code{\link{getIDs}}.
+##' @param ... Graphical parameters to pass to plotting functions
 ##' @method projection RetinalReconstructedOutline
 ##' @export
 projection.RetinalReconstructedOutline <-
@@ -57,6 +81,7 @@ projection.RetinalReconstructedOutline <-
            datapoint.means=TRUE,
            datapoint.contours=FALSE,
            grouped=FALSE,
+           grouped.contours=FALSE,
            landmarks=TRUE,
            mesh=FALSE,
            grid=TRUE,
@@ -86,9 +111,11 @@ projection.RetinalReconstructedOutline <-
                image=image)
 
 
-    ## Plot feature sets
+    ## Plot FeatureSets
+    
+    ## Datapoints
     if (datapoints) {
-      message("Plotting datapoints")
+      message("Plotting points")
       fs <- r$getFeatureSet("PointSet")
       if (!is.null(fs)) {
         projection.ReconstructedPointSet(fs,
@@ -99,6 +126,7 @@ projection.RetinalReconstructedOutline <-
 
     ## Mean datapoints
     if (datapoint.means) {
+      message("Plotting point means")
       fs <- r$getFeatureSet("PointSet")
       if (!is.null(fs)) {
         Dss.mean <- fs$getMean()
@@ -114,17 +142,8 @@ projection.RetinalReconstructedOutline <-
         }
       }
     }
-    
-    if (landmarks) {
-      message("Plotting landmarks")
-      fs <- r$getFeatureSet("LandmarkSet")
-      if (!is.null(fs)) {
-        projection.ReconstructedLandmarkSet(fs,
-                                            projection=projection,
-                                            phi0=r$phi0, ids=ids, ...)
-      }
-    }
 
+    ## Count sets, formerly known as groups 
     if (grouped) {
       message("Plotting counts")
       fs <- r$getFeatureSet("CountSet")
@@ -137,6 +156,7 @@ projection.RetinalReconstructedOutline <-
     
     ## KDE
     if (datapoint.contours) {
+      message("Plotting point contours")
       fs <- r$getFeatureSet("PointSet")
       if (!is.null(fs)) {
         k <- fs$getKDE()
@@ -169,6 +189,53 @@ projection.RetinalReconstructedOutline <-
         }
       }
     }
+
+    ## KR
+    if (grouped.contours) {
+      message("Plotting count contours")
+      fs <- r$getFeatureSet("CountSet")
+      if (!is.null(fs)) {
+        k <- fs$getKR()
+        for (id in ids) {
+          if (!is.null(k[[id]])) {
+            css <- k[[id]]$contours
+            for(cs in css) {
+              lines(projection(rotate.axis(transform(cs,
+                                                     phi0=r$phi0),
+                                           axisdir*pi/180),
+                               lambdalim=lambdalim*pi/180,
+                               lines=TRUE,
+                               proj.centre=pi/180*proj.centre),
+                    col=fs$cols[[id]])
+            }
+            ## FIXME: contours need to be labelled
+          }
+        }
+        ## Plot locations of highest contours
+        for (id in ids) {
+          if (!is.null(k[[id]])) {
+            points(projection(rotate.axis(transform(k[[id]]$maxs,
+                                                    phi0=r$phi0),
+                                          axisdir*pi/180),
+                              proj.centre=pi/180*proj.centre),
+                   pch=23, cex=1, lwd=1,
+                   col="black", bg=fs$cols[[id]])
+          }
+        }
+      }
+    }
+
+    ## Landmarks
+    if (landmarks) {
+      message("Plotting landmarks")
+      fs <- r$getFeatureSet("LandmarkSet")
+      if (!is.null(fs)) {
+        projection.ReconstructedLandmarkSet(fs,
+                                            projection=projection,
+                                            phi0=r$phi0, ids=ids, ...)
+      }
+    }
+
     
     NextMethod(projection=projection,
                philim=philim,

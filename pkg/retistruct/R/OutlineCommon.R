@@ -20,7 +20,7 @@ OutlineCommon <- R6Class("OutlineCommon",
       self$featureSets = list()
     },
     getIDs = function() {
-      return(unlist(sapply(self$getFeatureSets(), function(fs) { fs$getIDs() })))
+      return(unique(unlist(sapply(self$getFeatureSets(), function(fs) { fs$getIDs() }))))
     },
     getFeatureSetTypes = function() {
       return(sapply(self$getFeatureSets(), function(fs) return(fs$type)))
