@@ -5,7 +5,6 @@
 ##' @author David Sterratt
 ##' @export
 checkDatadir <- function(dir=NULL) {
-  ## FIXME: enable all formats
   if (idt.checkDatadir(dir))   { return("idt") }
   if (csv.checkDatadir(dir))   { return("csv") }
   if (ijroi.checkDatadir(dir)) { return("ijroi") }
@@ -130,7 +129,6 @@ retistruct.read.markup <- function(a, error=stop) {
       a$setFixedPoint(M["iN"], "Nasal")
     }
     a$phi0 <- M["phi0"]*pi/180
-    ## FIXME: implement landmarks
     if ("iOD" %in% names(M)) {
       a$getFeatureSet("LandmarkSet")$setName(M["iOD"], "OD")
     }
@@ -184,6 +182,7 @@ retistruct.check.markup <- function(o) {
 ##' @author David Sterratt
 ##' @export
 retistruct.read.recdata <- function(o, check=TRUE) {
+  ## FIXME: Issue #27: Saving and reading recddata need to be reviewed
   r <- NULL
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
@@ -204,17 +203,9 @@ retistruct.read.recdata <- function(o, check=TRUE) {
         return(NULL)
       } 
     }
-    ## Otherwise regenerate data derived from dataset, such as KDE and
-    ## KR; this was not stored by retistruct.recdata.save()
-    ## FIXME: This should be deleted when recfile.version is next incremented
-    if (is.null(r$KDE) | is.null(r$KR)) {
-      ## FIXME: Read KDE
-      ## r <- ReconstructedDataset(r)
-      ## r <- RetinalReconstructedDataset(r)
-    }
-
+    
     ## Make sure the dataset information isn't overwritten
-    r$dataset <- o$dataset
+    ## r$dataset <- o$dataset
     return(r)
   }
   return(NULL)
@@ -323,6 +314,7 @@ retistruct.save.markup <- function(a) {
 ##' @author David Sterratt
 ##' @export
 retistruct.save.recdata <- function(r) {
+  ## FIXME: Issue #27: Saving and reading recddata need to be reviewed
   if (!is.null(r$ol$dataset)) {
     ## Save the derived data
     ## r$version <- recfile.version        # Datafile version

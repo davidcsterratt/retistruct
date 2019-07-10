@@ -260,7 +260,6 @@ retistruct <- function() {
       N <- N +  nrow(Ss[[i]])
     }
     ## Set "OD" landmark
-    ## FIXME: implement nameLandmark()
     fs$setName(i, "OD")
 
     ## Update IDs panel
@@ -299,7 +298,8 @@ retistruct <- function() {
     if (is.null(r)) {
       unlink(file.path(a$dataset, "r.Rdata"))
     } else {
-      retistruct.save.recdata(r)
+      ## FIXME: Issue #27: Saving and reading recddata need to be reviewed
+      ## retistruct.save.recdata(r)
     }
     retistruct.export.matlab(r)
     unsaved.data(FALSE)
@@ -347,7 +347,7 @@ retistruct <- function() {
     gWidgets2::svalue(g.data) <-  ifelse (a$DVflip, "Flip DV", "")
     
     ## Read the reconstruction data
-    ## FIXME: Implement retistruct.read.recdata()
+    ## FIXME: Issue #27: Saving and reading recddata need to be reviewed    
     ## withCallingHandlers({
     ##   r <<- retistruct.read.recdata(a, check=TRUE)
     ## }, warning=h.warning, error=h.error)
