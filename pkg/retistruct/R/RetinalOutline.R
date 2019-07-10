@@ -15,7 +15,7 @@ RetinalOutline <- R6Class("RetinalOutline",
     initialize = function(..., dataset=NULL) {
       super$initialize(...)
       self$dataset <- dataset
-  }
+    }
   )
 )
 
@@ -27,7 +27,14 @@ flatplot.RetinalOutline <- function(x, axt="n", ylim=NULL,
   ## This will call projection.reconstructedOutline(), and hence
   ## Outline(), but without drawing a grid.  The grid will be drawn
   ## later, after all the data has appeared.
-  NextMethod(grid=FALSE)
+  if (x$DVflip) {
+    if (is.null(ylim)) {
+      ylim <- c(max(x$getPoints()[,"Y"]), min(x$getPoints()[,"Y"]))
+    } else {
+      ylim <- sort(ylim, TRUE)
+    }
+  }
+  NextMethod(grid=FALSE, ylim=ylim)
 
   ## Plot feature sets
   if (datapoints) {

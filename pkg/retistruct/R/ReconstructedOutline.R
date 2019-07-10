@@ -61,6 +61,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     immask = NULL,
     report = NULL,
     debug = NULL,
+    ## Optional function to transform FeatureSets linked to this outline
+    featureSetTransform = function(fs) { return(fs) },
     ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
     ## \item{\code{P}}{outline points as N-by-2 matrix}
     ## \item{\code{V0}}{indices of the apex of each tear}

@@ -40,6 +40,12 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
         ODmean <- karcher.mean.sphere(OD)
         self$EOD <- 90 + ODmean["phi"] * 180/pi
       }
+    },
+    featureSetTransform = function(Ps) {
+      if (self$ol$DVflip) {
+        Ps[,"lambda"] <- -Ps[,"lambda"]
+      }
+      return(Ps)
     }
   )
 )

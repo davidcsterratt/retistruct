@@ -344,6 +344,7 @@ retistruct <- function() {
     gWidgets2::svalue(g.win)   <- paste(version.string(), "-" ,a$dataset)
     gWidgets2::svalue(g.phi0d) <- a$phi0*180/pi
     gWidgets2::svalue(g.eye)   <- a$side
+    gWidgets2::svalue(g.data) <-  ifelse (a$DVflip, "Flip DV", "")
     
     ## Read the reconstruction data
     ## FIXME: Implement retistruct.read.recdata()

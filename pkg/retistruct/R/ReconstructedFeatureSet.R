@@ -1,9 +1,6 @@
 ##' ReconstructedFeatureSet class
-##' @return An \code{ReconstructedFeatureSet} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' Initialised with a FeatureSet (fs) and an ReconstructedOutline (ro) object
+##' @return A \code{ReconstructedFeatureSet} object.
 ##' @author David Sterratt
 ##' @export
 ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
@@ -18,7 +15,6 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
       self$ro <- ro
       self$type <- paste0("Reconstructed", fs$type)
       ro$report(paste("Inferring coordinates of", fs$type))
-      Ps <- list() # Datapoints on reconstructed sphere in spherical coordinates
       if (!is.null(fs$data) & (length(fs$data) > 0)) {
 
         ## Meshpoints in Cartesian coordinates
@@ -55,7 +51,7 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
       if (is.na(self$getID(name))) {
         return(NULL)
       }
-      return(self$Ps[[name]])
+      return(self$ro$featureSetTransform(self$Ps[[name]]))
     },
     getCol = function(id) {
       if (id %in% names(self$cols)) {

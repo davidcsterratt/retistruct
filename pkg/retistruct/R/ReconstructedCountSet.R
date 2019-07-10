@@ -64,14 +64,14 @@ projection.ReconstructedCountSet <-
   ## as appeared..
   ## Datapoints
   for (id in ids) {
-    if (!is.null(r$Ps[[id]])) {
-      if (nrow(r$Ps[[id]]) > 0) {
-        rc <- projection(rotate.axis(transform(r$Ps[[id]][,c("phi", "lambda")],
+    if (!is.null(r$getFeature(id))) {
+      if (nrow(r$getFeature(id)) > 0) {
+        rc <- projection(rotate.axis(transform(r$getFeature(id)[,c("phi", "lambda")],
                                                phi0=r$phi0),
                                      axisdir*pi/180),
                          proj.centre=pi/180*proj.centre)
         
-        text(rc[,"x"], rc[,"y"], r$Ps[[id]][,"C"],
+        text(rc[,"x"], rc[,"y"], r$getFeature(id)[,"C"],
              col=r$cols[[id]],
              ...)
       }

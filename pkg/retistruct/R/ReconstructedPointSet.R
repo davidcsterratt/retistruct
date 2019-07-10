@@ -231,8 +231,8 @@ projection.ReconstructedPointSet <-
   ## as appeared..
   ## Datapoints
   for (id in ids) {
-    if (!is.null(r$Ps[[id]])) {
-      points(projection(rotate.axis(transform(r$Ps[[id]], phi0=phi0),
+    if (!is.null(r$getFeature(id))) {
+      points(projection(rotate.axis(transform(r$getFeature(id), phi0=phi0),
                                     axisdir*pi/180),
                         proj.centre=pi/180*proj.centre),
              col=r$cols[[id]],

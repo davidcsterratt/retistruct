@@ -1,9 +1,6 @@
 ##' ReconstructedLandmarkSet class
-##' @return An \code{ReconstructedLandmarkSet} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' @return An \code{ReconstructedLandmarkSet} object, which inherits
+##'   from ReconstructedFeatureSet
 ##' @author David Sterratt
 ##' @export
 ReconstructedLandmarkSet <- R6Class("ReconstructedLandmarkSet",
