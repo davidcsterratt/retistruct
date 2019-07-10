@@ -21,7 +21,6 @@ projection.ReconstructedLandmarkSet <-
            lambdalim=c(-180, 180),
            ...)
 {
-  print(ids)
   for (id in ids) {
     if (!is.null(r$getFeature(id))) {
       lines(projection(rotate.axis(transform(r$getFeature(id),
