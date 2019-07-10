@@ -1132,45 +1132,47 @@ projection.ReconstructedOutline <- function(r,
     }
   }
 
-  ## Longitude labels around rim - not on actual frame of reference!
-  if (!is.null(labels)) {
-    ## Longitudes (meridians) at which to plot at
-    angles <- seq(0, by=2*pi/length(labels), len=length(labels))
+  if (grid) {  
+    ## Longitude labels around rim - not on actual frame of reference!
+    if (!is.null(labels)) {
+      ## Longitudes (meridians) at which to plot at
+      angles <- seq(0, by=2*pi/length(labels), len=length(labels))
 
-    ## This is a nasty hack: we want to find out how far to plot the
-    ## labels from the rim. We can't do this simply in terms of
-    ## angles, so we have to find the right angular distance to give
-    ## the desired fraction of the axes at which to plot the
-    ## labels. This is done by this optimisation function.
-    label.fax <- 0.02                   # Fraction of axis length from axes to plot labels
-    opt <- stats::optimise(function(a) {
-      rs0 <- cbind(phi=r$phi0,     lambda=angles[1])
-      rs  <- cbind(phi=r$phi0 + a, lambda=angles[1])
-      rc0 <- projection(rotate.axis(transform(rs0, phi0=r$phi0),
-                                    axisdir*pi/180),
-                        proj.centre=pi/180*proj.centre)
-      rc  <- projection(rotate.axis(transform(rs, phi0=r$phi0),
-                                    axisdir*pi/180),
-                        proj.centre=pi/180*proj.centre)
-      return((vecnorm(rc - rc0) - label.fax*abs(diff(xlim)))^2)
+      ## This is a nasty hack: we want to find out how far to plot the
+      ## labels from the rim. We can't do this simply in terms of
+      ## angles, so we have to find the right angular distance to give
+      ## the desired fraction of the axes at which to plot the
+      ## labels. This is done by this optimisation function.
+      label.fax <- 0.02                   # Fraction of axis length from axes to plot labels
+      opt <- stats::optimise(function(a) {
+        rs0 <- cbind(phi=r$phi0,     lambda=angles[1])
+        rs  <- cbind(phi=r$phi0 + a, lambda=angles[1])
+        rc0 <- projection(rotate.axis(transform(rs0, phi0=r$phi0),
+                                      axisdir*pi/180),
+                          proj.centre=pi/180*proj.centre)
+        rc  <- projection(rotate.axis(transform(rs, phi0=r$phi0),
+                                      axisdir*pi/180),
+                          proj.centre=pi/180*proj.centre)
+        return((vecnorm(rc - rc0) - label.fax*abs(diff(xlim)))^2)
+      }
+     ,interval=c(1, 20)*pi/180)
+      lambda.label.off <- opt$minimum
+
+      ## Now plot the labels themselves. Phew!!
+      rs <- cbind(phi=r$phi0 + lambda.label.off, lambda=angles)
+      rc <- projection(rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180),
+                       proj.centre=pi/180*proj.centre)
+      text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
     }
-                                ,interval=c(1, 20)*pi/180)
-    lambda.label.off <- opt$minimum
 
-    ## Now plot the labels themselves. Phew!!
-    rs <- cbind(phi=r$phi0 + lambda.label.off, lambda=angles)
-    rc <- projection(rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180),
-                     proj.centre=pi/180*proj.centre)
-    text(rc[,"x"], rc[,"y"], labels, xpd=TRUE)
+    ## Latitude Labels
+    ## rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
+    rlabels <- phis.maj
+    rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
+    rc <- projection(rs, proj.centre=pi/180*proj.centre)
+    text(rc[,"x"], rc[,"y"], rlabels + ifelse(colatitude, 90, 0),
+         xpd=TRUE, adj=c(1, 1), col=grid.maj.col)
   }
-
-  ## Latitude Labels
-  ## rlabels <- c(seq(philim[1], philim[2], by=grid.int.major))
-  rlabels <- phis.maj
-  rs <- cbind(phi=rlabels*pi/180, lambda=proj.centre[1,"lambda"])
-  rc <- projection(rs, proj.centre=pi/180*proj.centre)
-  text(rc[,"x"], rc[,"y"], rlabels + ifelse(colatitude, 90, 0),
-       xpd=TRUE, adj=c(1, 1), col=grid.maj.col)
 }
 
 ##' @export
