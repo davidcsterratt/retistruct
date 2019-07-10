@@ -331,10 +331,11 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
     stop("Inconsistent BOXSIZEX; cannot determine scale")
   }
   bsx <- sapply(sys["BOXSIZEX"], mean, na.rm=TRUE)
-  scale <- c(bsx/200)
+  scale <- bsx/200
+  names(scale) <- NULL
   
   ## Create Outline object
-  o <- RetinalOutline$new(P, scale=scale["Scale"], units=scale["Units"],
+  o <- RetinalOutline$new(P, scale=scale, units="um",
                           dataset=dataset, report=report)
   
   ## Check that P is more-or-less closed

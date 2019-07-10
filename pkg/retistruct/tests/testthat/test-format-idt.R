@@ -20,4 +20,5 @@ test_that("IDT format is read correctly", {
 
   colnames(od) <- c("X", "Y")
   expect_that(r$getFeatureSet("LandmarkSet")$getFeature("OD"), equals(od))
+  expect_that(r$scale, equals(0.7))
 })
