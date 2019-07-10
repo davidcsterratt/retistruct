@@ -338,9 +338,11 @@ retistruct.save.recdata <- function(r) {
 ##'
 ##' @title Save reconstruction data in MATLAB format
 ##' @param r \code{\link{RetinalReconstructedOutline}} object
+##' @param filename Filename of output file. If not specified, is
+##'   \code{r.mat} in the same directory as thie input files
 ##' @author David Sterratt
 ##' @export
-retistruct.export.matlab <- function(r) {
+retistruct.export.matlab <- function(r, filename=NULL) {
   ## writeMat() doesn't seem to cope with hierarchical structures, so
   ## we have to unlist the KDE and KR objects using this function
   unlist.kernel.estimate <- function(KDE) {
@@ -365,10 +367,18 @@ retistruct.export.matlab <- function(r) {
   }
 
   if (!is.null(r)) {
-    filename <- file.path(r$ol$dataset, "r.mat")
+    if (is.null(filename)) {
+      filename <- file.path(r$ol$dataset, "r.mat")
+    }
     message(paste("Saving", filename))
-    KDE <- unlist.kernel.estimate(r$getFeatureSet("PointSet")$getKDE())
-    KR <-  unlist.kernel.estimate(getKR(r))
+    KDE <- NULL
+    if (!is.null(r$getFeatureSet("PointSet"))) {
+      KDE <- unlist.kernel.estimate(r$getFeatureSet("PointSet")$getKDE())
+    }
+    KR <- NULL
+    if (!is.null(r$getFeatureSet("CountSet"))) {
+      KR <-  unlist.kernel.estimate(r$getFeatureSet("CountSet")$getKR())
+    }
     R.matlab::writeMat(filename,
                        phi0=r$ol$phi0*180/pi,
                        Dss=r$getFeatureSet("PointSet")$Ps,

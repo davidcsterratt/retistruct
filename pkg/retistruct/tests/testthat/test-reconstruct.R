@@ -11,9 +11,9 @@ test_that("Reconstruct SMI32", {
   projection(r)
   dev.off()    
   
-  ## ## Save as matlab
-  ## r$dataset <- tempdir()
-  ## retistruct.export.matlab(r)
+  ## Save as matlab
+  filename <-  file.path(tempdir(), "r.mat")
+  retistruct.export.matlab(r, filename)
 
   ## ## These values obtained from Retistruct 0.5.10, scaled now due to
   ## ## scale being applied before reconstruction
