@@ -130,7 +130,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## }
 
       ## Check for flipped triangles and record initial number
-      ft <- flipped.triangles(self$phi, self$lambda, self$Tt, self$R)
+      ft <- flipped.triangles(self$getPoints(), self$Tt, self$R)
       self$nflip0 <- sum(ft$flipped)
 
       self$report("Optimising mapping with no area constraint using BFGS...")
@@ -452,7 +452,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                  alpha=0,  N=Nt, x0=x0, nu=nu,
                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
 
-        ft <- flipped.triangles(phi, lambda, Tt, R)
+        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
         nflip <- sum(ft$flipped)
         self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip & self$debug) {
@@ -538,7 +538,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
       ## Optimisation and plotting
       opt <- list()
-      opt$x <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+      opt$x <- sphere.spherical.to.sphere.cart(cbind(phi=phi, lambda=lambda), R)
       opt$conv <- 1
 
       ## Compute "mass" for each node
@@ -569,7 +569,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         s <- sphere.cart.to.sphere.spherical(opt$x, R)
         phi <-    s[,"phi"]
         lambda <- s[,"lambda"]
-        ft <- flipped.triangles(phi, lambda, Tt, R)
+        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
         nflip <- sum(ft$flipped)
         self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip) {

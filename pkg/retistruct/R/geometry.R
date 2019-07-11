@@ -308,16 +308,16 @@ compute.intersections.sphere <- function(phi, lambda, T, n, d) {
 ##' points in 3D cartesian space
 ##'
 ##' @title Convert from spherical to Cartesian coordinates
-##' @param phi vector of latitudes of N points
-##' @param lambda vector of longitudes of N points
-##' @param R radius of sphere 
+##' @param Ps N-by-2 matrix with columns containing latitudes
+##'   (\code{phi}) and longitudes (\code{lambda}) of N points
+##' @param R radius of sphere
 ##' @return An N-by-3 matrix in which each row is the cartesian (X, Y,
-##' Z) coordinates of each point
+##'   Z) coordinates of each point
 ##' @author David Sterratt
-sphere.spherical.to.sphere.cart <- function(phi, lambda, R=1) {
-  P <- cbind(R*cos(phi)*cos(lambda),
-             R*cos(phi)*sin(lambda),
-             R*sin(phi))
+sphere.spherical.to.sphere.cart <- function(Ps, R=1) {
+  P <- cbind(R*cos(Ps[,"phi"])*cos(Ps[,"lambda"]),
+             R*cos(Ps[,"phi"])*sin(Ps[,"lambda"]),
+             R*sin(Ps[,"phi"]))
   colnames(P) <- c("X", "Y", "Z")
   return(P)
 }
@@ -351,7 +351,7 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
   }
 
   ## Find 3D coordinates of mesh points
-  P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+  P <- sphere.spherical.to.sphere.cart(cbind(phi=phi, lambda=lambda), R)
 
   ## Now find locations cc of datapoints in Cartesian coordinates  
   for(i in 1:nrow(cb$p)) {
@@ -553,7 +553,7 @@ azel.to.sphere.colatitude <- function(r, r0) {
 ##' @export
 rotate.axis <- function(r, r0) {
   ## Find cartesian coordinates of points on sphere
-  P <- sphere.spherical.to.sphere.cart(r[,"phi"], r[,"lambda"])
+  P <- sphere.spherical.to.sphere.cart(r)
 
   ## If we are not changing the longitude of the main axis, do nothing
   ## apart from convert back to spherical coordinates, which has the

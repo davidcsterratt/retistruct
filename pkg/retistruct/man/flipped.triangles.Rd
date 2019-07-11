@@ -4,12 +4,11 @@
 \alias{flipped.triangles}
 \title{Determine indices of triangles that are flipped}
 \usage{
-flipped.triangles(phi, lambda, Tt, R)
+flipped.triangles(Ps, Tt, R)
 }
 \arguments{
-\item{phi}{Vector of latitudes of points}
-
-\item{lambda}{Vector of longitudes of points}
+\item{Ps}{N-by-2 matrix with columns containing latitudes
+(\code{phi}) and longitudes (\code{lambda}) of N points}
 
 \item{Tt}{Triangulation of points}
 

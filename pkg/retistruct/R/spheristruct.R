@@ -441,8 +441,8 @@ flipped.triangles.cart <- function(P, Tt, R) {
 ##' product of two sides of the triangle.
 ##'
 ##' @title Determine indices of triangles that are flipped
-##' @param phi Vector of latitudes of points
-##' @param lambda Vector of longitudes of points
+##' @param Ps N-by-2 matrix with columns containing latitudes
+##'   (\code{phi}) and longitudes (\code{lambda}) of N points
 ##' @param Tt Triangulation of points
 ##' @param R Radius of sphere
 ##' @return List containing:
@@ -450,11 +450,6 @@ flipped.triangles.cart <- function(P, Tt, R) {
 ##' \item{\code{cents}}{Vectors of centres.}
 ##' \item{\code{areas}}{Areas of triangles.}
 ##' @author David Sterratt
-flipped.triangles <- function(phi, lambda, Tt, R) {
-  return(flipped.triangles.cart(sphere.spherical.to.sphere.cart(phi, lambda, R), Tt, R))
+flipped.triangles <- function(Ps, Tt, R=1) {
+  return(flipped.triangles.cart(sphere.spherical.to.sphere.cart(Ps, R), Tt, R))
 }
-
-
-
-
-

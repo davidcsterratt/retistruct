@@ -44,8 +44,8 @@ kde.fhat.cart <- function(r, mu, kappa) {
 ##' @author David Sterratt
 ##' @export
 kde.fhat <- function(r, mu, kappa) {
-  return(kde.fhat.cart(sphere.spherical.to.sphere.cart(r[,"phi"],  r[,"lambda"]),
-                       sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]),
+  return(kde.fhat.cart(sphere.spherical.to.sphere.cart(r),
+                       sphere.spherical.to.sphere.cart(mu),
                        kappa))
 }
 
@@ -78,7 +78,7 @@ kde.L <- function(mu, kappa) {
 ##' @author David Sterratt
 ##' @export
 kde.compute.concentration <- function(mu) {
-  mu.cart <- sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]) 
+  mu.cart <- sphere.spherical.to.sphere.cart(mu)
   opt <- stats::optimise(function(kappa) {kde.L(mu.cart, kappa)}, interval=c(0, 500),
                          maximum=TRUE)
   return(opt$maximum)
@@ -95,8 +95,8 @@ kde.compute.concentration <- function(mu) {
 ##' @author David Sterratt
 ##' @export
 kr.yhat <- function(r, mu, y, kappa) {
-  return(kr.yhat.cart(sphere.spherical.to.sphere.cart(r[,"phi"],  r[,"lambda"]),
-                      sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]),
+  return(kr.yhat.cart(sphere.spherical.to.sphere.cart(r),
+                      sphere.spherical.to.sphere.cart(mu),
                       y,
                       kappa))
 }
@@ -158,7 +158,7 @@ kr.sscv <- function(mu, y, kappa) {
 ##' @author David Sterratt
 ##' @export
 kr.compute.concentration <- function(mu, y) {
-  mu.cart <- sphere.spherical.to.sphere.cart(mu[,"phi"], mu[,"lambda"]) 
+  mu.cart <- sphere.spherical.to.sphere.cart(mu)
   opt <- stats::optimise(function(kappa) {kr.sscv(mu.cart, y, kappa)}, interval=c(0, 500),
                          maximum=FALSE)
   return(opt$minimum)
