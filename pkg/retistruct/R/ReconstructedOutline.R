@@ -467,11 +467,18 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         lambda       <- rep(lambda0, Nt)
         lambda[-i0t] <- opt$p[Nphi+1:(Nt-1)]
 
+        self$phi <- phi
+        self$lambda <- lambda
+        self$opt <- opt
+        self$nflip <- sum(ft$flipped)
+        self$E.tot <- E.tot
+        self$E.l <- E.l
+        self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
+        self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
+      
         ## Plot
         if (plot.3d) {
-          sphericalplot(list(phi=phi, lambda=lambda, R=R,
-                             Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
-                        datapoints=FALSE)
+          sphericalplot(self, datapoints=FALSE, strain=TRUE)
         }
 
         if (!is.na(dev.flat)) {
@@ -486,22 +493,11 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
           self$ims <- NULL
           self$clearFeatureSets()
           dev.set(dev.polar)
-          self$phi <- phi
-          self$lambda <- lambda
           projection(self, mesh=TRUE, 
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
         }
       }
-
-      self$phi <- phi
-      self$lambda <- lambda
-      self$opt <- opt
-      self$nflip <- sum(ft$flipped)
-      self$E.tot <- E.tot
-      self$E.l <- E.l
-      self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
-      self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
     },
     ## Optimise the mapping from the flat outline to the sphere
     ##
@@ -698,6 +694,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     },
     reconstructFeatureSets = function() {
       self$featureSets <- lapply(self$ol$getFeatureSets(), function(x) x$reconstruct(self))
+    },
+    getPoints = function() {
+      return(cbind(phi=self$phi, lambda=self$lambda))
     }
   )
 )
@@ -1218,83 +1217,82 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
 ##' @param strain If \code{TRUE}, plot the strain
 ##' @param surf If \code{TRUE}, plot the surface
 ##' @param ... Other graphics parameters -- not used at present
-##' @method sphericalplot reconstructedOutline
+##' @method sphericalplot ReconstructedOutline
 ##' @author David Sterratt
 ##' @import rgl
 ##' @export
-sphericalplot.reconstructedOutline <- function(r,
+sphericalplot.ReconstructedOutline <- function(r,
                                                strain=FALSE,
                                                surf=TRUE, ...) {
-  NextMethod()
+  print("sphericalplot.ReconstructedOutline")
+  ## Obtain Cartesian coordinates of points
+  Ps <- r$getPoints()
+  P <- sphere.spherical.to.sphere.cart(Ps)
+  rgl.clear()
+  if (surf) {
+    ## Outer triangles
+    fac <- 1.005
+    triangles3d(matrix(fac*P[t(r$Tt[,c(2,1,3)]),1], nrow=3),
+                matrix(fac*P[t(r$Tt[,c(2,1,3)]),2], nrow=3),
+                matrix(fac*P[t(r$Tt[,c(2,1,3)]),3], nrow=3),
+                color="darkgrey", alpha=1)
+    
+    ## Inner triangles
+    triangles3d(matrix(P[t(r$Tt),1], nrow=3),
+                matrix(P[t(r$Tt),2], nrow=3),
+                matrix(P[t(r$Tt),3], nrow=3),
+                color="white", alpha=1)
+  }
   
-  ## FIXME: This needs to be looked at with a view to replacing
-  ## functions in plots.R
-  with(r, {
-    ## Obtain Cartesian coordinates of points
-    P <- sphere.spherical.to.sphere.cart(phi, lambda, R)
+  ## Plot any flipped triangles
+  ft <- flipped.triangles(Ps, r$Tt)
+  with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
+                    col="blue", size=5))
 
-    if (surf) {
-      ## Outer triangles
-      fac <- 1.005
-      triangles3d(matrix(fac*P[t(Tt[,c(2,1,3)]),1], nrow=3),
-                  matrix(fac*P[t(Tt[,c(2,1,3)]),2], nrow=3),
-                  matrix(fac*P[t(Tt[,c(2,1,3)]),3], nrow=3),
-                  color="darkgrey", alpha=1)
-      
-      ## Inner triangles
-      triangles3d(matrix(P[t(Tt),1], nrow=3),
-                  matrix(P[t(Tt),2], nrow=3),
-                  matrix(P[t(Tt),3], nrow=3),
-                  color="white", alpha=1)
-    }
+  ## Shrink so that they appear inside the hemisphere
+  fac <- 0.997
+
+  ht <- r$ht
+  gb <- r$ol$gb
+  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+            lwd=3, color=getOption("TF.col"))
+  
+  fac <- 1.006
+  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+            lwd=3, color=getOption("TF.col"))
+
+  if (strain) {
+    o <- r$getStrains()
+    palette(rainbow(100))
+    scols <- strain.colours(o$spherical$logstrain)
+
+    fac <- 0.999
+    P1 <- fac*P[r$Cut[,1],]
+    P2 <- fac*P[r$Cut[,2],]
     
-    ## Plot any flipped triangles
-    ft <- flipped.triangles(phi, lambda, Tt, R)
-    with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
-                      col="blue", size=5))
+    width <- 0.02
+    ## Compute displacement vector to make sure that strips are
+    ## parallel to surface of sphere
+    d <- extprod3d(P1, P2-P1)
+    d <- width/2*d/vecnorm(d)
+    PA <- P1 - d
+    PB <- P1 + d
+    PC <- P2 + d
+    PD <- P2 - d
 
-    ## Shrink so that they appear inside the hemisphere
-    fac <- 0.997
-    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=getOption("TF.col"))
-    
-    fac <- 1.006
-    rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-              fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-              fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-              lwd=3, color=getOption("TF.col"))
-
-    if (strain) {
-      o <- getStrains(r)
-      palette(rainbow(100))
-      scols <- strain.colours(o$spherical$logstrain)
-
-      fac <- 0.999
-      P1 <- fac*P[Cut[,1],]
-      P2 <- fac*P[Cut[,2],]
-      
-      width <- 40
-      ## Compute displacement vector to make sure that strips are
-      ## parallel to surface of sphere
-      d <- extprod3d(P1, P2-P1)
-      d <- width/2*d/vecnorm(d)
-      PA <- P1 - d
-      PB <- P1 + d
-      PC <- P2 + d
-      PD <- P2 - d
-
-      ## This is a ridiculously inefficient way of drawing the strain,
-      ## but if you try presenting a color vector, it makes each line
-      ## multi-coloured. It has taking HOURS of fiddling round to
-      ## discover this! GRRRRRRRRRRRRRRRRR!
-      for (i in 1:nrow(PA)) {
-        quads3d(rbind(PA[i,1], PB[i,1], PC[i,1], PD[i,1]),
-                rbind(PA[i,2], PB[i,2], PC[i,2], PD[i,2]),
-                rbind(PA[i,3], PB[i,3], PC[i,3], PD[i,3]),
-                color=round(scols[i]), alpha=1)
-      }
+    ## This is a ridiculously inefficient way of drawing the strain,
+    ## but if you try presenting a color vector, it makes each line
+    ## multi-coloured. It has taking HOURS of fiddling round to
+    ## discover this! GRRRRRRRRRRRRRRRRR!
+    for (i in 1:nrow(PA)) {
+      quads3d(rbind(PA[i,1], PB[i,1], PC[i,1], PD[i,1]),
+              rbind(PA[i,2], PB[i,2], PC[i,2], PD[i,2]),
+              rbind(PA[i,3], PB[i,3], PC[i,3], PD[i,3]),
+              color=round(scols[i]), alpha=1)
     }
-  })
+  }
 }

@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.6.1 - Released 2019/07/xx
+
+BUG FIXES
+
+* Reinstated sphericalplot
+  (https://github.com/davidcsterratt/retistruct/issues/28)
+
 CHANGES IN VERSION 0.6.0 - Released 2019/07/10
 
 BUG FIXES
@@ -14,10 +21,10 @@ CODE IMPROVEMENTS
   (https://github.com/davidcsterratt/retistruct/issues/25)
 
 * Stitching algorithm changed so it only creates new points when they
-  lie outwith tolerance a of an existing one. This prevent very short
+  lie outwith tolerance a of an existing one. This prevents very short
   lengths in triangulated outlines.
   (https://github.com/davidcsterratt/retistruct/issues/21) This work
-  arose from the bug with the idefinite determinant (see above).
+  arose from the bug with the indefinite determinant (see above).
 
 NEW FEATURES
 

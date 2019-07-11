@@ -241,4 +241,55 @@ projection.ReconstructedPointSet <-
   }
 }
 
+##' @method sphericalplot ReconstructedPointSet
+sphericalplot.ReconstructedPointSet <- function(r,
+                                                datapoints=TRUE,
+                                                ids=r$getIDs(), ...) {
 
+  print("sphericalplot.ReconstructedPointSet")
+  fs <- r$getFeatureSet("PointSet")
+  if (!is.null(fs)) {
+    size <- 1/10
+    for (id in ids) {
+      if (!is.null(fs$getFeature(id))) {
+        Dc <- sphere.spherical.to.sphere.cart(fs$getFeature(id))
+        if (nrow(Dc) > 0) {
+          
+          ## Find axis in z=0 plane that is orthogonal to projection of
+          ## datapoint onto that plane
+          ax1 <- 1/sqrt(apply(Dc[,1:2,drop=FALSE]^2, 1, sum)) * cbind(-Dc[,2], Dc[,1], 0)
+
+          ax1 <- as.matrix(ax1, ncol=3)
+
+          ## Find axis that is orthogonal to the plane of axis 1 and the
+          ## datapoint
+          ax2 <- extprod3d(Dc, ax1)
+          ax2 <- matrix(ax2, ncol=3)
+
+          ax2 <- ax2/sqrt(apply(ax2^2, 1, sum))
+
+          ## Create the vertices of an equillateral triangle to plot
+          v1 <- Dc + size *  ax1/2
+          v2 <- Dc + size * (-ax1/4 + sqrt(3)/4*ax2)
+          v3 <- Dc + size * (-ax1/4 - sqrt(3)/4*ax2)
+
+          ## Plot the triangle inside and outside the sphere
+          inmag <- 0.98
+          outmag <- 1.02
+          
+          x <- rbind(v2[,1], v1[,1], v3[,1])
+          y <- rbind(v2[,2], v1[,2], v3[,2])
+          z <- rbind(v2[,3], v1[,3], v3[,3])
+          triangles3d(inmag*x, inmag*y, inmag*z, color=fs$cols[[id]])
+
+          x <- rbind(v1[,1], v2[,1], v3[,1])
+          y <- rbind(v1[,2], v2[,2], v3[,2])
+          z <- rbind(v1[,3], v2[,3], v3[,3])
+          triangles3d(outmag*x, outmag*y, outmag*z, color=fs$cols[[id]],
+                      pch=20)
+        }
+      }
+    }
+  }
+}
+  
