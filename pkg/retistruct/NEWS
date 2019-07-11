@@ -5,6 +5,9 @@ BUG FIXES
 * Reinstated sphericalplot
   (https://github.com/davidcsterratt/retistruct/issues/28)
 
+* retistruct.batch.summary() fails on retinae without CountSets
+  (https://github.com/davidcsterratt/retistruct/issues/30)
+
 CHANGES IN VERSION 0.6.0 - Released 2019/07/10
 
 BUG FIXES
