@@ -10,5 +10,6 @@ addons:
       - mesa-common-dev
       - libglu1-mesa-dev
       - libgtk2.0-de
+dist: xenial    
 services:
   - xvfb
