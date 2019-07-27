@@ -258,7 +258,6 @@ projection.RetinalReconstructedOutline <-
 sphericalplot.RetinalReconstructedOutline <- function(r,
                                                       datapoints=TRUE,
                                                       ids=r$getIDs(), ...) {
-  print("sphericalplot.RetinalReconstructedOutline")
   NextMethod()
 
   if (datapoints) {

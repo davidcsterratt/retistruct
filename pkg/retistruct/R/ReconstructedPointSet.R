@@ -246,7 +246,6 @@ sphericalplot.ReconstructedPointSet <- function(r,
                                                 datapoints=TRUE,
                                                 ids=r$getIDs(), ...) {
 
-  print("sphericalplot.ReconstructedPointSet")
   fs <- r$getFeatureSet("PointSet")
   if (!is.null(fs)) {
     size <- 1/10

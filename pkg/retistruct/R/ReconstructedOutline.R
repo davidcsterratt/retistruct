@@ -478,7 +478,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       
         ## Plot
         if (plot.3d) {
-          sphericalplot(self, datapoints=FALSE, strain=TRUE)
+          sphericalplot(self, datapoints=FALSE, strain=FALSE)
         }
 
         if (!is.na(dev.flat)) {
@@ -1224,7 +1224,6 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
 sphericalplot.ReconstructedOutline <- function(r,
                                                strain=FALSE,
                                                surf=TRUE, ...) {
-  print("sphericalplot.ReconstructedOutline")
   ## Obtain Cartesian coordinates of points
   Ps <- r$getPoints()
   P <- sphere.spherical.to.sphere.cart(Ps)
