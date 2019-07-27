@@ -614,8 +614,12 @@ retistruct <- function() {
   }
 
   ## Warning message
+  prior.warnings <- c()
   h.warning <- function(e) {
-    gWidgets2::gmessage(e, title="Warning", icon="warning")
+    if (!(e %in% prior.warnings)) {
+      gWidgets2::gmessage(e, title="Warning", icon="warning")
+      prior.warnings <<- c(prior.warnings, e)
+    }
   }
 
   ## Poperties dialogue
