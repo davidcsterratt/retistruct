@@ -13,6 +13,9 @@ CountSet <- R6Class("CountSet",
       if (!all(sapply(data, function(d) (all(c("C") %in% colnames(d)))))) {
         stop("data argument to CountSet needs column marked C")
       }
+      if (!all(sapply(data, function(d) (ncol(d) == 3)))) {
+        stop("Data must have 3 columns")
+      }
       super$initialize(data, cols, "CountSet")
     },
     reconstruct = function(ro) {

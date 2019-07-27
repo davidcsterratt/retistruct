@@ -21,4 +21,14 @@ test_that("IDT format is read correctly", {
   colnames(od) <- c("X", "Y")
   expect_that(r$getFeatureSet("LandmarkSet")$getFeature("OD"), equals(od))
   expect_that(r$scale, equals(0.7))
+
+  expect_that(r$getFeatureSet("PointSet")$getIDs(), equals(c("green", "red", "double")))
+  expect_true(is.matrix(r$getFeatureSet("PointSet")$getFeature("green")))
+  expect_that(dim(r$getFeatureSet("PointSet")$getFeature("green")), equals(c(169, 2)))
+  expect_that(colnames(r$getFeatureSet("PointSet")$getFeature("green")), equals(c("X", "Y")))
+
+  expect_that(r$getFeatureSet("CountSet")$getIDs(), equals(c("green", "red", "double")))
+  expect_true(is.matrix(r$getFeatureSet("CountSet")$getFeature("green")))
+  expect_that(ncol(r$getFeatureSet("CountSet")$getFeature("green")), equals(3))
+  expect_that(colnames(r$getFeatureSet("CountSet")$getFeature("green")), equals(c("X", "Y", "C")))
 })

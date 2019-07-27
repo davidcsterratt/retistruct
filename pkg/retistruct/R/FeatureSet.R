@@ -61,7 +61,7 @@ FeatureSet <- R6Class("FeatureSet",
       if (is.na(self$getID(name))) {
         return(NULL)
       }
-      return(self$data[[name]][,c("X", "Y")])
+      return(self$data[[name]])
     },
     getFeatures = function() {
       return(self$data)
