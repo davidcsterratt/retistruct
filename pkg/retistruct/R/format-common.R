@@ -36,6 +36,15 @@ read.image <- function(dataset, report=message) {
   return(im)
 }
 
+check.colour <- function(col) {
+  if (!(col %in% colours())) {
+    x11()
+    plotCol(grep("([0-9]|medium|light|dark)", colors(), invert=TRUE, value=TRUE), nrow=20)
+    return(FALSE)
+  }
+  return(TRUE)
+}
+
 ##' Read data points from a file \code{dataponts.csv} in the directory
 ##' \code{dataset}. The CSV should contain two columns for every
 ##' dataset. Each pair of columns must contain a unique name in the
@@ -86,6 +95,9 @@ read.datapoints <- function(dataset) {
       Ds <- c(Ds, D)
 
       col <- names[2]
+      if (!(check.colour(col))) {
+        stop("Invalid colour \"", col, "\" in datapoints.csv - see window for valid colour names")
+      }
       names(col) <- names[1]
       cols <- c(cols, col)
     }
@@ -129,6 +141,7 @@ read.datacounts <- function(dataset) {
       ## Force conversion to matrix, necessary when the data has only
       ## one row
       d <- matrix(d, ncol=3)
+      colnames(d) <- c("X", "Y", "C")
       
       ## Any strings (e.g. empty ones) that don't convert will be
       ## converted to NA. Get rid of these.
@@ -142,6 +155,9 @@ read.datacounts <- function(dataset) {
       Gs <- c(Gs, G)
 
       col <- list(names[2])
+      if (!(check.colour(col))) {
+        stop("Invalid colour \"", col, "\" in datacounts.csv - see window for valid colour names")
+      }
       names(col) <- names[1]
       cols <- c(cols, col)
     }
