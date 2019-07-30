@@ -4,7 +4,7 @@
 \alias{flipped.triangles}
 \title{Determine indices of triangles that are flipped}
 \usage{
-flipped.triangles(Ps, Tt, R)
+flipped.triangles(Ps, Tt, R = 1)
 }
 \arguments{
 \item{Ps}{N-by-2 matrix with columns containing latitudes
