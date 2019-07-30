@@ -61,6 +61,16 @@ ijroi.read.dataset <- function(dataset, report=report) {
     colnames(out) <- c("X", "Y")
     Ss[["OD"]] <- out
   }
+
+  ## Extract datapoints
+  ##
+  ## At present, for the plotting functions to work, the name of each
+  ## group has to be a valid colour. There are no datapoints in this
+  ## format, but we may have landmarks.
+  dat <- read.datacounts(dataset)
+  Gs <- dat$Gs
+  cols <- c(cols, dat$cols)
+  Gs <- lapply(Gs, function(P) {cbind(X=P[,"X"], Y=offset - P[,"Y"], C=P[,"C"])})
   
   ## Create forward and backward pointers
   o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
@@ -74,5 +84,6 @@ ijroi.read.dataset <- function(dataset, report=report) {
 
   o$addFeatureSet(PointSet$new(data=Ds, cols=cols))
   o$addFeatureSet(LandmarkSet$new(data=Ss, cols=cols))
+  o$addFeatureSet(CountSet$new(data=Gs, cols=cols))
   return(o)
 }

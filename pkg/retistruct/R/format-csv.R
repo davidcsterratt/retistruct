@@ -67,9 +67,8 @@ csv.read.dataset <- function(dataset, report=message) {
   ## At present, for the plotting functions to work, the name of each
   ## group has to be a valid colour. There are no datapoints in this
   ## format, but we may have landmarks.
-  Gs <- list()
   dat <- read.datacounts(dataset)
-  Gs <- c(Gs, dat$Gs)
+  Gs <- dat$Gs
   cols <- c(cols, dat$cols)
   Gs <- lapply(Gs, function(P) {cbind(P[,1], offset - P[,2], P[,3])})
   
@@ -85,5 +84,6 @@ csv.read.dataset <- function(dataset, report=message) {
 
   o$addFeatureSet(PointSet$new(data=Ds, cols=cols))
   o$addFeatureSet(LandmarkSet$new(data=Ss, cols=cols))
+  o$addFeatureSet(CountSet$new(data=Gs, cols=cols))
   return(o)
 }

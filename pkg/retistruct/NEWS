@@ -1,5 +1,10 @@
 CHANGES IN VERSION 0.6.1 - Released 2019/07/xx
 
+NEW FEATURES
+
+* Allow data counts to be read in using ijroi and csv formats
+  (https://github.com/davidcsterratt/retistruct/issues/37)
+
 BUG FIXES
 
 * Reinstated sphericalplot
