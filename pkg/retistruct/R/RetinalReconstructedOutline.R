@@ -125,8 +125,13 @@ projection.RetinalReconstructedOutline <-
       fs <- r$getFeatureSet("PointSet")
       if (!is.null(fs)) {
         projection.ReconstructedPointSet(fs,
+                                         phi0=r$phi0,
+                                         ids=ids,
+                                         transform=transform,
+                                         axisdir=axisdir,
                                          projection=projection,
-                                         phi0=r$phi0, ids=ids, ...)
+                                         proj.centre=proj.centre,
+                                         ...)
       }
     }
 
@@ -155,8 +160,13 @@ projection.RetinalReconstructedOutline <-
       fs <- r$getFeatureSet("CountSet")
       if (!is.null(fs)) {
         projection.ReconstructedCountSet(fs,
+                                         phi0=r$phi0,
+                                         ids=ids,
+                                         transform=transform,
+                                         axisdir=axisdir,
                                          projection=projection,
-                                         phi0=r$phi0, ids=ids, ...)
+                                         proj.centre=proj.centre,
+                                         ...)
       }
     }
     
@@ -237,8 +247,13 @@ projection.RetinalReconstructedOutline <-
       fs <- r$getFeatureSet("LandmarkSet")
       if (!is.null(fs)) {
         projection.ReconstructedLandmarkSet(fs,
+                                            phi0=r$phi0,
+                                            ids=ids,
+                                            transform=transform,
+                                            axisdir=axisdir,
                                             projection=projection,
-                                            phi0=r$phi0, ids=ids, ...)
+                                            proj.centre=proj.centre,
+                                            ...)
       }
     }
 
