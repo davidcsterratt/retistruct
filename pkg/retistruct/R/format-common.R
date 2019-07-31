@@ -36,10 +36,39 @@ read.image <- function(dataset, report=message) {
   return(im)
 }
 
+## Copied from demo("colors")
+## @title Comparing Colors
+## @param col
+## @param nrow
+## @param ncol
+## @param txt.col
+## @return the grid layout, invisibly
+## @author Marius Hofert, originally
+plotCol <- function(col, nrow=1, ncol=ceiling(length(col) / nrow),
+                    txt.col="black") {
+    stopifnot(nrow >= 1, ncol >= 1)
+    if(length(col) > nrow*ncol)
+        warning("some colors will not be shown")
+    grid::grid.newpage()
+    gl <- grid::grid.layout(nrow, ncol)
+    grid::pushViewport(grid::viewport(layout=gl))
+    ic <- 1
+    for(i in 1:nrow) {
+        for(j in 1:ncol) {
+            grid::pushViewport(grid::viewport(layout.pos.row=i, layout.pos.col=j))
+            grid::grid.rect(gp= grid::gpar(fill=col[ic]))
+            grid::grid.text(col[ic], gp=grid::gpar(col=txt.col))
+            grid::upViewport()
+            ic <- ic+1
+        }
+    }
+    grid::upViewport()
+    invisible(gl)
+}
+
 check.colour <- function(col) {
-  if (!(col %in% colours())) {
-    x11()
-    plotCol(grep("([0-9]|medium|light|dark)", colors(), invert=TRUE, value=TRUE), nrow=20)
+  if (!(col %in% grDevices::colours())) {
+    plotCol(grep("([0-9]|medium|light|dark)",  grDevices::colors(), invert=TRUE, value=TRUE), nrow=20)
     return(FALSE)
   }
   return(TRUE)
