@@ -20,7 +20,15 @@
 ##' \item The locations of the points on the sphere are moved so as to
 ##' minimise the energy function.
 ##' }
+##' 
+##' @section Member functions:
 ##'
+##' \describe{
+##' \item{mapFlatToSpherical(P)}{Returns location of point on sphere corresponding to point on the flat outline. Input values:}
+##' \describe{
+##' \item{P}{Cartesian coordinates  on flat outline as a matrix with "X" and "Y" columns}
+##' }}
+##' 
 ##' @title Reconstruct outline into spherical surface
 ##' @importFrom geometry tsearch sph2cart
 ##' @author David Sterratt
@@ -697,6 +705,33 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     },
     getPoints = function() {
       return(cbind(phi=self$phi, lambda=self$lambda))
+    },
+    mapFlatToSpherical = function(P) {
+      if (!(is.numeric(P))) {
+        stop("P must be numeric")
+      }
+      if (!(is.matrix(P))) {
+        stop("P must be matrix")
+      }
+      if (!(all(c("X", "Y") %in% colnames(P)))) {
+        stop("P should have columns named X and Y")
+      }
+
+      ## Meshpoints in Cartesian coordinates
+      Ptc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
+      
+      Pb <- tsearch(self$ol$getPoints()[,"X"],
+                    self$ol$getPoints()[,"Y"],
+                    self$ol$T,
+                    P[,"X"],
+                    P[,"Y"], bary=TRUE)
+      oo <- is.na(Pb$idx)           # Points outwith outline
+      if (any(oo)) {
+        warning(paste(sum(oo), "points outwith the outline will be ignored"))
+      }
+      Pb$p   <- Pb$p[!oo,,drop=FALSE]
+      Pb$idx <- Pb$idx[!oo]
+      return(bary2sph(Pb, self$Tt, Ptc))
     }
   )
 )

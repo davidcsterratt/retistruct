@@ -33,6 +33,16 @@ triangulation.
 minimise the energy function.
 }
 }
+\section{Member functions}{
+
+
+\describe{
+\item{mapFlatToSpherical(P)}{Returns location of point on sphere corresponding to point on the flat outline. Input values:}
+\describe{
+\item{P}{Cartesian coordinates  on flat outline as a matrix with "X" and "Y" columns}
+}}
+}
+
 \author{
 David Sterratt
 }

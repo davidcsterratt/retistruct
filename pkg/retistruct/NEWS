@@ -5,6 +5,12 @@ NEW FEATURES
 * Allow data counts to be read in using ijroi and csv formats
   (https://github.com/davidcsterratt/retistruct/issues/37)
 
+* Expose the mapping from flat coordinates to spherical coordinates in
+  reconstruected retina
+  (https://github.com/davidcsterratt/retistruct/issues/20)
+  This is achieved by the new member function mapFlatToSpherical() of
+  a ReconstructedOutline object
+
 BUG FIXES
 
 * Reinstated sphericalplot

@@ -14,6 +14,13 @@ test_that("Reconstruct SMI32 (CSV format)", {
   ## Save as matlab
   filename <-  file.path(tempdir(), "r.mat")
   retistruct.export.matlab(r, filename)
+
+  ## Nascent API
+  expect_error(r$mapFlatToSpherical(0), "P must be matrix")
+  expect_error(r$mapFlatToSpherical(c(0, 0)), "P must be matrix")
+  expect_warning(r$mapFlatToSpherical(cbind(X=0, Y=0)), "1 points outwith the outline will be ignored")
+  expect_equal(r$mapFlatToSpherical(cbind(X=200,Y=200)), cbind(phi=-0.1686439, lambda=-1.559814), tol=0.001)
+
 })
 
 test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
