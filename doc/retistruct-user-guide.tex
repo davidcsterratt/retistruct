@@ -1,15 +1,28 @@
-\documentclass{article}
+\documentclass{book}
 
-\newcommand{\svninfo}{Retistruct version: 0.6.0 , Date: 2019-07-09}
+\newcommand{\svninfo}{Retistruct version: 0.6.0 , Date: 2019-08-16}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
 \usepackage[a4paper,left=1in,right=1in,top=1in,bottom=1in,head=1in]{geometry}
-
+\usepackage{mathpazo}
 \usepackage[british]{babel}
 \usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{gensymb}
+\usepackage{titlesec}
+
+\newenvironment{aside}[1]%
+{\noindent\begin{minipage}{\textwidth}\vspace*{1em}\hrule height2pt\vspace*{2pt}
+  \noindent{\bf Note: #1}\par%
+  \vspace*{2pt}%
+  \hrule height1pt
+  \vspace*{2pt}\noindent\ignorespaces}%
+  {\vspace*{2pt}\hrule height1pt\vspace*{1em}\end{minipage}}
+
+\titleformat{\section}{\hrule\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\hrule\normalfont\large\bfseries}{\thesubsection}{1em}{}
 
 \title{\textsc{Retistruct} manual}
 \author{David C. Sterratt}
@@ -19,12 +32,14 @@
 \maketitle
 \thispagestyle{myheadings}
 
-\section{Installation}
+\tableofcontents
+
+\chapter{Installation}
 \label{manual:sec:installation}
 
-\subsection{Install the necessary system packages}
+\section{Install the necessary system packages}
 
-\subsubsection{Ubuntu Linux}
+\subsection{Ubuntu Linux}
 
 Follow the instructions at
 \url{https://cran.r-project.org/bin/linux/ubuntu/}
@@ -38,7 +53,7 @@ sudo apt-get install r-base r-base-dev libgtk2.0-dev libgl1-mesa-dev libglu1-mes
 \end{verbatim}
 % Need to install RGtk2 separately??
 
-\subsubsection{Fedora Linux }
+\subsection{Fedora Linux }
 
 \emph{NOTE: these instructions have not been tested since at least
   2015.}
@@ -55,14 +70,14 @@ yum install mesa-libGLU-devel
 \end{verbatim}
 
 
-\subsubsection{Mac OS X}
+\subsection{Mac OS X}
 \label{retistruct-manual:sec:mac}
 
 First install R for Mac OS X, available from
 \url{http://www.r-project.org/}. Under Mac OS X Leopard and Lion, this
 should be sufficient. 
 
-\paragraph{Under Mac OS X 10.8 (Snow Leopard),} it may be necessary to
+\subsubsection{Under Mac OS X 10.8 (Snow Leopard),} it may be necessary to
 install the following external packages:
 \begin{itemize}
 \item Xcode (free from App Store)
@@ -70,15 +85,15 @@ install the following external packages:
 \item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
 \end{itemize}
 
-\paragraph{Under Mac OS X 10.9 (Mavericks) or Mac OS X 10.10
+\subsubsection{Under Mac OS X 10.9 (Mavericks) or Mac OS X 10.10
   (Yosemite),}
 See this issue on Github: \url{https://github.com/davidcsterratt/retistruct/issues/4}
 
-\subsubsection{MS/Windows}
+\subsection{MS/Windows}
 
 First install R for MS/Windows, available from \url{http://www.r-project.org/}.
 
-\subsection{Install the core \textsc{Retistruct} package}
+\section{Install the core \textsc{Retistruct} package}
 
 \begin{enumerate}
 \item Start \textsc{R}
@@ -109,7 +124,7 @@ install.packages("retistruct")
 \end{verbatim}
 \end{enumerate}
 
-\subsection{Install the \textsc{Retistruct} GUI}
+\section{Install the \textsc{Retistruct} GUI}
 \label{retistruct-manual:sec:inst-retistr-gui}
 
 If the previous step works:
@@ -150,7 +165,7 @@ retistruct()
 %   \texttt{left-contra} directory in the \texttt{Figure\_6-data} directory.
 % \end{enumerate}
 
-\section{Running \textsc{Retistruct}}
+\chapter{Running \textsc{Retistruct}}
 \label{manual:sec:running}
 
 To start the program, start \textsc{R}. At the \textsc{R} prompt type:
@@ -161,7 +176,7 @@ retistruct()
 \end{verbatim}
 A window should appear.
 
-\subsection{Opening the files for a retina}
+\section{Preparing and opening the files for a retina}
 \label{manual:sec:opening-files-retina}
 
 There are a number of types of information associated with a
@@ -171,6 +186,10 @@ flat-mount retina that \textsc{Retistruct} can process:
 \item An image of the flat-mount retina (optional)
 \item The coordinates of labelled data points within the flat-mount
   retina (optional)
+\item The coordinates of labelled counts of data within the flat-mount
+  retina (optional)
+\item The scale of the coordinates provided in the other files
+  (optional)
 \end{itemize}
 To import this information into \textsc{Retistruct}, for each retina,
 a directory should be created containing files with the above
@@ -178,7 +197,7 @@ information, as will be described below.  At present there are three
 formats of directory that \textsc{Retistruct} can read.  Most users
 will probably find the the \textsc{ImageJ} ROI format most convenient.
 
-\subsubsection{\textsc{ImageJ} ROI format}
+\section{Reading files using the \textsc{ImageJ} ROI format}
 \label{retistruct-manual:sec:ijroi-format}
 
 This format allows you to load images of retinae whose outlines have
@@ -218,7 +237,7 @@ in Step 1.
   outline. Save this ROI to a file called \texttt{od.roi} in the same
   directory as \texttt{image.png}.
 \item Open \textsc{Retistruct}.
-\item Click on the \textbf{Open File} icon and select the directory
+\item Click on the \textbf{Open} icon and select the directory
 containing \texttt{image.png} and \texttt{outline.roi}. The retinal
 image should now appear, with the outline shown. By default the
 outline is in black. If this isn't visible against the image, press
@@ -226,7 +245,7 @@ the \textbf{Properties} button in the interface (or select \textbf{Edit$\rightar
 \textbf{Outline colour}.
 \end{enumerate}
 
-\paragraph{Specifying the scale} Optionally, the scale of the image
+\subsection{Specifying the scale} Optionally, the scale of the image
 can be specified by providing a file \texttt{scale.csv} in the same
 directory as the image and ROI files. This file should contain two
 lines, the first with the heading \texttt{Scale} and the second with
@@ -236,7 +255,7 @@ the length of the side of a pixel in micrometres. For example:
 1.5
 \end{verbatim}
 
-\paragraph{Reading in data points}
+\subsection{Reading in data points}
 \label{retistruct-user-guide:sec:read-data-points}
 
 In general, the coordinates of data points are read in from a csv file
@@ -270,7 +289,29 @@ outline. To do this:
   desired).
 \end{enumerate}
 
-\subsubsection{CSV format}
+\subsection{Reading in data counts}
+\label{retistruct-user-guide:sec:read-data-counts}
+
+In general, the coordinates of data counts (counts of data at X, Y
+positions) are read in from a csv file called \texttt{datacounts.csv}.
+
+The two cells of the first line of the file contain the name of the
+group of data counts and the colour that these should be displayed in
+\textsc{Retistruct}. 
+
+Each subsequent row has three numbers: The first two columns contain
+the X and Y coordinates at which the count was measured, and the third
+column contains the count at that location. It is important to ensure
+that the coordinates are in the same system as those used for the
+image and the outline.
+
+Save \texttt{datapoints.csv} in the retina's directory, along with
+\texttt{outline.roi} (and \texttt{image.png} if an image is desired).
+
+\section{Reading in files using other formats}
+\label{retistruct-user-guide:sec:reading-files-using}
+
+\subsection{CSV format}
 \label{retistruct-manual:sec:csv-format}
 
 This is the same as the \textsc{ImageJ ROI} format, except that the
@@ -285,7 +326,7 @@ outline is contained in the two columns of a file called
 The optic disc outline can be supplied in a similar file called
 \texttt{od.csv}.
 
-\subsubsection{IDT format}
+\subsection{IDT format}
 \label{retistruct-manual:sec:idt-format}
 
 This is the format used in Ian Thompson's lab (see
@@ -295,38 +336,13 @@ open file icon, and navigate to the directory containing the
 \texttt{SYS} and \texttt{MAP} files. On opening this directory, the
 retinal outline should appear in the \textsc{Retistruct} window.
 
-
-\subsection{The retinal display}
-\label{manual:sec:retinal-display}
-
-In the ``Show'' section at the bottom left of the screen there are
-checkboxes that allow you to show various types of information:
-\begin{description}
-\item[Markup] Locations of tears and the dorsal or nasal pole
-\item[Stitch] Locations of how the algorithm has stitched tears (only
-  visible after the reconstruction step)
-\item[Grid] Lines of latitude and longitude projected back onto the
-  flattened retina (only visible after the reconstruction step)
-\item[Datapoints] Locations of data points, such as the locations of
-  beads of dye
-\item[Landmarks] Landmarks such as the optic disc
-\item[Strain] This shows information about how the retina has been
-  reconstructed, after the reconstruction step has taken place.
-\item[Preserve area] When this is selected, the polar plot displays an
-  area-preserving projection
-\item[Contours] Display Kernel Density Estimate contours of the data
-  points. By default, contours at 5\%, 25\%, 50\%, 75\% and 95\% of the maximum
-  density are shown. This can be changed by a command like this at the
-  R prompt:
-\begin{verbatim}
-options(contour.levels=c(5, 25, 50))
-\end{verbatim}
-  This command would cause the 5\%, 25\% and 50\% contour lines to be
-  displayed.
-\end{description}
-
-\subsection{Marking up the retina}
+\section{Editing the retinal mark-up}
 \label{manual:sec:marking-up-retina}
+
+After a set of files is opened, the \textbf{Edit} tab in the
+\textsc{Retistruct} window will be open. Before the retina can be
+reconstructed, you need to mark-up tears and landmarks on the retina
+using the following controls:
 
 \begin{description}
 \item[Add tear] To add a tear, click on this button, then click on
@@ -349,11 +365,20 @@ options(contour.levels=c(5, 25, 50))
   in orange which you think is the OD. Once clicked on, the structure
   should become blue.
 \item[Phi0] This determines the latitude of the rim of the
-  reconstructed hemisphere. It depends on the age of the animal.
+  reconstructed hemisphere. In mouse, it depends on the age of the
+  animal \cite{SterrattEtal2012}.
+  \textbf{Ideally you will have measured or estimated this value from
+    an intact retina.}
+  The default value of 0 may lead to reconstructions that are not as
+  accurate as they could be, since the template that
+  \textsc{Retistruct} is trying to morph the flat-mount retina onto is
+  not the same as the original shape.
 \end{description}
 
-\subsection{Metadata}
+\section{Editing metadata}
 \label{retistruct-manual:sec:metadata}
+
+You can also edit the following metadata:
 
 \begin{description}
 \item[Data/Flip DV] Flip the DV axis to compensate for microscope
@@ -362,7 +387,7 @@ options(contour.levels=c(5, 25, 50))
   of retinae.
 \end{description}
 
-\subsection{Saving the markup and metadata}
+\section{Saving the markup and metadata}
 \label{manual:sec:saving-markup}
 
 To save the markup, click on the ``Save'' button in the toolbar. This
@@ -370,11 +395,12 @@ saves various markup files to the directory containing the
 data files. This saved data can be used to reconstruct the retina using
 a batch process (Section~\ref{manual:sec:runn-batch-reconstr}).
 
-\subsection{Reconstructing the retina}
+\section{Reconstructing the retina}
 \label{manual:sec:reconstr-retina}
 
-To reconstruct the retina, click on the ``Reconstruct retina''
-button. This causes a (lengthy) sequence of operations to be performed:
+To reconstruct the retina, click on the ``Reconstruct retina'' button.
+This causes \textsc{Retistruct} to perform a (sometimes lengthy)
+sequence of operations:
 \begin{description}
 \item[Stitching] Links between corresponding points on parts of the retinal
   outline  contained in tears are made.
@@ -389,17 +415,283 @@ button. This causes a (lengthy) sequence of operations to be performed:
 \end{description}
 
 At the end of the reconstruction process, a polar plot appears next to
-the flattened retina. When ``Landmarks'' are shown, the location of
+the flattened retina. By default the location of
 the cuts and tears in the polar coordinates can be seen.
 
-When ``Strain'' is shown, the polar plot is replaced by a scatter plot of the
-length of links in the reconstructed object versus the length on the
-flattened object. The colours of the points indicate the degree of
-expansion or compression from the flattened object to the
-reconstructed object.
+\section{Assessing the quality of the reconstruction}
+\label{retistruct-user-guide:sec:assess-qual-reconstr}
 
-\subsection{Saving the reconstruction}
+It is important to assess the quality of the reconstruction. The
+choice of where to mark up tears can affect this adversely, as can the
+rim angle.
+
+One diagnostic is to view the strain in each mesh link by clicking on
+the \textbf{Strain} checkbox in the \textbf{Edit} tab. When \textbf{Strain}
+is shown, the flat plot shows the strain in the links of the mesh
+using a colour code from blue (compressed) to red (expanded). The
+polar plot is replaced by a scatter plot of the length of links in the
+reconstructed object versus the length on the flattened object. The
+flat plot of a good reconstruction will look mostly green, and in the
+scatter plot the points will lie close to the black line.
+
+\section{Selecting viewing options}
+\label{retistruct-user-guide:sec:select-view-opti}
+
+To select viewing options click on the \textbf{View} tab. A number of
+options are now shown, grouped into a number of sections:
+
+\subsection{Show} In the \textbf{Show} section there are checkboxes
+that allow you to show various types of information:
+\begin{description}
+\item[Markup] Locations of tears and the dorsal or nasal pole
+\item[Stitch] Locations of how the algorithm has stitched tears (only
+  visible after the reconstruction step)
+\item[Grid] Lines of latitude and longitude projected back onto the
+  flattened retina (only visible after the reconstruction step) and
+  grid lines are shown on the reconstructed retina
+\item[Landmarks] Landmarks such as the optic disc
+\item[Points] Locations of data points, such as the locations of beads
+  of dye, which have been imported into \textsc{Retistruct} as
+  described in Section~\ref{retistruct-user-guide:sec:read-data-points}
+\item[Point means] Locations of the Karcher mean (mean in spherical
+  coordinates) of each group of data points
+\item[Point contours] Kernel Density Estimate contours of the data
+  points. By default, contours at 5\%, 25\%, 50\%, 75\% and 95\% of
+  the maximum density are shown. This can be changed by a command like
+  this at the R prompt:
+\begin{verbatim}
+options(contour.levels=c(5, 25, 50))
+\end{verbatim}
+  This command would cause the 5\%, 25\% and 50\% contour lines to be
+  displayed.
+\item[Counts] Counts (for example of cells), represented by a number
+  at the location at which the count was made, which have been
+  imported into \textsc{Retistruct} as described in
+  Section~\ref{retistruct-user-guide:sec:read-data-counts}
+\item[Count contours] Kernel Regression contours of the data counts.
+  By default, contours at 5\%, 25\%, 50\%, 75\% and 95\% of the
+  maximum density are shown. This can be changed by a command, as
+  shown under ``Point contours''.
+\end{description}
+
+\subsection{IDs}
+
+If you included a \texttt{datapoints.csv} and/or a
+\texttt{datacounts.csv} file (see
+Sections~\ref{retistruct-user-guide:sec:read-data-points}
+and~\ref{retistruct-user-guide:sec:read-data-counts})
+the \textbf{IDs} section will contain checkboxes with names
+corresponding to the names of the groups of points and the names of
+the groups of counts specified in those files. If you have marked the
+optic disc, it will also contain an \textbf{OD} checkbox. Check or
+uncheck these boxes to show or hide the corresponding points and
+counts.
+
+\subsection{Projection}
+\label{retistruct-user-guide:sec:projection}
+
+The reconstructed data can be viewed in a number of projections, just
+as there are various ways that the surface of the globe is projected
+to a 2D image. Because the geometry of the surface of a sphere is
+fundamentally different from a flat sheet of paper, no projection is a
+perfect representation; all have advantages and disadvantages.
+
+\begin{aside}{Coordinate systems}
+  The co-ordinates of a point on the reconstructed sphere can be
+  described in two ways:
+  \begin{description}
+  \item[Latitude and longitude] Here latitude and longitude are
+    defined analogously to the standard geographical coordinate
+    system. We imagine the retina lying with its optic pole at the
+    south pole, and with its widest point lying on the equator. The
+    latitude of the optic pole is $-90\degree$ and the latitude of
+    point on the widest point of the retina (its ``equator'') is
+    $0\degree$. We denote the latitude $\varphi$ and the longitude
+    $\lambda$.
+  \item [Colatitude and longitude] Here we imagine the retina in the
+    same orientation with respect to the earth, but we rather than
+    latitude, we use colatitude measured from the south pole, i.e. the
+    south pole has a colatitude of $0\degree$ and the widest point
+    (the ``equator'') has a colatitude of $90\degree$. We denote
+    colatitude by $\psi$ and it is related to latitude by
+    $\psi=\varphi+90\degree$.
+  \end{description}
+
+\end{aside}
+
+Currently the options are:
+\begin{description}
+\item[Azimuthal Equidistant] The default projection. This is a polar
+  plot in which the radial distance is proportional to the colatitude
+  (latitude measured from the ``South Pole''; see note on coordinate
+  systems), and angle from the horizontal is equal to the longitude on
+  the original retina. Points equidistant on line of longitude are
+  also equidistant in this projection. It is not an area-preserving
+  projection: it makes regions closer to the rim look bigger than they
+  actually are relative to areas close to the south pole.
+\item[Azimuthal Equal Area] In this projection, also known as a
+  Lambert projection, %\cite{FisherEtal1987}
+  points that are
+  equidistant on lines of longitude on the spherical retina are not
+  equidistant: points close to the rim are mapped to be closer
+  together. This is done so that area is preserved in the sense that
+  equal areas on the sphere project to equal areas on the plane of
+  projection. It is thus an area-preserving projection.
+\item[Azimuthal Conformal] In this projection, also known as a Wulff
+  projection, angles are preserved. This is done at the expense of
+  expanding the representation of areas close to the rim.
+\item[Sinusoidal] The sinusoidal projection projects the entire globe
+  onto the plane and preserves area. The user selects the longitude at
+  the centre of the projection in the \textbf{Az} box in the
+  \textbf{Projection centre} section of the window. The sinusoidal
+  projection is helpful for data transformed into visuotopic space
+  (see later).
+\item[Orthographic] The orthographic projection gives a perspective
+  view of one side of the globe. The projection is centred on a
+  latitude and longitude specified by the values in degrees in the
+  \textbf{El} and \textbf{Az} boxes in the \textbf{Projection centre}
+  section. % \cite{WolframOrthographic2012}.
+
+
+\end{description}
+
+\begin{table}
+  \centering
+  \begin{tabularx}{1.0\linewidth}{lll}
+    \hline
+    \textbf{Projection}
+    & \textbf{Latitude \& longitude} 
+    & \textbf{Colatitude \& longitude} \\
+    \hline
+    Azimuthal Equidistant 
+    & $\rho = 90\degree +\varphi$, $\lambda=\lambda$
+    & $\rho = \psi$, $\lambda=\lambda$ \\
+    Azimuthal Equal Area 
+    & $\rho =\sqrt{2(1+\sin \varphi )}$, $\lambda=\lambda$
+    & $\rho =\sqrt{2(1-\cos \psi )}$, $\lambda=\lambda$ \\
+    Azimuthal Conformal 
+    & $\rho =\tan\left(45\degree +\varphi /2\right)$,
+      $\lambda=\lambda$
+    & $\rho =\tan\left(\psi/2\right)$,
+      $\lambda=\lambda$  \\
+    Sinusoidal
+    & $x=(\lambda -\lambda _0)\cos
+      \varphi$, $y=\varphi $
+    &
+    \\
+    Orthographic
+    & $x=\cos \varphi \sin
+      (\lambda -\lambda _0)$
+    & \\
+    & $y=\cos \varphi _0\sin \varphi -\sin \varphi
+      _0\cos \varphi \cos (\lambda -\lambda _0)$ \\
+    \hline
+  \end{tabularx}
+  \caption{Projections. For the three azimuthal projections, the 
+    polar coordinates $(\rho, \lambda)$ are given in terms of the
+    latitude and longitude $(\varphi,\lambda)$ or colatitude and
+    longitude $(\psi,\lambda)$ on the original sphere. For the
+    sinusoidal and orthographic projection the $(x,y)$ coordinates in
+    the plane are given. For these projections
+    $(\varphi_0,\lambda_0)$ is the latitude and longitude at 
+    the centre of the projection.}
+  \label{tab:projections}
+\end{table}
+
+% is given by $x=(\lambda -\lambda _0)\cos \varphi ,y=\varphi $, where
+% \cite{WolframSinusoidal2012}.
+
+% The data on the sphere can be projected onto a polar or azimuthal
+% equidistant plot in the plane with coordinates  $(\rho ,\lambda )$ 
+% where the radius  $\rho =\pi /2+\varphi $. 
+
+\begin{aside}{Convention on longitude of nasal, dorsal, temporal and
+    ventral poles}
+By convention, the polar plots are viewed as though the animal is
+facing towards the observer. This means that when plotting a retina
+from a right eye, the nasal pole on the right and N, D, T, V are in
+anticlockwise order; for a retina from a left eye, nasal is on the
+left and N, D, T, V are in clockwise order. The longitude of a point
+was defined so that 0$^{\circ}$ is always at the right of the plot and
+90$^{\circ}$ at top. This means that for a right eye the poles correspond
+to the longitudes as follows: N, 0$^{\circ}$; D, 90$^{\circ}$; T, 180$^{\circ}$;
+V, 270$^{\circ}$. For a left eye the longitudes of the nasal and temporal
+poles are interchanged: N, 180$^{\circ}$; D, 90$^{\circ}$, T, 0$^{\circ}$; V,
+270$^{\circ}$.
+\end{aside}
+
+\subsection{Transform}
+\label{retistruct-user-guide:sec:transform}
+
+The \textbf{Transform} option allows the reconstructed retina to be
+projected into visual space. The options are
+
+\begin{description}
+\item[None (default)] No transformation is made.
+\item[Invert] The image is inverted as though by a pinhole lens, a
+  crude approximation to the optics of the eye. This allows visual
+  space to be mapped onto the retina via the optical system of the
+  eye. This mapping depends on the angle that a ray makes with the
+  optic axis (the \textbf{Axis direction}) which we define as being
+  oriented at azimuth (\textbf{Az}) and elevation
+  (\textbf{El}). % $\theta _0$ $\alpha _0$
+\item[Invert to hemisphere] Similar to \textbf{Invert}, except that
+  the projection is compressed or expanded so that the field of view
+  is 180\degree.
+\end{description}
+
+There are more details of the transformation in the supplemental
+information of \cite{SterrattEtal2012}.
+
+% In previous work of the mapping of visual space on the superior
+% colliculus \cite{DragerHubel1976}, visual space has been described
+% in terms of azimuth  $\theta $  and elevation  $\alpha $   with
+% respect to the long axis of the mouse. Visual space is mapped onto
+% the retina via the optical system of the eye. This mapping depends on
+% the angle that a ray makes with the optic axis, which we define as
+% being oriented at azimuth  $\theta _0$   and  elevation  $\alpha _0$.
+
+% In order to map the eye onto visual space, we consider a reference
+% frame in which the $z${}-axis
+% is vertical, the $x${}-axis
+% is pointing forwards along the long axis of the mouse and the
+% $y${}-axis
+% is pointing rightwards, as viewed by an observer facing the animal.
+% Notionally, the optic axis of the eye starts off vertical, and a
+% sequence of rotations is undertaken in order to move the eye to its
+% correct orientation. First the projection of rays from the retina to
+% visual space is determined using the approximate optics defined in the
+% main text. Second, the coordinates of points are converted to
+% Cartesian coordinates. Third, the coordinates are rotated about the
+% $x$-axis by $-90+\alpha _0$ degrees. This ensures that the optic axis
+% is oriented at the elevation $\alpha $ above the horizontal, but the
+% direction of its azimuth will be $-90^{\circ }$. The points on the eye
+% are then rotated about the original $z${}-axis
+% by $90+\theta _0$ degrees giving the optic axis an azimuth of $\theta
+% _0$, where positive values are to the right, as viewed from a point on
+% the positive $x${}-axis.
+% Finally the Cartesian coordinates are transformed back to spherical
+% coordinates in the original reference frame.
+
+
+\section{Exporting the plots}
+\label{retistruct-user-guide:sec:exporting-plots}
+
+The \textbf{Bitmap} and \textbf{PDF} buttons above the flatmount view
+and the reconstructed view export the image show to a PNG file format
+or an PDF respectively. To change the width of the image in pixels,
+select \textbf{Properties} and set the
+\textbf{Maximum width of projection} to the desired number of pixels.
+\textbf{Warning:} setting a high number of pixels will create a
+high-resolution image, but can also take some minutes.
+
+\section{Saving the reconstruction}
 \label{manual:sec:saving-reconstr}
+
+\begin{aside}{Saving reconstructions in Retistruct v0.6.0}
+  The ability to save reconstructions is currently disabled in v0.6.0,
+  but it is planned to enable it in v0.6.1.
+\end{aside}
 
 To save the markup, click on the ``Save'' button in the toolbar. This
 saves various files to the directory containing the data files. When
@@ -409,7 +701,10 @@ loaded, and the reconstruction will also appear, unless there has been
 a major upgrade of the software, in which case the retina will need to
 be reconstructed using the ``Reconstruct retina'' button.
 
-\subsection{Reading reconstruction data into R}
+\chapter{Further topics}
+\label{retistruct-user-guide:cha:advanced-topics}
+
+\section{Accessing reconstruction data from R}
 \label{retistruct-user-guide:sec:reading-date-into}
 
 It can be useful to have access to the data underlying a
@@ -424,12 +719,49 @@ accessed using the R \texttt{\$} operator, e.g.
 r$Dss$green
 \end{verbatim}
 gives a list of the spherical co-ordinates of green labelled
-datapoints. See Table~\ref{tab:matlab-export} for a list of the most
+data points. See Table~\ref{tab:matlab-export} for a list of the most
 useful quantities. Other quantities (for example the locations of the
 mesh points in the flat and spherical retina) are also available. The
 documentation for \texttt{ReconstructedOutline},
 \texttt{ReconstructedDataset}, \texttt{getDss} and \texttt{getSss} in
 the user manual has more information about this.
+
+
+\section{Reading reconstruction data into \textsc{Matlab}}
+\label{retistruct-manual:sec:export-reconstr-data}
+
+By default when a reconstruction is saved, a subset of the data is
+stored in a file called \texttt{r.mat} in the same directory as the
+raw data and the markup. To import this data into \textsc{Matlab}, cd
+into that directory, and type:
+\begin{verbatim}
+clear
+load r.mat
+\end{verbatim}
+This puts a number of variables into the workspace, as shown in
+Table~\ref{tab:matlab-export}.
+
+To produce a polar plot of data points, try the following code:
+\begin{verbatim}
+polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
+hold on
+polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
+hold off
+\end{verbatim}
+The radial axis indicates the latitude in degrees measured from the
+retinal pole.
+
+In the \texttt{matlab} subdirectory of the distribution, there are
+some scripts to produce polar polar plots, including the locations of
+tears and landmarks. To create PDF plots of all the retinae in a
+directory, try:
+\begin{verbatim}
+makefigures('retinae', 'output_directory')
+\end{verbatim}
+
+There are also some embryonic scripts to create polar plots:
+\texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
+
 
 \begin{table}[p]
   \begin{tabularx}{\linewidth}{p{1.2in}X}
@@ -510,51 +842,14 @@ the user manual has more information about this.
 \end{table}
 
 
-\subsection{Reading reconstruction data into \textsc{Matlab}}
-\label{retistruct-manual:sec:export-reconstr-data}
 
-By default when a reconstruction is saved, a subset of the data is
-stored in a file called \texttt{r.mat} in the same directory as the
-raw data and the markup. To import this data into \textsc{Matlab}, cd
-into that directory, and type:
-\begin{verbatim}
-clear
-load r.mat
-\end{verbatim}
-This puts a number of variables into the workspace, as shown in
-Table~\ref{tab:matlab-export}.
-
-To produce a polar plot of data points, try the following code:
-\begin{verbatim}
-polar(Dss.green(:,2), Dss.green(:,1)*180/pi+90, '.g')
-hold on
-polar(Dss.red(:,2),   Dss.red(:,1)*180/pi  +90, '.r')
-hold off
-\end{verbatim}
-The radial axis indicates the latitude in degrees measured from the
-retinal pole.
-
-In the \texttt{matlab} subdirectory of the distribution, there are
-some scripts to produce polar polar plots, including the locations of
-tears and landmarks. To create PDF plots of all the retinae in a
-directory, try:
-\begin{verbatim}
-makefigures('retinae', 'output_directory')
-\end{verbatim}
-
-There are also some embryonic scripts to create polar plots:
-\texttt{plot\_datapoints\_polararea.m} and \texttt{polararea.m}.
-
-
-
-
-\subsection{Running a batch of reconstructions}
+\section{Running a batch of reconstructions}
 \label{manual:sec:runn-batch-reconstr}
 
 The \textsc{Retistruct} library can be used to reconstruct a batch of
 retinae which have been marked up. Suppose that the directory
 \texttt{retinae} contains a directory tree in which there are data
-directories containing the raw outline, datapoint and image files and
+directories containing the raw outline, data point and image files and
 the saved markup files. In order to perform the reconstructions, we
 create a new directory \texttt{retinae/reconstructions}, and run the
 following sequence of commands in R:
@@ -597,7 +892,7 @@ R
 
 \appendix
 
-\section{The IDT Data format}
+\chapter{The IDT Data format}
 \label{manual:sec:reading-data}
 
 \begin{table}
@@ -703,4 +998,5 @@ each directory there are two files:
 %  LocalWords:  maxs Lattitude gpa Sterratt Lyngholm Willshaw PLoS GTK retinae
 % LocalWords:  alt isn checkboxes Markup markup toolbar min max von
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
-%  LocalWords:  ReconstructedDataset getSss
+%  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
+%  LocalWords:  Wulff Az El uncheck lll
