@@ -21,7 +21,7 @@ Imports:
     png,
     ttutils,
     sp,
-    geometry (>= 0.4.1),
+    geometry (>= 0.4.3),
     RTriangle (>= 1.6-0.9),
     rgl,
     R.matlab,
