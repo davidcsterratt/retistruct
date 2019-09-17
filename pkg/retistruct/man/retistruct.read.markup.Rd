@@ -31,13 +31,13 @@ which is specified in the reconstruction object \code{r}.
 The tear information is contained in the files \file{P.csv} and
 \file{T.csv}. The first file contains the locations of outline
 points that the tears were marked up on. The second file contains
-the indices of the apices and backward and forward vertices of
-each tear. It is necessary to have the file of points just in case
-the algorithm that determines \code{P} in
+the indices of the apex and backward and forward vertices of each
+tear. It is necessary to have the file of points just in case the
+algorithm that determines \code{P} in
 \code{\link{retistruct.read.dataset}} has changed since the markup
 of the tears.
 
-The remaining information is contained  contained in the file
+The remaining information is contained in the file
 \file{markup.csv}.
 
 If \code{DVflip} is specified, the locations of points \code{P}

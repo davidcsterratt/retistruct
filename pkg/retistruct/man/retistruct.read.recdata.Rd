@@ -18,7 +18,7 @@ If the reconstruction data exists, return a reconstruction
 object, else return the outline object \code{o}.
 }
 \description{
-Given an outline object with a \code{dataset} field,  read the
+Given an outline object with a \code{dataset} field, read the
 reconstruction data from the file \file{\var{dataset}/r.Rdata}.
 }
 \author{

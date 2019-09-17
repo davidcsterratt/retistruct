@@ -12,7 +12,7 @@ checkDatadir <- function(dir=NULL) {
 }
 
 ##' Read a retinal dataset in one of three formats; for information on
-##' formats see see \code{\link{idt.read.dataset}},
+##' formats see \code{\link{idt.read.dataset}},
 ##' \code{\link{csv.read.dataset}} and
 ##' \code{\link{ijroi.read.dataset}}. The format is autodetected from
 ##' the files in the directory.
@@ -51,13 +51,13 @@ retistruct.read.dataset <- function(dataset, report=message, ...) {
 ##' The tear information is contained in the files \file{P.csv} and
 ##' \file{T.csv}. The first file contains the locations of outline
 ##' points that the tears were marked up on. The second file contains
-##' the indices of the apices and backward and forward vertices of
-##' each tear. It is necessary to have the file of points just in case
-##' the algorithm that determines \code{P} in
+##' the indices of the apex and backward and forward vertices of each
+##' tear. It is necessary to have the file of points just in case the
+##' algorithm that determines \code{P} in
 ##' \code{\link{retistruct.read.dataset}} has changed since the markup
 ##' of the tears.
 ##'
-##' The remaining information is contained  contained in the file
+##' The remaining information is contained in the file
 ##' \file{markup.csv}.
 ##'
 ##' If \code{DVflip} is specified, the locations of points \code{P}
@@ -169,7 +169,7 @@ retistruct.check.markup <- function(o) {
   return(!is.null(names(o$i0)))
 }
 
-##' Given an outline object with a \code{dataset} field,  read the
+##' Given an outline object with a \code{dataset} field, read the
 ##' reconstruction data from the file \file{\var{dataset}/r.Rdata}.
 ##'
 ##' @title Read the reconstruction data from file

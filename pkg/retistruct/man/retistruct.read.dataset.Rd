@@ -20,7 +20,7 @@ A \code{\link{RetinalOutline}} object
 }
 \description{
 Read a retinal dataset in one of three formats; for information on
-formats see see \code{\link{idt.read.dataset}},
+formats see \code{\link{idt.read.dataset}},
 \code{\link{csv.read.dataset}} and
 \code{\link{ijroi.read.dataset}}. The format is autodetected from
 the files in the directory.
