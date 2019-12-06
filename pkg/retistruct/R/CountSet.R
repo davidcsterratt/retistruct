@@ -9,14 +9,16 @@
 CountSet <- R6Class("CountSet",
   inherit = FeatureSet,
   public = list(
-    initialize = function(data, cols) {
-      if (!all(sapply(data, function(d) (all(c("C") %in% colnames(d)))))) {
-        stop("data argument to CountSet needs column marked C")
+    initialize = function(data=NULL, cols=NULL) {
+      if (!is.null(data)) {
+        if (!all(sapply(data, function(d) (all(c("C") %in% colnames(d)))))) {
+          stop("data argument to CountSet needs column marked C")
+        }
+        if (!all(sapply(data, function(d) (ncol(d) == 3)))) {
+          stop("Data must have 3 columns")
+        }
+        super$initialize(data, cols, "CountSet")
       }
-      if (!all(sapply(data, function(d) (ncol(d) == 3)))) {
-        stop("Data must have 3 columns")
-      }
-      super$initialize(data, cols, "CountSet")
     },
     reconstruct = function(ro) {
       return(ReconstructedCountSet$new(self, ro))

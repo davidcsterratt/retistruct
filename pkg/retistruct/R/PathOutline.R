@@ -92,7 +92,7 @@ PathOutline <- R6Class("PathOutline",
         ## Get distance to current points in either path
         sf <- path.length(VF0, i, self$gf, self$hf, self$getPointsScaled())
         sb <- path.length(VB0, j, self$gb, self$hb, self$getPointsScaled())
-        self$report(paste("i =", i, "i0 =", i0, "j =", j, "j0 =", j0,
+        report(paste("i =", i, "i0 =", i0, "j =", j, "j0 =", j0,
                           "sf =", sf, "sf0 =", sf0, "sb =", sb, "sb0 =", sb0))
         if (sf/Sf <= sb/Sb) {
           ## If forward point is behind backward point, project forward to
@@ -100,25 +100,25 @@ PathOutline <- R6Class("PathOutline",
 
           if (any(self$h[-i] == i)) {
             ## Point is already pointed to
-            self$report(paste("Point", i, "at", sf, "along forward path already pointed to"))
+            report(paste("Point", i, "at", sf, "along forward path already pointed to"))
           } else {
             if (self$hf[i0] == i) {
               ## Point is pointed to by its predecessor, so make it point to
               ## the same point
-              self$report(paste("Point", i, "in forward path pointed to by", i0))
+              report(paste("Point", i, "in forward path pointed to by", i0))
               self$h[i] <- self$h[i0]
             } else {
               if (abs(sf/Sf*Sb - sb) < epsilon) {
                 ## If projection of forward point is within tolerance of
                 ## backward point, don't create a new point
-                self$report(paste("Point", j, "at", sb, "along backward path within",
-                                  epsilon, "of projection from", i, "in forward path")) 
+                report(paste("Point", j, "at", sb, "along backward path within",
+                             epsilon, "of projection from", i, "in forward path"))
                 self$h[i] <- j
               } else {
                 ## Insert a point in the backward path. Point j is ahead.
                 f <- (sf/Sf*Sb - sb0)/(sb - sb0)
                 k <- self$insertPoint(j0, j, f)
-                self$report(paste("Insert point", k, "at", sf/Sf*Sb,
+                report(paste("Insert point", k, "at", sf/Sf*Sb,
                                   "along backward path; projection from", i,
                                   "in forward path"))
                 self$h[k] <- i
@@ -137,7 +137,7 @@ PathOutline <- R6Class("PathOutline",
 
           if (any(self$h[-j] == j)) {
             ## Point is already pointed to
-            self$report(paste("Point", j, "at", sb, "along backward path already pointed to"))
+            report(paste("Point", j, "at", sb, "along backward path already pointed to"))
           } else {
             if (self$hb[j0] == j) {
               ## Point is pointed to by its predecessor, so make it point to
@@ -147,14 +147,14 @@ PathOutline <- R6Class("PathOutline",
               if (abs(sb/Sb*Sf - sf) < epsilon) {
                 ## If projection of forward point is within tolerance of
                 ## backward point, don't create a new point
-                self$report(paste("Point", i, "at", sf, "along forward path within",
+                report(paste("Point", i, "at", sf, "along forward path within",
                                   epsilon, "of projection from", j, "in backward path")) 
                 self$h[j] <- i
               } else {
                 ## Insert a point in the forward path. Point i is ahead.
                 f <- (sb/Sb*Sf - sf0)/(sf - sf0)
                 k <- self$insertPoint(i0, i, f)
-                self$report(paste("Insert point", k, "at", sb/Sb*Sf,
+                report(paste("Insert point", k, "at", sb/Sb*Sf,
                                   "along forward path; projection from", j,
                                   "in backward path"))
                 self$h[k] <- j

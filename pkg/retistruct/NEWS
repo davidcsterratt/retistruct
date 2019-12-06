@@ -13,6 +13,9 @@ NEW FEATURES
 
 BUG FIXES
 
+* Reinstated saving reconstructed data
+  (https://github.com/davidcsterratt/retistruct/issues/27)
+
 * Reinstated sphericalplot
   (https://github.com/davidcsterratt/retistruct/issues/28)
 

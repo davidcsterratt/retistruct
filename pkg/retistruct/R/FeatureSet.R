@@ -11,28 +11,29 @@ FeatureSet <- R6Class("FeatureSet",
     data = NA,
     cols = NA,
     type = NA,
-    initialize = function(data, cols, type) {
-      if (!is.list(data)) {
-        stop("data should be a list")
+    initialize = function(data=NULL, cols=NULL, type=NULL) {
+      if (!is.null(data)) {
+        if (!is.list(data)) {
+          stop("data should be a list")
+        }
+        if (!all(sapply(data, function(d) (all(c("X", "Y") %in% colnames(d)))))) {
+          stop("data argument to FeatureSet needs columns marked X and Y")
+        }
+        self$data <- data
+        self$cols <- cols
+        if (!("default" %in% names(cols))) {
+          cols[["default"]] <- "orange"
+        }
+        self$type <- type
+        if (is.null(names(self$data)) & length(self$data) > 0) {
+          names(self$data) <- paste0(type, 1:length(self$data))
+        }
+        missing_cols <- setdiff(cols, colors())
+        if (length(missing_cols)) {
+          warning(paste("Colour(s)", missing_cols, "missing from", type,
+                        names(cols)[which(missing_cols == cols)]))
+        }
       }
-      if (!all(sapply(data, function(d) (all(c("X", "Y") %in% colnames(d)))))) {
-        stop("data argument to FeatureSet needs columns marked X and Y")
-      }
-      self$data <- data
-      self$cols <- cols
-      if (!("default" %in% names(cols))) {
-        cols[["default"]] <- "orange"
-      }
-      self$type <- type
-      if (is.null(names(self$data)) & length(self$data) > 0) {
-        names(self$data) <- paste0(type, 1:length(self$data))
-      }
-      missing_cols <- setdiff(cols, colors())
-      if (length(missing_cols)) {
-        warning(paste("Colour(s)", missing_cols, "missing from", type,
-                      names(cols)[which(missing_cols == cols)]))
-      }
-
     },
     getID = function(name) {
       id <- which(names(self$data) == name)

@@ -28,7 +28,8 @@ test_that("ReconstructededOutlines work correctly", {
   a$addTear(c(12, 1, 2))
 
   ## Reconstruct
-  r <- ReconstructedOutline$new(a)
+  r <- ReconstructedOutline$new()
+  r$loadOutline(a)
   r$mergePointsEdges()
   expect_equal(length(r$Lt), nrow(r$Cut))
   expect_true(!any(is.na(r$Lt)))
@@ -36,9 +37,6 @@ test_that("ReconstructededOutlines work correctly", {
   expect_equal(r$ol$A.tot, 4 + 4*2)
   expect_true(is.numeric(r$R))
   r$getStrains()
-
-  #r <- ReconstructedOutline$new(a)
-  #r$reconstruct()
 
   ## FIXME: Test of scaling required. i.e. suppose we scale the
   ## original points (P) by a factor, do we get the same mapping?

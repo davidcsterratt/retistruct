@@ -29,18 +29,20 @@ StitchedOutline <- R6Class("StitchedOutline",
     epsilon = NA,
     initialize = function(...) {
       super$initialize(...)
-      rs <- self$getRimSet()
-      self$hf <- rep(NA, nrow(self$P))
-      self$hf[rs] <- rs
-      self$hb <- rep(NA, nrow(self$P))
-      self$hb[rs] <- rs
-      ## Theoretically the maximum tolerance should be half of the
-      ## minimum distance between points. We'll make it this, or 0.01%
-      ## of the total outline length, whichever is smaller.
-      self$epsilon <- min(min(self$getOutlineLengths())/4,
-                          sum(self$getRimLengths())*0.01/100)
+      if (!is.null(self$P) & (nrow(self$getPointsScaled()) > 0)) {
+        rs <- self$getRimSet()
+        self$hf <- rep(NA, nrow(self$P))
+        self$hf[rs] <- rs
+        self$hb <- rep(NA, nrow(self$P))
+        self$hb[rs] <- rs
+        ## Theoretically the maximum tolerance should be half of the
+        ## minimum distance between points. We'll make it this, or 0.01%
+        ## of the total outline length, whichever is smaller.
+        self$epsilon <- min(min(self$getOutlineLengths())/4,
+                            sum(self$getRimLengths())*0.01/100)
+      }
     },
-        stitchTears = function() {
+    stitchTears = function() {
       r <- self$computeTearRelationships(self$tears)
 
       if (length(r$TFset) == 0) {

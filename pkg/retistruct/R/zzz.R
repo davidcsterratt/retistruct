@@ -13,4 +13,5 @@
   options(max.proj.dim=400)
   options(show.sphere=TRUE)
   options(retistruct.print.pdf.width=6)
+  options(retistruct.report=message)
 }

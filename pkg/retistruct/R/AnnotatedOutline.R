@@ -157,18 +157,18 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
             ## If this tear is contained in a forward tear
             if (all(c(V0[j], VF[j], VB[j]) %in% TFset[[k]])) {
               i.parent[j] <- k
-              self$report(paste("Tear", j, "child of forward side of tear", k))
+              report(paste("Tear", j, "child of forward side of tear", k))
               ## Set the forward pointer
               hf[VB[j]] <- VF[j]
               ## Remove the child tear points from the parent
               TFset[[k]] <- setdiff(TFset[[k]],
                                     setdiff(c(TBset[[j]], TFset[[j]]), c(VB[j], VF[j])))
-              ## self$report(TFset[[k]])
+              ## report(TFset[[k]])
             } else {
               ## If this tear is contained in a backward tear
               if (all(c(V0[j], VF[j], VB[j]) %in% TBset[[k]])) {
                 i.parent[j] <- -k
-                self$report(paste("Tear", j, "child of backward side of tear", k))
+                report(paste("Tear", j, "child of backward side of tear", k))
                 ## Set the forward pointer
                 hb[VF[j]] <- VB[j]
                 ## Remove the child tear points from the parent
@@ -183,7 +183,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
             }
           }
           if (i.parent[j] == 0) {
-            self$report(paste("Tear", j, "child of rim"))
+            report(paste("Tear", j, "child of rim"))
             hf[VB[j]] <- VF[j]
             hb[VF[j]] <- VB[j]
           }
@@ -257,7 +257,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
           warning(paste(names(self$i0)[1], "point has been moved to be in the rim"))
           names(self$i0) <- names(i0)
         } else {
-          self$report("Fixed point has been moved to be in the rim")
+          report("Fixed point has been moved to be in the rim")
         }
       }
     },

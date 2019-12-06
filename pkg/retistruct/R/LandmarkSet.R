@@ -9,7 +9,7 @@
 LandmarkSet <- R6Class("LandmarkSet",
   inherit = FeatureSet,
   public = list(
-    initialize = function(data, cols) {
+    initialize = function(data=NULL, cols=NULL) {
       super$initialize(data, cols, "LandmarkSet")
     },
     reconstruct = function(ro) {

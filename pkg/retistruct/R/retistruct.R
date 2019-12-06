@@ -186,9 +186,11 @@ retistruct.read.recdata <- function(o, check=TRUE) {
   r <- NULL
   recfile <- file.path(o$dataset, "r.Rdata")
   if (file.exists(recfile)) {
-    load(recfile)                       # This puts r in the environment
+    r_list <- NULL
+    load(recfile)                # This puts r_list in the environment
     ## If the algorithm in the codebase is newer than in the recdata
     ## file, reject the recfile data
+    r <- list_to_R6(r_list)
     if (is.null(r$version) || (r$version != OutlineCommon$new()$version)) {
       unlink(recfile)
       warning("The algorithm has changed significantly since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
@@ -197,7 +199,8 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     ## If the base data doesn't match the recfile data, reject the
     ## recfile data
     if (check) {
-      if (!isTRUE(all.equal(o, r$ol))) {
+      if (!isTRUE(all.equal(o, r$ol0))) {
+        print(all.equal(o, r$ol0))
         unlink(recfile)
         warning("The base data has changed since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
         return(NULL)
@@ -212,7 +215,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 }
 
 ##' Reconstruct a retina
-##' @param o \code{\link{RetinalOutline}} object with tear and
+##' @param a \code{\link{RetinalOutline}} object with tear and
 ##'   correspondence annotations
 ##' @param report Function to report progress. Set to \code{FALSE} for
 ##'   no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}
@@ -227,9 +230,11 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 ##' @return A \code{\link{RetinalReconstructedOutline}} object
 ##' @author David Sterratt
 ##' @export
-retistruct.reconstruct <- function(o, report=NULL,
+retistruct.reconstruct <- function(a, report=NULL,
                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
                                    debug=FALSE, ...) {
+  o <- a$clone()
+  
   ## Check that markup is there
   if (!retistruct.check.markup(o)) {
     stop("Neither dorsal nor nasal pole specified")
@@ -257,8 +262,9 @@ retistruct.reconstruct <- function(o, report=NULL,
 
   ## Now do folding itself
   r <- NULL
-  r <- RetinalReconstructedOutline$new(o, report=report, debug=debug)
-  ## FIXME set report function
+  r <- RetinalReconstructedOutline$new()
+  r$loadOutline(o, debug=debug)
+
   r$reconstruct(plot.3d=plot.3d, dev.flat=dev.flat,
                 dev.polar=dev.polar,
                 ...)
@@ -272,7 +278,7 @@ retistruct.reconstruct <- function(o, report=NULL,
                       format(r$EOD, 2),
                       "degrees.")
     }
-    r$report(repstr)      
+    report(repstr)      
   }
   return(r)
 }
@@ -315,11 +321,12 @@ retistruct.save.markup <- function(a) {
 ##' @export
 retistruct.save.recdata <- function(r) {
   ## FIXME: Issue #27: Saving and reading recddata need to be reviewed
-  if (!is.null(r$ol$dataset)) {
+  if ("RetinalReconstructedOutline" %in% class(r)) {
     ## Save the derived data
     ## r$version <- recfile.version        # Datafile version
-    if (!is.null(r)) {
-      save(r, file=file.path(r$ol$dataset, "r.Rdata"))
+    r_list <- R6_to_list(r)
+    if (!is.null(r_list)) {
+      save(r_list, file=file.path(r$ol$dataset, "r.Rdata"))
     }
   }
 }

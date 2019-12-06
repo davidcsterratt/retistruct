@@ -13,6 +13,7 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
   inherit = ReconstructedOutline,
   public = list(
     EOD = NULL,
+    fst = NULL,          # Transformed feature set
     ## @method getIms retinalReconstructedOutline
     ## @export
     getIms = function() {
@@ -41,11 +42,21 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
         self$EOD <- 90 + ODmean["phi"]*180/pi
       }
     },
-    featureSetTransform = function(Ps) {
+    getFeatureSet = function(type) {
+      fs <- super$getFeatureSet(type)
       if (self$ol$DVflip) {
-        Ps[,"lambda"] <- -Ps[,"lambda"]
+        if (is.null(self$fst)) {
+          fst <- fs$clone()
+          fst$Ps <-
+            lapply(fs$Ps,
+                   function(x) {
+                     x[,"lambda"] <- -x[,"lambda"]
+                     return(x)
+                   })
+        }
+        return(fst)
       }
-      return(Ps)
+      return(fs)
     }
   )
 )

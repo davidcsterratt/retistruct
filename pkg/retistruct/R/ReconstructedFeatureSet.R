@@ -8,16 +8,16 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
     Ps = NULL,
     cols = NA,
     type = NA,
-    ro = NULL,
     fs = NULL,
-    initialize = function(fs, ro) {
-      self$cols <- fs$cols
-      self$ro <- ro
-      self$type <- paste0("Reconstructed", fs$type)
-      ro$report(paste("Inferring coordinates of", fs$type))
-      if (!is.null(fs$data) & (length(fs$data) > 0)) {
-        for (name in names(fs$data)) {
-          self$Ps[[name]] <- ro$mapFlatToSpherical(fs$data[[name]])
+    initialize = function(fs=NULL, ro=NULL) {
+      if (!is.null(fs)) {
+        self$cols <- fs$cols
+        self$type <- paste0("Reconstructed", fs$type)
+        report(paste("Inferring coordinates of", fs$type))
+        if (!is.null(fs$data) & (length(fs$data) > 0)) {
+          for (name in names(fs$data)) {
+            self$Ps[[name]] <- ro$mapFlatToSpherical(fs$data[[name]])
+          }
         }
       }
     },
@@ -36,7 +36,7 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
       if (is.na(self$getID(name))) {
         return(NULL)
       }
-      return(self$ro$featureSetTransform(self$Ps[[name]]))
+      return(self$Ps[[name]])
     },
     getCol = function(id) {
       if (id %in% names(self$cols)) {

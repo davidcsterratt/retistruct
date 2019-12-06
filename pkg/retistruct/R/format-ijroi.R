@@ -75,7 +75,7 @@ ijroi.read.dataset <- function(dataset, report=report) {
   ## Create forward and backward pointers
   o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
                           units=scale["Units"],
-                          dataset=dataset, report=report)
+                          dataset=dataset)
   
   ## Check that P is more-or-less closed
   ## if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {

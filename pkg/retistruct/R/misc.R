@@ -113,3 +113,14 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
       rbind(i1 + 0.5 - y, y - i1 + 0.5)
   }, x, y, i1, i2, j1, j2))
 }
+
+##' Reporting utility function
+##'
+##' Calls function speified by option \code{retistruct.report}
+##' @param ... Arguments to reporting function
+##' @author David Sterratt
+##' @export
+report <- function(...) {
+  f <- getOption("retistruct.report")
+  f(...)
+}

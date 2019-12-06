@@ -32,45 +32,47 @@
 ##' @title Reconstruct outline into spherical surface
 ##' @importFrom geometry tsearch sph2cart
 ##' @author David Sterratt
+##' @export
 ReconstructedOutline <- R6Class("ReconstructedOutline",
   inherit = OutlineCommon,
   public = list(
     ol = NULL,                            # Annotated outline
-    Pt = NULL,
-    Tt = NULL,
-    Ct = NULL,
+    ol0 = NULL,                           # Orignal Annotated outline
+    Pt = NULL,                            # Transformed cartesian mesh
+                                          # points
+    Tt = NULL,                            # Transformed triangulation
+    Ct = NULL,                            # Transformed links
     Cut = NULL,
     Bt = NULL,
-    Lt = NULL,
-    ht = NULL,
+    Lt = NULL,                          # Transformed lengths
+    ht = NULL,                          # Tramsformed correspondences
     u = NULL,
     U = NULL,
-    Rsett = NULL,
-    i0t = NULL,
+    Rsett = NULL,                       # Transformed rim set
+    i0t = NULL,                         # Transformed marker
     H = NULL,
     Ht = NULL,
-    phi0 = NULL,
-    R = NULL,
-    lambda0 = NULL,
-    lambda = NULL,
-    phi = NULL,
+    phi0 = NULL,                        # Rim angle
+    R = NULL,                           # Radius
+    lambda0 = NULL,                     # Longitude of pole on rim
+    lambda = NULL,                      # Longitudes of transformed mesh points
+    phi = NULL,                         # Lattitudes of transformed mesh points
     Ps = NULL,
-    n = 500,
-    alpha = 8,
+    n = 500,                            # Number of mesh points
+    alpha = 8,                          # Weighting of areas in energy function
     x0 = 0.5,
-    nflip0 = NULL,
-    nflip = NULL,
-    opt = NULL,
-    E.tot = NULL,
-    E.l = NULL,
-    mean.strain = NULL,
-    mean.logstrain = NULL,
-    ims = NULL,
-    immask = NULL,
-    report = NULL,
-    debug = NULL,
-    ## Optional function to transform FeatureSets linked to this outline
-    featureSetTransform = function(fs) { return(fs) },
+    nflip0 = NULL,                      # Initial number flipped triangles
+    nflip = NULL,                       # Final number flipped triangles
+    opt = NULL,                         # Optimisation object
+    E.tot = NULL,                       # Energy function including area
+    E.l = NULL,                         # Energy function based on lengths alone
+    mean.strain = NULL,                 # Mean strain
+    mean.logstrain = NULL,              # Mean log strain
+    ims = NULL,                         # Spherical coordinates of
+                                        # pixel corners
+    immask = NULL,                      # Image mask
+    report = NULL,                      # Report function
+    debug = NULL,                       # Debug function
     ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
     ## \item{\code{P}}{outline points as N-by-2 matrix}
     ## \item{\code{V0}}{indices of the apex of each tear}
@@ -98,18 +100,14 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## \item{\code{phi}}{latitude of new points on sphere}
     ## \item{\code{lambda}}{longitude of new points on sphere}
     ## \item{\code{Tt}}{New triangulation}
-    initialize = function(ol,
-                          n=500, alpha=8, x0=0.5,
-                          plot.3d=FALSE, dev.flat=NA, dev.polar=NA, report=NULL,
-                          debug=FALSE) {
+    loadOutline = function(ol,
+                           n=500, alpha=8, x0=0.5,
+                           plot.3d=FALSE, dev.flat=NA, dev.polar=NA, report=retistruct::report,
+                           debug=FALSE) {
+      self$ol0 <- ol$clone()
       self$n <- n
       self$alpha <- alpha
       self$x0 <- x0
-      if (is.null(report)) {
-        self$report <- ol$report
-      } else {
-        self$report <- report
-      }
       self$debug <- debug
       ol$triangulate()
       ol$stitchTears()
@@ -123,10 +121,10 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$phi0 <- ol$phi0
       self$lambda0 <- ol$lambda0
 
-      self$report("Merging points...")
+      report("Merging points...")
       self$mergePointsEdges()
 
-      self$report("Projecting to sphere...")
+      report("Projecting to sphere...")
       self$projectToSphere()
     },
     reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
@@ -141,11 +139,11 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ft <- flipped.triangles(self$getPoints(), self$Tt, self$R)
       self$nflip0 <- sum(ft$flipped)
 
-      self$report("Optimising mapping with no area constraint using BFGS...")
+      report("Optimising mapping with no area constraint using BFGS...")
       self$optimiseMapping(alpha=0, x0=0, nu=1,
                            plot.3d=plot.3d,
                            dev.flat=dev.flat, dev.polar=dev.polar)
-      self$report("Optimising mapping with area constraint using FIRE...")
+      report("Optimising mapping with area constraint using FIRE...")
       ## FIXME: Need to put in some better heuristics for scaling
       ## maxmove, and perhaps other parameters
       self$optimiseMappingCart(alpha=self$alpha, x0=self$x0, nu=1,
@@ -153,16 +151,16 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                                tol=1e-5,
                                plot.3d=plot.3d,
                                dev.flat=dev.flat, dev.polar=dev.polar)
-      self$report("Optimising mapping with strong area constraint using BFGS...")
+      report("Optimising mapping with strong area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=1,
                            plot.3d=plot.3d,
                            dev.flat=dev.flat, dev.polar=dev.polar)
-      self$report("Optimising mapping with weak area constraint using BFGS...")
+      report("Optimising mapping with weak area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=0.5,
                            plot.3d=plot.3d,
                            dev.flat=dev.flat, dev.polar=dev.polar)
       
-      self$report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
+      report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
                         ";", self$nflip, "flipped triangles."))
     },
     ## This function creates merged and transformed versions (all
@@ -462,7 +460,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
         nflip <- sum(ft$flipped)
-        self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip & self$debug) {
           print(data.frame(rbind(id=which(ft$flipped),
                                  A=A[ft$flipped],
@@ -562,7 +560,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                     restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                     dt=1,
                     nstep=200,
-                    m=m, verbose=TRUE, report=self$report, ...)
+                    m=m, verbose=TRUE, report=report, ...)
         count <- count - 1
         ## Report
         E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
@@ -575,7 +573,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         lambda <- s[,"lambda"]
         ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
         nflip <- sum(ft$flipped)
-        self$report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
+        report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip) {
           print(data.frame(rbind(id=which(ft$flipped),
                                  A=A[ft$flipped],
@@ -672,7 +670,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## @export
     getIms = function(r) {
       if (is.null(self$ims)) {
-        self$report("Transforming image...")
+        report("Transforming image...")
         ## Force garbage collection; not great practice, but this
         ## procedure is imemory intensive for large images
         gc()
@@ -999,14 +997,14 @@ projection.ReconstructedOutline <- function(r,
       ## This should not create a new version of the image
       im <- r$ol$im
       if (by > 1) {
-        r$report("Downsampling image by factor of ", by)
+        report("Downsampling image by factor of ", by)
         im <- r$ol$im[Ms, Ns]
       }
 
       ## Now need to do the more complex job of downsampling the matrix
       ## containing the coordinates of the corners of pixels
       if (by > 1) {
-        r$report("Downsampling pixel corner spherical coordinates by factor of ", by)
+        report("Downsampling pixel corner spherical coordinates by factor of ", by)
         imsmask <- matrix(FALSE, M+1, N+1)
         imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
         ims <- ims[imsmask,]
@@ -1029,7 +1027,7 @@ projection.ReconstructedOutline <- function(r,
       ## Number of columns in block k
       Ck <- C
       for (k in 1:B) {
-        r$report("Projecting block ", k, "/", B)
+        report("Projecting block ", k, "/", B)
         ## Actual number of columns, since the last block may have a
         ## different number of chunks to C
         if (k == B) {

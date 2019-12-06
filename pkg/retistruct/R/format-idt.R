@@ -336,7 +336,7 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
   
   ## Create Outline object
   o <- RetinalOutline$new(P, scale=scale, units="um",
-                          dataset=dataset, report=report)
+                          dataset=dataset)
   
   ## Check that P is more-or-less closed
   if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {

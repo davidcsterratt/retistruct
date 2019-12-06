@@ -4,12 +4,12 @@ test_that("No regression on Issue #21", {
   a <- expect_warning(retistruct.read.dataset(dataset), "Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
   o <- retistruct.read.markup(a)
   expect_equal(nrow(o$P), length(a$gf))
-  r <- ReconstructedOutline$new(o)
+  r <- ReconstructedOutline$new()
+  r$loadOutline(o)
   ## o$triangulate()
   ## o$stitchTears()
   ## o$triangulate(suppress.external.steiner=TRUE)
   ## o$lambda0 <- 0
   ## o$mergePointsEdges()
   ## o$projectToSphere()
-
 })

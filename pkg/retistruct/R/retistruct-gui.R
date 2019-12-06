@@ -298,8 +298,7 @@ retistruct <- function() {
     if (is.null(r)) {
       unlink(file.path(a$dataset, "r.Rdata"))
     } else {
-      ## FIXME: Issue #27: Saving and reading recddata need to be reviewed
-      ## retistruct.save.recdata(r)
+      retistruct.save.recdata(r)
     }
     retistruct.export.matlab(r)
     unsaved.data(FALSE)
@@ -347,10 +346,9 @@ retistruct <- function() {
     gWidgets2::svalue(g.data) <-  ifelse (a$DVflip, "Flip DV", "")
     
     ## Read the reconstruction data
-    ## FIXME: Issue #27: Saving and reading recddata need to be reviewed    
-    ## withCallingHandlers({
-    ##   r <<- retistruct.read.recdata(a, check=TRUE)
-    ## }, warning=h.warning, error=h.error)
+    withCallingHandlers({
+      r <<- retistruct.read.recdata(a, check=TRUE)
+    }, warning=h.warning, error=h.error)
     ## If there is no reconstruction data, show the markup so that we
     ## don't think there is no markup.
     if (is.null(r)) {

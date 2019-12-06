@@ -11,11 +11,13 @@ ReconstructedCountSet <- R6Class("ReconstructedCountSet",
   inherit = ReconstructedFeatureSet,
   public = list(
     KR = NULL,
-    initialize = function(fs, ro) {
-      super$initialize(fs, ro)
-      if (!is.null(fs$data) & (length(fs$data) > 0)) {
-        for (name in names(fs$data)) {
-          self$Ps[[name]] <- cbind(self$Ps[[name]], C=fs$data[[name]][,"C"])
+    initialize = function(fs=NULL, ro=NULL) {
+      if (!is.null(fs)) {
+        super$initialize(fs, ro)
+        if (!is.null(fs$data) & (length(fs$data) > 0)) {
+          for (name in names(fs$data)) {
+            self$Ps[[name]] <- cbind(self$Ps[[name]], C=fs$data[[name]][,"C"])
+          }
         }
       }
     },

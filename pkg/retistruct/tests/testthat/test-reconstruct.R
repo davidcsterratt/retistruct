@@ -4,7 +4,7 @@ test_that("Reconstruct SMI32 (CSV format)", {
   expect_warning(r <- retistruct.read.dataset(dataset),  "Scale bar will not be set")
   ## Load the human annotation of tears
   r <- retistruct.read.markup(r)
-  ## ## Reconstruct
+  ## Reconstruct
   r <- retistruct.reconstruct(r)
 
   png(file=file.path(tempdir(), "smi32-projection.png"), width=800)
@@ -25,15 +25,11 @@ test_that("Reconstruct SMI32 (CSV format)", {
 
 test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
   dataset <- file.path(system.file(package = "retistruct"), "extdata", "GMB530/R-CONTRA")
-  r <- retistruct.read.dataset(dataset)
+  o <- retistruct.read.dataset(dataset)
   ## Load the human annotation of tears
-  r <- retistruct.read.markup(r)
-  ## ## Reconstruct
-  r <- retistruct.reconstruct(r)
-  
-  ## Save as matlab
-  filename <-  file.path(tempdir(), "r.mat")
-  retistruct.export.matlab(r, filename)
+  o <- retistruct.read.markup(o)
+  ## Reconstruct
+  r <- retistruct.reconstruct(o)
 
   ## ## These values obtained from Retistruct 0.5.10, scaled now due to
   ## ## scale being applied before reconstruction
@@ -47,5 +43,54 @@ test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
   ## The Windows and Linux results for EOD are within 0.1 of each other. 
   ## It is not clear why, though it seems to occur during the minimisation
   ## using BFGS.
-  ## expect_equal(r$EOD, c(phi=4.517927), tolerance=0.1) 
+  ## expect_equal(r$EOD, c(phi=4.517927), tolerance=0.1)
+
+  
+  ## Test serialisation - note we do this before saving to matlab,
+  ## since KDE is cached and it messes up the comparsion
+  r0 <- r$clone()
+  retistruct.save.recdata(r)
+  rm(r)
+  r1 <- retistruct.read.recdata(o)
+  expect_equal(r0$featureSets[[1]]$KDE, r1$featureSets[[1]]$KDE)
+  expect_equal(r0$featureSets[[1]], r1$featureSets[[1]])
+  expect_equal(r0$featureSets, r1$featureSets)
+  expect_equal(r0, r1)
+
+  ## Test getting features
+  r0$getFeatureSet("PointSet")
+  r0$getFeatureSet("LandmarkSet")
+  cs <- r0$getFeatureSet("CountSet")
+  expect_equal(colnames(cs$Ps[[1]]), c("phi", "lambda", "C"))
+  
+  r0$ol$DVflip  <- TRUE
+  r0$getFeatureSet("PointSet")
+  r0$getFeatureSet("LandmarkSet")
+  cs <- r0$getFeatureSet("CountSet")
+  expect_equal(colnames(cs$Ps[[1]]), c("phi", "lambda", "C"))
+  
+  ## Save as matlab
+  filename <-  file.path(tempdir(), "r.mat")
+  retistruct.export.matlab(r0, filename)
+})
+
+test_that("Serialisation works with a particular example", {
+  dataset  <-  file.path(system.file(package = "retistruct"), "extdata", "GM509/R-CONTRA")
+  a <- retistruct.read.dataset(dataset, report=FALSE)
+  a <- retistruct.read.markup(a, error=message)
+  r <- retistruct.reconstruct(a) ## plot.3d=getOption("show.sphere")
+  retistruct.save.recdata(r)
+  r1 <- retistruct.read.recdata(a)
+
+  png(file=file.path(tempdir(), "flat.png"), width=800)
+  flatplot(a)
+  dev.off()    
+  
+  png(file=file.path(tempdir(), "proj.png"), width=800)
+  projection(r)
+  dev.off()    
+
+  retistruct.save.recdata(r)
+  r2 <- retistruct.read.recdata(a)
+  
 })

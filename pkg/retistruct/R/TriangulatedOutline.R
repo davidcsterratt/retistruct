@@ -31,7 +31,7 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
       t <- TriangulatedFragment$new(self,
                                     n=n,
                                     suppress.external.steiner=suppress.external.steiner,
-                                    report=self$report)
+                                    report=report)
       pids <- self$addPoints(t$P)
       if (length(t$gf) != length(pids)) {
         stop("Number of indices is not equal to number of pids supplied")
