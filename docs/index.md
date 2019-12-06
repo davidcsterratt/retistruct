@@ -95,13 +95,16 @@ If you encounter issues using Retistruct please either:
 
 ## Work using Retistruct
 
-* Smodlaka, H. and Khamas, W. A. and Palmer, L. and Lui, B. and
-  Borovac, J. A. and Cohn, B. A. and Schmitz, L. (2016) "Eye Histology
+* Sondereker, K. B., Stabio, M. E., Jamil, J. R., Tarchick, M. J. and Renna, J. M. (2018) "Where You Cut Matters: A Dissection and Analysis Guide for the Spatial Orientation of the Mouse Retina from Ocular Landmarks". *J Vis. Exp.*  138 [DOI: 10.3791/57861](http://dx.doi.org/10.3791/57861)
+* Stabio, M. E., Sondereker K. B., Haghgou S. D., Day, B. L., Chidsey, B., Sabbah, S. and Renna, J. M. (2018) "A novel map of the mouse eye for orienting retinal topography in anatomical space". 
+*J. Comp. Neurol.* __526__:1749-1759. [DOI: 10.1002/cne.24446](http://dx.doi.org/10.1002/cne.24446)
+* Smodlaka, H., Khamas, W. A., Palmer, L., Lui, B.,
+  Borovac, J. A., Cohn, B. A. and Schmitz, L. (2016) "Eye Histology
   and Ganglion Cell Topography of Northern Elephant Seals (Mirounga
   angustirostris)" <em>Anat. Rec.  (Hoboken)</em>
   <strong>6</strong>:&nbsp;798-805. <a
   href="http://dx.doi.org/10.1002/ar.23342">DOI: 10.1002/ar.23342</a>
-* Cohn, B. A. and Collin, S. P. and Wainwright, P. C. and Schmitz,
+* Cohn, B. A., Collin, S. P., Wainwright, P. C. and Schmitz,
   L. (2015) "Retinal topography maps in R: new tools for the analysis
   and visualization of spatial retinal data". <em>J. Vis.</em>
   <strong>15</strong>:&nbsp;19. <a
@@ -115,7 +118,7 @@ If you encounter issues using Retistruct please either:
   <strong>6</strong>:&nbsp;1223-1228. <a
   href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
   10.1039/c4mt00058g</a>
-* Bleckert, A., Schwartz, G. W., Turner, M.H., Rieke, F., Wong,
+* Bleckert, A., Schwartz, G. W., Turner, M.H., Rieke, F. and Wong,
   R. O. L. (2014) "Visual space is represented by nonmatching
   topographies of distinct mouse retinal ganglion cell
   types". <em>Current Biology</em> <strong>24</strong>:&nbsp;310-315.
