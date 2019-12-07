@@ -1,15 +1,11 @@
 context("Reconstruction")
 test_that("Reconstruct SMI32 (CSV format)", {
   dataset <- file.path(system.file(package = "retistruct"), "extdata", "smi32-csv")
-  expect_warning(r <- retistruct.read.dataset(dataset),  "Scale bar will not be set")
+  expect_warning(o <- retistruct.read.dataset(dataset),  "Scale bar will not be set")
   ## Load the human annotation of tears
-  r <- retistruct.read.markup(r)
+  o <- retistruct.read.markup(o)
   ## Reconstruct
-  r <- retistruct.reconstruct(r)
-
-  png(file=file.path(tempdir(), "smi32-projection.png"), width=800)
-  projection(r)
-  dev.off()    
+  r <- retistruct.reconstruct(o)
   
   ## Save as matlab
   filename <-  file.path(tempdir(), "r.mat")
@@ -21,6 +17,20 @@ test_that("Reconstruct SMI32 (CSV format)", {
   expect_warning(r$mapFlatToSpherical(cbind(X=0, Y=0)), "1 points outwith the outline will be ignored")
   expect_equal(r$mapFlatToSpherical(cbind(X=200,Y=200)), cbind(phi=-0.1686439, lambda=-1.559814), tol=0.001)
 
+  ## Serialisation
+  r0 <- r$clone()
+  retistruct.save.recdata(r)
+  rm(r)
+  r1 <- retistruct.read.recdata(o)
+  ## The test below won't work if we plot a projection projection
+  ## before, projection() results values being put into the private
+  ## member variable r0$ims. However, this is variable is not stored.
+  expect_equal(r0, r1)
+
+  ## Test projection after the above test
+  png(file=file.path(tempdir(), "smi32-projection.png"), width=800)
+  projection(r0)
+  dev.off()
 })
 
 test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {

@@ -35,6 +35,10 @@
 ##' @export
 ReconstructedOutline <- R6Class("ReconstructedOutline",
   inherit = OutlineCommon,
+  private = list(
+    ims = NULL                          # Spherical coordinates of
+                                        # pixel corners
+  ),
   public = list(
     ol = NULL,                            # Annotated outline
     ol0 = NULL,                           # Orignal Annotated outline
@@ -68,10 +72,6 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     E.l = NULL,                         # Energy function based on lengths alone
     mean.strain = NULL,                 # Mean strain
     mean.logstrain = NULL,              # Mean log strain
-    ims = NULL,                         # Spherical coordinates of
-                                        # pixel corners
-    immask = NULL,                      # Image mask
-    report = NULL,                      # Report function
     debug = NULL,                       # Debug function
     ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
     ## \item{\code{P}}{outline points as N-by-2 matrix}
@@ -496,7 +496,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
-          self$ims <- NULL
+          private$ims <- NULL
           self$clearFeatureSets()
           dev.set(dev.polar)
           projection(self, mesh=TRUE, 
@@ -596,7 +596,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
-          self$ims <- NULL
+          private$ims <- NULL
           self$clearFeatureSets()
           dev.set(dev.polar)
           self$phi <- phi
@@ -626,13 +626,13 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## @param r \code{reconstructedOutline} object
     ## @return \code{reconstructedOutline} object with extra elements
     ## \item{\code{ims}}{Coordinates of corners of pixes in spherical coordinates}
-    ## \item{\code{immask}}{Mask matrix with same dimensions as image \code{im}}
     ## @author David Sterratt
     transformImage = function() {
-      if (!is.null(self$ol$im)) {
+      im <- self$ol$getImage()
+      if (!is.null(im)) {
         ## Need to find the *boundaries* of pixels
-        N <- ncol(self$ol$im)
-        M <- nrow(self$ol$im)
+        N <- ncol(im)
+        M <- nrow(im)
 
         ## Create grid coords of corners of pixels.  These run from the
         ## top left of the image down each column of the image.
@@ -648,17 +648,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                       self$ol$T, I[,1], I[,2], bary=TRUE)
         rm(I)
         gc()
-        ## Create mask depending on whether corners are in outline
-        idx <- matrix(Ib$idx, M+1, N+1)
-        self$immask <- (!is.na(idx[1:M    , 1:N    ]) &
-                        !is.na(idx[1:M    , 2:(N+1)]) &
-                        !is.na(idx[2:(M+1), 1:N    ]) &
-                        !is.na(idx[2:(M+1), 2:(N+1)]))
-        rm(idx)
-        gc()
         ## Find 3D coordinates of mesh points
         Pc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
-        self$ims <- bary2sph(Ib, self$Tt, Pc)
+        private$ims <- bary2sph(Ib, self$Tt, Pc)
       }
     },
     ## Get coordinates of corners of pixels of image in spherical
@@ -668,8 +660,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ## @author David Sterratt
     ## @method getIms reconstructedOutline
     ## @export
-    getIms = function(r) {
-      if (is.null(self$ims)) {
+    getIms = function() {
+      if (is.null(private$ims)) {
         report("Transforming image...")
         ## Force garbage collection; not great practice, but this
         ## procedure is imemory intensive for large images
@@ -677,7 +669,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         self$transformImage()
         gc()
       }
-      return(self$ims)
+      return(private$ims)
     },
     ## @export
     getTearCoords = function(r) {
@@ -984,8 +976,9 @@ projection.ReconstructedOutline <- function(r,
       ## coordinates of corners of pixels
 
       ## Get the size of the image
-      M <- nrow(r$ol$im)
-      N <- ncol(r$ol$im)
+      im <- r$ol$getImage()
+      M <- nrow(im)
+      N <- ncol(im)
 
       ## Downsample the image by first selecting rows and columns to
       ## look at
@@ -995,10 +988,9 @@ projection.ReconstructedOutline <- function(r,
 
       ## Downsample the image
       ## This should not create a new version of the image
-      im <- r$ol$im
       if (by > 1) {
         report("Downsampling image by factor of ", by)
-        im <- r$ol$im[Ms, Ns]
+        im <- im[Ms, Ns]
       }
 
       ## Now need to do the more complex job of downsampling the matrix
