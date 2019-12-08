@@ -4,7 +4,7 @@
 \name{ReconstructedOutline}
 \alias{ReconstructedOutline}
 \title{Reconstruct outline into spherical surface}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 ReconstructedOutline
 }

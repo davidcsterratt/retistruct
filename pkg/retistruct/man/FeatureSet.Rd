@@ -4,7 +4,7 @@
 \name{FeatureSet}
 \alias{FeatureSet}
 \title{FeatureSet class}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 FeatureSet
 }

@@ -4,7 +4,7 @@
 \name{StitchedOutline}
 \alias{StitchedOutline}
 \title{Stitch together incisions and tears in an AnnotatedOutline}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 StitchedOutline
 }

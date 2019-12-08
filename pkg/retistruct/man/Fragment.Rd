@@ -4,7 +4,7 @@
 \name{Fragment}
 \alias{Fragment}
 \title{Fragment constructor}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 Fragment
 }

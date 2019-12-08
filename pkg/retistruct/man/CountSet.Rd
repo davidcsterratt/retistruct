@@ -4,7 +4,7 @@
 \name{CountSet}
 \alias{CountSet}
 \title{CountSet class}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 CountSet
 }

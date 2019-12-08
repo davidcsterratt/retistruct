@@ -5,7 +5,7 @@
 \alias{ReconstructedFeatureSet}
 \title{ReconstructedFeatureSet class
 Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 ReconstructedFeatureSet
 }

@@ -12,7 +12,7 @@ Parameters to constructor:
 addition of points in the outline. This happens to maintain
 triangle quality.
 \code{report} Function to report progress}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 TriangulatedFragment
 }

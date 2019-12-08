@@ -4,7 +4,7 @@
 \name{PathOutline}
 \alias{PathOutline}
 \title{Add point correspondences to the outline}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 PathOutline
 }
