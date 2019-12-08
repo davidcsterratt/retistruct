@@ -44,3 +44,8 @@ Improvements to image handing and refactoring the code (in the
 The Jackson Laboratory (Bar Harbor, ME, USA) Scientific Services
 Innovation Fund from 2016-2017 and an NIH R21 grant (EY027894–01A1)
 from 2018-2020 to Dr. Mark P. Krebs, The Jackson Laboratory.
+
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.org/davidcsterratt/retistruct)
+<!-- badges: end -->
+
