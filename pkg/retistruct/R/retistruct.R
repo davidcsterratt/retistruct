@@ -267,7 +267,7 @@ retistruct.reconstruct <- function(a, report=NULL,
   r$loadOutline(o, debug=debug)
 
   r$reconstruct(plot.3d=plot.3d, dev.flat=dev.flat,
-                dev.polar=dev.polar,
+                dev.polar=dev.polar, report=report,
                 ...)
   if (!is.null(r)) {
     repstr <- paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),

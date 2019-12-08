@@ -2,6 +2,9 @@ CHANGES IN VERSION 0.6.1 - Released 2019/07/xx
 
 NEW FEATURES
 
+* Allow resizing of windows
+  (https://github.com/davidcsterratt/retistruct/issues/34)
+
 * Allow data counts to be read in using ijroi and csv formats
   (https://github.com/davidcsterratt/retistruct/issues/37)
 

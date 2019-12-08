@@ -127,8 +127,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       report("Projecting to sphere...")
       self$projectToSphere()
     },
-    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA) {
-
+    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
+                           report=getOption("retistruct.report")) {
       ##   ## Initial plot in 3D space
       ##   if (plot.3d) {
       ##     sphericalplot(r)
