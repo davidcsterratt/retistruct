@@ -706,21 +706,28 @@ It can be useful to have access to the data underlying a
 reconstruction directly, for example to allow statistical analysis.
 To load saved date into R, type the following into R:
 \begin{verbatim}
-r <- retistruct.read.recdata("/path/to/reconstruction/directory")
+r <-
+retistruct.read.recdata(list(dataset="/path/to/reconstruction/directory"),
+check=FALSE)
 \end{verbatim}
 The resulting object \texttt{r} contains various fields, which can be
 accessed using the R \texttt{\$} operator, e.g.
 \begin{verbatim}
-r$Dss$green
+r$featureSets[[1]]$Ps
 \end{verbatim}
-gives a list of the spherical co-ordinates of green labelled
-data points. See Table~\ref{tab:matlab-export} for a list of the most
-useful quantities. Other quantities (for example the locations of the
-mesh points in the flat and spherical retina) are also available. The
-documentation for \texttt{ReconstructedOutline},
-\texttt{ReconstructedDataset}, \texttt{getDss} and \texttt{getSss} in
-the user manual has more information about this.
+gives a list of the spherical co-ordinates of labelled data points.
+Other quantities (for example the locations of the mesh points in the
+flat and spherical retina) are also available.
 
+At present the meanings of all fields are not documented - the 
+\texttt{ReconstructedOutline.R} source file gives some information.
+
+% See Table~\ref{tab:matlab-export} for a list of the most useful
+% quantities.
+
+% The documentation for \texttt{ReconstructedOutline}, \texttt{getDss}
+% and \texttt{getSss} in the user manual has more information about
+% this.
 
 \section{Reading reconstruction data into \textsc{Matlab}}
 \label{retistruct-manual:sec:export-reconstr-data}
@@ -994,4 +1001,4 @@ each directory there are two files:
 % LocalWords:  alt isn checkboxes Markup markup toolbar min max von
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
 %  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
-%  LocalWords:  Wulff Az El uncheck lll
+%  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal
