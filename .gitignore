@@ -6,6 +6,7 @@
 *.out
 *.so
 *.o
+*.toc
 doc/retistruct-manual.pdf
 doc/retistruct-user-guide.pdf
 doc/retistruct-tutorial.pdf
