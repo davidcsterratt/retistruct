@@ -19,7 +19,7 @@ Most users will wish to install from CRAN, as described on the [Retistruct homep
 
 To install from the current stable branch (i.e. the branch that is on CRAN), use the R devtools package like this:
 ```
-devtools::install_github("davidcsterratt/retistruct@v0.5.x", subdir="pkg/retistruct")
+devtools::install_github("davidcsterratt/retistruct@v0.6.1", subdir="pkg/retistruct")
 ```
 To install from the current, unstable, lesser tested development branch, use the R devtools package like this:
 ```
