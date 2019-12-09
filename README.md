@@ -31,7 +31,7 @@ Roadmap
 
 There are a number of improvements on the horizon - see the [list of milestones](https://github.com/davidcsterratt/retistruct/milestones) for full details.
 
-Retistruct is not my main work at present, so improvements may take some time. Nevertheless, if there's something you'd like implemented, please let me know, ideally by [creating an issue](https://github.com/davidcsterratt/retistruct/issues/new).
+Retistruct is not my main work at present, so improvements may take some time. Nevertheless, if there's something you'd like implemented, please let me know, either by [creating an issue](https://github.com/davidcsterratt/retistruct/issues/new), or [by email](mailto:david.c.sterratt@ed.ac.uk).
 
 Funding Acknowldegements
 ========================
