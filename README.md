@@ -19,7 +19,7 @@ Most users will wish to install from CRAN, as described on the [Retistruct homep
 
 To install from the current stable branch (i.e. the branch that is on CRAN), use the R devtools package like this:
 ```
-devtools::install_github("davidcsterratt/retistruct@v0.5.x", subdir="pkg/retistruct")
+devtools::install_github("davidcsterratt/retistruct@v0.6.1", subdir="pkg/retistruct")
 ```
 To install from the current, unstable, lesser tested development branch, use the R devtools package like this:
 ```
@@ -44,3 +44,8 @@ Improvements to image handing and refactoring the code (in the
 The Jackson Laboratory (Bar Harbor, ME, USA) Scientific Services
 Innovation Fund from 2016-2017 and an NIH R21 grant (EY027894–01A1)
 from 2018-2020 to Dr. Mark P. Krebs, The Jackson Laboratory.
+
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.org/davidcsterratt/retistruct)
+<!-- badges: end -->
+
