@@ -127,15 +127,17 @@ If you encounter issues using Retistruct please either:
 
 ## Updates
 
+December 2019
+: Retistruct 0.6.1 is out. This reinstates sphericalplots and the saving of reconstructed data. New features include allowing resizing of windows so plots can be larger, allowing data counts to be read in using ijroi and csv formats and exposing some features in the API.  See the [NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS)
+for more information.
+
 July 2019
 : Retistruct 0.6.0 is out. The big change in this version is a
 complete refactor of the code, which should enable future enhancements
 to happen more quickly. The stitching algorithm is improved. There are
 major improvments in image rendering, which should be a lot faster
 thanks to the tsearch algorithm in 0.4.x of the geometry package, and
-able to deal with high-resolution images. See the
-[NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS)
-for more information.
+able to deal with high-resolution images.
 
 July 2017
 : Retistruct 0.5.11 is out. The CSV input format can now take a file of counts (or "grouped") data and there are a number of bug fixes; see the [NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS) for more information.
