@@ -4,8 +4,13 @@
 \alias{sinusoidal}
 \title{Sinusoidal projection}
 \usage{
-sinusoidal(r, proj.centre = cbind(phi = 0, lambda = 0),
-  lambdalim = NULL, lines = FALSE, ...)
+sinusoidal(
+  r,
+  proj.centre = cbind(phi = 0, lambda = 0),
+  lambdalim = NULL,
+  lines = FALSE,
+  ...
+)
 }
 \arguments{
 \item{r}{Latitude-longitude coordinates in a matrix with columns

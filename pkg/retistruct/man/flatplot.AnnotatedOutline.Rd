@@ -4,8 +4,7 @@
 \alias{flatplot.AnnotatedOutline}
 \title{Flat plot of AnnotatedOutline}
 \usage{
-\method{flatplot}{AnnotatedOutline}(x, axt = "n", xlim = NULL,
-  ylim = NULL, markup = TRUE, ...)
+\method{flatplot}{AnnotatedOutline}(x, axt = "n", xlim = NULL, ylim = NULL, markup = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{AnnotatedOutline}} object}

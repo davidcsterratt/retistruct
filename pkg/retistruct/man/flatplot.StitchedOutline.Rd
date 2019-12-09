@@ -4,8 +4,7 @@
 \alias{flatplot.StitchedOutline}
 \title{Flat plot of AnnotatedOutline}
 \usage{
-\method{flatplot}{StitchedOutline}(x, axt = "n", xlim = NULL,
-  ylim = NULL, stitch = TRUE, lwd = 1, ...)
+\method{flatplot}{StitchedOutline}(x, axt = "n", xlim = NULL, ylim = NULL, stitch = TRUE, lwd = 1, ...)
 }
 \arguments{
 \item{x}{\code{\link{AnnotatedOutline}} object}

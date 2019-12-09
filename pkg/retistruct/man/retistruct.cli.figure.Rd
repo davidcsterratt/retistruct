@@ -4,8 +4,14 @@
 \alias{retistruct.cli.figure}
 \title{Print a figure to file}
 \usage{
-retistruct.cli.figure(dataset, outputdir, device = "pdf", width = 6,
-  height = 6, res = 100)
+retistruct.cli.figure(
+  dataset,
+  outputdir,
+  device = "pdf",
+  width = 6,
+  height = 6,
+  res = 100
+)
 }
 \arguments{
 \item{dataset}{Path to dataset to process}

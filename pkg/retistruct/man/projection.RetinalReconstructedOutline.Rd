@@ -4,13 +4,25 @@
 \alias{projection.RetinalReconstructedOutline}
 \title{Plot projection of reconstructed dataset}
 \usage{
-\method{projection}{RetinalReconstructedOutline}(r,
-  transform = identity.transform, projection = azimuthal.equalarea,
-  axisdir = cbind(phi = 90, lambda = 0), proj.centre = cbind(phi = 0,
-  lambda = 0), lambdalim = c(-180, 180), datapoints = TRUE,
-  datapoint.means = TRUE, datapoint.contours = FALSE,
-  grouped = FALSE, grouped.contours = FALSE, landmarks = TRUE,
-  mesh = FALSE, grid = TRUE, image = TRUE, ids = r$getIDs(), ...)
+\method{projection}{RetinalReconstructedOutline}(
+  r,
+  transform = identity.transform,
+  projection = azimuthal.equalarea,
+  axisdir = cbind(phi = 90, lambda = 0),
+  proj.centre = cbind(phi = 0, lambda = 0),
+  lambdalim = c(-180, 180),
+  datapoints = TRUE,
+  datapoint.means = TRUE,
+  datapoint.contours = FALSE,
+  grouped = FALSE,
+  grouped.contours = FALSE,
+  landmarks = TRUE,
+  mesh = FALSE,
+  grid = TRUE,
+  image = TRUE,
+  ids = r$getIDs(),
+  ...
+)
 }
 \arguments{
 \item{r}{\code{\link{RetinalReconstructedOutline}} object}

@@ -4,8 +4,13 @@
 \alias{retistruct.cli}
 \title{Process a dataset with a time limit}
 \usage{
-retistruct.cli(dataset, cpu.time.limit = Inf, outputdir = NA,
-  device = "pdf", ...)
+retistruct.cli(
+  dataset,
+  cpu.time.limit = Inf,
+  outputdir = NA,
+  device = "pdf",
+  ...
+)
 }
 \arguments{
 \item{dataset}{Path to dataset to process}

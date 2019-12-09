@@ -4,8 +4,26 @@
 \alias{dE}
 \title{The deformation energy gradient function}
 \usage{
-dE(p, Cu, C, L, B, T, A, R, Rset, i0, phi0, lambda0, Nphi, N, alpha = 1,
-  x0, nu = 1, verbose = FALSE)
+dE(
+  p,
+  Cu,
+  C,
+  L,
+  B,
+  T,
+  A,
+  R,
+  Rset,
+  i0,
+  phi0,
+  lambda0,
+  Nphi,
+  N,
+  alpha = 1,
+  x0,
+  nu = 1,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{p}{Parameter vector of \code{phi} and \code{lambda}}

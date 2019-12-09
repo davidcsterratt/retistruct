@@ -4,8 +4,15 @@
 \alias{flatplot.ReconstructedOutline}
 \title{Flat plot of reconstructed outline}
 \usage{
-\method{flatplot}{ReconstructedOutline}(x, axt = "n", xlim = NULL,
-  ylim = NULL, grid = TRUE, strain = FALSE, ...)
+\method{flatplot}{ReconstructedOutline}(
+  x,
+  axt = "n",
+  xlim = NULL,
+  ylim = NULL,
+  grid = TRUE,
+  strain = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{ReconstructedOutline}} object}

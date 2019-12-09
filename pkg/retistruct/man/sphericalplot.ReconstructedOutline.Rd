@@ -4,8 +4,7 @@
 \alias{sphericalplot.ReconstructedOutline}
 \title{Spherical plot of reconstructed outline}
 \usage{
-\method{sphericalplot}{ReconstructedOutline}(r, strain = FALSE,
-  surf = TRUE, ...)
+\method{sphericalplot}{ReconstructedOutline}(r, strain = FALSE, surf = TRUE, ...)
 }
 \arguments{
 \item{r}{\code{\link{ReconstructedOutline}} object}

@@ -4,8 +4,7 @@
 \alias{flatplot.TriangulatedOutline}
 \title{Plot flat \code{\link{TriangulatedOutline}}.}
 \usage{
-\method{flatplot}{TriangulatedOutline}(x, axt = "n", xlim = NULL,
-  ylim = NULL, mesh = TRUE, ...)
+\method{flatplot}{TriangulatedOutline}(x, axt = "n", xlim = NULL, ylim = NULL, mesh = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{TriangulatedOutline}} object}

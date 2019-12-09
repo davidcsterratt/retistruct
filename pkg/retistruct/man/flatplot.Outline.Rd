@@ -4,9 +4,20 @@
 \alias{flatplot.Outline}
 \title{Flat plot of outline}
 \usage{
-\method{flatplot}{Outline}(x, axt = "n", xlim = NULL, ylim = NULL,
-  add = FALSE, image = TRUE, scalebar = 1, rimset = FALSE,
-  pids = FALSE, pid.joggle = 0, lwd.outline = 1, ...)
+\method{flatplot}{Outline}(
+  x,
+  axt = "n",
+  xlim = NULL,
+  ylim = NULL,
+  add = FALSE,
+  image = TRUE,
+  scalebar = 1,
+  rimset = FALSE,
+  pids = FALSE,
+  pid.joggle = 0,
+  lwd.outline = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{Outline}} object}

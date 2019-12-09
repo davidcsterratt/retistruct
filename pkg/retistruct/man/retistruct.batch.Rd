@@ -4,9 +4,15 @@
 \alias{retistruct.batch}
 \title{Batch operation using the parallel package}
 \usage{
-retistruct.batch(tldir = ".", outputdir = tldir, datasets = NULL,
-  device = "pdf", titrate = FALSE, cpu.time.limit = 3600,
-  mc.cores = getOption("mc.cores", 2L))
+retistruct.batch(
+  tldir = ".",
+  outputdir = tldir,
+  datasets = NULL,
+  device = "pdf",
+  titrate = FALSE,
+  cpu.time.limit = 3600,
+  mc.cores = getOption("mc.cores", 2L)
+)
 }
 \arguments{
 \item{tldir}{If datasets is not specified, the top level of the

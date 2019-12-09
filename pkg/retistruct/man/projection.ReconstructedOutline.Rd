@@ -4,14 +4,28 @@
 \alias{projection.ReconstructedOutline}
 \title{Projection of a reconstructed outline}
 \usage{
-\method{projection}{ReconstructedOutline}(r,
-  transform = identity.transform, axisdir = cbind(phi = 90, lambda =
-  0), projection = azimuthal.equalarea, proj.centre = cbind(phi = 0,
-  lambda = 0), lambdalim = c(-180, 180), philim = c(-90, 90),
-  labels = c(0, 90, 180, 270), mesh = FALSE, grid = TRUE,
-  grid.bg = "transparent", grid.int.minor = 15, grid.int.major = 45,
-  colatitude = TRUE, pole = FALSE, image = TRUE, markup = TRUE,
-  add = FALSE, max.proj.dim = getOption("max.proj.dim"), ...)
+\method{projection}{ReconstructedOutline}(
+  r,
+  transform = identity.transform,
+  axisdir = cbind(phi = 90, lambda = 0),
+  projection = azimuthal.equalarea,
+  proj.centre = cbind(phi = 0, lambda = 0),
+  lambdalim = c(-180, 180),
+  philim = c(-90, 90),
+  labels = c(0, 90, 180, 270),
+  mesh = FALSE,
+  grid = TRUE,
+  grid.bg = "transparent",
+  grid.int.minor = 15,
+  grid.int.major = 45,
+  colatitude = TRUE,
+  pole = FALSE,
+  image = TRUE,
+  markup = TRUE,
+  add = FALSE,
+  max.proj.dim = getOption("max.proj.dim"),
+  ...
+)
 }
 \arguments{
 \item{r}{\code{ReconstructedOutline} object}
