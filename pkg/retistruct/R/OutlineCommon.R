@@ -5,11 +5,12 @@
 ##'   outline)
 OutlineCommon <- R6Class("OutlineCommon",
   public = list(
-    ##' @field Version of reconstruction file data format
+    ##' @field version Version of reconstruction file data format
     version = 6,
-    ##' @field List of feature sets associated with the outline, which may be of various types, e.g. a \link{PointSet} or \link{LandmarkSet}
+    ##' @field featureSets List of feature sets associated with the outline, which may be of various types, e.g. a \link{PointSet} or \link{LandmarkSet}
     featureSets = list(),
     ##' @description Get all the feature sets
+    ##' @return List of \link{FeatureSet}s associated with the outline
     getFeatureSets = function() {
       return(self$featureSets)
     },
@@ -26,7 +27,7 @@ OutlineCommon <- R6Class("OutlineCommon",
       }
       return(self$featureSets[[ind]])
     },
-    ##' @description Clear all feature sets
+    ##' @description Clear all feature sets from the outline
     clearFeatureSets = function() {
       self$featureSets = list()
     },
@@ -36,7 +37,7 @@ OutlineCommon <- R6Class("OutlineCommon",
       return(unique(unlist(sapply(self$getFeatureSets(), function(fs) { fs$getIDs() }))))
     },
     ##' @description Get all the disctinct types of \link{FeatureSet}s
-    ##' @return Vector of types as strings  
+    ##' @return Vector of types as strings, e.g. \var{PointSet}, \var{LandmarkSet}
     getFeatureSetTypes = function() {
       return(sapply(self$getFeatureSets(), function(fs) return(fs$type)))
     }
