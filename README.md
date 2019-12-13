@@ -46,6 +46,6 @@ Innovation Fund from 2016-2017 and an NIH R21 grant (EY027894–01A1)
 from 2018-2020 to Dr. Mark P. Krebs, The Jackson Laboratory.
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.org/davidcsterratt/retistruct)
+[![Travis build status](https://travis-ci.com/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.com/davidcsterratt/retistruct)
 <!-- badges: end -->
 
