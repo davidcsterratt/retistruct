@@ -218,6 +218,8 @@ projection.ReconstructedPointSet <-
            axisdir=cbind(phi=90, lambda=0),
            projection=azimuthal.equalarea,
            proj.centre=cbind(phi=0, lambda=0),
+           markup=NULL, # Not used in this function; hides from ...
+           max.proj.dim=NULL, # Not used in this function; hides from ...
            ...)
 {
   ## This will call projection.reconstructedOutline(), but without
