@@ -61,7 +61,7 @@ TestClass5 <-
 ##' @param r R6 object or list
 ##' @param path root of the path to the list - no need to supply. Not
 ##'   used but could be developed for pretty-printing
-##' @param envs list of environments already encounted - do not set
+##' @param envs list of environments already encountered - do not set
 ##' @return List with structure mirroring the R6 object.
 ##' @author David Sterratt
 R6_to_list <- function(r, path="", envs=list()) {

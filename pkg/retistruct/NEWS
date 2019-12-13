@@ -1,3 +1,12 @@
+CHANGES IN VERSION 0.6.2 - Released 2019/12/13
+
+NEW FEATURES
+
+* Improved documentation of the API
+  (https://github.com/davidcsterratt/retistruct/issues/47)
+  Thanks to improvements in roxygen2, the class hierarchy can be viewed
+  using help.start()
+
 CHANGES IN VERSION 0.6.1 - Released 2019/12/08
 
 NEW FEATURES

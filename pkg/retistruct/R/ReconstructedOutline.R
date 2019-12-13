@@ -1,105 +1,98 @@
-##' Reconstruct outline into spherical surface. Reconstruction
-##' proceeds in a number of stages:
+##' Class containing functions to reconstruct \link{StitchedOutline}s
+##' and store the associated data
 ##'
-##' \enumerate{
-##' 
-##' \item The flat object is triangulated with at least \code{n}
-##' triangles. This can introduce new vertices in the rim. 
-##'
-##' \item The triangulated object is stitched.
-##'
-##' \item The stitched object is triangulated again, but this time it
-##' is not permitted to add extra vertices to the rim.
-##'
-##' \item The corresponding points determined by the stitching process
-##' are merged to form a new set of merged points and a new
-##' triangulation.
-##'
-##' \item The merged points are projected roughly to a sphere.
-##'
-##' \item The locations of the points on the sphere are moved so as to
-##' minimise the energy function.
-##' }
-##' 
-##' @section Member functions:
-##'
-##' \describe{
-##' \item{mapFlatToSpherical(P)}{Returns location of point on sphere corresponding to point on the flat outline. Input values:}
-##' \describe{
-##' \item{P}{Cartesian coordinates  on flat outline as a matrix with "X" and "Y" columns}
-##' }}
-##' 
-##' @title Reconstruct outline into spherical surface
+##' @description The function \code{reconstruct} reconstructs outline
+##'   into spherical surface Reconstruct outline into spherical
+##'   surface. 
 ##' @importFrom geometry tsearch sph2cart
 ##' @author David Sterratt
 ##' @export
 ReconstructedOutline <- R6Class("ReconstructedOutline",
   inherit = OutlineCommon,
   private = list(
-    ims = NULL                          # Spherical coordinates of
-                                        # pixel corners
+    ## @field ims spherical coordinates of  pixel corners
+    ims = NULL
   ),
   public = list(
-    ol = NULL,                            # Annotated outline
-    ol0 = NULL,                           # Orignal Annotated outline
-    Pt = NULL,                            # Transformed cartesian mesh
-                                          # points
-    Tt = NULL,                            # Transformed triangulation
-    Ct = NULL,                            # Transformed links
+    ##' @field ol Annotated outline
+    ol = NULL,
+    ##' @field ol0 Original Annotated outline
+    ol0 = NULL,
+    ##' @field Pt Transformed cartesian mesh points
+    Pt = NULL,
+    ##' @field Tt Transformed triangulation   
+    Tt = NULL,
+    ##' @field Ct Transformed links
+    Ct = NULL,
+    ##' @field Cut Transformed links
     Cut = NULL,
+    ##' @field Bt Transformed binary vector representation
+    ##'   of edge indices onto a binary vector representation of the
+    ##'   indices of the points linked by the edge
     Bt = NULL,
-    Lt = NULL,                          # Transformed lengths
-    ht = NULL,                          # Tramsformed correspondences
+    ##' @field Lt Transformed lengths
+    Lt = NULL,
+    ##' @field ht Transformed correspondences
+    ht = NULL,
+    ##' @field u Indices of unique points in untransformed space
     u = NULL,
+    ##' @field U Transformed indices of unique points in untransformed space
     U = NULL,
-    Rsett = NULL,                       # Transformed rim set
-    i0t = NULL,                         # Transformed marker
+    ##' @field Rsett Transformed rim set
+    Rsett = NULL,
+    ##' @field i0t Transformed marker
+    i0t = NULL,
+    ##' @field H mapping from edges onto corresponding edges
     H = NULL,
+    ##' @field Ht Transformed mapping from edges onto corresponding edges
     Ht = NULL,
-    phi0 = NULL,                        # Rim angle
-    R = NULL,                           # Radius
-    lambda0 = NULL,                     # Longitude of pole on rim
-    lambda = NULL,                      # Longitudes of transformed mesh points
-    phi = NULL,                         # Lattitudes of transformed mesh points
+    ##' @field phi0 Rim angle
+    phi0 = NULL,
+    ##' @field R Radius of spherical template
+    R = NULL,
+    ##' @field lambda0 Longitude of pole on rim
+    lambda0 = NULL,
+    ##' @field lambda Longitudes of transformed mesh points
+    lambda = NULL,
+    ##' @field phi Latitudes of transformed mesh points
+    phi = NULL,
+    ##' @field Ps Location of mesh point on sphere in spherical coordinates
     Ps = NULL,
-    n = 500,                            # Number of mesh points
-    alpha = 8,                          # Weighting of areas in energy function
+    ##' @field n Number of mesh points
+    n = 500,
+    ##' @field alpha Weighting of areas in energy function
+    alpha = 8,
+    ##' @field x0 Area cut-off coefficient
     x0 = 0.5,
-    nflip0 = NULL,                      # Initial number flipped triangles
-    nflip = NULL,                       # Final number flipped triangles
-    opt = NULL,                         # Optimisation object
-    E.tot = NULL,                       # Energy function including area
-    E.l = NULL,                         # Energy function based on lengths alone
-    mean.strain = NULL,                 # Mean strain
-    mean.logstrain = NULL,              # Mean log strain
-    debug = NULL,                       # Debug function
-    ## @param o \code{\link{AnnotatedOutline}} object, containing the following information:\describe{
-    ## \item{\code{P}}{outline points as N-by-2 matrix}
-    ## \item{\code{V0}}{indices of the apex of each tear}
-    ## \item{\code{VF}}{indices of the forward vertex of each tear}
-    ## \item{\code{VB}}{indices of the backward vertex of each tear}
-    ## \item{\code{i0}}{index of the landmark on the rim}
-    ## \item{\code{phi0}}{latitude of rim of partial sphere}
-    ## \item{\code{lambda0}}{longitude of landmark on rim}
-    ## }
-    ## @param n Number of points in triangulation.
-    ## @param alpha Area scaling coefficient
-    ## @param x0 Area cut-off coefficient
-    ## @param plot.3d Whether to show 3D picture during optimisation.
-    ## @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
-    ## means no plotting.
-    ## @param dev.polar Device display projection. Value of NA
-    ## (default) means no plotting.
-    ## @param report Function to report progress.
-    ## @param debug If \code{TRUE} print extra debugging output
-    ## @return \code{reconstructedOutline} object containing the input
-    ## information and the following modified and extra information:
-    ## \item{\code{P}}{New set of points in flattened object}
-    ## \item{\code{gf}}{New set of forward pointers in flattened object}
-    ## \item{\code{gb}}{New set of backward pointers in flattened object}
-    ## \item{\code{phi}}{latitude of new points on sphere}
-    ## \item{\code{lambda}}{longitude of new points on sphere}
-    ## \item{\code{Tt}}{New triangulation}
+    ##' @field nflip0 Initial number flipped triangles
+    nflip0 = NULL,
+    ##' @field nflip Final number flipped triangles
+    nflip = NULL,
+    ##' @field opt Optimisation object
+    opt = NULL,
+    ##' @field E.tot Energy function including area
+    E.tot = NULL,
+    ##' @field E.l Energy function based on lengths alone
+    E.l = NULL,
+    ##' @field mean.strain Mean strain
+    mean.strain = NULL,
+    ##' @field mean.logstrain Mean log strain
+    mean.logstrain = NULL,
+    ##' @field debug Debug function
+    debug = NULL,
+
+    ##' @description Load \link{AnnotatedOutline} into ReconstructedOutline object
+    ##' @param ol \code{\link{AnnotatedOutline}} object, containing the following information
+    ##' @param n Number of points in triangulation.
+    ##' @param alpha Area scaling coefficient
+    ##' @param x0 Area cut-off coefficient
+    ##' @param plot.3d Whether to show 3D picture during optimisation.
+    ##' @param dev.flat Device to plot grid onto. Value of \code{NA} (default)
+    ##' means no plotting.
+    ##' @param dev.polar Device display projection. Value of NA
+    ##' (default) means no plotting.
+    ##' @param report Function to report progress.
+    ##' @param debug If \code{TRUE} print extra debugging output
     loadOutline = function(ol,
                            n=500, alpha=8, x0=0.5,
                            plot.3d=FALSE, dev.flat=NA, dev.polar=NA, report=retistruct::report,
@@ -120,25 +113,55 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$ol <- ol
       self$phi0 <- ol$phi0
       self$lambda0 <- ol$lambda0
-
+      
       report("Merging points...")
       self$mergePointsEdges()
-
+      
       report("Projecting to sphere...")
       self$projectToSphere()
     },
+    ##' @description Reconstruct
+    ##' Reconstruction proceeds in a number of stages:
+    ##'
+    ##' \enumerate{
+    ##' 
+    ##' \item The flat object is triangulated with at least \code{n}
+    ##' triangles. This can introduce new vertices in the rim. 
+    ##'
+    ##' \item The triangulated object is stitched.
+    ##'
+    ##' \item The stitched object is triangulated again, but this time it
+    ##' is not permitted to add extra vertices to the rim.
+    ##'
+    ##' \item The corresponding points determined by the stitching process
+    ##' are merged to form a new set of merged points and a new
+    ##' triangulation.
+    ##'
+    ##' \item The merged points are projected roughly to a sphere.
+    ##'
+    ##' \item The locations of the points on the sphere are moved so as to
+    ##' minimise the energy function.
+    ##' }
+    ##' 
+    ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+    ##' @param dev.flat Device handle for plotting flatplot updates to. If
+    ##' \code{NA} don't make any flat plots
+    ##' @param dev.polar Device handle for plotting polar plot updates
+    ##' to. If \code{NA} don't make any polar plots.
+    ##' @param  Control argument to pass to \code{optim}
+    ##' @param report Function to report progress.
     reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                           report=getOption("retistruct.report")) {
+                              report=getOption("retistruct.report")) {
       ##   ## Initial plot in 3D space
       ##   if (plot.3d) {
       ##     sphericalplot(r)
       ##   }
       ## }
-
+      
       ## Check for flipped triangles and record initial number
       ft <- flipped.triangles(self$getPoints(), self$Tt, self$R)
       self$nflip0 <- sum(ft$flipped)
-
+      
       report("Optimising mapping with no area constraint using BFGS...")
       self$optimiseMapping(alpha=0, x0=0, nu=1,
                            plot.3d=plot.3d,
@@ -161,35 +184,34 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                            dev.flat=dev.flat, dev.polar=dev.polar)
       
       report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
-                        ";", self$nflip, "flipped triangles."))
-    },
-    ## This function creates merged and transformed versions (all
-    ## suffixed with \code{t}) of a number of existing variables, as well
-    ## as a matrix \code{Bt}, which maps a binary vector representation
-    ## of edge indices onto a binary vector representation of the
-    ## indices of the points linked by the edge.
-    ## @title  Merge stitched points and edges 
-    ## @param t A \code{StitchedOutline} object in which points that have
-    ## been added by stitching have been triangulated
-    ## @return Adds following fields to input
-    ## \item{\code{Pt}}{Transformed point locations}
-    ## \item{\code{Tt}}{Transformed triangulation}
-    ## \item{\code{Ct}}{Transformed connection set}
-    ## \item{\code{Cut}}{Transformed symmetric connection set}
-    ## \item{\code{Bt}}{Transformed binary vector representation
-    ## of edge indices onto a binary vector representation of the
-    ## indices of the points linked by the edge}
-    ## \item{\code{Lt}}{Transformed edge lengths}
-    ## \item{\code{ht}}{Transformed correspondences}
-    ## \item{\code{u}}{Indices of unique points in untransformed space}
-    ## \item{\code{U}}{Transformed indices of unique points in untransformed space}
-    ## \item{\code{Rset}}{The set of points on the rim (which has been reordered)}
-    ## \item{\code{Rsett}}{Transformed set of points on rim}
-    ## \item{\code{i0t}}{Transformed index of the landmark}
-    ## \item{H}{mapping from edges onto corresponding edges}
-    ## \item{Ht}{Transformed mapping from edges onto corresponding edges}
-    ## @author David Sterratt
-    ## @export
+                   ";", self$nflip, "flipped triangles."))
+    }, 
+
+    ##' @description Merge stitched points and edges.
+    ##' Create merged and transformed versions (all suffixed with \code{t})
+    ##' of a number of existing variables, as well
+    ##' as a matrix \code{Bt}, which maps a binary vector representation
+    ##' of edge indices onto a binary vector representation of the
+    ##' indices of the points linked by the edge.
+    ##' Sets following fields
+    ##' \itemize{
+    ##' \item{\code{Pt}}{Transformed point locations}
+    ##' \item{\code{Tt}}{Transformed triangulation}
+    ##' \item{\code{Ct}}{Transformed connection set}
+    ##' \item{\code{Cut}}{Transformed symmetric connection set}
+    ##' \item{\code{Bt}}{Transformed binary vector representation
+    ##' of edge indices onto a binary vector representation of the
+    ##' indices of the points linked by the edge}
+    ##' \item{\code{Lt}}{Transformed edge lengths}
+    ##' \item{\code{ht}}{Transformed correspondences}
+    ##' \item{\code{u}}{Indices of unique points in untransformed space}
+    ##' \item{\code{U}}{Transformed indices of unique points in untransformed space}
+    ##' \item{\code{Rset}}{The set of points on the rim (which has been reordered)}
+    ##' \item{\code{Rsett}}{Transformed set of points on rim}
+    ##' \item{\code{i0t}}{Transformed index of the landmark}
+    ##' \item{\code{H}}{mapping from edges onto corresponding edges}
+    ##' \item{\code{Ht}}{Transformed mapping from edges onto corresponding edges}
+    ##' }
     mergePointsEdges = function() {
       h <- self$ol$h
       T <- self$ol$T
@@ -292,26 +314,18 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$H = H
       self$Ht= Ht
     },
-    ## This takes the mesh points from the flat outline and maps them to
-    ## the curtailed sphere. It uses the area of the flat outline and
-    ## \code{phi0} to determine the radius \code{R} of the sphere. It
-    ## tries to get a good first approximation by using the function
-    ## \code{\link{stretchMesh}}.
-    ##
-    ## @title Project mesh points in the flat outline onto a sphere
-    ## @param r \code{Outline} object to which the following information
-    ## has been added with \code{\link{mergePointsEdges}}:
-    ## \describe{
-    ## \item{\code{Pt}}{The mesh point coordinates.}
-    ## \item{\code{Rsett}}{The set of points on the rim.}
-    ## \item{\code{A.tot}}{The area of the flat outline.}}
-    ## @return \code{reconstructedOutline} object containing the
-    ## following extra information
-    ## \item{\code{phi}}{Latitude of mesh points.}
-    ## \item{\code{lmabda}}{Longitude of mesh points.}
-    ## \item{\code{R}}{Radius of sphere.}
-    ## @author David Sterratt
-    ## @export
+    ##' @description Project mesh points in the flat outline onto a sphere
+    ##' This takes the mesh points from the flat outline and maps them to
+    ##' the curtailed sphere. It uses the area of the flat outline and
+    ##' \code{phi0} to determine the radius \code{R} of the sphere. It
+    ##' tries to get a good first approximation by using the function
+    ##' \code{\link{stretchMesh}}.
+    ##' The following fields are set:
+    ##' \itemize{
+    ##' \item{\code{phi}}{Latitude of mesh points.}
+    ##' \item{\code{lmabda}}{Longitude of mesh points.}
+    ##' \item{\code{R}}{Radius of sphere.}
+    ##' }
     projectToSphere = function() {
       Rsett <- self$Rsett
       i0t <- self$i0t
@@ -360,18 +374,17 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$lambda0 <- lambda0
       self$Ps <- Ps
     },
-    ## This function returns information about how edges on the sphere
-    ## have been deformed from their flat state.
-    ##
-    ## @title Return strains edges are under in spherical retina
-    ## @param r A \code{\link{ReconstructedOutline}} object
-    ## @return A list containing two data frames \code{flat} and \code{spherical}. 
-    ## Each data frame contains for each edge in the flat or spherical meshes:
-    ## \item{\code{L}}{Length of the edge in the flat outline }
-    ## \item{\code{l}}{Length of the corresponding edge on the sphere}
-    ## \item{\code{strain}}{The strain of each connection}
-    ## \item{\code{logstrain}}{The logarithmic strain of each connection}
-    ## @author David Sterratt
+    ##' @description Return strains edges are under in spherical retina
+    ##' Set information about how edges on the sphere
+    ##' have been deformed from their flat state.
+    ##' @return A list containing two data frames \code{flat} and \code{spherical}. 
+    ##' Each data frame contains for each edge in the flat or spherical meshes:
+    ##' \itemize{
+    ##' \item{\code{L}}{Length of the edge in the flat outline }
+    ##' \item{\code{l}}{Length of the corresponding edge on the sphere}
+    ##' \item{\code{strain}}{The strain of each connection}
+    ##' \item{\code{logstrain}}{The logarithmic strain of each connection}
+    ##' }
     getStrains = function() {
       ## Original lengths in flattened outline is a vector with
       ## M elements, the number of rows of Cu
@@ -400,26 +413,20 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                     data.frame(L=Lt, l=lt,
                                strain=straint, logstrain=logstraint)))
     },
-    ## Optimise the mapping from the flat outline to the sphere
-    ##
-    ## @title Optimise mapping
-    ## @param r reconstructedOutline object
-    ## @param alpha Area penalty scaling coefficient
-    ## @param x0 Area penalty cut-off coefficient
-    ## @param nu Power to which to raise area
-    ## @param method Method to pass to \code{optim}
-    ## @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
-    ## @param dev.flat Device handle for plotting flatplot updates to. If
-    ## \code{NA} don't make any flat plots
-    ## @param dev.polar Device handle for plotting polar plot updates
-    ## to. If \code{NA} don't make any polar plots.
-    ## @param control Control argument to pass to \code{optim}
-    ## @return reconstructedOutline object
-    ## @author David Sterratt
-    ## @export
+    ##' @description Optimise the mapping from the flat outline to the sphere
+    ##' @param alpha Area penalty scaling coefficient
+    ##' @param x0 Area penalty cut-off coefficient
+    ##' @param nu Power to which to raise area
+    ##' @param optim.method Method to pass to \code{optim}
+    ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+    ##' @param dev.flat Device handle for plotting flatplot updates to. If
+    ##' \code{NA} don't make any flat plots
+    ##' @param dev.polar Device handle for plotting polar plot updates
+    ##' to. If \code{NA} don't make any polar plots.
+    ##' @param control Control argument to pass to \code{optim}
     optimiseMapping = function(alpha=4, x0=0.5, nu=1, optim.method="BFGS",
-                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                                control=list()) {
+                               plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
+                               control=list()) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -481,7 +488,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         self$E.l <- E.l
         self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
         self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
-      
+        
         ## Plot
         if (plot.3d) {
           sphericalplot(self, datapoints=FALSE, strain=FALSE)
@@ -505,23 +512,17 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         }
       }
     },
-    ## Optimise the mapping from the flat outline to the sphere
-    ##
-    ## @title Optimise mapping
-    ## @param r reconstructedOutline object
-    ## @param alpha Area penalty scaling coefficient
-    ## @param x0 Area penalty cut-off coefficient
-    ## @param nu Power to which to raise area
-    ## @param method Method to pass to \code{optim}
-    ## @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
-    ## @param dev.flat Device handle for plotting grid to
-    ## @param dev.polar Device handle for plotting polar plot to
-    ## @param ... Extra arguments to pass to \code{\link{fire}}
-    ## @return reconstructedOutline object
-    ## @author David Sterratt
-    ## @export
+    ##' @description Optimise the mapping from the flat outline to the sphere
+    ##' @param alpha Area penalty scaling coefficient
+    ##' @param x0 Area penalty cut-off coefficient
+    ##' @param nu Power to which to raise area
+    ##' @param method Method to pass to \code{optim}
+    ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
+    ##' @param dev.flat Device handle for plotting grid to
+    ##' @param dev.polar Device handle for plotting polar plot to
+    ##' @param ... Extra arguments to pass to \code{\link{fire}}
     optimiseMappingCart  = function(alpha=4, x0=0.5, nu=1, method="BFGS",
-                                 plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
+                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA, ...) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -616,17 +617,16 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
       self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
     },
-    ## Transform an image into the reconstructed space. The four corner
-    ## coordinates of each pixel are transformed into spherical
-    ## coordinates and a mask matrix with the same dimensions as
-    ## \code{im} is created. This has \code{TRUE} for pixels that should
-    ## be displayed and \code{FALSE} for ones that should not.
-    ##
-    ## @title Transform an image into the reconstructed space
-    ## @param r \code{reconstructedOutline} object
-    ## @return \code{reconstructedOutline} object with extra elements
-    ## \item{\code{ims}}{Coordinates of corners of pixes in spherical coordinates}
-    ## @author David Sterratt
+    ##' @description Transform an image into the reconstructed space
+    ##' Transform an image into the reconstructed space. The four corner
+    ##' coordinates of each pixel are transformed into spherical
+    ##' coordinates and a mask matrix with the same dimensions as
+    ##' \code{im} is created. This has \code{TRUE} for pixels that should
+    ##' be displayed and \code{FALSE} for ones that should not.
+    ##' Sets the field
+    ##' \itemize{
+    ##' \item{\code{ims}}{Coordinates of corners of pixels in spherical coordinates}
+    ##' }
     transformImage = function() {
       im <- self$ol$getImage()
       if (!is.null(im)) {
@@ -653,13 +653,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         private$ims <- bary2sph(Ib, self$Tt, Pc)
       }
     },
-    ## Get coordinates of corners of pixels of image in spherical
-    ## coordinates
-    ## @param r \code{\link{ReconstructedOutline}} object
-    ## @return Coordinates of corners of pixels in spherical coordinates
-    ## @author David Sterratt
-    ## @method getIms reconstructedOutline
-    ## @export
+    ##' @description Get coordinates of corners of pixels of image in spherical
+    ##' coordinates
+    ##' @return Coordinates of corners of pixels in spherical coordinates
     getIms = function() {
       if (is.null(private$ims)) {
         report("Transforming image...")
@@ -671,8 +667,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(private$ims)
     },
-    ## @export
-    getTearCoords = function(r) {
+    ##' @description Get location of tear coordinates in spherical coordinates
+    ##' @return Location of tear coordinates in spherical coordinates
+    getTearCoords = function() {
       Tss <- list()
       for (TF in self$ol$TFset) {
         ## Convert indices to the spherical frame of reference
@@ -681,6 +678,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(Tss)
     },
+    ##' @description Get \link{ReconstructedFeatureSet}
+    ##' @param type Base type of \link{FeatureSet} as string.
+    ##'   E.g. \code{PointSet} returns a \link{ReconstructedPointSet}
     getFeatureSet = function(type) {
       type <- paste0("Reconstructed", type)
       fs <- super$getFeatureSet(type)
@@ -690,12 +690,20 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(fs)
     },
+    ##' @description Reconstruct any attached feature sets.
     reconstructFeatureSets = function() {
       self$featureSets <- lapply(self$ol$getFeatureSets(), function(x) x$reconstruct(self))
     },
+    ##' @description Get mesh points in spherical coordinates
+    ##' @return Matrix with columns \code{phi} (latitude) and \code{lambda}
+    ##'   (longitude)
     getPoints = function() {
       return(cbind(phi=self$phi, lambda=self$lambda))
     },
+    ##' @description Return location of point on sphere corresponding
+    ##'   to point on the flat outline
+    ##' @param P Cartesian coordinates  on flat outline as a matrix
+    ##'   with \code{X} and \code{Y} columns
     mapFlatToSpherical = function(P) {
       if (!(is.numeric(P))) {
         stop("P must be numeric")
@@ -724,7 +732,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       return(bary2sph(Pb, self$Tt, Ptc))
     }
   )
-)
+  )
                            
 
 
@@ -942,7 +950,7 @@ projection.ReconstructedOutline <- function(r,
                    seq(grid.int.minor, lambdalim[2], by= grid.int.minor))
   lambdas.min <- setdiff(lambdas.min, lambdas.maj)
 
-  ## Lattidues at which to draw lines; the smaller the by interval,
+  ## Latitudes at which to draw lines; the smaller the by interval,
   ## the smoother
   phis <- seq(philim[1], philim[2], by=1)
 

@@ -2,23 +2,28 @@
 % Please edit documentation in R/RetinalReconstructedOutline.R
 \name{RetinalReconstructedOutline}
 \alias{RetinalReconstructedOutline}
-\title{RetinalReconstructedOutline constructor}
-\value{
-\code{RetinalReconstructedOutline} object. This does not
-contain any extra fields, but there are extra methods that apply
-to it.
-}
+\title{A version of \link{ReconstructedOutline} that is specific to
+retinal datasets}
 \description{
-Create an object that is specific to retinal datasets. This
-contains methods that return data point and landmark coordinates
-that have been transformed according to the values of
-\code{DVflip} and \code{side}.
+A RetinalReconstructedOutline overrides methods of
+  \link{ReconstructedOutline} so that they return data point and
+  landmark coordinates that have been transformed according to the
+  values of \code{DVflip} and \code{side}. When reconstructing, it
+  also computes the \dQuote{Optic disc displacement}, i.e. the
+  number of degrees subtended between the optic disc and the pole.
 }
 \author{
 David Sterratt
 }
 \section{Super classes}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{\link[retistruct:ReconstructedOutline]{retistruct::ReconstructedOutline}} -> \code{RetinalReconstructedOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{EOD}}{Optic disc displacement in degrees}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -53,18 +58,28 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIms"></a>}}
 \subsection{Method \code{getIms()}}{
+Get coordinates of corners of pixels of image in spherical
+  coordinates, transformed according to the value of \code{DVflip}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$getIms()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Coordinates of corners of pixels in spherical coordinates
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTearCoords"></a>}}
 \subsection{Method \code{getTearCoords()}}{
+Get location of tear coordinates in spherical coordinates,
+  transformed according to the value of \code{DVflip}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$getTearCoords()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Location of tear coordinates in spherical coordinates
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
@@ -73,14 +88,31 @@ David Sterratt
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$reconstruct(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Parameters to \code{\link{ReconstructedOutline}}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatureSet"></a>}}
 \subsection{Method \code{getFeatureSet()}}{
+Get \link{ReconstructedFeatureSet}, transformed
+  according to the value of \code{DVflip}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$getFeatureSet(type)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{Base type of \link{FeatureSet} as string.
+E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

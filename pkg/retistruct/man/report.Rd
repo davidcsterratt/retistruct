@@ -10,7 +10,7 @@ report(...)
 \item{...}{Arguments to reporting function}
 }
 \description{
-Calls function speified by option \code{retistruct.report}
+Calls function specified by option \code{retistruct.report}
 }
 \author{
 David Sterratt

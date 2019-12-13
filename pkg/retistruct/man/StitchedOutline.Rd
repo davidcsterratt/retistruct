@@ -2,34 +2,29 @@
 % Please edit documentation in R/StitchedOutline.R
 \name{StitchedOutline}
 \alias{StitchedOutline}
-\title{Stitch together incisions and tears in an AnnotatedOutline}
-\value{
-\item{\code{Rset}}{the set of points on the rim}
-\item{\code{i0}}{the index of the landmark}
-\item{\code{P}}{a new set of mesh points}
-\item{\code{V0}}{indices of the apex of each tear}
-\item{\code{VF}}{indices of the forward vertex of each tear}
-\item{\code{VB}}{indices of the backward vertex of each tear}
-\item{\code{TFset}}{list containing indices of points in each forward tear}
-\item{\code{TBset}}{list containing indices of points in each backward tear}
-\item{\code{gf}}{new forward pointer list}
-\item{\code{gb}}{new backward pointer list}
-\item{\code{h}}{correspondence mapping}
-\item{\code{hf}}{correspondence mapping in forward direction for
-points on boundary}
-\item{\code{hb}}{correspondence mapping in backward direction for
-points on boundary}
-}
+\title{Class containing functions and data relating to Stitching outlines}
 \description{
-This stitches together the incisions and tears by inserting new
-points in the tears and creating correspondences between new
-points.
+A StitchedOutline contains a function to stitch the
+  tears, setting the correspondences \code{hf}, \code{hb} and
+  \code{h}
 }
 \author{
 David Sterratt
 }
 \section{Super classes}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{\link[retistruct:Outline]{retistruct::Outline}} -> \code{\link[retistruct:PathOutline]{retistruct::PathOutline}} -> \code{\link[retistruct:AnnotatedOutline]{retistruct::AnnotatedOutline}} -> \code{\link[retistruct:TriangulatedOutline]{retistruct::TriangulatedOutline}} -> \code{StitchedOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{Rset}}{the set of points on the rim}
+
+\item{\code{TFset}}{list containing indices of points in each forward tear}
+
+\item{\code{epsilon}}{the minimum distance between points, set
+automatically}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -81,14 +76,25 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$new(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Parameters to superclass constructors}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-stitchTears"></a>}}
 \subsection{Method \code{stitchTears()}}{
+Stitch together the incisions and tears by inserting new
+  points in the tears and creating correspondences between new
+  points.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$stitchTears()}\if{html}{\out{</div>}}
 }

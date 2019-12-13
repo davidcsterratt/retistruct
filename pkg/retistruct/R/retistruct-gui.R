@@ -263,7 +263,7 @@ retistruct <- function() {
       N <- N +  nrow(Ss[[i]])
     }
     ## Set "OD" landmark
-    fs$setName(i, "OD")
+    fs$setID(i, "OD")
 
     ## Update IDs panel
     checked <- a$getIDs() %in% c(gWidgets2::svalue(g.ids), "OD")

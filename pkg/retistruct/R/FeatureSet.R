@@ -1,16 +1,27 @@
-##' FeatureSet class
-##' @return An \code{FeatureSet} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' Superclass containing functions and data relating to sets of
+##' features in flat \code{\link{Outline}}s
+##'
+##' @description A FeatureSet contains information about features
+##'   located on \code{\link{Outline}}s. Each FeatureSet contains a
+##'   list of matrices, each of which has columns labelled \code{X}
+##'   and \code{Y} describing the cartesian coordinates of points on
+##'   the Outline, in the unscaled coordinate frame. Derived classes,
+##'   e.g. a \code{\link{CountSet}}, may have extra columns. Each matrix
+##'   in the list has an associated label and colour, which is used by
+##'   plotting functions.
+##'
 ##' @author David Sterratt
 ##' @export
 FeatureSet <- R6Class("FeatureSet",
+  inherit = FeatureSetCommon,
   public = list(
-    data = NA,
-    cols = NA,
-    type = NA,
+    ##' @description Constructor
+    ##' @param data List of matrices describing data. Each matrix
+    ##'   should have columns named \code{X} and \code{Y}
+    ##' @param cols Named vector of colours for each data set. The name is
+    ##'   used as the ID (label) for the data set. The colours should be names
+    ##'   present in the output of the \code{\link{colors}} function
+    ##' @param type String 
     initialize = function(data=NULL, cols=NULL, type=NULL) {
       if (!is.null(data)) {
         if (!is.list(data)) {
@@ -34,44 +45,6 @@ FeatureSet <- R6Class("FeatureSet",
                         names(cols)[which(missing_cols == cols)]))
         }
       }
-    },
-    getID = function(name) {
-      id <- which(names(self$data) == name)
-      if (length(id) == 1) {
-        return(id)
-      } else {
-        return(NA)
-      }
-    },
-    getIDs = function() {
-      return(names(self$data))
-    },
-    setName = function(i, name) {
-      if (!is.na(i)) {
-        new.names <- names(self$data)
-        ## If this name already exists, replace it with ""
-        j <- self$getID(name)
-        if (!is.na(j)) {
-          new.names[j] <- ""
-        }
-        new.names[i] <- name
-        names(self$data) <- new.names
-      }
-    },
-    getFeature = function(name) {
-      if (is.na(self$getID(name))) {
-        return(NULL)
-      }
-      return(self$data[[name]])
-    },
-    getFeatures = function() {
-      return(self$data)
-    },
-    getCol = function(id) {
-      if (id %in% names(self$cols)) {
-        return(self$cols[[id]])
-      }
-      return(self$cols[["default"]])
     }
   )
 )

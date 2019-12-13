@@ -19,8 +19,15 @@
 PathOutline <- R6Class("PathOutline",
   inherit = Outline,
   public = list(
+    ##' @field hf Forward correspondences
     hf = NULL,
+    ##' @field hb Backward correspondences
     hb = NULL,
+    ##' @description Add points to the outline register of points
+    ##' @param P 2 column matrix of points to add
+    ##' @return The ID of each added point in the register. If points already
+    ##'   exist a point will not be created in the register,
+    ##'   but an ID will be returned 
     addPoints = function(P) {
       pids <- super$addPoints(P)
       ## For *new* points set forward and backward pointers
@@ -34,11 +41,16 @@ PathOutline <- R6Class("PathOutline",
       }
       return(pids)
     },
-    ## Get next point in path
-    nextPoint = function(inds) {
-      return(sapply(inds, function(i) {path.next(i, self$gf, self$hf)}))
+    ##' @description Get next point in path for 
+    ##' @param pids Point IDs of points to get next position
+    nextPoint = function(pids) {
+      return(sapply(pids, function(i) {path.next(i, self$gf, self$hf)}))
     },
-    ## Insert point at a fraction f between i0 and i1
+    ##' @description Insert point at a fractional distance between points
+    ##' @param i0 Point ID of first point
+    ##' @param i1 Point ID of second point
+    ##' @param f Fraction of distance  between points \code{i0} and
+    ##'   \code{i1} at which to insert point
     insertPoint = function(i0, i1, f) {
       if (!((self$gf[i0] == i1) || (self$gf[i1] == i0))) {
         stop("Points", i0, "and", i1, "are not connected by an edge")
@@ -71,6 +83,12 @@ PathOutline <- R6Class("PathOutline",
       }
       return(n)
     },
+    ##' @description Stitch subpaths
+    ##' @param VF0 First vertex of \dQuote{forward} subpath
+    ##' @param VF1 Second vertex of \dQuote{forward} subpath
+    ##' @param VB0 First vertex of \dQuote{backward} subpath
+    ##' @param VB1 Second vertex of \dQuote{backward} subpath
+    ##' @param epsilon Minimum distance between points
     stitchSubpaths = function(VF0, VF1, VB0, VB1,
                               epsilon) {
       ## Compute the total path length along each side of the tear

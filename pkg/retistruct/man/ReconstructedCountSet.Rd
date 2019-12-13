@@ -2,24 +2,29 @@
 % Please edit documentation in R/ReconstructedCountSet.R
 \name{ReconstructedCountSet}
 \alias{ReconstructedCountSet}
-\title{ReconstructedCountSet class}
-\value{
-An \code{ReconstructedCountSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
-}
+\title{Class containing functions and data to map \link{CountSet}s to
+\link{ReconstructedOutline}s}
 \description{
-ReconstructedCountSet class
-
-ReconstructedCountSet class
+A ReconstructedCountSet contains information about
+  features located on \code{\link{ReconstructedOutline}}s. Each
+  ReconstructedCountSet contains a list of matrices, each of which
+  has columns labelled \code{phi} (latitude) and \code{lambda}
+  (longitude) describing the spherical coordinates of points on
+  the ReconstructedOutline, and a column \code{C} representing the
+  counts at these points.
 }
 \author{
 David Sterratt
 }
-\section{Super class}{
-\code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedCountSet}
+\section{Super classes}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedCountSet}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{KR}}{Kernel regression}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -30,30 +35,48 @@ David Sterratt
 }
 }
 \if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
+\out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getCol">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getCol}{\code{retistruct::ReconstructedFeatureSet$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getFeature">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getFeature}{\code{retistruct::ReconstructedFeatureSet$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getID">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getID}{\code{retistruct::ReconstructedFeatureSet$getID()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getIDs">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getIDs}{\code{retistruct::ReconstructedFeatureSet$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
 }
 \out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedCountSet$new(fs = NULL, ro = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fs}}{\code{\link{FeatureSet}} to reconstruct}
+
+\item{\code{ro}}{\code{\link{ReconstructedOutline}} to which feature
+set should be mapped}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getKR"></a>}}
 \subsection{Method \code{getKR()}}{
+Get kernel regression estimate of grouped data points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedCountSet$getKR()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Kernel regression computed using
+   \code{\link{compute.kernel.estimate}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

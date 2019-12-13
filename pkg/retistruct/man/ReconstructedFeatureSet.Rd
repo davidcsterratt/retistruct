@@ -2,71 +2,62 @@
 % Please edit documentation in R/ReconstructedFeatureSet.R
 \name{ReconstructedFeatureSet}
 \alias{ReconstructedFeatureSet}
-\title{ReconstructedFeatureSet class
-Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object}
-\value{
-A \code{ReconstructedFeatureSet} object.
-}
+\title{Class containing functions and data to map \link{FeatureSet}s to
+\link{ReconstructedOutline}s}
 \description{
-ReconstructedFeatureSet class
-Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object
-
-ReconstructedFeatureSet class
-Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object
+A ReconstructedFeatureSet contains information about
+  features located on \code{\link{ReconstructedOutline}}s. Each
+  ReconstructedFeatureSet contains a list of matrices, each of
+  which has columns labelled \code{phi} (latitude) and
+  \code{lambda} (longitude) describing the spherical coordinates
+  of points on the ReconstructedOutline. Derived classes, e.g. a
+  \code{\link{ReconstructedCountSet}}, may have extra columns.
+  Each matrix in the list has an associated label and colour,
+  which is used by plotting functions.
 }
 \author{
 David Sterratt
+}
+\section{Super class}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{ReconstructedFeatureSet}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{ReconstructedFeatureSet$new()}}
-\item \href{#method-getID}{\code{ReconstructedFeatureSet$getID()}}
-\item \href{#method-getIDs}{\code{ReconstructedFeatureSet$getIDs()}}
-\item \href{#method-getFeature}{\code{ReconstructedFeatureSet$getFeature()}}
-\item \href{#method-getCol}{\code{ReconstructedFeatureSet$getCol()}}
 \item \href{#method-clone}{\code{ReconstructedFeatureSet$clone()}}
 }
+}
+\if{html}{
+\out{<details ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
+}
+\out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedFeatureSet$new(fs = NULL, ro = NULL)}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getID"></a>}}
-\subsection{Method \code{getID()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedFeatureSet$getID(name)}\if{html}{\out{</div>}}
-}
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fs}}{\code{\link{FeatureSet}} to reconstruct}
 
+\item{\code{ro}}{\code{\link{ReconstructedOutline}} to which feature
+set should be mapped}
 }
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getIDs"></a>}}
-\subsection{Method \code{getIDs()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedFeatureSet$getIDs()}\if{html}{\out{</div>}}
+\if{html}{\out{</div>}}
 }
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeature"></a>}}
-\subsection{Method \code{getFeature()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedFeatureSet$getFeature(name)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCol"></a>}}
-\subsection{Method \code{getCol()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedFeatureSet$getCol(id)}\if{html}{\out{</div>}}
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

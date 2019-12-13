@@ -1,21 +1,23 @@
-##' Create an object that is specific to retinal datasets. This
-##' contains methods that return data point and landmark coordinates
-##' that have been transformed according to the values of
-##' \code{DVflip} and \code{side}.
+##' A version of \link{ReconstructedOutline} that is specific to
+##' retinal datasets
 ##'
-##' @title RetinalReconstructedOutline constructor
-##' @return \code{RetinalReconstructedOutline} object. This does not
-##' contain any extra fields, but there are extra methods that apply
-##' to it.
+##' @description A RetinalReconstructedOutline overrides methods of
+##'   \link{ReconstructedOutline} so that they return data point and
+##'   landmark coordinates that have been transformed according to the
+##'   values of \code{DVflip} and \code{side}. When reconstructing, it
+##'   also computes the \dQuote{Optic disc displacement}, i.e. the
+##'   number of degrees subtended between the optic disc and the pole.
+##'
 ##' @author David Sterratt
 ##' @export
 RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
   inherit = ReconstructedOutline,
   public = list(
+    ##' @field EOD Optic disc displacement in degrees
     EOD = NULL,
-    fst = NULL,          # Transformed feature set
-    ## @method getIms retinalReconstructedOutline
-    ## @export
+    ##' @description Get coordinates of corners of pixels of image in spherical
+    ##'   coordinates, transformed according to the value of \code{DVflip}
+    ##' @return Coordinates of corners of pixels in spherical coordinates
     getIms = function() {
       ims <- super$getIms()
       if (self$ol$DVflip) {
@@ -25,6 +27,9 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
       }
       return(ims)
     },
+    ##' @description Get location of tear coordinates in spherical coordinates,
+    ##'   transformed according to the value of \code{DVflip}
+    ##' @return Location of tear coordinates in spherical coordinates
     getTearCoords = function() {
       Tss <- super$getTearCoords()
       if (self$ol$DVflip) {
@@ -34,6 +39,7 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
       }
       return(Tss)
     },
+    ##' @param ... Parameters to \code{\link{ReconstructedOutline}}
     reconstruct = function(...) {
       super$reconstruct(...)
       OD <- self$getFeatureSet("LandmarkSet")$getFeature("OD")
@@ -42,13 +48,17 @@ RetinalReconstructedOutline <- R6Class("RetinalReconstructedOutline",
         self$EOD <- 90 + ODmean["phi"]*180/pi
       }
     },
+    ##' @description Get \link{ReconstructedFeatureSet}, transformed
+    ##'   according to the value of \code{DVflip}
+    ##' @param type Base type of \link{FeatureSet} as string.
+    ##'   E.g. \code{PointSet} returns a \link{ReconstructedPointSet}
     getFeatureSet = function(type) {
       fs <- super$getFeatureSet(type)
       if (self$ol$DVflip) {
         if (is.null(self$fst)) {
           fst <- fs$clone()
-          fst$Ps <-
-            lapply(fs$Ps,
+          fst$data <-
+            lapply(fs$data,
                    function(x) {
                      x[,"lambda"] <- -x[,"lambda"]
                      return(x)

@@ -1,7 +1,7 @@
 ##' Class containing functionality common to flat and reconstructed outlines
 ##'
 ##' @description An OutlineCommon has functionality for retrieving
-##'   sets of features (e.g. points or landarks associated with an
+##'   sets of features (e.g. points or landmarks associated with an
 ##'   outline)
 OutlineCommon <- R6Class("OutlineCommon",
   public = list(
@@ -31,12 +31,12 @@ OutlineCommon <- R6Class("OutlineCommon",
     clearFeatureSets = function() {
       self$featureSets = list()
     },
-    ##' @description Get all the disctinct IDs contained in the \link{FeatureSet}s
+    ##' @description Get all the distinct IDs contained in the \link{FeatureSet}s
     ##' @return Vector of IDs
     getIDs = function() {
       return(unique(unlist(sapply(self$getFeatureSets(), function(fs) { fs$getIDs() }))))
     },
-    ##' @description Get all the disctinct types of \link{FeatureSet}s
+    ##' @description Get all the distinct types of \link{FeatureSet}s
     ##' @return Vector of types as strings, e.g. \var{PointSet}, \var{LandmarkSet}
     getFeatureSetTypes = function() {
       return(sapply(self$getFeatureSets(), function(fs) return(fs$type)))

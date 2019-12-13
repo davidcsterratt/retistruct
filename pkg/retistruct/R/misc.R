@@ -116,7 +116,7 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
 
 ##' Reporting utility function
 ##'
-##' Calls function speified by option \code{retistruct.report}
+##' Calls function specified by option \code{retistruct.report}
 ##' @param ... Arguments to reporting function
 ##' @author David Sterratt
 ##' @export

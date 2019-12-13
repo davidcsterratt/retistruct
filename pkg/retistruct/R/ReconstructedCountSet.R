@@ -1,31 +1,39 @@
-##' ReconstructedCountSet class
-##' @return An \code{ReconstructedCountSet} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' Class containing functions and data to map \link{CountSet}s to
+##' \link{ReconstructedOutline}s
+##'
+##' @description A ReconstructedCountSet contains information about
+##'   features located on \code{\link{ReconstructedOutline}}s. Each
+##'   ReconstructedCountSet contains a list of matrices, each of which
+##'   has columns labelled \code{phi} (latitude) and \code{lambda}
+##'   (longitude) describing the spherical coordinates of points on
+##'   the ReconstructedOutline, and a column \code{C} representing the
+##'   counts at these points.
+##' 
 ##' @author David Sterratt
 ##' @importFrom geometry delaunayn
 ##' @export
 ReconstructedCountSet <- R6Class("ReconstructedCountSet",
   inherit = ReconstructedFeatureSet,
   public = list(
+    ##' @field KR Kernel regression
     KR = NULL,
+    ##' @description Constructor
+    ##' @param fs \code{\link{FeatureSet}} to reconstruct
+    ##' @param ro \code{\link{ReconstructedOutline}} to which feature
+    ##'   set should be mapped
     initialize = function(fs=NULL, ro=NULL) {
       if (!is.null(fs)) {
         super$initialize(fs, ro)
         if (!is.null(fs$data) & (length(fs$data) > 0)) {
           for (name in names(fs$data)) {
-            self$Ps[[name]] <- cbind(self$Ps[[name]], C=fs$data[[name]][,"C"])
+            self$data[[name]] <- cbind(self$data[[name]], C=fs$data[[name]][,"C"])
           }
         }
       }
     },
-    ## Get kernel regression estimate of grouped data points
-    ## @param r \code{\link{ReconstructedDataset}} object
-    ## @return See \code{\link{compute.kernel.estimate}}
-    ## @author David Sterratt
-    ## @export
+    ##' @description Get kernel regression estimate of grouped data points
+    ##' @return Kernel regression computed using
+    ##'    \code{\link{compute.kernel.estimate}}
     getKR = function() {
       if (is.null(self$KR)) {
         yhat <- function(r, mu, kappa) {

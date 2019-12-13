@@ -13,7 +13,7 @@ R6_to_list(r, path = "", envs = list())
 \item{path}{root of the path to the list - no need to supply. Not
 used but could be developed for pretty-printing}
 
-\item{envs}{list of environments already encounted - do not set}
+\item{envs}{list of environments already encountered - do not set}
 }
 \value{
 List with structure mirroring the R6 object.

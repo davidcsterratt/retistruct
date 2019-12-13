@@ -2,24 +2,20 @@
 % Please edit documentation in R/LandmarkSet.R
 \name{LandmarkSet}
 \alias{LandmarkSet}
-\title{LandmarkSet class}
-\value{
-An \code{LandmarkSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
-}
+\title{Subclass of \code{\link{FeatureSet}} to represent points}
 \description{
-LandmarkSet class
-
-LandmarkSet class
+A LandmarkSet contains information about points
+  located on \code{\link{Outline}}s. Each LandmarkSet contains a
+  list of matrices, each of which has columns labelled \code{X}
+  and \code{Y} describing the cartesian coordinates (in the
+  unscaled coordinate frame) of points in landmarks on the
+  Outline.
 }
 \author{
 David Sterratt
 }
-\section{Super class}{
-\code{\link[retistruct:FeatureSet]{retistruct::FeatureSet}} -> \code{LandmarkSet}
+\section{Super classes}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{\link[retistruct:FeatureSet]{retistruct::FeatureSet}} -> \code{LandmarkSet}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -32,30 +28,51 @@ David Sterratt
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="getCol">}\href{../../retistruct/html/FeatureSet.html#method-getCol}{\code{retistruct::FeatureSet$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="getFeature">}\href{../../retistruct/html/FeatureSet.html#method-getFeature}{\code{retistruct::FeatureSet$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="getFeatures">}\href{../../retistruct/html/FeatureSet.html#method-getFeatures}{\code{retistruct::FeatureSet$getFeatures()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="getID">}\href{../../retistruct/html/FeatureSet.html#method-getID}{\code{retistruct::FeatureSet$getID()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="getIDs">}\href{../../retistruct/html/FeatureSet.html#method-getIDs}{\code{retistruct::FeatureSet$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSet" data-id="setName">}\href{../../retistruct/html/FeatureSet.html#method-setName}{\code{retistruct::FeatureSet$setName()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
 }
 \out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{LandmarkSet$new(data = NULL, cols = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{List of matrices describing data. Each matrix
+should have columns named \code{X} and \code{Y}}
+
+\item{\code{cols}}{Named vector of colours for each data set. The name is
+used as the ID (label) for the data set. The colours should be names
+present in the output of the \code{\link{colors}} function}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
 \subsection{Method \code{reconstruct()}}{
+Map the LandmarkSet to a \code{\link{ReconstructedOutline}}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{LandmarkSet$reconstruct(ro)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ro}}{The \code{\link{ReconstructedOutline}}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

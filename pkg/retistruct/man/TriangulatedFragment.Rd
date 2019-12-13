@@ -2,39 +2,38 @@
 % Please edit documentation in R/TriangulatedFragment.R
 \name{TriangulatedFragment}
 \alias{TriangulatedFragment}
-\title{Triangulate outline
-
-Parameters to constructor:
-\code{P} Points to triangulate
-\code{n} Minimum number of points in the triangulation
-\code{suppress.external.steiner} If \code{TRUE} prevent the
-addition of points in the outline. This happens to maintain
-triangle quality.
-\code{report} Function to report progress}
-\value{
-A \code{triangulatedFragment} object containing the
-following fields:
-\item{\code{P}}{The set of new points, with the existing points at the start}
-\item{\code{T}}{The triangulation}
-\item{\code{Cu}}{Unique set of M connections, as M*2 matrix}
-\item{\code{h}}{Correspondences mapping}
-\item{\code{A}}{Array containing area of each triangle}
-\item{\code{L}}{Length of each connection}
-\item{\code{A.signed}}{Signed area of each triangle}
-\item{\code{A.tot}}{Total area of outline}
-\item{\code{gf}}{Forward pointers}
-\item{\code{gb}}{Backward pointers}
-\item{\code{S}}{Segments (from \code{\link{triangulate}})}
-\item{\code{E}}{Edges (from \code{\link{triangulate}})}
-\item{\code{EB}}{Edge boundaries (from \code{\link{triangulate}})}
-}
+\title{Class to triangulate \link{Fragment}s}
 \description{
-Create a triangulation of the \code{Fragment} object \code{o}.  The
-minimum number of triangles in the triangulation is specified by
-\code{n}.
+A TriangulatedFragment contains a function to create a
+  triangulated mesh over an fragment, and fields to hold the mesh
+  information.
 }
 \author{
 David Sterratt
+}
+\section{Super class}{
+\code{\link[retistruct:Fragment]{retistruct::Fragment}} -> \code{TriangulatedFragment}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{T}}{3 column matrix in which each row contains IDs of
+points of each triangle}
+
+\item{\code{A}}{Area of each triangle in the  mesh - has same number of
+elements as there are rows of \code{T}}
+
+\item{\code{Cu}}{2 column matrix in which each row contains IDs of
+points of edge in mesh}
+
+\item{\code{L}}{Length of each edge in the mesh - has same number of
+elements as there are rows of \code{Cu}}
+
+\item{\code{A.signed}}{Signed area of each triangle generated using
+\code{\link{tri.area.signed}}. Positive sign indicates points are
+anticlockwise direction; negative indicates clockwise.}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -43,9 +42,17 @@ David Sterratt
 \item \href{#method-clone}{\code{TriangulatedFragment$clone()}}
 }
 }
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Fragment" data-id="initializeFromPoints">}\href{../../retistruct/html/Fragment.html#method-initializeFromPoints}{\code{retistruct::Fragment$initializeFromPoints()}}\out{</span>}
+}
+\out{</details>}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TriangulatedFragment$new(
   fragment,
@@ -55,6 +62,21 @@ David Sterratt
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fragment}}{\link{Fragment} to triangulate}
+
+\item{\code{n}}{Minimum number of points in the triangulation}
+
+\item{\code{suppress.external.steiner}}{If \code{TRUE} prevent the
+addition of points in the outline. This happens to maintain
+triangle quality.}
+
+\item{\code{report}}{Function to report progress}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

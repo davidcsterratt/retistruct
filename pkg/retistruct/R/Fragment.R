@@ -1,26 +1,25 @@
 ##' Construct an outline object. This sanitises the input points
 ##' \code{P}, as described below.
 ##'
-##' @title Fragment constructor
-##' @return An \code{Fragment} object containing the following:
-##' \item{\code{P}}{A N-by-2 matrix of points of the \code{Outline} arranged in anticlockwise order}
-##' \item{\code{gf}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling anticlockwise (forwards)}
-##' \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
-##' \item{\code{h}}{For each row of \code{P}, the correspondence of that point (which will be to itself initially)}
 ##' @author David Sterratt
 Fragment <- R6Class("Fragment",
   public = list(
+    ##' @field P A N-by-2 matrix of points of the \code{Outline}
+    ##'   arranged in anticlockwise order
     P = NULL,
+    ##' @field gf For each row of \code{P}, the index of \code{P} that
+    ##'   is next in the outline travelling anticlockwise (forwards)
     gf = NULL,
+    ##' @field gb For each row of \code{P}, the index of \code{P} that
+    ##'   is next in the outline travelling clockwise (backwards)
     gb = NULL,
+    ##' @field h For each row of \code{P}, the correspondence of that
+    ##'   point (which will be to itself initially)
     h = NULL,
+    ##' @field A.tot Total area of the Fragment    
     A.tot = NULL,
-    initialize = function(P = NULL, gf = NULL, gb=NULL, h=NULL) {
-      self$P = P
-      self$gf = gf
-      self$gb = gb
-      self$h = h
-    },
+    ##' @description Initialise a Fragment from a set of points
+    ##' @param P An N-by-2 matrix of points of the \code{Outline}
     initializeFromPoints = function(P) {
       if (is.null(P)) {
         stop("P is NULL; it should be a matrix")

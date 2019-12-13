@@ -130,7 +130,7 @@ retistruct.read.markup <- function(a, error=stop) {
     }
     a$phi0 <- M["phi0"]*pi/180
     if ("iOD" %in% names(M)) {
-      a$getFeatureSet("LandmarkSet")$setName(M["iOD"], "OD")
+      a$getFeatureSet("LandmarkSet")$setID(M["iOD"], "OD")
     }
     if ("DVflip" %in% names(M)) {
       a$DVflip <- M["DVflip"]
@@ -304,7 +304,7 @@ retistruct.save.markup <- function(a) {
   iD <- ifelse(names(i0) == "Dorsal", i0, NA)
   iN <- ifelse(names(i0) == "Nasal" , i0, NA)
 
-  iOD <- a$getFeatureSet("LandmarkSet")$getID("OD")
+  iOD <- a$getFeatureSet("LandmarkSet")$getIndex("OD")
   if (length(iOD) == 0)
     iOD <- NA
   markup <- data.frame(iD=iD, iN=iN, phi0=a$phi0*180/pi, iOD=iOD, DVflip=a$DVflip, side=a$side)     

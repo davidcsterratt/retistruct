@@ -11,6 +11,11 @@ points on boundary}
 points on boundary}
 }
 \description{
+Add point correspondences to the outline
+
+Add point correspondences to the outline
+}
+\details{
 The member function \code{stitchSubpaths()} stitches together two
 subpaths of the outline. One subpath is stitched in the forward
 direction from the point indexed by \code{VF0} to the point
@@ -24,6 +29,15 @@ new point is created.
 }
 \section{Super classes}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{\link[retistruct:Outline]{retistruct::Outline}} -> \code{PathOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{hf}}{Forward correspondences}
+
+\item{\code{hb}}{Backward correspondences}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -60,34 +74,84 @@ new point is created.
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addPoints"></a>}}
 \subsection{Method \code{addPoints()}}{
+Add points to the outline register of points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PathOutline$addPoints(P)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{2 column matrix of points to add}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The ID of each added point in the register. If points already
+  exist a point will not be created in the register,
+  but an ID will be returned
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-nextPoint"></a>}}
 \subsection{Method \code{nextPoint()}}{
+Get next point in path for
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PathOutline$nextPoint(inds)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{PathOutline$nextPoint(pids)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{Point IDs of points to get next position}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-insertPoint"></a>}}
 \subsection{Method \code{insertPoint()}}{
+Insert point at a fractional distance between points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PathOutline$insertPoint(i0, i1, f)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{i0}}{Point ID of first point}
+
+\item{\code{i1}}{Point ID of second point}
+
+\item{\code{f}}{Fraction of distance  between points \code{i0} and
+\code{i1} at which to insert point}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-stitchSubpaths"></a>}}
 \subsection{Method \code{stitchSubpaths()}}{
+Stitch subpaths
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PathOutline$stitchSubpaths(VF0, VF1, VB0, VB1, epsilon)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{VF0}}{First vertex of \dQuote{forward} subpath}
+
+\item{\code{VF1}}{Second vertex of \dQuote{forward} subpath}
+
+\item{\code{VB0}}{First vertex of \dQuote{backward} subpath}
+
+\item{\code{VB1}}{Second vertex of \dQuote{backward} subpath}
+
+\item{\code{epsilon}}{Minimum distance between points}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

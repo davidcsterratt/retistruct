@@ -2,25 +2,39 @@
 % Please edit documentation in R/Outline.R
 \name{Outline}
 \alias{Outline}
-\title{Outline class}
-\value{
-An \code{Outline} object containing the following:
-\item{\code{P}}{A N-by-2 matrix of points of the \code{Outline} arranged in anticlockwise order}
-\item{\code{gf}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling anticlockwise (forwards)}
-\item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
-\item{\code{h}}{For each row of \code{P}, the correspondence of that point (which will be to itself initially)}
-\item{\code{im}}{The image as a \code{raster} object}
-\item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
-}
+\title{Class containing basic information about flat outlines}
 \description{
-Construct an outline object. This sanitises the input points
-\code{P}, as described below.
+An Outline has contains the polygon describing the
+  outline and an image associated with the outline.
 }
 \author{
 David Sterratt
 }
 \section{Super class}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{Outline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{P}}{A N-by-2 matrix of points of the \code{Outline}
+arranged in anticlockwise order}
+
+\item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
+
+\item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
+
+\item{\code{gf}}{For each row of \code{P}, the index of \code{P} that
+is next in the outline travelling anticlockwise (forwards)}
+
+\item{\code{gb}}{For each row of \code{P}, the index of \code{P} that
+is next in the outline travelling clockwise (backwards)}
+
+\item{\code{h}}{For each row of \code{P}, the correspondence of that
+point (which will be to itself initially)}
+
+\item{\code{im}}{An image as a \code{raster} object}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -54,98 +68,196 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Construct an outline object. This sanitises the
+  input points \code{P}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$new(P = NULL, scale = NA, im = NULL, units = NA)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{An N-by-2 matrix of points of the \code{Outline}}
+
+\item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
+
+\item{\code{im}}{The image as a \code{raster} object}
+
+\item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getImage"></a>}}
 \subsection{Method \code{getImage()}}{
+Image accessor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getImage()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+An image as a \code{raster} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-replaceImage"></a>}}
 \subsection{Method \code{replaceImage()}}{
+Image setter
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$replaceImage(im)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{im}}{An image as a \code{raster} object}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapFragment"></a>}}
 \subsection{Method \code{mapFragment()}}{
+Map the point IDs of a \link{Fragment} on the
+  point IDs of this Outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$mapFragment(fragment, pids)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fragment}}{\link{Fragment} to map}
+
+\item{\code{pids}}{Point IDs in Outline of points in \link{Fragment}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapPids"></a>}}
 \subsection{Method \code{mapPids()}}{
+Map references to points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$mapPids(x, y, pids)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{References to point indices in source}
+
+\item{\code{y}}{References to existing point indices in target}
+
+\item{\code{pids}}{IDs of points in point register}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New references to point indices in target
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addPoints"></a>}}
 \subsection{Method \code{addPoints()}}{
+Add points to the outline register of points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$addPoints(P)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{2 column matrix of points to add}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The ID of each added point in the register. If points already
+  exist a point will not be created in the register,
+  but an ID will be returned
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPoints"></a>}}
 \subsection{Method \code{getPoints()}}{
+Get unscaled mesh points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getPoints()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Matrix with columns \code{X} and \code{Y}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPointsScaled"></a>}}
 \subsection{Method \code{getPointsScaled()}}{
+Get scaled mesh points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getPointsScaled()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Matrix with columns \code{X} and \code{Y} which is
+  exactly \code{scale} times the matrix returned by \code{getPoints}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimSet"></a>}}
 \subsection{Method \code{getRimSet()}}{
+Get set of points on rim
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getRimSet()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Vector of point IDs, i.e. indices of the rows in
+  the matrices returned by \code{getPoints} and
+  \code{getPointsScaled}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getOutlineSet"></a>}}
 \subsection{Method \code{getOutlineSet()}}{
+Get points on the edge of the outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getOutlineSet()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Vector of points IDs on outline
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getOutlineLengths"></a>}}
 \subsection{Method \code{getOutlineLengths()}}{
+Get lengths of edges of the outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$getOutlineLengths()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Vector of lengths of edges connecting neighbouring points
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addFeatureSet"></a>}}
 \subsection{Method \code{addFeatureSet()}}{
+Add a \link{FeatureSet}, e.g. a \link{PointSet}
+  or \link{LandmarkSet}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Outline$addFeatureSet(fs)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fs}}{\link{FeatureSet} to add}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

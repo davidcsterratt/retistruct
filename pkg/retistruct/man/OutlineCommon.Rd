@@ -5,7 +5,7 @@
 \title{Class containing functionality common to flat and reconstructed outlines}
 \description{
 An OutlineCommon has functionality for retrieving
-  sets of features (e.g. points or landarks associated with an
+  sets of features (e.g. points or landmarks associated with an
   outline)
 }
 \section{Public fields}{
@@ -71,7 +71,7 @@ Clear all feature sets from the outline
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIDs"></a>}}
 \subsection{Method \code{getIDs()}}{
-Get all the disctinct IDs contained in the \link{FeatureSet}s
+Get all the distinct IDs contained in the \link{FeatureSet}s
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OutlineCommon$getIDs()}\if{html}{\out{</div>}}
 }
@@ -83,7 +83,7 @@ Vector of IDs
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatureSetTypes"></a>}}
 \subsection{Method \code{getFeatureSetTypes()}}{
-Get all the disctinct types of \link{FeatureSet}s
+Get all the distinct types of \link{FeatureSet}s
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OutlineCommon$getFeatureSetTypes()}\if{html}{\out{</div>}}
 }

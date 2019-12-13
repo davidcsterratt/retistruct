@@ -2,21 +2,21 @@
 % Please edit documentation in R/ReconstructedLandmarkSet.R
 \name{ReconstructedLandmarkSet}
 \alias{ReconstructedLandmarkSet}
-\title{ReconstructedLandmarkSet class}
-\value{
-An \code{ReconstructedLandmarkSet} object, which inherits
-  from ReconstructedFeatureSet
-}
+\title{Class containing functions and data to map \link{LandmarkSet}s to
+\link{ReconstructedOutline}s}
 \description{
-ReconstructedLandmarkSet class
-
-ReconstructedLandmarkSet class
+A ReconstructedLandmarkSet contains information about
+  features located on \code{\link{ReconstructedOutline}}s. Each
+  ReconstructedLandmarkSet contains a list of matrices, each of
+  which has columns labelled \code{phi} (latitude) and
+  \code{lambda} (longitude) describing the spherical coordinates
+  of points on the ReconstructedOutline.
 }
 \author{
 David Sterratt
 }
-\section{Super class}{
-\code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedLandmarkSet}
+\section{Super classes}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedLandmarkSet}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -25,12 +25,14 @@ David Sterratt
 }
 }
 \if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
+\out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getCol">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getCol}{\code{retistruct::ReconstructedFeatureSet$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getFeature">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getFeature}{\code{retistruct::ReconstructedFeatureSet$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getID">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getID}{\code{retistruct::ReconstructedFeatureSet$getID()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getIDs">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getIDs}{\code{retistruct::ReconstructedFeatureSet$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="initialize">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-initialize}{\code{retistruct::ReconstructedFeatureSet$initialize()}}\out{</span>}
 }
 \out{</details>}

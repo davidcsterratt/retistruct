@@ -1,47 +1,38 @@
-##' Create a triangulation of the \code{Fragment} object \code{o}.  The
-##' minimum number of triangles in the triangulation is specified by
-##' \code{n}.
+##' Class to triangulate \link{Fragment}s
 ##'
-##' @title Triangulate outline
-##' 
-##' Parameters to constructor:
-##' \code{P} Points to triangulate
-##' \code{n} Minimum number of points in the triangulation
-##' \code{suppress.external.steiner} If \code{TRUE} prevent the
-##' addition of points in the outline. This happens to maintain
-##' triangle quality.
-##' \code{report} Function to report progress
-##' @return A \code{triangulatedFragment} object containing the
-##' following fields:
-##' \item{\code{P}}{The set of new points, with the existing points at the start}
-##' \item{\code{T}}{The triangulation}
-##' \item{\code{Cu}}{Unique set of M connections, as M*2 matrix}
-##' \item{\code{h}}{Correspondences mapping}
-##' \item{\code{A}}{Array containing area of each triangle}
-##' \item{\code{L}}{Length of each connection}
-##' \item{\code{A.signed}}{Signed area of each triangle}
-##' \item{\code{A.tot}}{Total area of outline}
-##' \item{\code{gf}}{Forward pointers}
-##' \item{\code{gb}}{Backward pointers}
-##' \item{\code{S}}{Segments (from \code{\link{triangulate}})}
-##' \item{\code{E}}{Edges (from \code{\link{triangulate}})}
-##' \item{\code{EB}}{Edge boundaries (from \code{\link{triangulate}})}
+##' @description A TriangulatedFragment contains a function to create a
+##'   triangulated mesh over an fragment, and fields to hold the mesh
+##'   information.
 ##' @import ttutils
 ##' @importFrom geometry Unique 
 ##' @author David Sterratt
 ##' @export
 TriangulatedFragment <- R6Class("TriangulatedFragment",
+  inherit = Fragment,
   public = list(
-    P = NULL,
+    ##' @field T 3 column matrix in which each row contains IDs of
+    ##'   points of each triangle
     T = NULL,
-    Cu = NULL,
-    h = NULL,
+    ##' @field A Area of each triangle in the  mesh - has same number of
+    ##'   elements as there are rows of \code{T}
     A = NULL,
+    ##' @field Cu 2 column matrix in which each row contains IDs of
+    ##'   points of edge in mesh
+    Cu = NULL,
+    ##' @field L Length of each edge in the mesh - has same number of
+    ##'   elements as there are rows of \code{Cu}
     L = NULL,
+    ##' @field A.signed Signed area of each triangle generated using
+    ##'  \code{\link{tri.area.signed}}. Positive sign indicates points are
+    ##'  anticlockwise direction; negative indicates clockwise.
     A.signed = NULL,
-    A.tot = NULL,
-    gf = NULL,
-    gb = NULL,
+    ##' @description Constructor
+    ##' @param fragment \link{Fragment} to triangulate
+    ##' @param n Minimum number of points in the triangulation
+    ##' @param suppress.external.steiner If \code{TRUE} prevent the
+    ##'   addition of points in the outline. This happens to maintain
+    ##'   triangle quality.
+    ##' @param report Function to report progress
     initialize=function(fragment, n=200,
                         suppress.external.steiner=FALSE,
                         report=message) {

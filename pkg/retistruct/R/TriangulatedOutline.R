@@ -1,8 +1,10 @@
-##' Constructor for TriangulatedOutline object.
+##' Class containing functions and data relating to Triangulation
 ##'
-##' @title TriangulatedOutline object
-##' @return TriangulatedOutline object, with extra fields for tears
-##'   latitude of rim \code{phi0} and index of fixed point \code{i0}.
+##' @description A TriangulatedOutline contains a function to create a
+##'   triangulated mesh over an outline, and fields to hold the mesh
+##'   information. Note that areas and lengths are all scaled using
+##'   the value of the \code{scale} field.
+##'
 ##' @author David Sterratt
 ##' @export
 ##' @importFrom R6 R6Class
@@ -20,11 +22,25 @@
 TriangulatedOutline <- R6Class("TriangulatedOutline",
   inherit = AnnotatedOutline,
   public = list(
+    ##' @field T 3 column matrix in which each row contains IDs of
+    ##'   points of each triangle
     T =  matrix(NA, 0, 3),
-    Cu = matrix(NA, 0, 2),
-    L = NULL,
+    ##' @field A Area of each triangle in the mesh - has same number of
+    ##'   elements as there are rows of \code{T}
     A = NULL,
+    ##' @field A.tot Total area of the mesh
     A.tot = NULL,
+    ##' @field Cu 2 column matrix in which each row contains IDs of
+    ##    points of edge in mesh
+    Cu = matrix(NA, 0, 2),
+    ##' @field L Length of each edge in the mesh - has same number of
+    ##'   elements as there are rows of \code{Cu}
+    L = NULL,
+    ##' @description Triangulate (mesh) outline
+    ##' @param n Desired number of points in mesh
+    ##' @param suppress.external.steiner Boolean variable describing
+    ##'   whether to insert external Steiner points - see
+    ##'   \link{TriangulatedFragment}
     triangulate = function(n=200, suppress.external.steiner=FALSE) {
       self$T <- matrix(NA, 0, 3)
       self$Cu <- matrix(NA, 0, 2)
@@ -44,6 +60,10 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
       self$L <- vecnorm(P[self$Cu[,1],] - P[self$Cu[,2],])
       self$A.tot <- sum(self$A)
     },
+    ##' @description Map the point IDs of a \link{TriangulatedFragment} on the
+    ##'   point IDs of this Outline
+    ##' @param fragment \link{TriangulatedFragment} to map
+    ##' @param pids Point IDs in TriangulatedOutline of points in \link{TriangulatedFragment}
     mapTriangulatedFragment = function(fragment, pids) {
       self$mapFragment(fragment, pids)
       if (!is.null(fragment$T)) {

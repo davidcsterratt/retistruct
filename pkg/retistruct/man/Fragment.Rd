@@ -2,44 +2,59 @@
 % Please edit documentation in R/Fragment.R
 \name{Fragment}
 \alias{Fragment}
-\title{Fragment constructor}
-\value{
-An \code{Fragment} object containing the following:
-\item{\code{P}}{A N-by-2 matrix of points of the \code{Outline} arranged in anticlockwise order}
-\item{\code{gf}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling anticlockwise (forwards)}
-\item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
-\item{\code{h}}{For each row of \code{P}, the correspondence of that point (which will be to itself initially)}
-}
+\title{Construct an outline object. This sanitises the input points
+\code{P}, as described below.}
 \description{
+Construct an outline object. This sanitises the input points
+\code{P}, as described below.
+
 Construct an outline object. This sanitises the input points
 \code{P}, as described below.
 }
 \author{
 David Sterratt
 }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{P}}{A N-by-2 matrix of points of the \code{Outline}
+arranged in anticlockwise order}
+
+\item{\code{gf}}{For each row of \code{P}, the index of \code{P} that
+is next in the outline travelling anticlockwise (forwards)}
+
+\item{\code{gb}}{For each row of \code{P}, the index of \code{P} that
+is next in the outline travelling clockwise (backwards)}
+
+\item{\code{h}}{For each row of \code{P}, the correspondence of that
+point (which will be to itself initially)}
+
+\item{\code{A.tot}}{Total area of the Fragment}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Fragment$new()}}
 \item \href{#method-initializeFromPoints}{\code{Fragment$initializeFromPoints()}}
 \item \href{#method-clone}{\code{Fragment$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Fragment$new(P = NULL, gf = NULL, gb = NULL, h = NULL)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-initializeFromPoints"></a>}}
 \subsection{Method \code{initializeFromPoints()}}{
+Initialise a Fragment from a set of points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Fragment$initializeFromPoints(P)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{An N-by-2 matrix of points of the \code{Outline}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

@@ -2,90 +2,65 @@
 % Please edit documentation in R/FeatureSet.R
 \name{FeatureSet}
 \alias{FeatureSet}
-\title{FeatureSet class}
-\value{
-An \code{FeatureSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
-}
+\title{Superclass containing functions and data relating to sets of
+features in flat \code{\link{Outline}}s}
 \description{
-FeatureSet class
-
-FeatureSet class
+A FeatureSet contains information about features
+  located on \code{\link{Outline}}s. Each FeatureSet contains a
+  list of matrices, each of which has columns labelled \code{X}
+  and \code{Y} describing the cartesian coordinates of points on
+  the Outline, in the unscaled coordinate frame. Derived classes,
+  e.g. a \code{\link{CountSet}}, may have extra columns. Each matrix
+  in the list has an associated label and colour, which is used by
+  plotting functions.
 }
 \author{
 David Sterratt
+}
+\section{Super class}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{FeatureSet}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{FeatureSet$new()}}
-\item \href{#method-getID}{\code{FeatureSet$getID()}}
-\item \href{#method-getIDs}{\code{FeatureSet$getIDs()}}
-\item \href{#method-setName}{\code{FeatureSet$setName()}}
-\item \href{#method-getFeature}{\code{FeatureSet$getFeature()}}
-\item \href{#method-getFeatures}{\code{FeatureSet$getFeatures()}}
-\item \href{#method-getCol}{\code{FeatureSet$getCol()}}
 \item \href{#method-clone}{\code{FeatureSet$clone()}}
 }
+}
+\if{html}{
+\out{<details ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
+}
+\out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FeatureSet$new(data = NULL, cols = NULL, type = NULL)}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getID"></a>}}
-\subsection{Method \code{getID()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$getID(name)}\if{html}{\out{</div>}}
-}
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{List of matrices describing data. Each matrix
+should have columns named \code{X} and \code{Y}}
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getIDs"></a>}}
-\subsection{Method \code{getIDs()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$getIDs()}\if{html}{\out{</div>}}
-}
+\item{\code{cols}}{Named vector of colours for each data set. The name is
+used as the ID (label) for the data set. The colours should be names
+present in the output of the \code{\link{colors}} function}
 
+\item{\code{type}}{String}
 }
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\subsection{Method \code{setName()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$setName(i, name)}\if{html}{\out{</div>}}
+\if{html}{\out{</div>}}
 }
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeature"></a>}}
-\subsection{Method \code{getFeature()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$getFeature(name)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatures"></a>}}
-\subsection{Method \code{getFeatures()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$getFeatures()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCol"></a>}}
-\subsection{Method \code{getCol()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FeatureSet$getCol(id)}\if{html}{\out{</div>}}
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

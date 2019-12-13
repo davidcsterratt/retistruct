@@ -9,10 +9,10 @@ Description: Reconstructs retinae by morphing a flat surface with cuts (a
     shape). It can estimate the position of a point on the intact adult retina
     to within 8 degrees of arc (3.6% of nasotemporal axis). The coordinates in
     reconstructed retinae can be transformed to visuotopic coordinates.
-Version: 0.6.1
+Version: 0.6.2
 URL: http://davidcsterratt.github.io/retistruct/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2019-12-08
+Date: 2019-12-13
 Depends:
     R (>= 3.5.0)
 Imports:
@@ -27,11 +27,11 @@ Imports:
     R.matlab,
     R6
 Suggests:
+    spelling,
     testthat,
     gWidgets2RGtk2 (>= 1.0.6),
     gWidgets2 (>= 1.0.6),
     cairoDevice,
     RGtk2
 Language: en-GB
-Roxygen: list(wrap = FALSE)
 RoxygenNote: 7.0.2

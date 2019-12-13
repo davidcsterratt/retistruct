@@ -2,18 +2,14 @@
 % Please edit documentation in R/AnnotatedOutline.R
 \name{AnnotatedOutline}
 \alias{AnnotatedOutline}
-\title{AnnotatedOutline object}
+\title{Class containing functions and data relating to annotating outlines}
 \value{
 AnnotatedOutline object, with extra fields for tears
   latitude of rim \code{phi0} and index of fixed point \code{i0}.
 }
 \description{
-AnnotatedOutline object
-
-AnnotatedOutline object
-}
-\details{
-Constructor for AnnotatedOutline object.
+An AnnotatedOutline contains a function to annotate 
+  tears on the outline.
 }
 \examples{
 P <- rbind(c(1,1),   c(2,1),  c(2,-1),
@@ -39,6 +35,12 @@ David Sterratt
 \item{\code{tears}}{Matrix in which each row represents a tear by the
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
+
+\item{\code{phi0}}{rim angle in radians}
+
+\item{\code{lambda0}}{longitude of fixed point}
+
+\item{\code{i0}}{index of fixed point}
 }
 \if{html}{\out{</div>}}
 }
@@ -89,21 +91,39 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$new(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Parameters to \code{\link{PathOutline}}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-labelTearPoints"></a>}}
 \subsection{Method \code{labelTearPoints()}}{
-Label a set of three unlabelled points supposed to refer to the apex and vertices of a cut and tear with the V0 (Apex), VF (forward vertex) and VB (backward vertex) labels.
- @param pids the vector of three indices
- @return Vector of indices labelled with V0, VF and VB
+Label a set of three unlabelled points supposed
+  to refer to the apex and vertices of a cut and tear with the \code{V0}
+  (Apex), \code{VF} (forward vertex) and \code{VB} (backward vertex) labels.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelTearPoints(pids)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{the vector of three indices}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-whichTear"></a>}}
@@ -147,18 +167,46 @@ Vector of three point IDs, labelled with \code{V0},
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTears"></a>}}
 \subsection{Method \code{getTears()}}{
+Get tears
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getTears()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Matrix of tears
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-computeTearRelationships"></a>}}
 \subsection{Method \code{computeTearRelationships()}}{
+Compute the parent relationships for a potential
+  set of tears. The function throws an error if tears overlap.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$computeTearRelationships(tears = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tears}}{Matrix containing columns \code{V0} (Apices of tears) 
+\code{VB} (Backward vertices of tears) and \code{VF} (Forward
+vertices of tears)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List containing
+\itemize{
+\item{\code{Rset}}{the set of points on the rim}
+\item{\code{TFset}}{list containing indices of points in each forward tear}
+\item{\code{TBset}}{list containing indices of points in each backward tear}
+\item{\code{h}}{correspondence mapping}
+\item{\code{hf}}{correspondence mapping in forward direction for
+        points on boundary}
+\item{\code{hb}}{correspondence mapping in backward direction for
+        points on boundary}
+}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addTear"></a>}}
@@ -226,18 +274,26 @@ Set fixed point
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFixedPoint"></a>}}
 \subsection{Method \code{getFixedPoint()}}{
+Get point ID of fixed point
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFixedPoint()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Point ID of fixed point
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimSet"></a>}}
 \subsection{Method \code{getRimSet()}}{
+Get point IDs of points on rim
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getRimSet()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Point IDs of points on rim
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ensureFixedPointInRim"></a>}}

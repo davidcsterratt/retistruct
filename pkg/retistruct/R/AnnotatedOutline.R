@@ -1,6 +1,8 @@
-##' Constructor for AnnotatedOutline object.
+##' Class containing functions and data relating to annotating outlines
 ##'
-##' @title AnnotatedOutline object
+##' @description An AnnotatedOutline contains a function to annotate 
+##'   tears on the outline.
+##'
 ##' @return AnnotatedOutline object, with extra fields for tears
 ##'   latitude of rim \code{phi0} and index of fixed point \code{i0}.
 ##' @author David Sterratt
@@ -21,20 +23,27 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
   inherit = PathOutline,
   public = list(
     ##' @field tears Matrix in which each row represents a tear by the
-    ##' indices into the outline points of the apex (\code{V0}) and
-    ##' backward (\code{VB}) and forward (\code{VF}) points
+    ##'   indices into the outline points of the apex (\code{V0}) and
+    ##'   backward (\code{VB}) and forward (\code{VF}) points
     tears = NULL,
+    ##' @field phi0 rim angle in radians
+    phi0 = 0,
+    ##' @field lambda0 longitude of fixed point
+    lambda0 = 0,
+    ##' @field i0 index of fixed point
+    i0 = 1,
+    ##' @description Constructor
+    ##' @param ... Parameters to \code{\link{PathOutline}}
     initialize = function(...) {
       super$initialize(...)
       self$tears <- matrix(0, 0, 3)
       colnames(self$tears) <- c("V0","VB","VF")
     },
-    phi0 = 0,
-    lambda0 = 0,
-    i0 = 1,
-    ##' @description Label a set of three unlabelled points supposed to refer to the apex and vertices of a cut and tear with the V0 (Apex), VF (forward vertex) and VB (backward vertex) labels.
-    ##'  @param pids the vector of three indices
-    ##'  @return Vector of indices labelled with V0, VF and VB
+    ##' @description Label a set of three unlabelled points supposed
+    ##'   to refer to the apex and vertices of a cut and tear with the \code{V0}
+    ##'   (Apex), \code{VF} (forward vertex) and \code{VB} (backward vertex) labels.
+    ##' @param pids the vector of three indices
+    ##' @return Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
     labelTearPoints = function(pids) {
       if (length(unique(pids)) != 3) {
         stop("Tears have to be defined by 3 points")
@@ -92,24 +101,27 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       }
       return(c(self$tears[tid,]))
     },
+    ##' @description Get tears
+    ##' @return Matrix of tears
     getTears = function() {
       return(self$tears)
     },
-    ## Compute the parent relationships for a potential set of tears on
-    ## an \code{AnnotatedOutline}. The function throws an error if tears
-    ## overlap.
-    ## @param V0 Apices of tears
-    ## @param VB Backward vertices of tears
-    ## @param VF Forward vertices of tears
-    ## @return List
-    ## \item{\code{Rset}}{the set of points on the rim}
-    ## \item{\code{TFset}}{list containing indices of points in each forward tear}
-    ## \item{\code{TBset}}{list containing indices of points in each backward tear}
-    ## \item{\code{h}}{correspondence mapping}
-    ## \item{\code{hf}}{correspondence mapping in forward direction for
-    ##         points on boundary}
-    ## \item{\code{hb}}{correspondence mapping in backward direction for
-    ##         points on boundary}
+    ##' @description Compute the parent relationships for a potential
+    ##'   set of tears. The function throws an error if tears overlap.
+    ##' @param tears Matrix containing columns \code{V0} (Apices of tears) 
+    ##'   \code{VB} (Backward vertices of tears) and \code{VF} (Forward
+    ##'   vertices of tears)
+    ##' @return List containing
+    ##' \itemize{
+    ##' \item{\code{Rset}}{the set of points on the rim}
+    ##' \item{\code{TFset}}{list containing indices of points in each forward tear}
+    ##' \item{\code{TBset}}{list containing indices of points in each backward tear}
+    ##' \item{\code{h}}{correspondence mapping}
+    ##' \item{\code{hf}}{correspondence mapping in forward direction for
+    ##'         points on boundary}
+    ##' \item{\code{hb}}{correspondence mapping in backward direction for
+    ##'         points on boundary}
+    ##' }
     computeTearRelationships = function(tears=NULL) {
       if (is.null(tears)) {
         tears <- self$getTears()
@@ -235,9 +247,13 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       names(self$i0) <- name
       self$ensureFixedPointInRim()
     },
+    ##' @description Get point ID of fixed point
+    ##' @return Point ID of fixed point
     getFixedPoint = function() {
       return(self$i0)
     },
+    ##' @description Get point IDs of points on rim
+    ##' @return Point IDs of points on rim
     getRimSet = function() {
       TR <- self$computeTearRelationships(self$tears)
       return(TR$Rset)

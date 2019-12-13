@@ -1,26 +1,24 @@
-##' ReconstructedPointSet class
-##' @return An \code{ReconstructedPointSet} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' Class containing functions and data to map \link{PointSet}s to
+##' \link{ReconstructedOutline}s
+##'
+##' @description A ReconstructedPointSet contains information about
+##'   features located on \code{\link{ReconstructedOutline}}s. Each
+##'   ReconstructedPointSet contains a list of matrices, each of
+##'   which has columns labelled \code{phi} (latitude) and
+##'   \code{lambda} (longitude) describing the spherical coordinates
+##'   of points on the ReconstructedOutline.
+##' 
 ##' @author David Sterratt
 ##' @importFrom geometry delaunayn
 ##' @export
 ReconstructedPointSet <- R6Class("ReconstructedPointSet",
   inherit = ReconstructedFeatureSet,
   public = list(
+    ##' @field KDE Kernel density estimate, computed using
+    ##'   \code{\link{compute.kernel.estimate}} in \code{getKDE}
     KDE = NULL,
-    ## initialize = function(fs, ro) {
-    ##   super$initialize(fs, ro)
-    ## }
-    ## Get Karcher mean of datapoints in spherical coordinates.
-    ##
-    ## @title Karcher mean of datapoints in spherical coordinates
-    ## @param r \code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
-    ## @return \code{Dss.mean}
-    ## @method getDssMean reconstructedDataset
-    ## @author David Sterratt
+    ##' @description Get Karcher mean of datapoints in spherical coordinates
+    ##' @return Karcher mean of datapoints in spherical coordinates
     getMean = function() {
       Dss.mean <- list()
       for (id in self$getIDs()) {
@@ -29,10 +27,8 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
       }
       return(Dss.mean)
     },
-    ## Get area of convex hull around data points on sphere
-    ## @param r code{\link{ReconstructedDataset}} or \code{\link{RetinalReconstructedDataset}} object.
-    ## @return Area in degrees squared
-    ## @author David Sterratt
+    ##' @description Get area of convex hull around data points on sphere
+    ##' @return Area in degrees squared
     getHullarea = function() {
       Dss.hullarea <- list()
       for (id in self$getIDs()) {
@@ -46,10 +42,8 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
       }
       return(Dss.hullarea)
     },
-    ## Get kernel density estimate of data points
-    ## @param r \code{\link{ReconstructedDataset}} object
-    ## @return See \code{\link{compute.kernel.estimate}}
-    ## @author David Sterratt
+    ##' @description Get kernel density estimate of data points
+    ##' @return See \code{\link{compute.kernel.estimate}}
     getKDE = function() {
       if (is.null(self$KDE)) {
         Dss <- list()

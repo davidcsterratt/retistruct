@@ -2,13 +2,12 @@
 % Please edit documentation in R/TriangulatedOutline.R
 \name{TriangulatedOutline}
 \alias{TriangulatedOutline}
-\title{TriangulatedOutline object}
-\value{
-TriangulatedOutline object, with extra fields for tears
-  latitude of rim \code{phi0} and index of fixed point \code{i0}.
-}
+\title{Class containing functions and data relating to Triangulation}
 \description{
-Constructor for TriangulatedOutline object.
+A TriangulatedOutline contains a function to create a
+  triangulated mesh over an outline, and fields to hold the mesh
+  information. Note that areas and lengths are all scaled using
+  the value of the \code{scale} field.
 }
 \examples{
 P <- rbind(c(1,1),   c(2,1),  c(2,-1),
@@ -27,6 +26,24 @@ David Sterratt
 }
 \section{Super classes}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{\link[retistruct:Outline]{retistruct::Outline}} -> \code{\link[retistruct:PathOutline]{retistruct::PathOutline}} -> \code{\link[retistruct:AnnotatedOutline]{retistruct::AnnotatedOutline}} -> \code{TriangulatedOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{T}}{3 column matrix in which each row contains IDs of
+points of each triangle}
+
+\item{\code{A}}{Area of each triangle in the mesh - has same number of
+elements as there are rows of \code{T}}
+
+\item{\code{A.tot}}{Total area of the mesh}
+
+\item{\code{Cu}}{2 column matrix in which each row contains IDs of}
+
+\item{\code{L}}{Length of each edge in the mesh - has same number of
+elements as there are rows of \code{Cu}}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -77,18 +94,41 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-triangulate"></a>}}
 \subsection{Method \code{triangulate()}}{
+Triangulate (mesh) outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TriangulatedOutline$triangulate(n = 200, suppress.external.steiner = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{n}}{Desired number of points in mesh}
+
+\item{\code{suppress.external.steiner}}{Boolean variable describing
+whether to insert external Steiner points - see
+\link{TriangulatedFragment}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapTriangulatedFragment"></a>}}
 \subsection{Method \code{mapTriangulatedFragment()}}{
+Map the point IDs of a \link{TriangulatedFragment} on the
+  point IDs of this Outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TriangulatedOutline$mapTriangulatedFragment(fragment, pids)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fragment}}{\link{TriangulatedFragment} to map}
+
+\item{\code{pids}}{Point IDs in TriangulatedOutline of points in \link{TriangulatedFragment}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

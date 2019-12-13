@@ -1,17 +1,27 @@
-##' RetinalOutline class
-##' @return An \code{retinalOutline} object. This contains the following fields:
-##' \item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-##' the dorsoventral direction} 
-##' \item{\code{side}}{The side of the eye ("Left" or "Right")}
-##' \item{\code{dataset}}{File system path to dataset}
+##' Class containing functions and data relating to retinal outlines
+##' 
+##' @description In addition to fields inherited from
+##'   \link{StitchedOutline}, a RetinalOutline contains a
+##'   \code{dataset} field, describing the system path to dataset
+##'   directory and metadata specific to retinae and some formats of
+##'   retinae
+##'
+##' @description An \code{retinalOutline} object. This contains the following fields:
 ##' @author David Sterratt
 ##' @export
 RetinalOutline <- R6Class("RetinalOutline",
   inherit = StitchedOutline,
   public = list(
+    ##' @field DVflip \code{TRUE} if the raw data is flipped in
+    ##'   the dorsoventral direction
     DVflip = FALSE,
+    ##' @field side The side of the eye (\dQuote{Left} or \dQuote{Right})
     side = "Right",
+    ##' @field dataset File system path to dataset directory
     dataset = NULL,
+    ##' @description Constructor
+    ##' @param ... Parameters to superclass constructors
+    ##' @param dataset File system path to dataset directory
     initialize = function(..., dataset=NULL) {
       super$initialize(...)
       self$dataset <- dataset

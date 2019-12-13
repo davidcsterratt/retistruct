@@ -71,13 +71,13 @@ test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
   r0$getFeatureSet("PointSet")
   r0$getFeatureSet("LandmarkSet")
   cs <- r0$getFeatureSet("CountSet")
-  expect_equal(colnames(cs$Ps[[1]]), c("phi", "lambda", "C"))
+  expect_equal(colnames(cs$data[[1]]), c("phi", "lambda", "C"))
   
   r0$ol$DVflip  <- TRUE
   r0$getFeatureSet("PointSet")
   r0$getFeatureSet("LandmarkSet")
   cs <- r0$getFeatureSet("CountSet")
-  expect_equal(colnames(cs$Ps[[1]]), c("phi", "lambda", "C"))
+  expect_equal(colnames(cs$data[[1]]), c("phi", "lambda", "C"))
   
   ## Save as matlab
   filename <-  file.path(tempdir(), "r.mat")

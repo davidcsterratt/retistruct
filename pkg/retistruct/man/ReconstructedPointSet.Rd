@@ -2,24 +2,29 @@
 % Please edit documentation in R/ReconstructedPointSet.R
 \name{ReconstructedPointSet}
 \alias{ReconstructedPointSet}
-\title{ReconstructedPointSet class}
-\value{
-An \code{ReconstructedPointSet} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
-}
+\title{Class containing functions and data to map \link{PointSet}s to
+\link{ReconstructedOutline}s}
 \description{
-ReconstructedPointSet class
-
-ReconstructedPointSet class
+A ReconstructedPointSet contains information about
+  features located on \code{\link{ReconstructedOutline}}s. Each
+  ReconstructedPointSet contains a list of matrices, each of
+  which has columns labelled \code{phi} (latitude) and
+  \code{lambda} (longitude) describing the spherical coordinates
+  of points on the ReconstructedOutline.
 }
 \author{
 David Sterratt
 }
-\section{Super class}{
-\code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedPointSet}
+\section{Super classes}{
+\code{\link[retistruct:FeatureSetCommon]{retistruct::FeatureSetCommon}} -> \code{\link[retistruct:ReconstructedFeatureSet]{retistruct::ReconstructedFeatureSet}} -> \code{ReconstructedPointSet}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{KDE}}{Kernel density estimate, computed using
+\code{\link{compute.kernel.estimate}} in \code{getKDE}}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -31,12 +36,14 @@ David Sterratt
 }
 }
 \if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
+\out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getCol">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getCol}{\code{retistruct::ReconstructedFeatureSet$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getFeature">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getFeature}{\code{retistruct::ReconstructedFeatureSet$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getID">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getID}{\code{retistruct::ReconstructedFeatureSet$getID()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="getIDs">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-getIDs}{\code{retistruct::ReconstructedFeatureSet$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="initialize">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-initialize}{\code{retistruct::ReconstructedFeatureSet$initialize()}}\out{</span>}
 }
 \out{</details>}
@@ -44,26 +51,38 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getMean"></a>}}
 \subsection{Method \code{getMean()}}{
+Get Karcher mean of datapoints in spherical coordinates
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedPointSet$getMean()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Karcher mean of datapoints in spherical coordinates
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getHullarea"></a>}}
 \subsection{Method \code{getHullarea()}}{
+Get area of convex hull around data points on sphere
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedPointSet$getHullarea()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Area in degrees squared
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getKDE"></a>}}
 \subsection{Method \code{getKDE()}}{
+Get kernel density estimate of data points
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedPointSet$getKDE()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+See \code{\link{compute.kernel.estimate}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

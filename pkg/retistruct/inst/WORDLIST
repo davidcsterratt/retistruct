@@ -2,6 +2,7 @@ AnnotatedOutline
 B'C
 B'D
 Bitzek
+cloneable
 CountSet
 csv
 dorsoventral
@@ -23,6 +24,7 @@ Koskinen
 MathWorld
 Moseler
 nasotemporal
+OutlineCommon
 PointSet
 rData
 ReconstructedCountSet
@@ -44,3 +46,14 @@ visuotopic
 Weisstein
 Wellcome
 Wulff
+CountSets
+FeatureSetCommon
+flatplot
+LandmarkSets
+PointSets
+ReconstructedOutlines
+RGL
+StitchedOutline
+StitchedOutlines
+TriangulatedFragment
+FeatureSets

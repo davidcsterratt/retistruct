@@ -2,24 +2,33 @@
 % Please edit documentation in R/RetinalOutline.R
 \name{RetinalOutline}
 \alias{RetinalOutline}
-\title{RetinalOutline class}
-\value{
-An \code{retinalOutline} object. This contains the following fields:
-\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
-the dorsoventral direction} 
-\item{\code{side}}{The side of the eye ("Left" or "Right")}
-\item{\code{dataset}}{File system path to dataset}
-}
+\title{Class containing functions and data relating to retinal outlines}
 \description{
-RetinalOutline class
+In addition to fields inherited from
+  \link{StitchedOutline}, a RetinalOutline contains a
+  \code{dataset} field, describing the system path to dataset
+  directory and metadata specific to retinae and some formats of
+  retinae
 
-RetinalOutline class
+An \code{retinalOutline} object. This contains the following fields:
 }
 \author{
 David Sterratt
 }
 \section{Super classes}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{\link[retistruct:Outline]{retistruct::Outline}} -> \code{\link[retistruct:PathOutline]{retistruct::PathOutline}} -> \code{\link[retistruct:AnnotatedOutline]{retistruct::AnnotatedOutline}} -> \code{\link[retistruct:TriangulatedOutline]{retistruct::TriangulatedOutline}} -> \code{\link[retistruct:StitchedOutline]{retistruct::StitchedOutline}} -> \code{RetinalOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{DVflip}}{\code{TRUE} if the raw data is flipped in
+the dorsoventral direction}
+
+\item{\code{side}}{The side of the eye (\dQuote{Left} or \dQuote{Right})}
+
+\item{\code{dataset}}{File system path to dataset directory}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -71,10 +80,20 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Constructor
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalOutline$new(..., dataset = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Parameters to superclass constructors}
+
+\item{\code{dataset}}{File system path to dataset directory}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

@@ -1,14 +1,25 @@
-##' ReconstructedFeatureSet class
-##' Initialised with a FeatureSet (\code{fs}) and an ReconstructedOutline (\code{ro}) object
-##' @return A \code{ReconstructedFeatureSet} object.
+##' Class containing functions and data to map \link{FeatureSet}s to
+##' \link{ReconstructedOutline}s
+##'
+##' @description A ReconstructedFeatureSet contains information about
+##'   features located on \code{\link{ReconstructedOutline}}s. Each
+##'   ReconstructedFeatureSet contains a list of matrices, each of
+##'   which has columns labelled \code{phi} (latitude) and
+##'   \code{lambda} (longitude) describing the spherical coordinates
+##'   of points on the ReconstructedOutline. Derived classes, e.g. a
+##'   \code{\link{ReconstructedCountSet}}, may have extra columns.
+##'   Each matrix in the list has an associated label and colour,
+##'   which is used by plotting functions.
+##' 
 ##' @author David Sterratt
 ##' @export
 ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
+  inherit = FeatureSetCommon,
   public = list(
-    Ps = NULL,
-    cols = NA,
-    type = NA,
-    fs = NULL,
+    ##' @description Constructor
+    ##' @param fs \code{\link{FeatureSet}} to reconstruct
+    ##' @param ro \code{\link{ReconstructedOutline}} to which feature
+    ##'   set should be mapped
     initialize = function(fs=NULL, ro=NULL) {
       if (!is.null(fs)) {
         self$cols <- fs$cols
@@ -16,33 +27,10 @@ ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
         report(paste("Inferring coordinates of", fs$type))
         if (!is.null(fs$data) & (length(fs$data) > 0)) {
           for (name in names(fs$data)) {
-            self$Ps[[name]] <- ro$mapFlatToSpherical(fs$data[[name]])
+            self$data[[name]] <- ro$mapFlatToSpherical(fs$data[[name]])
           }
         }
       }
-    },
-    getID = function(name) {
-      id <- which(names(self$Ps) == name)
-      if (length(id) == 1) {
-        return(id)
-      } else {
-        return(NA)
-      }
-    },
-    getIDs = function() {
-      return(names(self$Ps))
-    },
-    getFeature = function(name) {
-      if (is.na(self$getID(name))) {
-        return(NULL)
-      }
-      return(self$Ps[[name]])
-    },
-    getCol = function(id) {
-      if (id %in% names(self$cols)) {
-        return(self$cols[[id]])
-      }
-      return(self$cols[["default"]])
     }
   )
 )

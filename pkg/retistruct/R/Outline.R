@@ -1,27 +1,36 @@
-##' Construct an outline object. This sanitises the input points
-##' \code{P}, as described below.
+##' Class containing basic information about flat outlines
 ##'
-##' @title Outline class
-##' @return An \code{Outline} object containing the following:
-##' \item{\code{P}}{A N-by-2 matrix of points of the \code{Outline} arranged in anticlockwise order}
-##' \item{\code{gf}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling anticlockwise (forwards)}
-##' \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that is next in the outline travelling clockwise (backwards)}
-##' \item{\code{h}}{For each row of \code{P}, the correspondence of that point (which will be to itself initially)}
-##' \item{\code{im}}{The image as a \code{raster} object}
-##' \item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
+##' @description An Outline has contains the polygon describing the
+##'   outline and an image associated with the outline.
 ##' @author David Sterratt
 ##' @importFrom R6 R6Class
 Outline <- R6Class("Outline",
   inherit = OutlineCommon,
   public = list(
-    scale=NULL,
-    units=NA,
+    ##' @field P A N-by-2 matrix of points of the \code{Outline}
+    ##'   arranged in anticlockwise order
     P=NULL,
+    ##' @field scale The length of one unit of \code{P} in arbitrary units
+    scale=NULL,        
+    ##' @field units String giving units of scaled P, e.g. \dQuote{um}
+    units=NA,
+    ##' @field gf For each row of \code{P}, the index of \code{P} that
+    ##'   is next in the outline travelling anticlockwise (forwards)
     gf=NULL,
+    ##' @field gb For each row of \code{P}, the index of \code{P} that
+    ##'   is next in the outline travelling clockwise (backwards)
     gb=NULL,
+    ##' @field h For each row of \code{P}, the correspondence of that
+    ##'   point (which will be to itself initially)
     h=NULL,
+    ##' @field im An image as a \code{raster} object
     im=NULL,
-    dm=NULL,
+    ##' @description Construct an outline object. This sanitises the
+    ##'   input points \code{P}.
+    ##' @param P An N-by-2 matrix of points of the \code{Outline}
+    ##' @param scale The length of one unit of \code{P} in arbitrary units
+    ##' @param im The image as a \code{raster} object
+    ##' @param units String giving units of scaled P, e.g. \dQuote{um}
     initialize=function(P=NULL, scale=NA, im=NULL, units=NA) {
       self$P <- matrix(0, 0, 2)
       colnames(self$P) <- c("X", "Y")
@@ -35,12 +44,20 @@ Outline <- R6Class("Outline",
         self$mapFragment(fragment, pids)
       }
     },
+    ##' @description Image accessor
+    ##' @return An image as a \code{raster} object
     getImage = function() {
       return(self$im)
     },
+    ##' @description Image setter
+    ##' @param im An image as a \code{raster} object
     replaceImage = function(im) {
       self$im <- im
     },
+    ##' @description Map the point IDs of a \link{Fragment} on the
+    ##'   point IDs of this Outline
+    ##' @param fragment \link{Fragment} to map
+    ##' @param pids Point IDs in Outline of points in \link{Fragment}
     mapFragment = function(fragment, pids) {
       if (length(fragment$gf) != length(pids)) {
         stop("Number of fragment indices being mapped is not equal to number of pids supplied")
@@ -48,22 +65,22 @@ Outline <- R6Class("Outline",
       self$gf <- self$mapPids(fragment$gf, self$gf, pids)
       self$gb <- self$mapPids(fragment$gb, self$gb, pids)
     },
-    ## Map references to points
-    ## @param x References to point indices in source
-    ## @param y References to existing point indices in target
-    ## @param pids IDs of points in point register
-    ## @return New references to point indicies in target
+    ##' @description Map references to points
+    ##' @param x References to point indices in source
+    ##' @param y References to existing point indices in target
+    ##' @param pids IDs of points in point register
+    ##' @return New references to point indices in target
     mapPids = function(x, y, pids) {
       y[pids[which(is.na(x))]] <- NA
       nna <- which(!is.na(x))
       y[pids[nna]] <- pids[x[nna]]
       return(y)
     },
-    ## Add points to the outline register of points
-    ## @param P 2 column matrix of points to add
-    ## @return The ID of each added point in the register. If points already
-    ##   exist a point will not be created in the register,
-    ##   but an ID will be returned 
+    ##' @description Add points to the outline register of points
+    ##' @param P 2 column matrix of points to add
+    ##' @return The ID of each added point in the register. If points already
+    ##'   exist a point will not be created in the register,
+    ##'   but an ID will be returned 
     addPoints = function(P) {
       if (!is.matrix(P)) {
         if (length(P) == 2) {
@@ -101,25 +118,41 @@ Outline <- R6Class("Outline",
       }
       return(pids)
     },
+    ##' @description Get unscaled mesh points
+    ##' @return  Matrix with columns \code{X} and \code{Y}
     getPoints = function() {
       return(self$P[,c("X", "Y")])
     },
+    ##' @description Get scaled mesh points
+    ##' @return  Matrix with columns \code{X} and \code{Y} which is
+    ##'   exactly \code{scale} times the matrix returned by \code{getPoints}
     getPointsScaled = function() {
       if (is.na(self$scale)) {
         return(self$P[,c("X", "Y")])
       }
       return(cbind(self$scale*self$P[,c("X", "Y")]))
     },
+    ##' @description Get set of points on rim
+    ##' @return Vector of point IDs, i.e. indices of the rows in
+    ##'   the matrices returned by \code{getPoints} and
+    ##'   \code{getPointsScaled}
     getRimSet = function() {
       return(1:nrow(self$P))
     },
+    ##' @description Get points on the edge of the outline
+    ##' @return Vector of points IDs on outline
     getOutlineSet = function() {
       return(which(!is.na(self$gf)))
     },
+    ##' @description Get lengths of edges of the outline
+    ##' @return Vector of lengths of edges connecting neighbouring points
     getOutlineLengths = function() {
       return(vecnorm(self$getPointsScaled()[self$getOutlineSet(),] -
                      self$getPointsScaled()[self$gf[self$getOutlineSet()],]))
     },
+    ##' @description Add a \link{FeatureSet}, e.g. a \link{PointSet}
+    ##'   or \link{LandmarkSet}
+    ##' @param fs \link{FeatureSet} to add
     addFeatureSet = function(fs) {
       if (fs$type %in% self$getFeatureSetTypes()) {
         stop(paste("There is already a", fs$type, "attached to this outline"))

@@ -2,47 +2,89 @@
 % Please edit documentation in R/ReconstructedOutline.R
 \name{ReconstructedOutline}
 \alias{ReconstructedOutline}
-\title{Reconstruct outline into spherical surface}
+\title{Class containing functions to reconstruct \link{StitchedOutline}s
+and store the associated data}
 \description{
-Reconstruct outline into spherical surface. Reconstruction
-proceeds in a number of stages:
+The function \code{reconstruct} reconstructs outline
+  into spherical surface Reconstruct outline into spherical
+  surface.
 }
-\details{
-\enumerate{
-
-\item The flat object is triangulated with at least \code{n}
-triangles. This can introduce new vertices in the rim. 
-
-\item The triangulated object is stitched.
-
-\item The stitched object is triangulated again, but this time it
-is not permitted to add extra vertices to the rim.
-
-\item The corresponding points determined by the stitching process
-are merged to form a new set of merged points and a new
-triangulation.
-
-\item The merged points are projected roughly to a sphere.
-
-\item The locations of the points on the sphere are moved so as to
-minimise the energy function.
-}
-}
-\section{Member functions}{
-
-
-\describe{
-\item{mapFlatToSpherical(P)}{Returns location of point on sphere corresponding to point on the flat outline. Input values:}
-\describe{
-\item{P}{Cartesian coordinates  on flat outline as a matrix with "X" and "Y" columns}
-}}
-}
-
 \author{
 David Sterratt
 }
 \section{Super class}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{ReconstructedOutline}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{ol}}{Annotated outline}
+
+\item{\code{ol0}}{Original Annotated outline}
+
+\item{\code{Pt}}{Transformed cartesian mesh points}
+
+\item{\code{Tt}}{Transformed triangulation}
+
+\item{\code{Ct}}{Transformed links}
+
+\item{\code{Cut}}{Transformed links}
+
+\item{\code{Bt}}{Transformed binary vector representation
+of edge indices onto a binary vector representation of the
+indices of the points linked by the edge}
+
+\item{\code{Lt}}{Transformed lengths}
+
+\item{\code{ht}}{Transformed correspondences}
+
+\item{\code{u}}{Indices of unique points in untransformed space}
+
+\item{\code{U}}{Transformed indices of unique points in untransformed space}
+
+\item{\code{Rsett}}{Transformed rim set}
+
+\item{\code{i0t}}{Transformed marker}
+
+\item{\code{H}}{mapping from edges onto corresponding edges}
+
+\item{\code{Ht}}{Transformed mapping from edges onto corresponding edges}
+
+\item{\code{phi0}}{Rim angle}
+
+\item{\code{R}}{Radius of spherical template}
+
+\item{\code{lambda0}}{Longitude of pole on rim}
+
+\item{\code{lambda}}{Longitudes of transformed mesh points}
+
+\item{\code{phi}}{Latitudes of transformed mesh points}
+
+\item{\code{Ps}}{Location of mesh point on sphere in spherical coordinates}
+
+\item{\code{n}}{Number of mesh points}
+
+\item{\code{alpha}}{Weighting of areas in energy function}
+
+\item{\code{x0}}{Area cut-off coefficient}
+
+\item{\code{nflip0}}{Initial number flipped triangles}
+
+\item{\code{nflip}}{Final number flipped triangles}
+
+\item{\code{opt}}{Optimisation object}
+
+\item{\code{E.tot}}{Energy function including area}
+
+\item{\code{E.l}}{Energy function based on lengths alone}
+
+\item{\code{mean.strain}}{Mean strain}
+
+\item{\code{mean.logstrain}}{Mean log strain}
+
+\item{\code{debug}}{Debug function}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -77,6 +119,7 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-loadOutline"></a>}}
 \subsection{Method \code{loadOutline()}}{
+Load \link{AnnotatedOutline} into ReconstructedOutline object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$loadOutline(
   ol,
@@ -91,10 +134,57 @@ David Sterratt
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ol}}{\code{\link{AnnotatedOutline}} object, containing the following information}
+
+\item{\code{n}}{Number of points in triangulation.}
+
+\item{\code{alpha}}{Area scaling coefficient}
+
+\item{\code{x0}}{Area cut-off coefficient}
+
+\item{\code{plot.3d}}{Whether to show 3D picture during optimisation.}
+
+\item{\code{dev.flat}}{Device to plot grid onto. Value of \code{NA} (default)
+means no plotting.}
+
+\item{\code{dev.polar}}{Device display projection. Value of NA
+(default) means no plotting.}
+
+\item{\code{report}}{Function to report progress.}
+
+\item{\code{debug}}{If \code{TRUE} print extra debugging output}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
 \subsection{Method \code{reconstruct()}}{
+Reconstruct
+Reconstruction proceeds in a number of stages:
+
+\enumerate{
+
+\item The flat object is triangulated with at least \code{n}
+triangles. This can introduce new vertices in the rim. 
+
+\item The triangulated object is stitched.
+
+\item The stitched object is triangulated again, but this time it
+is not permitted to add extra vertices to the rim.
+
+\item The corresponding points determined by the stitching process
+are merged to form a new set of merged points and a new
+triangulation.
+
+\item The merged points are projected roughly to a sphere.
+
+\item The locations of the points on the sphere are moved so as to
+minimise the energy function.
+}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$reconstruct(
   plot.3d = FALSE,
@@ -104,10 +194,52 @@ David Sterratt
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{plot.3d}}{If \code{TRUE} make a 3D plot in an RGL window}
+
+\item{\code{dev.flat}}{Device handle for plotting flatplot updates to. If
+\code{NA} don't make any flat plots}
+
+\item{\code{dev.polar}}{Device handle for plotting polar plot updates
+to. If \code{NA} don't make any polar plots.}
+
+\item{\code{report}}{Function to report progress.}
+
+\item{\code{Control}}{argument to pass to \code{optim}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mergePointsEdges"></a>}}
 \subsection{Method \code{mergePointsEdges()}}{
+Merge stitched points and edges.
+Create merged and transformed versions (all suffixed with \code{t})
+of a number of existing variables, as well
+as a matrix \code{Bt}, which maps a binary vector representation
+of edge indices onto a binary vector representation of the
+indices of the points linked by the edge.
+Sets following fields
+\itemize{
+\item{\code{Pt}}{Transformed point locations}
+\item{\code{Tt}}{Transformed triangulation}
+\item{\code{Ct}}{Transformed connection set}
+\item{\code{Cut}}{Transformed symmetric connection set}
+\item{\code{Bt}}{Transformed binary vector representation
+of edge indices onto a binary vector representation of the
+indices of the points linked by the edge}
+\item{\code{Lt}}{Transformed edge lengths}
+\item{\code{ht}}{Transformed correspondences}
+\item{\code{u}}{Indices of unique points in untransformed space}
+\item{\code{U}}{Transformed indices of unique points in untransformed space}
+\item{\code{Rset}}{The set of points on the rim (which has been reordered)}
+\item{\code{Rsett}}{Transformed set of points on rim}
+\item{\code{i0t}}{Transformed index of the landmark}
+\item{\code{H}}{mapping from edges onto corresponding edges}
+\item{\code{Ht}}{Transformed mapping from edges onto corresponding edges}
+}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$mergePointsEdges()}\if{html}{\out{</div>}}
 }
@@ -116,6 +248,18 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-projectToSphere"></a>}}
 \subsection{Method \code{projectToSphere()}}{
+Project mesh points in the flat outline onto a sphere
+This takes the mesh points from the flat outline and maps them to
+the curtailed sphere. It uses the area of the flat outline and
+\code{phi0} to determine the radius \code{R} of the sphere. It
+tries to get a good first approximation by using the function
+\code{\link{stretchMesh}}.
+The following fields are set:
+\itemize{
+\item{\code{phi}}{Latitude of mesh points.}
+\item{\code{lmabda}}{Longitude of mesh points.}
+\item{\code{R}}{Radius of sphere.}
+}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$projectToSphere()}\if{html}{\out{</div>}}
 }
@@ -124,14 +268,28 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getStrains"></a>}}
 \subsection{Method \code{getStrains()}}{
+Return strains edges are under in spherical retina
+Set information about how edges on the sphere
+have been deformed from their flat state.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getStrains()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A list containing two data frames \code{flat} and \code{spherical}. 
+Each data frame contains for each edge in the flat or spherical meshes:
+\itemize{
+\item{\code{L}}{Length of the edge in the flat outline }
+\item{\code{l}}{Length of the corresponding edge on the sphere}
+\item{\code{strain}}{The strain of each connection}
+\item{\code{logstrain}}{The logarithmic strain of each connection}
+}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-optimiseMapping"></a>}}
 \subsection{Method \code{optimiseMapping()}}{
+Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$optimiseMapping(
   alpha = 4,
@@ -145,10 +303,34 @@ David Sterratt
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{alpha}}{Area penalty scaling coefficient}
+
+\item{\code{x0}}{Area penalty cut-off coefficient}
+
+\item{\code{nu}}{Power to which to raise area}
+
+\item{\code{optim.method}}{Method to pass to \code{optim}}
+
+\item{\code{plot.3d}}{If \code{TRUE} make a 3D plot in an RGL window}
+
+\item{\code{dev.flat}}{Device handle for plotting flatplot updates to. If
+\code{NA} don't make any flat plots}
+
+\item{\code{dev.polar}}{Device handle for plotting polar plot updates
+to. If \code{NA} don't make any polar plots.}
+
+\item{\code{control}}{Control argument to pass to \code{optim}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-optimiseMappingCart"></a>}}
 \subsection{Method \code{optimiseMappingCart()}}{
+Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$optimiseMappingCart(
   alpha = 4,
@@ -162,10 +344,41 @@ David Sterratt
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{alpha}}{Area penalty scaling coefficient}
+
+\item{\code{x0}}{Area penalty cut-off coefficient}
+
+\item{\code{nu}}{Power to which to raise area}
+
+\item{\code{method}}{Method to pass to \code{optim}}
+
+\item{\code{plot.3d}}{If \code{TRUE} make a 3D plot in an RGL window}
+
+\item{\code{dev.flat}}{Device handle for plotting grid to}
+
+\item{\code{dev.polar}}{Device handle for plotting polar plot to}
+
+\item{\code{...}}{Extra arguments to pass to \code{\link{fire}}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-transformImage"></a>}}
 \subsection{Method \code{transformImage()}}{
+Transform an image into the reconstructed space
+Transform an image into the reconstructed space. The four corner
+coordinates of each pixel are transformed into spherical
+coordinates and a mask matrix with the same dimensions as
+\code{im} is created. This has \code{TRUE} for pixels that should
+be displayed and \code{FALSE} for ones that should not.
+Sets the field
+\itemize{
+\item{\code{ims}}{Coordinates of corners of pixels in spherical coordinates}
+}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$transformImage()}\if{html}{\out{</div>}}
 }
@@ -174,30 +387,49 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIms"></a>}}
 \subsection{Method \code{getIms()}}{
+Get coordinates of corners of pixels of image in spherical
+coordinates
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getIms()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Coordinates of corners of pixels in spherical coordinates
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTearCoords"></a>}}
 \subsection{Method \code{getTearCoords()}}{
+Get location of tear coordinates in spherical coordinates
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getTearCoords(r)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getTearCoords()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Location of tear coordinates in spherical coordinates
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatureSet"></a>}}
 \subsection{Method \code{getFeatureSet()}}{
+Get \link{ReconstructedFeatureSet}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getFeatureSet(type)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{Base type of \link{FeatureSet} as string.
+E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstructFeatureSets"></a>}}
 \subsection{Method \code{reconstructFeatureSets()}}{
+Reconstruct any attached feature sets.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$reconstructFeatureSets()}\if{html}{\out{</div>}}
 }
@@ -206,18 +438,33 @@ David Sterratt
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPoints"></a>}}
 \subsection{Method \code{getPoints()}}{
+Get mesh points in spherical coordinates
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getPoints()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Matrix with columns \code{phi} (latitude) and \code{lambda}
+  (longitude)
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapFlatToSpherical"></a>}}
 \subsection{Method \code{mapFlatToSpherical()}}{
+Return location of point on sphere corresponding
+  to point on the flat outline
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$mapFlatToSpherical(P)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{Cartesian coordinates  on flat outline as a matrix
+with \code{X} and \code{Y} columns}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
