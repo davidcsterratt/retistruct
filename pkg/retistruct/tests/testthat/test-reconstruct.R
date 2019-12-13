@@ -1,6 +1,8 @@
 context("Reconstruction")
 test_that("Reconstruct SMI32 (CSV format)", {
-  dataset <- file.path(system.file(package = "retistruct"), "extdata", "smi32-csv")
+  dataset <- file.path(tempdir(), "smi32-csv")
+  file.copy(file.path(system.file(package = "retistruct"), "extdata", "smi32-csv"), tempdir(), recursive=TRUE, overwrite=TRUE)
+
   expect_warning(o <- retistruct.read.dataset(dataset),  "Scale bar will not be set")
   ## Load the human annotation of tears
   o <- retistruct.read.markup(o)
@@ -34,7 +36,10 @@ test_that("Reconstruct SMI32 (CSV format)", {
 })
 
 test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
-  dataset <- file.path(system.file(package = "retistruct"), "extdata", "GMB530/R-CONTRA")
+  dataset <- file.path(tempdir(), "GMB530", "R-CONTRA")
+  dir.create(file.path(tempdir(), "GMB530"))
+  file.copy(file.path(system.file(package = "retistruct"), "extdata", "GMB530/R-CONTRA"), file.path(tempdir(), "GMB530"), recursive=TRUE, overwrite=TRUE)
+
   o <- retistruct.read.dataset(dataset)
   ## Load the human annotation of tears
   o <- retistruct.read.markup(o)
@@ -85,7 +90,10 @@ test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
 })
 
 test_that("Serialisation works with a particular example", {
-  dataset  <-  file.path(system.file(package = "retistruct"), "extdata", "GM509/R-CONTRA")
+  dataset <- file.path(tempdir(), "GM509", "R-CONTRA")
+  dir.create(file.path(tempdir(), "GM509"))
+  file.copy(file.path(system.file(package = "retistruct"), "extdata", "GM509/R-CONTRA"), file.path(tempdir(), "GM509"), recursive=TRUE, overwrite=TRUE)
+
   a <- retistruct.read.dataset(dataset, report=FALSE)
   a <- retistruct.read.markup(a, error=message)
   r <- retistruct.reconstruct(a) ## plot.3d=getOption("show.sphere")

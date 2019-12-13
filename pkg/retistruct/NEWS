@@ -7,6 +7,12 @@ NEW FEATURES
   Thanks to improvements in roxygen2, the class hierarchy can be viewed
   using help.start()
 
+BUG FIXES
+
+* Check problems on Debian systems
+  (https://github.com/davidcsterratt/retistruct/issues/48)
+  Thanks to the CRAN maintainers for reporting this problem
+
 CHANGES IN VERSION 0.6.1 - Released 2019/12/08
 
 NEW FEATURES
