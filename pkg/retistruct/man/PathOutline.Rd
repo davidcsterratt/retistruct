@@ -73,6 +73,7 @@ new point is created.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-addPoints}{}}}
 \subsection{Method \code{addPoints()}}{
 Add points to the outline register of points
 \subsection{Usage}{
@@ -94,6 +95,7 @@ The ID of each added point in the register. If points already
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-nextPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-nextPoint}{}}}
 \subsection{Method \code{nextPoint()}}{
 Get next point in path for
 \subsection{Usage}{
@@ -110,6 +112,7 @@ Get next point in path for
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-insertPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-insertPoint}{}}}
 \subsection{Method \code{insertPoint()}}{
 Insert point at a fractional distance between points
 \subsection{Usage}{
@@ -131,6 +134,7 @@ Insert point at a fractional distance between points
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-stitchSubpaths"></a>}}
+\if{latex}{\out{\hypertarget{method-stitchSubpaths}{}}}
 \subsection{Method \code{stitchSubpaths()}}{
 Stitch subpaths
 \subsection{Usage}{
@@ -155,6 +159,7 @@ Stitch subpaths
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

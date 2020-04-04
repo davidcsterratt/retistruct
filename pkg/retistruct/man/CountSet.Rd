@@ -40,6 +40,7 @@ David Sterratt
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -61,6 +62,7 @@ present in the output of the \code{\link{colors}} function}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 Map the CountSet to a \code{\link{ReconstructedOutline}}
 \subsection{Usage}{
@@ -77,6 +79,7 @@ Map the CountSet to a \code{\link{ReconstructedOutline}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

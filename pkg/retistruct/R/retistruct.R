@@ -109,31 +109,33 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(markupfile)) {
     ## read.csv() returns a data frame
     M.df <- read.csv(markupfile)
-    ## Get strings out before converting to vector
-    if ("side" %in% names(M.df)) {
-      a$side <- as.character(M.df[1,"side"])
+    if (nrow(M.df) > 1) {
+      stop("Markup file markup.csv contains more than one row")
+    }
+    M <- as.list(M.df)
+    ## Get strings out
+    if ("side" %in% names(M)) {
+      a$side <- M[["side"]]
       ## Make sure that side is a valid value
       if (!(a$side %in% c("Left", "Right"))) {
         a$side <- "Right"
         warning("The side was neither Left nor Right; setting to Right.")
       }
     }
-    ## Convert to vector
-    M <- sapply(M.df, function(x) x)
-    if (!is.na(M["iD"])) {
-      M["iD"] <- convert.markup(M["iD"], P.old, a$getPoints())
-      a$setFixedPoint(M["iD"], "Dorsal")
+    if (!is.na(M[["iD"]])) {
+      M[["iD"]] <- convert.markup(M[["iD"]], P.old, a$getPoints())
+      a$setFixedPoint(M[["iD"]], "Dorsal")
     }
-    if (!is.na(M["iN"])) {
-      M["iN"] <- convert.markup(M["iN"], P.old, a$getPoints())
-      a$setFixedPoint(M["iN"], "Nasal")
+    if (!is.na(M[["iN"]])) {
+      M[["iN"]] <- convert.markup(M[["iN"]], P.old, a$getPoints())
+      a$setFixedPoint(M[["iN"]], "Nasal")
     }
-    a$phi0 <- M["phi0"]*pi/180
+    a$phi0 <- M[["phi0"]]*pi/180
     if ("iOD" %in% names(M)) {
-      a$getFeatureSet("LandmarkSet")$setID(M["iOD"], "OD")
+      a$getFeatureSet("LandmarkSet")$setID(M[["iOD"]], "OD")
     }
     if ("DVflip" %in% names(M)) {
-      a$DVflip <- M["DVflip"]
+      a$DVflip <- M[["DVflip"]]
     }
   } else {
     error("Markup file markup.csv doesn't exist.")

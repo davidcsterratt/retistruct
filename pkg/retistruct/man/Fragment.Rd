@@ -42,6 +42,7 @@ point (which will be to itself initially)}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-initializeFromPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-initializeFromPoints}{}}}
 \subsection{Method \code{initializeFromPoints()}}{
 Initialise a Fragment from a set of points
 \subsection{Usage}{
@@ -58,6 +59,7 @@ Initialise a Fragment from a set of points
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

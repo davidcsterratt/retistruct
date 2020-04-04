@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.6.3 - Released 2020/04/03
+
+BUG FIX
+
+* Error due to change in stringsAsFactors
+  (https://github.com/davidcsterratt/retistruct/issues/49)
+
 CHANGES IN VERSION 0.6.2 - Released 2019/12/13
 
 NEW FEATURES

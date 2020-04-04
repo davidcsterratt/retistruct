@@ -118,6 +118,7 @@ indices of the points linked by the edge}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-loadOutline"></a>}}
+\if{latex}{\out{\hypertarget{method-loadOutline}{}}}
 \subsection{Method \code{loadOutline()}}{
 Load \link{AnnotatedOutline} into ReconstructedOutline object
 \subsection{Usage}{
@@ -162,6 +163,7 @@ means no plotting.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 Reconstruct
 Reconstruction proceeds in a number of stages:
@@ -214,6 +216,7 @@ to. If \code{NA} don't make any polar plots.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mergePointsEdges"></a>}}
+\if{latex}{\out{\hypertarget{method-mergePointsEdges}{}}}
 \subsection{Method \code{mergePointsEdges()}}{
 Merge stitched points and edges.
 Create merged and transformed versions (all suffixed with \code{t})
@@ -247,6 +250,7 @@ indices of the points linked by the edge}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-projectToSphere"></a>}}
+\if{latex}{\out{\hypertarget{method-projectToSphere}{}}}
 \subsection{Method \code{projectToSphere()}}{
 Project mesh points in the flat outline onto a sphere
 This takes the mesh points from the flat outline and maps them to
@@ -267,6 +271,7 @@ The following fields are set:
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getStrains"></a>}}
+\if{latex}{\out{\hypertarget{method-getStrains}{}}}
 \subsection{Method \code{getStrains()}}{
 Return strains edges are under in spherical retina
 Set information about how edges on the sphere
@@ -288,6 +293,7 @@ Each data frame contains for each edge in the flat or spherical meshes:
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-optimiseMapping"></a>}}
+\if{latex}{\out{\hypertarget{method-optimiseMapping}{}}}
 \subsection{Method \code{optimiseMapping()}}{
 Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
@@ -329,6 +335,7 @@ to. If \code{NA} don't make any polar plots.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-optimiseMappingCart"></a>}}
+\if{latex}{\out{\hypertarget{method-optimiseMappingCart}{}}}
 \subsection{Method \code{optimiseMappingCart()}}{
 Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
@@ -368,6 +375,7 @@ Optimise the mapping from the flat outline to the sphere
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-transformImage"></a>}}
+\if{latex}{\out{\hypertarget{method-transformImage}{}}}
 \subsection{Method \code{transformImage()}}{
 Transform an image into the reconstructed space
 Transform an image into the reconstructed space. The four corner
@@ -386,6 +394,7 @@ Sets the field
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIms"></a>}}
+\if{latex}{\out{\hypertarget{method-getIms}{}}}
 \subsection{Method \code{getIms()}}{
 Get coordinates of corners of pixels of image in spherical
 coordinates
@@ -399,6 +408,7 @@ Coordinates of corners of pixels in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTearCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-getTearCoords}{}}}
 \subsection{Method \code{getTearCoords()}}{
 Get location of tear coordinates in spherical coordinates
 \subsection{Usage}{
@@ -411,6 +421,7 @@ Location of tear coordinates in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeatureSet}{}}}
 \subsection{Method \code{getFeatureSet()}}{
 Get \link{ReconstructedFeatureSet}
 \subsection{Usage}{
@@ -428,6 +439,7 @@ E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstructFeatureSets"></a>}}
+\if{latex}{\out{\hypertarget{method-reconstructFeatureSets}{}}}
 \subsection{Method \code{reconstructFeatureSets()}}{
 Reconstruct any attached feature sets.
 \subsection{Usage}{
@@ -437,6 +449,7 @@ Reconstruct any attached feature sets.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-getPoints}{}}}
 \subsection{Method \code{getPoints()}}{
 Get mesh points in spherical coordinates
 \subsection{Usage}{
@@ -450,6 +463,7 @@ Matrix with columns \code{phi} (latitude) and \code{lambda}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapFlatToSpherical"></a>}}
+\if{latex}{\out{\hypertarget{method-mapFlatToSpherical}{}}}
 \subsection{Method \code{mapFlatToSpherical()}}{
 Return location of point on sphere corresponding
   to point on the flat outline
@@ -468,6 +482,7 @@ with \code{X} and \code{Y} columns}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

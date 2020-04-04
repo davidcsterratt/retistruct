@@ -93,6 +93,7 @@ elements as there are rows of \code{Cu}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-triangulate"></a>}}
+\if{latex}{\out{\hypertarget{method-triangulate}{}}}
 \subsection{Method \code{triangulate()}}{
 Triangulate (mesh) outline
 \subsection{Usage}{
@@ -113,6 +114,7 @@ whether to insert external Steiner points - see
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapTriangulatedFragment"></a>}}
+\if{latex}{\out{\hypertarget{method-mapTriangulatedFragment}{}}}
 \subsection{Method \code{mapTriangulatedFragment()}}{
 Map the point IDs of a \link{TriangulatedFragment} on the
   point IDs of this Outline
@@ -132,6 +134,7 @@ Map the point IDs of a \link{TriangulatedFragment} on the
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

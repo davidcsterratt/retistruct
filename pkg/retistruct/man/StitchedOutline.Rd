@@ -75,6 +75,7 @@ automatically}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -91,6 +92,7 @@ Constructor
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-stitchTears"></a>}}
+\if{latex}{\out{\hypertarget{method-stitchTears}{}}}
 \subsection{Method \code{stitchTears()}}{
 Stitch together the incisions and tears by inserting new
   points in the tears and creating correspondences between new
@@ -102,6 +104,7 @@ Stitch together the incisions and tears by inserting new
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

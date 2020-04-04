@@ -12,7 +12,7 @@ Description: Reconstructs retinae by morphing a flat surface with cuts (a
 Version: 0.6.2
 URL: http://davidcsterratt.github.io/retistruct/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2019-12-13
+Date: 2020-04-03
 Depends:
     R (>= 3.5.0)
 Imports:
@@ -34,4 +34,4 @@ Suggests:
     cairoDevice,
     RGtk2
 Language: en-GB
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0

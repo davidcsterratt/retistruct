@@ -67,6 +67,7 @@ point (which will be to itself initially)}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Construct an outline object. This sanitises the
   input points \code{P}.
@@ -90,6 +91,7 @@ Construct an outline object. This sanitises the
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getImage"></a>}}
+\if{latex}{\out{\hypertarget{method-getImage}{}}}
 \subsection{Method \code{getImage()}}{
 Image accessor
 \subsection{Usage}{
@@ -102,6 +104,7 @@ An image as a \code{raster} object
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-replaceImage"></a>}}
+\if{latex}{\out{\hypertarget{method-replaceImage}{}}}
 \subsection{Method \code{replaceImage()}}{
 Image setter
 \subsection{Usage}{
@@ -118,6 +121,7 @@ Image setter
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapFragment"></a>}}
+\if{latex}{\out{\hypertarget{method-mapFragment}{}}}
 \subsection{Method \code{mapFragment()}}{
 Map the point IDs of a \link{Fragment} on the
   point IDs of this Outline
@@ -137,6 +141,7 @@ Map the point IDs of a \link{Fragment} on the
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-mapPids"></a>}}
+\if{latex}{\out{\hypertarget{method-mapPids}{}}}
 \subsection{Method \code{mapPids()}}{
 Map references to points
 \subsection{Usage}{
@@ -160,6 +165,7 @@ New references to point indices in target
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-addPoints}{}}}
 \subsection{Method \code{addPoints()}}{
 Add points to the outline register of points
 \subsection{Usage}{
@@ -181,6 +187,7 @@ The ID of each added point in the register. If points already
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-getPoints}{}}}
 \subsection{Method \code{getPoints()}}{
 Get unscaled mesh points
 \subsection{Usage}{
@@ -193,6 +200,7 @@ Matrix with columns \code{X} and \code{Y}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getPointsScaled"></a>}}
+\if{latex}{\out{\hypertarget{method-getPointsScaled}{}}}
 \subsection{Method \code{getPointsScaled()}}{
 Get scaled mesh points
 \subsection{Usage}{
@@ -206,6 +214,7 @@ Matrix with columns \code{X} and \code{Y} which is
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimSet"></a>}}
+\if{latex}{\out{\hypertarget{method-getRimSet}{}}}
 \subsection{Method \code{getRimSet()}}{
 Get set of points on rim
 \subsection{Usage}{
@@ -220,6 +229,7 @@ Vector of point IDs, i.e. indices of the rows in
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getOutlineSet"></a>}}
+\if{latex}{\out{\hypertarget{method-getOutlineSet}{}}}
 \subsection{Method \code{getOutlineSet()}}{
 Get points on the edge of the outline
 \subsection{Usage}{
@@ -232,6 +242,7 @@ Vector of points IDs on outline
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getOutlineLengths"></a>}}
+\if{latex}{\out{\hypertarget{method-getOutlineLengths}{}}}
 \subsection{Method \code{getOutlineLengths()}}{
 Get lengths of edges of the outline
 \subsection{Usage}{
@@ -244,6 +255,7 @@ Vector of lengths of edges connecting neighbouring points
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-addFeatureSet}{}}}
 \subsection{Method \code{addFeatureSet()}}{
 Add a \link{FeatureSet}, e.g. a \link{PointSet}
   or \link{LandmarkSet}
@@ -261,6 +273,7 @@ Add a \link{FeatureSet}, e.g. a \link{PointSet}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

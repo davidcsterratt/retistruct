@@ -90,6 +90,7 @@ backward (\code{VB}) and forward (\code{VF}) points}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -106,6 +107,7 @@ Constructor
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-labelTearPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-labelTearPoints}{}}}
 \subsection{Method \code{labelTearPoints()}}{
 Label a set of three unlabelled points supposed
   to refer to the apex and vertices of a cut and tear with the \code{V0}
@@ -127,6 +129,7 @@ Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-whichTear"></a>}}
+\if{latex}{\out{\hypertarget{method-whichTear}{}}}
 \subsection{Method \code{whichTear()}}{
 Return index of tear in an AnnotatedOutline in which a point appears
 \subsection{Usage}{
@@ -146,6 +149,7 @@ ID of tear
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTear"></a>}}
+\if{latex}{\out{\hypertarget{method-getTear}{}}}
 \subsection{Method \code{getTear()}}{
 Return indices of tear in AnnotatedOutline
 \subsection{Usage}{
@@ -166,6 +170,7 @@ Vector of three point IDs, labelled with \code{V0},
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTears"></a>}}
+\if{latex}{\out{\hypertarget{method-getTears}{}}}
 \subsection{Method \code{getTears()}}{
 Get tears
 \subsection{Usage}{
@@ -178,6 +183,7 @@ Matrix of tears
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-computeTearRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-computeTearRelationships}{}}}
 \subsection{Method \code{computeTearRelationships()}}{
 Compute the parent relationships for a potential
   set of tears. The function throws an error if tears overlap.
@@ -210,6 +216,7 @@ List containing
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addTear"></a>}}
+\if{latex}{\out{\hypertarget{method-addTear}{}}}
 \subsection{Method \code{addTear()}}{
 Add tear to an AnnotatedOutline
 \subsection{Usage}{
@@ -226,6 +233,7 @@ Add tear to an AnnotatedOutline
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-removeTear"></a>}}
+\if{latex}{\out{\hypertarget{method-removeTear}{}}}
 \subsection{Method \code{removeTear()}}{
 Remove tear from an AnnotatedOutline
 \subsection{Usage}{
@@ -242,6 +250,7 @@ Remove tear from an AnnotatedOutline
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-checkTears"></a>}}
+\if{latex}{\out{\hypertarget{method-checkTears}{}}}
 \subsection{Method \code{checkTears()}}{
 Check that all tears are correct.
 \subsection{Usage}{
@@ -255,6 +264,7 @@ If all is OK, returns empty vector.  If not, returns
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-setFixedPoint}{}}}
 \subsection{Method \code{setFixedPoint()}}{
 Set fixed point
 \subsection{Usage}{
@@ -273,6 +283,7 @@ Set fixed point
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-getFixedPoint}{}}}
 \subsection{Method \code{getFixedPoint()}}{
 Get point ID of fixed point
 \subsection{Usage}{
@@ -285,6 +296,7 @@ Point ID of fixed point
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimSet"></a>}}
+\if{latex}{\out{\hypertarget{method-getRimSet}{}}}
 \subsection{Method \code{getRimSet()}}{
 Get point IDs of points on rim
 \subsection{Usage}{
@@ -297,6 +309,7 @@ Point IDs of points on rim
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ensureFixedPointInRim"></a>}}
+\if{latex}{\out{\hypertarget{method-ensureFixedPointInRim}{}}}
 \subsection{Method \code{ensureFixedPointInRim()}}{
 Ensure that the fixed point \code{i0} is in the rim, not a tear.
 Alters object in which \code{i0} may have been changed.
@@ -307,6 +320,7 @@ Alters object in which \code{i0} may have been changed.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimLengths"></a>}}
+\if{latex}{\out{\hypertarget{method-getRimLengths}{}}}
 \subsection{Method \code{getRimLengths()}}{
 Get lengths of edges on rim
 \subsection{Usage}{
@@ -319,6 +333,7 @@ Vector of rim lengths
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

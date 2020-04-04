@@ -57,6 +57,7 @@ David Sterratt
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIms"></a>}}
+\if{latex}{\out{\hypertarget{method-getIms}{}}}
 \subsection{Method \code{getIms()}}{
 Get coordinates of corners of pixels of image in spherical
   coordinates, transformed according to the value of \code{DVflip}
@@ -70,6 +71,7 @@ Coordinates of corners of pixels in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getTearCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-getTearCoords}{}}}
 \subsection{Method \code{getTearCoords()}}{
 Get location of tear coordinates in spherical coordinates,
   transformed according to the value of \code{DVflip}
@@ -83,6 +85,7 @@ Location of tear coordinates in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$reconstruct(...)}\if{html}{\out{</div>}}
@@ -98,6 +101,7 @@ Location of tear coordinates in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeatureSet}{}}}
 \subsection{Method \code{getFeatureSet()}}{
 Get \link{ReconstructedFeatureSet}, transformed
   according to the value of \code{DVflip}
@@ -116,6 +120,7 @@ E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

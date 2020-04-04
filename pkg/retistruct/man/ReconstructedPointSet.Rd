@@ -50,6 +50,7 @@ David Sterratt
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getMean"></a>}}
+\if{latex}{\out{\hypertarget{method-getMean}{}}}
 \subsection{Method \code{getMean()}}{
 Get Karcher mean of datapoints in spherical coordinates
 \subsection{Usage}{
@@ -62,6 +63,7 @@ Karcher mean of datapoints in spherical coordinates
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getHullarea"></a>}}
+\if{latex}{\out{\hypertarget{method-getHullarea}{}}}
 \subsection{Method \code{getHullarea()}}{
 Get area of convex hull around data points on sphere
 \subsection{Usage}{
@@ -74,6 +76,7 @@ Area in degrees squared
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getKDE"></a>}}
+\if{latex}{\out{\hypertarget{method-getKDE}{}}}
 \subsection{Method \code{getKDE()}}{
 Get kernel density estimate of data points
 \subsection{Usage}{
@@ -86,6 +89,7 @@ See \code{\link{compute.kernel.estimate}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

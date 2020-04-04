@@ -37,6 +37,7 @@ David Sterratt
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIndex"></a>}}
+\if{latex}{\out{\hypertarget{method-getIndex}{}}}
 \subsection{Method \code{getIndex()}}{
 Get numeric index of features
 \subsection{Usage}{
@@ -53,6 +54,7 @@ Get numeric index of features
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-getIDs}{}}}
 \subsection{Method \code{getIDs()}}{
 Get IDs of features
 \subsection{Usage}{
@@ -65,6 +67,7 @@ Vector of IDs of features
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setID"></a>}}
+\if{latex}{\out{\hypertarget{method-setID}{}}}
 \subsection{Method \code{setID()}}{
 Set name
 \subsection{Usage}{
@@ -83,6 +86,7 @@ Set name
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeature"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeature}{}}}
 \subsection{Method \code{getFeature()}}{
 Get feature by feature ID
 \subsection{Usage}{
@@ -102,6 +106,7 @@ Matrix describing feature
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getFeatures"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeatures}{}}}
 \subsection{Method \code{getFeatures()}}{
 Get all features
 \subsection{Usage}{
@@ -111,6 +116,7 @@ Get all features
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getCol"></a>}}
+\if{latex}{\out{\hypertarget{method-getCol}{}}}
 \subsection{Method \code{getCol()}}{
 Get colour in which to plot feature ID
 \subsection{Usage}{
@@ -127,6 +133,7 @@ Get colour in which to plot feature ID
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
