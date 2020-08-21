@@ -59,8 +59,8 @@ point (which will be to itself initially)}
 \itemize{
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
 }
 \out{</details>}
