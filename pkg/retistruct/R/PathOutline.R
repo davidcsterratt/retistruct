@@ -25,11 +25,12 @@ PathOutline <- R6Class("PathOutline",
     hb = NULL,
     ##' @description Add points to the outline register of points
     ##' @param P 2 column matrix of points to add
+    ##' @param fid fragment id of the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
     ##'   but an ID will be returned 
-    addPoints = function(P) {
-      pids <- super$addPoints(P)
+    addPoints = function(P, fid) {
+      pids <- super$addPoints(P, fid)
       ## For *new* points set forward and backward pointers
       newpids <- pids
       if (length(self$hf) > 0) {
@@ -55,6 +56,11 @@ PathOutline <- R6Class("PathOutline",
       if (!((self$gf[i0] == i1) || (self$gf[i1] == i0))) {
         stop("Points", i0, "and", i1, "are not connected by an edge")
       }
+      fid  <- self$getFragmentIDsFromPointIDs(i0)
+      fid1  <- self$getFragmentIDsFromPointIDs(i1)
+      if (fid != fid1) {
+        stop("Fragment IDs of points differ")
+      }
       PXY <- self$getPoints()
       p <-
         (1 - f)*PXY[i0,] +
@@ -64,7 +70,7 @@ PathOutline <- R6Class("PathOutline",
                          fromLast=TRUE)
       if (n == 0) {
         ## If the point p doesn't exist
-        n <- self$addPoints(p) # n is Index of new point
+        n <- self$addPoints(p, fid) # n is Index of new point
         ## Update forward and backward pointers
         if (!is.na(self$gf[i0] == i1) && self$gf[i0] == i1) {
           self$gb[n]  <- i0
@@ -91,7 +97,7 @@ PathOutline <- R6Class("PathOutline",
     ##' @param epsilon Minimum distance between points
     stitchSubpaths = function(VF0, VF1, VB0, VB1,
                               epsilon) {
-      ## Compute the total path length along each side of the tear
+      ## Compute the total path length along each side of the subpath
       Sf <- path.length(VF0, VF1, self$gf, self$hf, self$getPointsScaled())
       Sb <- path.length(VB0, VB1, self$gb, self$hb, self$getPointsScaled())
 
@@ -131,6 +137,7 @@ PathOutline <- R6Class("PathOutline",
                 ## backward point, don't create a new point
                 report(paste("Point", j, "at", sb, "along backward path within",
                              epsilon, "of projection from", i, "in forward path"))
+                report(paste("Not creating new point, but setting point", i, "to link to", j))
                 self$h[i] <- j
               } else {
                 ## Insert a point in the backward path. Point j is ahead.

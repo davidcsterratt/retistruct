@@ -99,6 +99,7 @@ indices of the points linked by the edge}
 \item \href{#method-transformImage}{\code{ReconstructedOutline$transformImage()}}
 \item \href{#method-getIms}{\code{ReconstructedOutline$getIms()}}
 \item \href{#method-getTearCoords}{\code{ReconstructedOutline$getTearCoords()}}
+\item \href{#method-getCorrespondenceCoords}{\code{ReconstructedOutline$getCorrespondenceCoords()}}
 \item \href{#method-getFeatureSet}{\code{ReconstructedOutline$getFeatureSet()}}
 \item \href{#method-reconstructFeatureSets}{\code{ReconstructedOutline$reconstructFeatureSets()}}
 \item \href{#method-getPoints}{\code{ReconstructedOutline$getPoints()}}
@@ -417,6 +418,19 @@ Get location of tear coordinates in spherical coordinates
 
 \subsection{Returns}{
 Location of tear coordinates in spherical coordinates
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getCorrespondenceCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-getCorrespondenceCoords}{}}}
+\subsection{Method \code{getCorrespondenceCoords()}}{
+Get location of correspondence coordinates in spherical coordinates
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getCorrespondenceCoords()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Location of correspondence coordinates in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}

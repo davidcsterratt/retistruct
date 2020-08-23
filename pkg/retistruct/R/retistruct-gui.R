@@ -172,9 +172,10 @@ retistruct <- function() {
     
     ## Locate tear ID in which the point occurs
     tid <- a$whichTear(id1)
+    cid <- a$whichCorrespondence(id1)
 
     ## If there is a tear in which it occurs, select a point to move it to
-    if (!is.na(tid)) {
+    if (!is.na(tid) | !is.na(cid)) {
       gWidgets2::svalue(g.status) <- paste("Click on point to move it to.",
                                            identify.abort.text())
 
@@ -184,17 +185,33 @@ retistruct <- function() {
       ## Select second point
       id2 <- identify(P[,"X"], P[,"Y"], n=1)
 
-      ## Get point ids of exsiting tear
-      pids <- a$getTear(tid)
+      if (!is.na(tid)) {
+        ## Get point ids of exsiting tear
+        pids <- a$getTear(tid)
 
-      ## Replace old point with desired new point
-      if (length(id2)) pids[pids==id1] <- id2
+        ## Replace old point with desired new point
+        if (length(id2)) pids[pids==id1] <- id2
 
-      ## It is possible to get the apex and vertex mixed up when moving points.
-      ## Fix any errors.
-      pids <- a$labelTearPoints(pids)
-      a$removeTear(tid)
-      a$addTear(pids)
+        ## It is possible to get the apex and vertex mixed up when moving points.
+        ## Fix any errors.
+        pids <- a$labelTearPoints(pids)
+        a$removeTear(tid)
+        a$addTear(pids)
+      }
+      if (!is.na(cid)) {
+        ## Get point ids of exsiting correspondence
+        pids <- a$getCorrespondence(cid)
+
+        ## Replace old point with desired new point
+        if (length(id2)) pids[pids==id1] <- id2
+
+        ## It is possible to get the apex and vertex mixed up when moving points.
+        ## Fix any errors.
+        pids <- a$labelCorrespondencePoints(pids)
+        a$removeCorrespondence(cid)
+        a$addCorrespondence(pids)
+      }
+
     }
 
     ## Display and cleanup
@@ -203,6 +220,38 @@ retistruct <- function() {
     enable.widgets(TRUE)
   }
 
+  ## Handler for adding a correspondence
+  h.add.correspondence <- function(h, ...) {
+    unsaved.data(TRUE)
+    enable.widgets(FALSE)
+    gWidgets2::svalue(g.status) <- paste("Click on the four points of the correspondence in any order.",
+                              identify.abort.text())
+    dev.set(d1)
+    P <- a$getPoints()
+    pids <- identify(P[,1], P[,2], n=4, col=getOption("TF.col"))
+    withCallingHandlers({
+      a$addCorrespondence(pids)
+    }, warning=h.warning, error=h.warning)
+    do.plot()
+    gWidgets2::svalue(g.status) <- ""
+    enable.widgets(TRUE)
+  }
+
+  ## Handler for removing a tear
+  h.remove.correspondence <- function(h, ...) {
+    unsaved.data(TRUE)
+    enable.widgets(FALSE)
+    gWidgets2::svalue(g.status) <- paste("Click on the apex of the correspondence to remove.",
+                                         identify.abort.text())
+    dev.set(d1)
+    P <- a$getPoints()
+    id <- identify(P[,1], P[,2], n=1, plot=FALSE)
+    a$removeCorrespondence(a$whichCorrespondence(id))
+    do.plot()
+    gWidgets2::svalue(g.status) <- ""
+    enable.widgets(TRUE)
+  }
+  
   ## Handler for marking nasal point
   h.mark.n <- function(h, ...) {
     unsaved.data(TRUE)
@@ -717,6 +766,12 @@ retistruct <- function() {
       a$dataset <<- file.path(extdata, "smi32")
       h.open()
     })
+  mbl$Demos$Fragments <- gWidgets2::gaction(
+    label="Octants",
+    handler=function(h, ...) {
+      a$dataset <<- file.path(extdata, "ijroimulti")
+      h.open()
+    })
   mbl$Demos$left.contra <-
     gWidgets2::gaction(label="Figure 6 Left Contra",
                        handler=function(h, ...) {
@@ -775,8 +830,10 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.editor <- gWidgets2::ggroup(horizontal = FALSE, container=g.nb, label="Edit")
 
   g.add     <- gWidgets2::gbutton("Add tear",    handler=h.add,     container=g.editor)
-  g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
   g.remove  <- gWidgets2::gbutton("Remove tear", handler=h.remove,  container=g.editor)
+  g.add.correspondence  <- gWidgets2::gbutton("Add correspondence", handler=h.add.correspondence,  container=g.editor)
+  g.remove.correspondence  <- gWidgets2::gbutton("Remove correspondence", handler=h.remove.correspondence,  container=g.editor)
+  g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
   g.mark.n  <- gWidgets2::gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
   g.mark.d  <- gWidgets2::gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
   g.mark.od <- gWidgets2::gbutton("Mark OD",     handler=h.mark.od, container=g.editor)

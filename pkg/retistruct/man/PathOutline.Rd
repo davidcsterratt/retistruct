@@ -58,6 +58,11 @@ new point is created.
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragment">}\href{../../retistruct/html/Outline.html#method-getFragment}{\code{retistruct::Outline$getFragment()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentIDs}{\code{retistruct::Outline$getFragmentIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDsFromPointIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentIDsFromPointIDs}{\code{retistruct::Outline$getFragmentIDsFromPointIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPointIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentPointIDs}{\code{retistruct::Outline$getFragmentPointIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPoints">}\href{../../retistruct/html/Outline.html#method-getFragmentPoints}{\code{retistruct::Outline$getFragmentPoints()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
@@ -77,13 +82,15 @@ new point is created.
 \subsection{Method \code{addPoints()}}{
 Add points to the outline register of points
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{PathOutline$addPoints(P)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{PathOutline$addPoints(P, fid)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{P}}{2 column matrix of points to add}
+
+\item{\code{fid}}{fragment id of the points}
 }
 \if{html}{\out{</div>}}
 }

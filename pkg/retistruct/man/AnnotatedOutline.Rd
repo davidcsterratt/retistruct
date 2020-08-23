@@ -22,6 +22,17 @@ o$addTear(c(6, 7, 8))
 o$addTear(c(9, 10, 11))
 o$addTear(c(12, 1, 2))
 flatplot(o)
+
+P <- list(rbind(c(1,1), c(2,1), c(2.5,2), c(3,1), c(4,1), c(1,4)),
+          rbind(c(-1,1), c(-1,4), c(-2,3), c(-2,2), c(-3,2), c(-4,1)),
+          rbind(c(-4,-1), c(-1,-1), c(-1,-4)),
+          rbind(c(1,-1), c(2,-1), c(2.5,-2), c(3,-1), c(4,-1), c(1,-4)))
+o <- AnnotatedOutline$new(P)
+o$addTear(c(2, 3, 4))
+o$addTear(c(17, 18, 19))
+o$addTear(c(9, 10, 11))
+o$addCorrespondence(c(1, 5, 16, 20))
+flatplot(o)
 }
 \author{
 David Sterratt
@@ -32,7 +43,11 @@ David Sterratt
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{tears}}{Matrix in which each row represents a tear by the
+\item{\code{tears}}{Matrix in which each row represents a correspondence by the
+indices into the outline points of the apex (\code{V0}) and
+backward (\code{VB}) and forward (\code{VF}) points}
+
+\item{\code{corrs}}{Matrix in which each row represents a correspondence by the
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
 
@@ -60,6 +75,15 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \item \href{#method-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
 \item \href{#method-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
 \item \href{#method-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
+\item \href{#method-getFlatRimLength}{\code{AnnotatedOutline$getFlatRimLength()}}
+\item \href{#method-labelCorrespondencePoints}{\code{AnnotatedOutline$labelCorrespondencePoints()}}
+\item \href{#method-addCorrespondence}{\code{AnnotatedOutline$addCorrespondence()}}
+\item \href{#method-whichCorrespondence}{\code{AnnotatedOutline$whichCorrespondence()}}
+\item \href{#method-removeCorrespondence}{\code{AnnotatedOutline$removeCorrespondence()}}
+\item \href{#method-computeCorrespondenceRelationships}{\code{AnnotatedOutline$computeCorrespondenceRelationships()}}
+\item \href{#method-getCorrespondence}{\code{AnnotatedOutline$getCorrespondence()}}
+\item \href{#method-getCorrespondences}{\code{AnnotatedOutline$getCorrespondences()}}
+\item \href{#method-addPoints}{\code{AnnotatedOutline$addPoints()}}
 \item \href{#method-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
 \item \href{#method-clone}{\code{AnnotatedOutline$clone()}}
 }
@@ -73,6 +97,11 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragment">}\href{../../retistruct/html/Outline.html#method-getFragment}{\code{retistruct::Outline$getFragment()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentIDs}{\code{retistruct::Outline$getFragmentIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDsFromPointIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentIDsFromPointIDs}{\code{retistruct::Outline$getFragmentIDsFromPointIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPointIDs">}\href{../../retistruct/html/Outline.html#method-getFragmentPointIDs}{\code{retistruct::Outline$getFragmentPointIDs()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPoints">}\href{../../retistruct/html/Outline.html#method-getFragmentPoints}{\code{retistruct::Outline$getFragmentPoints()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
@@ -81,7 +110,6 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment">}\href{../../retistruct/html/Outline.html#method-mapFragment}{\code{retistruct::Outline$mapFragment()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids">}\href{../../retistruct/html/Outline.html#method-mapPids}{\code{retistruct::Outline$mapPids()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage">}\href{../../retistruct/html/Outline.html#method-replaceImage}{\code{retistruct::Outline$replaceImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="addPoints">}\href{../../retistruct/html/PathOutline.html#method-addPoints}{\code{retistruct::PathOutline$addPoints()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint">}\href{../../retistruct/html/PathOutline.html#method-insertPoint}{\code{retistruct::PathOutline$insertPoint()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint">}\href{../../retistruct/html/PathOutline.html#method-nextPoint}{\code{retistruct::PathOutline$nextPoint()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths">}\href{../../retistruct/html/PathOutline.html#method-stitchSubpaths}{\code{retistruct::PathOutline$stitchSubpaths()}}\out{</span>}
@@ -317,6 +345,184 @@ Alters object in which \code{i0} may have been changed.
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$ensureFixedPointInRim()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFlatRimLength"></a>}}
+\if{latex}{\out{\hypertarget{method-getFlatRimLength}{}}}
+\subsection{Method \code{getFlatRimLength()}}{
+Get flat rim length
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFlatRimLength()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The rim length
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-labelCorrespondencePoints"></a>}}
+\if{latex}{\out{\hypertarget{method-labelCorrespondencePoints}{}}}
+\subsection{Method \code{labelCorrespondencePoints()}}{
+Label a set of four unlabelled points supposed to refer to a
+correspondence.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelCorrespondencePoints(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{the vector of point indices}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addCorrespondence"></a>}}
+\if{latex}{\out{\hypertarget{method-addCorrespondence}{}}}
+\subsection{Method \code{addCorrespondence()}}{
+Add correspondence to an AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addCorrespondence(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{Vector of three point IDs to be added}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-whichCorrespondence"></a>}}
+\if{latex}{\out{\hypertarget{method-whichCorrespondence}{}}}
+\subsection{Method \code{whichCorrespondence()}}{
+Return index of correspondence in an AnnotatedOutline in which a point
+appears
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$whichCorrespondence(pid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pid}}{ID of point}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+ID of correspondence
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-removeCorrespondence"></a>}}
+\if{latex}{\out{\hypertarget{method-removeCorrespondence}{}}}
+\subsection{Method \code{removeCorrespondence()}}{
+Remove correspondence from an AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$removeCorrespondence(cid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cid}}{Correspondence ID, which can be returned from
+\code{whichCorrespondence}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-computeCorrespondenceRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-computeCorrespondenceRelationships}{}}}
+\subsection{Method \code{computeCorrespondenceRelationships()}}{
+Compute the correspondence relationships between the points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$computeCorrespondenceRelationships(corrs)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{corrs}}{Matrix containing columns \code{VB0},
+and \code{VB1} (Backward vertices of correspondences) and \code{VF0} and \code{VF1} (Forward
+vertices of correspondences)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List containing
+\itemize{
+\item{\code{Rset}}{the set of points on the rim}
+\item{\code{TFset}}{list containing indices of points in each forward correspondence}
+\item{\code{TBset}}{list containing indices of points in each backward correspondence}
+\item{\code{h}}{correspondence mapping}
+\item{\code{hf}}{correspondence mapping in forward direction for
+        points on boundary}
+\item{\code{hb}}{correspondence mapping in backward direction for
+        points on boundary}
+}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getCorrespondence"></a>}}
+\if{latex}{\out{\hypertarget{method-getCorrespondence}{}}}
+\subsection{Method \code{getCorrespondence()}}{
+Return indices of correspondences in AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getCorrespondence(cid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cid}}{Correspondence ID, which can be returned from \code{whichCorrespondence}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of four point IDs, labelled with \code{VF1},
+\code{VF1}, \code{VB0} and \code{VB1}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getCorrespondences"></a>}}
+\if{latex}{\out{\hypertarget{method-getCorrespondences}{}}}
+\subsection{Method \code{getCorrespondences()}}{
+Return indices of correspondences in AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getCorrespondences()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Matrix in which each row contains point IDs, for the forward and backward
+sides of the correspondence: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-addPoints}{}}}
+\subsection{Method \code{addPoints()}}{
+Add points to the outline register of points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addPoints(P, fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{2 column matrix of points to add}
+
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The ID of each added point in the register. If points already
+  exist a point will not be created in the register,
+  but an ID will be returned
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getRimLengths"></a>}}

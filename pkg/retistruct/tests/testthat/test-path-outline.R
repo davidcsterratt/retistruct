@@ -1,11 +1,11 @@
 context("PathOutline")
-test_that("paths with no correspondances work correctly", {
+test_that("paths with no correspondences work correctly", {
 
   ## Simple example
   po <- PathOutline$new()
   P <- rbind(cbind(0, 0:2), cbind(1, seq(0, 2, by=0.5)))
   colnames(P) <- c("X", "Y")
-  po$addPoints(P)
+  po$addPoints(P, 1)
   po$gf <- c(2, 3, NA, NA, 4, 5, 6, 7)
   po$gb <- c(NA, 1, 2, 5, 6, 7, 8, NA)
 
@@ -18,7 +18,7 @@ test_that("paths with no correspondances work correctly", {
   ## Inverse of simple example; keep same points but make forward path
   ## backward path and vice versa
   po <- PathOutline$new()
-  po$addPoints(P)
+  po$addPoints(P, 1)
   po$gb <- c(2, 3, NA, NA, 4, 5, 6, 7)
   po$gf <- c(NA, 1, 2, 5, 6, 7, 8, NA)
 
@@ -31,7 +31,7 @@ test_that("paths with no correspondances work correctly", {
   
 })
 
-test_that("paths with a correspondance in one path work correctly", {
+test_that("paths with a correspondence in one path work correctly", {
 
   P <- rbind(c(X=1,Y=1),
              c(2,1),
@@ -41,7 +41,7 @@ test_that("paths with a correspondance in one path work correctly", {
              c(1,-1),
              c(4,-1))
   po <- PathOutline$new()
-  po$addPoints(P)
+  po$addPoints(P, 1)
   po$gf <- c(2, 3, 4, 5, NA, NA, 6)
   po$gb <- c(NA, 1, 2, 3, 4, 7, NA)
   po$hf[2] <- 4
@@ -65,7 +65,7 @@ test_that("paths with a correspondance in one path work correctly", {
              c(4,-1))
 
   po <- PathOutline$new()
-  po$addPoints(P)
+  po$addPoints(P, 1)
   po$gf <- c(2, 3, 4, 5, NA, NA, 6, 7, 8)
   po$gb <- c(NA, 1, 2, 3, 4, 7, 8, 9, NA)
   po$hf[2] <- 4
@@ -78,7 +78,7 @@ test_that("paths with a correspondance in one path work correctly", {
   
 })
 
-test_that("paths with correspondances in each path work correctly", {
+test_that("paths with correspondences in each path work correctly", {
 
   P <- rbind(c(X=1,Y=1),
              c(2,1),
@@ -92,7 +92,7 @@ test_that("paths with correspondances in each path work correctly", {
              c(4,-1))
 
   po <- PathOutline$new()
-  po$addPoints(P)
+  po$addPoints(P, 1)
   po$gf <- c(2, 3, 4, 5, NA, NA, 6, 7, 8, 9)
   po$gb <- c(NA, 1, 2, 3, 4, 7, 8, 9, 10, NA)
   po$hf[2] <- 4
@@ -107,7 +107,7 @@ test_that("paths with correspondances in each path work correctly", {
   expect_equal(po$gb, c(NA, 1, 2, 3, 4, 7, 8, 9, 10, NA))
 })
 
-test_that("paths with a double correspondance in one path works correctly", {
+test_that("paths with a double correspondence in one path works correctly", {
   P <- rbind(c(X=1,Y=1),
              c(2,1),
              c(2.5,2),
@@ -122,7 +122,7 @@ test_that("paths with a double correspondance in one path works correctly", {
              c(4,-1))
   
   po <- PathOutline$new()
-  po$addPoints(P)
+  po$addPoints(P, 1)
   gf <- c(2, 3, 4, 5, NA, NA, 6, 7, 8, 9, 10, 11)
   po$gf <- gf
   gb <- c(NA, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, NA)

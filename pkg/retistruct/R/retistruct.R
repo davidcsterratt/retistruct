@@ -8,6 +8,7 @@ checkDatadir <- function(dir=NULL) {
   if (idt.checkDatadir(dir))   { return("idt") }
   if (csv.checkDatadir(dir))   { return("csv") }
   if (ijroi.checkDatadir(dir)) { return("ijroi") }
+  if (ijroimulti.checkDatadir(dir)) { return("ijroimulti") }
   return(FALSE)
 }
 
@@ -40,6 +41,7 @@ retistruct.read.dataset <- function(dataset, report=message, ...) {
   if (type=="idt")   { return(idt.read.dataset(dataset, report, ...))}
   if (type=="csv")   { return(csv.read.dataset(dataset, report, ...))}
   if (type=="ijroi") { return(ijroi.read.dataset(dataset, report, ...))}
+  if (type=="ijroimulti") { return(ijroimulti.read.dataset(dataset, ...))}
 
   stop("No valid dataset format detected.")
 }
@@ -155,6 +157,21 @@ retistruct.read.markup <- function(a, error=stop) {
     }
   } else {
     error("Tear file T.csv doesn't exist.")
+  }
+  ## Read in correspondence file
+  correspondencefile <- file.path(a$dataset, "C.csv")
+  if (file.exists(correspondencefile)) {
+    C.old <- read.csv(correspondencefile)
+    cn <- colnames(C.old)
+    C <- matrix(convert.markup(C.old, P.old, a$getPointsXY()), ncol=4)
+    colnames(C) <- cn
+    for (i in 1:nrow(C)) {
+      a$addCorrespondence(C[i,])
+    }
+  } else {
+    if (length(a$getFragmentIDs()) > 1) {
+      warning("Correspondence file C.csv doesn't exist.")
+    }
   }
   return(a)
 }
@@ -297,6 +314,8 @@ retistruct.reconstruct <- function(a, report=NULL,
 retistruct.save.markup <- function(a) {
   ## Save the tear information and the outline
   write.csv(a$getTears(), file.path(a$dataset, "T.csv"),
+            row.names=FALSE)
+  write.csv(a$getCorrespondences(), file.path(a$dataset, "C.csv"),
             row.names=FALSE)
   write.csv(a$getPoints(), file.path(a$dataset, "P.csv"),
             row.names=FALSE)

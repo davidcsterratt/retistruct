@@ -106,6 +106,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ol$stitchTears()
       ol$triangulate(suppress.external.steiner=TRUE)
       if (length(ol$corrs)) {
+        ol$stitchCorrespondences()
         ol$triangulate(suppress.external.steiner=TRUE)
       }
       ## Transform the rim set
@@ -678,6 +679,17 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(Tss)
     },
+    ##' @description Get location of correspondence coordinates in spherical coordinates
+    ##' @return Location of correspondence coordinates in spherical coordinates
+    getCorrespondenceCoords = function() {
+      Css <- list()
+      for (CF in self$ol$CFset) {
+        ## Convert indices to the spherical frame of reference
+        j <- self$ht[CF]
+        Css <- c(Css, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
+      }
+      return(Css)
+    },
     ##' @description Get \link{ReconstructedFeatureSet}
     ##' @param type Base type of \link{FeatureSet} as string.
     ##'   E.g. \code{PointSet} returns a \link{ReconstructedPointSet}
@@ -886,7 +898,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
 ##' respect to colatitude rather than latitude
 ##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
-##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed tears
+##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed correspondences and tears
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param max.proj.dim Maximum width of the image created in pixels
 ##' @param ... Graphical parameters to pass to plotting functions
@@ -1161,6 +1173,18 @@ projection.ReconstructedOutline <- function(r,
                        lambdalim=lambdalim*pi/180,
                        proj.centre=pi/180*proj.centre),
             col=getOption("TF.col"), lwd=Call$lwd, lty=Call$lty)
+    }
+
+    ## Plot correspondences
+    Css <- r$getCorrespondenceCoords()
+    for (Cs in Css) {
+      ## Plot
+      lines(projection(rotate.axis(transform(Cs, phi0=r$phi0),
+                                   axisdir*pi/180),
+                       lines=TRUE,
+                       lambdalim=lambdalim*pi/180,
+                       proj.centre=pi/180*proj.centre),
+            col=getOption("C.col"), lwd=Call$lwd, lty=Call$lty)
     }
   }
 

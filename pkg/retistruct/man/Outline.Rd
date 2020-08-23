@@ -33,6 +33,8 @@ is next in the outline travelling clockwise (backwards)}
 point (which will be to itself initially)}
 
 \item{\code{im}}{An image as a \code{raster} object}
+
+\item{\code{A.fragments}}{Areas of fragments}
 }
 \if{html}{\out{</div>}}
 }
@@ -45,6 +47,11 @@ point (which will be to itself initially)}
 \item \href{#method-mapFragment}{\code{Outline$mapFragment()}}
 \item \href{#method-mapPids}{\code{Outline$mapPids()}}
 \item \href{#method-addPoints}{\code{Outline$addPoints()}}
+\item \href{#method-getFragmentPointIDs}{\code{Outline$getFragmentPointIDs()}}
+\item \href{#method-getFragmentPoints}{\code{Outline$getFragmentPoints()}}
+\item \href{#method-getFragment}{\code{Outline$getFragment()}}
+\item \href{#method-getFragmentIDsFromPointIDs}{\code{Outline$getFragmentIDsFromPointIDs()}}
+\item \href{#method-getFragmentIDs}{\code{Outline$getFragmentIDs()}}
 \item \href{#method-getPoints}{\code{Outline$getPoints()}}
 \item \href{#method-getPointsScaled}{\code{Outline$getPointsScaled()}}
 \item \href{#method-getRimSet}{\code{Outline$getRimSet()}}
@@ -72,13 +79,13 @@ point (which will be to itself initially)}
 Construct an outline object. This sanitises the
   input points \code{P}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$new(P = NULL, scale = NA, im = NULL, units = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$new(fragments = list(), scale = NA, im = NULL, units = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{P}}{An N-by-2 matrix of points of the \code{Outline}}
+\item{\code{fragments}}{A list of N-by-2 matrix of points for each fragment of the \code{Outline}}
 
 \item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
 
@@ -169,13 +176,15 @@ New references to point indices in target
 \subsection{Method \code{addPoints()}}{
 Add points to the outline register of points
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$addPoints(P)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$addPoints(P, fid)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{P}}{2 column matrix of points to add}
+
+\item{\code{fid}}{fragment id of the points}
 }
 \if{html}{\out{</div>}}
 }
@@ -183,6 +192,101 @@ Add points to the outline register of points
 The ID of each added point in the register. If points already
   exist a point will not be created in the register,
   but an ID will be returned
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFragmentPointIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-getFragmentPointIDs}{}}}
+\subsection{Method \code{getFragmentPointIDs()}}{
+Get the point IDs in a fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentPointIDs(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of point IDs, i.e. indices of the rows in
+  the matrices returned by \code{getPoints} and
+  \code{getPointsScaled}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFragmentPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-getFragmentPoints}{}}}
+\subsection{Method \code{getFragmentPoints()}}{
+Get the points in a fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentPoints(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of points
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFragment"></a>}}
+\if{latex}{\out{\hypertarget{method-getFragment}{}}}
+\subsection{Method \code{getFragment()}}{
+Get fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragment(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{Fragment ID}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The  \code{\link{Fragment}} object with ID fid
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFragmentIDsFromPointIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-getFragmentIDsFromPointIDs}{}}}
+\subsection{Method \code{getFragmentIDsFromPointIDs()}}{
+Get fragment IDs from point IDS
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentIDsFromPointIDs(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{Vector of point IDs}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The Fragment ID to which each point belongs
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFragmentIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-getFragmentIDs}{}}}
+\subsection{Method \code{getFragmentIDs()}}{
+Get fragment IDs
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentIDs()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+IDs of all fragments
 }
 }
 \if{html}{\out{<hr>}}

@@ -1,10 +1,10 @@
 context("TriangulatedOutline")
 test_that("TriangulatedOutlines work correctly", {
   ## 2x2 square - area 4
-  P <- rbind(c(0,0),
-             c(2,0),
-             c(2,2),
-             c(0,2))
+  P <- list(rbind(c(0,0),
+                  c(2,0),
+                  c(2,2),
+                  c(0,2)))
   ## Check area OK
   o <- TriangulatedOutline$new(P)
   o$triangulate()

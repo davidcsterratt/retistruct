@@ -25,23 +25,31 @@ Outline <- R6Class("Outline",
     h=NULL,
     ##' @field im An image as a \code{raster} object
     im=NULL,
+    ##' @field A.fragments Areas of fragments
+    A.fragments = NULL,
     ##' @description Construct an outline object. This sanitises the
     ##'   input points \code{P}.
-    ##' @param P An N-by-2 matrix of points of the \code{Outline}
+    ##' @param fragments A list of N-by-2 matrix of points for each fragment of the \code{Outline}
     ##' @param scale The length of one unit of \code{P} in arbitrary units
     ##' @param im The image as a \code{raster} object
     ##' @param units String giving units of scaled P, e.g. \dQuote{um}
-    initialize=function(P=NULL, scale=NA, im=NULL, units=NA) {
-      self$P <- matrix(0, 0, 2)
-      colnames(self$P) <- c("X", "Y")
+    initialize=function(fragments=list(), scale=NA, im=NULL, units=NA) {
+      self$P <- matrix(0, 0, 3)
+      colnames(self$P) <- c("X", "Y", "FID")
       self$im <- im
       self$scale <- scale
       self$units <- sub(units, "um", "\U00B5m")
-      if (!is.null(P)) {
-        fragment <- Fragment$new()
-        fragment$initializeFromPoints(P)
-        pids <- self$addPoints(fragment$P)
-        self$mapFragment(fragment, pids)
+      if (!is.list(fragments)) {
+        fragments <- list(fragments)
+      }
+      if (length(fragments) > 0) {
+        for (i in 1:length(fragments)) {
+          fragment <- Fragment$new()
+          fragment$initializeFromPoints(fragments[[i]])
+          pids <- self$addPoints(fragment$P, i)
+          self$mapFragment(fragment, pids)
+          self$A.fragments[i] <- fragment$A.tot
+        }
       }
     },
     ##' @description Image accessor
@@ -78,10 +86,11 @@ Outline <- R6Class("Outline",
     },
     ##' @description Add points to the outline register of points
     ##' @param P 2 column matrix of points to add
+    ##' @param fid fragment id of the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
     ##'   but an ID will be returned 
-    addPoints = function(P) {
+    addPoints = function(P, fid) {
       if (!is.matrix(P)) {
         if (length(P) == 2) {
           P <- matrix(P, nrow=1)
@@ -95,12 +104,12 @@ Outline <- R6Class("Outline",
       pids <- rep(NA, nrow(P))
       for (i in (1:nrow(P))) {
         if (nrow(self$P) == 0) {
-          self$P <- rbind(self$P, c(P[i,]))
+          self$P <- rbind(self$P, c(P[i,], fid))
           pids[i] <- nrow(self$P)
           self$h[1] <- 1
         } else {
           ## Check point doesn't already exist
-          id <- which(apply(t(self$P) == P[i,], 2, all))
+          id <- which(apply(t(self$P[,-3,drop=FALSE]) == P[i,], 2, all))
           if (length(id) > 1) {
             stop(paste("Point register has duplicates", self$P[id,], collapse=", "))
           }
@@ -110,13 +119,52 @@ Outline <- R6Class("Outline",
           }
           ## Point doesn't exist
           if (length(id) == 0) {
-            self$P <- rbind(self$P, c(P[i,]))
+            self$P <- rbind(self$P, c(P[i,], fid))
             pids[i] <- nrow(self$P)
             self$h <- c(self$h, pids[i])
           }
         }
       }
       return(pids)
+    },
+    ##' @description Get the point IDs in a fragment
+    ##' @param fid fragment id of the points
+    ##' @return Vector of point IDs, i.e. indices of the rows in
+    ##'   the matrices returned by \code{getPoints} and
+    ##'   \code{getPointsScaled}
+    getFragmentPointIDs = function(fid) {
+      return(which(self$P[,"FID"] == fid))
+    },
+    ##' @description Get the points in a fragment
+    ##' @param fid fragment id of the points
+    ##' @return Vector of points
+    getFragmentPoints = function(fid) {
+      return(self$P[self$getFragmentPointIDs(fid),c("X", "Y")])
+    },
+    ##' @description Get fragment
+    ##' @param fid Fragment ID
+    ##' @return The  \code{\link{Fragment}} object with ID fid
+    getFragment = function(fid) {
+      fpids <- self$getFragmentPointIDs(fid)
+      map <- NULL
+      map[fpids] <- 1:length(fpids)
+      fragment <- Fragment$new()
+      fragment$P = self$getFragmentPoints(fid)
+      fragment$gf = map[self$gf[fpids]]
+      fragment$gb = map[self$gb[fpids]]
+      fragment$h = map[self$h[fpids]]
+      return(fragment)
+    },
+    ##' @description Get fragment IDs from point IDS
+    ##' @param pids Vector of point IDs
+    ##' @return The Fragment ID to which each point belongs
+    getFragmentIDsFromPointIDs = function(pids) {
+      return(self$P[pids,"FID"])
+    },
+    ##' @description Get fragment IDs
+    ##' @return IDs of all fragments 
+    getFragmentIDs = function() {
+      return(unique(self$P[,"FID"]))
     },
     ##' @description Get unscaled mesh points
     ##' @return  Matrix with columns \code{X} and \code{Y}

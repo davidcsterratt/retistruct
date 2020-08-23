@@ -245,6 +245,14 @@ the \textbf{Properties} button in the interface (or select \textbf{Edit$\rightar
 \textbf{Outline colour}.
 \end{enumerate}
 
+\subsection{Reading in images comprising multiple fragments}
+\label{retistruct-user-guide:sec:read-imag-compr}
+
+Images from retinae that been cut into multiple fragments can also be
+loaded in. To do this, instead of saving one outline.,save multiple
+ImageJ ROI regions from the same image in a file called
+\texttt{RoiSet.zip}
+
 \subsection{Specifying the scale} Optionally, the scale of the image
 can be specified by providing a file \texttt{scale.csv} in the same
 directory as the image and ROI files. This file should contain two
@@ -341,19 +349,36 @@ retinal outline should appear in the \textsc{Retistruct} window.
 
 After a set of files is opened, the \textbf{Edit} tab in the
 \textsc{Retistruct} window will be open. Before the retina can be
-reconstructed, you need to mark-up tears and landmarks on the retina
-using the following controls:
+reconstructed, you need to mark-up tears, ``correspondences'' and
+landmarks on the retina using the following controls:
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{correspondence}
+  \caption{Adding a correspondence. One correspondence between the two
+    upper petals has been added. The red dashed line indicate the ends
+    of the correspondence, and the red highlighted edge indicates the
+    edges the correspond.}
+  \label{retistruct-user-guide:fig:correspondence}
+\end{figure}
 
 \begin{description}
 \item[Add tear] To add a tear, click on this button, then click on
   three points in turn which define a tear. The order in which the
   points are added does not matter. Tears contained within a tear can
   be marked up, but tears cannot cross over one another.
-\item[Move Point] To move one of the points defining a tear, click on
-  this button, then click on the point which you desire to move, then
-  click on the point to which it should be moved.
 \item[Remove tear] To remove a tear, click on this button, then click
   on the apex of the tear (marked in cyan on the plot)
+\item[Add correspondence] To add a ``correspondence'', i.e.~a pair of
+  corresponding edges of two fragments, click on this button, then
+  click on four points in turn which define a correspondence
+  (Figure~\ref{retistruct-user-guide:fig:correspondence}). The order
+  in which the points are added does not matter.
+\item[Remove correspondence] To remove a correspondence, click on this
+  button, then click on any point on the correspondence.
+\item[Move Point] To move one of the points defining a tear or
+  correspondence, click on this button, then click on the point which
+  you desire to move, then click on the point to which it should be
+  moved.
 \item[Mark nasal] To mark the nasal pole, click on this button, then
   click on the point which is the nasal pole.  If the nasal or
   dorsal pole has already been marked, the marker is removed from
@@ -1002,4 +1027,4 @@ each directory there are two files:
 % LocalWords:  alt isn checkboxes Markup markup toolbar min max von
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
 %  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
-%  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal
+%  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal RoiSet

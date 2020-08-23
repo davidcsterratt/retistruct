@@ -13,6 +13,8 @@ StitchedOutline <- R6Class("StitchedOutline",
     Rset = NULL,
     ##' @field TFset list containing indices of points in each forward tear
     TFset = NULL,
+    ##' @field CFset list containing indices of points in each forward correspondence
+    CFset = NULL,
     ##' @field epsilon the minimum distance between points, set
     ##'   automatically
     epsilon = NA,
@@ -68,6 +70,44 @@ StitchedOutline <- R6Class("StitchedOutline",
       }
       ## self$h <- h
       self$TFset <- r$TFset
+    },
+    ##' @description Stitch together the correspondences by inserting new
+    ##'   points in the tears and creating correspondences between new
+    ##'   points.
+    stitchCorrespondences = function() {
+      r <- self$computeCorrespondenceRelationships(self$corrs)
+
+      ## If not set, set the landmark marker index. Otherwise
+      ## check it
+      self$Rset <- r$Rset
+      if (!(self$i0 %in% self$Rset)) {
+        stop(paste("Fixed Point", self$i0, "is not in rim points:",
+                   paste(self$Rset, collapse=", ")))
+      }
+
+      ## VF0 <- self$corrs[,1]
+      ## VF1 <- self$corrs[,2]
+      ## VB0 <- self$corrs[,4]
+      ## VB1 <- self$corrs[,3]
+
+      for (i in 1:nrow(self$corrs)) {
+        self$stitchSubpaths(self$corrs[i,"VF0"], self$corrs[i,"VF1"],
+                            self$corrs[i,"VB0"], self$corrs[i,"VB1"],
+                            epsilon=self$epsilon)
+      }
+      
+      ## Link up points on rim
+      self$hf[self$Rset] <- r$hf[self$Rset]
+      self$hb[self$Rset] <- r$hb[self$Rset]
+      ## self$h <- r$h
+
+      self$h[self$Rset] <- self$hf[self$Rset]
+      
+      ## Make sure that there are no chains of correspondences
+      while (!all(self$h==self$h[self$h])) {
+        self$h <- self$h[self$h]
+      }
+      self$CFset <- r$CFset
     }
   )
 )

@@ -19,13 +19,28 @@
 ##' o$addTear(c(9, 10, 11))
 ##' o$addTear(c(12, 1, 2))
 ##' flatplot(o)
+##'
+##' P <- list(rbind(c(1,1), c(2,1), c(2.5,2), c(3,1), c(4,1), c(1,4)),
+##'           rbind(c(-1,1), c(-1,4), c(-2,3), c(-2,2), c(-3,2), c(-4,1)),
+##'           rbind(c(-4,-1), c(-1,-1), c(-1,-4)),
+##'           rbind(c(1,-1), c(2,-1), c(2.5,-2), c(3,-1), c(4,-1), c(1,-4)))
+##' o <- AnnotatedOutline$new(P)
+##' o$addTear(c(2, 3, 4))
+##' o$addTear(c(17, 18, 19))
+##' o$addTear(c(9, 10, 11))
+##' o$addCorrespondence(c(1, 5, 16, 20))
+##' flatplot(o)
 AnnotatedOutline <- R6Class("AnnotatedOutline",
   inherit = PathOutline,
   public = list(
-    ##' @field tears Matrix in which each row represents a tear by the
+    ##' @field tears Matrix in which each row represents a correspondence by the
     ##'   indices into the outline points of the apex (\code{V0}) and
     ##'   backward (\code{VB}) and forward (\code{VF}) points
-    tears = NULL,
+    tears = matrix(0, 0, 3),
+    ##' @field corrs Matrix in which each row represents a correspondence by the
+    ##'   indices into the outline points of the apex (\code{V0}) and
+    ##'   backward (\code{VB}) and forward (\code{VF}) points
+    corrs = matrix(0, 0, 4),
     ##' @field phi0 rim angle in radians
     phi0 = 0,
     ##' @field lambda0 longitude of fixed point
@@ -36,8 +51,8 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##' @param ... Parameters to \code{\link{PathOutline}}
     initialize = function(...) {
       super$initialize(...)
-      self$tears <- matrix(0, 0, 3)
       colnames(self$tears) <- c("V0","VB","VF")
+      colnames(self$corrs) <- c("VF0","VF1","VB1","VB0") # Note the order
     },
     ##' @description Label a set of three unlabelled points supposed
     ##'   to refer to the apex and vertices of a cut and tear with the \code{V0}
@@ -47,6 +62,10 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     labelTearPoints = function(pids) {
       if (length(unique(pids)) != 3) {
         stop("Tears have to be defined by 3 points")
+      }
+      fids <- self$getFragmentIDsFromPointIDs(pids)
+      if (length(table(fids)) != 1) {
+        stop("Tears have to be within one fragment")
       }
 
       ## Each row of this matrix is a permutation of the markers
@@ -256,7 +275,9 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##' @return Point IDs of points on rim
     getRimSet = function() {
       TR <- self$computeTearRelationships(self$tears)
-      return(TR$Rset)
+      CR <- self$computeCorrespondenceRelationships(self$corrs)
+      Rset <- intersect(TR$Rset, CR$Rset)
+      return(Rset)
     },
     ##' @description Ensure that the fixed point \code{i0} is in the rim, not a tear.
     ##' Alters object in which \code{i0} may have been changed. 
@@ -272,6 +293,206 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
           report("Fixed point has been moved to be in the rim")
         }
       }
+    },
+    ##' @description Get flat rim length
+    ##' @return The rim length 
+    getFlatRimLength = function() {
+      suppressMessages(r <- self$computeTearRelationships(self$V0, self$VB, self$VF))
+      return(path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gf, r$hf, self$P) +
+             path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gb, r$hb, self$P))
+    },
+    ##' @description Label a set of four unlabelled points supposed to refer to a
+    ##' correspondence.
+    ##' @param pids the vector of point indices
+    ## @return Vector of indices labelled with V0, VF and VB
+    labelCorrespondencePoints = function(pids) {
+      ## First check the four points comprise two points on each of two
+      ## separate fragments
+      fids <- self$getFragmentIDsFromPointIDs(pids)
+      if (length(fids) != 4) {
+        stop("Correspondences have to be defined by 4 points")
+      }
+      if (length(table(fids)) != 2) {
+        stop("Correspondences have to be between two fragments")
+      }
+      if (any(table(fids) != 2)) {
+        stop("Correspondences have have exactly two points on each fragment")
+      }
+
+      ## For each permuation of V0, VF, VB, measure the sum of length in
+      ## the forwards direction from V0 to VF and in the backwards
+      ## direction from V0 to VB. The permuation with the minimum distance
+      ## is the correct one.
+      h <- 1:nrow(self$P)
+      corr <- c()
+      for (fid in unique(fids)) {
+        pf <- pids[fids==fid]
+        if (path.length(pf[1], pf[2], self$gf, h, self$P) <
+            path.length(pf[2], pf[1], self$gf, h, self$P)) {
+          corr <- c(corr, pf)
+        } else {
+          corr <- c(corr, pf[2:1])
+        }
+      }
+      return(corr)
+    },
+    ##' @description Add correspondence to an AnnotatedOutline
+    ##' @param pids Vector of three point IDs to be added
+    addCorrespondence = function(pids) {
+      C <- self$labelCorrespondencePoints(pids)
+      ## This call will throw an error if tears are not valid
+      ## suppressMessages(computeTearRelationships(a, V0, VB, VF))
+      self$corrs <- rbind(self$corrs, C)
+      rownames(self$corrs) <- NULL
+      self$ensureFixedPointInRim()
+    },
+    ##' @description Return index of correspondence in an AnnotatedOutline in which a point
+    ##' appears
+    ##' @param pid ID of point
+    ##' @return ID of correspondence
+    whichCorrespondence = function(pid) {
+      cid <- which(apply(pid==self$corrs, 1, any))[1]
+      if (!length(cid))
+        cid <- NA
+      return(cid)
+    },
+    ##' @description Remove correspondence from an AnnotatedOutline
+    ##' @param cid Correspondence ID, which can be returned from
+    ##' \code{whichCorrespondence}
+    removeCorrespondence = function(cid) {
+      if (!is.na(cid)) {
+        self$corrs <- self$corrs[-cid,,drop=FALSE]
+      }
+    },
+    ##' @description Compute the correspondence relationships between the points
+    ##' @param corrs Matrix containing columns \code{VB0},
+    ##'   and \code{VB1} (Backward vertices of correspondences) and \code{VF0} and \code{VF1} (Forward
+    ##'   vertices of correspondences)
+    ##' @return List containing
+    ##' \itemize{
+    ##' \item{\code{Rset}}{the set of points on the rim}
+    ##' \item{\code{TFset}}{list containing indices of points in each forward correspondence}
+    ##' \item{\code{TBset}}{list containing indices of points in each backward correspondence}
+    ##' \item{\code{h}}{correspondence mapping}
+    ##' \item{\code{hf}}{correspondence mapping in forward direction for
+    ##'         points on boundary}
+    ##' \item{\code{hb}}{correspondence mapping in backward direction for
+    ##'         points on boundary}
+    ##' }
+
+    computeCorrespondenceRelationships = function(corrs) {
+      ## Initialise the set of points in the rim
+      ## We don't assume that P is the entire set of points; instead
+      ## get this information from the pointer list.
+      N <- nrow(self$P)                 # number of points
+      if (is.null(self$h)) {
+        h <- 1:N                        # Initial correspondences
+      } else {
+        h <- self$h
+      }
+      if (is.null(self$hf)) {
+        hf <- h
+        hb <- h
+      } else {
+        hf <- self$hf
+        hb <- self$hb
+      }
+      M <- nrow(corrs)        # Number of corrs
+
+      if (is.null(self$Rset)) {
+        Rset <- na.omit(self$gf)
+      } else {
+        Rset <- self$Rset
+      }
+      
+      ## Create lists of forward and backward corrs
+      CFset <- list()
+      CBset <- list()
+      
+      if (M > 0) {
+        ## Convenience variables
+        VF0 <- corrs[,"VF0"]
+        VF1 <- corrs[,"VF1"]
+        VB0 <- corrs[,"VB0"]
+        VB1 <- corrs[,"VB1"]
+
+        ## Prevent infinite path loops
+        hf[corrs] <- corrs
+        hb[corrs] <- corrs
+        
+        ## Iterate through the corrs to create corr sets and rim set
+        for (j in 1:M) {
+          ## Create sets of points for each corr and remove these points from
+          ## the rim set
+          ## message(paste("Correpsondence", j))
+          CFset[[j]] <- mod1(path(VF0[j], VF1[j], self$gf, hf), N)
+          CBset[[j]] <- mod1(path(VB0[j], VB1[j], self$gb, hb), N)
+
+          ## All points not in corrs or tears are on the rim
+          Rset <- setdiff(Rset,
+                          setdiff(union(CFset[[j]], CBset[[j]]),
+                                  corrs[j,]))
+        }
+
+        ## Set the forward pointer on the rim
+        for (j in 1:M) {
+          VB  <- intersect(Rset, c(VB0[j], VB1[j]))
+          VF  <- intersect(Rset, c(VF0[j], VF1[j]))
+        }
+        hf[VB1] <- VF1
+        hf[VF0] <- VB0
+        hb[VF1] <- VB1
+        hb[VB0] <- VF0
+        h <- hf
+
+        ## If the same point appears in more than one correspondence,
+        ## then it must be an internal point and should be removed.
+        ## This incantation achieves the desired effect.
+        Rset <- setdiff(Rset,
+                        as.numeric(names(which(table(corrs)>1))))
+
+      }
+      return(list(Rset=Rset,
+                  CFset=CFset,
+                  CBset=CBset,
+                  h=h,
+                  hf=hf,
+                  hb=hb))
+    },
+    ##' @description Return indices of correspondences in AnnotatedOutline
+    ##' @param cid Correspondence ID, which can be returned from \code{whichCorrespondence}
+    ##' @return Vector of four point IDs, labelled with \code{VF1},
+    ##' \code{VF1}, \code{VB0} and \code{VB1}
+    getCorrespondence = function(cid) {
+      if (cid > nrow(self$corrs)) {
+        return(NA)
+      }
+      return(c(self$corrs[cid,]))
+    },
+    ##' @description Return indices of correspondences in AnnotatedOutline
+    ##' @return Matrix in which each row contains point IDs, for the forward and backward
+    ##' sides of the correspondence: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
+    getCorrespondences = function() {
+      return(self$corrs)
+    },
+    ##' @description Add points to the outline register of points
+    ##' @param P 2 column matrix of points to add
+    ##' @param fid fragment id of the points
+    ##' @return The ID of each added point in the register. If points already
+    ##'   exist a point will not be created in the register,
+    ##'   but an ID will be returned 
+    addPoints = function(P, fid) {
+      pids <- super$addPoints(P, fid)
+      ## For *new* points set forward and backward pointers
+      newpids <- pids
+      if (length(self$hf) > 0) {
+        newpids <- setdiff(pids, 1:length(self$hf))
+      }
+      if (length(newpids) > 0) {
+        self$hf[newpids] <- newpids
+        self$hb[newpids] <- newpids
+      }
+      return(pids)
     },
     ##' @description Get lengths of edges on rim
     ##' @return Vector of rim lengths
@@ -314,8 +535,25 @@ flatplot.AnnotatedOutline <- function(x, axt="n",
     tears <- x$getTears()
     P <- x$P
     i0 <- x$i0
+    C <- x$corrs
     gf <- x$gf
     h <- 1:nrow(x$P)
+    if (nrow(C) > 0) {
+      points(P[C,,drop=FALSE], col=getOption("C.col"), pch="+")
+      ## Show lines between correspondences
+      segments(P[C[,1],1], P[C[,1],2], P[C[,4],1], P[C[,4],2], col=getOption("C.col"), lty=2)
+      segments(P[C[,2],1], P[C[,2],2], P[C[,3],1], P[C[,3],2], col=getOption("C.col"), lty=2)
+      for (i in 1:nrow(C)) {
+        iC <- path(C[i,1], C[i,2], gf, h)
+        iC0 <- iC[-1]
+        iC1 <- iC[-length(iC)]
+        segments(P[iC0,1], P[iC0,2], P[iC1,1], P[iC1,2], col=getOption("C.col"))
+        iC <- path(C[i,3], C[i,4], gf, h)
+        iC0 <- iC[-1]
+        iC1 <- iC[-length(iC)]
+        segments(P[iC0,1], P[iC0,2], P[iC1,1], P[iC1,2], col=getOption("C.col"))
+      }
+    }
     if (nrow(tears) > 0) {
       V0 <- tears[,"V0"]
       VB <- tears[,"VB"]

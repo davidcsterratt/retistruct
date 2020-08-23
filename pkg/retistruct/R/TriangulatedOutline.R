@@ -19,6 +19,17 @@
 ##' o$addTear(c(9, 10, 11))
 ##' o$addTear(c(12, 1, 2))
 ##' flatplot(o)
+##'
+##' P <- list(rbind(c(1,1), c(2,1), c(2.5,2), c(3,1), c(4,1), c(1,4)),
+##'               rbind(c(-1,1), c(-1,4), c(-2,3), c(-2,2), c(-3,2), c(-4,1)),
+##'               rbind(c(-4,-1), c(-1,-1), c(-1,-4)),
+##'               rbind(c(1,-1), c(2,-1), c(2.5,-2), c(3,-1), c(4,-1), c(1,-4)))
+##' o <- TriangulatedOutline$new(P)
+##' ##' o$addTear(c(2, 3, 4))
+##' o$addTear(c(17, 18, 19))
+##' o$addTear(c(9, 10, 11))
+##' o$addCorrespondence(c(1, 5, 16, 20))
+##' flatplot(o)
 TriangulatedOutline <- R6Class("TriangulatedOutline",
   inherit = AnnotatedOutline,
   public = list(
@@ -44,16 +55,18 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
     triangulate = function(n=200, suppress.external.steiner=FALSE) {
       self$T <- matrix(NA, 0, 3)
       self$Cu <- matrix(NA, 0, 2)
-      t <- TriangulatedFragment$new(self,
-                                    n=n,
-                                    suppress.external.steiner=suppress.external.steiner,
-                                    report=report)
-      pids <- self$addPoints(t$P)
-      if (length(t$gf) != length(pids)) {
-        stop("Number of indices is not equal to number of pids supplied")
+      for (fid in self$getFragmentIDs()) {
+        fragment <- self$getFragment(fid)
+        t <- TriangulatedFragment$new(fragment,
+                                      n=ceiling(n*self$A.fragments[fid]/sum(self$A.fragments)),
+                                      suppress.external.steiner=suppress.external.steiner,
+                                      report=report)
+        pids <- self$addPoints(t$P, fid)
+        if (length(t$gf) != length(pids)) {
+          stop("Number of fragment indices being mapped is not equal to number of pids supplied")
+        }
+        self$mapTriangulatedFragment(t, pids)
       }
-      self$mapTriangulatedFragment(t, pids)
-
       ## Find areas and lengths of connections
       P <- self$getPointsScaled()
       self$A <- tri.area(cbind(P, 0), self$T)
@@ -109,4 +122,3 @@ depthplot3D.TriangulatedOutline <- function(r, ...) {
               matrix(P[t(r$T),"Z"], nrow=3),
               color="red", alpha=1)
 }
-
