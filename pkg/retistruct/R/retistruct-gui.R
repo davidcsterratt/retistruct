@@ -133,7 +133,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     pids <- identify(P[,"X"], P[,"Y"], n=3, col=getOption("TF.col"))
     withCallingHandlers({
@@ -150,7 +150,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1, plot=FALSE)
     a$removeTear(a$whichTear(id))
@@ -163,7 +163,7 @@ retistruct <- function() {
   h.move <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    dev.set(d1)
+    g.m1$devSet()
     ## Find the intial point
     gWidgets2::svalue(g.status) <- paste("Click on apex or vertex to move.",
                                          identify.abort.text())
@@ -226,7 +226,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the four points of the correspondence in any order.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     pids <- identify(P[,1], P[,2], n=4, col=getOption("TF.col"))
     withCallingHandlers({
@@ -243,7 +243,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the apex of the correspondence to remove.",
                                          identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,1], P[,2], n=1, plot=FALSE)
     a$removeCorrespondence(a$whichCorrespondence(id))
@@ -258,7 +258,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on nasal point.",
                                          identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
@@ -275,7 +275,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on dorsal point.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
@@ -292,7 +292,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on a point on the optic disc.",
                                          identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     ## Convert list of segments to a matrix of points
     Sm <- NULL
     fs <- a$getFeatureSet("LandmarkSet")
@@ -438,7 +438,7 @@ retistruct <- function() {
     withCallingHandlers({
       r <<- retistruct.reconstruct(a, report=set.status,
                                    plot.3d=getOption("show.sphere"),
-                                   dev.flat=d1, dev.polar=d2)
+                                   dev.flat=g.m1$d, dev.polar=g.m2$d)
     }, warning=h.warning, error=h.warning)  
     enable.widgets(TRUE)
     do.plot()
@@ -555,11 +555,11 @@ retistruct <- function() {
   ## Handlers for printing bitmaps and PDFs from the two graphics
   ## devices
   h.print1 <- function(h, ...) {
-    h.print.bitmap(d1, initial.filename="image-flat.png")
+    h.print.bitmap(g.m1$d, initial.filename="image-flat.png")
   }
 
   h.print.pdf1 <- function(h, ...) {
-    h.print.pdf(d1, initial.filename="image-flat.pdf")
+    h.print.pdf(g.m1$d, initial.filename="image-flat.pdf")
   }
 
   h.print2 <- function(h, ...) {
@@ -567,7 +567,7 @@ retistruct <- function() {
   }
 
   h.print.pdf2 <- function(h, ...) {
-    h.print.pdf(d2, initial.filename="image-polar.pdf")
+    h.print.pdf(g.m2$d, initial.filename="image-polar.pdf")
   }
 
   ## Get and name available projections
@@ -617,7 +617,7 @@ retistruct <- function() {
       r <- a
     }
     if (("Strain" %in% gWidgets2::svalue(g.edit.show)) & (tab == "Edit")) {   # Strain plot
-      dev.set(d1)
+      g.m1$devSet()
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
                datapoints=FALSE,
@@ -628,12 +628,12 @@ retistruct <- function() {
                mesh=FALSE,
                strain=TRUE,
                scalebar=1)
-      dev.set(d2)
+      g.m2$devSet()
       par(mar=c(4.5, 4.5, 1, 0.5))
       lvsLplot(r)
       sphericalplot(r, strain=TRUE, datapoints=FALSE)
     } else {
-      dev.set(d1)
+      g.m1$devSet()
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
                datapoints=("Points" %in% gWidgets2::svalue(g.show)),
@@ -645,12 +645,12 @@ retistruct <- function() {
                ids=gWidgets2::svalue(g.ids),
                mesh=FALSE,
                scalebar=1)
-      dev.set(d2)
+      g.m2$devSet()
       par(mar=c(0.7, 0.7, 0.7, 0.7))
       plotProjection(max.proj.dim=400, markup=markup)
       sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
-    dev.set(d1)
+    g.m1$devSet()
     set.status("")
   }
 
@@ -919,23 +919,17 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
 
   ## Flat plot
   g.f1 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body, expand=TRUE)
-  ## Buttons
-  g.f1.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f1)
-  g.print1     <- gWidgets2::gbutton("Bitmap", handler=h.print1,     container=g.f1.buttons)
-  g.print.pdf1 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf1, container=g.f1.buttons)
-  ## Device itself
-  g.fd1 <- gWidgets2::ggraphics(expand=TRUE, ps=11, container=g.f1)
-  d1 <- dev.cur()
+  ## Magnifier and buttons
+  g.m1  <- Magnifier$new(container=g.f1, ps=11)
+  g.print1     <- gWidgets2::gbutton("Bitmap", handler=h.print1,     container=g.m1$buttons)
+  g.print.pdf1 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf1, container=g.m1$buttons)
 
   ## Projection
   g.f2 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body, expand=TRUE)
-  ## Buttons  
-  g.f2.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f2)  
-  g.print2     <- gWidgets2::gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
-  g.print.pdf2 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
-  ## Device itself
-  g.fd2 <- gWidgets2::ggraphics(expand=TRUE, ps=11, container=g.f2)
-  d2 <- dev.cur()
+  ## Magnifier and buttons
+  g.m2  <- Magnifier$new(container=g.f2, ps=11)
+  g.print2     <- gWidgets2::gbutton("Bitmap", handler=h.print2,     container=g.m2$buttons)
+  g.print.pdf2 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf2, container=g.m2$buttons)
   
   ## Status bar
   ## g.statusbar <- ggroup(container=g.rows)

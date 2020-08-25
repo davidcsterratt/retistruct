@@ -1,8 +1,10 @@
 CHANGES IN VERSION 0.7.0 - Released 2020/08/23
 
-NEW FEATURE
+NEW FEATURES
 
 * Ability to stitch together separate petals or "fragments"
+
+* Ability to magnify plots in the GUI
 
 CHANGES IN VERSION 0.6.3 - Released 2020/04/03
 
