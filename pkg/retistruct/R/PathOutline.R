@@ -56,17 +56,19 @@ PathOutline <- R6Class("PathOutline",
       if (!((self$gf[i0] == i1) || (self$gf[i1] == i0))) {
         stop("Points", i0, "and", i1, "are not connected by an edge")
       }
+      if ((f >= 1) | (f <= 0)) {
+        stop("f argument should be between 0 and 1")
+      }
       fid  <- self$getFragmentIDsFromPointIDs(i0)
       fid1  <- self$getFragmentIDsFromPointIDs(i1)
       if (fid != fid1) {
         stop("Fragment IDs of points differ")
       }
-      PXY <- self$getPoints()
       p <-
-        (1 - f)*PXY[i0,] +
-        f*      PXY[i1,]
+        (1 - f)*self$getPointsXY(i0) +
+        f*      self$getPointsXY(i1)
       ## Find the index of any row of P that matches p
-      n <- anyDuplicated(rbind(PXY, p),
+      n <- anyDuplicated(rbind(self$getPointsXY(c(i0, i1)), p),
                          fromLast=TRUE)
       if (n == 0) {
         ## If the point p doesn't exist
@@ -100,6 +102,10 @@ PathOutline <- R6Class("PathOutline",
       ## Compute the total path length along each side of the subpath
       Sf <- path.length(VF0, VF1, self$gf, self$hf, self$getPointsScaled())
       Sb <- path.length(VB0, VB1, self$gb, self$hb, self$getPointsScaled())
+
+      report(paste("\nstitchSubpaths(", VF0, ",", VF1, ",", VB0, ",", VB1, ",", epsilon, ")\n"))
+
+      report(paste("Sf =", Sf, ", Sb =", Sb, "\n"))
 
       ## Initialise forward and backward indicies to first points in each
       ## path

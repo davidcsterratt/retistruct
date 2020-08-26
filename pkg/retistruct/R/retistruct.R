@@ -103,7 +103,7 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(Pfile)) {
     P.old <- as.matrix(read.csv(Pfile))
   } else {
-    P.old <- a$getPoints()
+    P.old <- a$getPointsXY()
   }
   
   ## Read in markup file
@@ -125,16 +125,18 @@ retistruct.read.markup <- function(a, error=stop) {
       }
     }
     if (!is.na(M[["iD"]])) {
-      M[["iD"]] <- convert.markup(M[["iD"]], P.old, a$getPoints())
+      M[["iD"]] <- convert.markup(M[["iD"]], P.old, a$getPointsXY())
       a$setFixedPoint(M[["iD"]], "Dorsal")
     }
     if (!is.na(M[["iN"]])) {
-      M[["iN"]] <- convert.markup(M[["iN"]], P.old, a$getPoints())
+      M[["iN"]] <- convert.markup(M[["iN"]], P.old, a$getPointsXY())
       a$setFixedPoint(M[["iN"]], "Nasal")
     }
     a$phi0 <- M[["phi0"]]*pi/180
     if ("iOD" %in% names(M)) {
-      a$getFeatureSet("LandmarkSet")$setID(M[["iOD"]], "OD")
+      if (!is.na(M[["iOD"]])) {
+        a$getFeatureSet("LandmarkSet")$setID(M[["iOD"]], "OD")
+      }
     }
     if ("DVflip" %in% names(M)) {
       a$DVflip <- M[["DVflip"]]
@@ -148,7 +150,7 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     cn <- colnames(T.old)
-    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$getPoints()), ncol=3)
+    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$getPointsXY()), ncol=3)
     colnames(T) <- cn
     if (nrow(T) > 0) {
       for (i in 1:nrow(T)) {
@@ -317,7 +319,7 @@ retistruct.save.markup <- function(a) {
             row.names=FALSE)
   write.csv(a$getCorrespondences(), file.path(a$dataset, "C.csv"),
             row.names=FALSE)
-  write.csv(a$getPoints(), file.path(a$dataset, "P.csv"),
+  write.csv(a$getPointsXY(), file.path(a$dataset, "P.csv"),
             row.names=FALSE)
       
   ## Save the dorsal and nasal locations and phi0 to markup.csv

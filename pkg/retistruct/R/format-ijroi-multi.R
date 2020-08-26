@@ -35,6 +35,14 @@ ijroimulti.read.dataset <- function(dataset) {
   
   ## If there is an image, read it
   im <- read.image(dataset)
+
+  ## If there is a depth map read it
+  dm <- read.depthmap(dataset)
+  if (!is.null(dm)) {
+    if (!("Z" %in% names(scale))) {
+      stop("\"Z\" must be specified in scale.csv when depthmap is present")
+    }
+  }
   
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
@@ -74,7 +82,8 @@ ijroimulti.read.dataset <- function(dataset) {
   }
 
   ## Create forward and backward pointers
-  o <- RetinalOutline$new(fragments=Ps, scale=scale["XY"], im=im,
+  o <- RetinalOutline$new(fragments=Ps, scale=scale[["XY"]], im=im,
+                          scalez=scale[["Z"]], dm=dm,
                           dataset=dataset)
   # o <- simplify.outline(o)
 

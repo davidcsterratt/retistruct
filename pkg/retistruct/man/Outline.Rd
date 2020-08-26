@@ -19,7 +19,9 @@ David Sterratt
 \item{\code{P}}{A N-by-2 matrix of points of the \code{Outline}
 arranged in anticlockwise order}
 
-\item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
+\item{\code{scale}}{The length of one unit of \code{P} in the X-Y plane in arbitrary units}
+
+\item{\code{scalez}}{The length of one unit of \code{P} in the Z-direction in arbitrary units}
 
 \item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
 
@@ -34,6 +36,9 @@ point (which will be to itself initially)}
 
 \item{\code{im}}{An image as a \code{raster} object}
 
+\item{\code{dm}}{Depthmap, with same dimensions as \code{im}, which indicates
+height of each pixel in Z-direction}
+
 \item{\code{A.fragments}}{Areas of fragments}
 }
 \if{html}{\out{</div>}}
@@ -46,6 +51,7 @@ point (which will be to itself initially)}
 \item \href{#method-replaceImage}{\code{Outline$replaceImage()}}
 \item \href{#method-mapFragment}{\code{Outline$mapFragment()}}
 \item \href{#method-mapPids}{\code{Outline$mapPids()}}
+\item \href{#method-getDepth}{\code{Outline$getDepth()}}
 \item \href{#method-addPoints}{\code{Outline$addPoints()}}
 \item \href{#method-getFragmentPointIDs}{\code{Outline$getFragmentPointIDs()}}
 \item \href{#method-getFragmentPoints}{\code{Outline$getFragmentPoints()}}
@@ -53,6 +59,7 @@ point (which will be to itself initially)}
 \item \href{#method-getFragmentIDsFromPointIDs}{\code{Outline$getFragmentIDsFromPointIDs()}}
 \item \href{#method-getFragmentIDs}{\code{Outline$getFragmentIDs()}}
 \item \href{#method-getPoints}{\code{Outline$getPoints()}}
+\item \href{#method-getPointsXY}{\code{Outline$getPointsXY()}}
 \item \href{#method-getPointsScaled}{\code{Outline$getPointsScaled()}}
 \item \href{#method-getRimSet}{\code{Outline$getRimSet()}}
 \item \href{#method-getOutlineSet}{\code{Outline$getOutlineSet()}}
@@ -79,7 +86,14 @@ point (which will be to itself initially)}
 Construct an outline object. This sanitises the
   input points \code{P}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$new(fragments = list(), scale = NA, im = NULL, units = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$new(
+  fragments = list(),
+  scale = NA,
+  im = NULL,
+  scalez = NA,
+  dm = NULL,
+  units = NA
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -90,6 +104,11 @@ Construct an outline object. This sanitises the
 \item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
 
 \item{\code{im}}{The image as a \code{raster} object}
+
+\item{\code{scalez}}{The length of one unit of \code{P} in the Z-direction in arbitrary units. If \code{NA}, the depthmap is ignored.}
+
+\item{\code{dm}}{Depthmap, with same dimensions as \code{im}, which indicates
+height of each pixel in Z-direction}
 
 \item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
 }
@@ -171,6 +190,26 @@ New references to point indices in target
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getDepth"></a>}}
+\if{latex}{\out{\hypertarget{method-getDepth}{}}}
+\subsection{Method \code{getDepth()}}{
+Get depth of points P
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getDepth(P)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{matrix containing unscaled X-Y coordinates of points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of unscaled Z coordinates of points P
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addPoints"></a>}}
 \if{latex}{\out{\hypertarget{method-addPoints}{}}}
 \subsection{Method \code{addPoints()}}{
@@ -182,9 +221,9 @@ Add points to the outline register of points
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{P}}{2 column matrix of points to add}
+\item{\code{P}}{2 or 3 column matrix of points to add}
 
-\item{\code{fid}}{fragment id of the points}
+\item{\code{fid}}{ID of fragment to which to add  the points}
 }
 \if{html}{\out{</div>}}
 }
@@ -295,9 +334,36 @@ IDs of all fragments
 \subsection{Method \code{getPoints()}}{
 Get unscaled mesh points
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$getPoints()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getPoints(pids = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{IDs of point to return}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Matrix with columns \code{X}, \code{Y} and \code{Z}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getPointsXY"></a>}}
+\if{latex}{\out{\hypertarget{method-getPointsXY}{}}}
+\subsection{Method \code{getPointsXY()}}{
+Get X-Y coordinates of unscaled mesh points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getPointsXY(pids = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{IDs of point to return}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 Matrix with columns \code{X} and \code{Y}
 }

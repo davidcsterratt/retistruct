@@ -73,8 +73,8 @@ ijroi.read.dataset <- function(dataset, report=report) {
   Gs <- lapply(Gs, function(P) {cbind(X=P[,"X"], Y=offset - P[,"Y"], C=P[,"C"])})
   
   ## Create forward and backward pointers
-  o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
-                          units=scale["Units"],
+  o <- RetinalOutline$new(P, scale=scale[["XY"]], im=im,
+                          units=scale[["Units"]],
                           dataset=dataset)
   
   ## Check that P is more-or-less closed

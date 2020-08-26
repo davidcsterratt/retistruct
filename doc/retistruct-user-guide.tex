@@ -1,6 +1,6 @@
 \documentclass{book}
 
-\newcommand{\svninfo}{Retistruct version: 0.6.2 , Date: 2019-12-13}
+\newcommand{\svninfo}{Retistruct version: 0.7.0 , Date: 2020-08-26}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -245,7 +245,7 @@ the \textbf{Properties} button in the interface (or select \textbf{Edit$\rightar
 \textbf{Outline colour}.
 \end{enumerate}
 
-\subsection{Reading in images comprising multiple fragments}
+\subsection{Reading in images comprising multiple fragments [Optional]}
 \label{retistruct-user-guide:sec:read-imag-compr}
 
 Images from retinae that been cut into multiple fragments can also be
@@ -259,8 +259,37 @@ directory as the image and ROI files. This file should contain two
 lines, the first with the heading \texttt{Scale} and the second with
 the length of the side of a pixel in micrometres. For example:
 \begin{verbatim}
-"Scale"
+"XY"
 1.5
+\end{verbatim}
+Note that for compatibility with older versions of
+\texttt{Retistruct}, this column can also be called ``Scale''.
+
+\subsection{Specifying depth information [Optional]}
+\label{retistruct-user-guide:sec:specifying-depth}
+
+A ``flat-mount'' needn't be flat. If depth information is available,
+this should be supplied in the form of a single-channel TIFF file
+called \texttt{depthmap.tiff} with the same dimensions as
+\texttt{image.png}. The value of each pixel in the TIFF file specifies
+the height of the corresponding pixel in the image. The size of each
+step in the Z-direction should be specified using an extra column
+``Z'' in \texttt{scale.csv}.
+
+Parts of the TIFF image will correspond to parts of the flat-mount that
+are empty; we refer to these parts as the background. Typically the
+background is represented by a value of 0. There will be problems if
+the outline specified in ImageJ strays onto parts of the TIFF depthmap
+image, since it might appear that there are very sharp jumps in the
+depth. To get around this problem, it is necessary to specify the
+value of the background, so that \textsc{Retistruct} can infer the
+depth of any background regions that the outline strays onto by
+looking at the closest depths that are in the foreground. To specify
+the background value, include a file \texttt{depthmap.csv}, in the
+following format:
+\begin{verbatim}
+"Background value"
+0
 \end{verbatim}
 
 \subsection{Reading in data points}
@@ -702,7 +731,7 @@ information of \cite{SterrattEtal2012}.
 \section{Exporting the plots}
 \label{retistruct-user-guide:sec:exporting-plots}
 
-The \textbf{Bitmap} and \textbf{PDF} buttons above the flatmount view
+The \textbf{Bitmap} and \textbf{PDF} buttons above the flat-mount view
 and the reconstructed view export the image show to a PNG file format
 or an PDF respectively. To change the width of the image in pixels,
 select \textbf{Properties} and set the
@@ -1028,3 +1057,4 @@ each directory there are two files:
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
 %  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
 %  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal RoiSet
+% LocalWords:  depthmap

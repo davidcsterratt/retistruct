@@ -113,7 +113,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## ol$orderRset()
       self$ol <- ol
       self$phi0 <- ol$phi0
-      self$lambda0 <- ol$lambda0
+     self$lambda0 <- ol$lambda0
       
       report("Merging points...")
       self$mergePointsEdges()
@@ -645,7 +645,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                    as.vector(outer(ys, xs*0, FUN="+")))
 
         ## Find Barycentric coordinates of corners of pixels
-        Ib <- tsearch(self$ol$getPoints()[,"X"], self$ol$getPoints()[,"Y"],
+
+        Ib <- tsearch(self$ol$getPointsXY()[,"X"], self$ol$getPointsXY()[,"Y"],
                       self$ol$T, I[,1], I[,2], bary=TRUE)
         rm(I)
         gc()
@@ -848,7 +849,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
       } else {
         col <- grid.min.col
       }
-      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(0,0,1), sin(Phi*pi/180))
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -860,7 +861,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
         col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
-      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(sin(Lambda),cos(Lambda),0), 0)
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)

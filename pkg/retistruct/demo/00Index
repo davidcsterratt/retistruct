@@ -4,3 +4,4 @@ retistruct.titrate   Demonstration of titrating the rim angle
 orange               Reconstruct a peeled orange!
 wedge		             Demonstration of wedge coordinates
 smi32                Reconstruct a retina labelled with SMI-32
+parabola             Reconstruct a parabolically transformed retina

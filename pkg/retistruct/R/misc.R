@@ -86,13 +86,13 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
     stop(paste0("max X-value of P (", max(x),") is bigger than number of cols in im (", N, ")"))
   }
   if (min(x) < 0) {
-    stop(paste0("min X-value of P (", min(x),") is less than number of cols in im (", N, ")"))
+    stop(paste0("min X-value of P (", min(x),") is less than 0"))
   }
   if (max(y) > M) {
     stop(paste0("max Y-value of P (", max(y),") is bigger than number of rows in im (", M, ")"))
   }
   if (min(y) < 0) {
-    stop(paste0("min Y-value of P (", min(y),") is less than number of rows in im (", M, ")"))
+    stop(paste0("min Y-value of P (", min(y),") is less than 0"))
   }
 
   ## Assume that centres of pixels in image are at {(0.5, 0.5), (1.5,
@@ -107,11 +107,27 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
   i2 <- pmin(ceiling(y + 0.5), M)
 
   ## Bilinear interpolation
-  return(mapply(function(x, y, i1, i2, j1, j2) {
+  z <- mapply(function(x, y, i1, i2, j1, j2) {
     cbind(j1 + 0.5 - x, x - j1 + 0.5) %*%
       t(im[c(i1,i2),c(j1,j2)]) %*%
       rbind(i1 + 0.5 - y, y - i1 + 0.5)
-  }, x, y, i1, i2, j1, j2))
+  }, x, y, i1, i2, j1, j2)
+  for (k in which(is.na(z))) {
+    ## print(k)
+    is <- pmax(i1[k] - 10, 1):pmin(i2[k] + 10, M)
+    js <- pmax(j1[k] - 10, 1):pmin(j2[k] + 10, M)
+    dat <- data.frame(i=as.vector(outer(js*0, is, FUN="+")),
+                      j=as.vector(outer(js, is*0, FUN="+")))
+    dat$z <- mapply(function(i, j) { im[i, j] }, dat$i, dat$j)
+    dat$x  <- dat$j - 0.5
+    dat$y  <- dat$i - 0.5
+    ## print(dat)
+    ## print(dat[!is.na(dat$z),])
+    ## print(summary(lm(z ~ x + y, dat[!is.na(dat$z),c("x", "y", "z")])))
+    z[k] <- stats::predict(stats::lm(z ~ x + y, dat[!is.na(dat$z),c("x", "y", "z")]), data.frame(x=x[k], y=y[k]))
+    ## print(paste(x[k], y[k], z[k]))
+  }
+  return(z)
 }
 
 ##' Reporting utility function

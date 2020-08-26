@@ -10,7 +10,7 @@ test_that("paths with no correspondences work correctly", {
   po$gb <- c(NA, 1, 2, 5, 6, 7, 8, NA)
 
   po$stitchSubpaths(VF0=1, VF1=3, VB0=4, VB1=8, epsilon=0.01)
-  expect_equal(po$getPoints(), rbind(P, c(0, 0.5), c(0, 1.5)))
+  expect_equal(po$getPointsXY(), rbind(P, c(0, 0.5), c(0, 1.5)))
   expect_equal(po$h, c(1, 6, 3, 4, 5, 6, 7, 8, 5, 7))
   expect_equal(po$gf, c(9, 10, NA, NA, 4, 5, 6, 7, 2, 3))
   expect_equal(po$gb, c(NA, 9, 10,  5, 6, 7, 8, NA, 1, 2))
@@ -24,7 +24,7 @@ test_that("paths with no correspondences work correctly", {
 
   po$stitchSubpaths(VF0=4, VF1=8, VB0=1, VB1=3, epsilon=0.01)
 
-  expect_equal(po$getPoints(), rbind(P, c(0, 0.5), c(0, 1.5)))
+  expect_equal(po$getPointsXY(), rbind(P, c(0, 0.5), c(0, 1.5)))
   expect_equal(po$h, c(1, 2, 3, 4, 5, 2, 7, 8, 5, 7))
   expect_equal(po$gf, c(NA, 9, 10,  5, 6, 7, 8, NA, 1, 2))
   expect_equal(po$gb, c(9, 10, NA, NA, 4, 5, 6, 7, 2, 3))
@@ -48,7 +48,7 @@ test_that("paths with a correspondence in one path work correctly", {
   po$hb[4] <- 2
 
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=7, epsilon=0.01)
-  expect_equal(po$getPoints(), rbind(P, c(2.5, -1)))
+  expect_equal(po$getPointsXY(), rbind(P, c(2.5, -1)))
   expect_equal(po$h, c(1, 2, 3, 2, 5, 6, 7, 2))
   expect_equal(po$gf, c(2, 3, 4, 5, NA, NA, 8, 6))
   expect_equal(po$gb, c(NA, 1, 2, 3, 4, 8, NA, 7))
@@ -71,7 +71,7 @@ test_that("paths with a correspondence in one path work correctly", {
   po$hf[2] <- 4
   po$hb[4] <- 2
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=9, epsilon=0.01)
-  expect_equal(po$getPoints(), rbind(P, c(5/3, 1), c(2.5, -1), c(10/3, 1)))
+  expect_equal(po$getPointsXY(), rbind(P, c(5/3, 1), c(2.5, -1), c(10/3, 1)))
   expect_equal(po$h, c(1, 2, 3, 2, 5, 6, 7, 8, 9, 7, 2, 8))
   expect_equal(po$gf, c(10, 3, 4, 12, NA, NA, 6, 11, 8, 2, 7, 5))
   expect_equal(po$gb, c(NA, 10, 2, 3, 12, 7, 11, 9, NA, 1, 8, 4))
@@ -101,7 +101,7 @@ test_that("paths with correspondences in each path work correctly", {
   po$hb[7] <- 9
   
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=10, epsilon=0.01)
-  expect_equal(po$getPoints(), P)
+  expect_equal(po$getPointsXY(), P)
   expect_equal(po$h, c(1, 7, 3, 7, 5, 6, 7, 8, 7, 10))
   expect_equal(po$gf, c(2, 3, 4, 5, NA, NA, 6, 7, 8, 9))
   expect_equal(po$gb, c(NA, 1, 2, 3, 4, 7, 8, 9, 10, NA))
@@ -135,7 +135,7 @@ test_that("paths with a double correspondence in one path works correctly", {
   po$hb[9] <- 11
   
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=12, epsilon=0.01)
-  expect_equal(po$getPoints(), P)
+  expect_equal(po$getPointsXY(), P)
   expect_equal(po$h, c(1, 7, 3, 7, 5, 6, 7, 8, 7, 10, 7, 12))
   expect_equal(po$gf, gf)
   expect_equal(po$gb, gb)

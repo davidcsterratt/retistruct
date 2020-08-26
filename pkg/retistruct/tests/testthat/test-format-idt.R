@@ -5,7 +5,7 @@ test_that("IDT format is read correctly", {
   ## Test that points are read in correctly 
   P <- as.matrix(read.csv(file.path(dataset, "P.csv"), row.names=NULL))
   colnames(P) <- c("X", "Y")
-  expect_that(r$getPoints(), equals(P))
+  expect_that(r$getPointsXY(), equals(P))
   r <- retistruct.read.markup(r)
   ## Test that optic disc is read in correctly 
   od <- rbind(c(X=1090, Y=1319),

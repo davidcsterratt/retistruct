@@ -57,8 +57,8 @@ StitchedOutline <- R6Class("StitchedOutline",
       self$h <- r$h
       for (i in 1:nrow(self$tears)) {
         self$stitchSubpaths(self$tears[i,"V0"], self$tears[i,"VF"],
-          self$tears[i,"V0"], self$tears[i,"VB"],
-          epsilon=self$epsilon)
+                            self$tears[i,"V0"], self$tears[i,"VB"],
+                            epsilon=self$epsilon)
       }
       
       ## Link up points on rim
@@ -84,11 +84,6 @@ StitchedOutline <- R6Class("StitchedOutline",
         stop(paste("Fixed Point", self$i0, "is not in rim points:",
                    paste(self$Rset, collapse=", ")))
       }
-
-      ## VF0 <- self$corrs[,1]
-      ## VF1 <- self$corrs[,2]
-      ## VB0 <- self$corrs[,4]
-      ## VB1 <- self$corrs[,3]
 
       for (i in 1:nrow(self$corrs)) {
         self$stitchSubpaths(self$corrs[i,"VF0"], self$corrs[i,"VF1"],

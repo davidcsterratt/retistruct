@@ -631,7 +631,6 @@ retistruct <- function() {
       g.m2$devSet()
       par(mar=c(4.5, 4.5, 1, 0.5))
       lvsLplot(r)
-      sphericalplot(r, strain=TRUE, datapoints=FALSE)
     } else {
       g.m1$devSet()
       par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -648,10 +647,28 @@ retistruct <- function() {
       g.m2$devSet()
       par(mar=c(0.7, 0.7, 0.7, 0.7))
       plotProjection(max.proj.dim=400, markup=markup)
-      sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
     g.m1$devSet()
+    do.plot.3D()
     set.status("")
+  }
+
+  do.plot.3D <- function() {
+    if (("Flatmount" %in% gWidgets2::svalue(g.3D.plot))) {
+      a1  <- a$clone()
+      a1$triangulate()
+      depthplot3D(a1)
+    }
+    if (("Reconstructed" %in% gWidgets2::svalue(g.3D.plot))) {
+      if (is.null(r)) {
+        r <- a
+      }
+      if (("Strain" %in% gWidgets2::svalue(g.edit.show)) & (tab == "Edit")) {   # Strain plot
+        sphericalplot(r, strain=TRUE, datapoints=FALSE)
+      } else {
+        sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
+      }
+    }
   }
 
   ## It would be nice to have error messages displayed graphically.
@@ -914,6 +931,12 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   gWidgets2::glabel("Az", container=g.axisdir.frame)
   g.axis.az <- gWidgets2::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                      container=g.axisdir.frame)
+
+  ## 3D frame
+  g.3D.frame <- gWidgets2::gframe("3D", container=g.view2)
+  g.3D.plot  <- gWidgets2::gradio(c("Flatmount", "Reconstructed"),
+                                  handler=function(h, ...) {do.plot.3D()},
+                                  container=g.3D.frame)
 
   ## Graphs at right
 

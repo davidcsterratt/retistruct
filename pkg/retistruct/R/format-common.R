@@ -1,11 +1,11 @@
 read.scale <- function(dataset, report=message) {
   ## If there is a scale file, read it
-  scale <- c(Scale=NA, Units=NA)
+  scale <- list(XY=NA, Z=NA, Units=NA)
   scfile <- file.path(dataset, "scale.csv")
   if (file.exists(scfile)) {
     report("Reading scale file")
     sc <- read.csv(scfile)
-    valid.colnames <- c("Scale", "Units")
+    valid.colnames <- c("Scale", "XY", "Z", "Units")
     if (!all(colnames(sc) %in% valid.colnames)) {
       stop(paste("Unknown column names",
                  paste0("\"", setdiff(colnames(sc), valid.colnames), "\"",
@@ -13,12 +13,21 @@ read.scale <- function(dataset, report=message) {
                  "in", scfile, ". Valid column names:",
                  paste(valid.colnames, collapse=", ")))
     }
-    scale <- as.matrix(sc)[1,]
-    if (!("Scale" %in% names(scale)) | !is.numeric(scale["Scale"])) {
+    if ("Scale" %in% colnames(sc)) {
+      scale[["XY"]] <- as.numeric(sc[1, "Scale"])
+      warning("\"Scale\" is deprecated as column header in scale.csv - please use \"XY\" instead")
+    }
+    if (is.na(as.numeric(sc[1, "XY"]) | is.na(as.numeric(sc[1, "Z"]))) ) {
       stop("Scale file has not been read correctly. Check it is in the correct format.")
     }
-    if (!("Units" %in% names(scale))) {
-      scale["Units"] <- NA
+    if ("XY" %in% colnames(sc)) {
+      scale[["XY"]] <- as.numeric(sc[1, "XY"])
+    }
+    if ("Z" %in% colnames(sc)) {
+      scale[["Z"]] <- as.numeric(sc[1, "Z"])
+    }
+    if (("Units" %in% colnames(sc))) {
+      scale[["Units"]] <- sc[1, "Units"]
     }
   } else {
     warning("Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
@@ -34,6 +43,24 @@ read.image <- function(dataset, report=message) {
     im <- grDevices::as.raster(png::readPNG(imfile))
   }
   return(im)
+}
+
+read.depthmap <- function(dataset) {
+  dm <- NULL
+  dmfile <- file.path(dataset, "depthmap.tif")
+  if (file.exists(dmfile)) {
+    message("Reading depth map")
+    dm <- tiff::readTIFF(dmfile, as.is=TRUE)
+    dmmarkupfile  <- file.path(dataset, "depthmap.csv")
+    if (file.exists(dmmarkupfile)) {
+      dmmarkup <- read.csv(dmmarkupfile)
+      if ("Background.value" %in% colnames(dmmarkup)) {
+        ## Set coords which have value of "Background" to NA - these will be extrapolated
+        dm[dm == dmmarkup[1, "Background.value"]] <- NA
+      }
+    }
+  }
+  return(dm)
 }
 
 ## Copied from demo("colors")

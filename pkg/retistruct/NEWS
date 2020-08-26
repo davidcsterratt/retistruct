@@ -1,10 +1,16 @@
-CHANGES IN VERSION 0.7.0 - Released 2020/08/23
+CHANGES IN VERSION 0.7.0 - Released 2020/08/26
 
 NEW FEATURES
 
-* Ability to stitch together separate petals or "fragments"
+* Stitching together separate petals or "fragments"
 
 * Ability to magnify plots in the GUI
+
+* Depthmaps, i.e. the ability to specify the depth at various points
+  of the flatmount image, for more accurate reconstruction.
+
+* Switch easily between 3D views of flatmount and reconstruction in
+  GUI
 
 CHANGES IN VERSION 0.6.3 - Released 2020/04/03
 

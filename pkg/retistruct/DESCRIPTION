@@ -12,7 +12,7 @@ Description: Reconstructs retinae by morphing a flat surface with cuts (a
 Version: 0.7.0
 URL: http://davidcsterratt.github.io/retistruct/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
-Date: 2020-08-23
+Date: 2020-08-26
 Depends:
     R (>= 3.5.0)
 Imports:
@@ -25,7 +25,8 @@ Imports:
     RTriangle (>= 1.6-0.9),
     rgl,
     R.matlab,
-    R6
+    R6,
+    tiff
 Suggests:
     spelling,
     testthat,

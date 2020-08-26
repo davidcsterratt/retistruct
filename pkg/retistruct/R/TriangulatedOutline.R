@@ -69,7 +69,7 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
       }
       ## Find areas and lengths of connections
       P <- self$getPointsScaled()
-      self$A <- tri.area(cbind(P, 0), self$T)
+      self$A <- tri.area(P, self$T)
       self$L <- vecnorm(P[self$Cu[,1],] - P[self$Cu[,2],])
       self$A.tot <- sum(self$A)
     },

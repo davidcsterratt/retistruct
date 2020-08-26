@@ -26,7 +26,15 @@ csv.read.dataset <- function(dataset, report=message) {
   
   ## If there is an image, read it
   im <- read.image(dataset, report=report)
-  
+
+  ## If there is a depth map read it
+  dm <- read.depthmap(dataset)
+  if (!is.null(dm)) {
+    if (!("Z" %in% names(scale))) {
+      stop("\"Z\" must be specified in scale.csv when depthmap is present")
+    }
+  }
+
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
   ## to transform P so that the outline appears in the correct
@@ -73,8 +81,8 @@ csv.read.dataset <- function(dataset, report=message) {
   Gs <- lapply(Gs, function(P) {cbind(P[,1], offset - P[,2], P[,3])})
   
   ## Create forward and backward pointers
-  o <- RetinalOutline$new(P, scale=scale["Scale"], im=im,
-                          units=scale["Units"],
+  o <- RetinalOutline$new(fragments=P, scale=scale[["XY"]], im=im,
+                          scalez=scale[["Z"]], dm=dm, units=scale[["Units"]],
                           dataset=dataset)
   
   ## Check that P is more-or-less closed
