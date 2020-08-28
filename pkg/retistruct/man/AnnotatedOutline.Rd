@@ -74,8 +74,8 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \item \href{#method-setFixedPoint}{\code{AnnotatedOutline$setFixedPoint()}}
 \item \href{#method-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
 \item \href{#method-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
+\item \href{#method-getBoundarySets}{\code{AnnotatedOutline$getBoundarySets()}}
 \item \href{#method-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
-\item \href{#method-getFlatRimLength}{\code{AnnotatedOutline$getFlatRimLength()}}
 \item \href{#method-labelCorrespondencePoints}{\code{AnnotatedOutline$labelCorrespondencePoints()}}
 \item \href{#method-addCorrespondence}{\code{AnnotatedOutline$addCorrespondence()}}
 \item \href{#method-whichCorrespondence}{\code{AnnotatedOutline$whichCorrespondence()}}
@@ -334,7 +334,29 @@ Get point IDs of points on rim
 }
 
 \subsection{Returns}{
-Point IDs of points on rim
+Point IDs of points on rim. If the outline has been
+stitched (see \code{\link{StitchedOutline}}), the point IDs
+will be ordered in the direction of the
+forward pointer.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getBoundarySets"></a>}}
+\if{latex}{\out{\hypertarget{method-getBoundarySets}{}}}
+\subsection{Method \code{getBoundarySets()}}{
+Get point IDs of points on boundaries
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getBoundarySets()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+List of Point IDs of points on the boundaries.
+If the outline has been stitched (see \code{\link{StitchedOutline}}),
+the point IDs in each
+element of the list will be ordered in the direction of the
+forward pointer, and the boundary that is longest will be
+named as \code{Rim}. If the outline has not been stitched,
+the list will have one element named \code{Rim}.
 }
 }
 \if{html}{\out{<hr>}}
@@ -347,19 +369,6 @@ Alters object in which \code{i0} may have been changed.
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$ensureFixedPointInRim()}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFlatRimLength"></a>}}
-\if{latex}{\out{\hypertarget{method-getFlatRimLength}{}}}
-\subsection{Method \code{getFlatRimLength()}}{
-Get flat rim length
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFlatRimLength()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-The rim length
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-labelCorrespondencePoints"></a>}}

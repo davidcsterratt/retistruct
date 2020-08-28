@@ -34,6 +34,8 @@ automatically}
 \item \href{#method-new}{\code{StitchedOutline$new()}}
 \item \href{#method-stitchTears}{\code{StitchedOutline$stitchTears()}}
 \item \href{#method-stitchCorrespondences}{\code{StitchedOutline$stitchCorrespondences()}}
+\item \href{#method-isStitched}{\code{StitchedOutline$isStitched()}}
+\item \href{#method-getBoundarySets}{\code{StitchedOutline$getBoundarySets()}}
 \item \href{#method-clone}{\code{StitchedOutline$clone()}}
 }
 }
@@ -74,7 +76,6 @@ automatically}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getCorrespondence">}\href{../../retistruct/html/AnnotatedOutline.html#method-getCorrespondence}{\code{retistruct::AnnotatedOutline$getCorrespondence()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getCorrespondences">}\href{../../retistruct/html/AnnotatedOutline.html#method-getCorrespondences}{\code{retistruct::AnnotatedOutline$getCorrespondences()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFixedPoint">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFixedPoint}{\code{retistruct::AnnotatedOutline$getFixedPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFlatRimLength">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFlatRimLength}{\code{retistruct::AnnotatedOutline$getFlatRimLength()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimLengths">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimLengths}{\code{retistruct::AnnotatedOutline$getRimLengths()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimSet">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimSet}{\code{retistruct::AnnotatedOutline$getRimSet()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-getTear}{\code{retistruct::AnnotatedOutline$getTear()}}\out{</span>}
@@ -131,6 +132,38 @@ Stitch together the correspondences by inserting new
 \if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$stitchCorrespondences()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isStitched"></a>}}
+\if{latex}{\out{\hypertarget{method-isStitched}{}}}
+\subsection{Method \code{isStitched()}}{
+Test if the outline has been stitched
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$isStitched()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Boolean, indicating if the outline has been stitched or not
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getBoundarySets"></a>}}
+\if{latex}{\out{\hypertarget{method-getBoundarySets}{}}}
+\subsection{Method \code{getBoundarySets()}}{
+Get point IDs of points on boundaries
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$getBoundarySets()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+List of Point IDs of points on the boundaries.
+If the outline has been stitched,
+the point IDs in each
+element of the list will be ordered in the direction of the
+forward pointer, and the boundary that is longest will be
+named as \code{Rim}. If the outline has not been stitched,
+the list will have one element named \code{Rim}.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

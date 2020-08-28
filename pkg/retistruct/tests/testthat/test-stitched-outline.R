@@ -15,7 +15,7 @@ test_that("StitchedOutlines with a single fragment work correctly", {
 
   ## Stitched outlines
   a <- StitchedOutline$new(P)
-  
+  expect_false(a$isStitched())
   ## Set a fixed point
   ## One that is in the rim should be fine
   a$setFixedPoint(5, "Nasal")
@@ -117,7 +117,7 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   expect_equal(which(a$hb != 1:length(a$hb)), c(4, 11, 17))
   ## Points in tears should not be in rim set
   expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
-  
+
   cr <- a$computeCorrespondenceRelationships(a$corrs)
   expect_true(setequal(cr$CFset[[1]],
                        c(1, 45, 2, 4, 63, 5)))
@@ -168,7 +168,6 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   expect_equal(path(204, 66, g=a$gf, h=a$h), c(204, 186, 207,  20, 5, 64, 66))
   path(a$Rset[1], a$Rset[2], g=a$gf, a$hf)
   path(a$Rset[2], a$Rset[1], g=a$gf, a$h)
-  Rset <- order.Rset(a$Rset, a$gf, a$h)
 
   a$triangulate(suppress.external.steiner=TRUE)
 
@@ -176,5 +175,172 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
 
   path(a$Rset[1], a$Rset[2], g=a$gf, a$hf)
   path(a$Rset[2], a$Rset[1], g=a$gf, a$h)
-  Rset <- order.Rset(a$Rset, a$gf, a$h)
+})
+
+test_that("StitchedOutlines with multiple fragments with a hole work correctly", {
+  ## Constructing multi-fragment outline
+  P <- list(rbind(c(1,1.5),
+                  c(1.5,1),
+                  c(2,1),
+                  c(2.5,2),
+                  c(3,1),
+                  c(4,1),
+                  c(1,4)),
+            rbind(c(-1.5,1),
+                  c(-1,1.5),
+                  c(-1,4),
+                  c(-2,3),
+                  c(-2,2),
+                  c(-3,2),
+                  c(-4,1)),
+            rbind(c(-4,-1),
+                  c(-1.5,-1),
+                  c(-1,-1.5),
+                  c(-1,-4)),
+            rbind(c(1,-1.5),
+                  c(1.5,-1),
+                  c(2,-1),
+                  c(2.5,-2),
+                  c(3,-1),
+                  c(4,-1),
+                  c(1,-4)))
+
+  ## Stitched outlines
+  a <- StitchedOutline$new(P)
+
+  expect_false(a$isStitched())
+
+  ## Set a fixed point
+  ## One that is in the rim should be fine
+  a$setFixedPoint(6, "Nasal")
+  expect_equal(a$i0, c(Nasal=6))
+
+  ## One that is not in the rim should be moved
+  a$addTear(c(11, 12, 13))
+  a$addTear(c(3, 4, 5))
+  a$addTear(c(21, 22, 23))
+
+  ## Add correspondences
+  a$addCorrespondence(c(2, 6, 20, 24))
+  a$addCorrespondence(c(1, 7, 9, 10))
+  a$addCorrespondence(c(8, 14, 15, 16))
+  a$addCorrespondence(c(17, 18, 19, 25))
+
+  ## hf and hb point across gaps rim
+  ## hf points anti-clockwise and hb points clockwise
+  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  expect_equal(cr$hf[7], 10)
+  expect_equal(cr$hf[14], 15)
+  expect_equal(cr$hf[18], 25)
+  expect_equal(cr$hf[24], 6)
+  expect_equal(cr$hb[10],  7)
+  expect_equal(cr$hb[15], 14)
+  expect_equal(cr$hb[25], 18)
+  expect_equal(cr$hb[6],  24)
+
+  ## hf and hb point across gaps on the internal boundary
+  ## hf points clockwise and hb points anti-clockwise
+  expect_equal(cr$hf[2] , 20)
+  expect_equal(cr$hf[19], 17)
+  expect_equal(cr$hf[16],  8)
+  expect_equal(cr$hf[9] ,  1)
+  expect_equal(cr$hb[1],   9)
+  expect_equal(cr$hb[8],  16)
+  expect_equal(cr$hb[17], 19)
+  expect_equal(cr$hb[20],  2)
+
+  ## Stitch tears
+  expect_equal(nrow(a$P), length(a$gf))
+  a$triangulate()
+  expect_equal(nrow(a$P), length(a$gf))
+  a$stitchTears()
+  expect_equal(nrow(a$P), length(a$gf))
+  expect_equal(which(a$hf != 1:length(a$hf)), c(3, 11, 23))
+  expect_equal(which(a$hb != 1:length(a$hb)), c(5, 13, 21))
+  ## Points in tears should not be in rim set
+  ## expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
+
+  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  expect_true(setequal(cr$CFset[[1]],
+                       c(2, 3, 5, 53, 6)))
+
+  expect_true(setequal(cr$CBset[[1]],
+                       c(20, 21, 23, 222, 24)))
+
+  ## hf and hb point across gaps rim
+  ## hf points anti-clockwise and hb points clockwise
+  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  expect_equal(cr$hf[7], 10)
+  expect_equal(cr$hf[14], 15)
+  expect_equal(cr$hf[18], 25)
+  expect_equal(cr$hf[24], 6)
+  expect_equal(cr$hb[10],  7)
+  expect_equal(cr$hb[15], 14)
+  expect_equal(cr$hb[25], 18)
+  expect_equal(cr$hb[6],  24)
+
+  ## hf and hb point across gaps on the internal boundary
+  ## hf points clockwise and hb points anti-clockwise
+  expect_equal(cr$hf[2] , 20)
+  expect_equal(cr$hf[19], 17)
+  expect_equal(cr$hf[16],  8)
+  expect_equal(cr$hf[9] ,  1)
+  expect_equal(cr$hb[1],   9)
+  expect_equal(cr$hb[8],  16)
+  expect_equal(cr$hb[17], 19)
+  expect_equal(cr$hb[20],  2)
+
+  a$triangulate(suppress.external.steiner=TRUE)
+
+  ## Points in tears should not be in rim set
+  expect_false(any(c(4, 29, 42, 12, 90, 109, 22, 199, 233, 188, 186) %in% a$Rset))
+  expect_equal(nrow(a$P), length(a$gf))
+  expect_equal(nrow(a$P), length(a$hf))
+  expect_equal(nrow(a$P), length(a$h))
+  expect_equal(nrow(a$P), length(a$hb))
+
+  ## hf and hb points point accross tears
+  expect_equal(which(a$hf != 1:length(a$hf)), c(3, 11, 23))
+  expect_equal(which(a$hb != 1:length(a$hb)), c(5, 13, 21))
+
+  ## Stitch corresopndences
+  a$stitchCorrespondences()
+  expect_true(a$isStitched())
+
+  bs <- a$getBoundarySets()
+  expect_equal(length(bs), 2)
+  expect_true("Rim" %in% names(bs))
+  expect_true(is.vector(bs[["Rim"]]))
+  expect_true(is.vector(bs[["n1"]]))
+
+  ## The points on the hole should be ordered in the direction of the forward pointer gf
+  expect_equal(bs[["n1"]], c(20, 196, 19, 17, 125, 16, 8, 77, 9, 1, 2))
+
+  ## Points
+
+  ## Points in tears or correspondences should not be in rim set
+  # expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
+
+  trueRset <- c(56,28,41,26,32,46,30,69,7,10,103,93,104,11,13,115,113,117,14,
+                15,172,147,165,123,151,139,161,150,159,18,25,208,184,202,187,181,198,183,
+                221,219,224,24,6,54)
+
+  ## FIXME?? a$Rset isn't the rim set any more...
+  ## expect_true(setequal(a$Rset, trueRset))
+  expect_true(setequal(a$getRimSet(), trueRset))
+
+  expect_equal(a$h[24], 6)
+  ## Test a path around the rim
+  expect_equal(path(219, 54, g=a$gf, h=a$h), c(219, 224, 24, 6, 54))
+  rs <- a$getRimSet()
+  path(rs[1], rs[2], g=a$gf, a$hf)
+  path(rs[2], rs[1], g=a$gf, a$h)
+
+  a$triangulate(suppress.external.steiner=TRUE)
+
+  expect_equal(length(a$L), nrow(a$Cu))
+
+  rs <- a$getRimSet()
+  path(rs[1], rs[2], g=a$gf, a$hf)
+  path(rs[2], rs[1], g=a$gf, a$h)
 })

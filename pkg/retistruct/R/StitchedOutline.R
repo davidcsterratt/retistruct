@@ -103,6 +103,48 @@ StitchedOutline <- R6Class("StitchedOutline",
         self$h <- self$h[self$h]
       }
       self$CFset <- r$CFset
+    },
+    ##' @description Test if the outline has been stitched
+    ##' @return Boolean, indicating if the outline has been stitched or not
+    isStitched = function() {
+      return((!(is.null(self$TFset))) &
+               ((nrow(self$corrs) == 0) | !(is.null(self$CFset))))
+    },
+    ##' @description Get point IDs of points on boundaries
+    ##' @return List of Point IDs of points on the boundaries.
+    ##' If the outline has been stitched,
+    ##' the point IDs in each
+    ##' element of the list will be ordered in the direction of the
+    ##' forward pointer, and the boundary that is longest will be
+    ##' named as \code{Rim}. If the outline has not been stitched,
+    ##' the list will have one element named \code{Rim}.
+    getBoundarySets = function() {
+      Bsets <- super$getBoundarySets()
+      if (!self$isStitched()) {
+        return(Bsets)
+      }
+      UBset <- Bsets[["Rim"]]
+      ## Now separate out the Bsets
+      Bsets  <- list()
+      Blengths <- c()
+      P <- self$getPointsScaled()
+      while(length(UBset) > 0) {
+        i  <- UBset[1]
+        j  <- path.next(i, self$gf, self$hf)
+        B12 <- path(i, j, self$gf, self$hf)
+        B21 <- path(j, i, self$gf, self$hf)
+        BL12 <- path.length(i, j,
+                            self$gf, self$hf, P)
+        BL21 <- path.length(j, i,
+                            self$gf, self$hf, P)
+        Bset <- c(B12[-1], B21[-1])
+        Bsets <- c(Bsets, list(Bset))
+        Blengths <- c(Blengths, BL12 + BL21)
+        UBset <- setdiff(UBset, Bset)
+      }
+      Bsets <- name.list(Bsets)
+      names(Bsets)[which.max(Blengths)] <- "Rim"
+      return(Bsets)
     }
   )
 )

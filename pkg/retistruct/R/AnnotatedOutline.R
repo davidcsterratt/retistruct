@@ -272,12 +272,30 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       return(self$i0)
     },
     ##' @description Get point IDs of points on rim
-    ##' @return Point IDs of points on rim
+    ##' @return Point IDs of points on rim. If the outline has been
+    ##' stitched (see \code{\link{StitchedOutline}}), the point IDs
+    ##' will be ordered in the direction of the
+    ##' forward pointer.
     getRimSet = function() {
+      ## TR <- self$computeTearRelationships(self$tears)
+      ## CR <- self$computeCorrespondenceRelationships(self$corrs)
+      ## Rset <- intersect(TR$Rset, CR$Rset)
+      return(self$getBoundarySets()[["Rim"]])
+    },
+    ##' @description Get point IDs of points on boundaries
+    ##' @return List of Point IDs of points on the boundaries.
+    ##' If the outline has been stitched (see \code{\link{StitchedOutline}}),
+    ##' the point IDs in each
+    ##' element of the list will be ordered in the direction of the
+    ##' forward pointer, and the boundary that is longest will be
+    ##' named as \code{Rim}. If the outline has not been stitched,
+    ##' the list will have one element named \code{Rim}.
+    getBoundarySets = function() {
       TR <- self$computeTearRelationships(self$tears)
       CR <- self$computeCorrespondenceRelationships(self$corrs)
-      Rset <- intersect(TR$Rset, CR$Rset)
-      return(Rset)
+      ## The intersection of these two is the union of the boundary
+      ## sets
+      return(list(Rim=intersect(TR$Rset, CR$Rset)))
     },
     ##' @description Ensure that the fixed point \code{i0} is in the rim, not a tear.
     ##' Alters object in which \code{i0} may have been changed. 
@@ -294,13 +312,15 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
         }
       }
     },
-    ##' @description Get flat rim length
-    ##' @return The rim length 
-    getFlatRimLength = function() {
-      suppressMessages(r <- self$computeTearRelationships(self$V0, self$VB, self$VF))
-      return(path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gf, r$hf, self$P) +
-             path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gb, r$hb, self$P))
-    },
+    ## FIXME: Remove getFlatRimLength? It is not used and I'm not convinced it's correct
+    ##
+    ## ##' @description Get flat rim length
+    ## ##' @return The rim length
+    ## getFlatRimLength = function() {
+    ##   suppressMessages(r <- self$computeTearRelationships(self$V0, self$VB, self$VF))
+    ##   return(path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gf, r$hf, self$P) +
+    ##          path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gb, r$hb, self$P))
+    ## },
     ##' @description Label a set of four unlabelled points supposed to refer to a
     ##' correspondence.
     ##' @param pids the vector of point indices

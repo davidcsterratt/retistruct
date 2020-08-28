@@ -287,7 +287,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
 
       ## Transform the rim set
-      Rset <- order.Rset(self$ol$getRimSet(), self$ol$gf, self$ol$h)
+      Rset <- self$ol$getRimSet()
       Rsett <- unique(ht[Rset])
       i0t <- ht[self$ol$i0]
 
@@ -669,8 +669,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(private$ims)
     },
-    ##' @description Get location of tear coordinates in spherical coordinates
-    ##' @return Location of tear coordinates in spherical coordinates
+    ##' @description Get locations of tears in spherical coordinates
+    ##' @return List containing locations of tears in spherical coordinates
     getTearCoords = function() {
       Tss <- list()
       for (TF in self$ol$TFset) {
@@ -680,8 +680,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(Tss)
     },
-    ##' @description Get location of correspondence coordinates in spherical coordinates
-    ##' @return Location of correspondence coordinates in spherical coordinates
+    ##' @description Get locations of correspondences in spherical coordinates
+    ##' @return List containing locations of correspondences in spherical coordinates
     getCorrespondenceCoords = function() {
       Css <- list()
       for (CF in self$ol$CFset) {
@@ -690,6 +690,22 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         Css <- c(Css, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
       }
       return(Css)
+    },
+    ##' @description Get location of non-rim boundaries in spherical coordinates
+    ##' @return List containing locations of non-rim boundaries in spherical coordinates
+    getNonRimBoundaryCoords = function() {
+      Bsets <- self$ol$getBoundarySets()
+      if (length(Bsets) <= 1) {
+        return(NULL)
+      }
+      Bss <- list()
+      for (B in Bsets[names(Bsets) != "Rim"]) {
+        ## Convert indices to the spherical frame of reference
+        j <- self$ht[B]
+        Bss <- c(Bss, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
+      }
+      return(Bss)
+
     },
     ##' @description Get \link{ReconstructedFeatureSet}
     ##' @param type Base type of \link{FeatureSet} as string.
@@ -1145,15 +1161,23 @@ projection.ReconstructedOutline <- function(r,
     graphics::polygon(boundary[,"x"], boundary[,"y"], border="black")
   }
 
-  ## Plot rim in visutopic space
+  ## Plot rim in visuotopic space
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
   rs.rot <- rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
   ## r$axisdir = cbind(phi=0, lambda=0)
-
   lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
                    proj.centre=pi/180*proj.centre),
         col=getOption("TF.col"))
+
+  ## Plot non-rim boundary in visuotopic space
+  bss <- r$getNonRimBoundaryCoords()
+  for (bs in bss) {
+    bs.rot <- rotate.axis(transform(bs, phi0=r$phi0), axisdir*pi/180)
+    lines(projection(bs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
+                     proj.centre=pi/180*proj.centre),
+          col=getOption("TF.col"))
+  }
 
   ## Projection of pole
   if (pole) {
