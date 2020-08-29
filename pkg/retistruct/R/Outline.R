@@ -22,7 +22,7 @@ Outline <- R6Class("Outline",
     ##' @field gb For each row of \code{P}, the index of \code{P} that
     ##'   is next in the outline travelling clockwise (backwards)
     gb=NULL,
-    ##' @field h For each row of \code{P}, the correspondence of that
+    ##' @field h For each row of \code{P}, the cut of that
     ##'   point (which will be to itself initially)
     h=NULL,
     ##' @field im An image as a \code{raster} object

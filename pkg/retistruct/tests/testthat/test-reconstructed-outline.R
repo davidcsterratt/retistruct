@@ -78,11 +78,11 @@ test_that("ReconstructededOutlines with mutliple fragments work correctly", {
   a$addTear(c(2, 3, 4))
   a$addTear(c(17, 18, 19))
 
-  ## Add correspondences
-  a$addCorrespondence(c(1, 5, 16, 20))
-  a$addCorrespondence(c(1, 7, 6, 8))
-  a$addCorrespondence(c(7, 14, 12, 13))
-  a$addCorrespondence(c(14, 15, 16, 21))
+  ## Add fullcuts
+  a$addFullCut(c(1, 5, 16, 20))
+  a$addFullCut(c(1, 7, 6, 8))
+  a$addFullCut(c(7, 14, 12, 13))
+  a$addFullCut(c(14, 15, 16, 21))
   r <- ReconstructedOutline$new()
   r$loadOutline(a)
   r$mergePointsEdges()
@@ -142,11 +142,11 @@ test_that("ReconstructededOutlines with multiple fragments with a hole work corr
   a$addTear(c(3, 4, 5))
   a$addTear(c(21, 22, 23))
 
-  ## Add correspondences
-  a$addCorrespondence(c(2, 6, 20, 24))
-  a$addCorrespondence(c(1, 7, 9, 10))
-  a$addCorrespondence(c(8, 14, 15, 16))
-  a$addCorrespondence(c(17, 18, 19, 25))
+  ## Add fullcuts
+  a$addFullCut(c(2, 6, 20, 24))
+  a$addFullCut(c(1, 7, 9, 10))
+  a$addFullCut(c(8, 14, 15, 16))
+  a$addFullCut(c(17, 18, 19, 25))
 
   r <- ReconstructedOutline$new()
   r$loadOutline(a)

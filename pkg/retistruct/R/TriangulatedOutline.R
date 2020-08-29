@@ -28,7 +28,7 @@
 ##' ##' o$addTear(c(2, 3, 4))
 ##' o$addTear(c(17, 18, 19))
 ##' o$addTear(c(9, 10, 11))
-##' o$addCorrespondence(c(1, 5, 16, 20))
+##' o$addFullCut(c(1, 5, 16, 20))
 ##' flatplot(o)
 TriangulatedOutline <- R6Class("TriangulatedOutline",
   inherit = AnnotatedOutline,

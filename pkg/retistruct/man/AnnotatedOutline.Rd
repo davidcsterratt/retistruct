@@ -31,7 +31,7 @@ o <- AnnotatedOutline$new(P)
 o$addTear(c(2, 3, 4))
 o$addTear(c(17, 18, 19))
 o$addTear(c(9, 10, 11))
-o$addCorrespondence(c(1, 5, 16, 20))
+o$addFullCut(c(1, 5, 16, 20))
 flatplot(o)
 }
 \author{
@@ -43,11 +43,11 @@ David Sterratt
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{tears}}{Matrix in which each row represents a correspondence by the
+\item{\code{tears}}{Matrix in which each row represents a cut by the
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
 
-\item{\code{corrs}}{Matrix in which each row represents a correspondence by the
+\item{\code{fullcuts}}{Matrix in which each row represents a cut by the
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
 
@@ -76,13 +76,13 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \item \href{#method-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
 \item \href{#method-getBoundarySets}{\code{AnnotatedOutline$getBoundarySets()}}
 \item \href{#method-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
-\item \href{#method-labelCorrespondencePoints}{\code{AnnotatedOutline$labelCorrespondencePoints()}}
-\item \href{#method-addCorrespondence}{\code{AnnotatedOutline$addCorrespondence()}}
-\item \href{#method-whichCorrespondence}{\code{AnnotatedOutline$whichCorrespondence()}}
-\item \href{#method-removeCorrespondence}{\code{AnnotatedOutline$removeCorrespondence()}}
-\item \href{#method-computeCorrespondenceRelationships}{\code{AnnotatedOutline$computeCorrespondenceRelationships()}}
-\item \href{#method-getCorrespondence}{\code{AnnotatedOutline$getCorrespondence()}}
-\item \href{#method-getCorrespondences}{\code{AnnotatedOutline$getCorrespondences()}}
+\item \href{#method-labelFullCutPoints}{\code{AnnotatedOutline$labelFullCutPoints()}}
+\item \href{#method-addFullCut}{\code{AnnotatedOutline$addFullCut()}}
+\item \href{#method-whichFullCut}{\code{AnnotatedOutline$whichFullCut()}}
+\item \href{#method-removeFullCut}{\code{AnnotatedOutline$removeFullCut()}}
+\item \href{#method-computeFullCutRelationships}{\code{AnnotatedOutline$computeFullCutRelationships()}}
+\item \href{#method-getFullCut}{\code{AnnotatedOutline$getFullCut()}}
+\item \href{#method-getFullCuts}{\code{AnnotatedOutline$getFullCuts()}}
 \item \href{#method-addPoints}{\code{AnnotatedOutline$addPoints()}}
 \item \href{#method-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
 \item \href{#method-clone}{\code{AnnotatedOutline$clone()}}
@@ -140,7 +140,7 @@ Constructor
 \if{latex}{\out{\hypertarget{method-labelTearPoints}{}}}
 \subsection{Method \code{labelTearPoints()}}{
 Label a set of three unlabelled points supposed
-  to refer to the apex and vertices of a cut and tear with the \code{V0}
+  to refer to the apex and vertices of a tear with the \code{V0}
   (Apex), \code{VF} (forward vertex) and \code{VB} (backward vertex) labels.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelTearPoints(pids)}\if{html}{\out{</div>}}
@@ -371,13 +371,13 @@ Alters object in which \code{i0} may have been changed.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-labelCorrespondencePoints"></a>}}
-\if{latex}{\out{\hypertarget{method-labelCorrespondencePoints}{}}}
-\subsection{Method \code{labelCorrespondencePoints()}}{
+\if{html}{\out{<a id="method-labelFullCutPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-labelFullCutPoints}{}}}
+\subsection{Method \code{labelFullCutPoints()}}{
 Label a set of four unlabelled points supposed to refer to a
-correspondence.
+cut.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelCorrespondencePoints(pids)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelFullCutPoints(pids)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -389,12 +389,12 @@ correspondence.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addCorrespondence"></a>}}
-\if{latex}{\out{\hypertarget{method-addCorrespondence}{}}}
-\subsection{Method \code{addCorrespondence()}}{
-Add correspondence to an AnnotatedOutline
+\if{html}{\out{<a id="method-addFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-addFullCut}{}}}
+\subsection{Method \code{addFullCut()}}{
+Add cut to an AnnotatedOutline
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addCorrespondence(pids)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addFullCut(pids)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -406,13 +406,13 @@ Add correspondence to an AnnotatedOutline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-whichCorrespondence"></a>}}
-\if{latex}{\out{\hypertarget{method-whichCorrespondence}{}}}
-\subsection{Method \code{whichCorrespondence()}}{
-Return index of correspondence in an AnnotatedOutline in which a point
+\if{html}{\out{<a id="method-whichFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-whichFullCut}{}}}
+\subsection{Method \code{whichFullCut()}}{
+Return index of cut in an AnnotatedOutline in which a point
 appears
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$whichCorrespondence(pid)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$whichFullCut(pid)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -423,42 +423,42 @@ appears
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-ID of correspondence
+ID of cut
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeCorrespondence"></a>}}
-\if{latex}{\out{\hypertarget{method-removeCorrespondence}{}}}
-\subsection{Method \code{removeCorrespondence()}}{
-Remove correspondence from an AnnotatedOutline
+\if{html}{\out{<a id="method-removeFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-removeFullCut}{}}}
+\subsection{Method \code{removeFullCut()}}{
+Remove cut from an AnnotatedOutline
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$removeCorrespondence(cid)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$removeFullCut(cid)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{cid}}{Correspondence ID, which can be returned from
-\code{whichCorrespondence}}
+\item{\code{cid}}{FullCut ID, which can be returned from
+\code{whichFullCut}}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-computeCorrespondenceRelationships"></a>}}
-\if{latex}{\out{\hypertarget{method-computeCorrespondenceRelationships}{}}}
-\subsection{Method \code{computeCorrespondenceRelationships()}}{
-Compute the correspondence relationships between the points
+\if{html}{\out{<a id="method-computeFullCutRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-computeFullCutRelationships}{}}}
+\subsection{Method \code{computeFullCutRelationships()}}{
+Compute the cut relationships between the points
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$computeCorrespondenceRelationships(corrs)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$computeFullCutRelationships(fullcuts)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{corrs}}{Matrix containing columns \code{VB0},
-and \code{VB1} (Backward vertices of correspondences) and \code{VF0} and \code{VF1} (Forward
-vertices of correspondences)}
+\item{\code{fullcuts}}{Matrix containing columns \code{VB0},
+and \code{VB1} (Backward vertices of fullcuts) and \code{VF0} and \code{VF1} (Forward
+vertices of fullcuts)}
 }
 \if{html}{\out{</div>}}
 }
@@ -466,8 +466,8 @@ vertices of correspondences)}
 List containing
 \itemize{
 \item{\code{Rset}}{the set of points on the rim}
-\item{\code{TFset}}{list containing indices of points in each forward correspondence}
-\item{\code{TBset}}{list containing indices of points in each backward correspondence}
+\item{\code{TFset}}{list containing indices of points in each forward cut}
+\item{\code{TBset}}{list containing indices of points in each backward cut}
 \item{\code{h}}{correspondence mapping}
 \item{\code{hf}}{correspondence mapping in forward direction for
         points on boundary}
@@ -477,18 +477,18 @@ List containing
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCorrespondence"></a>}}
-\if{latex}{\out{\hypertarget{method-getCorrespondence}{}}}
-\subsection{Method \code{getCorrespondence()}}{
-Return indices of correspondences in AnnotatedOutline
+\if{html}{\out{<a id="method-getFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-getFullCut}{}}}
+\subsection{Method \code{getFullCut()}}{
+Return indices of fullcuts in AnnotatedOutline
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getCorrespondence(cid)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFullCut(cid)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{cid}}{Correspondence ID, which can be returned from \code{whichCorrespondence}}
+\item{\code{cid}}{FullCut ID, which can be returned from \code{whichFullCut}}
 }
 \if{html}{\out{</div>}}
 }
@@ -498,17 +498,17 @@ Vector of four point IDs, labelled with \code{VF1},
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCorrespondences"></a>}}
-\if{latex}{\out{\hypertarget{method-getCorrespondences}{}}}
-\subsection{Method \code{getCorrespondences()}}{
-Return indices of correspondences in AnnotatedOutline
+\if{html}{\out{<a id="method-getFullCuts"></a>}}
+\if{latex}{\out{\hypertarget{method-getFullCuts}{}}}
+\subsection{Method \code{getFullCuts()}}{
+Return indices of fullcuts in AnnotatedOutline
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getCorrespondences()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFullCuts()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
 Matrix in which each row contains point IDs, for the forward and backward
-sides of the correspondence: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
+sides of the cut: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
 }
 }
 \if{html}{\out{<hr>}}

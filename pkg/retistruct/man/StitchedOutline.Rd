@@ -5,7 +5,7 @@
 \title{Class containing functions and data relating to Stitching outlines}
 \description{
 A StitchedOutline contains a function to stitch the
-  tears, setting the correspondences \code{hf}, \code{hb} and
+  tears and fullcuts, setting the correspondences \code{hf}, \code{hb} and
   \code{h}
 }
 \author{
@@ -21,7 +21,7 @@ David Sterratt
 
 \item{\code{TFset}}{list containing indices of points in each forward tear}
 
-\item{\code{CFset}}{list containing indices of points in each forward correspondence}
+\item{\code{CFset}}{list containing indices of points in each forward cut}
 
 \item{\code{epsilon}}{the minimum distance between points, set
 automatically}
@@ -33,7 +33,7 @@ automatically}
 \itemize{
 \item \href{#method-new}{\code{StitchedOutline$new()}}
 \item \href{#method-stitchTears}{\code{StitchedOutline$stitchTears()}}
-\item \href{#method-stitchCorrespondences}{\code{StitchedOutline$stitchCorrespondences()}}
+\item \href{#method-stitchFullCuts}{\code{StitchedOutline$stitchFullCuts()}}
 \item \href{#method-isStitched}{\code{StitchedOutline$isStitched()}}
 \item \href{#method-getBoundarySets}{\code{StitchedOutline$getBoundarySets()}}
 \item \href{#method-clone}{\code{StitchedOutline$clone()}}
@@ -66,26 +66,26 @@ automatically}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint">}\href{../../retistruct/html/PathOutline.html#method-insertPoint}{\code{retistruct::PathOutline$insertPoint()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint">}\href{../../retistruct/html/PathOutline.html#method-nextPoint}{\code{retistruct::PathOutline$nextPoint()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths">}\href{../../retistruct/html/PathOutline.html#method-stitchSubpaths}{\code{retistruct::PathOutline$stitchSubpaths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addCorrespondence">}\href{../../retistruct/html/AnnotatedOutline.html#method-addCorrespondence}{\code{retistruct::AnnotatedOutline$addCorrespondence()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addFullCut">}\href{../../retistruct/html/AnnotatedOutline.html#method-addFullCut}{\code{retistruct::AnnotatedOutline$addFullCut()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addPoints">}\href{../../retistruct/html/AnnotatedOutline.html#method-addPoints}{\code{retistruct::AnnotatedOutline$addPoints()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-addTear}{\code{retistruct::AnnotatedOutline$addTear()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="checkTears">}\href{../../retistruct/html/AnnotatedOutline.html#method-checkTears}{\code{retistruct::AnnotatedOutline$checkTears()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeCorrespondenceRelationships">}\href{../../retistruct/html/AnnotatedOutline.html#method-computeCorrespondenceRelationships}{\code{retistruct::AnnotatedOutline$computeCorrespondenceRelationships()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeFullCutRelationships">}\href{../../retistruct/html/AnnotatedOutline.html#method-computeFullCutRelationships}{\code{retistruct::AnnotatedOutline$computeFullCutRelationships()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeTearRelationships">}\href{../../retistruct/html/AnnotatedOutline.html#method-computeTearRelationships}{\code{retistruct::AnnotatedOutline$computeTearRelationships()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="ensureFixedPointInRim">}\href{../../retistruct/html/AnnotatedOutline.html#method-ensureFixedPointInRim}{\code{retistruct::AnnotatedOutline$ensureFixedPointInRim()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getCorrespondence">}\href{../../retistruct/html/AnnotatedOutline.html#method-getCorrespondence}{\code{retistruct::AnnotatedOutline$getCorrespondence()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getCorrespondences">}\href{../../retistruct/html/AnnotatedOutline.html#method-getCorrespondences}{\code{retistruct::AnnotatedOutline$getCorrespondences()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFixedPoint">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFixedPoint}{\code{retistruct::AnnotatedOutline$getFixedPoint()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFullCut">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFullCut}{\code{retistruct::AnnotatedOutline$getFullCut()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFullCuts">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFullCuts}{\code{retistruct::AnnotatedOutline$getFullCuts()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimLengths">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimLengths}{\code{retistruct::AnnotatedOutline$getRimLengths()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimSet">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimSet}{\code{retistruct::AnnotatedOutline$getRimSet()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-getTear}{\code{retistruct::AnnotatedOutline$getTear()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTears">}\href{../../retistruct/html/AnnotatedOutline.html#method-getTears}{\code{retistruct::AnnotatedOutline$getTears()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelCorrespondencePoints">}\href{../../retistruct/html/AnnotatedOutline.html#method-labelCorrespondencePoints}{\code{retistruct::AnnotatedOutline$labelCorrespondencePoints()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelFullCutPoints">}\href{../../retistruct/html/AnnotatedOutline.html#method-labelFullCutPoints}{\code{retistruct::AnnotatedOutline$labelFullCutPoints()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelTearPoints">}\href{../../retistruct/html/AnnotatedOutline.html#method-labelTearPoints}{\code{retistruct::AnnotatedOutline$labelTearPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeCorrespondence">}\href{../../retistruct/html/AnnotatedOutline.html#method-removeCorrespondence}{\code{retistruct::AnnotatedOutline$removeCorrespondence()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeFullCut">}\href{../../retistruct/html/AnnotatedOutline.html#method-removeFullCut}{\code{retistruct::AnnotatedOutline$removeFullCut()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-removeTear}{\code{retistruct::AnnotatedOutline$removeTear()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="setFixedPoint">}\href{../../retistruct/html/AnnotatedOutline.html#method-setFixedPoint}{\code{retistruct::AnnotatedOutline$setFixedPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichCorrespondence">}\href{../../retistruct/html/AnnotatedOutline.html#method-whichCorrespondence}{\code{retistruct::AnnotatedOutline$whichCorrespondence()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichFullCut">}\href{../../retistruct/html/AnnotatedOutline.html#method-whichFullCut}{\code{retistruct::AnnotatedOutline$whichFullCut()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-whichTear}{\code{retistruct::AnnotatedOutline$whichTear()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="mapTriangulatedFragment">}\href{../../retistruct/html/TriangulatedOutline.html#method-mapTriangulatedFragment}{\code{retistruct::TriangulatedOutline$mapTriangulatedFragment()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="triangulate">}\href{../../retistruct/html/TriangulatedOutline.html#method-triangulate}{\code{retistruct::TriangulatedOutline$triangulate()}}\out{</span>}
@@ -122,14 +122,14 @@ Stitch together the incisions and tears by inserting new
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-stitchCorrespondences"></a>}}
-\if{latex}{\out{\hypertarget{method-stitchCorrespondences}{}}}
-\subsection{Method \code{stitchCorrespondences()}}{
-Stitch together the correspondences by inserting new
+\if{html}{\out{<a id="method-stitchFullCuts"></a>}}
+\if{latex}{\out{\hypertarget{method-stitchFullCuts}{}}}
+\subsection{Method \code{stitchFullCuts()}}{
+Stitch together the fullcuts by inserting new
   points in the tears and creating correspondences between new
   points.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$stitchCorrespondences()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$stitchFullCuts()}\if{html}{\out{</div>}}
 }
 
 }

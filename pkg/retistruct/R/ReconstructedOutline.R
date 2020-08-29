@@ -105,8 +105,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ol$triangulate()
       ol$stitchTears()
       ol$triangulate(suppress.external.steiner=TRUE)
-      if (length(ol$corrs)) {
-        ol$stitchCorrespondences()
+      if (length(ol$fullcuts)) {
+        ol$stitchFullCuts()
         ol$triangulate(suppress.external.steiner=TRUE)
       }
       ## Transform the rim set
@@ -680,9 +680,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(Tss)
     },
-    ##' @description Get locations of correspondences in spherical coordinates
-    ##' @return List containing locations of correspondences in spherical coordinates
-    getCorrespondenceCoords = function() {
+    ##' @description Get locations of fullcuts in spherical coordinates
+    ##' @return List containing locations of fullcuts in spherical coordinates
+    getFullCutCoords = function() {
       Css <- list()
       for (CF in self$ol$CFset) {
         ## Convert indices to the spherical frame of reference
@@ -915,7 +915,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
 ##' respect to colatitude rather than latitude
 ##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
-##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed correspondences and tears
+##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed fullcuts and tears
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param max.proj.dim Maximum width of the image created in pixels
 ##' @param ... Graphical parameters to pass to plotting functions
@@ -1200,8 +1200,8 @@ projection.ReconstructedOutline <- function(r,
             col=getOption("TF.col"), lwd=Call$lwd, lty=Call$lty)
     }
 
-    ## Plot correspondences
-    Css <- r$getCorrespondenceCoords()
+    ## Plot fullcuts
+    Css <- r$getFullCutCoords()
     for (Cs in Css) {
       ## Plot
       lines(projection(rotate.axis(transform(Cs, phi0=r$phi0),

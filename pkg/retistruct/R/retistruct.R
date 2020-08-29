@@ -160,19 +160,19 @@ retistruct.read.markup <- function(a, error=stop) {
   } else {
     error("Tear file T.csv doesn't exist.")
   }
-  ## Read in correspondence file
-  correspondencefile <- file.path(a$dataset, "C.csv")
-  if (file.exists(correspondencefile)) {
-    C.old <- read.csv(correspondencefile)
+  ## Read in cut file
+  cutfile <- file.path(a$dataset, "C.csv")
+  if (file.exists(cutfile)) {
+    C.old <- read.csv(cutfile)
     cn <- colnames(C.old)
     C <- matrix(convert.markup(C.old, P.old, a$getPointsXY()), ncol=4)
     colnames(C) <- cn
     for (i in 1:nrow(C)) {
-      a$addCorrespondence(C[i,])
+      a$addFullCut(C[i,])
     }
   } else {
     if (length(a$getFragmentIDs()) > 1) {
-      warning("Correspondence file C.csv doesn't exist.")
+      warning("FullCut file C.csv doesn't exist.")
     }
   }
   return(a)
@@ -238,7 +238,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 
 ##' Reconstruct a retina
 ##' @param a \code{\link{RetinalOutline}} object with tear and
-##'   correspondence annotations
+##'   cut annotations
 ##' @param report Function to report progress. Set to \code{FALSE} for
 ##'   no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}
 ##' @param plot.3d If \code{TRUE} show progress in a 3D plot
@@ -317,7 +317,7 @@ retistruct.save.markup <- function(a) {
   ## Save the tear information and the outline
   write.csv(a$getTears(), file.path(a$dataset, "T.csv"),
             row.names=FALSE)
-  write.csv(a$getCorrespondences(), file.path(a$dataset, "C.csv"),
+  write.csv(a$getFullCuts(), file.path(a$dataset, "C.csv"),
             row.names=FALSE)
   write.csv(a$getPointsXY(), file.path(a$dataset, "P.csv"),
             row.names=FALSE)

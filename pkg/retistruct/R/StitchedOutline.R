@@ -1,7 +1,7 @@
 ##' Class containing functions and data relating to Stitching outlines
 ##'
 ##' @description A StitchedOutline contains a function to stitch the
-##'   tears, setting the correspondences \code{hf}, \code{hb} and
+##'   tears and fullcuts, setting the correspondences \code{hf}, \code{hb} and
 ##'   \code{h}
 ##'
 ##' @author David Sterratt
@@ -13,7 +13,7 @@ StitchedOutline <- R6Class("StitchedOutline",
     Rset = NULL,
     ##' @field TFset list containing indices of points in each forward tear
     TFset = NULL,
-    ##' @field CFset list containing indices of points in each forward correspondence
+    ##' @field CFset list containing indices of points in each forward cut
     CFset = NULL,
     ##' @field epsilon the minimum distance between points, set
     ##'   automatically
@@ -71,11 +71,11 @@ StitchedOutline <- R6Class("StitchedOutline",
       ## self$h <- h
       self$TFset <- r$TFset
     },
-    ##' @description Stitch together the correspondences by inserting new
+    ##' @description Stitch together the fullcuts by inserting new
     ##'   points in the tears and creating correspondences between new
     ##'   points.
-    stitchCorrespondences = function() {
-      r <- self$computeCorrespondenceRelationships(self$corrs)
+    stitchFullCuts = function() {
+      r <- self$computeFullCutRelationships(self$fullcuts)
 
       ## If not set, set the landmark marker index. Otherwise
       ## check it
@@ -85,9 +85,9 @@ StitchedOutline <- R6Class("StitchedOutline",
                    paste(self$Rset, collapse=", ")))
       }
 
-      for (i in 1:nrow(self$corrs)) {
-        self$stitchSubpaths(self$corrs[i,"VF0"], self$corrs[i,"VF1"],
-                            self$corrs[i,"VB0"], self$corrs[i,"VB1"],
+      for (i in 1:nrow(self$fullcuts)) {
+        self$stitchSubpaths(self$fullcuts[i,"VF0"], self$fullcuts[i,"VF1"],
+                            self$fullcuts[i,"VB0"], self$fullcuts[i,"VB1"],
                             epsilon=self$epsilon)
       }
       
@@ -108,7 +108,7 @@ StitchedOutline <- R6Class("StitchedOutline",
     ##' @return Boolean, indicating if the outline has been stitched or not
     isStitched = function() {
       return((!(is.null(self$TFset))) &
-               ((nrow(self$corrs) == 0) | !(is.null(self$CFset))))
+               ((nrow(self$fullcuts) == 0) | !(is.null(self$CFset))))
     },
     ##' @description Get point IDs of points on boundaries
     ##' @return List of Point IDs of points on the boundaries.

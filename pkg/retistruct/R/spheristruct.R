@@ -370,7 +370,7 @@ Fcart <- function(P, C, L, T, A, R,
 ##' @param R Radius of sphere
 ##' @param Rset Indices of points on rim
 ##' @param i0 Index of fixed point
-##' @param phi0 Cut-off of curtailed sphere in radians
+##' @param phi0 FullCut-off of curtailed sphere in radians
 ##' @param lambda0 Longitude of fixed point on rim
 ##' @return Points projected back onto sphere
 ##' @author David Sterratt

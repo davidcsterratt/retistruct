@@ -2,18 +2,18 @@
 % Please edit documentation in R/PathOutline.R
 \name{PathOutline}
 \alias{PathOutline}
-\title{Add point correspondences to the outline}
+\title{Add point fullcuts to the outline}
 \value{
 To the \code{\link{Outline}} object this adds
-\item{\code{hf}}{point correspondence mapping in forward direction for
+\item{\code{hf}}{point cut mapping in forward direction for
 points on boundary}
-\item{\code{hb}}{point correspondence mapping in backward direction for
+\item{\code{hb}}{point cut mapping in backward direction for
 points on boundary}
 }
 \description{
-Add point correspondences to the outline
+Add point fullcuts to the outline
 
-Add point correspondences to the outline
+Add point fullcuts to the outline
 }
 \details{
 The member function \code{stitchSubpaths()} stitches together two
@@ -33,9 +33,9 @@ new point is created.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{hf}}{Forward correspondences}
+\item{\code{hf}}{Forward fullcuts}
 
-\item{\code{hb}}{Backward correspondences}
+\item{\code{hb}}{Backward fullcuts}
 }
 \if{html}{\out{</div>}}
 }

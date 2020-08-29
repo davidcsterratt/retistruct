@@ -1,6 +1,6 @@
 \documentclass{book}
 
-\newcommand{\svninfo}{Retistruct version: 0.7.1 , Date: 2020-08-28}
+\newcommand{\svninfo}{Retistruct version: 0.7.2 , Date: 2020-08-30}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -378,16 +378,16 @@ retinal outline should appear in the \textsc{Retistruct} window.
 
 After a set of files is opened, the \textbf{Edit} tab in the
 \textsc{Retistruct} window will be open. Before the retina can be
-reconstructed, you need to mark-up tears, ``correspondences'' and
+reconstructed, you need to mark-up tears, full cuts and
 landmarks on the retina using the following controls:
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{correspondence}
-  \caption{Adding a correspondence. One correspondence between the two
+  \includegraphics[width=\linewidth]{fullcut}
+  \caption{Adding a full cut. One full cut between the two
     upper petals has been added. The red dashed line indicate the ends
-    of the correspondence, and the red highlighted edge indicates the
-    edges of the correspondence.}
-  \label{retistruct-user-guide:fig:correspondence}
+    of the full cut, and the red highlighted edge indicates the
+    edges of the full cut.}
+  \label{retistruct-user-guide:fig:full-cut}
 \end{figure}
 
 \begin{description}
@@ -397,15 +397,15 @@ landmarks on the retina using the following controls:
   be marked up, but tears cannot cross over one another.
 \item[Remove tear] To remove a tear, click on this button, then click
   on the apex of the tear (marked in cyan on the plot)
-\item[Add correspondence] To add a ``correspondence'', i.e.~a pair of
+\item[Add full cut] To add a ``full cut'', i.e.~a pair of
   corresponding edges of two fragments, click on this button, then
-  click on four points in turn which define a correspondence
-  (Figure~\ref{retistruct-user-guide:fig:correspondence}). The order
+  click on four points in turn which define a full cut
+  (Figure~\ref{retistruct-user-guide:fig:full-cut}). The order
   in which the points are added does not matter.
-\item[Remove correspondence] To remove a correspondence, click on this
-  button, then click on any point on the correspondence.
+\item[Remove full cut] To remove a full cut, click on this
+  button, then click on any point on the full cut.
 \item[Move Point] To move one of the points defining a tear or
-  correspondence, click on this button, then click on the point which
+  full cut, click on this button, then click on the point which
   you desire to move, then click on the point to which it should be
   moved.
 \item[Mark nasal] To mark the nasal pole, click on this button, then
@@ -470,7 +470,7 @@ sequence of operations:
 
 At the end of the reconstruction process, a polar plot appears next to
 the flattened retina. By default the location of
-the cuts and tears in the polar coordinates can be seen.
+the full cuts and tears in the polar coordinates can be seen.
 
 \section{Assessing the quality of the reconstruction}
 \label{retistruct-user-guide:sec:assess-qual-reconstr}

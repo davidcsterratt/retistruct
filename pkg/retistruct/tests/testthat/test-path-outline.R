@@ -1,5 +1,5 @@
 context("PathOutline")
-test_that("paths with no correspondences work correctly", {
+test_that("paths with no fullcuts work correctly", {
 
   ## Simple example
   po <- PathOutline$new()
@@ -31,7 +31,7 @@ test_that("paths with no correspondences work correctly", {
   
 })
 
-test_that("paths with a correspondence in one path work correctly", {
+test_that("paths with a cut in one path work correctly", {
 
   P <- rbind(c(X=1,Y=1),
              c(2,1),
@@ -78,7 +78,7 @@ test_that("paths with a correspondence in one path work correctly", {
   
 })
 
-test_that("paths with correspondences in each path work correctly", {
+test_that("paths with fullcuts in each path work correctly", {
 
   P <- rbind(c(X=1,Y=1),
              c(2,1),
@@ -107,7 +107,7 @@ test_that("paths with correspondences in each path work correctly", {
   expect_equal(po$gb, c(NA, 1, 2, 3, 4, 7, 8, 9, 10, NA))
 })
 
-test_that("paths with a double correspondence in one path works correctly", {
+test_that("paths with a double cut in one path works correctly", {
   P <- rbind(c(X=1,Y=1),
              c(2,1),
              c(2.5,2),

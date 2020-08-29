@@ -99,7 +99,7 @@ indices of the points linked by the edge}
 \item \href{#method-transformImage}{\code{ReconstructedOutline$transformImage()}}
 \item \href{#method-getIms}{\code{ReconstructedOutline$getIms()}}
 \item \href{#method-getTearCoords}{\code{ReconstructedOutline$getTearCoords()}}
-\item \href{#method-getCorrespondenceCoords}{\code{ReconstructedOutline$getCorrespondenceCoords()}}
+\item \href{#method-getFullCutCoords}{\code{ReconstructedOutline$getFullCutCoords()}}
 \item \href{#method-getNonRimBoundaryCoords}{\code{ReconstructedOutline$getNonRimBoundaryCoords()}}
 \item \href{#method-getFeatureSet}{\code{ReconstructedOutline$getFeatureSet()}}
 \item \href{#method-reconstructFeatureSets}{\code{ReconstructedOutline$reconstructFeatureSets()}}
@@ -422,16 +422,16 @@ List containing locations of tears in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getCorrespondenceCoords"></a>}}
-\if{latex}{\out{\hypertarget{method-getCorrespondenceCoords}{}}}
-\subsection{Method \code{getCorrespondenceCoords()}}{
-Get locations of correspondences in spherical coordinates
+\if{html}{\out{<a id="method-getFullCutCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-getFullCutCoords}{}}}
+\subsection{Method \code{getFullCutCoords()}}{
+Get locations of fullcuts in spherical coordinates
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getCorrespondenceCoords()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$getFullCutCoords()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-List containing locations of correspondences in spherical coordinates
+List containing locations of fullcuts in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}

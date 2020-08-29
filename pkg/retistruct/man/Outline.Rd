@@ -31,7 +31,7 @@ is next in the outline travelling anticlockwise (forwards)}
 \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that
 is next in the outline travelling clockwise (backwards)}
 
-\item{\code{h}}{For each row of \code{P}, the correspondence of that
+\item{\code{h}}{For each row of \code{P}, the cut of that
 point (which will be to itself initially)}
 
 \item{\code{im}}{An image as a \code{raster} object}

@@ -28,19 +28,19 @@
 ##' o$addTear(c(2, 3, 4))
 ##' o$addTear(c(17, 18, 19))
 ##' o$addTear(c(9, 10, 11))
-##' o$addCorrespondence(c(1, 5, 16, 20))
+##' o$addFullCut(c(1, 5, 16, 20))
 ##' flatplot(o)
 AnnotatedOutline <- R6Class("AnnotatedOutline",
   inherit = PathOutline,
   public = list(
-    ##' @field tears Matrix in which each row represents a correspondence by the
+    ##' @field tears Matrix in which each row represents a cut by the
     ##'   indices into the outline points of the apex (\code{V0}) and
     ##'   backward (\code{VB}) and forward (\code{VF}) points
     tears = matrix(0, 0, 3),
-    ##' @field corrs Matrix in which each row represents a correspondence by the
+    ##' @field fullcuts Matrix in which each row represents a cut by the
     ##'   indices into the outline points of the apex (\code{V0}) and
     ##'   backward (\code{VB}) and forward (\code{VF}) points
-    corrs = matrix(0, 0, 4),
+    fullcuts = matrix(0, 0, 4),
     ##' @field phi0 rim angle in radians
     phi0 = 0,
     ##' @field lambda0 longitude of fixed point
@@ -52,10 +52,10 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     initialize = function(...) {
       super$initialize(...)
       colnames(self$tears) <- c("V0","VB","VF")
-      colnames(self$corrs) <- c("VF0","VF1","VB1","VB0") # Note the order
+      colnames(self$fullcuts) <- c("VF0","VF1","VB1","VB0") # Note the order
     },
     ##' @description Label a set of three unlabelled points supposed
-    ##'   to refer to the apex and vertices of a cut and tear with the \code{V0}
+    ##'   to refer to the apex and vertices of a tear with the \code{V0}
     ##'   (Apex), \code{VF} (forward vertex) and \code{VB} (backward vertex) labels.
     ##' @param pids the vector of three indices
     ##' @return Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
@@ -278,7 +278,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##' forward pointer.
     getRimSet = function() {
       ## TR <- self$computeTearRelationships(self$tears)
-      ## CR <- self$computeCorrespondenceRelationships(self$corrs)
+      ## CR <- self$computeFullCutRelationships(self$fullcuts)
       ## Rset <- intersect(TR$Rset, CR$Rset)
       return(self$getBoundarySets()[["Rim"]])
     },
@@ -292,7 +292,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##' the list will have one element named \code{Rim}.
     getBoundarySets = function() {
       TR <- self$computeTearRelationships(self$tears)
-      CR <- self$computeCorrespondenceRelationships(self$corrs)
+      CR <- self$computeFullCutRelationships(self$fullcuts)
       ## The intersection of these two is the union of the boundary
       ## sets
       return(list(Rim=intersect(TR$Rset, CR$Rset)))
@@ -322,21 +322,21 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##          path.length(self$i0, path.next(self$i0, self$gf, r$hf), self$gb, r$hb, self$P))
     ## },
     ##' @description Label a set of four unlabelled points supposed to refer to a
-    ##' correspondence.
+    ##' cut.
     ##' @param pids the vector of point indices
     ## @return Vector of indices labelled with V0, VF and VB
-    labelCorrespondencePoints = function(pids) {
+    labelFullCutPoints = function(pids) {
       ## First check the four points comprise two points on each of two
       ## separate fragments
       fids <- self$getFragmentIDsFromPointIDs(pids)
       if (length(fids) != 4) {
-        stop("Correspondences have to be defined by 4 points")
+        stop("FullCuts have to be defined by 4 points")
       }
       if (length(table(fids)) != 2) {
-        stop("Correspondences have to be between two fragments")
+        stop("FullCuts have to be between two fragments")
       }
       if (any(table(fids) != 2)) {
-        stop("Correspondences have have exactly two points on each fragment")
+        stop("FullCuts have have exactly two points on each fragment")
       }
 
       ## For each permuation of V0, VF, VB, measure the sum of length in
@@ -356,43 +356,43 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       }
       return(corr)
     },
-    ##' @description Add correspondence to an AnnotatedOutline
+    ##' @description Add cut to an AnnotatedOutline
     ##' @param pids Vector of three point IDs to be added
-    addCorrespondence = function(pids) {
-      C <- self$labelCorrespondencePoints(pids)
+    addFullCut = function(pids) {
+      C <- self$labelFullCutPoints(pids)
       ## This call will throw an error if tears are not valid
       ## suppressMessages(computeTearRelationships(a, V0, VB, VF))
-      self$corrs <- rbind(self$corrs, C)
-      rownames(self$corrs) <- NULL
+      self$fullcuts <- rbind(self$fullcuts, C)
+      rownames(self$fullcuts) <- NULL
       self$ensureFixedPointInRim()
     },
-    ##' @description Return index of correspondence in an AnnotatedOutline in which a point
+    ##' @description Return index of cut in an AnnotatedOutline in which a point
     ##' appears
     ##' @param pid ID of point
-    ##' @return ID of correspondence
-    whichCorrespondence = function(pid) {
-      cid <- which(apply(pid==self$corrs, 1, any))[1]
+    ##' @return ID of cut
+    whichFullCut = function(pid) {
+      cid <- which(apply(pid==self$fullcuts, 1, any))[1]
       if (!length(cid))
         cid <- NA
       return(cid)
     },
-    ##' @description Remove correspondence from an AnnotatedOutline
-    ##' @param cid Correspondence ID, which can be returned from
-    ##' \code{whichCorrespondence}
-    removeCorrespondence = function(cid) {
+    ##' @description Remove cut from an AnnotatedOutline
+    ##' @param cid FullCut ID, which can be returned from
+    ##' \code{whichFullCut}
+    removeFullCut = function(cid) {
       if (!is.na(cid)) {
-        self$corrs <- self$corrs[-cid,,drop=FALSE]
+        self$fullcuts <- self$fullcuts[-cid,,drop=FALSE]
       }
     },
-    ##' @description Compute the correspondence relationships between the points
-    ##' @param corrs Matrix containing columns \code{VB0},
-    ##'   and \code{VB1} (Backward vertices of correspondences) and \code{VF0} and \code{VF1} (Forward
-    ##'   vertices of correspondences)
+    ##' @description Compute the cut relationships between the points
+    ##' @param fullcuts Matrix containing columns \code{VB0},
+    ##'   and \code{VB1} (Backward vertices of fullcuts) and \code{VF0} and \code{VF1} (Forward
+    ##'   vertices of fullcuts)
     ##' @return List containing
     ##' \itemize{
     ##' \item{\code{Rset}}{the set of points on the rim}
-    ##' \item{\code{TFset}}{list containing indices of points in each forward correspondence}
-    ##' \item{\code{TBset}}{list containing indices of points in each backward correspondence}
+    ##' \item{\code{TFset}}{list containing indices of points in each forward cut}
+    ##' \item{\code{TBset}}{list containing indices of points in each backward cut}
     ##' \item{\code{h}}{correspondence mapping}
     ##' \item{\code{hf}}{correspondence mapping in forward direction for
     ##'         points on boundary}
@@ -400,13 +400,13 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##'         points on boundary}
     ##' }
 
-    computeCorrespondenceRelationships = function(corrs) {
+    computeFullCutRelationships = function(fullcuts) {
       ## Initialise the set of points in the rim
       ## We don't assume that P is the entire set of points; instead
       ## get this information from the pointer list.
       N <- nrow(self$P)                 # number of points
       if (is.null(self$h)) {
-        h <- 1:N                        # Initial correspondences
+        h <- 1:N                        # Initial fullcuts
       } else {
         h <- self$h
       }
@@ -417,7 +417,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
         hf <- self$hf
         hb <- self$hb
       }
-      M <- nrow(corrs)        # Number of corrs
+      M <- nrow(fullcuts)        # Number of fullcuts
 
       if (is.null(self$Rset)) {
         Rset <- na.omit(self$gf)
@@ -425,22 +425,22 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
         Rset <- self$Rset
       }
       
-      ## Create lists of forward and backward corrs
+      ## Create lists of forward and backward fullcuts
       CFset <- list()
       CBset <- list()
       
       if (M > 0) {
         ## Convenience variables
-        VF0 <- corrs[,"VF0"]
-        VF1 <- corrs[,"VF1"]
-        VB0 <- corrs[,"VB0"]
-        VB1 <- corrs[,"VB1"]
+        VF0 <- fullcuts[,"VF0"]
+        VF1 <- fullcuts[,"VF1"]
+        VB0 <- fullcuts[,"VB0"]
+        VB1 <- fullcuts[,"VB1"]
 
         ## Prevent infinite path loops
-        hf[corrs] <- corrs
-        hb[corrs] <- corrs
+        hf[fullcuts] <- fullcuts
+        hb[fullcuts] <- fullcuts
         
-        ## Iterate through the corrs to create corr sets and rim set
+        ## Iterate through the fullcuts to create corr sets and rim set
         for (j in 1:M) {
           ## Create sets of points for each corr and remove these points from
           ## the rim set
@@ -448,10 +448,10 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
           CFset[[j]] <- mod1(path(VF0[j], VF1[j], self$gf, hf), N)
           CBset[[j]] <- mod1(path(VB0[j], VB1[j], self$gb, hb), N)
 
-          ## All points not in corrs or tears are on the rim
+          ## All points not in fullcuts or tears are on the rim
           Rset <- setdiff(Rset,
                           setdiff(union(CFset[[j]], CBset[[j]]),
-                                  corrs[j,]))
+                                  fullcuts[j,]))
         }
 
         ## Set the forward pointer on the rim
@@ -465,11 +465,11 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
         hb[VB0] <- VF0
         h <- hf
 
-        ## If the same point appears in more than one correspondence,
+        ## If the same point appears in more than one cut,
         ## then it must be an internal point and should be removed.
         ## This incantation achieves the desired effect.
         Rset <- setdiff(Rset,
-                        as.numeric(names(which(table(corrs)>1))))
+                        as.numeric(names(which(table(fullcuts)>1))))
 
       }
       return(list(Rset=Rset,
@@ -479,21 +479,21 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
                   hf=hf,
                   hb=hb))
     },
-    ##' @description Return indices of correspondences in AnnotatedOutline
-    ##' @param cid Correspondence ID, which can be returned from \code{whichCorrespondence}
+    ##' @description Return indices of fullcuts in AnnotatedOutline
+    ##' @param cid FullCut ID, which can be returned from \code{whichFullCut}
     ##' @return Vector of four point IDs, labelled with \code{VF1},
     ##' \code{VF1}, \code{VB0} and \code{VB1}
-    getCorrespondence = function(cid) {
-      if (cid > nrow(self$corrs)) {
+    getFullCut = function(cid) {
+      if (cid > nrow(self$fullcuts)) {
         return(NA)
       }
-      return(c(self$corrs[cid,]))
+      return(c(self$fullcuts[cid,]))
     },
-    ##' @description Return indices of correspondences in AnnotatedOutline
+    ##' @description Return indices of fullcuts in AnnotatedOutline
     ##' @return Matrix in which each row contains point IDs, for the forward and backward
-    ##' sides of the correspondence: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
-    getCorrespondences = function() {
-      return(self$corrs)
+    ##' sides of the cut: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
+    getFullCuts = function() {
+      return(self$fullcuts)
     },
     ##' @description Add points to the outline register of points
     ##' @param P 2 column matrix of points to add
@@ -555,12 +555,12 @@ flatplot.AnnotatedOutline <- function(x, axt="n",
     tears <- x$getTears()
     P <- x$P
     i0 <- x$i0
-    C <- x$corrs
+    C <- x$fullcuts
     gf <- x$gf
     h <- 1:nrow(x$P)
     if (nrow(C) > 0) {
       points(P[C,,drop=FALSE], col=getOption("C.col"), pch="+")
-      ## Show lines between correspondences
+      ## Show lines between fullcuts
       segments(P[C[,1],1], P[C[,1],2], P[C[,4],1], P[C[,4],2], col=getOption("C.col"), lty=2)
       segments(P[C[,2],1], P[C[,2],2], P[C[,3],1], P[C[,3],2], col=getOption("C.col"), lty=2)
       for (i in 1:nrow(C)) {

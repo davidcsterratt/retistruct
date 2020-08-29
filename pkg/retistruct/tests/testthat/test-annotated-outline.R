@@ -119,26 +119,26 @@ test_that("AnnotatedOutlines comprising fragments with tears work correctly", {
   ## Check checkTears()
   expect_equal(length(a$checkTears()), 0)
 
-  ## Check we can add a correspondence
+  ## Check we can add a cut
 
   ## Wrong number of points won't work
-  expect_error(a$addCorrespondence(c(76, 35, 44, 96, 67)))
+  expect_error(a$addFullCut(c(76, 35, 44, 96, 67)))
 
   ## Non-existent points won't work
-  expect_error(a$addCorrespondence(c(76, 35, 37, 44)))
+  expect_error(a$addFullCut(c(76, 35, 37, 44)))
   
   ## 3 points in one fragment won't work
-  expect_error(a$addCorrespondence(a, c(1, 2, 3, 9)))
+  expect_error(a$addFullCut(a, c(1, 2, 3, 9)))
   
   ##  Points in more than two fragments won't work
-  expect_error(a$addCorrespondence(c(1, 7, 10, 15)))
+  expect_error(a$addFullCut(c(1, 7, 10, 15)))
 
-  ## Add a correspondence
-  a$addCorrespondence(c(1, 5, 16, 20))
-  expect_true(setequal(a$getCorrespondences(), cbind(1, 5, 16, 20)))
+  ## Add a cut
+  a$addFullCut(c(1, 5, 16, 20))
+  expect_true(setequal(a$getFullCuts(), cbind(1, 5, 16, 20)))
   
   ## Check 
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_true(setequal(cr$Rset, c(1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 21)))
   
   ## Set a fixed point
@@ -150,7 +150,7 @@ test_that("AnnotatedOutlines comprising fragments with tears work correctly", {
   a$setFixedPoint(2, "Nasal")
   expect_false(a$i0 == 2)
 
-  ## Add a tear outside a correspondence
+  ## Add a tear outside a cut
   a$addTear(c(9, 10, 11))
   tr <- a$computeTearRelationships(a$getTears())
   expect_true(setequal(tr$Rset, (1:21)[-c(3, 10, 18)]))
@@ -159,10 +159,10 @@ test_that("AnnotatedOutlines comprising fragments with tears work correctly", {
   a$setFixedPoint(10, "Nasal")
   expect_false(a$i0 == 10)
 
-  ## Add more correspondences
-  a$addCorrespondence(c(1, 7, 6, 8))
-  a$addCorrespondence(c(7, 14, 12, 13))
-  a$addCorrespondence(c(14, 15, 16, 21))
+  ## Add more fullcuts
+  a$addFullCut(c(1, 7, 6, 8))
+  a$addFullCut(c(7, 14, 12, 13))
+  a$addFullCut(c(14, 15, 16, 21))
 
   expect_true(setequal(a$getRimSet(), c(5, 6, 8, 9, 11, 12, 13, 15, 21, 20)))
 })
@@ -184,11 +184,11 @@ test_that("AnnotatedOutlines comprising fragments without tears work correctly",
     ## Annotated outlines
     a <- AnnotatedOutline$new(P)
 
-    ## Add correspondences
-    a$addCorrespondence(c(1, 10, 11, 2))
-    a$addCorrespondence(c(1, 4, 3, 5))
-    a$addCorrespondence(c(4, 8, 6, 7))
-    a$addCorrespondence(c(8, 10, 9, 12))
+    ## Add fullcuts
+    a$addFullCut(c(1, 10, 11, 2))
+    a$addFullCut(c(1, 4, 3, 5))
+    a$addFullCut(c(4, 8, 6, 7))
+    a$addFullCut(c(8, 10, 9, 12))
 })
 
 

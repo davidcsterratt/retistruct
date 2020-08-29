@@ -90,14 +90,14 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   a$addTear(c(2, 3, 4))
   a$addTear(c(17, 18, 19))
 
-  ## Add correspondences
-  a$addCorrespondence(c(1, 5, 16, 20))
-  a$addCorrespondence(c(1, 7, 6, 8))
-  a$addCorrespondence(c(7, 14, 12, 13))
-  a$addCorrespondence(c(14, 15, 16, 21))
+  ## Add fullcuts
+  a$addFullCut(c(1, 5, 16, 20))
+  a$addFullCut(c(1, 7, 6, 8))
+  a$addFullCut(c(7, 14, 12, 13))
+  a$addFullCut(c(14, 15, 16, 21))
 
   ## hf and hb point across on rim
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_equal(cr$hf[6], 8)
   expect_equal(cr$hf[12], 13)
   expect_equal(cr$hf[15], 21)
@@ -118,7 +118,7 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   ## Points in tears should not be in rim set
   expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
 
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_true(setequal(cr$CFset[[1]],
                        c(1, 45, 2, 4, 63, 5)))
 
@@ -152,7 +152,7 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   expect_equal(which(a$hb != 1:length(a$hb)), c(4, 11, 17))
 
   ## Stitch corresopndences
-  a$stitchCorrespondences()
+  a$stitchFullCuts()
   ## Points in tears should not be in rim set
   expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
 
@@ -220,15 +220,15 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
   a$addTear(c(3, 4, 5))
   a$addTear(c(21, 22, 23))
 
-  ## Add correspondences
-  a$addCorrespondence(c(2, 6, 20, 24))
-  a$addCorrespondence(c(1, 7, 9, 10))
-  a$addCorrespondence(c(8, 14, 15, 16))
-  a$addCorrespondence(c(17, 18, 19, 25))
+  ## Add fullcuts
+  a$addFullCut(c(2, 6, 20, 24))
+  a$addFullCut(c(1, 7, 9, 10))
+  a$addFullCut(c(8, 14, 15, 16))
+  a$addFullCut(c(17, 18, 19, 25))
 
   ## hf and hb point across gaps rim
   ## hf points anti-clockwise and hb points clockwise
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_equal(cr$hf[7], 10)
   expect_equal(cr$hf[14], 15)
   expect_equal(cr$hf[18], 25)
@@ -260,7 +260,7 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
   ## Points in tears should not be in rim set
   ## expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
 
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_true(setequal(cr$CFset[[1]],
                        c(2, 3, 5, 53, 6)))
 
@@ -269,7 +269,7 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
 
   ## hf and hb point across gaps rim
   ## hf points anti-clockwise and hb points clockwise
-  cr <- a$computeCorrespondenceRelationships(a$corrs)
+  cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_equal(cr$hf[7], 10)
   expect_equal(cr$hf[14], 15)
   expect_equal(cr$hf[18], 25)
@@ -304,7 +304,7 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
   expect_equal(which(a$hb != 1:length(a$hb)), c(5, 13, 21))
 
   ## Stitch corresopndences
-  a$stitchCorrespondences()
+  a$stitchFullCuts()
   expect_true(a$isStitched())
 
   bs <- a$getBoundarySets()
@@ -318,7 +318,7 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
 
   ## Points
 
-  ## Points in tears or correspondences should not be in rim set
+  ## Points in tears or fullcuts should not be in rim set
   # expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
 
   trueRset <- c(56,28,41,26,32,46,30,69,7,10,103,93,104,11,13,115,113,117,14,

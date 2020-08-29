@@ -40,11 +40,11 @@ a$addTear(c(11, 12, 13))
 a$addTear(c(3, 4, 5))
 a$addTear(c(21, 22, 23))
 
-## Add correspondences
-a$addCorrespondence(c(2, 6, 20, 24))
-a$addCorrespondence(c(1, 7, 9, 10))
-a$addCorrespondence(c(8, 14, 15, 16))
-a$addCorrespondence(c(17, 18, 19, 25))
+## Add fullcuts
+a$addFullCut(c(2, 6, 20, 24))
+a$addFullCut(c(1, 7, 9, 10))
+a$addFullCut(c(8, 14, 15, 16))
+a$addFullCut(c(17, 18, 19, 25))
 
 r <- ReconstructedOutline$new()
 r$loadOutline(a)

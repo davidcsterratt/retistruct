@@ -90,9 +90,14 @@ retistruct <- function() {
                    g.mark.n, g.mark.d, g.mark.od,
                    g.phi0d, g.show, g.edit.show, g.data, g.eye,
                    g.print1, g.print2,
-                   g.print.pdf1, g.print.pdf2), state)
-    if (state) 
+                   g.print.pdf1, g.print.pdf2,
+                   g.add.fullcut, g.remove.fullcut), state)
+    if (state) {
       enable.group(c(g.mark.od), length(a$getFeatureSet("LandmarkSet")$getIDs() > 0))
+      if (length(a$getFragmentIDs()) == 1) {
+        enable.group(c(g.add.fullcut, g.remove.fullcut), FALSE)
+      }
+    }
     if (!retistruct.check.markup(a)) {
       enable.group(c(g.reconstruct), FALSE)
     }
@@ -172,7 +177,7 @@ retistruct <- function() {
     
     ## Locate tear ID in which the point occurs
     tid <- a$whichTear(id1)
-    cid <- a$whichCorrespondence(id1)
+    cid <- a$whichFullCut(id1)
 
     ## If there is a tear in which it occurs, select a point to move it to
     if (!is.na(tid) | !is.na(cid)) {
@@ -199,17 +204,17 @@ retistruct <- function() {
         a$addTear(pids)
       }
       if (!is.na(cid)) {
-        ## Get point ids of exsiting correspondence
-        pids <- a$getCorrespondence(cid)
+        ## Get point ids of exsiting cut
+        pids <- a$getFullCut(cid)
 
         ## Replace old point with desired new point
         if (length(id2)) pids[pids==id1] <- id2
 
         ## It is possible to get the apex and vertex mixed up when moving points.
         ## Fix any errors.
-        pids <- a$labelCorrespondencePoints(pids)
-        a$removeCorrespondence(cid)
-        a$addCorrespondence(pids)
+        pids <- a$labelFullCutPoints(pids)
+        a$removeFullCut(cid)
+        a$addFullCut(pids)
       }
 
     }
@@ -220,17 +225,17 @@ retistruct <- function() {
     enable.widgets(TRUE)
   }
 
-  ## Handler for adding a correspondence
-  h.add.correspondence <- function(h, ...) {
+  ## Handler for adding a cut
+  h.add.fullcut <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets2::svalue(g.status) <- paste("Click on the four points of the correspondence in any order.",
+    gWidgets2::svalue(g.status) <- paste("Click on the four points of the cut in any order.",
                               identify.abort.text())
     g.m1$devSet()
     P <- a$getPoints()
     pids <- identify(P[,1], P[,2], n=4, col=getOption("TF.col"))
     withCallingHandlers({
-      a$addCorrespondence(pids)
+      a$addFullCut(pids)
     }, warning=h.warning, error=h.warning)
     do.plot()
     gWidgets2::svalue(g.status) <- ""
@@ -238,15 +243,15 @@ retistruct <- function() {
   }
 
   ## Handler for removing a tear
-  h.remove.correspondence <- function(h, ...) {
+  h.remove.fullcut <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    gWidgets2::svalue(g.status) <- paste("Click on the apex of the correspondence to remove.",
+    gWidgets2::svalue(g.status) <- paste("Click on the apex of the cut to remove.",
                                          identify.abort.text())
     g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,1], P[,2], n=1, plot=FALSE)
-    a$removeCorrespondence(a$whichCorrespondence(id))
+    a$removeFullCut(a$whichFullCut(id))
     do.plot()
     gWidgets2::svalue(g.status) <- ""
     enable.widgets(TRUE)
@@ -848,8 +853,8 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
 
   g.add     <- gWidgets2::gbutton("Add tear",    handler=h.add,     container=g.editor)
   g.remove  <- gWidgets2::gbutton("Remove tear", handler=h.remove,  container=g.editor)
-  g.add.correspondence  <- gWidgets2::gbutton("Add correspondence", handler=h.add.correspondence,  container=g.editor)
-  g.remove.correspondence  <- gWidgets2::gbutton("Remove correspondence", handler=h.remove.correspondence,  container=g.editor)
+  g.add.fullcut  <- gWidgets2::gbutton("Add full cut", handler=h.add.fullcut,  container=g.editor)
+  g.remove.fullcut  <- gWidgets2::gbutton("Remove full cut", handler=h.remove.fullcut,  container=g.editor)
   g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
   g.mark.n  <- gWidgets2::gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
   g.mark.d  <- gWidgets2::gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)

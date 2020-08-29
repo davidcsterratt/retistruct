@@ -9,19 +9,19 @@
 ##' point is connected. If no point exists within this tolerance, a
 ##' new point is created.
 ##'
-##' @title Add point correspondences to the outline
+##' @title Add point fullcuts to the outline
 ##' @return To the \code{\link{Outline}} object this adds
-##' \item{\code{hf}}{point correspondence mapping in forward direction for
+##' \item{\code{hf}}{point cut mapping in forward direction for
 ##' points on boundary}
-##' \item{\code{hb}}{point correspondence mapping in backward direction for
+##' \item{\code{hb}}{point cut mapping in backward direction for
 ##' points on boundary}
 ##' @export
 PathOutline <- R6Class("PathOutline",
   inherit = Outline,
   public = list(
-    ##' @field hf Forward correspondences
+    ##' @field hf Forward fullcuts
     hf = NULL,
-    ##' @field hb Backward correspondences
+    ##' @field hb Backward fullcuts
     hb = NULL,
     ##' @description Add points to the outline register of points
     ##' @param P 2 column matrix of points to add
@@ -85,7 +85,7 @@ PathOutline <- R6Class("PathOutline",
           self$gb[i0] <- n
           self$gf[i1] <- n
         }
-        ## Update correspondences
+        ## Update fullcuts
         self$hf[n] <- n
         self$hb[n] <- n
       }
