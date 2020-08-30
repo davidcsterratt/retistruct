@@ -18,26 +18,25 @@ Installation from Github
 Most users will wish to install from CRAN, as described on the [Retistruct homepage](http://davidcsterratt.github.io/retistruct/).
 
 If you want to try out the latest features, you should install from
-Github:
-
-1. From the R console, make sure the `devtools` package is installed:
+Github. First, from the R console, make sure the `devtools` package is installed:
 ```
 install.packages("devtools")
 ```
+Then, do one of the following from the R console:
 
-2. To install the latest development branch (not yet released on
+* To install the latest development branch (not yet released on
    CRAN):
 ```
 devtools::install_github("davidcsterratt/retistruct@v0.7.x", subdir="pkg/retistruct")
 ```
 The development [User guide](https://github.com/davidcsterratt/retistruct/blob/v0.7.x/docs/retistruct-user-guide.pdf) has more details on how to use the new features.
 
-3. To install from the stable development branch (i.e. code that will be in the next CRAN release), use the R devtools package like this:
+* To install from the stable development branch (i.e. code that will be in the next CRAN release), use the R devtools package like this:
 ```
 devtools::install_github("davidcsterratt/retistruct", subdir="pkg/retistruct")
 ```
 
-4. To install the current stable version (i.e. the one currently on CRAN), use the R devtools package like this:
+* To install the current stable version (i.e. the one currently on CRAN), use the R devtools package like this:
 ```
 devtools::install_github("davidcsterratt/retistruct@v0.6.2", subdir="pkg/retistruct")
 ```
