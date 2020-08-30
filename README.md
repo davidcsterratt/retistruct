@@ -17,14 +17,28 @@ Installation from Github
 
 Most users will wish to install from CRAN, as described on the [Retistruct homepage](http://davidcsterratt.github.io/retistruct/).
 
-To install the current stable verision (i.e. the one currently on CRAN), use the R devtools package like this:
+If you want to try out the latest features, you should install from
+Github:
+
+1. From the R console, make sure the `devtools` package is installed:
 ```
-devtools::install_github("davidcsterratt/retistruct@v0.6.1", subdir="pkg/retistruct")
+install.packages("devtools")
 ```
-To install from the stable development branch (i.e. code that will be in the next CRAN release), use the R devtools package like this:
+2. To install the latest development branch (not yet released on
+   CRAN):
+```
+devtools::install_github("davidcsterratt/retistruct@v0.7.x", subdir="pkg/retistruct")
+```
+3. To install from the stable development branch (i.e. code that will be in the next CRAN release), use the R devtools package like this:
 ```
 devtools::install_github("davidcsterratt/retistruct", subdir="pkg/retistruct")
 ```
+4. To install the current stable version (i.e. the one currently on CRAN), use the R devtools package like this:
+```
+devtools::install_github("davidcsterratt/retistruct@v0.6.2", subdir="pkg/retistruct")
+```
+You will need to replace `0.6.2` with the version number of the
+latest release.
 
 Roadmap
 =======
@@ -33,7 +47,7 @@ There are a number of improvements on the horizon - see the [list of milestones]
 
 Retistruct is not my main work at present, so improvements may take some time. Nevertheless, if there's something you'd like implemented, please let me know, either by [creating an issue](https://github.com/davidcsterratt/retistruct/issues/new), or [by email](mailto:david.c.sterratt@ed.ac.uk).
 
-Funding Acknowldegements
+Funding Acknowledgements
 ========================
 
 The development of the initial version of Retistruct was supported by
@@ -45,11 +59,18 @@ Scientific Services Innovation Fund from 2016-2017 and an NIH R21
 grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
-The ability to stitch together separate fragments (released v0.8.0)
-was supported by an NIH R21 grant (EY027894–01A1) from 2018-2020 to
-Dr. Mark P. Krebs, The Jackson Laboratory.
+The ability to stitch together separate fragments (released v0.7.0)
+and utilise depth information in flat-mounts (released v0.7.1) and user
+interface improvements (released v0.7.0) were supported by an NIH R21
+grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+Laboratory.
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.com/davidcsterratt/retistruct)
 <!-- badges: end -->
 
+
+<!--  LocalWords:  Retistruct Github CRAN devtools davidcsterratt EY
+ -->
+<!--  LocalWords:  subdir retistruct Roadmap Wellcome Harbor
+ -->
