@@ -26,21 +26,21 @@ Then, do one of the following from the R console:
 
 * To install the latest development branch (not yet released on
    CRAN):
-```
-devtools::install_github("davidcsterratt/retistruct@v0.7.x", subdir="pkg/retistruct")
-```
-The development [User guide](https://github.com/davidcsterratt/retistruct/blob/v0.7.x/docs/retistruct-user-guide.pdf) has more details on how to use the new features.
+   ```
+   devtools::install_github("davidcsterratt/retistruct@v0.7.x", subdir="pkg/retistruct")
+   ```
+   The development [User guide](https://github.com/davidcsterratt/retistruct/blob/v0.7.x/docs/retistruct-user-guide.pdf) has more details on how to use the new features.
 
 * To install from the stable development branch (i.e. code that will be in the next CRAN release), use the R devtools package like this:
-```
-devtools::install_github("davidcsterratt/retistruct", subdir="pkg/retistruct")
-```
+   ```
+   devtools::install_github("davidcsterratt/retistruct", subdir="pkg/retistruct")
+   ```
 
 * To install the current stable version (i.e. the one currently on CRAN), use the R devtools package like this:
-```
-devtools::install_github("davidcsterratt/retistruct@v0.6.2", subdir="pkg/retistruct")
-```
-You will need to replace `0.6.2` with the version number of the latest release.
+   ```
+   devtools::install_github("davidcsterratt/retistruct@v0.6.2", subdir="pkg/retistruct")
+   ```
+   You will need to replace `0.6.2` with the version number of the latest release.
 
 Roadmap
 =======
