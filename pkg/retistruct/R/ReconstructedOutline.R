@@ -105,15 +105,15 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ol$triangulate()
       ol$stitchTears()
       ol$triangulate(suppress.external.steiner=TRUE)
+      ol$stitchFullCuts()
       if (length(ol$fullcuts)) {
-        ol$stitchFullCuts()
         ol$triangulate(suppress.external.steiner=TRUE)
       }
       ## Transform the rim set
       ## ol$orderRset()
       self$ol <- ol
       self$phi0 <- ol$phi0
-     self$lambda0 <- ol$lambda0
+      self$lambda0 <- ol$lambda0
       
       report("Merging points...")
       self$mergePointsEdges()

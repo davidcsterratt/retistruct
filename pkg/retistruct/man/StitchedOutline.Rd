@@ -25,6 +25,10 @@ David Sterratt
 
 \item{\code{epsilon}}{the minimum distance between points, set
 automatically}
+
+\item{\code{tearsStitched}}{Boolean indicating if tears have been stitched}
+
+\item{\code{fullCutsStitched}}{Boolean indicating if full cuts have been stitched}
 }
 \if{html}{\out{</div>}}
 }

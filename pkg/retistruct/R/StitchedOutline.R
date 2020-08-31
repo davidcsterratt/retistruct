@@ -18,6 +18,10 @@ StitchedOutline <- R6Class("StitchedOutline",
     ##' @field epsilon the minimum distance between points, set
     ##'   automatically
     epsilon = NA,
+    ##' @field tearsStitched Boolean indicating if tears have been stitched
+    tearsStitched = FALSE,
+    ##' @field fullCutsStitched Boolean indicating if full cuts have been stitched
+    fullCutsStitched = FALSE,
     ##' @description Constructor
     ##' @param ... Parameters to superclass constructors
     initialize = function(...) {
@@ -39,6 +43,7 @@ StitchedOutline <- R6Class("StitchedOutline",
     ##'   points in the tears and creating correspondences between new
     ##'   points.
     stitchTears = function() {
+      self$tearsStitched = TRUE
       r <- self$computeTearRelationships(self$tears)
 
       if (length(r$TFset) == 0) {
@@ -75,7 +80,12 @@ StitchedOutline <- R6Class("StitchedOutline",
     ##'   points in the tears and creating correspondences between new
     ##'   points.
     stitchFullCuts = function() {
+      self$fullCutsStitched = TRUE
       r <- self$computeFullCutRelationships(self$fullcuts)
+
+      if (length(r$CFset) == 0) {
+        return(NULL)
+      }
 
       ## If not set, set the landmark marker index. Otherwise
       ## check it
@@ -107,8 +117,7 @@ StitchedOutline <- R6Class("StitchedOutline",
     ##' @description Test if the outline has been stitched
     ##' @return Boolean, indicating if the outline has been stitched or not
     isStitched = function() {
-      return((!(is.null(self$TFset))) &
-               ((nrow(self$fullcuts) == 0) | !(is.null(self$CFset))))
+      return(self$tearsStitched & self$fullCutsStitched)
     },
     ##' @description Get point IDs of points on boundaries
     ##' @return List of Point IDs of points on the boundaries.
