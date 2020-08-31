@@ -61,10 +61,11 @@ Scientific Services Innovation Fund from 2016-2017 and an NIH R21
 grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
-The ability to stitch together separate fragments (released v0.7.0)
-and utilise depth information in flat-mounts (released v0.7.1) and user
-interface improvements (released v0.7.0) were supported by an NIH R21
-grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+The capabilities to reconstruct tissue comprised of separate fragments
+(released in v0.7.0) and to reconstruct 3D data comprising an overhead
+image and depth map (released in v0.7.2), and user interface
+improvements (released in v0.7.0) were supported by an NIH R21 grant
+(EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
 <!-- badges: start -->
