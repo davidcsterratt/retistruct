@@ -58,7 +58,7 @@ a Programme Grant from the UK Wellcome Trust (G083305) from 2008-2013.
 Improvements to image handing and refactoring the code (released in
 v0.6.0) were supported by The Jackson Laboratory (Bar Harbor, ME, USA)
 Scientific Services Innovation Fund from 2016-2017 and an NIH R21
-grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+grant (EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
 The capabilities to reconstruct tissue comprised of separate fragments
