@@ -127,6 +127,14 @@ If you encounter issues using Retistruct please either:
 
 ## Updates
 
+August 2020
+: The development branch, 0.7.x, is released. This adds the ability to
+stitch together separate fragments and reconstruct 3D data comprising
+an overhead image and depth map. There are also user interface
+improvements, most notably a magnifier function. The improvements were
+supported by an NIH R21 grant (EY027894) from 2018-2020 to Dr. Mark P.
+Krebs, The Jackson Laboratory.
+
 December 2019
 : Retistruct 0.6.1 and 0.6.2 is out. This reinstates sphericalplots and the saving of reconstructed data. New features include allowing resizing of windows so plots can be larger, allowing data counts to be read in using ijroi and csv formats and exposing some features in the API. Version 0.6.2 fixes a small issue and adds much better documentation for developers.  See the [NEWS file](https://github.com/davidcsterratt/retistruct/blob/master/pkg/retistruct/NEWS)
 for more information.
@@ -135,7 +143,7 @@ July 2019
 : Retistruct 0.6.0 is out. The big change in this version is a
 complete refactor of the code, which should enable future enhancements
 to happen more quickly. The stitching algorithm is improved. There are
-major improvments in image rendering, which should be a lot faster
+major improvements in image rendering, which should be a lot faster
 thanks to the tsearch algorithm in 0.4.x of the geometry package, and
 able to deal with high-resolution images.
 
@@ -166,10 +174,35 @@ href="http://www.wellcome.ac.uk">Wellcome Trust</a> (G083305) from
 Improvements to image handing and refactoring the code (released in
 v0.6.0) were supported by The Jackson Laboratory (Bar Harbor, ME, USA)
 Scientific Services Innovation Fund from 2016-2017 and an NIH R21
-grant (EY027894–01A1) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+grant (EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+Laboratory.
+
+The capabilities to reconstruct tissue comprised of separate fragments
+(released in v0.7.0) and to reconstruct 3D data comprising an overhead
+image and depth map (released in v0.7.2), and user interface
+improvements (released in v0.7.0) were supported by an NIH R21 grant
+(EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
 <!--  LocalWords:  Retistruct retistruct Sterratt Willshaw Blog blog
  -->
-<!--  LocalWords:  ul li href prepend baseurl endfor rss
+<!--  LocalWords:  ul li href prepend baseurl endfor rss png Lyngholm
+ -->
+<!--  LocalWords:  curvilinear visuotopic PLoS neuroinf pdf GTK CRAN
+ -->
+<!--  LocalWords:  Github al SMI ImageJ Fluoro brightfield ImageJ's
+ -->
+<!--  LocalWords:  Sondereker Stabio Jamil Tarchick Renna Vis DOI Lui
+ -->
+<!--  LocalWords:  Haghgou Chidsey Sabbah Neurol Smodlaka Khamas Cohn
+ -->
+<!--  LocalWords:  Borovac Schmitz Mirounga angustirostris Anat nbsp
+ -->
+<!--  LocalWords:  Hoboken visualization Flinn Kakalec Tappero Rieke
+ -->
+<!--  LocalWords:  Lengyel macular Metallomics Bleckert nonmatching
+ -->
+<!--  LocalWords:  EY sphericalplots ijroi csv tsearch Curcio Pubmed
+ -->
+<!--  LocalWords:  MRC KCL Wellcome Harbor
  -->
