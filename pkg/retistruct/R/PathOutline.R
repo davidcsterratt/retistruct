@@ -57,7 +57,7 @@ PathOutline <- R6Class("PathOutline",
         stop("Points", i0, "and", i1, "are not connected by an edge")
       }
       if ((f >= 1) | (f <= 0)) {
-        stop("f argument should be between 0 and 1")
+        stop("f argument should be between 0 and 1. f = ", f)
       }
       fid  <- self$getFragmentIDsFromPointIDs(i0)
       fid1  <- self$getFragmentIDsFromPointIDs(i1)
@@ -65,10 +65,10 @@ PathOutline <- R6Class("PathOutline",
         stop("Fragment IDs of points differ")
       }
       p <-
-        (1 - f)*self$getPointsXY(i0) +
-        f*      self$getPointsXY(i1)
+        (1 - f)*self$getPoints(i0) +
+        f*      self$getPoints(i1)
       ## Find the index of any row of P that matches p
-      n <- anyDuplicated(rbind(self$getPointsXY(c(i0, i1)), p),
+      n <- anyDuplicated(rbind(self$getPointsXY(c(i0, i1)), p[c("X", "Y")]),
                          fromLast=TRUE)
       if (n == 0) {
         ## If the point p doesn't exist
@@ -103,7 +103,7 @@ PathOutline <- R6Class("PathOutline",
       Sf <- path.length(VF0, VF1, self$gf, self$hf, self$getPointsScaled())
       Sb <- path.length(VB0, VB1, self$gb, self$hb, self$getPointsScaled())
 
-      report(paste("\nstitchSubpaths(", VF0, ",", VF1, ",", VB0, ",", VB1, ",", epsilon, ")\n"))
+      report(paste0("\nstitchSubpaths(", VF0, ", ", VF1, ", ", VB0, ", ", VB1, ", ", epsilon, ")\n"))
 
       report(paste("Sf =", Sf, ", Sb =", Sb, "\n"))
 
@@ -123,7 +123,15 @@ PathOutline <- R6Class("PathOutline",
         sf <- path.length(VF0, i, self$gf, self$hf, self$getPointsScaled())
         sb <- path.length(VB0, j, self$gb, self$hb, self$getPointsScaled())
         report(paste("i =", i, "i0 =", i0, "j =", j, "j0 =", j0,
-                          "sf =", sf, "sf0 =", sf0, "sb =", sb, "sb0 =", sb0))
+                     "sf =", sf, "sf0 =", sf0, "sb =", sb, "sb0 =", sb0))
+        ## Defensive programming - a test might be better, but at
+        ## least this will highlight one class of error
+        if (sf - Sf > 1E-10*Sf) {
+          stop("Distance along forward path, ", sf, ", is greater than length of forward path, ", Sf, " ; Sf - sf=", Sf - sf)
+        }
+        if (sb - Sb > 1E-10*Sb) {
+          stop("Distance along forward path, ", sb, ", is greater than length of forward path, ", Sb, " ; Sb - sb=", Sb - sb)
+        }
         if (sf/Sf <= sb/Sb) {
           ## If forward point is behind backward point, project forward to
           ## backward path

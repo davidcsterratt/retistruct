@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.7.3 - Released 2020/09/12
+
+BUG FIXES
+
+* Fix regression that caused the stitching to fail on some retinae with depthmaps
+
 CHANGES IN VERSION 0.7.2 - Released 2020/08/31
 
 BUG FIXES
