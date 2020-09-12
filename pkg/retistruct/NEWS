@@ -4,9 +4,12 @@ BUG FIXES
 
 * Fix regression that caused the stitching to fail on some retinae with depthmaps
 
-NEW FEATURE
+NEW FEATURES
 
 * Determine the background value of depthmaps automatically
+
+* Allow minimum and maxium size of window for infering missing valus
+  in depthmaps to be specified
 
 CHANGES IN VERSION 0.7.2 - Released 2020/08/31
 

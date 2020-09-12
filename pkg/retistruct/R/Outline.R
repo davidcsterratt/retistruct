@@ -32,6 +32,10 @@ Outline <- R6Class("Outline",
     dm=NULL,
     ##' @field A.fragments Areas of fragments
     A.fragments = NULL,
+    ##' @field Mininum window size (in pixels) for inferring missing values in depthmaps
+    dm.inferna.window.min=10,
+    ##' @field Mininum window size (in pixels) for inferring missing values in depthmaps
+    dm.inferna.window.max=100,
     ##' @description Construct an outline object. This sanitises the
     ##'   input points \code{P}.
     ##' @param fragments A list of N-by-2 matrix of points for each fragment of the \code{Outline}
@@ -107,7 +111,9 @@ Outline <- R6Class("Outline",
     ##' @return Vector of unscaled Z coordinates of points P
     getDepth = function(P) {
       if (!is.null(self$dm)) {
-        Z <- interpolate.image(self$dm, P, invert.y=TRUE)
+        Z <- interpolate.image(self$dm, P, invert.y=TRUE,
+                               wmin=self$dm.inferna.window.min,
+                               wmax=self$dm.inferna.window.max)
       } else {
         Z <- rep(0, nrow(P))
       }

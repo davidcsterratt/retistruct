@@ -1288,7 +1288,9 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
   text(0.2*max(L), 0.2*max(L)*0.5, "25% compressed", col="blue",
                pos=4)
   text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
-               pos=2)
+       pos=2)
+  text(0.0*max(L), max(L), paste("Mean strain =", format(r$mean.strain, digits=3)),
+       pos=4)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just

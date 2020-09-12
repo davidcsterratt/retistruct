@@ -40,6 +40,19 @@ point (which will be to itself initially)}
 height of each pixel in Z-direction}
 
 \item{\code{A.fragments}}{Areas of fragments}
+
+\item{\code{Mininum}}{window size (in pixels) for inferring missing values in depthmaps}
+
+\item{\code{Mininum}}{window size (in pixels) for inferring missing values in depthmaps}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{Mininum}}{window size (in pixels) for inferring missing values in depthmaps}
+
+\item{\code{Mininum}}{window size (in pixels) for inferring missing values in depthmaps}
 }
 \if{html}{\out{</div>}}
 }

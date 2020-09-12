@@ -72,10 +72,11 @@ parse.dependencies <- function(deps) {
 ##' @param invert.y If \code{FALSE} (the default), the y coordinate is
 ##'   zero at the top of the image. \code{TRUE} the zero y coordinate
 ##'   is at the bottom.
-##' @param wmax maximum window size for interpolation of NA values
+##' @param wmin minimum window size for inferring NA values
+##' @param wmax maximum window size for inferring NA values
 ##' @return Vector of N interpolated values
 ##' @author David Sterratt
-interpolate.image <- function(im, P, invert.y=FALSE, wmax=100) {
+interpolate.image <- function(im, P, invert.y=FALSE, wmin=10, wmax=100) {
   N <- ncol(im)
   M <- nrow(im)
   x <- P[,1]
