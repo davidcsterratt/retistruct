@@ -56,9 +56,13 @@ read.depthmap <- function(dataset) {
       dmmarkup <- read.csv(dmmarkupfile)
       if ("Background.value" %in% colnames(dmmarkup)) {
         ## Set coords which have value of "Background" to NA - these will be extrapolated
-        dm[dm == dmmarkup[1, "Background.value"]] <- NA
+        bgval  <- dmmarkup[1, "Background.value"]
       }
+    } else {
+      bgval <- as.numeric(names(which.max(table(dm))))
+      warning("The background value has been determined to be ", bgval, ". To stop this warning, create a file depthmap.csv, with one column headed \"Background value\" and the value in the \"depthmap.tif\" that should be the background value")
     }
+    dm[dm == bgval] <- NA
   }
   return(dm)
 }
