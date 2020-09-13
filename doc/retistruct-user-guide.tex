@@ -260,7 +260,7 @@ directory as the image and ROI files. This file should contain two
 lines, the first with the heading \texttt{Scale} and the second with
 the length of the side of a pixel in micrometres. For example:
 \begin{verbatim}
-"XY"
+XY
 1.5
 \end{verbatim}
 Note that for compatibility with older versions of
@@ -289,7 +289,7 @@ looking at the closest depths that are in the foreground. To specify
 the background value, include a file \texttt{depthmap.csv}, in the
 following format:
 \begin{verbatim}
-"Background value"
+Background value
 0
 \end{verbatim}
 If there is no \texttt{depthmap.csv} in this format,
@@ -359,7 +359,7 @@ This is the same as the \textsc{ImageJ ROI} format, except that the
 outline is contained in the two columns of a file called
 \texttt{outline.csv}.  Each column should have a heading, e.g.:
 \begin{verbatim}
-"X", "Y"
+X,Y
 1,5
 10,76,
 ...
