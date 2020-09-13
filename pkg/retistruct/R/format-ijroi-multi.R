@@ -39,6 +39,9 @@ ijroimulti.read.dataset <- function(dataset) {
   ## If there is a depth map read it
   dm <- read.depthmap(dataset)
   if (!is.null(dm)) {
+    if (is.null(im)) {
+      stop("There is a depthmap (depthmap.tif) but no image (image.png)")
+    }
     if (!("Z" %in% names(scale))) {
       stop("\"Z\" must be specified in scale.csv when depthmap is present")
     }
