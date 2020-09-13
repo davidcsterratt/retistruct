@@ -11,6 +11,8 @@ The function \code{reconstruct} reconstructs outline
 }
 \author{
 David Sterratt
+
+David Sterratt
 }
 \section{Super class}{
 \code{\link[retistruct:OutlineCommon]{retistruct::OutlineCommon}} -> \code{ReconstructedOutline}
@@ -82,6 +84,8 @@ indices of the points linked by the edge}
 
 \item{\code{mean.logstrain}}{Mean log strain}
 
+\item{\code{titration}}{Titrated data structure, saved by \code{titrate}}
+
 \item{\code{debug}}{Debug function}
 }
 \if{html}{\out{</div>}}
@@ -105,6 +109,7 @@ indices of the points linked by the edge}
 \item \href{#method-reconstructFeatureSets}{\code{ReconstructedOutline$reconstructFeatureSets()}}
 \item \href{#method-getPoints}{\code{ReconstructedOutline$getPoints()}}
 \item \href{#method-mapFlatToSpherical}{\code{ReconstructedOutline$mapFlatToSpherical()}}
+\item \href{#method-titrate}{\code{ReconstructedOutline$titrate()}}
 \item \href{#method-clone}{\code{ReconstructedOutline$clone()}}
 }
 }
@@ -504,6 +509,40 @@ Return location of point on sphere corresponding
 \describe{
 \item{\code{P}}{Cartesian coordinates  on flat outline as a matrix
 with \code{X} and \code{Y} columns}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-titrate"></a>}}
+\if{latex}{\out{\hypertarget{method-titrate}{}}}
+\subsection{Method \code{titrate()}}{
+Try a range of values of phi0s in the reconstruction, recording the
+energy of the mapping in each case.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$titrate(
+  alpha = 8,
+  x0 = 0.5,
+  byd = 1,
+  len.up = 5,
+  len.down = 20
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{alpha}}{Area penalty scaling coefficient}
+
+\item{\code{x0}}{Area cutoff coefficient}
+
+\item{\code{byd}}{Increments in degrees}
+
+\item{\code{len.up}}{How many increments to go up from starting value of
+\code{phi0} in \code{r}.}
+
+\item{\code{len.down}}{How many increments to go up from starting value
+of \code{phi0} in \code{r}.}
 }
 \if{html}{\out{</div>}}
 }

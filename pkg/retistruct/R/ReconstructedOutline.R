@@ -78,6 +78,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     mean.strain = NULL,
     ##' @field mean.logstrain Mean log strain
     mean.logstrain = NULL,
+    ##' @field titration Titrated data structure, saved by \code{titrate}
+    titration = NULL,
     ##' @field debug Debug function
     debug = NULL,
 
@@ -759,9 +761,77 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       Pb$p   <- Pb$p[!oo,,drop=FALSE]
       Pb$idx <- Pb$idx[!oo]
       return(bary2sph(Pb, self$Tt, Ptc))
+    },
+    ##' @description Try a range of values of phi0s in the reconstruction, recording the
+    ##' energy of the mapping in each case.
+    ##' @param alpha Area penalty scaling coefficient
+    ##' @param x0 Area cutoff coefficient
+    ##' @param byd Increments in degrees
+    ##' @param len.up How many increments to go up from starting value of
+    ##' \code{phi0} in \code{r}.
+    ##' @param len.down How many increments to go up from starting value
+    ##' of \code{phi0} in \code{r}.
+    ##' @author David Sterratt
+    titrate=function(alpha=8, x0=0.5, byd=1,
+                     len.up=5, len.down=20) {
+      dat <- data.frame(phi0=self$phi0, sqrt.E=sqrt(self$E.l))
+      by <- byd*pi/180
+
+      ## Going up from phi0
+      message("Going up from phi0")
+      s <- self$clone()
+      sqrt.E.min <- sqrt(self$E.l)
+      r.opt <- self
+      phi0s <- self$phi0 + seq(by, by=by, len=len.up)
+      for (phi0 in phi0s)  {
+        message(paste("phi0 =", phi0*180/pi))
+        s$phi0 <- phi0
+        s$R <- sqrt(self$ol$A.tot/(2*pi*(sin(s$phi0) + 1)))
+        ## Stretch the mapping to help with optimisation
+        s$phi <- -pi/2 + (s$phi + pi/2)*(phi0 + pi/2)/(s$phi0 + pi/2)
+        s$optimiseMapping(alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+        sqrt.E <- sqrt(s$E.l)
+        dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
+        if (sqrt.E < sqrt.E.min) {
+          r.opt <- s
+        }
+      }
+
+      ## Going down from phi0
+      message("Going down from phi0")
+      s <- self$clone()
+      phi0s <- self$phi0 - seq(by, by=by, len=len.down)
+      for (phi0 in phi0s)  {
+        message(paste("phi0 =", phi0*180/pi))
+        s$phi0 <- phi0
+        s$R <- sqrt(self$ol$A.tot/(2*pi*(sin(s$phi0) + 1)))
+        ## Stretch the mapping to help with optimisation
+        s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+        s$optimiseMapping(alpha=alpha, x0=x0, nu=0.5,
+                             plot.3d=FALSE)
+        sqrt.E <- sqrt(s$E.l)
+        dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+        if (sqrt.E < sqrt.E.min) {
+          r.opt <- s
+        }
+      }
+      dat$phi0d <- dat$phi0*180/pi
+      dat <- dat[order(dat$phi0d),]
+      phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
+
+      ## Find mean difference between grid points
+      ## First map range of original positions onto
+      phi.adj <- -pi/2 + (self$phi + pi/2)*(phi0d.opt*pi/180+pi/2)/(self$phi0+pi/2)
+      Dtheta.mean <- mean(central.angle(phi.adj, self$lambda, r.opt$phi, r.opt$lambda)) * 180/pi
+
+      self$titration <- list(dat=dat, phi0d.orig=self$phi0*180/pi,
+                             phi0d.opt=phi0d.opt,
+                             r.opt=r.opt,
+                             Dtheta.mean=Dtheta.mean)
     }
   )
-  )
+)
                            
 
 

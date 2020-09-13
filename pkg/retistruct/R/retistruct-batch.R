@@ -89,10 +89,7 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
     flog <- file(logfile, open="wt")
     sink(flog)
     sink(flog, type="message")
-    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device
-                          ## ,
-                          ## titrate=titrate   ## FIXME: Issue #25: Titration
-                          ))
+    return(retistruct.cli(dataset, cpu.time.limit, outputdir, device, titrate=titrate))
   }
 
   ## Run the reconstructions

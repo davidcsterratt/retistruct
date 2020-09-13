@@ -53,6 +53,7 @@ David Sterratt
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="optimiseMappingCart">}\href{../../retistruct/html/ReconstructedOutline.html#method-optimiseMappingCart}{\code{retistruct::ReconstructedOutline$optimiseMappingCart()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="projectToSphere">}\href{../../retistruct/html/ReconstructedOutline.html#method-projectToSphere}{\code{retistruct::ReconstructedOutline$projectToSphere()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="reconstructFeatureSets">}\href{../../retistruct/html/ReconstructedOutline.html#method-reconstructFeatureSets}{\code{retistruct::ReconstructedOutline$reconstructFeatureSets()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="titrate">}\href{../../retistruct/html/ReconstructedOutline.html#method-titrate}{\code{retistruct::ReconstructedOutline$titrate()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="transformImage">}\href{../../retistruct/html/ReconstructedOutline.html#method-transformImage}{\code{retistruct::ReconstructedOutline$transformImage()}}\out{</span>}
 }
 \out{</details>}

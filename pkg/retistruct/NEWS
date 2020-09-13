@@ -4,6 +4,9 @@ BUG FIXES
 
 * Fix regression that caused the stitching to fail on some retinae with depthmaps
 
+* Titration reinstated
+  (https://github.com/davidcsterratt/retistruct/issues/29)
+
 NEW FEATURES
 
 * Determine the background value of depthmaps automatically
