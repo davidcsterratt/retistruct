@@ -95,6 +95,9 @@ If you encounter issues using Retistruct please either:
 
 ## Work using Retistruct
 
+* Tosetto, L., Williamson, J. E., White, T. E. and Hart, N. S. (2021) "Can the Dynamic Colouration and Patterning
+of Bluelined Goatfish (Mullidae; _Upeneichthys
+lineatus_) Be Perceived by Conspecifics?)". *Brain Behav. Evol.* [DOI: 10.1159/000519894](http://dx.doi.org/10.1159/000519894)
 * Sondereker, K. B., Stabio, M. E., Jamil, J. R., Tarchick, M. J. and Renna, J. M. (2018) "Where You Cut Matters: A Dissection and Analysis Guide for the Spatial Orientation of the Mouse Retina from Ocular Landmarks". *J Vis. Exp.*  138 [DOI: 10.3791/57861](http://dx.doi.org/10.3791/57861)
 * Stabio, M. E., Sondereker K. B., Haghgou S. D., Day, B. L., Chidsey, B., Sabbah, S. and Renna, J. M. (2018) "A novel map of the mouse eye for orienting retinal topography in anatomical space". 
 *J. Comp. Neurol.* __526__:1749-1759. [DOI: 10.1002/cne.24446](http://dx.doi.org/10.1002/cne.24446)
