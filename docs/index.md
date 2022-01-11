@@ -99,6 +99,7 @@ If you encounter issues using Retistruct please either:
 of Bluelined Goatfish (Mullidae; _Upeneichthys
 lineatus_) Be Perceived by Conspecifics?". *Brain Behav. Evol.* [DOI: 10.1159/000519894](http://dx.doi.org/10.1159/000519894)
 * Adelman, S. A., Oikawa, K., Senthilkumar, G., Trane, R. M., Teixeira, L.,  and McLellan, G. J. (2021). "Mapping retinal ganglion cell somas in a large-eyed glaucoma model". *Mol. vis.* 27, 608–621. [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8645189/)
+* Nadal-Nicolás, F. M., Kunze, V. P., Ball, J. M, Peng,  B. T., Krishnan, A., Zhou, G., Dong, L. and Li, W. "True S-cones are concentrated in the ventral mouse retina and wired for color detection in the upper visual field". *eLife* 9:e56840 [DOI: 10.7554/eLife.56840](http://dx.doi.org/10.7554/eLife.56840)
 * Sondereker, K. B., Stabio, M. E., Jamil, J. R., Tarchick, M. J. and Renna, J. M. (2018) "Where You Cut Matters: A Dissection and Analysis Guide for the Spatial Orientation of the Mouse Retina from Ocular Landmarks". *J Vis. Exp.*  138 [DOI: 10.3791/57861](http://dx.doi.org/10.3791/57861)
 * Stabio, M. E., Sondereker K. B., Haghgou S. D., Day, B. L., Chidsey, B., Sabbah, S. and Renna, J. M. (2018) "A novel map of the mouse eye for orienting retinal topography in anatomical space". 
 *J. Comp. Neurol.* __526__:1749-1759. [DOI: 10.1002/cne.24446](http://dx.doi.org/10.1002/cne.24446)
@@ -106,7 +107,7 @@ lineatus_) Be Perceived by Conspecifics?". *Brain Behav. Evol.* [DOI: 10.1159/00
   Borovac, J. A., Cohn, B. A. and Schmitz, L. (2016) "Eye Histology
   and Ganglion Cell Topography of Northern Elephant Seals (Mirounga
   angustirostris)" <em>Anat. Rec.  (Hoboken)</em>
-  <strong>6</strong>:&nbsp;798-805. <a
+  <strong>6</strong>:&nbsp798-805. <a
   href="http://dx.doi.org/10.1002/ar.23342">DOI: 10.1002/ar.23342</a>
 * Cohn, B. A., Collin, S. P., Wainwright, P. C. and Schmitz,
   L. (2015) "Retinal topography maps in R: new tools for the analysis
