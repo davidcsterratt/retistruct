@@ -28,8 +28,7 @@ install.packages("devtools")
 To use the graphical user interface of Retistruct, you will need to
 install the GTK libraries as follows:
 
-* Mac: using this guidance
-  https://github.com/davidcsterratt/retistruct/issues/4
+* Mac: using [this guidance](https://github.com/davidcsterratt/retistruct/issues/4)
 * Ubuntu Linux:
   ```
   sudo apt-get install r-base r-base-dev libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev
