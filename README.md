@@ -38,7 +38,7 @@ Then install three R packages, as follows:
 ```
 devtools::install_github('https://github.com/lawremi/cairoDevice')
 devtools::install_github('https://github.com/lawremi/RGtk2/RGtk2', subdir='RGtk2')
-devtools::install_github('https://github.com/jverzani/gWidgets2RGtk2', force=TRUE
+devtools::install_github('https://github.com/jverzani/gWidgets2RGtk2', force=TRUE)
 ```
 
 Then, do one of the following from the R console:
