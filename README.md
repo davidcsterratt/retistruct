@@ -18,13 +18,18 @@ Installation from Github
 Retistruct is currently not installable from CRAN, as described on the
 [Retistruct homepage](http://davidcsterratt.github.io/retistruct/). In
 addition, a number of the packages on which Retistruct depends are no
-longer on CRAN.
+longer on CRAN. Therefore, you need to install from Github.
 
-Therefore, you need install from Github. First, from the R console,
-make sure the `devtools` package is installed:
+## Install the `devtoools` package to enable installation from Github
+
+First, from the R console, install the `devtools` package by typing:
 ```
 install.packages("devtools")
 ```
+followed by `Return`. This command will take some time to run, as it has to install a number of packages that it depends on.
+
+## Install the requirements for the graphical user interface (GUI)
+
 To use the graphical user interface of Retistruct, you will need to
 install the GTK libraries as follows:
 
@@ -40,6 +45,8 @@ devtools::install_github('https://github.com/lawremi/cairoDevice')
 devtools::install_github('https://github.com/lawremi/RGtk2/RGtk2', subdir='RGtk2')
 devtools::install_github('https://github.com/jverzani/gWidgets2RGtk2', force=TRUE)
 ```
+
+## Install Retistruct
 
 Then, do one of the following from the R console:
 
