@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.7.4 - Released 2023/02/04
+
+BUG FIX
+
+* Renamed deprecated rgl.*functions,
+  which were causing a crash in the GUI
+
 CHANGES IN VERSION 0.7.3 - Released 2020/09/12
 
 BUG FIXES
