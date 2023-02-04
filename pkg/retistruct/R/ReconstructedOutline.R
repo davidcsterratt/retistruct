@@ -1381,7 +1381,7 @@ sphericalplot.ReconstructedOutline <- function(r,
   ## Obtain Cartesian coordinates of points
   Ps <- r$getPoints()
   P <- sphere.spherical.to.sphere.cart(Ps)
-  rgl.clear()
+  clear3d()
   if (surf) {
     ## Outer triangles
     fac <- 1.005
@@ -1407,16 +1407,16 @@ sphericalplot.ReconstructedOutline <- function(r,
 
   ht <- r$ht
   gb <- r$ol$gb
-  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-            lwd=3, color=getOption("TF.col"))
+  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+          lwd=3, color=getOption("TF.col"))
   
   fac <- 1.006
-  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-            lwd=3, color=getOption("TF.col"))
+  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+          lwd=3, color=getOption("TF.col"))
 
   if (strain) {
     o <- r$getStrains()

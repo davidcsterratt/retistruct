@@ -39,8 +39,8 @@ sphericalplot <- function(r, ...) {
 
 ##' @export
 sphericalplot.default <- function(r, ...) {
-  rgl.clear()
-  rgl.bg(color="white")
+  clear3d()
+  bg3d(color="white")
 }
 
 ##' Draw the "flat" outline in 3D with depth information 

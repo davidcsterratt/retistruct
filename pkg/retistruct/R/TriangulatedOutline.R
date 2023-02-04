@@ -112,7 +112,7 @@ flatplot.TriangulatedOutline <- function(x, axt="n",
 ##' @method depthplot3D TriangulatedOutline
 ##' @export
 depthplot3D.TriangulatedOutline <- function(r, ...) {
-  rgl.clear()
+  clear3d()
   if (nrow(r$T) == 0) {
     warning("Outline not yet triangulated - no depthplot will show")
   }
