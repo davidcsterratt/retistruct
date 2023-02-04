@@ -21,7 +21,7 @@ retistruct.cli.process(
 
 \item{titrate}{Whether to titrate or not}
 
-\item{matlab}{Whether to save to matlab or not}
+\item{matlab}{Whether to save to MATLAB or not}
 }
 \description{
 This function processes a \code{dataset}, saving the

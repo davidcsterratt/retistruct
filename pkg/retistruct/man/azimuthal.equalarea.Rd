@@ -25,7 +25,7 @@ projection being the South Pole. The MathWorld equations are for
 the more general case.
 }
 \references{
-\url{http://en.wikipedia.org/wiki/Map_projection},
+\url{https://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html}
 Fisher, N. I., Lewis, T., and Embleton,
 B. J. J. (1987). Statistical analysis of spherical data. Cambridge

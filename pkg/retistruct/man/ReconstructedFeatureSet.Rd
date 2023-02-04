@@ -24,25 +24,25 @@ David Sterratt
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{ReconstructedFeatureSet$new()}}
-\item \href{#method-clone}{\code{ReconstructedFeatureSet$clone()}}
+\item \href{#method-ReconstructedFeatureSet-new}{\code{ReconstructedFeatureSet$new()}}
+\item \href{#method-ReconstructedFeatureSet-clone}{\code{ReconstructedFeatureSet$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getCol'><code>retistruct::FeatureSetCommon$getCol()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeature'><code>retistruct::FeatureSetCommon$getFeature()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeatures'><code>retistruct::FeatureSetCommon$getFeatures()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIDs'><code>retistruct::FeatureSetCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIndex'><code>retistruct::FeatureSetCommon$getIndex()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-setID'><code>retistruct::FeatureSetCommon$setID()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-ReconstructedFeatureSet-new"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedFeatureSet-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -61,8 +61,8 @@ set should be mapped}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-ReconstructedFeatureSet-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedFeatureSet-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

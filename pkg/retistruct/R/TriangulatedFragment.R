@@ -4,7 +4,8 @@
 ##'   triangulated mesh over an fragment, and fields to hold the mesh
 ##'   information.
 ##' @import ttutils
-##' @importFrom geometry Unique 
+##' @importFrom geometry Unique
+##' @importFrom RTriangle pslg
 ##' @author David Sterratt
 ##' @export
 TriangulatedFragment <- R6Class("TriangulatedFragment",

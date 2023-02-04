@@ -708,7 +708,7 @@ sphere.cart.to.sphere.dualwedge <- function(P, phi0, R=1) {
 ##' @param phi2 Latitude of second point
 ##' @param lambda2 Longitude of second point
 ##' @return Central angle
-##' @source Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
+##' @source Wikipedia \url{https://en.wikipedia.org/wiki/Central_angle}
 ##' @author David Sterratt
 ##' @export
 central.angle <- function(phi1, lambda1, phi2, lambda2) {

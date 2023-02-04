@@ -765,7 +765,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @description Try a range of values of phi0s in the reconstruction, recording the
     ##' energy of the mapping in each case.
     ##' @param alpha Area penalty scaling coefficient
-    ##' @param x0 Area cutoff coefficient
+    ##' @param x0 Area cut-off coefficient
     ##' @param byd Increments in degrees
     ##' @param len.up How many increments to go up from starting value of
     ##' \code{phi0} in \code{r}.

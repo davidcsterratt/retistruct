@@ -40,14 +40,14 @@ David Sterratt
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Magnifier$new()}}
-\item \href{#method-devSet}{\code{Magnifier$devSet()}}
-\item \href{#method-clone}{\code{Magnifier$clone()}}
+\item \href{#method-Magnfier-new}{\code{Magnifier$new()}}
+\item \href{#method-Magnfier-devSet}{\code{Magnifier$devSet()}}
+\item \href{#method-Magnfier-clone}{\code{Magnifier$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Magnfier-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Magnfier-new}{}}}
 \subsection{Method \code{new()}}{
 Magnifier constructor
 \subsection{Usage}{
@@ -67,8 +67,8 @@ Magnifier constructor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-devSet"></a>}}
-\if{latex}{\out{\hypertarget{method-devSet}{}}}
+\if{html}{\out{<a id="method-Magnfier-devSet"></a>}}
+\if{latex}{\out{\hypertarget{method-Magnfier-devSet}{}}}
 \subsection{Method \code{devSet()}}{
 Set the graphics device to the device contained in the
 magnifier
@@ -78,8 +78,8 @@ magnifier
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Magnfier-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Magnfier-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -45,7 +45,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
 ##' @param outputdir Directory in which to save any figures
 ##' @param device String representing device to print figures to
 ##' @param titrate Whether to titrate or not
-##' @param matlab Whether to save to matlab or not
+##' @param matlab Whether to save to MATLAB or not
 ##' @author David Sterratt
 ##' @export
 retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",

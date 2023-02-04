@@ -38,7 +38,7 @@ Two-column matrix with columns labelled \code{x} and
 Sinusoidal projection
 }
 \references{
-\url{http://en.wikipedia.org/wiki/Map_projection},
+\url{https://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/SinusoidalProjection.html}
 }
 \author{
