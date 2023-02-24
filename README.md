@@ -64,8 +64,8 @@ Then, do one of the following from the R console:
 
 * To install the current stable version, use the R devtools package
    like this: ```
-   devtools::install_github("davidcsterratt/retistruct@v0.6.2",
-   subdir="pkg/retistruct") ``` You will need to replace `0.6.2` with
+   devtools::install_github("davidcsterratt/retistruct@v0.6.4",
+   subdir="pkg/retistruct") ``` You will need to replace `0.6.4` with
    the version number of the latest release.
 
 Roadmap
