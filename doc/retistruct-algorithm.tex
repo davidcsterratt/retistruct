@@ -14,6 +14,8 @@
 \newcommand{\Ed}{\ensuremath{E_\mathrm{d}}\xspace}
 \newcommand{\p}{\vec{p}}
 \newcommand{\q}{\vec{q}}
+
+\newcommand{\dif}{\textup{d}}
 \renewcommand{\vec}[1]{\mathbf{#1}}
 
 \title{Formal definition of Retistruct algorithm}
@@ -59,7 +61,7 @@ represented as vectors $\vec{g}^+$ and $\vec{g}^-$:
 
 A triangular mesh with the set of points $\mathcal{P}$ as its boundary
 is created using the conforming Delaunay triangulation algorithm
-provided by the Triangle package \citep{shewchuk96b}. By summing the
+provided by the Triangle package \citep{Shewchuk1996}. By summing the
 areas of the triangles in this rough triangulation, the total area $A$
 of the retina is computed. The retina is then triangulated again into
 at least $n=200$ triangles, by using the conforming Delaunay
@@ -69,7 +71,7 @@ by no larger than $A/n$, and and with Ruppert's
 any triangle is no less than $20^\circ$.
 
 The triangulation comprises $M$ triangles and is described by an
-$M\times3$ matrix $\mathbf{T}$, where each row contains the indicies
+$M\times3$ matrix $\mathbf{T}$, where each row contains the indices
 of the points in the triangle in anticlockwise order.
 
 The area $a_i$ of each triangle is computed:
@@ -80,7 +82,7 @@ The area $a_i$ of each triangle is computed:
 
 \begin{enumerate}
 \item From the triangulation $\mathbf{T}$ the set $\mathcal{C}$ of pairs of
-  indicies representing line segments is constructed.
+  indices representing line segments is constructed. 
 \item For the morphing algorithm, it is essential that no line segment
   connects non-adjacent nodes in the rim $\mathcal{R}$. Such line
   segments may be created by the triangulation. To detect such line
@@ -100,12 +102,25 @@ The area $a_i$ of each triangle is computed:
   \end{itemize}
 \end{enumerate}
 
-The connection set is converted into $\mathbf{C}$, a symmetric,
-binary-valued matrix that defines if there is a connection between $i$
-and $j$.  
+% The connection set is converted into $\mathbf{C}$, a symmetric,
+% binary-valued matrix that defines if there is a connection between $i$
+% and $j$.  
 
-The distances $L_{ij}$ are between grid points on the flattened retina
-are computed.
+% The distances $L_{ij}$ are between grid points on the flattened retina
+% are computed.
+
+The connection set is converted into $\mathbf{C}$ a matrix with two
+columns in which each row contains the indices of the connected
+points $i$ and $j$. There is one row for each direction of the
+connection. For example if point with index 3 and point with index 5
+are connected, there would be two rows:
+\begin{displaymath}
+  \begin{array}{cc}
+    3 & 5 \\
+    5 & 3
+  \end{array}
+\end{displaymath}
+There are $M$ rows in $\mathbf{C}$.
 
 \subsection{Stitching algorithm}
 \label{fold-sphere:sec:stitching-algorithm}
@@ -198,7 +213,7 @@ is computed:
 \end{displaymath}
 The node $k$ in the corresponding tear is the node which has the node
 with the highest fractional distance $s^-_{jk}=\mathrm{pl}(A_j, k,
-\vec{g}^-, \vec{h}^-, \mathcal{P})$ along the - tear which is still below
+\vec{g}^-, \vec{h}^-, \mathcal{P})$ along the $-$ tear which is still below
 $s^+_{ji}$. The location of the new point is
 \begin{displaymath}
   \vec{p}_n = (1-f)\vec{p}_k + f\vec{p}_{g^-_k}
@@ -223,10 +238,10 @@ A similar procedure is carried out for the $-$ tear.
 
 After this procedure, it is possible that there may be chains of
 correspondences where, for example, $i$ corresponds to $h_i$ and $h_i$
-correspondences to a different point $h_{h_i}$. These three points are in
+corresponds to a different point $h_{h_i}$. These three points are in
 fact actually one, but to indicate this, both $h_i$ and $i$ should
-point to $h_{h_i}$.  It order to ensure this, the correspondence
-vector is updated iteratively:
+point to $h_{h_i}$. It order to ensure this, the correspondence vector
+is updated iteratively:
 \begin{displaymath}
   h^{k+1}_i = h^k_{h^k_i}  
 \end{displaymath}
@@ -242,50 +257,60 @@ to as $\vec{h}$.
 \label{fold-sphere:sec:proj-onto-hemisph}
 
 When the points are projected onto the hemisphere, the points which
-have the stitching algorithm has identified as corresponding with each
+the stitching algorithm has identified as corresponding with each
 other are merged. This results in a new set of points, which is a
 subset of the existing set of points created by the triangulation and
 stitching operations. It is desirable to renumber this set of points
-consecutively starting at 1. In order to do this, 
-\begin{itemize}
+consecutively starting at 1. In order to do this, the following steps
+are undertaken:
+\begin{enumerate}
 \item An ordered set $\mathcal{U}$ of the unique values of the range
   of $h$ is formed. $\mathcal{U}$ has $\tilde N$ elements. The mapping
-  $u: \{1,\dots, \tilde N\} \rightarrow \mathcal{U}$ maps the new index
-  to the old index.
+  $u: \{1,\dots, \tilde N\} \rightarrow \mathcal{U}$ maps the new
+  index to the old index. This this is a one-to-one mapping, $u$ is an
+  invertable function.
 \item A transformed set of points $\mathcal{\tilde P}$ is formed by
   setting $\tilde{\vec{p}}_i = \vec{p}_{u_i}$
-\item A new mapping $\tilde h$ from the existing indicies to a
-  new set of unique indicies is formed:
+\item A new mapping $\tilde h$ from the existing indices to a
+  new set of unique indices is formed:
   \begin{displaymath}
     \tilde h_i = j:u_j = h_i \quad
     \tilde h(i) = u^{-1}(h(u(i)))
   \end{displaymath}
 \item A transformed triangulation $\tilde{\mathbf{T}}$ is derived from
   $\mathbf{T}$, by setting $\tilde{T}_{ij} = \tilde h_{T_{ij}}$
-\end{itemize}
+\item A transformed rim set $\mathcal{\tilde R}$ is obtained by using
+  $\tilde h_i$ to map every point $i$ in the the original rim set
+  $\mathcal{R}$, formally: $\mathcal{\tilde R}: \{\tilde h_i
+  \quad\forall i \in \mathcal{R}\} $
+\end{enumerate}
 
-It is also necessary to transform the indicies used by the edge sets
-and determine correspondences between edges which have been merged. 
-\begin{itemize}
-\item A mapping $\vec{H}$ between connections (as opposed to points)
-  is formed by 
+It is also necessary to transform the indices used by the edge sets
+and determine correspondences between edges which have been merged. A
+mapping $H$ between connections (as opposed to points) is formed by
+the following steps:
+\begin{enumerate}
 \item A transformed set of edges is formed by setting $C'_{ij} =
   \tilde h(C_{ij})$. A number of the rows of this matrix contain
-  identical elements to each other. A mapping $H$ from each rows of
-  this matrix the corresponding row. This is analogous to the mapping
-  $h$ for points. Mappings $\tilde{H}$ and $U$ are formed
-  analogously to $\tilde{h}$ and $u$.
+  identical elements to each other. There is a mapping $H$ from each
+  row of $\mathbf{C}$ to the corresponding row of $\mathbf{C'}$. This
+  is analogous to the mapping $h$ for points. Mappings $\tilde{H}$ and
+  $U$ are formed analogously to $\tilde{h}$ and $u$.
 \item The final connection matrix $\tilde{\mathbf{C}}$ is formed using
-  $\vec{U}$ and $\mathbf{C}'$: $\tilde C_{ij} = C'_{U_ij}$. The number
+  $U$ and $\mathbf{C}'$: $\tilde C_{ij} = C'_{u_iu_j}$. The number
   of rows in $\tilde{\mathbf{C}}$ is $\tilde M$.
-\item New $\tilde L_k = \frac{1}{|\mathcal{H}_k|}
-  \sum_{i\in\mathcal{H}_k} L_i$ where $\mathcal{H}_k = i: k=H_k$. 
+\item The flattened lengths of most connections in stitched space
+  remains the same as before. However connections that are matched to
+  each other (along cuts) will have two original lengths, so we
+  average these: $\tilde L_k = \frac{1}{|\mathcal{H}_k|}
+  \sum_{i\in\mathcal{H}_k} L_i$ where $\mathcal{H}_k = i: k=H_k$.
 \item In order to compute derivatives efficiently later on in the
-  procedure, a we form a $\tilde N$ by $2\tilde M$ matrix
+  procedure, a we form a $\tilde N$ by $\tilde M$ matrix
   $\tilde{\mathbf{B}}$ which maps by setting $\tilde B_{\tilde
-    C_{k1}k} = 1$ and $\tilde B_{\tilde C_{k2}k} = 1$ for all
+    C_{k1}k} = 1$ % and $\tilde B_{\tilde C_{k2}k} = 1$
+  for all
   $k=1\dots \tilde M$.
-\end{itemize}
+\end{enumerate}
 
 The total area $a_\mathrm{tot}$ of the retina is computed by summing the areas of
 individual triangles:
@@ -319,7 +344,149 @@ $E_\mathrm{A}$:
   & + \alpha E_\mathrm{A}(\phi_1,\dots,\phi_N,\lambda_1,\dots,\lambda_N) 
   \end{split}
 \end{equation}
+We will use an optimisation algorithm to find the set of values of
+$\phi_i$ and $\lambda_i$ that minimise the energy.
 
+The points on the rim are special cases. One of the points on the rim
+is fixed to be in a known position on the eye (e.g.~the nasal or
+dorsal position). We denote the index of this point $i_0$, and fix the
+value of of its longitude $\lambda_{i_0}$. We can make two assumptions
+about the lattitude of the points on the rim:
+\begin{enumerate}
+\item Fixed rim angle: For the points on the rim (i.e.~$i \in
+  \mathcal{\tilde R}$), $\phi_i$ is fixed to the value $\phi_0$
+  supplied by the user, so we will not give it as a parameter to the
+  optimisation algorithm.
+\item Variable rim angle: For the points on the rim (i.e.~$i \in
+  \mathcal{\tilde R}$), all $\phi_i$ have the same value $\phi_0$,
+  which can vary, and should therefore be a parameter passed to the
+  optimisation algorithm.
+\end{enumerate}
+
+To minimise $E$ we will use optimisation algorithms that require the
+gradient of the energy with respect to $\phi_i$ and $\lambda_i$. In
+the next sections we will compute these derivatives.
+
+\subsubsection{Transformation between spherical coordinates and Cartesian
+  coordinates on the sphere}
+\label{retistruct-algorithm:sec:transf-betw-spher}
+
+It turns out that we can simplify the caluculations by:
+\begin{enumerate}
+\item Converting the spherical coordinates of each $(\phi_i, \lambda_i)$ to
+   Cartesian coordinates $(x_i, y_i, z_i)$
+ \item Calculating the partial derivatives of $\EE$ and $\EA$ with
+   respect to $x_i$, $y_i$ and $z_i$
+ \item Using the chain rule to compute the derivatives of $E$ with
+   respect to $\phi_i$ and $\lambda_i$, and, if the rim angle varies,
+   $\phi_0$:
+\begin{equation}
+  \begin{split} 
+  \frac{\partial\EE}{\partial \phi_i} &  =
+  \frac{\partial\EE}{\partial x_i}\frac{\partial x_i}{\partial
+    \phi_i}
+  +   \frac{\partial\EE}{\partial y_i}\frac{\partial y_i}{\partial
+    \phi_i}
+    +   \frac{\partial\EE}{\partial z_i}\frac{\partial z_i}{\partial
+    \phi_i} \\
+  \frac{\partial\EE}{\partial \lambda_i} &  =
+  \frac{\partial\EE}{\partial x_i}\frac{\partial x_i}{\partial
+    \lambda_i}
+  +   \frac{\partial\EE}{\partial y_i}\frac{\partial y_i}{\partial
+    \lambda_i}
+    +   \frac{\partial\EE}{\partial z_i}\frac{\partial z_i}{\partial
+      \lambda_i} \\
+    \frac{\partial\EE}{\partial \phi_0} &  =
+  \frac{\partial\EE}{\partial x_i}\frac{\partial x_i}{\partial
+    \phi_0}
+  +   \frac{\partial\EE}{\partial y_i}\frac{\partial y_i}{\partial
+    \phi_0}
+    +   \frac{\partial\EE}{\partial z_i}\frac{\partial z_i}{\partial
+    \phi_0}
+  \end{split}
+\end{equation}
+\end{enumerate}
+In this section we will describe the cooridaite transformation and
+compute the derivatives of the Cartesian coordinates with respect to
+the spherical coordinates.
+
+To transform from spherical coordiates to Cartesian coordinates we us
+the transformation:
+\begin{equation}
+  \vec{p}_i = 
+  \label{retistruct-algorithm:eq:1}
+  \left(
+    \begin{array}{c}
+    x_i\\ y_i\\ z_i
+    \end{array}
+  \right) =
+  R\left(
+    \begin{array}{c}
+      \cos\phi_i\cos\lambda_i \\
+      \cos\phi_i\sin\lambda_i\\
+      \sin\phi_i 
+    \end{array}\right)
+\end{equation}
+The deriviatives of the Cartesian coordinates with respect to the
+longitude and latitude are:
+\begin{equation}
+  \frac{\partial\vec{p}_i}{\partial\phi_i} = 
+  \left(
+    \begin{array}{c}
+    \frac{\partial x_i}{\partial\phi_i}\\ \frac{\partial y_i}{\partial\phi_i}\\ \frac{\partial z_i}{\partial\phi_i}
+    \end{array}
+  \right) =
+  R\left(
+    \begin{array}{c}
+      -\sin\phi_i\cos\lambda_i \\
+      -\sin\phi_i\sin\lambda_i\\
+      \cos\phi_i 
+    \end{array}\right)
+\end{equation}
+\begin{equation}
+  \frac{\partial\vec{p}_i}{\partial\lambda_i} = 
+  \left(
+    \begin{array}{c}
+    \frac{\partial x_i}{\partial\lambda_i}\\ \frac{\partial y_i}{\partial\lambda_i}\\ \frac{\partial z_i}{\partial\lambda_i}
+    \end{array}
+  \right) =
+  R\left(
+    \begin{array}{c}
+      -\cos\phi_i\sin\lambda_i \\
+      \cos\phi_i\cos\lambda_i\\
+      0
+    \end{array}\right)
+\end{equation}
+If the rim angle is also allowed to vary, we also need the derivative
+with respect to $\phi_0$, which we can obtain by using the product
+rule:
+\begin{equation}
+  \frac{\partial\vec{p}_i}{\partial\phi_0} = 
+  \left(
+    \begin{array}{c}
+      \frac{\partial x_i}{\partial\lambda_i}\\ \frac{\partial y_i}{\partial\phi_i}\\ \frac{\partial z_i}{\partial\phi_i}
+    \end{array}
+  \right) =
+  \frac{\partial R}{\partial \phi_0}\left(
+    \begin{array}{c}
+      \cos\phi_i\cos\lambda_i \\
+      \cos\phi_i\sin\lambda_i \\
+      \sin\phi_i 
+    \end{array}\right)
+  +
+  R\frac{\partial\phi_i}{\partial\phi_0}\left(
+    \begin{array}{c}
+      -\sin\phi_i\cos\lambda_i \\
+      -\sin\phi_i\sin\lambda_i \\
+      \cos\phi_i 
+    \end{array}\right)
+\end{equation}
+Changing $\phi_0$ changes the radius $R$
+(Equation~\ref{fold-sphere:eq:1}), which affects \emph{all} points
+(the first term above). Changing $\phi_0$ also affects the latitudes
+of the points on the rim, for which $\phi_i=\phi_0$. For these points
+$\frac{\partial \phi_i}{\partial\phi_0}=1$, but for all other points
+$\frac{\partial \phi_i}{\partial\phi_0}=0$.
 
 \subsubsection{The elastic energy}
 \label{fold-sphere:sec:elastic-force}
@@ -337,96 +504,185 @@ flattened retina, $\tilde L_k$:
     L_k)^2}{\tilde L_k}
 \end{equation}
 where $\tilde l_k$ is the distance of the $k$th edge between grid points on
-the sphere and is given by the formula for the central angle:
+the sphere and is given by:
 \begin{equation}
   \label{fold-sphere:eq:2}
-  \tilde l_k = R\cos^{-1}(\cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) + \sin\phi_i\sin\phi_j)
+  \tilde l_k = 2R\arcsin\left(\frac{\sqrt{(x_i-x_j)^2 + (y_i-y_j)^2 + (z_i-z_j)^2}}{2R}\right)
 \end{equation}
 where $i=\tilde C_{k1}$ and $j=\tilde C_{k2}$.  Minimising this energy
 function should lead to the distances between neighbouring points on
 the sphere being similar to the corresponding distances on the
 flattened retina.
 
-In order to minimise the function efficiently, the derivatives with
-respect to $\phi_i$ and $\lambda_i$ are found:
+% We aim to find the derivative of the elastic energy with respect to the
+% Cartesian coordinates $\partial \EE/\partial x_i$, $\partial
+% \EE/\partial y_i$ and $\partial \EE/\partial z_i$, and then use the
+% chain rule to find the derivative of the elastic energy with respect
+% to the latitude and longitude:
+% \begin{equation}
+%   \label{retistruct-algorithm:eq:6}
+%   \begin{split} 
+%   \frac{\partial\EE}{\partial \phi_i} &  =
+%   \frac{\partial\EE}{\partial x_i}\frac{\partial x_i}{\partial
+%     \phi_i}
+%   +   \frac{\partial\EE}{\partial y_i}\frac{\partial y_i}{\partial
+%     \phi_i}
+%     +   \frac{\partial\EE}{\partial z_i}\frac{\partial z_i}{\partial
+%     \phi_i} \\
+%   \frac{\partial\EE}{\partial \lambda_i} &  =
+%   \frac{\partial\EE}{\partial x_i}\frac{\partial x_i}{\partial
+%     \lambda_i}
+%   +   \frac{\partial\EE}{\partial y_i}\frac{\partial y_i}{\partial
+%     \lambda_i}
+%     +   \frac{\partial\EE}{\partial z_i}\frac{\partial z_i}{\partial
+%     \lambda_i}
+%   \end{split}
+% \end{equation}
+
+We compute $\frac{\partial\EE}{\partial x_i}$ using the chain rule:
 \begin{equation}
-  \label{fold-sphere:eq:3}
+  \label{retistruct-algorithm:eq:7}
   \begin{split}
-    \frac{\partial \EE}{\partial\phi_i} = 
-    \sum_j C_{ij} (l_{ij} - L_{ij})R
-    \frac{\sin\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) - \cos\phi_i\sin\phi_j}
-    {\sqrt{1-(\sin\phi_i\sin\phi_j +
-        \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}} \\
-    \frac{\partial \EE}{\partial\lambda_i} = 
-    \sum_j C_{ij} (l_{ij} - L_{ij})R
-    \frac{\cos\phi_i\cos\phi_j\sin(\lambda_i-\lambda_j)}
-    {\sqrt{1-(\sin\phi_i\sin\phi_j + \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}}
+    \frac{\partial\EE}{\partial x_i} & = \frac{\partial}{\partial x_i}
+    \frac{1}{2} \sum_{k=1}^{\tilde M} \frac{(\tilde l_k- \tilde
+      L_k)^2}{\tilde L_k} \\
+    & = 
+    \frac{1}{2} \sum_{k=1}^{\tilde M} \frac{\partial \tilde l_k}{\partial
+      x_i} \frac{\partial }{\partial \tilde l_k}\frac{(\tilde l_k- \tilde
+      L_k)^2}{\tilde L_k} \\
+       & = 
+       \sum_{k=1}^{\tilde M} \frac{\partial \tilde l_k}{\partial
+      x_i} \frac{(\tilde l_k- \tilde
+      L_k)}{\tilde L_k}
   \end{split}
 \end{equation}
-A quasi-Newton-Raphson method is then used in R to achieve this
-optimisation, and the resulting grid on the sphere is plotted in 3D
-(Figure~\ref{fold-sphere:fig:test2}).
+
+We now need to compute $\frac{\partial \tilde l_k}{\partial x_i}$.
+There are two cases to consider:
+\begin{enumerate}
+\item If point $i$ is not one of the points at either end of link $k$
+  (i.e.~if $i \ne C_{k1}$) then changing the value
+  of $x_i$ has no effect on $\tilde l_k$ and so
+  $\frac{\partial \tilde l_k}{\partial x_i}=0$
+\item If point $i$ is one of the points at either end of link $k$
+  (i.e.~if $i = C_{k1}$) then changing the value of $x_i$ affects
+  $\tilde l_k$ and so $\frac{\partial \tilde l_k}{\partial x_i}$ can
+  be non-zero. We will assume $i=C_{k1}$ and $j=C_{k2}$. Setting:
+\begin{equation}
+  \label{retistruct-algorithm:eq:2}
+  v_k = \frac{\sqrt{(x_i-x_j)^2 + (y_i-y_j)^2 + (z_i-z_j)^2}}{2R}
+\end{equation}
+we can write the length \emph{over the surface of the sphere} as:
+\begin{equation}
+  \label{retistruct-algorithm:eq:8}
+  \tilde l_k = 2R\arcsin v_k
+\end{equation}
+We then use the chain rule to differentiate $ \tilde l_k$ with respect
+to each of the coordinates:
+\begin{equation}
+  \begin{split}
+    \label{retistruct-algorithm:eq:4}
+    \frac{\partial \tilde l_k}{\partial x_i} & = 2R \frac{\partial
+      v}{\partial x_i}\frac{\dif}{\dif v_k}\arcsin u_
+    \quad \mbox{using the chain rule} \\
+    & = 2R \frac{\partial
+      v_k}{\partial x_i}\frac{1}{\sqrt{1-v_k^2}} \quad \mbox{derivative of
+      $\arcsin v_k$} \\
+    & = 2R \frac{1}{2R}\frac{2(x_i-x_j)}{2\sqrt{(x_i-x_j)^2 +
+        (y_i-y_j)^2 + (z_i-z_j)^2}}\frac{1}{\sqrt{1-v_k^2}} \\
+    & = \frac{(x_i-x_j)}{2Rv_k}\frac{1}{\sqrt{1-v_k^2}}
+  \end{split}
+\end{equation}
+It turns out that using this derivative in an optimisation algorithm
+leads to the algorithm becoming unstable, and that it is sufficient to
+approximate the derivative by assuming that (a)~$v$ is close to zero,
+which should be true because the the connections on the sphere only
+subtend a small angle and (b)~$Rv_k\approx \tilde l_k \approx \tilde
+L_k$, which holds because the the angle is small (so $v_k\approx
+\arcsin v_k$ and the relaxed length should be similar to the original
+length. Thus the derivative can be approximated to:
+\begin{equation}
+  \label{retistruct-algorithm:eq:10}
+  \frac{\partial \tilde l_k}{\partial x_i} \approx
+  \frac{(x_i-x_j)}{\tilde L_k}
+\end{equation}
+\end{enumerate}
+Substituting Equation~\ref{retistruct-algorithm:eq:10} into
+Equation~\ref{retistruct-algorithm:eq:7} for all links $k$ where point
+$i$ is the first point in the connection pair leads to:
+\begin{equation}
+  \label{retistruct-algorithm:eq:9}
+  \begin{split}
+    \frac{\partial\EE}{\partial x_i} & = \sum_{k: C_{k1} = i}
+      \frac{(x_i-x_{C_{k2}})}{\tilde L_k}
+    \frac{(\tilde l_k- \tilde L_k)}{\tilde L_k}
+  \end{split}
+\end{equation}
+
+\end{enumerate}
+We can apply the same principle to find the derivatives with respect
+to $y_i$ and $z_i$ (here assuming case (2) above, that connection $k$
+connects point $i$ to point $j$):
+\begin{equation}
+  \left(
+    \begin{array}{c}
+      \frac{\partial \tilde l_k}{\partial x_i} \\
+      \frac{\partial \tilde l_k}{\partial y_i} \\
+      \frac{\partial \tilde l_k}{\partial z_i}
+    \end{array}
+  \right) \approx
+  \frac{1}{\tilde L_k}
+  \left(
+  \begin{array}{c}
+    x_i-x_j \\
+    y_i-y_j \\
+    z_i-z_j
+  \end{array}
+  \right)
+\end{equation}
+We can write this in vector notation as:
+\begin{equation}
+  \label{retistruct-algorithm:eq:5}
+  \frac{\partial \tilde l_k}{\partial \vec{p}_i} =   \frac{\vec{p}_i - \vec{p}_j}{\tilde L_k}
+\end{equation}
+We can also write Equation~(\ref{retistruct-algorithm:eq:9}) in vector notation:
+\begin{equation}
+  \label{retistruct-algorithm:eq:9}
+  \begin{split}
+    \frac{\partial\EE}{\partial \vec{p}_i} & = \sum_{k: C_{k1} = i}
+      \frac{(\vec{p}_i-\vec{p}_{C_{k2}})}{\tilde L_k}
+    \frac{(\tilde l_k- \tilde L_k)}{\tilde L_k}
+  \end{split}
+\end{equation}
+The interpretation of this equation is that each component of the sum
+is in the direction of the connection between $C_{k1}$ and $C_{k2}$
+and that the energy increases when the connection is lengthened and
+$\tilde l > \tilde L$, and that the energy decreases when the
+connection is lengthened and $\tilde l < \tilde L$.
+
+% In order to minimise the function efficiently, the derivatives with
+% respect to $\phi_i$ and $\lambda_i$ are found:
+% \begin{equation}
+%   \label{fold-sphere:eq:3}
+%   \begin{split}
+%     \frac{\partial \EE}{\partial\phi_i} = 
+%     \sum_j C_{ij} (l_{ij} - L_{ij})R
+%     \frac{\sin\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j) - \cos\phi_i\sin\phi_j}
+%     {\sqrt{1-(\sin\phi_i\sin\phi_j +
+%         \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}} \\
+%     \frac{\partial \EE}{\partial\lambda_i} = 
+%     \sum_j C_{ij} (l_{ij} - L_{ij})R
+%     \frac{\cos\phi_i\cos\phi_j\sin(\lambda_i-\lambda_j)}
+%     {\sqrt{1-(\sin\phi_i\sin\phi_j + \cos\phi_i\cos\phi_j\cos(\lambda_i-\lambda_j))^2}}
+%   \end{split}
+% \end{equation}
+% A quasi-Newton-Raphson method is then used in R to achieve this
+% optimisation, and the resulting grid on the sphere is plotted in 3D
+% (Figure~\ref{fold-sphere:fig:test2}).
 
 
-\subsection{The elastic energy (2)}
-\label{fold-sphere:sec:elastic-energy-2}
 
-\begin{displaymath}
-  E_\mathrm{E} = \frac{1}{2} \sum_{i\in\mathcal{C}} \frac{(l_i - L_i)^2}{L_i}  
-\end{displaymath}
-Where $L_i$ and $l_i$ are lengths of corresponding connections
-$i\in\mathcal{C}$ in flattened and spherical retina.
-\begin{displaymath}
-  l_i = |\vec{p}_{C_{i1}} - \vec{p}_{C_{i2}}|
-\end{displaymath}
-
-\begin{displaymath}
-  l_i = \sqrt{(\vec{p}_{C_{i1}} - \vec{p}_{C_{i2}})^2}
-\end{displaymath}
-
-\begin{displaymath}
-  l_i = \sqrt{(\mathbf{C}^i\vec{p})^2}
-\end{displaymath}
-
-\begin{displaymath}
-  l_i = \sqrt{(\mathbf{C}^i\vec{x})^2 + 
-    (\mathbf{C}^i\vec{y})^2 + 
-    (\mathbf{C}^i\vec{z})^2}
-\end{displaymath}
-
-\begin{displaymath}
-  l_i = \sqrt{(\sum_jC_{ij}x_j)^2 + 
-    (\sum_jC_{ij}y_j)^2 +
-    (\sum_jC_{ij}z_j)^2}
-\end{displaymath}
-
-
-\begin{displaymath}
-  x_i = \cos(\phi_i)\cos(\lambda_i) \quad 
-  y_i = \cos(\phi_i)\sin(\lambda_i) \quad
-  z_i = \sin(\phi_i)
-\end{displaymath}
-
-\begin{displaymath}
-  \frac{\partial E_\mathrm{E}}{\partial \phi_j} 
-  = \sum_{i=1}^{\tilde M} \frac{\partial l_i}{\partial \phi_j}
-  \frac{(l_i - L_i)}{L_i}  
-\end{displaymath}
-
-\begin{displaymath}
-  \frac{\partial l_i}{\partial x_k} = C_{ik}\frac{\sum_jC_{ij}x_j}{l_i}
-\end{displaymath}
-
-\begin{displaymath}
-  \frac{\partial l_i}{\partial \phi_j} = \frac{1}{l_i}
-    C_{ij}\left(
-      \sum_k(C_{ik}x_k)\frac{\partial x_j}{\partial \phi_j} +
-      \sum_k(C_{ik}y_k)\frac{\partial y_j}{\partial \phi_j} +
-      \sum_k(C_{ik}z_k)\frac{\partial z_j}{\partial \phi_j} 
-    \right)
-\end{displaymath}
-
-\subsection{The area-preserving energy}
+\subsubsection{The area-preserving energy}
 \label{fold-sphere:sec:area-pres-energy}
 
 \begin{displaymath}
@@ -446,7 +702,7 @@ $i\in\mathcal{C}$ in flattened and spherical retina.
 \label{fold-sphere:sec:mean-location-points}
 
 The Karcher mean of a set of points on the sphere
-\citep{Karc77riem,HeoSmal06form} is defined as the point
+\citep{Karcher1977,HeoSmall2006} is defined as the point
 $(\overline{\phi}, \overline{\lambda})$ that has a minimal sum of
 squared distances to the set of points $(\phi_i, \lambda_i)$:
 %% See also BergWerm06
@@ -467,7 +723,7 @@ The generalised variance is
 \end{equation}
 
 \bibliographystyle{apalike}
-\bibliography{nmf_morph}
+\bibliography{paper/nmf_morph}
 
 
 \end{document}
@@ -476,4 +732,5 @@ The generalised variance is
 %%% Local Variables: 
 %%% TeX-PDF-mode: t
 %%% End: 
-% LocalWords:  jk th nmf
+% LocalWords:  jk th nmf Retistruct Ruppert iu Rv Karc riem HeoSmal
+% LocalWords:  arg
