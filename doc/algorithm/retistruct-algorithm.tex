@@ -325,8 +325,17 @@ $A$ of the flattened retina. The radius is
   R = \sqrt{\frac{a_\mathrm{tot}}{2\pi\sin\phi_0+1}}
 \end{equation}
 where $\phi_0$ is the latitude at which the rim of the intact retina
-would be expected.
+would be expected. This function, and its derivative with respect to
+$\phi_0$ is plotted in Figure~\ref{retistruct-algorithm:fig:R-phi}.
 
+\begin{figure}
+  \centering
+  \includegraphics{R-phi}
+  \caption{Upper plot: The radius $R$ as a function of $\phi_0$ for
+    fixed area $a_\mathrm{tot}=1$. Lower plot: the derivative
+    $\partial R/\partial \phi_0.$}
+  \label{retistruct-algorithm:fig:R-phi}
+\end{figure}
 
 \subsection{Optimisation of the mapping}
 \label{fold-sphere:sec:energy-function}
@@ -351,7 +360,7 @@ The points on the rim are special cases. One of the points on the rim
 is fixed to be in a known position on the eye (e.g.~the nasal or
 dorsal position). We denote the index of this point $i_0$, and fix the
 value of of its longitude $\lambda_{i_0}$. We can make two assumptions
-about the lattitude of the points on the rim:
+about the latitude of the points on the rim:
 \begin{enumerate}
 \item Fixed rim angle: For the points on the rim (i.e.~$i \in
   \mathcal{\tilde R}$), $\phi_i$ is fixed to the value $\phi_0$
@@ -371,7 +380,7 @@ the next sections we will compute these derivatives.
   coordinates on the sphere}
 \label{retistruct-algorithm:sec:transf-betw-spher}
 
-It turns out that we can simplify the caluculations by:
+It turns out that we can simplify the calculations by:
 \begin{enumerate}
 \item Converting the spherical coordinates of each $(\phi_i, \lambda_i)$ to
    Cartesian coordinates $(x_i, y_i, z_i)$
@@ -406,11 +415,11 @@ It turns out that we can simplify the caluculations by:
   \end{split}
 \end{equation}
 \end{enumerate}
-In this section we will describe the cooridaite transformation and
+In this section we will describe the coordinate transformation and
 compute the derivatives of the Cartesian coordinates with respect to
 the spherical coordinates.
 
-To transform from spherical coordiates to Cartesian coordinates we us
+To transform from spherical coordinates to Cartesian coordinates we us
 the transformation:
 \begin{equation}
   \vec{p}_i = 
@@ -427,7 +436,7 @@ the transformation:
       \sin\phi_i 
     \end{array}\right)
 \end{equation}
-The deriviatives of the Cartesian coordinates with respect to the
+The derivatives of the Cartesian coordinates with respect to the
 longitude and latitude are:
 \begin{equation}
   \frac{\partial\vec{p}_i}{\partial\phi_i} = 
@@ -583,7 +592,7 @@ to each of the coordinates:
   \begin{split}
     \label{retistruct-algorithm:eq:4}
     \frac{\partial \tilde l_k}{\partial x_i} & = 2R \frac{\partial
-      v}{\partial x_i}\frac{\dif}{\dif v_k}\arcsin u_
+      v}{\partial x_i}\frac{\dif}{\dif v_k}\arcsin v_k
     \quad \mbox{using the chain rule} \\
     & = 2R \frac{\partial
       v_k}{\partial x_i}\frac{1}{\sqrt{1-v_k^2}} \quad \mbox{derivative of
@@ -619,7 +628,6 @@ $i$ is the first point in the connection pair leads to:
   \end{split}
 \end{equation}
 
-\end{enumerate}
 We can apply the same principle to find the derivatives with respect
 to $y_i$ and $z_i$ (here assuming case (2) above, that connection $k$
 connects point $i$ to point $j$):
@@ -680,23 +688,110 @@ connection is lengthened and $\tilde l < \tilde L$.
 % optimisation, and the resulting grid on the sphere is plotted in 3D
 % (Figure~\ref{fold-sphere:fig:test2}).
 
-
-
 \subsubsection{The area-preserving energy}
 \label{fold-sphere:sec:area-pres-energy}
 
-\begin{displaymath}
-  \sum_{j\in\mathcal{T}} \exp\left(-k\frac{a_j}{A_j}\right)
-\end{displaymath}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\linewidth]{area-f-crop.pdf}
+  \caption{The function $f$ and its derivative with respect to $x$.}
+  \label{retistruct-algorithm:fig:area-f}
+\end{figure}
+
+The area-preserving energy adds a penalty when the area of triangles
+is very small or even negative:
+\begin{equation}
+ \EA = \sum_{t\in\mathcal{T}} f\left(\frac{a_t}{A_t}; x_0\right)
+\end{equation}
+where the function $f$ (Figure~\ref{retistruct-algorithm:fig:area-f}) is used to apply penalties mostly to
+triangles with negative area, which are flipped:
+\begin{equation}
+  \label{retistruct-algorithm:eq:3}
+  f(x) = \left\{
+    \begin{array}{ll}
+      -(x - x_0/2) & x < 0 \\
+      \frac{1}{2x_0}(x - x_0)^2 & 0 < x <x_0 \\
+      0 & x \ge x_0
+    \end{array} \right.
+\end{equation}
+Here:
 \begin{itemize}
-\item $A_j$ and $a_j$ are signed areas of corresponding triangles
-  $j\in\mathcal{T}$ in flattened and spherical retina
+\item $A_t$ and $a_t$ are signed areas of corresponding triangles
+  $t\in\mathcal{T}$ in flattened and spherical retina
 \item Signed area is positive for triangles in correct orientation,
   but negative for flipped triangles
-\item Parameter $k$ should be large so that only triangles with
+\item Parameter $x_0$ should be small so that only triangles with
   negative or near-zero area ratios are penalised. Parameter $\alpha$
   scaled according to number of connections.
 \end{itemize}
+
+It is useful to write the coordinates of the points in terms of a unit
+vector $\vec{e}_i$ and the radius:
+\begin{equation}
+  \label{retistruct-algorithm:eq:13}
+  \vec{p}_i = R\vec{e}_i
+\end{equation}
+The signed area of a triangle $t$ formed by points $i=\tilde T_{t1}$,
+$j=\tilde T_{t2}$ and $k=\tilde T_{t3}$ is:
+\begin{equation}
+  \label{retistruct-algorithm:eq:11}
+  a_t = \frac{1}{2R} (\vec{p}_j\times \vec{p}_k)\cdot \vec{p}_i = \frac{R^2}{2} (\vec{e}_j\times \vec{e}_k)\cdot \vec{e}_i
+\end{equation}
+The derivative with respect to $\vec{p}_i$ is:
+\begin{equation}
+  \frac{\partial a_t}{\partial \vec{p}_i} = \frac{1}{2R} (\vec{p}_j\times \vec{p}_k)
+\end{equation}
+The derivative with respect to $R$ is 
+\begin{equation}
+  \label{retistruct-algorithm:eq:14}
+  \frac{\partial a_t}{\partial R} =
+  \frac{\partial}{\partial R} \frac{R^2}{2} (\vec{e}_j\times
+  \vec{e}_k)\cdot \vec{e}_i
+  = R (\vec{e}_j\times \vec{e}_k)\cdot \vec{e}_i = \frac{2a_t}{R}
+\end{equation}
+
+To calculate the derivatives with respect to the spherical coordinates
+of the free points we use the chain rule:
+\begin{equation}
+  \label{retistruct-algorithm:eq:12}
+  \begin{split}
+  \frac{\partial \EA}{\partial \phi_i} = \sum_{t \in \mathcal{T}}
+  \frac{\partial f}{\partial a_t}\frac{\partial a_t}{\partial
+    \vec{p}_i}\frac{\partial \vec{p}_i}{\partial \phi_i} \\
+  \frac{\partial \EA}{\partial \lambda_i} = \sum_{t \in \mathcal{T}}
+  \frac{\partial f}{\partial a_t}\frac{\partial a_t}{\partial
+    \vec{p}_i}\frac{\partial \vec{p}_i}{\partial \lambda_i} \\
+  \end{split}
+\end{equation}
+If we are allowing the rim angle to vary we also need to calculate the
+derivative with respect to $\phi_0$.
+\begin{equation}
+  \label{retistruct-algorithm:eq:12}
+  \begin{split}
+  \frac{\partial \EA}{\partial \phi_0} = \sum_{t \in \mathcal{T}}
+  \frac{\partial f}{\partial a_t}
+  \left(\frac{\partial a_t}{\partial \vec{p}_i}\frac{\partial
+      \vec{p}_i}{\partial \phi_0} +
+    \frac{\partial a_t}{\partial R}\frac{\partial
+      R}{\partial \phi_0} 
+  \right)\\
+  \end{split}
+\end{equation}
+The one derivative we have not calculated already is $\frac{\partial
+  R}{\partial \phi_0}$,which we calculate 
+\begin{equation}
+  \label{retistruct-algorithm:eq:15}
+  \begin{split}
+  \frac{\partial R}{\partial \phi_0} & = 2\pi\cos\phi_0
+  \frac{a_\mathrm{tot}}{(2\pi\sin\phi_0 +1)^2}
+  \frac{1}{2}\left(\frac{a_\mathrm{tot}}{2\pi\sin\phi_0+1}\right)^{-\frac{1}{2}}
+  \\
+  & =
+  \frac{ \pi\cos\phi_0 a_\mathrm{tot}^{\frac{1}{2}}}{(2\pi\sin\phi_0 +1)^{\frac{3}{2}}}
+    \end{split}
+\end{equation}
+where $\phi_0$ is the latitude at which the rim of the intact retina
+would be expected.
 
 \subsection{Mean location of points on sphere}
 \label{fold-sphere:sec:mean-location-points}
@@ -723,7 +818,7 @@ The generalised variance is
 \end{equation}
 
 \bibliographystyle{apalike}
-\bibliography{paper/nmf_morph}
+\bibliography{../paper/nmf_morph}
 
 
 \end{document}
@@ -733,4 +828,4 @@ The generalised variance is
 %%% TeX-PDF-mode: t
 %%% End: 
 % LocalWords:  jk th nmf Retistruct Ruppert iu Rv Karc riem HeoSmal
-% LocalWords:  arg
+% LocalWords:  arg HeoSmall
