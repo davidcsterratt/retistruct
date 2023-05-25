@@ -25,32 +25,40 @@ mtext("B", adj=0, font=2, line=-0.9)
 ## Set up fixed point
 o$lambda0 <- 0
 
+## In v0.6 and below, the code below could be used to triangulate and
+## stitch the outline. In v0.7,
+## RetinalReconstructedOutline$loadOutline() carries out these steps.
+
 ## Initial triangulation (with 500 points)
-n <- 500
-t <- TriangulatedOutline(o, n=n)
+# n <- 500
+# t <- TriangulatedOutline$new(o, n=n)
 
 ## Stitching
-s <- StitchedOutline(t)
-
-## Plot triangulation and stitching
-flatplot(s, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
-mtext("C", adj=0, font=2, line=-0.9)
+# s <- StitchedOutline(t)
 
 ## Triangulate again, to take into account points added by stitching
-m <- TriangulatedOutline(s, n=n,
-                         suppress.external.steiner=TRUE)
+# m <- TriangulatedOutline(s, n=n,
+#                          suppress.external.steiner=TRUE)
 
 ## Merge the points that have been stitched
-m <- mergePointsEdges(m)
+# m <- mergePointsEdges(m)
 
 ## Make a rough projection to a sphere
-m <- projectToSphere(m)
+# m <- projectToSphere(m)
+
+r <- NULL
+r <- RetinalReconstructedOutline$new()
+r$loadOutline(o, debug=FALSE)
+
+## Plot triangulation and stitching
+flatplot(r, datapoints=FALSE, landmarks=FALSE, markup=FALSE)
+mtext("C", adj=0, font=2, line=-0.9)
 
 ## Plot the initial gridlines in 2D
 par(mfg=c(3, 3))
-flatplot(m, grid=TRUE,
-          datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
-          stitch=FALSE, strain=TRUE)
+flatplot(r, grid=TRUE,
+         datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
+         stitch=FALSE, strain=TRUE)
 mtext("Dii", adj=0, font=2, line=-0.9)
 
 ## Plot the intial projection in 3D
@@ -58,21 +66,11 @@ par(mfg=c(2, 3))
 plot.new()
 mtext("Di", adj=0, font=2, line=-0.9)
 
-sphericalplot(m, strain=TRUE, datapoints=FALSE)
-rgl.viewpoint(zoom=0.7)
+sphericalplot(r, strain=TRUE, datapoints=FALSE)
+view3d(zoom=0.7)
 rgl.postscript("initial-projection.svg", "svg")
 
-## Optimise mapping - this takes a few minutes
-alpha <- 8
-x0 <- 0.5
-r <- solveMappingCart(m, alpha=0, x0=0, nu=1,
-                        dtmax=500, maxmove=1E2, tol=2e-7,
-                          plot.3d=FALSE)
-r <- solveMappingCart(r, alpha=alpha, x0=x0, nu=1,
-                        dtmax=500, maxmove=1E2, tol=1e-6,
-                        plot.3d=FALSE)
-r <- optimiseMapping(r, alpha=alpha, x0=x0, nu=0.5,
-                      plot.3d=FALSE)
+r$reconstruct(plot.3d=FALSE)
 
 ## Plot the final projection in 3D and on the grid
 par(mfg=c(2, 2))
@@ -87,11 +85,6 @@ flatplot(r, grid=TRUE,
           datapoints=FALSE, landmarks=FALSE, mesh=FALSE, markup=FALSE,
           stitch=FALSE, strain=TRUE)
 mtext("Eii", adj=0, font=2, line=-0.9)
-
-## Infer locations of datapoints in spherical coordinates
-r <- RetinalReconstructedOutline(r)
-r <- ReconstructedDataset(r)
-r <- RetinalReconstructedDataset(r)
 
 ## Plot data in polar coordinates and flattend retina
 par(mfg=c(2, 1))
