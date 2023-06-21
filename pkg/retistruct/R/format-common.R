@@ -16,6 +16,7 @@ read.scale <- function(dataset, report=message) {
     if ("Scale" %in% colnames(sc)) {
       scale[["XY"]] <- as.numeric(sc[1, "Scale"])
       warning("\"Scale\" is deprecated as column header in scale.csv - please use \"XY\" instead")
+      return(scale)
     }
     if (is.na(as.numeric(sc[1, "XY"]) | is.na(as.numeric(sc[1, "Z"]))) ) {
       stop("Scale file has not been read correctly. Check it is in the correct format.")
