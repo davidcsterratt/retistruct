@@ -95,6 +95,7 @@ If you encounter issues using Retistruct please either:
 
 ## Work using Retistruct
 
+* Gupta D., Młynarski W., Sumser A., Symonova O., Svatoň J., and Joesch M. (2023) "Panoramic visual statistics shape retina-wide organization of receptive fields". *Nat. Neurosci.*  __26__:&nbsp;606–614 [DOI:10.1038/s41593-023-01280-0]( https://doi.org/10.1038/s41593-023-01280-0)
 * Tosetto, L., Williamson, J. E., White, T. E. and Hart, N. S. (2021) "Can the Dynamic Colouration and Patterning
 of Bluelined Goatfish (Mullidae; _Upeneichthyslineatus_) Be Perceived by Conspecifics?". *Brain Behav. Evol.* [DOI: 10.1159/000519894](http://dx.doi.org/10.1159/000519894)
 * Adelman, S. A., Oikawa, K., Senthilkumar, G., Trane, R. M., Teixeira, L.,  and McLellan, G. J. (2021). "Mapping retinal ganglion cell somas in a large-eyed glaucoma model". *Mol. vis.* __27__:&nbsp;608–621. [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8645189/)
