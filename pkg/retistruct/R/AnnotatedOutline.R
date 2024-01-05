@@ -112,7 +112,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##'   \code{VB} (Backward vertices of tears) and \code{VF} (Forward
     ##'   vertices of tears)
     ##' @return List containing
-    ##' \itemize{
+    ##' \describe{
     ##' \item{\code{Rset}}{the set of points on the rim}
     ##' \item{\code{TFset}}{list containing indices of points in each forward tear}
     ##' \item{\code{TBset}}{list containing indices of points in each backward tear}

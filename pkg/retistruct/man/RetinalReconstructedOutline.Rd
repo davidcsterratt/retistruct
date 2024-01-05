@@ -28,36 +28,36 @@ David Sterratt
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-getIms}{\code{RetinalReconstructedOutline$getIms()}}
-\item \href{#method-getTearCoords}{\code{RetinalReconstructedOutline$getTearCoords()}}
-\item \href{#method-reconstruct}{\code{RetinalReconstructedOutline$reconstruct()}}
-\item \href{#method-getFeatureSet}{\code{RetinalReconstructedOutline$getFeatureSet()}}
-\item \href{#method-clone}{\code{RetinalReconstructedOutline$clone()}}
+\item \href{#method-RetinalReconstructedOutline-getIms}{\code{RetinalReconstructedOutline$getIms()}}
+\item \href{#method-RetinalReconstructedOutline-getTearCoords}{\code{RetinalReconstructedOutline$getTearCoords()}}
+\item \href{#method-RetinalReconstructedOutline-reconstruct}{\code{RetinalReconstructedOutline$reconstruct()}}
+\item \href{#method-RetinalReconstructedOutline-getFeatureSet}{\code{RetinalReconstructedOutline$getFeatureSet()}}
+\item \href{#method-RetinalReconstructedOutline-clone}{\code{RetinalReconstructedOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="getPoints">}\href{../../retistruct/html/ReconstructedOutline.html#method-getPoints}{\code{retistruct::ReconstructedOutline$getPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="getStrains">}\href{../../retistruct/html/ReconstructedOutline.html#method-getStrains}{\code{retistruct::ReconstructedOutline$getStrains()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="loadOutline">}\href{../../retistruct/html/ReconstructedOutline.html#method-loadOutline}{\code{retistruct::ReconstructedOutline$loadOutline()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="mapFlatToSpherical">}\href{../../retistruct/html/ReconstructedOutline.html#method-mapFlatToSpherical}{\code{retistruct::ReconstructedOutline$mapFlatToSpherical()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="mergePointsEdges">}\href{../../retistruct/html/ReconstructedOutline.html#method-mergePointsEdges}{\code{retistruct::ReconstructedOutline$mergePointsEdges()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="optimiseMapping">}\href{../../retistruct/html/ReconstructedOutline.html#method-optimiseMapping}{\code{retistruct::ReconstructedOutline$optimiseMapping()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="optimiseMappingCart">}\href{../../retistruct/html/ReconstructedOutline.html#method-optimiseMappingCart}{\code{retistruct::ReconstructedOutline$optimiseMappingCart()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="projectToSphere">}\href{../../retistruct/html/ReconstructedOutline.html#method-projectToSphere}{\code{retistruct::ReconstructedOutline$projectToSphere()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="reconstructFeatureSets">}\href{../../retistruct/html/ReconstructedOutline.html#method-reconstructFeatureSets}{\code{retistruct::ReconstructedOutline$reconstructFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="transformImage">}\href{../../retistruct/html/ReconstructedOutline.html#method-transformImage}{\code{retistruct::ReconstructedOutline$transformImage()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="getPoints"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-getPoints'><code>retistruct::ReconstructedOutline$getPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="getStrains"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-getStrains'><code>retistruct::ReconstructedOutline$getStrains()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="loadOutline"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-loadOutline'><code>retistruct::ReconstructedOutline$loadOutline()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="mapFlatToSpherical"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-mapFlatToSpherical'><code>retistruct::ReconstructedOutline$mapFlatToSpherical()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="mergePointsEdges"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-mergePointsEdges'><code>retistruct::ReconstructedOutline$mergePointsEdges()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="optimiseMapping"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-optimiseMapping'><code>retistruct::ReconstructedOutline$optimiseMapping()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="optimiseMappingCart"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-optimiseMappingCart'><code>retistruct::ReconstructedOutline$optimiseMappingCart()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="projectToSphere"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-projectToSphere'><code>retistruct::ReconstructedOutline$projectToSphere()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="reconstructFeatureSets"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-reconstructFeatureSets'><code>retistruct::ReconstructedOutline$reconstructFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedOutline" data-id="transformImage"><a href='../../retistruct/html/ReconstructedOutline.html#method-ReconstructedOutline-transformImage'><code>retistruct::ReconstructedOutline$transformImage()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getIms"></a>}}
-\if{latex}{\out{\hypertarget{method-getIms}{}}}
+\if{html}{\out{<a id="method-RetinalReconstructedOutline-getIms"></a>}}
+\if{latex}{\out{\hypertarget{method-RetinalReconstructedOutline-getIms}{}}}
 \subsection{Method \code{getIms()}}{
 Get coordinates of corners of pixels of image in spherical
   coordinates, transformed according to the value of \code{DVflip}
@@ -70,8 +70,8 @@ Coordinates of corners of pixels in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTearCoords"></a>}}
-\if{latex}{\out{\hypertarget{method-getTearCoords}{}}}
+\if{html}{\out{<a id="method-RetinalReconstructedOutline-getTearCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-RetinalReconstructedOutline-getTearCoords}{}}}
 \subsection{Method \code{getTearCoords()}}{
 Get location of tear coordinates in spherical coordinates,
   transformed according to the value of \code{DVflip}
@@ -84,8 +84,8 @@ Location of tear coordinates in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reconstruct"></a>}}
-\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
+\if{html}{\out{<a id="method-RetinalReconstructedOutline-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-RetinalReconstructedOutline-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RetinalReconstructedOutline$reconstruct(...)}\if{html}{\out{</div>}}
@@ -100,8 +100,8 @@ Location of tear coordinates in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureSet}{}}}
+\if{html}{\out{<a id="method-RetinalReconstructedOutline-getFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-RetinalReconstructedOutline-getFeatureSet}{}}}
 \subsection{Method \code{getFeatureSet()}}{
 Get \link{ReconstructedFeatureSet}, transformed
   according to the value of \code{DVflip}
@@ -119,8 +119,8 @@ E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-RetinalReconstructedOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-RetinalReconstructedOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

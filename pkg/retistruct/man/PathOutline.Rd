@@ -42,38 +42,38 @@ new point is created.
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-addPoints}{\code{PathOutline$addPoints()}}
-\item \href{#method-nextPoint}{\code{PathOutline$nextPoint()}}
-\item \href{#method-insertPoint}{\code{PathOutline$insertPoint()}}
-\item \href{#method-stitchSubpaths}{\code{PathOutline$stitchSubpaths()}}
-\item \href{#method-clone}{\code{PathOutline$clone()}}
+\item \href{#method-PathOutline-addPoints}{\code{PathOutline$addPoints()}}
+\item \href{#method-PathOutline-nextPoint}{\code{PathOutline$nextPoint()}}
+\item \href{#method-PathOutline-insertPoint}{\code{PathOutline$insertPoint()}}
+\item \href{#method-PathOutline-stitchSubpaths}{\code{PathOutline$stitchSubpaths()}}
+\item \href{#method-PathOutline-clone}{\code{PathOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints">}\href{../../retistruct/html/Outline.html#method-getPoints}{\code{retistruct::Outline$getPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled">}\href{../../retistruct/html/Outline.html#method-getPointsScaled}{\code{retistruct::Outline$getPointsScaled()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getRimSet">}\href{../../retistruct/html/Outline.html#method-getRimSet}{\code{retistruct::Outline$getRimSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="initialize">}\href{../../retistruct/html/Outline.html#method-initialize}{\code{retistruct::Outline$initialize()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment">}\href{../../retistruct/html/Outline.html#method-mapFragment}{\code{retistruct::Outline$mapFragment()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids">}\href{../../retistruct/html/Outline.html#method-mapPids}{\code{retistruct::Outline$mapPids()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage">}\href{../../retistruct/html/Outline.html#method-replaceImage}{\code{retistruct::Outline$replaceImage()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSet'><code>retistruct::OutlineCommon$getFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet"><a href='../../retistruct/html/Outline.html#method-Outline-addFeatureSet'><code>retistruct::Outline$addFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage"><a href='../../retistruct/html/Outline.html#method-Outline-getImage'><code>retistruct::Outline$getImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineLengths'><code>retistruct::Outline$getOutlineLengths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineSet'><code>retistruct::Outline$getOutlineSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getPoints'><code>retistruct::Outline$getPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsScaled'><code>retistruct::Outline$getPointsScaled()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getRimSet"><a href='../../retistruct/html/Outline.html#method-Outline-getRimSet'><code>retistruct::Outline$getRimSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="initialize"><a href='../../retistruct/html/Outline.html#method-Outline-initialize'><code>retistruct::Outline$initialize()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment"><a href='../../retistruct/html/Outline.html#method-Outline-mapFragment'><code>retistruct::Outline$mapFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids"><a href='../../retistruct/html/Outline.html#method-Outline-mapPids'><code>retistruct::Outline$mapPids()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage"><a href='../../retistruct/html/Outline.html#method-Outline-replaceImage'><code>retistruct::Outline$replaceImage()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-addPoints}{}}}
+\if{html}{\out{<a id="method-PathOutline-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-PathOutline-addPoints}{}}}
 \subsection{Method \code{addPoints()}}{
 Add points to the outline register of points
 \subsection{Usage}{
@@ -94,8 +94,8 @@ The ID of each added point in the register. If points already
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-nextPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-nextPoint}{}}}
+\if{html}{\out{<a id="method-PathOutline-nextPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-PathOutline-nextPoint}{}}}
 \subsection{Method \code{nextPoint()}}{
 Get next point in path for
 \subsection{Usage}{
@@ -111,8 +111,8 @@ Get next point in path for
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-insertPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-insertPoint}{}}}
+\if{html}{\out{<a id="method-PathOutline-insertPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-PathOutline-insertPoint}{}}}
 \subsection{Method \code{insertPoint()}}{
 Insert point at a fractional distance between points
 \subsection{Usage}{
@@ -133,8 +133,8 @@ Insert point at a fractional distance between points
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-stitchSubpaths"></a>}}
-\if{latex}{\out{\hypertarget{method-stitchSubpaths}{}}}
+\if{html}{\out{<a id="method-PathOutline-stitchSubpaths"></a>}}
+\if{latex}{\out{\hypertarget{method-PathOutline-stitchSubpaths}{}}}
 \subsection{Method \code{stitchSubpaths()}}{
 Stitch subpaths
 \subsection{Usage}{
@@ -158,8 +158,8 @@ Stitch subpaths
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-PathOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-PathOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

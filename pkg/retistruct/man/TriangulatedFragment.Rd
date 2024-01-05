@@ -38,20 +38,20 @@ anticlockwise direction; negative indicates clockwise.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{TriangulatedFragment$new()}}
-\item \href{#method-clone}{\code{TriangulatedFragment$clone()}}
+\item \href{#method-TriangulatedFragment-new}{\code{TriangulatedFragment$new()}}
+\item \href{#method-TriangulatedFragment-clone}{\code{TriangulatedFragment$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Fragment" data-id="initializeFromPoints">}\href{../../retistruct/html/Fragment.html#method-initializeFromPoints}{\code{retistruct::Fragment$initializeFromPoints()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Fragment" data-id="initializeFromPoints"><a href='../../retistruct/html/Fragment.html#method-Fragment-initializeFromPoints'><code>retistruct::Fragment$initializeFromPoints()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-TriangulatedFragment-new"></a>}}
+\if{latex}{\out{\hypertarget{method-TriangulatedFragment-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -80,8 +80,8 @@ triangle quality.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-TriangulatedFragment-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-TriangulatedFragment-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

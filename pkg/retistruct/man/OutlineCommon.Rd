@@ -20,17 +20,17 @@ An OutlineCommon has functionality for retrieving
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-getFeatureSets}{\code{OutlineCommon$getFeatureSets()}}
-\item \href{#method-getFeatureSet}{\code{OutlineCommon$getFeatureSet()}}
-\item \href{#method-clearFeatureSets}{\code{OutlineCommon$clearFeatureSets()}}
-\item \href{#method-getIDs}{\code{OutlineCommon$getIDs()}}
-\item \href{#method-getFeatureSetTypes}{\code{OutlineCommon$getFeatureSetTypes()}}
-\item \href{#method-clone}{\code{OutlineCommon$clone()}}
+\item \href{#method-OutlineCommon-getFeatureSets}{\code{OutlineCommon$getFeatureSets()}}
+\item \href{#method-OutlineCommon-getFeatureSet}{\code{OutlineCommon$getFeatureSet()}}
+\item \href{#method-OutlineCommon-clearFeatureSets}{\code{OutlineCommon$clearFeatureSets()}}
+\item \href{#method-OutlineCommon-getIDs}{\code{OutlineCommon$getIDs()}}
+\item \href{#method-OutlineCommon-getFeatureSetTypes}{\code{OutlineCommon$getFeatureSetTypes()}}
+\item \href{#method-OutlineCommon-clone}{\code{OutlineCommon$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureSets"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureSets}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-getFeatureSets"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-getFeatureSets}{}}}
 \subsection{Method \code{getFeatureSets()}}{
 Get all the feature sets
 \subsection{Usage}{
@@ -42,8 +42,8 @@ List of \link{FeatureSet}s associated with the outline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureSet}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-getFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-getFeatureSet}{}}}
 \subsection{Method \code{getFeatureSet()}}{
 Get all feature sets of a particular type, e.g. \link{PointSet} or \link{LandmarkSet}
 \subsection{Usage}{
@@ -62,8 +62,8 @@ All \link{FeatureSet}s of that type
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clearFeatureSets"></a>}}
-\if{latex}{\out{\hypertarget{method-clearFeatureSets}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-clearFeatureSets"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-clearFeatureSets}{}}}
 \subsection{Method \code{clearFeatureSets()}}{
 Clear all feature sets from the outline
 \subsection{Usage}{
@@ -72,8 +72,8 @@ Clear all feature sets from the outline
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getIDs"></a>}}
-\if{latex}{\out{\hypertarget{method-getIDs}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-getIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-getIDs}{}}}
 \subsection{Method \code{getIDs()}}{
 Get all the distinct IDs contained in the \link{FeatureSet}s
 \subsection{Usage}{
@@ -85,8 +85,8 @@ Vector of IDs
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureSetTypes"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureSetTypes}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-getFeatureSetTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-getFeatureSetTypes}{}}}
 \subsection{Method \code{getFeatureSetTypes()}}{
 Get all the distinct types of \link{FeatureSet}s
 \subsection{Usage}{
@@ -98,8 +98,8 @@ Vector of types as strings, e.g. \var{PointSet}, \var{LandmarkSet}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-OutlineCommon-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-OutlineCommon-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

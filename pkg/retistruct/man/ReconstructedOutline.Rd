@@ -89,36 +89,36 @@ indices of the points linked by the edge}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-loadOutline}{\code{ReconstructedOutline$loadOutline()}}
-\item \href{#method-reconstruct}{\code{ReconstructedOutline$reconstruct()}}
-\item \href{#method-mergePointsEdges}{\code{ReconstructedOutline$mergePointsEdges()}}
-\item \href{#method-projectToSphere}{\code{ReconstructedOutline$projectToSphere()}}
-\item \href{#method-getStrains}{\code{ReconstructedOutline$getStrains()}}
-\item \href{#method-optimiseMapping}{\code{ReconstructedOutline$optimiseMapping()}}
-\item \href{#method-optimiseMappingCart}{\code{ReconstructedOutline$optimiseMappingCart()}}
-\item \href{#method-transformImage}{\code{ReconstructedOutline$transformImage()}}
-\item \href{#method-getIms}{\code{ReconstructedOutline$getIms()}}
-\item \href{#method-getTearCoords}{\code{ReconstructedOutline$getTearCoords()}}
-\item \href{#method-getFeatureSet}{\code{ReconstructedOutline$getFeatureSet()}}
-\item \href{#method-reconstructFeatureSets}{\code{ReconstructedOutline$reconstructFeatureSets()}}
-\item \href{#method-getPoints}{\code{ReconstructedOutline$getPoints()}}
-\item \href{#method-mapFlatToSpherical}{\code{ReconstructedOutline$mapFlatToSpherical()}}
-\item \href{#method-clone}{\code{ReconstructedOutline$clone()}}
+\item \href{#method-ReconstructedOutline-loadOutline}{\code{ReconstructedOutline$loadOutline()}}
+\item \href{#method-ReconstructedOutline-reconstruct}{\code{ReconstructedOutline$reconstruct()}}
+\item \href{#method-ReconstructedOutline-mergePointsEdges}{\code{ReconstructedOutline$mergePointsEdges()}}
+\item \href{#method-ReconstructedOutline-projectToSphere}{\code{ReconstructedOutline$projectToSphere()}}
+\item \href{#method-ReconstructedOutline-getStrains}{\code{ReconstructedOutline$getStrains()}}
+\item \href{#method-ReconstructedOutline-optimiseMapping}{\code{ReconstructedOutline$optimiseMapping()}}
+\item \href{#method-ReconstructedOutline-optimiseMappingCart}{\code{ReconstructedOutline$optimiseMappingCart()}}
+\item \href{#method-ReconstructedOutline-transformImage}{\code{ReconstructedOutline$transformImage()}}
+\item \href{#method-ReconstructedOutline-getIms}{\code{ReconstructedOutline$getIms()}}
+\item \href{#method-ReconstructedOutline-getTearCoords}{\code{ReconstructedOutline$getTearCoords()}}
+\item \href{#method-ReconstructedOutline-getFeatureSet}{\code{ReconstructedOutline$getFeatureSet()}}
+\item \href{#method-ReconstructedOutline-reconstructFeatureSets}{\code{ReconstructedOutline$reconstructFeatureSets()}}
+\item \href{#method-ReconstructedOutline-getPoints}{\code{ReconstructedOutline$getPoints()}}
+\item \href{#method-ReconstructedOutline-mapFlatToSpherical}{\code{ReconstructedOutline$mapFlatToSpherical()}}
+\item \href{#method-ReconstructedOutline-clone}{\code{ReconstructedOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-loadOutline"></a>}}
-\if{latex}{\out{\hypertarget{method-loadOutline}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-loadOutline"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-loadOutline}{}}}
 \subsection{Method \code{loadOutline()}}{
 Load \link{AnnotatedOutline} into ReconstructedOutline object
 \subsection{Usage}{
@@ -162,8 +162,8 @@ means no plotting.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reconstruct"></a>}}
-\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 Reconstruct
 Reconstruction proceeds in a number of stages:
@@ -215,8 +215,8 @@ to. If \code{NA} don't make any polar plots.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mergePointsEdges"></a>}}
-\if{latex}{\out{\hypertarget{method-mergePointsEdges}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-mergePointsEdges"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-mergePointsEdges}{}}}
 \subsection{Method \code{mergePointsEdges()}}{
 Merge stitched points and edges.
 Create merged and transformed versions (all suffixed with \code{t})
@@ -225,7 +225,7 @@ as a matrix \code{Bt}, which maps a binary vector representation
 of edge indices onto a binary vector representation of the
 indices of the points linked by the edge.
 Sets following fields
-\itemize{
+\describe{
 \item{\code{Pt}}{Transformed point locations}
 \item{\code{Tt}}{Transformed triangulation}
 \item{\code{Ct}}{Transformed connection set}
@@ -249,8 +249,8 @@ indices of the points linked by the edge}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-projectToSphere"></a>}}
-\if{latex}{\out{\hypertarget{method-projectToSphere}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-projectToSphere"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-projectToSphere}{}}}
 \subsection{Method \code{projectToSphere()}}{
 Project mesh points in the flat outline onto a sphere
 This takes the mesh points from the flat outline and maps them to
@@ -259,7 +259,7 @@ the curtailed sphere. It uses the area of the flat outline and
 tries to get a good first approximation by using the function
 \code{\link{stretchMesh}}.
 The following fields are set:
-\itemize{
+\describe{
 \item{\code{phi}}{Latitude of mesh points.}
 \item{\code{lmabda}}{Longitude of mesh points.}
 \item{\code{R}}{Radius of sphere.}
@@ -270,8 +270,8 @@ The following fields are set:
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getStrains"></a>}}
-\if{latex}{\out{\hypertarget{method-getStrains}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-getStrains"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-getStrains}{}}}
 \subsection{Method \code{getStrains()}}{
 Return strains edges are under in spherical retina
 Set information about how edges on the sphere
@@ -283,7 +283,7 @@ have been deformed from their flat state.
 \subsection{Returns}{
 A list containing two data frames \code{flat} and \code{spherical}. 
 Each data frame contains for each edge in the flat or spherical meshes:
-\itemize{
+\describe{
 \item{\code{L}}{Length of the edge in the flat outline }
 \item{\code{l}}{Length of the corresponding edge on the sphere}
 \item{\code{strain}}{The strain of each connection}
@@ -292,8 +292,8 @@ Each data frame contains for each edge in the flat or spherical meshes:
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-optimiseMapping"></a>}}
-\if{latex}{\out{\hypertarget{method-optimiseMapping}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-optimiseMapping"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-optimiseMapping}{}}}
 \subsection{Method \code{optimiseMapping()}}{
 Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
@@ -334,8 +334,8 @@ to. If \code{NA} don't make any polar plots.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-optimiseMappingCart"></a>}}
-\if{latex}{\out{\hypertarget{method-optimiseMappingCart}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-optimiseMappingCart"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-optimiseMappingCart}{}}}
 \subsection{Method \code{optimiseMappingCart()}}{
 Optimise the mapping from the flat outline to the sphere
 \subsection{Usage}{
@@ -374,8 +374,8 @@ Optimise the mapping from the flat outline to the sphere
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-transformImage"></a>}}
-\if{latex}{\out{\hypertarget{method-transformImage}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-transformImage"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-transformImage}{}}}
 \subsection{Method \code{transformImage()}}{
 Transform an image into the reconstructed space
 Transform an image into the reconstructed space. The four corner
@@ -384,7 +384,7 @@ coordinates and a mask matrix with the same dimensions as
 \code{im} is created. This has \code{TRUE} for pixels that should
 be displayed and \code{FALSE} for ones that should not.
 Sets the field
-\itemize{
+\describe{
 \item{\code{ims}}{Coordinates of corners of pixels in spherical coordinates}
 }
 \subsection{Usage}{
@@ -393,8 +393,8 @@ Sets the field
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getIms"></a>}}
-\if{latex}{\out{\hypertarget{method-getIms}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-getIms"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-getIms}{}}}
 \subsection{Method \code{getIms()}}{
 Get coordinates of corners of pixels of image in spherical
 coordinates
@@ -407,8 +407,8 @@ Coordinates of corners of pixels in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTearCoords"></a>}}
-\if{latex}{\out{\hypertarget{method-getTearCoords}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-getTearCoords"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-getTearCoords}{}}}
 \subsection{Method \code{getTearCoords()}}{
 Get location of tear coordinates in spherical coordinates
 \subsection{Usage}{
@@ -420,8 +420,8 @@ Location of tear coordinates in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureSet}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-getFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-getFeatureSet}{}}}
 \subsection{Method \code{getFeatureSet()}}{
 Get \link{ReconstructedFeatureSet}
 \subsection{Usage}{
@@ -438,8 +438,8 @@ E.g. \code{PointSet} returns a \link{ReconstructedPointSet}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reconstructFeatureSets"></a>}}
-\if{latex}{\out{\hypertarget{method-reconstructFeatureSets}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-reconstructFeatureSets"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-reconstructFeatureSets}{}}}
 \subsection{Method \code{reconstructFeatureSets()}}{
 Reconstruct any attached feature sets.
 \subsection{Usage}{
@@ -448,8 +448,8 @@ Reconstruct any attached feature sets.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-getPoints}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-getPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-getPoints}{}}}
 \subsection{Method \code{getPoints()}}{
 Get mesh points in spherical coordinates
 \subsection{Usage}{
@@ -462,8 +462,8 @@ Matrix with columns \code{phi} (latitude) and \code{lambda}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mapFlatToSpherical"></a>}}
-\if{latex}{\out{\hypertarget{method-mapFlatToSpherical}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-mapFlatToSpherical"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-mapFlatToSpherical}{}}}
 \subsection{Method \code{mapFlatToSpherical()}}{
 Return location of point on sphere corresponding
   to point on the flat outline
@@ -481,8 +481,8 @@ with \code{X} and \code{Y} columns}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-ReconstructedOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

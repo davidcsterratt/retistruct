@@ -47,50 +47,50 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{AnnotatedOutline$new()}}
-\item \href{#method-labelTearPoints}{\code{AnnotatedOutline$labelTearPoints()}}
-\item \href{#method-whichTear}{\code{AnnotatedOutline$whichTear()}}
-\item \href{#method-getTear}{\code{AnnotatedOutline$getTear()}}
-\item \href{#method-getTears}{\code{AnnotatedOutline$getTears()}}
-\item \href{#method-computeTearRelationships}{\code{AnnotatedOutline$computeTearRelationships()}}
-\item \href{#method-addTear}{\code{AnnotatedOutline$addTear()}}
-\item \href{#method-removeTear}{\code{AnnotatedOutline$removeTear()}}
-\item \href{#method-checkTears}{\code{AnnotatedOutline$checkTears()}}
-\item \href{#method-setFixedPoint}{\code{AnnotatedOutline$setFixedPoint()}}
-\item \href{#method-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
-\item \href{#method-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
-\item \href{#method-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
-\item \href{#method-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
-\item \href{#method-clone}{\code{AnnotatedOutline$clone()}}
+\item \href{#method-AnnotatedOutline-new}{\code{AnnotatedOutline$new()}}
+\item \href{#method-AnnotatedOutline-labelTearPoints}{\code{AnnotatedOutline$labelTearPoints()}}
+\item \href{#method-AnnotatedOutline-whichTear}{\code{AnnotatedOutline$whichTear()}}
+\item \href{#method-AnnotatedOutline-getTear}{\code{AnnotatedOutline$getTear()}}
+\item \href{#method-AnnotatedOutline-getTears}{\code{AnnotatedOutline$getTears()}}
+\item \href{#method-AnnotatedOutline-computeTearRelationships}{\code{AnnotatedOutline$computeTearRelationships()}}
+\item \href{#method-AnnotatedOutline-addTear}{\code{AnnotatedOutline$addTear()}}
+\item \href{#method-AnnotatedOutline-removeTear}{\code{AnnotatedOutline$removeTear()}}
+\item \href{#method-AnnotatedOutline-checkTears}{\code{AnnotatedOutline$checkTears()}}
+\item \href{#method-AnnotatedOutline-setFixedPoint}{\code{AnnotatedOutline$setFixedPoint()}}
+\item \href{#method-AnnotatedOutline-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
+\item \href{#method-AnnotatedOutline-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
+\item \href{#method-AnnotatedOutline-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
+\item \href{#method-AnnotatedOutline-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
+\item \href{#method-AnnotatedOutline-clone}{\code{AnnotatedOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints">}\href{../../retistruct/html/Outline.html#method-getPoints}{\code{retistruct::Outline$getPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled">}\href{../../retistruct/html/Outline.html#method-getPointsScaled}{\code{retistruct::Outline$getPointsScaled()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment">}\href{../../retistruct/html/Outline.html#method-mapFragment}{\code{retistruct::Outline$mapFragment()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids">}\href{../../retistruct/html/Outline.html#method-mapPids}{\code{retistruct::Outline$mapPids()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage">}\href{../../retistruct/html/Outline.html#method-replaceImage}{\code{retistruct::Outline$replaceImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="addPoints">}\href{../../retistruct/html/PathOutline.html#method-addPoints}{\code{retistruct::PathOutline$addPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint">}\href{../../retistruct/html/PathOutline.html#method-insertPoint}{\code{retistruct::PathOutline$insertPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint">}\href{../../retistruct/html/PathOutline.html#method-nextPoint}{\code{retistruct::PathOutline$nextPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths">}\href{../../retistruct/html/PathOutline.html#method-stitchSubpaths}{\code{retistruct::PathOutline$stitchSubpaths()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSet'><code>retistruct::OutlineCommon$getFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet"><a href='../../retistruct/html/Outline.html#method-Outline-addFeatureSet'><code>retistruct::Outline$addFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage"><a href='../../retistruct/html/Outline.html#method-Outline-getImage'><code>retistruct::Outline$getImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineLengths'><code>retistruct::Outline$getOutlineLengths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineSet'><code>retistruct::Outline$getOutlineSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getPoints'><code>retistruct::Outline$getPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsScaled'><code>retistruct::Outline$getPointsScaled()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment"><a href='../../retistruct/html/Outline.html#method-Outline-mapFragment'><code>retistruct::Outline$mapFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids"><a href='../../retistruct/html/Outline.html#method-Outline-mapPids'><code>retistruct::Outline$mapPids()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage"><a href='../../retistruct/html/Outline.html#method-Outline-replaceImage'><code>retistruct::Outline$replaceImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="addPoints"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-addPoints'><code>retistruct::PathOutline$addPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-insertPoint'><code>retistruct::PathOutline$insertPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-nextPoint'><code>retistruct::PathOutline$nextPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-stitchSubpaths'><code>retistruct::PathOutline$stitchSubpaths()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-new"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -106,8 +106,8 @@ Constructor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-labelTearPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-labelTearPoints}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-labelTearPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-labelTearPoints}{}}}
 \subsection{Method \code{labelTearPoints()}}{
 Label a set of three unlabelled points supposed
   to refer to the apex and vertices of a cut and tear with the \code{V0}
@@ -128,8 +128,8 @@ Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-whichTear"></a>}}
-\if{latex}{\out{\hypertarget{method-whichTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-whichTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-whichTear}{}}}
 \subsection{Method \code{whichTear()}}{
 Return index of tear in an AnnotatedOutline in which a point appears
 \subsection{Usage}{
@@ -148,8 +148,8 @@ ID of tear
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTear"></a>}}
-\if{latex}{\out{\hypertarget{method-getTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getTear}{}}}
 \subsection{Method \code{getTear()}}{
 Return indices of tear in AnnotatedOutline
 \subsection{Usage}{
@@ -169,8 +169,8 @@ Vector of three point IDs, labelled with \code{V0},
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTears"></a>}}
-\if{latex}{\out{\hypertarget{method-getTears}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getTears"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getTears}{}}}
 \subsection{Method \code{getTears()}}{
 Get tears
 \subsection{Usage}{
@@ -182,8 +182,8 @@ Matrix of tears
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-computeTearRelationships"></a>}}
-\if{latex}{\out{\hypertarget{method-computeTearRelationships}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-computeTearRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-computeTearRelationships}{}}}
 \subsection{Method \code{computeTearRelationships()}}{
 Compute the parent relationships for a potential
   set of tears. The function throws an error if tears overlap.
@@ -202,7 +202,7 @@ vertices of tears)}
 }
 \subsection{Returns}{
 List containing
-\itemize{
+\describe{
 \item{\code{Rset}}{the set of points on the rim}
 \item{\code{TFset}}{list containing indices of points in each forward tear}
 \item{\code{TBset}}{list containing indices of points in each backward tear}
@@ -215,8 +215,8 @@ List containing
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addTear"></a>}}
-\if{latex}{\out{\hypertarget{method-addTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-addTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-addTear}{}}}
 \subsection{Method \code{addTear()}}{
 Add tear to an AnnotatedOutline
 \subsection{Usage}{
@@ -232,8 +232,8 @@ Add tear to an AnnotatedOutline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeTear"></a>}}
-\if{latex}{\out{\hypertarget{method-removeTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-removeTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-removeTear}{}}}
 \subsection{Method \code{removeTear()}}{
 Remove tear from an AnnotatedOutline
 \subsection{Usage}{
@@ -249,8 +249,8 @@ Remove tear from an AnnotatedOutline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkTears"></a>}}
-\if{latex}{\out{\hypertarget{method-checkTears}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-checkTears"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-checkTears}{}}}
 \subsection{Method \code{checkTears()}}{
 Check that all tears are correct.
 \subsection{Usage}{
@@ -263,8 +263,8 @@ If all is OK, returns empty vector.  If not, returns
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setFixedPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-setFixedPoint}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-setFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-setFixedPoint}{}}}
 \subsection{Method \code{setFixedPoint()}}{
 Set fixed point
 \subsection{Usage}{
@@ -282,8 +282,8 @@ Set fixed point
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFixedPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-getFixedPoint}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getFixedPoint}{}}}
 \subsection{Method \code{getFixedPoint()}}{
 Get point ID of fixed point
 \subsection{Usage}{
@@ -295,8 +295,8 @@ Point ID of fixed point
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRimSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getRimSet}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getRimSet"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getRimSet}{}}}
 \subsection{Method \code{getRimSet()}}{
 Get point IDs of points on rim
 \subsection{Usage}{
@@ -308,8 +308,8 @@ Point IDs of points on rim
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ensureFixedPointInRim"></a>}}
-\if{latex}{\out{\hypertarget{method-ensureFixedPointInRim}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-ensureFixedPointInRim"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-ensureFixedPointInRim}{}}}
 \subsection{Method \code{ensureFixedPointInRim()}}{
 Ensure that the fixed point \code{i0} is in the rim, not a tear.
 Alters object in which \code{i0} may have been changed.
@@ -319,8 +319,8 @@ Alters object in which \code{i0} may have been changed.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRimLengths"></a>}}
-\if{latex}{\out{\hypertarget{method-getRimLengths}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getRimLengths"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getRimLengths}{}}}
 \subsection{Method \code{getRimLengths()}}{
 Get lengths of edges on rim
 \subsection{Usage}{
@@ -332,8 +332,8 @@ Vector of rim lengths
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

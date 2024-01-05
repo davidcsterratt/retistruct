@@ -21,26 +21,26 @@ David Sterratt
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{CountSet$new()}}
-\item \href{#method-reconstruct}{\code{CountSet$reconstruct()}}
-\item \href{#method-clone}{\code{CountSet$clone()}}
+\item \href{#method-CountSet-new}{\code{CountSet$new()}}
+\item \href{#method-CountSet-reconstruct}{\code{CountSet$reconstruct()}}
+\item \href{#method-CountSet-clone}{\code{CountSet$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getCol'><code>retistruct::FeatureSetCommon$getCol()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeature'><code>retistruct::FeatureSetCommon$getFeature()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeatures'><code>retistruct::FeatureSetCommon$getFeatures()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIDs'><code>retistruct::FeatureSetCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIndex'><code>retistruct::FeatureSetCommon$getIndex()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-setID'><code>retistruct::FeatureSetCommon$setID()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-CountSet-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CountSet-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -61,8 +61,8 @@ present in the output of the \code{\link{colors}} function}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-reconstruct"></a>}}
-\if{latex}{\out{\hypertarget{method-reconstruct}{}}}
+\if{html}{\out{<a id="method-CountSet-reconstruct"></a>}}
+\if{latex}{\out{\hypertarget{method-CountSet-reconstruct}{}}}
 \subsection{Method \code{reconstruct()}}{
 Map the CountSet to a \code{\link{ReconstructedOutline}}
 \subsection{Usage}{
@@ -78,8 +78,8 @@ Map the CountSet to a \code{\link{ReconstructedOutline}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-CountSet-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CountSet-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
