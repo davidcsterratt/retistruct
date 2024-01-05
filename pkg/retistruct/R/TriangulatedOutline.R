@@ -95,7 +95,7 @@ flatplot.TriangulatedOutline <- function(x, axt="n",
     trimesh(x$T, x$P, col="grey", add=TRUE)
 }
 
-##' @import rgl
+##' @rawNamespace import(rgl, except = triangulate)
 ##' @method depthplot3D TriangulatedOutline
 ##' @export
 depthplot3D.TriangulatedOutline <- function(r, ...) {

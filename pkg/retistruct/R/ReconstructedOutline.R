@@ -1252,7 +1252,6 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
 ##' @param ... Other graphics parameters -- not used at present
 ##' @method sphericalplot ReconstructedOutline
 ##' @author David Sterratt
-##' @import rgl
 ##' @export
 sphericalplot.ReconstructedOutline <- function(r,
                                                strain=FALSE,
