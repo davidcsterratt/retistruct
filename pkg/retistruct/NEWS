@@ -1,3 +1,55 @@
+CHANGES IN VERSION 0.7.4 - Released 2023/02/04
+
+BUG FIX
+
+* Renamed deprecated rgl.*functions,
+  which were causing a crash in the GUI
+
+CHANGES IN VERSION 0.7.3 - Released 2020/09/12
+
+BUG FIXES
+
+* Fix regression that caused the stitching to fail on some retinae with depthmaps
+
+* Titration reinstated
+  (https://github.com/davidcsterratt/retistruct/issues/29)
+
+NEW FEATURES
+
+* Determine the background value of depthmaps automatically
+
+* Allow minimum and maxium size of window for infering missing valus
+  in depthmaps to be specified
+
+CHANGES IN VERSION 0.7.2 - Released 2020/08/31
+
+BUG FIXES
+
+* Fix regression in v0.7.1 that caused some mulit-fragment outlines to fail
+
+* Improve image interpolation
+
+CHANGES IN VERSION 0.7.1 - Released 2020/08/28
+
+NEW FEATURE
+
+* Stitching together of fragments that contain a hole in the centre
+  is now possible
+
+CHANGES IN VERSION 0.7.0 - Released 2020/08/26
+
+NEW FEATURES
+
+* Stitching together separate petals or "fragments"
+
+* Ability to magnify plots in the GUI
+
+* Depthmaps, i.e. the ability to specify the depth at various points
+  of the flatmount image, for more accurate reconstruction.
+
+* Switch easily between 3D views of flatmount and reconstruction in
+  GUI
+
 CHANGES IN VERSION 0.6.3 - Released 2020/04/03
 
 BUG FIX

@@ -5,7 +5,7 @@
 \title{Class containing functions and data relating to Stitching outlines}
 \description{
 A StitchedOutline contains a function to stitch the
-  tears, setting the correspondences \code{hf}, \code{hb} and
+  tears and fullcuts, setting the correspondences \code{hf}, \code{hb} and
   \code{h}
 }
 \author{
@@ -21,61 +21,84 @@ David Sterratt
 
 \item{\code{TFset}}{list containing indices of points in each forward tear}
 
+\item{\code{CFset}}{list containing indices of points in each forward cut}
+
 \item{\code{epsilon}}{the minimum distance between points, set
 automatically}
+
+\item{\code{tearsStitched}}{Boolean indicating if tears have been stitched}
+
+\item{\code{fullCutsStitched}}{Boolean indicating if full cuts have been stitched}
 }
 \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{StitchedOutline$new()}}
-\item \href{#method-stitchTears}{\code{StitchedOutline$stitchTears()}}
-\item \href{#method-clone}{\code{StitchedOutline$clone()}}
+\item \href{#method-StitchedOutline-new}{\code{StitchedOutline$new()}}
+\item \href{#method-StitchedOutline-stitchTears}{\code{StitchedOutline$stitchTears()}}
+\item \href{#method-StitchedOutline-stitchFullCuts}{\code{StitchedOutline$stitchFullCuts()}}
+\item \href{#method-StitchedOutline-isStitched}{\code{StitchedOutline$isStitched()}}
+\item \href{#method-StitchedOutline-getBoundarySets}{\code{StitchedOutline$getBoundarySets()}}
+\item \href{#method-StitchedOutline-clone}{\code{StitchedOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints">}\href{../../retistruct/html/Outline.html#method-getPoints}{\code{retistruct::Outline$getPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled">}\href{../../retistruct/html/Outline.html#method-getPointsScaled}{\code{retistruct::Outline$getPointsScaled()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment">}\href{../../retistruct/html/Outline.html#method-mapFragment}{\code{retistruct::Outline$mapFragment()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids">}\href{../../retistruct/html/Outline.html#method-mapPids}{\code{retistruct::Outline$mapPids()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage">}\href{../../retistruct/html/Outline.html#method-replaceImage}{\code{retistruct::Outline$replaceImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="addPoints">}\href{../../retistruct/html/PathOutline.html#method-addPoints}{\code{retistruct::PathOutline$addPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint">}\href{../../retistruct/html/PathOutline.html#method-insertPoint}{\code{retistruct::PathOutline$insertPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint">}\href{../../retistruct/html/PathOutline.html#method-nextPoint}{\code{retistruct::PathOutline$nextPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths">}\href{../../retistruct/html/PathOutline.html#method-stitchSubpaths}{\code{retistruct::PathOutline$stitchSubpaths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-addTear}{\code{retistruct::AnnotatedOutline$addTear()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="checkTears">}\href{../../retistruct/html/AnnotatedOutline.html#method-checkTears}{\code{retistruct::AnnotatedOutline$checkTears()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeTearRelationships">}\href{../../retistruct/html/AnnotatedOutline.html#method-computeTearRelationships}{\code{retistruct::AnnotatedOutline$computeTearRelationships()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="ensureFixedPointInRim">}\href{../../retistruct/html/AnnotatedOutline.html#method-ensureFixedPointInRim}{\code{retistruct::AnnotatedOutline$ensureFixedPointInRim()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFixedPoint">}\href{../../retistruct/html/AnnotatedOutline.html#method-getFixedPoint}{\code{retistruct::AnnotatedOutline$getFixedPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimLengths">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimLengths}{\code{retistruct::AnnotatedOutline$getRimLengths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimSet">}\href{../../retistruct/html/AnnotatedOutline.html#method-getRimSet}{\code{retistruct::AnnotatedOutline$getRimSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-getTear}{\code{retistruct::AnnotatedOutline$getTear()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTears">}\href{../../retistruct/html/AnnotatedOutline.html#method-getTears}{\code{retistruct::AnnotatedOutline$getTears()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelTearPoints">}\href{../../retistruct/html/AnnotatedOutline.html#method-labelTearPoints}{\code{retistruct::AnnotatedOutline$labelTearPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-removeTear}{\code{retistruct::AnnotatedOutline$removeTear()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="setFixedPoint">}\href{../../retistruct/html/AnnotatedOutline.html#method-setFixedPoint}{\code{retistruct::AnnotatedOutline$setFixedPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichTear">}\href{../../retistruct/html/AnnotatedOutline.html#method-whichTear}{\code{retistruct::AnnotatedOutline$whichTear()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="mapTriangulatedFragment">}\href{../../retistruct/html/TriangulatedOutline.html#method-mapTriangulatedFragment}{\code{retistruct::TriangulatedOutline$mapTriangulatedFragment()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="triangulate">}\href{../../retistruct/html/TriangulatedOutline.html#method-triangulate}{\code{retistruct::TriangulatedOutline$triangulate()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSet'><code>retistruct::OutlineCommon$getFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet"><a href='../../retistruct/html/Outline.html#method-Outline-addFeatureSet'><code>retistruct::Outline$addFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getDepth"><a href='../../retistruct/html/Outline.html#method-Outline-getDepth'><code>retistruct::Outline$getDepth()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragment"><a href='../../retistruct/html/Outline.html#method-Outline-getFragment'><code>retistruct::Outline$getFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentIDs'><code>retistruct::Outline$getFragmentIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDsFromPointIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentIDsFromPointIDs'><code>retistruct::Outline$getFragmentIDsFromPointIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPointIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentPointIDs'><code>retistruct::Outline$getFragmentPointIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentPoints'><code>retistruct::Outline$getFragmentPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage"><a href='../../retistruct/html/Outline.html#method-Outline-getImage'><code>retistruct::Outline$getImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineLengths'><code>retistruct::Outline$getOutlineLengths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineSet'><code>retistruct::Outline$getOutlineSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getPoints'><code>retistruct::Outline$getPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsScaled'><code>retistruct::Outline$getPointsScaled()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsXY"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsXY'><code>retistruct::Outline$getPointsXY()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment"><a href='../../retistruct/html/Outline.html#method-Outline-mapFragment'><code>retistruct::Outline$mapFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids"><a href='../../retistruct/html/Outline.html#method-Outline-mapPids'><code>retistruct::Outline$mapPids()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage"><a href='../../retistruct/html/Outline.html#method-Outline-replaceImage'><code>retistruct::Outline$replaceImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-insertPoint'><code>retistruct::PathOutline$insertPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-nextPoint'><code>retistruct::PathOutline$nextPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-stitchSubpaths'><code>retistruct::PathOutline$stitchSubpaths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addFullCut"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-addFullCut'><code>retistruct::AnnotatedOutline$addFullCut()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addPoints"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-addPoints'><code>retistruct::AnnotatedOutline$addPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="addTear"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-addTear'><code>retistruct::AnnotatedOutline$addTear()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="checkTears"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-checkTears'><code>retistruct::AnnotatedOutline$checkTears()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeFullCutRelationships"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-computeFullCutRelationships'><code>retistruct::AnnotatedOutline$computeFullCutRelationships()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="computeTearRelationships"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-computeTearRelationships'><code>retistruct::AnnotatedOutline$computeTearRelationships()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="ensureFixedPointInRim"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-ensureFixedPointInRim'><code>retistruct::AnnotatedOutline$ensureFixedPointInRim()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFixedPoint"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getFixedPoint'><code>retistruct::AnnotatedOutline$getFixedPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFullCut"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getFullCut'><code>retistruct::AnnotatedOutline$getFullCut()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getFullCuts"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getFullCuts'><code>retistruct::AnnotatedOutline$getFullCuts()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimLengths"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getRimLengths'><code>retistruct::AnnotatedOutline$getRimLengths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getRimSet"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getRimSet'><code>retistruct::AnnotatedOutline$getRimSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTear"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getTear'><code>retistruct::AnnotatedOutline$getTear()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="getTears"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-getTears'><code>retistruct::AnnotatedOutline$getTears()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelFullCutPoints"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-labelFullCutPoints'><code>retistruct::AnnotatedOutline$labelFullCutPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="labelTearPoints"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-labelTearPoints'><code>retistruct::AnnotatedOutline$labelTearPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeFullCut"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-removeFullCut'><code>retistruct::AnnotatedOutline$removeFullCut()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="removeTear"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-removeTear'><code>retistruct::AnnotatedOutline$removeTear()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="setFixedPoint"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-setFixedPoint'><code>retistruct::AnnotatedOutline$setFixedPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichFullCut"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-whichFullCut'><code>retistruct::AnnotatedOutline$whichFullCut()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="AnnotatedOutline" data-id="whichTear"><a href='../../retistruct/html/AnnotatedOutline.html#method-AnnotatedOutline-whichTear'><code>retistruct::AnnotatedOutline$whichTear()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="mapTriangulatedFragment"><a href='../../retistruct/html/TriangulatedOutline.html#method-TriangulatedOutline-mapTriangulatedFragment'><code>retistruct::TriangulatedOutline$mapTriangulatedFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="TriangulatedOutline" data-id="triangulate"><a href='../../retistruct/html/TriangulatedOutline.html#method-TriangulatedOutline-triangulate'><code>retistruct::TriangulatedOutline$triangulate()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-StitchedOutline-new"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -91,8 +114,8 @@ Constructor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-stitchTears"></a>}}
-\if{latex}{\out{\hypertarget{method-stitchTears}{}}}
+\if{html}{\out{<a id="method-StitchedOutline-stitchTears"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-stitchTears}{}}}
 \subsection{Method \code{stitchTears()}}{
 Stitch together the incisions and tears by inserting new
   points in the tears and creating correspondences between new
@@ -103,8 +126,52 @@ Stitch together the incisions and tears by inserting new
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-StitchedOutline-stitchFullCuts"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-stitchFullCuts}{}}}
+\subsection{Method \code{stitchFullCuts()}}{
+Stitch together the fullcuts by inserting new
+  points in the tears and creating correspondences between new
+  points.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$stitchFullCuts()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-StitchedOutline-isStitched"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-isStitched}{}}}
+\subsection{Method \code{isStitched()}}{
+Test if the outline has been stitched
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$isStitched()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Boolean, indicating if the outline has been stitched or not
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-StitchedOutline-getBoundarySets"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-getBoundarySets}{}}}
+\subsection{Method \code{getBoundarySets()}}{
+Get point IDs of points on boundaries
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{StitchedOutline$getBoundarySets()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+List of Point IDs of points on the boundaries.
+If the outline has been stitched,
+the point IDs in each
+element of the list will be ordered in the direction of the
+forward pointer, and the boundary that is longest will be
+named as \code{Rim}. If the outline has not been stitched,
+the list will have one element named \code{Rim}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-StitchedOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-StitchedOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

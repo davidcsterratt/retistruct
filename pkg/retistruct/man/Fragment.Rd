@@ -26,7 +26,7 @@ is next in the outline travelling anticlockwise (forwards)}
 \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that
 is next in the outline travelling clockwise (backwards)}
 
-\item{\code{h}}{For each row of \code{P}, the correspondence of that
+\item{\code{h}}{For each row of \code{P}, the cut of that
 point (which will be to itself initially)}
 
 \item{\code{A.tot}}{Total area of the Fragment}
@@ -36,13 +36,13 @@ point (which will be to itself initially)}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-initializeFromPoints}{\code{Fragment$initializeFromPoints()}}
-\item \href{#method-clone}{\code{Fragment$clone()}}
+\item \href{#method-Fragment-initializeFromPoints}{\code{Fragment$initializeFromPoints()}}
+\item \href{#method-Fragment-clone}{\code{Fragment$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-initializeFromPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-initializeFromPoints}{}}}
+\if{html}{\out{<a id="method-Fragment-initializeFromPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-Fragment-initializeFromPoints}{}}}
 \subsection{Method \code{initializeFromPoints()}}{
 Initialise a Fragment from a set of points
 \subsection{Usage}{
@@ -58,8 +58,8 @@ Initialise a Fragment from a set of points
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Fragment-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Fragment-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

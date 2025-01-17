@@ -25,7 +25,7 @@ projection being the South Pole. The MathWorld equations are for
 the more general case.
 }
 \references{
-\url{http://en.wikipedia.org/wiki/Map_projection},
+\url{https://en.wikipedia.org/wiki/Map_projection},
 \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}
 }
 \author{

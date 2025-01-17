@@ -4,7 +4,7 @@ test_that("IJROI format with image is read correctly", {
   r <- expect_warning(retistruct.read.dataset(dataset), "Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
   ## Test that points are read in correctly 
   P <- as.matrix(read.csv(file.path(dataset, "P.csv")))
-  expect_equal(r$getPoints(), P)
+  expect_equal(r$getPointsXY(), P)
   ## Test that optic disc is read in correctly 
   od <- rbind(c(X=354, Y=336),
               c(354, 347),
@@ -20,7 +20,7 @@ test_that("IJROI format with data points and data counts is read correctly", {
     r <- expect_warning(retistruct.read.dataset(dataset), "Scale file \"scale.csv\" does not exist. Scale bar will not be set.")
     ## Test that points are read in correctly 
     P <- as.matrix(read.csv(file.path(dataset, "P.csv")))
-    expect_equal(r$getPoints(), P)
+    expect_equal(r$getPointsXY(), P)
 
     testcounts <- rbind(c(X=100,Y=200,C=4),
                         c(110,200,4),

@@ -6,7 +6,7 @@ test_that("CSV format is read correctly", {
     P <- as.matrix(read.csv(file.path(dataset, "P.csv")))
     colnames(P) <- c("X", "Y")
 
-    expect_equal(r$getPoints(), P)
+    expect_equal(r$getPointsXY(), P)
 
     ## Test that optic disc landmark is read in correctly 
     od <- rbind(c(X=354, Y=336),
@@ -16,4 +16,14 @@ test_that("CSV format is read correctly", {
                 c(364, 338),
                 c(360, 333))
     expect_equal(r$getFeatureSet("LandmarkSet")$getFeature("OD"), od)
+})
+
+test_that("CSV format with depthmap is read correctly", {
+    dataset <- file.path(system.file(package = "retistruct"), "extdata", "parabola")
+    r <- retistruct.read.dataset(dataset)
+    expect_false(is.null(r$dm))
+    expect_equal(r$scale, 1)
+    expect_equal(r$scalez, 0.680708333333333, tol=1E-5)
+    ## There should be some non-zero Z coordinates
+    expect_false(all(r$getPoints()[,"Z"] == 0))
 })

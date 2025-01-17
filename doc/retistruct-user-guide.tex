@@ -1,6 +1,7 @@
+
 \documentclass{book}
 
-\newcommand{\svninfo}{Retistruct version: 0.6.2 , Date: 2019-12-13}
+\newcommand{\svninfo}{Retistruct version: 0.7.3 , Date: 2020-09-12}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -245,15 +246,55 @@ the \textbf{Properties} button in the interface (or select \textbf{Edit$\rightar
 \textbf{Outline colour}.
 \end{enumerate}
 
+\subsection{Reading in images comprising multiple fragments [Optional]}
+\label{retistruct-user-guide:sec:read-imag-compr}
+
+Images from retinae that been cut into multiple fragments can also be
+loaded in. To do this, instead of saving one outline.,save multiple
+ImageJ ROI regions from the same image in a file called
+\texttt{RoiSet.zip}
+
 \subsection{Specifying the scale} Optionally, the scale of the image
 can be specified by providing a file \texttt{scale.csv} in the same
 directory as the image and ROI files. This file should contain two
 lines, the first with the heading \texttt{Scale} and the second with
 the length of the side of a pixel in micrometres. For example:
 \begin{verbatim}
-"Scale"
+XY
 1.5
 \end{verbatim}
+Note that for compatibility with older versions of
+\texttt{Retistruct}, this column can also be called ``Scale''.
+
+\subsection{Specifying depth information [Optional]}
+\label{retistruct-user-guide:sec:specifying-depth}
+
+A ``flat-mount'' needn't be flat. If depth information is available,
+this should be supplied in the form of a single-channel TIFF file
+called \texttt{depthmap.tiff} with the same dimensions as
+\texttt{image.png}. The value of each pixel in the TIFF file specifies
+the height of the corresponding pixel in the image. The size of each
+step in the Z-direction should be specified using an extra column
+``Z'' in \texttt{scale.csv}.
+
+Parts of the TIFF image will correspond to parts of the flat-mount
+that are empty; we refer to these parts as the background. Typically
+the background is represented by a value of 0. There will be problems
+if the outline specified in ImageJ strays onto parts of the TIFF
+depthmap image, since it might appear that there are very sharp jumps
+in the depth. To get around this problem, it is necessary to specify
+the value of the background, so that \textsc{Retistruct} can infer the
+depth of any background regions that the outline strays onto by
+looking at the closest depths that are in the foreground. To specify
+the background value, include a file \texttt{depthmap.csv}, in the
+following format:
+\begin{verbatim}
+Background value
+0
+\end{verbatim}
+If there is no \texttt{depthmap.csv} in this format,
+\textsc{Retistruct} tries to infer the background value, giving a
+giving a warning as it does so.
 
 \subsection{Reading in data points}
 \label{retistruct-user-guide:sec:read-data-points}
@@ -318,7 +359,7 @@ This is the same as the \textsc{ImageJ ROI} format, except that the
 outline is contained in the two columns of a file called
 \texttt{outline.csv}.  Each column should have a heading, e.g.:
 \begin{verbatim}
-"X", "Y"
+X,Y
 1,5
 10,76,
 ...
@@ -341,19 +382,36 @@ retinal outline should appear in the \textsc{Retistruct} window.
 
 After a set of files is opened, the \textbf{Edit} tab in the
 \textsc{Retistruct} window will be open. Before the retina can be
-reconstructed, you need to mark-up tears and landmarks on the retina
-using the following controls:
+reconstructed, you need to mark-up tears, full cuts and
+landmarks on the retina using the following controls:
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{fullcut}
+  \caption{Adding a full cut. One full cut between the two
+    upper petals has been added. The red dashed line indicate the ends
+    of the full cut, and the red highlighted edge indicates the
+    edges of the full cut.}
+  \label{retistruct-user-guide:fig:full-cut}
+\end{figure}
 
 \begin{description}
 \item[Add tear] To add a tear, click on this button, then click on
   three points in turn which define a tear. The order in which the
   points are added does not matter. Tears contained within a tear can
   be marked up, but tears cannot cross over one another.
-\item[Move Point] To move one of the points defining a tear, click on
-  this button, then click on the point which you desire to move, then
-  click on the point to which it should be moved.
 \item[Remove tear] To remove a tear, click on this button, then click
   on the apex of the tear (marked in cyan on the plot)
+\item[Add full cut] To add a ``full cut'', i.e.~a pair of
+  corresponding edges of two fragments, click on this button, then
+  click on four points in turn which define a full cut
+  (Figure~\ref{retistruct-user-guide:fig:full-cut}). The order
+  in which the points are added does not matter.
+\item[Remove full cut] To remove a full cut, click on this
+  button, then click on any point on the full cut.
+\item[Move Point] To move one of the points defining a tear or
+  full cut, click on this button, then click on the point which
+  you desire to move, then click on the point to which it should be
+  moved.
 \item[Mark nasal] To mark the nasal pole, click on this button, then
   click on the point which is the nasal pole.  If the nasal or
   dorsal pole has already been marked, the marker is removed from
@@ -416,7 +474,7 @@ sequence of operations:
 
 At the end of the reconstruction process, a polar plot appears next to
 the flattened retina. By default the location of
-the cuts and tears in the polar coordinates can be seen.
+the full cuts and tears in the polar coordinates can be seen.
 
 \section{Assessing the quality of the reconstruction}
 \label{retistruct-user-guide:sec:assess-qual-reconstr}
@@ -677,7 +735,7 @@ information of \cite{SterrattEtal2012}.
 \section{Exporting the plots}
 \label{retistruct-user-guide:sec:exporting-plots}
 
-The \textbf{Bitmap} and \textbf{PDF} buttons above the flatmount view
+The \textbf{Bitmap} and \textbf{PDF} buttons above the flat-mount view
 and the reconstructed view export the image show to a PNG file format
 or an PDF respectively. To change the width of the image in pixels,
 select \textbf{Properties} and set the
@@ -1002,4 +1060,5 @@ each directory there are two files:
 % LocalWords:  alt isn checkboxes Markup markup toolbar min max von
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
 %  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
-%  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal
+%  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal RoiSet
+% LocalWords:  depthmap visuotopic

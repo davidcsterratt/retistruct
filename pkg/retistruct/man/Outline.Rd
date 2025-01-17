@@ -19,7 +19,9 @@ David Sterratt
 \item{\code{P}}{A N-by-2 matrix of points of the \code{Outline}
 arranged in anticlockwise order}
 
-\item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
+\item{\code{scale}}{The length of one unit of \code{P} in the X-Y plane in arbitrary units}
+
+\item{\code{scalez}}{The length of one unit of \code{P} in the Z-direction in arbitrary units}
 
 \item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
 
@@ -29,60 +31,88 @@ is next in the outline travelling anticlockwise (forwards)}
 \item{\code{gb}}{For each row of \code{P}, the index of \code{P} that
 is next in the outline travelling clockwise (backwards)}
 
-\item{\code{h}}{For each row of \code{P}, the correspondence of that
+\item{\code{h}}{For each row of \code{P}, the cut of that
 point (which will be to itself initially)}
 
 \item{\code{im}}{An image as a \code{raster} object}
+
+\item{\code{dm}}{Depthmap, with same dimensions as \code{im}, which indicates
+height of each pixel in Z-direction}
+
+\item{\code{A.fragments}}{Areas of fragments}
+
+\item{\code{dm.inferna.window.min}}{Minimum window size (in pixels) for inferring missing values in depthmaps}
+
+\item{\code{dm.inferna.window.max}}{Minimum window size (in pixels) for inferring missing values in depthmaps}
 }
 \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Outline$new()}}
-\item \href{#method-getImage}{\code{Outline$getImage()}}
-\item \href{#method-replaceImage}{\code{Outline$replaceImage()}}
-\item \href{#method-mapFragment}{\code{Outline$mapFragment()}}
-\item \href{#method-mapPids}{\code{Outline$mapPids()}}
-\item \href{#method-addPoints}{\code{Outline$addPoints()}}
-\item \href{#method-getPoints}{\code{Outline$getPoints()}}
-\item \href{#method-getPointsScaled}{\code{Outline$getPointsScaled()}}
-\item \href{#method-getRimSet}{\code{Outline$getRimSet()}}
-\item \href{#method-getOutlineSet}{\code{Outline$getOutlineSet()}}
-\item \href{#method-getOutlineLengths}{\code{Outline$getOutlineLengths()}}
-\item \href{#method-addFeatureSet}{\code{Outline$addFeatureSet()}}
-\item \href{#method-clone}{\code{Outline$clone()}}
+\item \href{#method-Outline-new}{\code{Outline$new()}}
+\item \href{#method-Outline-getImage}{\code{Outline$getImage()}}
+\item \href{#method-Outline-replaceImage}{\code{Outline$replaceImage()}}
+\item \href{#method-Outline-mapFragment}{\code{Outline$mapFragment()}}
+\item \href{#method-Outline-mapPids}{\code{Outline$mapPids()}}
+\item \href{#method-Outline-getDepth}{\code{Outline$getDepth()}}
+\item \href{#method-Outline-addPoints}{\code{Outline$addPoints()}}
+\item \href{#method-Outline-getFragmentPointIDs}{\code{Outline$getFragmentPointIDs()}}
+\item \href{#method-Outline-getFragmentPoints}{\code{Outline$getFragmentPoints()}}
+\item \href{#method-Outline-getFragment}{\code{Outline$getFragment()}}
+\item \href{#method-Outline-getFragmentIDsFromPointIDs}{\code{Outline$getFragmentIDsFromPointIDs()}}
+\item \href{#method-Outline-getFragmentIDs}{\code{Outline$getFragmentIDs()}}
+\item \href{#method-Outline-getPoints}{\code{Outline$getPoints()}}
+\item \href{#method-Outline-getPointsXY}{\code{Outline$getPointsXY()}}
+\item \href{#method-Outline-getPointsScaled}{\code{Outline$getPointsScaled()}}
+\item \href{#method-Outline-getRimSet}{\code{Outline$getRimSet()}}
+\item \href{#method-Outline-getOutlineSet}{\code{Outline$getOutlineSet()}}
+\item \href{#method-Outline-getOutlineLengths}{\code{Outline$getOutlineLengths()}}
+\item \href{#method-Outline-addFeatureSet}{\code{Outline$addFeatureSet()}}
+\item \href{#method-Outline-clone}{\code{Outline$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSet'><code>retistruct::OutlineCommon$getFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Outline-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-new}{}}}
 \subsection{Method \code{new()}}{
 Construct an outline object. This sanitises the
   input points \code{P}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$new(P = NULL, scale = NA, im = NULL, units = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$new(
+  fragments = list(),
+  scale = NA,
+  im = NULL,
+  scalez = NA,
+  dm = NULL,
+  units = NA
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{P}}{An N-by-2 matrix of points of the \code{Outline}}
+\item{\code{fragments}}{A list of N-by-2 matrix of points for each fragment of the \code{Outline}}
 
 \item{\code{scale}}{The length of one unit of \code{P} in arbitrary units}
 
 \item{\code{im}}{The image as a \code{raster} object}
+
+\item{\code{scalez}}{The length of one unit of \code{P} in the Z-direction in arbitrary units. If \code{NA}, the depthmap is ignored.}
+
+\item{\code{dm}}{Depthmap, with same dimensions as \code{im}, which indicates
+height of each pixel in Z-direction}
 
 \item{\code{units}}{String giving units of scaled P, e.g. \dQuote{um}}
 }
@@ -90,8 +120,8 @@ Construct an outline object. This sanitises the
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getImage"></a>}}
-\if{latex}{\out{\hypertarget{method-getImage}{}}}
+\if{html}{\out{<a id="method-Outline-getImage"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getImage}{}}}
 \subsection{Method \code{getImage()}}{
 Image accessor
 \subsection{Usage}{
@@ -103,8 +133,8 @@ An image as a \code{raster} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-replaceImage"></a>}}
-\if{latex}{\out{\hypertarget{method-replaceImage}{}}}
+\if{html}{\out{<a id="method-Outline-replaceImage"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-replaceImage}{}}}
 \subsection{Method \code{replaceImage()}}{
 Image setter
 \subsection{Usage}{
@@ -120,8 +150,8 @@ Image setter
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mapFragment"></a>}}
-\if{latex}{\out{\hypertarget{method-mapFragment}{}}}
+\if{html}{\out{<a id="method-Outline-mapFragment"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-mapFragment}{}}}
 \subsection{Method \code{mapFragment()}}{
 Map the point IDs of a \link{Fragment} on the
   point IDs of this Outline
@@ -140,8 +170,8 @@ Map the point IDs of a \link{Fragment} on the
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mapPids"></a>}}
-\if{latex}{\out{\hypertarget{method-mapPids}{}}}
+\if{html}{\out{<a id="method-Outline-mapPids"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-mapPids}{}}}
 \subsection{Method \code{mapPids()}}{
 Map references to points
 \subsection{Usage}{
@@ -164,18 +194,40 @@ New references to point indices in target
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-addPoints}{}}}
-\subsection{Method \code{addPoints()}}{
-Add points to the outline register of points
+\if{html}{\out{<a id="method-Outline-getDepth"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getDepth}{}}}
+\subsection{Method \code{getDepth()}}{
+Get depth of points P
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$addPoints(P)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getDepth(P)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{P}}{2 column matrix of points to add}
+\item{\code{P}}{matrix containing unscaled X-Y coordinates of points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of unscaled Z coordinates of points P
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-addPoints}{}}}
+\subsection{Method \code{addPoints()}}{
+Add points to the outline register of points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$addPoints(P, fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{2 or 3 column matrix of points to add}
+
+\item{\code{fid}}{ID of fragment to which to add  the points}
 }
 \if{html}{\out{</div>}}
 }
@@ -186,21 +238,143 @@ The ID of each added point in the register. If points already
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-getPoints}{}}}
+\if{html}{\out{<a id="method-Outline-getFragmentPointIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getFragmentPointIDs}{}}}
+\subsection{Method \code{getFragmentPointIDs()}}{
+Get the point IDs in a fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentPointIDs(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of point IDs, i.e. indices of the rows in
+  the matrices returned by \code{getPoints} and
+  \code{getPointsScaled}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getFragmentPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getFragmentPoints}{}}}
+\subsection{Method \code{getFragmentPoints()}}{
+Get the points in a fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentPoints(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of points
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getFragment"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getFragment}{}}}
+\subsection{Method \code{getFragment()}}{
+Get fragment
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragment(fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fid}}{Fragment ID}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The  \code{\link{Fragment}} object with ID fid
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getFragmentIDsFromPointIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getFragmentIDsFromPointIDs}{}}}
+\subsection{Method \code{getFragmentIDsFromPointIDs()}}{
+Get fragment IDs from point IDS
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentIDsFromPointIDs(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{Vector of point IDs}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The Fragment ID to which each point belongs
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getFragmentIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getFragmentIDs}{}}}
+\subsection{Method \code{getFragmentIDs()}}{
+Get fragment IDs
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getFragmentIDs()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+IDs of all fragments
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getPoints}{}}}
 \subsection{Method \code{getPoints()}}{
 Get unscaled mesh points
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Outline$getPoints()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getPoints(pids = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{IDs of point to return}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Matrix with columns \code{X}, \code{Y} and \code{Z}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Outline-getPointsXY"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getPointsXY}{}}}
+\subsection{Method \code{getPointsXY()}}{
+Get X-Y coordinates of unscaled mesh points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Outline$getPointsXY(pids = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{IDs of point to return}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 Matrix with columns \code{X} and \code{Y}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getPointsScaled"></a>}}
-\if{latex}{\out{\hypertarget{method-getPointsScaled}{}}}
+\if{html}{\out{<a id="method-Outline-getPointsScaled"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getPointsScaled}{}}}
 \subsection{Method \code{getPointsScaled()}}{
 Get scaled mesh points
 \subsection{Usage}{
@@ -213,8 +387,8 @@ Matrix with columns \code{X} and \code{Y} which is
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRimSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getRimSet}{}}}
+\if{html}{\out{<a id="method-Outline-getRimSet"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getRimSet}{}}}
 \subsection{Method \code{getRimSet()}}{
 Get set of points on rim
 \subsection{Usage}{
@@ -228,8 +402,8 @@ Vector of point IDs, i.e. indices of the rows in
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getOutlineSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getOutlineSet}{}}}
+\if{html}{\out{<a id="method-Outline-getOutlineSet"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getOutlineSet}{}}}
 \subsection{Method \code{getOutlineSet()}}{
 Get points on the edge of the outline
 \subsection{Usage}{
@@ -241,8 +415,8 @@ Vector of points IDs on outline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getOutlineLengths"></a>}}
-\if{latex}{\out{\hypertarget{method-getOutlineLengths}{}}}
+\if{html}{\out{<a id="method-Outline-getOutlineLengths"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-getOutlineLengths}{}}}
 \subsection{Method \code{getOutlineLengths()}}{
 Get lengths of edges of the outline
 \subsection{Usage}{
@@ -254,8 +428,8 @@ Vector of lengths of edges connecting neighbouring points
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addFeatureSet"></a>}}
-\if{latex}{\out{\hypertarget{method-addFeatureSet}{}}}
+\if{html}{\out{<a id="method-Outline-addFeatureSet"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-addFeatureSet}{}}}
 \subsection{Method \code{addFeatureSet()}}{
 Add a \link{FeatureSet}, e.g. a \link{PointSet}
   or \link{LandmarkSet}
@@ -272,8 +446,8 @@ Add a \link{FeatureSet}, e.g. a \link{PointSet}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Outline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Outline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

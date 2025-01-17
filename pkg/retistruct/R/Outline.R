@@ -10,8 +10,10 @@ Outline <- R6Class("Outline",
     ##' @field P A N-by-2 matrix of points of the \code{Outline}
     ##'   arranged in anticlockwise order
     P=NULL,
-    ##' @field scale The length of one unit of \code{P} in arbitrary units
-    scale=NULL,        
+    ##' @field scale The length of one unit of \code{P} in the X-Y plane in arbitrary units
+    scale=NULL,
+    ##' @field scalez The length of one unit of \code{P} in the Z-direction in arbitrary units
+    scalez=NULL,
     ##' @field units String giving units of scaled P, e.g. \dQuote{um}
     units=NA,
     ##' @field gf For each row of \code{P}, the index of \code{P} that
@@ -20,28 +22,54 @@ Outline <- R6Class("Outline",
     ##' @field gb For each row of \code{P}, the index of \code{P} that
     ##'   is next in the outline travelling clockwise (backwards)
     gb=NULL,
-    ##' @field h For each row of \code{P}, the correspondence of that
+    ##' @field h For each row of \code{P}, the cut of that
     ##'   point (which will be to itself initially)
     h=NULL,
     ##' @field im An image as a \code{raster} object
     im=NULL,
+    ##' @field dm Depthmap, with same dimensions as \code{im}, which indicates
+    ##' height of each pixel in Z-direction
+    dm=NULL,
+    ##' @field A.fragments Areas of fragments
+    A.fragments = NULL,
+
+    ##' @field dm.inferna.window.min Minimum window size (in pixels) for inferring missing values in depthmaps
+    dm.inferna.window.min = 10,
+    ##' @field dm.inferna.window.max Minimum window size (in pixels) for inferring missing values in depthmaps
+    dm.inferna.window.max = 100,
     ##' @description Construct an outline object. This sanitises the
     ##'   input points \code{P}.
-    ##' @param P An N-by-2 matrix of points of the \code{Outline}
+    ##' @param fragments A list of N-by-2 matrix of points for each fragment of the \code{Outline}
     ##' @param scale The length of one unit of \code{P} in arbitrary units
     ##' @param im The image as a \code{raster} object
+    ##' @param scalez The length of one unit of \code{P} in the Z-direction in arbitrary units. If \code{NA}, the depthmap is ignored.
+    ##' @param dm Depthmap, with same dimensions as \code{im}, which indicates
+    ##' height of each pixel in Z-direction
     ##' @param units String giving units of scaled P, e.g. \dQuote{um}
-    initialize=function(P=NULL, scale=NA, im=NULL, units=NA) {
-      self$P <- matrix(0, 0, 2)
-      colnames(self$P) <- c("X", "Y")
+    initialize=function(fragments=list(), scale=NA, im=NULL, scalez=NA, dm=NULL, units=NA) {
+      self$P <- matrix(0, 0, 4)
+      colnames(self$P) <- c("X", "Y", "Z", "FID")
+      if (!is.null(dm) & !is.null(im)) {
+        if (all(dim(im) != dim(dm))) {
+          stop("Image and depthmap must have the same dimensions")
+        }
+      }
       self$im <- im
+      self$dm <- dm
       self$scale <- scale
+      self$scalez <- scalez
       self$units <- sub(units, "um", "\U00B5m")
-      if (!is.null(P)) {
-        fragment <- Fragment$new()
-        fragment$initializeFromPoints(P)
-        pids <- self$addPoints(fragment$P)
-        self$mapFragment(fragment, pids)
+      if (!is.list(fragments)) {
+        fragments <- list(fragments)
+      }
+      if (length(fragments) > 0) {
+        for (i in 1:length(fragments)) {
+          fragment <- Fragment$new()
+          fragment$initializeFromPoints(fragments[[i]])
+          pids <- self$addPoints(fragment$P, i)
+          self$mapFragment(fragment, pids)
+          self$A.fragments[i] <- fragment$A.tot
+        }
       }
     },
     ##' @description Image accessor
@@ -52,6 +80,9 @@ Outline <- R6Class("Outline",
     ##' @description Image setter
     ##' @param im An image as a \code{raster} object
     replaceImage = function(im) {
+      if (all(dim(im) != dim(self$dm))) {
+        stop("Image and depthmap must have the same dimensions")
+      }
       self$im <- im
     },
     ##' @description Map the point IDs of a \link{Fragment} on the
@@ -76,31 +107,54 @@ Outline <- R6Class("Outline",
       y[pids[nna]] <- pids[x[nna]]
       return(y)
     },
+    ##' @description Get depth of points P
+    ##' @param P matrix containing unscaled X-Y coordinates of points
+    ##' @return Vector of unscaled Z coordinates of points P
+    getDepth = function(P) {
+      if (!is.null(self$dm)) {
+        Z <- interpolate.image(self$dm, P, invert.y=TRUE,
+                               wmin=self$dm.inferna.window.min,
+                               wmax=self$dm.inferna.window.max)
+      } else {
+        Z <- rep(0, nrow(P))
+      }
+      return(Z)
+    },
+
     ##' @description Add points to the outline register of points
-    ##' @param P 2 column matrix of points to add
+    ##' @param P 2 or 3 column matrix of points to add
+    ##' @param fid ID of fragment to which to add  the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
     ##'   but an ID will be returned 
-    addPoints = function(P) {
-      if (!is.matrix(P)) {
-        if (length(P) == 2) {
+    addPoints = function(P, fid) {
+      if (!(is.vector(P) | is.matrix(P))) {
+        stop("P must be a matrix with 2 or 3 columns, or a vector of length 2 or 3")
+      }
+      if (is.vector(P)) {
+        if (length(P) == 2 | length(P) == 3) {
           P <- matrix(P, nrow=1)
         } else {
-          stop("P must be a matrix or vector of length 2")
+          stop("P should be vector of length 2 or 3")
         }
       }
-      if (!(ncol(P) == 2)) {
-        stop("P must have 2 (X, Y) columns")
+      if (is.matrix(P)) {
+        if (!(ncol(P) == 2 | ncol(P) == 3)) {
+          stop("P should be a matrix with 2 or 3 columns")
+        }
+      }
+      if (ncol(P) == 2) {
+        P <- cbind(P, self$getDepth(P))
       }
       pids <- rep(NA, nrow(P))
       for (i in (1:nrow(P))) {
         if (nrow(self$P) == 0) {
-          self$P <- rbind(self$P, c(P[i,]))
+          self$P <- rbind(self$P, c(P[i,], fid))
           pids[i] <- nrow(self$P)
           self$h[1] <- 1
         } else {
           ## Check point doesn't already exist
-          id <- which(apply(t(self$P) == P[i,], 2, all))
+          id <- which(apply(t(self$P[,1:2,drop=FALSE]) == P[i,1:2], 2, all))
           if (length(id) > 1) {
             stop(paste("Point register has duplicates", self$P[id,], collapse=", "))
           }
@@ -110,7 +164,7 @@ Outline <- R6Class("Outline",
           }
           ## Point doesn't exist
           if (length(id) == 0) {
-            self$P <- rbind(self$P, c(P[i,]))
+            self$P <- rbind(self$P, c(P[i,], fid))
             pids[i] <- nrow(self$P)
             self$h <- c(self$h, pids[i])
           }
@@ -118,9 +172,61 @@ Outline <- R6Class("Outline",
       }
       return(pids)
     },
+    ##' @description Get the point IDs in a fragment
+    ##' @param fid fragment id of the points
+    ##' @return Vector of point IDs, i.e. indices of the rows in
+    ##'   the matrices returned by \code{getPoints} and
+    ##'   \code{getPointsScaled}
+    getFragmentPointIDs = function(fid) {
+      return(which(self$P[,"FID"] == fid))
+    },
+    ##' @description Get the points in a fragment
+    ##' @param fid fragment id of the points
+    ##' @return Vector of points
+    getFragmentPoints = function(fid) {
+      return(self$P[self$getFragmentPointIDs(fid),c("X", "Y", "Z")])
+    },
+    ##' @description Get fragment
+    ##' @param fid Fragment ID
+    ##' @return The  \code{\link{Fragment}} object with ID fid
+    getFragment = function(fid) {
+      fpids <- self$getFragmentPointIDs(fid)
+      map <- NULL
+      map[fpids] <- 1:length(fpids)
+      fragment <- Fragment$new()
+      fragment$P = self$getFragmentPoints(fid)
+      fragment$gf = map[self$gf[fpids]]
+      fragment$gb = map[self$gb[fpids]]
+      fragment$h = map[self$h[fpids]]
+      return(fragment)
+    },
+    ##' @description Get fragment IDs from point IDS
+    ##' @param pids Vector of point IDs
+    ##' @return The Fragment ID to which each point belongs
+    getFragmentIDsFromPointIDs = function(pids) {
+      return(self$P[pids,"FID"])
+    },
+    ##' @description Get fragment IDs
+    ##' @return IDs of all fragments 
+    getFragmentIDs = function() {
+      return(unique(self$P[,"FID"]))
+    },
     ##' @description Get unscaled mesh points
+    ##' @param pids IDs of point to return
+    ##' @return  Matrix with columns \code{X}, \code{Y} and \code{Z}
+    getPoints = function(pids=NULL) {
+      if (!is.null(pids)) {
+        return(self$P[pids,c("X", "Y", "Z")])
+      }
+      return(self$P[,c("X", "Y", "Z")])
+    },
+    ##' @description Get X-Y coordinates of unscaled mesh points
+    ##' @param pids IDs of point to return
     ##' @return  Matrix with columns \code{X} and \code{Y}
-    getPoints = function() {
+    getPointsXY = function(pids=NULL) {
+      if (!is.null(pids)) {
+        return(self$P[pids,c("X", "Y")])
+      }
       return(self$P[,c("X", "Y")])
     },
     ##' @description Get scaled mesh points
@@ -128,9 +234,14 @@ Outline <- R6Class("Outline",
     ##'   exactly \code{scale} times the matrix returned by \code{getPoints}
     getPointsScaled = function() {
       if (is.na(self$scale)) {
-        return(self$P[,c("X", "Y")])
+        return(self$P[,c("X", "Y", "Z")])
       }
-      return(cbind(self$scale*self$P[,c("X", "Y")]))
+      if (is.na(self$scalez)) {
+        return(cbind(self$scale*self$P[,c("X", "Y")],
+                     Z=0))
+      }
+      return(cbind(self$scale*self$P[,c("X", "Y")],
+                   Z=self$scalez*self$P[,"Z"]))
     },
     ##' @description Get set of points on rim
     ##' @return Vector of point IDs, i.e. indices of the rows in

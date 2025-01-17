@@ -67,7 +67,7 @@ respect to colatitude rather than latitude}
 
 \item{image}{If \code{TRUE}, show the image}
 
-\item{markup}{If \code{TRUE}, plot markup, i.e. reconstructed tears}
+\item{markup}{If \code{TRUE}, plot markup, i.e. reconstructed fullcuts and tears}
 
 \item{add}{If \code{TRUE}, don't draw axes; add to existing plot.}
 

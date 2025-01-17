@@ -90,9 +90,14 @@ retistruct <- function() {
                    g.mark.n, g.mark.d, g.mark.od,
                    g.phi0d, g.show, g.edit.show, g.data, g.eye,
                    g.print1, g.print2,
-                   g.print.pdf1, g.print.pdf2), state)
-    if (state) 
+                   g.print.pdf1, g.print.pdf2,
+                   g.add.fullcut, g.remove.fullcut), state)
+    if (state) {
       enable.group(c(g.mark.od), length(a$getFeatureSet("LandmarkSet")$getIDs() > 0))
+      if (length(a$getFragmentIDs()) == 1) {
+        enable.group(c(g.add.fullcut, g.remove.fullcut), FALSE)
+      }
+    }
     if (!retistruct.check.markup(a)) {
       enable.group(c(g.reconstruct), FALSE)
     }
@@ -133,7 +138,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the three points of the tear in any order.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     pids <- identify(P[,"X"], P[,"Y"], n=3, col=getOption("TF.col"))
     withCallingHandlers({
@@ -150,7 +155,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on the apex of the tear to remvoe.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1, plot=FALSE)
     a$removeTear(a$whichTear(id))
@@ -163,7 +168,7 @@ retistruct <- function() {
   h.move <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
-    dev.set(d1)
+    g.m1$devSet()
     ## Find the intial point
     gWidgets2::svalue(g.status) <- paste("Click on apex or vertex to move.",
                                          identify.abort.text())
@@ -172,9 +177,10 @@ retistruct <- function() {
     
     ## Locate tear ID in which the point occurs
     tid <- a$whichTear(id1)
+    cid <- a$whichFullCut(id1)
 
     ## If there is a tear in which it occurs, select a point to move it to
-    if (!is.na(tid)) {
+    if (!is.na(tid) | !is.na(cid)) {
       gWidgets2::svalue(g.status) <- paste("Click on point to move it to.",
                                            identify.abort.text())
 
@@ -184,17 +190,33 @@ retistruct <- function() {
       ## Select second point
       id2 <- identify(P[,"X"], P[,"Y"], n=1)
 
-      ## Get point ids of exsiting tear
-      pids <- a$getTear(tid)
+      if (!is.na(tid)) {
+        ## Get point ids of exsiting tear
+        pids <- a$getTear(tid)
 
-      ## Replace old point with desired new point
-      if (length(id2)) pids[pids==id1] <- id2
+        ## Replace old point with desired new point
+        if (length(id2)) pids[pids==id1] <- id2
 
-      ## It is possible to get the apex and vertex mixed up when moving points.
-      ## Fix any errors.
-      pids <- a$labelTearPoints(pids)
-      a$removeTear(tid)
-      a$addTear(pids)
+        ## It is possible to get the apex and vertex mixed up when moving points.
+        ## Fix any errors.
+        pids <- a$labelTearPoints(pids)
+        a$removeTear(tid)
+        a$addTear(pids)
+      }
+      if (!is.na(cid)) {
+        ## Get point ids of exsiting cut
+        pids <- a$getFullCut(cid)
+
+        ## Replace old point with desired new point
+        if (length(id2)) pids[pids==id1] <- id2
+
+        ## It is possible to get the apex and vertex mixed up when moving points.
+        ## Fix any errors.
+        pids <- a$labelFullCutPoints(pids)
+        a$removeFullCut(cid)
+        a$addFullCut(pids)
+      }
+
     }
 
     ## Display and cleanup
@@ -203,13 +225,45 @@ retistruct <- function() {
     enable.widgets(TRUE)
   }
 
+  ## Handler for adding a cut
+  h.add.fullcut <- function(h, ...) {
+    unsaved.data(TRUE)
+    enable.widgets(FALSE)
+    gWidgets2::svalue(g.status) <- paste("Click on the four points of the cut in any order.",
+                              identify.abort.text())
+    g.m1$devSet()
+    P <- a$getPoints()
+    pids <- identify(P[,1], P[,2], n=4, col=getOption("TF.col"))
+    withCallingHandlers({
+      a$addFullCut(pids)
+    }, warning=h.warning, error=h.warning)
+    do.plot()
+    gWidgets2::svalue(g.status) <- ""
+    enable.widgets(TRUE)
+  }
+
+  ## Handler for removing a tear
+  h.remove.fullcut <- function(h, ...) {
+    unsaved.data(TRUE)
+    enable.widgets(FALSE)
+    gWidgets2::svalue(g.status) <- paste("Click on the apex of the cut to remove.",
+                                         identify.abort.text())
+    g.m1$devSet()
+    P <- a$getPoints()
+    id <- identify(P[,1], P[,2], n=1, plot=FALSE)
+    a$removeFullCut(a$whichFullCut(id))
+    do.plot()
+    gWidgets2::svalue(g.status) <- ""
+    enable.widgets(TRUE)
+  }
+  
   ## Handler for marking nasal point
   h.mark.n <- function(h, ...) {
     unsaved.data(TRUE)
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on nasal point.",
                                          identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
@@ -226,7 +280,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on dorsal point.",
                               identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     P <- a$getPoints()
     id <- identify(P[,"X"], P[,"Y"], n=1)
     withCallingHandlers({
@@ -243,7 +297,7 @@ retistruct <- function() {
     enable.widgets(FALSE)
     gWidgets2::svalue(g.status) <- paste("Click on a point on the optic disc.",
                                          identify.abort.text())
-    dev.set(d1)
+    g.m1$devSet()
     ## Convert list of segments to a matrix of points
     Sm <- NULL
     fs <- a$getFeatureSet("LandmarkSet")
@@ -389,7 +443,7 @@ retistruct <- function() {
     withCallingHandlers({
       r <<- retistruct.reconstruct(a, report=set.status,
                                    plot.3d=getOption("show.sphere"),
-                                   dev.flat=d1, dev.polar=d2)
+                                   dev.flat=g.m1$d, dev.polar=g.m2$d)
     }, warning=h.warning, error=h.warning)  
     enable.widgets(TRUE)
     do.plot()
@@ -506,11 +560,11 @@ retistruct <- function() {
   ## Handlers for printing bitmaps and PDFs from the two graphics
   ## devices
   h.print1 <- function(h, ...) {
-    h.print.bitmap(d1, initial.filename="image-flat.png")
+    h.print.bitmap(g.m1$d, initial.filename="image-flat.png")
   }
 
   h.print.pdf1 <- function(h, ...) {
-    h.print.pdf(d1, initial.filename="image-flat.pdf")
+    h.print.pdf(g.m1$d, initial.filename="image-flat.pdf")
   }
 
   h.print2 <- function(h, ...) {
@@ -518,7 +572,7 @@ retistruct <- function() {
   }
 
   h.print.pdf2 <- function(h, ...) {
-    h.print.pdf(d2, initial.filename="image-polar.pdf")
+    h.print.pdf(g.m2$d, initial.filename="image-polar.pdf")
   }
 
   ## Get and name available projections
@@ -568,7 +622,7 @@ retistruct <- function() {
       r <- a
     }
     if (("Strain" %in% gWidgets2::svalue(g.edit.show)) & (tab == "Edit")) {   # Strain plot
-      dev.set(d1)
+      g.m1$devSet()
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
                datapoints=FALSE,
@@ -579,12 +633,11 @@ retistruct <- function() {
                mesh=FALSE,
                strain=TRUE,
                scalebar=1)
-      dev.set(d2)
+      g.m2$devSet()
       par(mar=c(4.5, 4.5, 1, 0.5))
       lvsLplot(r)
-      sphericalplot(r, strain=TRUE, datapoints=FALSE)
     } else {
-      dev.set(d1)
+      g.m1$devSet()
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
                datapoints=("Points" %in% gWidgets2::svalue(g.show)),
@@ -596,13 +649,31 @@ retistruct <- function() {
                ids=gWidgets2::svalue(g.ids),
                mesh=FALSE,
                scalebar=1)
-      dev.set(d2)
+      g.m2$devSet()
       par(mar=c(0.7, 0.7, 0.7, 0.7))
       plotProjection(max.proj.dim=400, markup=markup)
-      sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
     }
-    dev.set(d1)
+    g.m1$devSet()
+    do.plot.3D()
     set.status("")
+  }
+
+  do.plot.3D <- function() {
+    if (("Flatmount" %in% gWidgets2::svalue(g.3D.plot))) {
+      a1  <- a$clone()
+      a1$triangulate()
+      depthplot3D(a1)
+    }
+    if (("Reconstructed" %in% gWidgets2::svalue(g.3D.plot))) {
+      if (is.null(r)) {
+        r <- a
+      }
+      if (("Strain" %in% gWidgets2::svalue(g.edit.show)) & (tab == "Edit")) {   # Strain plot
+        sphericalplot(r, strain=TRUE, datapoints=FALSE)
+      } else {
+        sphericalplot(r, datapoints=("Points" %in% gWidgets2::svalue(g.show)))
+      }
+    }
   }
 
   ## It would be nice to have error messages displayed graphically.
@@ -717,6 +788,12 @@ retistruct <- function() {
       a$dataset <<- file.path(extdata, "smi32")
       h.open()
     })
+  mbl$Demos$Fragments <- gWidgets2::gaction(
+    label="Octants",
+    handler=function(h, ...) {
+      a$dataset <<- file.path(extdata, "ijroimulti")
+      h.open()
+    })
   mbl$Demos$left.contra <-
     gWidgets2::gaction(label="Figure 6 Left Contra",
                        handler=function(h, ...) {
@@ -775,8 +852,10 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.editor <- gWidgets2::ggroup(horizontal = FALSE, container=g.nb, label="Edit")
 
   g.add     <- gWidgets2::gbutton("Add tear",    handler=h.add,     container=g.editor)
-  g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
   g.remove  <- gWidgets2::gbutton("Remove tear", handler=h.remove,  container=g.editor)
+  g.add.fullcut  <- gWidgets2::gbutton("Add full cut", handler=h.add.fullcut,  container=g.editor)
+  g.remove.fullcut  <- gWidgets2::gbutton("Remove full cut", handler=h.remove.fullcut,  container=g.editor)
+  g.move    <- gWidgets2::gbutton("Move Point",  handler=h.move,    container=g.editor)
   g.mark.n  <- gWidgets2::gbutton("Mark nasal",  handler=h.mark.n,  container=g.editor)
   g.mark.d  <- gWidgets2::gbutton("Mark dorsal", handler=h.mark.d,  container=g.editor)
   g.mark.od <- gWidgets2::gbutton("Mark OD",     handler=h.mark.od, container=g.editor)
@@ -858,27 +937,27 @@ This work was supported by a Programme Grant from the Wellcome Trust (G083305). 
   g.axis.az <- gWidgets2::gedit("0", handler=h.show, width=5, coerce.with=as.numeric,
                      container=g.axisdir.frame)
 
+  ## 3D frame
+  g.3D.frame <- gWidgets2::gframe("3D", container=g.view2)
+  g.3D.plot  <- gWidgets2::gradio(c("Flatmount", "Reconstructed"),
+                                  handler=function(h, ...) {do.plot.3D()},
+                                  container=g.3D.frame)
+
   ## Graphs at right
 
   ## Flat plot
   g.f1 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body, expand=TRUE)
-  ## Buttons
-  g.f1.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f1)
-  g.print1     <- gWidgets2::gbutton("Bitmap", handler=h.print1,     container=g.f1.buttons)
-  g.print.pdf1 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf1, container=g.f1.buttons)
-  ## Device itself
-  g.fd1 <- gWidgets2::ggraphics(expand=TRUE, ps=11, container=g.f1)
-  d1 <- dev.cur()
+  ## Magnifier and buttons
+  g.m1  <- Magnifier$new(container=g.f1, ps=11)
+  g.print1     <- gWidgets2::gbutton("Bitmap", handler=h.print1,     container=g.m1$buttons)
+  g.print.pdf1 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf1, container=g.m1$buttons)
 
   ## Projection
   g.f2 <- gWidgets2::ggroup(horizontal=FALSE, container=g.body, expand=TRUE)
-  ## Buttons  
-  g.f2.buttons <- gWidgets2::ggroup(horizontal=TRUE, container=g.f2)  
-  g.print2     <- gWidgets2::gbutton("Bitmap", handler=h.print2,     container=g.f2.buttons)
-  g.print.pdf2 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf2, container=g.f2.buttons)
-  ## Device itself
-  g.fd2 <- gWidgets2::ggraphics(expand=TRUE, ps=11, container=g.f2)
-  d2 <- dev.cur()
+  ## Magnifier and buttons
+  g.m2  <- Magnifier$new(container=g.f2, ps=11)
+  g.print2     <- gWidgets2::gbutton("Bitmap", handler=h.print2,     container=g.m2$buttons)
+  g.print.pdf2 <- gWidgets2::gbutton("PDF",    handler=h.print.pdf2, container=g.m2$buttons)
   
   ## Status bar
   ## g.statusbar <- ggroup(container=g.rows)

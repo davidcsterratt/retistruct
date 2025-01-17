@@ -4,7 +4,13 @@
 \alias{retistruct.cli.process}
 \title{Process a dataset, saving results to disk}
 \usage{
-retistruct.cli.process(dataset, outputdir = NA, device = "pdf")
+retistruct.cli.process(
+  dataset,
+  outputdir = NA,
+  device = "pdf",
+  titrate = FALSE,
+  matlab = TRUE
+)
 }
 \arguments{
 \item{dataset}{Path to dataset to process}
@@ -12,6 +18,10 @@ retistruct.cli.process(dataset, outputdir = NA, device = "pdf")
 \item{outputdir}{Directory in which to save any figures}
 
 \item{device}{String representing device to print figures to}
+
+\item{titrate}{Whether to titrate or not}
+
+\item{matlab}{Whether to save to MATLAB or not}
 }
 \description{
 This function processes a \code{dataset}, saving the

@@ -22,6 +22,17 @@ o$addTear(c(6, 7, 8))
 o$addTear(c(9, 10, 11))
 o$addTear(c(12, 1, 2))
 flatplot(o)
+
+P <- list(rbind(c(1,1), c(2,1), c(2.5,2), c(3,1), c(4,1), c(1,4)),
+          rbind(c(-1,1), c(-1,4), c(-2,3), c(-2,2), c(-3,2), c(-4,1)),
+          rbind(c(-4,-1), c(-1,-1), c(-1,-4)),
+          rbind(c(1,-1), c(2,-1), c(2.5,-2), c(3,-1), c(4,-1), c(1,-4)))
+o <- AnnotatedOutline$new(P)
+o$addTear(c(2, 3, 4))
+o$addTear(c(17, 18, 19))
+o$addTear(c(9, 10, 11))
+o$addFullCut(c(1, 5, 16, 20))
+flatplot(o)
 }
 \author{
 David Sterratt
@@ -32,7 +43,11 @@ David Sterratt
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{tears}}{Matrix in which each row represents a tear by the
+\item{\code{tears}}{Matrix in which each row represents a cut by the
+indices into the outline points of the apex (\code{V0}) and
+backward (\code{VB}) and forward (\code{VF}) points}
+
+\item{\code{fullcuts}}{Matrix in which each row represents a cut by the
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
 
@@ -47,50 +62,65 @@ backward (\code{VB}) and forward (\code{VF}) points}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{AnnotatedOutline$new()}}
-\item \href{#method-labelTearPoints}{\code{AnnotatedOutline$labelTearPoints()}}
-\item \href{#method-whichTear}{\code{AnnotatedOutline$whichTear()}}
-\item \href{#method-getTear}{\code{AnnotatedOutline$getTear()}}
-\item \href{#method-getTears}{\code{AnnotatedOutline$getTears()}}
-\item \href{#method-computeTearRelationships}{\code{AnnotatedOutline$computeTearRelationships()}}
-\item \href{#method-addTear}{\code{AnnotatedOutline$addTear()}}
-\item \href{#method-removeTear}{\code{AnnotatedOutline$removeTear()}}
-\item \href{#method-checkTears}{\code{AnnotatedOutline$checkTears()}}
-\item \href{#method-setFixedPoint}{\code{AnnotatedOutline$setFixedPoint()}}
-\item \href{#method-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
-\item \href{#method-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
-\item \href{#method-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
-\item \href{#method-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
-\item \href{#method-clone}{\code{AnnotatedOutline$clone()}}
+\item \href{#method-AnnotatedOutline-new}{\code{AnnotatedOutline$new()}}
+\item \href{#method-AnnotatedOutline-labelTearPoints}{\code{AnnotatedOutline$labelTearPoints()}}
+\item \href{#method-AnnotatedOutline-whichTear}{\code{AnnotatedOutline$whichTear()}}
+\item \href{#method-AnnotatedOutline-getTear}{\code{AnnotatedOutline$getTear()}}
+\item \href{#method-AnnotatedOutline-getTears}{\code{AnnotatedOutline$getTears()}}
+\item \href{#method-AnnotatedOutline-computeTearRelationships}{\code{AnnotatedOutline$computeTearRelationships()}}
+\item \href{#method-AnnotatedOutline-addTear}{\code{AnnotatedOutline$addTear()}}
+\item \href{#method-AnnotatedOutline-removeTear}{\code{AnnotatedOutline$removeTear()}}
+\item \href{#method-AnnotatedOutline-checkTears}{\code{AnnotatedOutline$checkTears()}}
+\item \href{#method-AnnotatedOutline-setFixedPoint}{\code{AnnotatedOutline$setFixedPoint()}}
+\item \href{#method-AnnotatedOutline-getFixedPoint}{\code{AnnotatedOutline$getFixedPoint()}}
+\item \href{#method-AnnotatedOutline-getRimSet}{\code{AnnotatedOutline$getRimSet()}}
+\item \href{#method-AnnotatedOutline-getBoundarySets}{\code{AnnotatedOutline$getBoundarySets()}}
+\item \href{#method-AnnotatedOutline-ensureFixedPointInRim}{\code{AnnotatedOutline$ensureFixedPointInRim()}}
+\item \href{#method-AnnotatedOutline-labelFullCutPoints}{\code{AnnotatedOutline$labelFullCutPoints()}}
+\item \href{#method-AnnotatedOutline-addFullCut}{\code{AnnotatedOutline$addFullCut()}}
+\item \href{#method-AnnotatedOutline-whichFullCut}{\code{AnnotatedOutline$whichFullCut()}}
+\item \href{#method-AnnotatedOutline-removeFullCut}{\code{AnnotatedOutline$removeFullCut()}}
+\item \href{#method-AnnotatedOutline-computeFullCutRelationships}{\code{AnnotatedOutline$computeFullCutRelationships()}}
+\item \href{#method-AnnotatedOutline-getFullCut}{\code{AnnotatedOutline$getFullCut()}}
+\item \href{#method-AnnotatedOutline-getFullCuts}{\code{AnnotatedOutline$getFullCuts()}}
+\item \href{#method-AnnotatedOutline-addPoints}{\code{AnnotatedOutline$addPoints()}}
+\item \href{#method-AnnotatedOutline-getRimLengths}{\code{AnnotatedOutline$getRimLengths()}}
+\item \href{#method-AnnotatedOutline-clone}{\code{AnnotatedOutline$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-clearFeatureSets}{\code{retistruct::OutlineCommon$clearFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSet}{\code{retistruct::OutlineCommon$getFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSetTypes}{\code{retistruct::OutlineCommon$getFeatureSetTypes()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets">}\href{../../retistruct/html/OutlineCommon.html#method-getFeatureSets}{\code{retistruct::OutlineCommon$getFeatureSets()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs">}\href{../../retistruct/html/OutlineCommon.html#method-getIDs}{\code{retistruct::OutlineCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet">}\href{../../retistruct/html/Outline.html#method-addFeatureSet}{\code{retistruct::Outline$addFeatureSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage">}\href{../../retistruct/html/Outline.html#method-getImage}{\code{retistruct::Outline$getImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths">}\href{../../retistruct/html/Outline.html#method-getOutlineLengths}{\code{retistruct::Outline$getOutlineLengths()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet">}\href{../../retistruct/html/Outline.html#method-getOutlineSet}{\code{retistruct::Outline$getOutlineSet()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints">}\href{../../retistruct/html/Outline.html#method-getPoints}{\code{retistruct::Outline$getPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled">}\href{../../retistruct/html/Outline.html#method-getPointsScaled}{\code{retistruct::Outline$getPointsScaled()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment">}\href{../../retistruct/html/Outline.html#method-mapFragment}{\code{retistruct::Outline$mapFragment()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids">}\href{../../retistruct/html/Outline.html#method-mapPids}{\code{retistruct::Outline$mapPids()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage">}\href{../../retistruct/html/Outline.html#method-replaceImage}{\code{retistruct::Outline$replaceImage()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="addPoints">}\href{../../retistruct/html/PathOutline.html#method-addPoints}{\code{retistruct::PathOutline$addPoints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint">}\href{../../retistruct/html/PathOutline.html#method-insertPoint}{\code{retistruct::PathOutline$insertPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint">}\href{../../retistruct/html/PathOutline.html#method-nextPoint}{\code{retistruct::PathOutline$nextPoint()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths">}\href{../../retistruct/html/PathOutline.html#method-stitchSubpaths}{\code{retistruct::PathOutline$stitchSubpaths()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="clearFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-clearFeatureSets'><code>retistruct::OutlineCommon$clearFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSet"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSet'><code>retistruct::OutlineCommon$getFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSetTypes"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSetTypes'><code>retistruct::OutlineCommon$getFeatureSetTypes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getFeatureSets"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getFeatureSets'><code>retistruct::OutlineCommon$getFeatureSets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="OutlineCommon" data-id="getIDs"><a href='../../retistruct/html/OutlineCommon.html#method-OutlineCommon-getIDs'><code>retistruct::OutlineCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="addFeatureSet"><a href='../../retistruct/html/Outline.html#method-Outline-addFeatureSet'><code>retistruct::Outline$addFeatureSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getDepth"><a href='../../retistruct/html/Outline.html#method-Outline-getDepth'><code>retistruct::Outline$getDepth()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragment"><a href='../../retistruct/html/Outline.html#method-Outline-getFragment'><code>retistruct::Outline$getFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentIDs'><code>retistruct::Outline$getFragmentIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentIDsFromPointIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentIDsFromPointIDs'><code>retistruct::Outline$getFragmentIDsFromPointIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPointIDs"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentPointIDs'><code>retistruct::Outline$getFragmentPointIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getFragmentPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getFragmentPoints'><code>retistruct::Outline$getFragmentPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getImage"><a href='../../retistruct/html/Outline.html#method-Outline-getImage'><code>retistruct::Outline$getImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineLengths"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineLengths'><code>retistruct::Outline$getOutlineLengths()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getOutlineSet"><a href='../../retistruct/html/Outline.html#method-Outline-getOutlineSet'><code>retistruct::Outline$getOutlineSet()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPoints"><a href='../../retistruct/html/Outline.html#method-Outline-getPoints'><code>retistruct::Outline$getPoints()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsScaled"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsScaled'><code>retistruct::Outline$getPointsScaled()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="getPointsXY"><a href='../../retistruct/html/Outline.html#method-Outline-getPointsXY'><code>retistruct::Outline$getPointsXY()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapFragment"><a href='../../retistruct/html/Outline.html#method-Outline-mapFragment'><code>retistruct::Outline$mapFragment()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="mapPids"><a href='../../retistruct/html/Outline.html#method-Outline-mapPids'><code>retistruct::Outline$mapPids()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="Outline" data-id="replaceImage"><a href='../../retistruct/html/Outline.html#method-Outline-replaceImage'><code>retistruct::Outline$replaceImage()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="insertPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-insertPoint'><code>retistruct::PathOutline$insertPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="nextPoint"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-nextPoint'><code>retistruct::PathOutline$nextPoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="PathOutline" data-id="stitchSubpaths"><a href='../../retistruct/html/PathOutline.html#method-PathOutline-stitchSubpaths'><code>retistruct::PathOutline$stitchSubpaths()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-new"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-new}{}}}
 \subsection{Method \code{new()}}{
 Constructor
 \subsection{Usage}{
@@ -106,11 +136,11 @@ Constructor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-labelTearPoints"></a>}}
-\if{latex}{\out{\hypertarget{method-labelTearPoints}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-labelTearPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-labelTearPoints}{}}}
 \subsection{Method \code{labelTearPoints()}}{
 Label a set of three unlabelled points supposed
-  to refer to the apex and vertices of a cut and tear with the \code{V0}
+  to refer to the apex and vertices of a tear with the \code{V0}
   (Apex), \code{VF} (forward vertex) and \code{VB} (backward vertex) labels.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelTearPoints(pids)}\if{html}{\out{</div>}}
@@ -128,8 +158,8 @@ Vector of indices labelled with \code{V0}, \code{VF} and \code{VB}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-whichTear"></a>}}
-\if{latex}{\out{\hypertarget{method-whichTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-whichTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-whichTear}{}}}
 \subsection{Method \code{whichTear()}}{
 Return index of tear in an AnnotatedOutline in which a point appears
 \subsection{Usage}{
@@ -148,8 +178,8 @@ ID of tear
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTear"></a>}}
-\if{latex}{\out{\hypertarget{method-getTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getTear}{}}}
 \subsection{Method \code{getTear()}}{
 Return indices of tear in AnnotatedOutline
 \subsection{Usage}{
@@ -169,8 +199,8 @@ Vector of three point IDs, labelled with \code{V0},
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getTears"></a>}}
-\if{latex}{\out{\hypertarget{method-getTears}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getTears"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getTears}{}}}
 \subsection{Method \code{getTears()}}{
 Get tears
 \subsection{Usage}{
@@ -182,8 +212,8 @@ Matrix of tears
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-computeTearRelationships"></a>}}
-\if{latex}{\out{\hypertarget{method-computeTearRelationships}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-computeTearRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-computeTearRelationships}{}}}
 \subsection{Method \code{computeTearRelationships()}}{
 Compute the parent relationships for a potential
   set of tears. The function throws an error if tears overlap.
@@ -215,8 +245,8 @@ List containing
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addTear"></a>}}
-\if{latex}{\out{\hypertarget{method-addTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-addTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-addTear}{}}}
 \subsection{Method \code{addTear()}}{
 Add tear to an AnnotatedOutline
 \subsection{Usage}{
@@ -232,8 +262,8 @@ Add tear to an AnnotatedOutline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-removeTear"></a>}}
-\if{latex}{\out{\hypertarget{method-removeTear}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-removeTear"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-removeTear}{}}}
 \subsection{Method \code{removeTear()}}{
 Remove tear from an AnnotatedOutline
 \subsection{Usage}{
@@ -249,8 +279,8 @@ Remove tear from an AnnotatedOutline
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkTears"></a>}}
-\if{latex}{\out{\hypertarget{method-checkTears}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-checkTears"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-checkTears}{}}}
 \subsection{Method \code{checkTears()}}{
 Check that all tears are correct.
 \subsection{Usage}{
@@ -263,8 +293,8 @@ If all is OK, returns empty vector.  If not, returns
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setFixedPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-setFixedPoint}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-setFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-setFixedPoint}{}}}
 \subsection{Method \code{setFixedPoint()}}{
 Set fixed point
 \subsection{Usage}{
@@ -282,8 +312,8 @@ Set fixed point
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFixedPoint"></a>}}
-\if{latex}{\out{\hypertarget{method-getFixedPoint}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getFixedPoint"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getFixedPoint}{}}}
 \subsection{Method \code{getFixedPoint()}}{
 Get point ID of fixed point
 \subsection{Usage}{
@@ -295,8 +325,8 @@ Point ID of fixed point
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRimSet"></a>}}
-\if{latex}{\out{\hypertarget{method-getRimSet}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getRimSet"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getRimSet}{}}}
 \subsection{Method \code{getRimSet()}}{
 Get point IDs of points on rim
 \subsection{Usage}{
@@ -304,12 +334,34 @@ Get point IDs of points on rim
 }
 
 \subsection{Returns}{
-Point IDs of points on rim
+Point IDs of points on rim. If the outline has been
+stitched (see \code{\link{StitchedOutline}}), the point IDs
+will be ordered in the direction of the
+forward pointer.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ensureFixedPointInRim"></a>}}
-\if{latex}{\out{\hypertarget{method-ensureFixedPointInRim}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getBoundarySets"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getBoundarySets}{}}}
+\subsection{Method \code{getBoundarySets()}}{
+Get point IDs of points on boundaries
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getBoundarySets()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+List of Point IDs of points on the boundaries.
+If the outline has been stitched (see \code{\link{StitchedOutline}}),
+the point IDs in each
+element of the list will be ordered in the direction of the
+forward pointer, and the boundary that is longest will be
+named as \code{Rim}. If the outline has not been stitched,
+the list will have one element named \code{Rim}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-ensureFixedPointInRim"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-ensureFixedPointInRim}{}}}
 \subsection{Method \code{ensureFixedPointInRim()}}{
 Ensure that the fixed point \code{i0} is in the rim, not a tear.
 Alters object in which \code{i0} may have been changed.
@@ -319,8 +371,173 @@ Alters object in which \code{i0} may have been changed.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRimLengths"></a>}}
-\if{latex}{\out{\hypertarget{method-getRimLengths}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-labelFullCutPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-labelFullCutPoints}{}}}
+\subsection{Method \code{labelFullCutPoints()}}{
+Label a set of four unlabelled points supposed to refer to a
+cut.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$labelFullCutPoints(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{the vector of point indices}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-addFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-addFullCut}{}}}
+\subsection{Method \code{addFullCut()}}{
+Add cut to an AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addFullCut(pids)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pids}}{Vector of three point IDs to be added}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-whichFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-whichFullCut}{}}}
+\subsection{Method \code{whichFullCut()}}{
+Return index of cut in an AnnotatedOutline in which a point
+appears
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$whichFullCut(pid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pid}}{ID of point}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+ID of cut
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-removeFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-removeFullCut}{}}}
+\subsection{Method \code{removeFullCut()}}{
+Remove cut from an AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$removeFullCut(cid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cid}}{FullCut ID, which can be returned from
+\code{whichFullCut}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-computeFullCutRelationships"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-computeFullCutRelationships}{}}}
+\subsection{Method \code{computeFullCutRelationships()}}{
+Compute the cut relationships between the points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$computeFullCutRelationships(fullcuts)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fullcuts}}{Matrix containing columns \code{VB0},
+and \code{VB1} (Backward vertices of fullcuts) and \code{VF0} and \code{VF1} (Forward
+vertices of fullcuts)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+List containing
+\itemize{
+\item{\code{Rset}}{the set of points on the rim}
+\item{\code{TFset}}{list containing indices of points in each forward cut}
+\item{\code{TBset}}{list containing indices of points in each backward cut}
+\item{\code{h}}{correspondence mapping}
+\item{\code{hf}}{correspondence mapping in forward direction for
+        points on boundary}
+\item{\code{hb}}{correspondence mapping in backward direction for
+        points on boundary}
+}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getFullCut"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getFullCut}{}}}
+\subsection{Method \code{getFullCut()}}{
+Return indices of fullcuts in AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFullCut(cid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cid}}{FullCut ID, which can be returned from \code{whichFullCut}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Vector of four point IDs, labelled with \code{VF1},
+\code{VF1}, \code{VB0} and \code{VB1}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getFullCuts"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getFullCuts}{}}}
+\subsection{Method \code{getFullCuts()}}{
+Return indices of fullcuts in AnnotatedOutline
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$getFullCuts()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Matrix in which each row contains point IDs, for the forward and backward
+sides of the cut: \code{VF0}, \code{VF1}, \code{VB0} and \code{VB1}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-addPoints"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-addPoints}{}}}
+\subsection{Method \code{addPoints()}}{
+Add points to the outline register of points
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AnnotatedOutline$addPoints(P, fid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{P}}{2 column matrix of points to add}
+
+\item{\code{fid}}{fragment id of the points}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The ID of each added point in the register. If points already
+  exist a point will not be created in the register,
+  but an ID will be returned
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AnnotatedOutline-getRimLengths"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-getRimLengths}{}}}
 \subsection{Method \code{getRimLengths()}}{
 Get lengths of edges on rim
 \subsection{Usage}{
@@ -332,8 +549,8 @@ Vector of rim lengths
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-AnnotatedOutline-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-AnnotatedOutline-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

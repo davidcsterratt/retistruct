@@ -78,6 +78,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     mean.strain = NULL,
     ##' @field mean.logstrain Mean log strain
     mean.logstrain = NULL,
+    ##' @field titration Titrated data structure, saved by \code{titrate}
+    titration = NULL,
     ##' @field debug Debug function
     debug = NULL,
 
@@ -105,7 +107,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ol$triangulate()
       ol$stitchTears()
       ol$triangulate(suppress.external.steiner=TRUE)
-      if (length(ol$corrs)) {
+      ol$stitchFullCuts()
+      if (length(ol$fullcuts)) {
         ol$triangulate(suppress.external.steiner=TRUE)
       }
       ## Transform the rim set
@@ -286,7 +289,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
 
       ## Transform the rim set
-      Rset <- order.Rset(self$ol$getRimSet(), self$ol$gf, self$ol$h)
+      Rset <- self$ol$getRimSet()
       Rsett <- unique(ht[Rset])
       i0t <- ht[self$ol$i0]
 
@@ -644,7 +647,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                    as.vector(outer(ys, xs*0, FUN="+")))
 
         ## Find Barycentric coordinates of corners of pixels
-        Ib <- tsearch(self$ol$getPoints()[,"X"], self$ol$getPoints()[,"Y"],
+
+        Ib <- tsearch(self$ol$getPointsXY()[,"X"], self$ol$getPointsXY()[,"Y"],
                       self$ol$T, I[,1], I[,2], bary=TRUE)
         rm(I)
         gc()
@@ -667,8 +671,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       return(private$ims)
     },
-    ##' @description Get location of tear coordinates in spherical coordinates
-    ##' @return Location of tear coordinates in spherical coordinates
+    ##' @description Get locations of tears in spherical coordinates
+    ##' @return List containing locations of tears in spherical coordinates
     getTearCoords = function() {
       Tss <- list()
       for (TF in self$ol$TFset) {
@@ -677,6 +681,33 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         Tss <- c(Tss, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
       }
       return(Tss)
+    },
+    ##' @description Get locations of fullcuts in spherical coordinates
+    ##' @return List containing locations of fullcuts in spherical coordinates
+    getFullCutCoords = function() {
+      Css <- list()
+      for (CF in self$ol$CFset) {
+        ## Convert indices to the spherical frame of reference
+        j <- self$ht[CF]
+        Css <- c(Css, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
+      }
+      return(Css)
+    },
+    ##' @description Get location of non-rim boundaries in spherical coordinates
+    ##' @return List containing locations of non-rim boundaries in spherical coordinates
+    getNonRimBoundaryCoords = function() {
+      Bsets <- self$ol$getBoundarySets()
+      if (length(Bsets) <= 1) {
+        return(NULL)
+      }
+      Bss <- list()
+      for (B in Bsets[names(Bsets) != "Rim"]) {
+        ## Convert indices to the spherical frame of reference
+        j <- self$ht[B]
+        Bss <- c(Bss, list(cbind(phi=self$phi[j], lambda=self$lambda[j])))
+      }
+      return(Bss)
+
     },
     ##' @description Get \link{ReconstructedFeatureSet}
     ##' @param type Base type of \link{FeatureSet} as string.
@@ -730,9 +761,77 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       Pb$p   <- Pb$p[!oo,,drop=FALSE]
       Pb$idx <- Pb$idx[!oo]
       return(bary2sph(Pb, self$Tt, Ptc))
+    },
+    ##' @description Try a range of values of phi0s in the reconstruction, recording the
+    ##' energy of the mapping in each case.
+    ##' @param alpha Area penalty scaling coefficient
+    ##' @param x0 Area cut-off coefficient
+    ##' @param byd Increments in degrees
+    ##' @param len.up How many increments to go up from starting value of
+    ##' \code{phi0} in \code{r}.
+    ##' @param len.down How many increments to go up from starting value
+    ##' of \code{phi0} in \code{r}.
+    ##' @author David Sterratt
+    titrate=function(alpha=8, x0=0.5, byd=1,
+                     len.up=5, len.down=20) {
+      dat <- data.frame(phi0=self$phi0, sqrt.E=sqrt(self$E.l))
+      by <- byd*pi/180
+
+      ## Going up from phi0
+      message("Going up from phi0")
+      s <- self$clone()
+      sqrt.E.min <- sqrt(self$E.l)
+      r.opt <- self
+      phi0s <- self$phi0 + seq(by, by=by, len=len.up)
+      for (phi0 in phi0s)  {
+        message(paste("phi0 =", phi0*180/pi))
+        s$phi0 <- phi0
+        s$R <- sqrt(self$ol$A.tot/(2*pi*(sin(s$phi0) + 1)))
+        ## Stretch the mapping to help with optimisation
+        s$phi <- -pi/2 + (s$phi + pi/2)*(phi0 + pi/2)/(s$phi0 + pi/2)
+        s$optimiseMapping(alpha=alpha, x0=x0, nu=0.5,
+                          plot.3d=FALSE)
+        sqrt.E <- sqrt(s$E.l)
+        dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt.E))
+        if (sqrt.E < sqrt.E.min) {
+          r.opt <- s
+        }
+      }
+
+      ## Going down from phi0
+      message("Going down from phi0")
+      s <- self$clone()
+      phi0s <- self$phi0 - seq(by, by=by, len=len.down)
+      for (phi0 in phi0s)  {
+        message(paste("phi0 =", phi0*180/pi))
+        s$phi0 <- phi0
+        s$R <- sqrt(self$ol$A.tot/(2*pi*(sin(s$phi0) + 1)))
+        ## Stretch the mapping to help with optimisation
+        s$phi <- -pi/2 + (s$phi + pi/2)*(phi0+pi/2)/(s$phi0+pi/2)
+        s$optimiseMapping(alpha=alpha, x0=x0, nu=0.5,
+                             plot.3d=FALSE)
+        sqrt.E <- sqrt(s$E.l)
+        dat <- rbind(dat, data.frame(phi0=s$phi0, sqrt.E=sqrt(s$E.l)))
+        if (sqrt.E < sqrt.E.min) {
+          r.opt <- s
+        }
+      }
+      dat$phi0d <- dat$phi0*180/pi
+      dat <- dat[order(dat$phi0d),]
+      phi0d.opt <- dat[which.min(dat$sqrt.E),"phi0d"]
+
+      ## Find mean difference between grid points
+      ## First map range of original positions onto
+      phi.adj <- -pi/2 + (self$phi + pi/2)*(phi0d.opt*pi/180+pi/2)/(self$phi0+pi/2)
+      Dtheta.mean <- mean(central.angle(phi.adj, self$lambda, r.opt$phi, r.opt$lambda)) * 180/pi
+
+      self$titration <- list(dat=dat, phi0d.orig=self$phi0*180/pi,
+                             phi0d.opt=phi0d.opt,
+                             r.opt=r.opt,
+                             Dtheta.mean=Dtheta.mean)
     }
   )
-  )
+)
                            
 
 
@@ -836,7 +935,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
       } else {
         col <- grid.min.col
       }
-      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(0,0,1), sin(Phi*pi/180))
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -848,7 +947,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
         col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
-      P1 <- get.gridline.flat(x$ol$getPoints(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
                               c(sin(Lambda),cos(Lambda),0), 0)
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -886,7 +985,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
 ##' respect to colatitude rather than latitude
 ##' @param pole If \code{TRUE} indicate the pole with a "*"
 ##' @param image If \code{TRUE}, show the image
-##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed tears
+##' @param markup If \code{TRUE}, plot markup, i.e. reconstructed fullcuts and tears
 ##' @param add If \code{TRUE}, don't draw axes; add to existing plot.
 ##' @param max.proj.dim Maximum width of the image created in pixels
 ##' @param ... Graphical parameters to pass to plotting functions
@@ -1132,15 +1231,23 @@ projection.ReconstructedOutline <- function(r,
     graphics::polygon(boundary[,"x"], boundary[,"y"], border="black")
   }
 
-  ## Plot rim in visutopic space
+  ## Plot rim in visuotopic space
   rs <- cbind(phi=r$phi0, lambda=seq(0, 2*pi, len=360))
   rs.rot <- rotate.axis(transform(rs, phi0=r$phi0), axisdir*pi/180)
   ## "Home" position for a cyclops looking ahead
   ## r$axisdir = cbind(phi=0, lambda=0)
-
   lines(projection(rs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
                    proj.centre=pi/180*proj.centre),
         col=getOption("TF.col"))
+
+  ## Plot non-rim boundary in visuotopic space
+  bss <- r$getNonRimBoundaryCoords()
+  for (bs in bss) {
+    bs.rot <- rotate.axis(transform(bs, phi0=r$phi0), axisdir*pi/180)
+    lines(projection(bs.rot, lambdalim=lambdalim*pi/180, lines=TRUE,
+                     proj.centre=pi/180*proj.centre),
+          col=getOption("TF.col"))
+  }
 
   ## Projection of pole
   if (pole) {
@@ -1161,6 +1268,18 @@ projection.ReconstructedOutline <- function(r,
                        lambdalim=lambdalim*pi/180,
                        proj.centre=pi/180*proj.centre),
             col=getOption("TF.col"), lwd=Call$lwd, lty=Call$lty)
+    }
+
+    ## Plot fullcuts
+    Css <- r$getFullCutCoords()
+    for (Cs in Css) {
+      ## Plot
+      lines(projection(rotate.axis(transform(Cs, phi0=r$phi0),
+                                   axisdir*pi/180),
+                       lines=TRUE,
+                       lambdalim=lambdalim*pi/180,
+                       proj.centre=pi/180*proj.centre),
+            col=getOption("C.col"), lwd=Call$lwd, lty=Call$lty)
     }
   }
 
@@ -1239,7 +1358,9 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
   text(0.2*max(L), 0.2*max(L)*0.5, "25% compressed", col="blue",
                pos=4)
   text(0.75*max(L), 0.75*max(L)*1.25, "25% expanded", col="red",
-               pos=2)
+       pos=2)
+  text(0.0*max(L), max(L), paste("Mean strain =", format(r$mean.strain, digits=3)),
+       pos=4)
 }
 
 ##' Draw a spherical plot of reconstructed outline. This method just
@@ -1260,7 +1381,7 @@ sphericalplot.ReconstructedOutline <- function(r,
   ## Obtain Cartesian coordinates of points
   Ps <- r$getPoints()
   P <- sphere.spherical.to.sphere.cart(Ps)
-  rgl.clear()
+  clear3d()
   if (surf) {
     ## Outer triangles
     fac <- 1.005
@@ -1286,16 +1407,16 @@ sphericalplot.ReconstructedOutline <- function(r,
 
   ht <- r$ht
   gb <- r$ol$gb
-  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-            lwd=3, color=getOption("TF.col"))
+  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+          lwd=3, color=getOption("TF.col"))
   
   fac <- 1.006
-  rgl.lines(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-            fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-            fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-            lwd=3, color=getOption("TF.col"))
+  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
+          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
+          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
+          lwd=3, color=getOption("TF.col"))
 
   if (strain) {
     o <- r$getStrains()

@@ -4,7 +4,7 @@
 \alias{central.angle}
 \title{Central angle between two points on a sphere}
 \source{
-Wikipedia \url{http://en.wikipedia.org/wiki/Central_angle}
+Wikipedia \url{https://en.wikipedia.org/wiki/Central_angle}
 }
 \usage{
 central.angle(phi1, lambda1, phi2, lambda2)

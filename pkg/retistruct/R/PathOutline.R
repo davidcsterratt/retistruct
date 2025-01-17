@@ -9,27 +9,28 @@
 ##' point is connected. If no point exists within this tolerance, a
 ##' new point is created.
 ##'
-##' @title Add point correspondences to the outline
+##' @title Add point fullcuts to the outline
 ##' @return To the \code{\link{Outline}} object this adds
-##' \item{\code{hf}}{point correspondence mapping in forward direction for
+##' \item{\code{hf}}{point cut mapping in forward direction for
 ##' points on boundary}
-##' \item{\code{hb}}{point correspondence mapping in backward direction for
+##' \item{\code{hb}}{point cut mapping in backward direction for
 ##' points on boundary}
 ##' @export
 PathOutline <- R6Class("PathOutline",
   inherit = Outline,
   public = list(
-    ##' @field hf Forward correspondences
+    ##' @field hf Forward fullcuts
     hf = NULL,
-    ##' @field hb Backward correspondences
+    ##' @field hb Backward fullcuts
     hb = NULL,
     ##' @description Add points to the outline register of points
     ##' @param P 2 column matrix of points to add
+    ##' @param fid fragment id of the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
     ##'   but an ID will be returned 
-    addPoints = function(P) {
-      pids <- super$addPoints(P)
+    addPoints = function(P, fid) {
+      pids <- super$addPoints(P, fid)
       ## For *new* points set forward and backward pointers
       newpids <- pids
       if (length(self$hf) > 0) {
@@ -55,16 +56,23 @@ PathOutline <- R6Class("PathOutline",
       if (!((self$gf[i0] == i1) || (self$gf[i1] == i0))) {
         stop("Points", i0, "and", i1, "are not connected by an edge")
       }
-      PXY <- self$getPoints()
+      if ((f >= 1) | (f <= 0)) {
+        stop("f argument should be between 0 and 1. f = ", f)
+      }
+      fid  <- self$getFragmentIDsFromPointIDs(i0)
+      fid1  <- self$getFragmentIDsFromPointIDs(i1)
+      if (fid != fid1) {
+        stop("Fragment IDs of points differ")
+      }
       p <-
-        (1 - f)*PXY[i0,] +
-        f*      PXY[i1,]
+        (1 - f)*self$getPoints(i0) +
+        f*      self$getPoints(i1)
       ## Find the index of any row of P that matches p
-      n <- anyDuplicated(rbind(PXY, p),
+      n <- anyDuplicated(rbind(self$getPointsXY(c(i0, i1)), p[c("X", "Y")]),
                          fromLast=TRUE)
       if (n == 0) {
         ## If the point p doesn't exist
-        n <- self$addPoints(p) # n is Index of new point
+        n <- self$addPoints(p, fid) # n is Index of new point
         ## Update forward and backward pointers
         if (!is.na(self$gf[i0] == i1) && self$gf[i0] == i1) {
           self$gb[n]  <- i0
@@ -77,7 +85,7 @@ PathOutline <- R6Class("PathOutline",
           self$gb[i0] <- n
           self$gf[i1] <- n
         }
-        ## Update correspondences
+        ## Update fullcuts
         self$hf[n] <- n
         self$hb[n] <- n
       }
@@ -91,9 +99,13 @@ PathOutline <- R6Class("PathOutline",
     ##' @param epsilon Minimum distance between points
     stitchSubpaths = function(VF0, VF1, VB0, VB1,
                               epsilon) {
-      ## Compute the total path length along each side of the tear
+      ## Compute the total path length along each side of the subpath
       Sf <- path.length(VF0, VF1, self$gf, self$hf, self$getPointsScaled())
       Sb <- path.length(VB0, VB1, self$gb, self$hb, self$getPointsScaled())
+
+      report(paste0("\nstitchSubpaths(", VF0, ", ", VF1, ", ", VB0, ", ", VB1, ", ", epsilon, ")\n"))
+
+      report(paste("Sf =", Sf, ", Sb =", Sb, "\n"))
 
       ## Initialise forward and backward indicies to first points in each
       ## path
@@ -111,7 +123,15 @@ PathOutline <- R6Class("PathOutline",
         sf <- path.length(VF0, i, self$gf, self$hf, self$getPointsScaled())
         sb <- path.length(VB0, j, self$gb, self$hb, self$getPointsScaled())
         report(paste("i =", i, "i0 =", i0, "j =", j, "j0 =", j0,
-                          "sf =", sf, "sf0 =", sf0, "sb =", sb, "sb0 =", sb0))
+                     "sf =", sf, "sf0 =", sf0, "sb =", sb, "sb0 =", sb0))
+        ## Defensive programming - a test might be better, but at
+        ## least this will highlight one class of error
+        if (sf - Sf > 1E-10*Sf) {
+          stop("Distance along forward path, ", sf, ", is greater than length of forward path, ", Sf, " ; Sf - sf=", Sf - sf)
+        }
+        if (sb - Sb > 1E-10*Sb) {
+          stop("Distance along forward path, ", sb, ", is greater than length of forward path, ", Sb, " ; Sb - sb=", Sb - sb)
+        }
         if (sf/Sf <= sb/Sb) {
           ## If forward point is behind backward point, project forward to
           ## backward path
@@ -131,6 +151,7 @@ PathOutline <- R6Class("PathOutline",
                 ## backward point, don't create a new point
                 report(paste("Point", j, "at", sb, "along backward path within",
                              epsilon, "of projection from", i, "in forward path"))
+                report(paste("Not creating new point, but setting point", i, "to link to", j))
                 self$h[i] <- j
               } else {
                 ## Insert a point in the backward path. Point j is ahead.

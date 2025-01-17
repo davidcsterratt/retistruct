@@ -1,14 +1,3 @@
-## order.Rset(Rset, gf, hf)
-##
-## It is nice to create Rset as an ordered set
-order.Rset <- function(Rset, gf, hf) {
-  ## To to this, join the path from the first two members of the set.
-  R12 <- path(Rset[1], Rset[2], gf, hf)
-  R21 <- path(Rset[2], Rset[1], gf, hf)
-  Rset <- c(R12[-1], R21[-1])
-  return(Rset)
-}
-
 ##' Stretch the mesh in the flat retina to a circular outline
 ##'
 ##' @title Stretch mesh
@@ -381,7 +370,7 @@ Fcart <- function(P, C, L, T, A, R,
 ##' @param R Radius of sphere
 ##' @param Rset Indices of points on rim
 ##' @param i0 Index of fixed point
-##' @param phi0 Cut-off of curtailed sphere in radians
+##' @param phi0 FullCut-off of curtailed sphere in radians
 ##' @param lambda0 Longitude of fixed point on rim
 ##' @return Points projected back onto sphere
 ##' @author David Sterratt

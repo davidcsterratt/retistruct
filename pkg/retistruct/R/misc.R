@@ -72,9 +72,11 @@ parse.dependencies <- function(deps) {
 ##' @param invert.y If \code{FALSE} (the default), the y coordinate is
 ##'   zero at the top of the image. \code{TRUE} the zero y coordinate
 ##'   is at the bottom.
+##' @param wmin minimum window size for inferring NA values
+##' @param wmax maximum window size for inferring NA values
 ##' @return Vector of N interpolated values
 ##' @author David Sterratt
-interpolate.image <- function(im, P, invert.y=FALSE) {
+interpolate.image <- function(im, P, invert.y=FALSE, wmin=10, wmax=100) {
   N <- ncol(im)
   M <- nrow(im)
   x <- P[,1]
@@ -86,13 +88,13 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
     stop(paste0("max X-value of P (", max(x),") is bigger than number of cols in im (", N, ")"))
   }
   if (min(x) < 0) {
-    stop(paste0("min X-value of P (", min(x),") is less than number of cols in im (", N, ")"))
+    stop(paste0("min X-value of P (", min(x),") is less than 0"))
   }
   if (max(y) > M) {
     stop(paste0("max Y-value of P (", max(y),") is bigger than number of rows in im (", M, ")"))
   }
   if (min(y) < 0) {
-    stop(paste0("min Y-value of P (", min(y),") is less than number of rows in im (", M, ")"))
+    stop(paste0("min Y-value of P (", min(y),") is less than 0"))
   }
 
   ## Assume that centres of pixels in image are at {(0.5, 0.5), (1.5,
@@ -107,11 +109,32 @@ interpolate.image <- function(im, P, invert.y=FALSE) {
   i2 <- pmin(ceiling(y + 0.5), M)
 
   ## Bilinear interpolation
-  return(mapply(function(x, y, i1, i2, j1, j2) {
+  z <- mapply(function(x, y, i1, i2, j1, j2) {
     cbind(j1 + 0.5 - x, x - j1 + 0.5) %*%
       t(im[c(i1,i2),c(j1,j2)]) %*%
       rbind(i1 + 0.5 - y, y - i1 + 0.5)
-  }, x, y, i1, i2, j1, j2))
+  }, x, y, i1, i2, j1, j2)
+
+  ## Some pixels may be in regions with NA. The stratagy here is to
+  ## extrapolate using linear regression in a window around the pixel
+  for (k in which(is.na(z))) {
+    ## Increase the window size until stats::lm() doesn't throw an error
+    w <- 1
+    while (is.na(z[k])) {
+      is <- pmax(i1[k] - w, 1):pmin(i2[k] + w, M)
+      js <- pmax(j1[k] - w, 1):pmin(j2[k] + w, M)
+      dat <- data.frame(i=as.vector(outer(js*0, is, FUN="+")),
+                        j=as.vector(outer(js, is*0, FUN="+")))
+      dat$z <- mapply(function(i, j) { im[i, j] }, dat$i, dat$j)
+      dat$x  <- dat$j - 0.5
+      dat$y  <- dat$i - 0.5
+      tryCatch(z[k] <- stats::predict(stats::lm(z ~ x + y, dat[!is.na(dat$z),c("x", "y", "z")]), data.frame(x=x[k], y=y[k])),
+               error = function(e) {}, warning = function(w) {})
+      if (w == wmax) stop(paste0("NA pixel is over ", wmax, " pixels from nearest non-NA pixel"))
+      w <- w  + 1
+    }
+  }
+  return(z)
 }
 
 ##' Reporting utility function

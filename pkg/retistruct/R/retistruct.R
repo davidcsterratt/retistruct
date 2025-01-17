@@ -8,6 +8,7 @@ checkDatadir <- function(dir=NULL) {
   if (idt.checkDatadir(dir))   { return("idt") }
   if (csv.checkDatadir(dir))   { return("csv") }
   if (ijroi.checkDatadir(dir)) { return("ijroi") }
+  if (ijroimulti.checkDatadir(dir)) { return("ijroimulti") }
   return(FALSE)
 }
 
@@ -40,6 +41,7 @@ retistruct.read.dataset <- function(dataset, report=message, ...) {
   if (type=="idt")   { return(idt.read.dataset(dataset, report, ...))}
   if (type=="csv")   { return(csv.read.dataset(dataset, report, ...))}
   if (type=="ijroi") { return(ijroi.read.dataset(dataset, report, ...))}
+  if (type=="ijroimulti") { return(ijroimulti.read.dataset(dataset, ...))}
 
   stop("No valid dataset format detected.")
 }
@@ -101,7 +103,7 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(Pfile)) {
     P.old <- as.matrix(read.csv(Pfile))
   } else {
-    P.old <- a$getPoints()
+    P.old <- a$getPointsXY()
   }
   
   ## Read in markup file
@@ -123,16 +125,18 @@ retistruct.read.markup <- function(a, error=stop) {
       }
     }
     if (!is.na(M[["iD"]])) {
-      M[["iD"]] <- convert.markup(M[["iD"]], P.old, a$getPoints())
+      M[["iD"]] <- convert.markup(M[["iD"]], P.old, a$getPointsXY())
       a$setFixedPoint(M[["iD"]], "Dorsal")
     }
     if (!is.na(M[["iN"]])) {
-      M[["iN"]] <- convert.markup(M[["iN"]], P.old, a$getPoints())
+      M[["iN"]] <- convert.markup(M[["iN"]], P.old, a$getPointsXY())
       a$setFixedPoint(M[["iN"]], "Nasal")
     }
     a$phi0 <- M[["phi0"]]*pi/180
     if ("iOD" %in% names(M)) {
-      a$getFeatureSet("LandmarkSet")$setID(M[["iOD"]], "OD")
+      if (!is.na(M[["iOD"]])) {
+        a$getFeatureSet("LandmarkSet")$setID(M[["iOD"]], "OD")
+      }
     }
     if ("DVflip" %in% names(M)) {
       a$DVflip <- M[["DVflip"]]
@@ -146,7 +150,7 @@ retistruct.read.markup <- function(a, error=stop) {
   if (file.exists(tearfile)) {
     T.old <- read.csv(tearfile)
     cn <- colnames(T.old)
-    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$getPoints()), ncol=3)
+    T <- matrix(convert.markup(as.matrix(T.old), P.old, a$getPointsXY()), ncol=3)
     colnames(T) <- cn
     if (nrow(T) > 0) {
       for (i in 1:nrow(T)) {
@@ -155,6 +159,21 @@ retistruct.read.markup <- function(a, error=stop) {
     }
   } else {
     error("Tear file T.csv doesn't exist.")
+  }
+  ## Read in cut file
+  cutfile <- file.path(a$dataset, "C.csv")
+  if (file.exists(cutfile)) {
+    C.old <- read.csv(cutfile)
+    cn <- colnames(C.old)
+    C <- matrix(convert.markup(C.old, P.old, a$getPointsXY()), ncol=4)
+    colnames(C) <- cn
+    for (i in 1:nrow(C)) {
+      a$addFullCut(C[i,])
+    }
+  } else {
+    if (length(a$getFragmentIDs()) > 1) {
+      warning("FullCut file C.csv doesn't exist.")
+    }
   }
   return(a)
 }
@@ -219,7 +238,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 
 ##' Reconstruct a retina
 ##' @param a \code{\link{RetinalOutline}} object with tear and
-##'   correspondence annotations
+##'   cut annotations
 ##' @param report Function to report progress. Set to \code{FALSE} for
 ##'   no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}
 ##' @param plot.3d If \code{TRUE} show progress in a 3D plot
@@ -298,7 +317,9 @@ retistruct.save.markup <- function(a) {
   ## Save the tear information and the outline
   write.csv(a$getTears(), file.path(a$dataset, "T.csv"),
             row.names=FALSE)
-  write.csv(a$getPoints(), file.path(a$dataset, "P.csv"),
+  write.csv(a$getFullCuts(), file.path(a$dataset, "C.csv"),
+            row.names=FALSE)
+  write.csv(a$getPointsXY(), file.path(a$dataset, "P.csv"),
             row.names=FALSE)
       
   ## Save the dorsal and nasal locations and phi0 to markup.csv

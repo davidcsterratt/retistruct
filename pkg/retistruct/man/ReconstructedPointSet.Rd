@@ -29,28 +29,28 @@ David Sterratt
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-getMean}{\code{ReconstructedPointSet$getMean()}}
-\item \href{#method-getHullarea}{\code{ReconstructedPointSet$getHullarea()}}
-\item \href{#method-getKDE}{\code{ReconstructedPointSet$getKDE()}}
-\item \href{#method-clone}{\code{ReconstructedPointSet$clone()}}
+\item \href{#method-ReconstructedPointSet-getMean}{\code{ReconstructedPointSet$getMean()}}
+\item \href{#method-ReconstructedPointSet-getHullarea}{\code{ReconstructedPointSet$getHullarea()}}
+\item \href{#method-ReconstructedPointSet-getKDE}{\code{ReconstructedPointSet$getKDE()}}
+\item \href{#method-ReconstructedPointSet-clone}{\code{ReconstructedPointSet$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol">}\href{../../retistruct/html/FeatureSetCommon.html#method-getCol}{\code{retistruct::FeatureSetCommon$getCol()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeature}{\code{retistruct::FeatureSetCommon$getFeature()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures">}\href{../../retistruct/html/FeatureSetCommon.html#method-getFeatures}{\code{retistruct::FeatureSetCommon$getFeatures()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIDs}{\code{retistruct::FeatureSetCommon$getIDs()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex">}\href{../../retistruct/html/FeatureSetCommon.html#method-getIndex}{\code{retistruct::FeatureSetCommon$getIndex()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID">}\href{../../retistruct/html/FeatureSetCommon.html#method-setID}{\code{retistruct::FeatureSetCommon$setID()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="initialize">}\href{../../retistruct/html/ReconstructedFeatureSet.html#method-initialize}{\code{retistruct::ReconstructedFeatureSet$initialize()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getCol"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getCol'><code>retistruct::FeatureSetCommon$getCol()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeature"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeature'><code>retistruct::FeatureSetCommon$getFeature()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getFeatures"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getFeatures'><code>retistruct::FeatureSetCommon$getFeatures()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIDs"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIDs'><code>retistruct::FeatureSetCommon$getIDs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="getIndex"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-getIndex'><code>retistruct::FeatureSetCommon$getIndex()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="FeatureSetCommon" data-id="setID"><a href='../../retistruct/html/FeatureSetCommon.html#method-FeatureSetCommon-setID'><code>retistruct::FeatureSetCommon$setID()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="retistruct" data-topic="ReconstructedFeatureSet" data-id="initialize"><a href='../../retistruct/html/ReconstructedFeatureSet.html#method-ReconstructedFeatureSet-initialize'><code>retistruct::ReconstructedFeatureSet$initialize()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getMean"></a>}}
-\if{latex}{\out{\hypertarget{method-getMean}{}}}
+\if{html}{\out{<a id="method-ReconstructedPointSet-getMean"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedPointSet-getMean}{}}}
 \subsection{Method \code{getMean()}}{
 Get Karcher mean of datapoints in spherical coordinates
 \subsection{Usage}{
@@ -62,8 +62,8 @@ Karcher mean of datapoints in spherical coordinates
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getHullarea"></a>}}
-\if{latex}{\out{\hypertarget{method-getHullarea}{}}}
+\if{html}{\out{<a id="method-ReconstructedPointSet-getHullarea"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedPointSet-getHullarea}{}}}
 \subsection{Method \code{getHullarea()}}{
 Get area of convex hull around data points on sphere
 \subsection{Usage}{
@@ -75,8 +75,8 @@ Area in degrees squared
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getKDE"></a>}}
-\if{latex}{\out{\hypertarget{method-getKDE}{}}}
+\if{html}{\out{<a id="method-ReconstructedPointSet-getKDE"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedPointSet-getKDE}{}}}
 \subsection{Method \code{getKDE()}}{
 Get kernel density estimate of data points
 \subsection{Usage}{
@@ -88,8 +88,8 @@ See \code{\link{compute.kernel.estimate}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-ReconstructedPointSet-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-ReconstructedPointSet-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

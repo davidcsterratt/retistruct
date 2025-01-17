@@ -33,7 +33,7 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
     }
   }
   ## Success
-  return(list(status=status, time=syst["user.self"], mess=mess))
+  return(list(status=status, time=syst["user.self"], mess=mess, r=out))
 }
 
 ##' This function processes a \code{dataset}, saving the
@@ -44,21 +44,22 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
 ##' @param dataset Path to dataset to process 
 ##' @param outputdir Directory in which to save any figures
 ##' @param device String representing device to print figures to
+##' @param titrate Whether to titrate or not
+##' @param matlab Whether to save to MATLAB or not
 ##' @author David Sterratt
 ##' @export
-retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf"
-                                   ## titrate=FALSE   ## FIXME: Issue #25: Titration
-                                   ) {
+retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
+                                   titrate=FALSE, matlab=TRUE) {
   ## Processing
   warn.opt <- getOption("warn")
   options(warn=1)
   r <- retistruct.read.dataset(dataset)
   r <- retistruct.read.markup(r)
   r <- retistruct.reconstruct(r)
-  ## FIXME: Issue #25: Titration
-  ## if (titrate) {
-  ##   r$titration <- titrate.reconstructedOutline(r)
-  ## }
+  if (titrate) {
+    r$titrate()
+  }
+
   ## Output
   retistruct.save.recdata(r)
   
@@ -68,9 +69,13 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf"
   }
 
   ## Export to matlab
-  message("Exporting to matlab")
-  retistruct.export.matlab(r)
+  if (matlab) {
+    message("Exporting to matlab")
+    retistruct.export.matlab(r)
+  }
+
   options(warn=warn.opt)
+  return(r)
 }
 
 ## retistruct.cli.basepath - generate a path based on the elided directory name

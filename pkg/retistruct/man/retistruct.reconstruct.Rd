@@ -16,7 +16,7 @@ retistruct.reconstruct(
 }
 \arguments{
 \item{a}{\code{\link{RetinalOutline}} object with tear and
-correspondence annotations}
+cut annotations}
 
 \item{report}{Function to report progress. Set to \code{FALSE} for
 no reporting or to \code{NULL} to inherit from the argument given to \code{\link{retistruct.read.dataset}}}
