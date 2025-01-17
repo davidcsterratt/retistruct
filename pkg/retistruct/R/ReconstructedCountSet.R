@@ -59,6 +59,7 @@ ReconstructedCountSet <- R6Class("ReconstructedCountSet",
   )
 )
 
+##' @method projection ReconstructedCountSet
 projection.ReconstructedCountSet <-
   function(r,
            phi0,

@@ -8,7 +8,7 @@ layout: default
 
 Retistruct is an <a href="http://www.r-project.org">R</a> package to
 morph a flat surface with cuts (a dissected flat-mount retina) onto a
-curvilinear surface (the a standard retinal shape).  It can estimate
+curvilinear surface (a standard retinal shape).  It can estimate
 the position of a point on the intact adult retina to within 8&deg; of
 arc (3.6% of nasotemporal axis). The coordinates in reconstructed
 retinae can be transformed to visuotopic coordinates.
@@ -95,19 +95,27 @@ If you encounter issues using Retistruct please either:
 
 ## Work using Retistruct
 
-* Sondereker, K. B., Stabio, M. E., Jamil, J. R., Tarchick, M. J. and Renna, J. M. (2018) "Where You Cut Matters: A Dissection and Analysis Guide for the Spatial Orientation of the Mouse Retina from Ocular Landmarks". *J Vis. Exp.*  138 [DOI: 10.3791/57861](http://dx.doi.org/10.3791/57861)
+* Gupta D., Młynarski W., Sumser A., Symonova O., Svatoň J., and Joesch M. (2023). "Panoramic visual statistics shape retina-wide organization of receptive fields". *Nat. Neurosci.*  __26__:&nbsp;606–614 [DOI:10.1038/s41593-023-01280-0]( https://doi.org/10.1038/s41593-023-01280-0)
+* D'Souza, S. P., Swygart, D. I., Wienbar, S. R., Upton, B. A., Zhang, K. X., Mackin, R. D., Casasent, A. K., Samuel, M. A., Schwartz, G. W. and Lang, R. A. (2022). "Retinal patterns and the cellular repertoire of neuropsin (Opn5) retinal ganglion cells". *J. Comp. Neurol.* __530__:&nbsp;1247-1262. [DOI: 10.1002/cne.25272](https://doi.org/10.1002/cne.25272)
+* Tosetto, L., Williamson, J. E., White, T. E. and Hart, N. S. (2021) "Can the Dynamic Colouration and Patterning
+of Bluelined Goatfish (Mullidae; _Upeneichthyslineatus_) Be Perceived by Conspecifics?". *Brain Behav. Evol.* [DOI: 10.1159/000519894](http://dx.doi.org/10.1159/000519894)
+* Adelman, S. A., Oikawa, K., Senthilkumar, G., Trane, R. M., Teixeira, L.,  and McLellan, G. J. (2021). "Mapping retinal ganglion cell somas in a large-eyed glaucoma model". *Mol. Vis.* __27__:&nbsp;608–621. [PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8645189/)
+* Nadal-Nicolás, F. M., Kunze, V. P., Ball, J. M, Peng,  B. T., Krishnan, A., Zhou, G., Dong, L. and Li, W. (2020). "True S-cones are concentrated in the ventral mouse retina and wired for color detection in the upper visual field". *eLife* __9__:&nbsp;e56840 [DOI: 10.7554/eLife.56840](http://dx.doi.org/10.7554/eLife.56840)
+* Deichler, A., Carrasco, D., Lopez-Jury, L. et al. (2020). "A specialized reciprocal connectivity suggests a link between the mechanisms by which the superior colliculus and parabigeminal nucleus produce defensive behaviors in rodents". *Sci. Rep.* __10__:&nbsp;16220  [DOI: 10.1038/s41598-020-72848-0](https://doi.org/10.1038/s41598-020-72848-0)
+* Lyngholm, D., Sterratt, D. C., Hjorth, J. J., Willshaw, D. J., Eglen, S. J., and Thompson, I. D. (2019). "Measuring and Modelling the Emergence of Order in the Mouse Retinocollicular Projection". *bioRxiv*: 713628. [DOI: 10.1101/713628](https://doi.org/10.1101/713628)
+* Sondereker, K. B., Stabio, M. E., Jamil, J. R., Tarchick, M. J. and Renna, J. M. (2018) "Where You Cut Matters: A Dissection and Analysis Guide for the Spatial Orientation of the Mouse Retina from Ocular Landmarks". *J Vis. Exp.*  __138__ [DOI: 10.3791/57861](http://dx.doi.org/10.3791/57861)
 * Stabio, M. E., Sondereker K. B., Haghgou S. D., Day, B. L., Chidsey, B., Sabbah, S. and Renna, J. M. (2018) "A novel map of the mouse eye for orienting retinal topography in anatomical space". 
 *J. Comp. Neurol.* __526__:1749-1759. [DOI: 10.1002/cne.24446](http://dx.doi.org/10.1002/cne.24446)
 * Smodlaka, H., Khamas, W. A., Palmer, L., Lui, B.,
   Borovac, J. A., Cohn, B. A. and Schmitz, L. (2016) "Eye Histology
   and Ganglion Cell Topography of Northern Elephant Seals (Mirounga
   angustirostris)" <em>Anat. Rec.  (Hoboken)</em>
-  <strong>6</strong>:&nbsp;798-805. <a
+  __6__:&nbsp;798-805. <a
   href="http://dx.doi.org/10.1002/ar.23342">DOI: 10.1002/ar.23342</a>
 * Cohn, B. A., Collin, S. P., Wainwright, P. C. and Schmitz,
   L. (2015) "Retinal topography maps in R: new tools for the analysis
   and visualization of spatial retinal data". <em>J. Vis.</em>
-  <strong>15</strong>:&nbsp;19. <a
+  __15__:&nbsp;19. <a
   href="http://dx.doi.org/10.1167/15.9.19">DOI:
   10.1167/15.9.19</a>
 * Flinn, J. M., Kakalec P., Tappero, R.,
@@ -115,13 +123,13 @@ If you encounter issues using Retistruct please either:
   concentration of calcium, copper and iron with zinc in isolated
   extracellular deposits associated with age-related macular
   degeneration". <em>Metallomics</em>
-  <strong>6</strong>:&nbsp;1223-1228. <a
+  __6__:&nbsp;1223-1228. <a
   href="http://dx.doi.org/10.1039/c4mt00058g">DOI:
   10.1039/c4mt00058g</a>
 * Bleckert, A., Schwartz, G. W., Turner, M.H., Rieke, F. and Wong,
   R. O. L. (2014) "Visual space is represented by nonmatching
   topographies of distinct mouse retinal ganglion cell
-  types". <em>Current Biology</em> <strong>24</strong>:&nbsp;310-315.
+  types". <em>Current Biology</em> __24__:&nbsp;310-315.
   <a href="http://dx.doi.org/10.1016/j.cub.2013.12.020">DOI:
   10.1016/j.cub.2013.12.020</a>
 

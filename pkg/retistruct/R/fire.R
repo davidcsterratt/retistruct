@@ -23,7 +23,7 @@
 ##' \code{conv}, which is 0 if convergence as occurred and 1 otherwise,
 ##' and \code{frms}, the root mean square of the forces on the
 ##' particles.
-##' @references Bitzek, E., Koskinen, P., G\"{a}hler, F., Moseler, M.,
+##' @references Bitzek, E., Koskinen, P., Gähler, F., Moseler, M.,
 ##' and Gumbsch, P. (2006). Structural relaxation made
 ##' simple. Phys. Rev. Lett., 97:170201.
 ##' @author David Sterratt

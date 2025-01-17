@@ -15,6 +15,7 @@ ReconstructedLandmarkSet <- R6Class("ReconstructedLandmarkSet",
   inherit = ReconstructedFeatureSet
 )
 
+##' @method projection ReconstructedLandmarkSet
 projection.ReconstructedLandmarkSet <-
   function(r,
            phi0,

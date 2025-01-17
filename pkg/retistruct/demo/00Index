@@ -6,3 +6,4 @@ wedge		             Demonstration of wedge coordinates
 smi32                Reconstruct a retina labelled with SMI-32
 parabola             Reconstruct a parabolically transformed retina
 hole                 Reconstruct a retina with a holes
+figure6              Reconstruct an S-opsin stained retina and project into visuotopic space

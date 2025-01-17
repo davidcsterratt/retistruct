@@ -71,7 +71,7 @@ This is an implementation of the FIRE algorithm for structural
 relaxation put forward by Bitzek et al. (2006)
 }
 \references{
-Bitzek, E., Koskinen, P., G\"{a}hler, F., Moseler, M.,
+Bitzek, E., Koskinen, P., Gähler, F., Moseler, M.,
 and Gumbsch, P. (2006). Structural relaxation made
 simple. Phys. Rev. Lett., 97:170201.
 }

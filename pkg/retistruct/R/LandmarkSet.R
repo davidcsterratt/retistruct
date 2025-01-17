@@ -26,10 +26,10 @@ LandmarkSet <- R6Class("LandmarkSet",
     reconstruct = function(ro) {
       return(ReconstructedLandmarkSet$new(self, ro))
     }
-   
   )
 )
 
+##' @method flatplot LandmarkSet
 flatplot.LandmarkSet <- function(x, ids=x$getIDs(), ...) {
   for (id in ids) {
     if (!is.null(x$getFeature(id))) {

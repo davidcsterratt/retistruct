@@ -98,7 +98,8 @@ plotCol <- function(col, nrow=1, ncol=ceiling(length(col) / nrow),
     invisible(gl)
 }
 
-check.colour <- function(col) {
+
+colour.exists <- function(col) {
   if (!(col %in% grDevices::colours())) {
     plotCol(grep("([0-9]|medium|light|dark)",  grDevices::colors(), invert=TRUE, value=TRUE), nrow=20)
     return(FALSE)
@@ -156,7 +157,7 @@ read.datapoints <- function(dataset) {
       Ds <- c(Ds, D)
 
       col <- names[2]
-      if (!(check.colour(col))) {
+      if (!(colour.exists(col))) {
         stop("Invalid colour \"", col, "\" in datapoints.csv - see window for valid colour names")
       }
       names(col) <- names[1]
@@ -216,7 +217,7 @@ read.datacounts <- function(dataset) {
       Gs <- c(Gs, G)
 
       col <- list(names[2])
-      if (!(check.colour(col))) {
+      if (!(colour.exists(col))) {
         stop("Invalid colour \"", col, "\" in datacounts.csv - see window for valid colour names")
       }
       names(col) <- names[1]

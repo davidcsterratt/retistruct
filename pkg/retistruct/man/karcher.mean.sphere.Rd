@@ -8,7 +8,7 @@ karcher.mean.sphere(x, na.rm = FALSE, var = FALSE)
 }
 \arguments{
 \item{x}{Matrix of points on sphere as N-by-2 matrix with labelled
-columns \\code{phi} (latitude) and \code{lambda} (longitude)}
+columns \code{phi} (latitude) and \code{lambda} (longitude)}
 
 \item{na.rm}{logical value indicating whether \code{NA} values should
 be stripped before the computation proceeds.}

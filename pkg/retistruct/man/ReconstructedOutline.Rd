@@ -230,7 +230,7 @@ as a matrix \code{Bt}, which maps a binary vector representation
 of edge indices onto a binary vector representation of the
 indices of the points linked by the edge.
 Sets following fields
-\itemize{
+\describe{
 \item{\code{Pt}}{Transformed point locations}
 \item{\code{Tt}}{Transformed triangulation}
 \item{\code{Ct}}{Transformed connection set}
@@ -264,7 +264,7 @@ the curtailed sphere. It uses the area of the flat outline and
 tries to get a good first approximation by using the function
 \code{\link{stretchMesh}}.
 The following fields are set:
-\itemize{
+\describe{
 \item{\code{phi}}{Latitude of mesh points.}
 \item{\code{lmabda}}{Longitude of mesh points.}
 \item{\code{R}}{Radius of sphere.}
@@ -288,7 +288,7 @@ have been deformed from their flat state.
 \subsection{Returns}{
 A list containing two data frames \code{flat} and \code{spherical}. 
 Each data frame contains for each edge in the flat or spherical meshes:
-\itemize{
+\describe{
 \item{\code{L}}{Length of the edge in the flat outline }
 \item{\code{l}}{Length of the corresponding edge on the sphere}
 \item{\code{strain}}{The strain of each connection}
@@ -389,7 +389,7 @@ coordinates and a mask matrix with the same dimensions as
 \code{im} is created. This has \code{TRUE} for pixels that should
 be displayed and \code{FALSE} for ones that should not.
 Sets the field
-\itemize{
+\describe{
 \item{\code{ims}}{Coordinates of corners of pixels in spherical coordinates}
 }
 \subsection{Usage}{

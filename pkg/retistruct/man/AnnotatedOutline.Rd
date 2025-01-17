@@ -232,7 +232,7 @@ vertices of tears)}
 }
 \subsection{Returns}{
 List containing
-\itemize{
+\describe{
 \item{\code{Rset}}{the set of points on the rim}
 \item{\code{TFset}}{list containing indices of points in each forward tear}
 \item{\code{TBset}}{list containing indices of points in each backward tear}
@@ -464,7 +464,7 @@ vertices of fullcuts)}
 }
 \subsection{Returns}{
 List containing
-\itemize{
+\describe{
 \item{\code{Rset}}{the set of points on the rim}
 \item{\code{TFset}}{list containing indices of points in each forward cut}
 \item{\code{TBset}}{list containing indices of points in each backward cut}

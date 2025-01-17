@@ -1,6 +1,6 @@
 library(retistruct)
 ## Reconstruct left contra
-root <- system.file(package = "retistructdemos")
+root <- system.file(package = "retistruct")
 
 options(contour.levels=c(25, 50, 75, 95))
 

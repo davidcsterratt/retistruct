@@ -38,6 +38,7 @@ CountSet <- R6Class("CountSet",
   )
 )
 
+##' @method flatplot CountSet
 flatplot.CountSet <- function(x, ids=x$getIDs(), ...) {
   for (id in ids) {
     if (!is.null(x$data[[id]])) {

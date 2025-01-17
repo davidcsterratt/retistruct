@@ -33,6 +33,7 @@ PointSet <- R6Class("PointSet",
   )
 )
 
+##' @method flatplot PointSet
 flatplot.PointSet <- function(x, ids=x$getIDs(), ...) {
   for (id in ids) {
     if (!is.null(x$data[[id]])) {

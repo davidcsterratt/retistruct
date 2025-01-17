@@ -209,7 +209,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
   return(KDE)
 }
 
-
+##' @method projection ReconstructedPointSet
 projection.ReconstructedPointSet <-
   function(r,
            phi0,

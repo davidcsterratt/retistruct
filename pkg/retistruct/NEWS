@@ -50,6 +50,13 @@ NEW FEATURES
 * Switch easily between 3D views of flatmount and reconstruction in
   GUI
 
+CHANGES IN VERSION 0.6.4 - Released 2023/02/04
+
+BUG FIX
+
+* Renamed deprecated rgl.*functions,
+  which were causing a crash in the GUI
+
 CHANGES IN VERSION 0.6.3 - Released 2020/04/03
 
 BUG FIX

@@ -273,6 +273,7 @@ Outline <- R6Class("Outline",
   )
 )
 
+##' @method plot Outline
 plot.Outline <- function(x, ...) {
   plot(x$self$P)
 }
