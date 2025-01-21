@@ -1,3 +1,4 @@
+
 ##' Check the whether  directory contains valid data 
 ##' @param dir Directory to check.
 ##' @return  \code{TRUE} if \code{dir} contains valid data;
@@ -254,7 +255,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
 ##' @export
 retistruct.reconstruct <- function(a, report=NULL,
                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                                   debug=FALSE, ...) {
+                                   output=NA, debug=FALSE, ...) {
   o <- a$clone()
   
   ## Check that markup is there
@@ -288,7 +289,7 @@ retistruct.reconstruct <- function(a, report=NULL,
   r$loadOutline(o, debug=debug)
 
   r$reconstruct(plot.3d=plot.3d, dev.flat=dev.flat,
-                dev.polar=dev.polar, report=report,
+                dev.polar=dev.polar, output=output, report=report,
                 ...)
   if (!is.null(r)) {
     repstr <- paste("Mapping optimised. Deformation eL:", format(sqrt(r$E.l), 5),
