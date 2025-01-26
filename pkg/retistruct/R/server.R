@@ -1,28 +1,22 @@
-library(shiny)
-library(shinyjs)
-library(shinyFiles)
-library(bslib)
-library(fs)
-
 ## --------- All the server handlers are located in R/server-handler.R ---------
-get_root <- function() {
-  if (.Platform$OS.type == "windows") {
-    return(fs::path("C:/"))  ## Default to C:/ on Windows
-  } else {
-    return(fs::path("/"))    ## Root directory on Unix-like systems
-  }
-}
-
-timeout <- 1000 # How long to leave a status text before clearing in ms
+time_out <- 1000 # How long to leave a status text before clearing in ms
 abort.text <- "Press the red cancel button at the top of the screen to cancel"
 
-## File system directories used by shinyFiles
-directories <- c(Home=fs::path_home(), Root=get_root())
+##' File system directories used by shinyFiles
+##' @importFrom fs path_home
+directories <- c(Home=fs::path_home())
 
+##' @title Retistruct Shiny Server
 ##' @description The R shiny server responsible for storing a state for each 
 ##' session, handling inputs from the UI to the server, and plotting outputs
 ##' to the UI. The arguments are all handled by the shiny package and this 
 ##' function should not be insantiated manually.
+##' @param input object that holds the UI state (Managed automatically by shiny)
+##' @param output sends new outputs to the UI (Managed automatically by shiny)
+##' @param session controls each open instance (Managed automatically by shiny)
+##' @importFrom shiny observeEvent renderPlot renderText
+##' @importFrom shinyjs useShinyjs enable disable delay
+##' @importFrom shinyFiles shinyDirChoose parseDirPath
 server <- function(input, output, session) {
   useShinyjs()
   
@@ -80,7 +74,7 @@ server <- function(input, output, session) {
   observeEvent(input$cancel, {
     reset.state(state)
     set.status(output, "Operation Cancelled.")
-    delay(timeout, {set.status(output, "")})
+    delay(time_out, {set.status(output, "")})
   })
   
   ## Click handler for any click made onto the plot, doesn't do anything if 
@@ -94,7 +88,7 @@ server <- function(input, output, session) {
         h.add(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Added tear successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
     
@@ -110,7 +104,7 @@ server <- function(input, output, session) {
         h.move(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Moved points successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
     
@@ -123,7 +117,7 @@ server <- function(input, output, session) {
         h.remove(state, input, output, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Removed tear successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
     
@@ -136,7 +130,7 @@ server <- function(input, output, session) {
         h.mark.n(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Marked nasal successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
     
@@ -150,7 +144,7 @@ server <- function(input, output, session) {
         h.mark.d(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Marked dorasal successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
     
@@ -163,7 +157,7 @@ server <- function(input, output, session) {
         h.mark.od(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Marked OD successfully")
-        delay(timeout, {set.status(output, "")})
+        delay(time_out, {set.status(output, "")})
       }
     }
   })

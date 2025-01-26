@@ -1,8 +1,3 @@
-library(shiny)
-library(shinyjs)
-library(shinyFiles)
-library(bslib)
-
 ## Get and name available projections
 getProjections <- function() {
   return(list("Azimuthal Equidistant" = '0',
@@ -26,9 +21,14 @@ version.string <- function() {
                 " (", utils::packageDescription("retistruct", fields="Date"), ")"))
 }
 
+##' @title Retistruct UI
 ##' @description
 ##' The Shiny UI element, runs on a browser and is similar to HTML, attempt to 
 ##' mimic the original Retistruct UI as closely as possible.
+##' @importFrom shinyjs useShinyjs
+##' @import shiny
+##' @importFrom shinyFiles shinyDirButton
+##' @importFrom bslib navset_tab nav_panel
 ui <- fluidPage(
   useShinyjs(),
   ## CSS class to turn cancel button red when active.

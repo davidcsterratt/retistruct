@@ -152,8 +152,10 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param dev.polar Device handle for plotting polar plot updates
     ##' to. If \code{NA} don't make any polar plots.
     ##' @param  Control argument to pass to \code{optim}
+    ##' @param shinyOutput A Shiny output element used to render and display a 
+    ##' plot in the application.
     ##' @param report Function to report progress.
-    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, output=NA,  
+    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NA,  
                            report=getOption("retistruct.report")) {
       ##   ## Initial plot in 3D space
       ##   if (plot.3d) {
@@ -168,7 +170,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       report("Optimising mapping with no area constraint using BFGS...")
       self$optimiseMapping(alpha=0, x0=0, nu=1,
                            plot.3d=plot.3d,
-                           output=output)
+                           shinyOutput=shinyOutput)
       report("Optimising mapping with area constraint using FIRE...")
       ## FIXME: Need to put in some better heuristics for scaling
       ## maxmove, and perhaps other parameters
@@ -176,15 +178,15 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                                dtmax=500, maxmove=0.002*sqrt(self$ol$A.tot),
                                tol=1e-5,
                                plot.3d=plot.3d,
-                               output=output)
+                               shinyOutput=shinyOutput)
       report("Optimising mapping with strong area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=1,
                            plot.3d=plot.3d,
-                           output=output)
+                           shinyOutput=shinyOutput)
       report("Optimising mapping with weak area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=0.5,
                            plot.3d=plot.3d,
-                           output=output)
+                           shinyOutput=shinyOutput)
       
       report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
                    ";", self$nflip, "flipped triangles."))
@@ -423,13 +425,15 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param optim.method Method to pass to \code{optim}
     ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
     ##' @param dev.flat Device handle for plotting flatplot updates to. If
+    ##' @param shinyOutput A Shiny output element used to render and display a 
+    ##' plot in the application.
     ##' \code{NA} don't make any flat plots
     ##' @param dev.polar Device handle for plotting polar plot updates
     ##' to. If \code{NA} don't make any polar plots.
     ##' @param control Control argument to pass to \code{optim}
     optimiseMapping = function(alpha=4, x0=0.5, nu=1, optim.method="BFGS",
                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                               output=NA, control=list()) {
+                               shinyOutput=NA, control=list()) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -494,25 +498,25 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         
         ## Plot
         if (plot.3d) {
-          output$plot3 <- renderRglwidget({
+          shinyOutput$plot3 <- renderRglwidget({
             sphericalplot(self, datapoints=FALSE, strain=FALSE)
             rglwidget()
           })
         }
 
-        if (class(output)!=class(NA)) {
-          output$plot1 <- renderPlot({
+        if (class(shinyOutput)!=class(NA)) {
+          shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
         }
 
-        if (class(output)!=class(NA)) {
+        if (class(shinyOutput)!=class(NA)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
-          output$plot2 <- renderPlot({
+          shinyOutput$plot2 <- renderPlot({
             projection(self, mesh=TRUE,
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
@@ -528,9 +532,11 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
     ##' @param dev.flat Device handle for plotting grid to
     ##' @param dev.polar Device handle for plotting polar plot to
+    ##' @param shinyOutput A Shiny output element used to render and display a 
+    ##' plot in the application.
     ##' @param ... Extra arguments to pass to \code{\link{fire}}
     optimiseMappingCart  = function(alpha=4, x0=0.5, nu=1, method="BFGS",
-                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA, output=NA, ...) {
+                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NA, ...) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -591,7 +597,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         ## Plot
         if (plot.3d) {
-          output$plot3 <- renderRglwidget({
+          shinyOutput$plot3 <- renderRglwidget({
               sphericalplot(list(phi=phi, lambda=lambda, R=R,
                 Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
                 datapoints=FALSE)
@@ -600,21 +606,21 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
           
         }
   
-        if (class(output)!=class(NA)) {
-          output$plot1 <- renderPlot({
+        if (class(shinyOutput)!=class(NA)) {
+          shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
         }
 
-        if (class(output)!=class(NA)) {
+        if (class(shinyOutput)!=class(NA)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
           self$phi <- phi
           self$lambda <- lambda
-          output$plot2 <- renderPlot({
+          shinyOutput$plot2 <- renderPlot({
             projection(self, mesh=TRUE,
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)

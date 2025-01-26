@@ -10,6 +10,7 @@ retistruct.reconstruct(
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
+  shinyOutput = NULL,
   debug = FALSE,
   ...
 )
@@ -28,6 +29,9 @@ representation}
 
 \item{dev.polar}{The ID of the device to which to plot the polar
 representation}
+
+\item{shinyOutput}{A Shiny output element used to render and display a 
+plot in the application.}
 
 \item{debug}{If \code{TRUE} print extra debugging output}
 

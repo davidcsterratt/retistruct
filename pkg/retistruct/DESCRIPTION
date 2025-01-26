@@ -26,14 +26,15 @@ Imports:
     rgl,
     R.matlab,
     R6,
-    tiff
+    tiff,
+    shiny,
+    shinyjs,
+    shinyFiles,
+    bslib,
+    fs
 Suggests:
     spelling,
-    testthat,
-    gWidgets2RGtk2 (>= 1.0.6),
-    gWidgets2 (>= 1.0.6),
-    cairoDevice,
-    RGtk2
+    testthat
 Language: en-GB
 RoxygenNote: 7.3.2
 Encoding: UTF-8

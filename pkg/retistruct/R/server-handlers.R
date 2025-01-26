@@ -212,7 +212,7 @@ h.reconstruct <- function(h, state, input, output, session, ...) {
   withCallingHandlers({
     state$r <- retistruct.reconstruct(state$a, report=function(m) set.status(output, m),
                                       plot.3d=getOption("show.sphere"), 
-                                      output=output)
+                                      shinyOutput=output)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
   enable.widgets(TRUE, state)
   do.plot(state=state, input=input, output=output)
