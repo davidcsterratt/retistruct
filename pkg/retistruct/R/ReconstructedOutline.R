@@ -433,7 +433,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param control Control argument to pass to \code{optim}
     optimiseMapping = function(alpha=4, x0=0.5, nu=1, optim.method="BFGS",
                                plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
-                               shinyOutput=NA, control=list()) {
+                               shinyOutput=NULL, control=list()) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -498,21 +498,30 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         
         ## Plot
         if (plot.3d) {
-          shinyOutput$plot3 <- renderRglwidget({
+          if (is.null(shinyOutput)) {
             sphericalplot(self, datapoints=FALSE, strain=FALSE)
-            rglwidget()
-          })
+          } else {
+            shinyOutput$plot3 <- renderRglwidget({
+              sphericalplot(self, datapoints=FALSE, strain=FALSE)
+              rglwidget()
+            })
+          }
         }
 
-        if (class(shinyOutput)!=class(NA)) {
+        if (!is.null(shinyOutput)) {
           shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
+        } else if (!is.na(dev.flat)) {
+          dev.set(dev.flat)
+          flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
+                   datapoints=FALSE, landmarks=FALSE,
+                   image=FALSE)
         }
-
-        if (class(shinyOutput)!=class(NA)) {
+        
+        if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
@@ -521,6 +530,14 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
+        } else if (!is.na(dev.polar)) {
+          ## Wipe any previous reconstruction of coordinates of pixels and feature sets
+          private$ims <- NULL
+          self$clearFeatureSets()
+          dev.set(dev.polar)
+          projection(self, mesh=TRUE, 
+                     datapoints=FALSE, landmarks=FALSE,
+                     image=FALSE)
         }
       }
     },
@@ -536,7 +553,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' plot in the application.
     ##' @param ... Extra arguments to pass to \code{\link{fire}}
     optimiseMappingCart  = function(alpha=4, x0=0.5, nu=1, method="BFGS",
-                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NA, ...) {
+                                    plot.3d=FALSE, dev.flat=NA, dev.polar=NA,
+                                    shinyOutput=NULL, ...) {
       phi <- self$phi
       lambda <- self$lambda
       R <- self$R
@@ -597,24 +615,34 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
         ## Plot
         if (plot.3d) {
-          shinyOutput$plot3 <- renderRglwidget({
+          if (is.null(shinyOutput)) {
+            sphericalplot(list(phi=phi, lambda=lambda, R=R,
+                               Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                          datapoints=FALSE)
+          } else {
+            shinyOutput$plot3 <- renderRglwidget({
               sphericalplot(list(phi=phi, lambda=lambda, R=R,
-                Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
-                datapoints=FALSE)
+                                 Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                            datapoints=FALSE)
               rglwidget()
-          })
-          
+            })
+          }
         }
-  
-        if (class(shinyOutput)!=class(NA)) {
+        
+        if (!is.null(shinyOutput)) {
           shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
+        } else if (!is.na(dev.flat)) {
+          dev.set(dev.flat)
+          flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
+                   datapoints=FALSE, landmarks=FALSE,
+                   image=FALSE)
         }
-
-        if (class(shinyOutput)!=class(NA)) {
+        
+        if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
@@ -625,6 +653,16 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
+        } else if (!is.na(dev.polar)) {
+          ## Wipe any previous reconstruction of coordinates of pixels and feature sets
+          private$ims <- NULL
+          self$clearFeatureSets()
+          dev.set(dev.polar)
+          self$phi <- phi
+          self$lambda <- lambda
+          projection(self, mesh=TRUE, 
+                     datapoints=FALSE, landmarks=FALSE,
+                     image=FALSE)
         }
       }
 

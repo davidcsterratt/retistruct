@@ -314,7 +314,7 @@ Optimise the mapping from the flat outline to the sphere
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
-  shinyOutput = NA,
+  shinyOutput = NULL,
   control = list()
 )}\if{html}{\out{</div>}}
 }
@@ -360,7 +360,7 @@ Optimise the mapping from the flat outline to the sphere
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
-  shinyOutput = NA,
+  shinyOutput = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
