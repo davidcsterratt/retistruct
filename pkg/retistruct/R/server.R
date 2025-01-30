@@ -54,6 +54,27 @@ server <- function(input, output, session) {
   observeEvent(input$reconstruct, {
     h.reconstruct(state=state, input=input, output=output, session=session)
   })
+  
+  ## Demo handler
+  observe({
+    showModal(
+      modalDialog(
+        title = "Choose one of the following demos to load",
+        easy_close = TRUE,
+        size="s",
+        fluidPage(
+          fluidRow(actionButton("fig1", "Figure 1")),
+          fluidRow(actionButton("fig2a", "Figure 2A-D: Low deformation")),
+          fluidRow(actionButton("fig2e", "Figure 2E-H: High deformation")),
+          fluidRow(actionButton("smi32", "smi32")),
+          fluidRow(actionButton("fig6lc", "Figure 6 Left Contra")),
+          fluidRow(actionButton("fig6li", "Figure 6 Left Ipsi")),
+          fluidRow(actionButton("fig6rc", "Figure 6 Right Contra")),
+          fluidRow(actionButton("fig6ri", "Figure 6 Right Ipsi"))
+        )
+      )
+    )
+  }) |> bindEvent(input$demo)
 
   ## About handler
   observe({
@@ -75,6 +96,10 @@ server <- function(input, output, session) {
     reset.state(state)
     set.status(output, "Operation Cancelled.")
     delay(time_out, {set.status(output, "")})
+  })
+  
+  observeEvent(input$smi32, {
+    removeModal()
   })
   
   ## Click handler for any click made onto the plot, doesn't do anything if 
