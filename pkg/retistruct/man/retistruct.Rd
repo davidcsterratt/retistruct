@@ -14,6 +14,3 @@ contains variables in object.
 \description{
 Start the Retistruct GUI
 }
-\seealso{
-gWidgets2
-}

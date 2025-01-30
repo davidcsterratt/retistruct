@@ -7,6 +7,7 @@ abort.text <- "Press the red cancel button at the top of the screen to cancel"
 directories <- c(Home=fs::path_home())
 
 ##' @title Retistruct Shiny Server
+##' @author Jan Okul
 ##' @description The R shiny server responsible for storing a state for each 
 ##' session, handling inputs from the UI to the server, and plotting outputs
 ##' to the UI. The arguments are all handled by the shiny package and this 
