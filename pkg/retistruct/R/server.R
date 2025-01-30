@@ -219,6 +219,11 @@ server <- function(input, output, session) {
     do.plot(state=state, input=input, output=output)
   }, ignoreInit = TRUE)
   
+  # Strain handler
+  observeEvent(input$strain, {
+    do.plot(markup=TRUE, state=state, input=input, output=output)
+  })
+  
   ## Needed to render text boxes
   output$projcentre <- renderText("Projection Centre")
   output$axdir <- renderText("Axis Direction")
