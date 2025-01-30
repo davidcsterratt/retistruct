@@ -190,7 +190,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       
       report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
                    ";", self$nflip, "flipped triangles."))
-    },  
+    },
 
     ##' @description Merge stitched points and edges.
     ##' Create merged and transformed versions (all suffixed with \code{t})
@@ -508,19 +508,23 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
           }
         }
 
+        ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
-        } else if (!is.na(dev.flat)) {
+        }
+        
+        if (!is.na(dev.flat)) {
           dev.set(dev.flat)
           flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                    datapoints=FALSE, landmarks=FALSE,
                    image=FALSE)
         }
         
+        ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
@@ -530,7 +534,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
-        } else if (!is.na(dev.polar)) {
+        } 
+        
+        if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
@@ -629,19 +635,23 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
           }
         }
         
+        ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           shinyOutput$plot1 <- renderPlot({
             flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
-        } else if (!is.na(dev.flat)) {
+        } 
+        
+        if (!is.na(dev.flat)) {
           dev.set(dev.flat)
           flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                    datapoints=FALSE, landmarks=FALSE,
                    image=FALSE)
         }
         
+        ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
@@ -653,7 +663,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
-        } else if (!is.na(dev.polar)) {
+        } 
+        
+        if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()

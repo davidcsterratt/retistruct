@@ -1,10 +1,10 @@
 ## Converts projections into a function, as values returned from ui are strings.
 translateProjections <- function() {
-  return(list('0' = azimuthal.equidistant,
-              '1' = azimuthal.equalarea,
-              '2' = azimuthal.conformal,
-              '3' = sinusoidal,
-              '4' = orthographic))
+  return(list("0" = azimuthal.equidistant,
+              "1" = azimuthal.equalarea,
+              "2" = azimuthal.conformal,
+              "3" = sinusoidal,
+              "4" = orthographic))
 }
 
 ## Converts transforms into a function, as values returned from ui are strings.
