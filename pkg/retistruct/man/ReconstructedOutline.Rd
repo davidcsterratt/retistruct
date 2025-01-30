@@ -197,6 +197,7 @@ minimise the energy function.
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
+  shinyOutput = NA,
   report = getOption("retistruct.report")
 )}\if{html}{\out{</div>}}
 }
@@ -211,6 +212,9 @@ minimise the energy function.
 
 \item{\code{dev.polar}}{Device handle for plotting polar plot updates
 to. If \code{NA} don't make any polar plots.}
+
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
+plot in the application.}
 
 \item{\code{report}}{Function to report progress.}
 
@@ -310,6 +314,7 @@ Optimise the mapping from the flat outline to the sphere
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
+  shinyOutput = NULL,
   control = list()
 )}\if{html}{\out{</div>}}
 }
@@ -327,11 +332,14 @@ Optimise the mapping from the flat outline to the sphere
 
 \item{\code{plot.3d}}{If \code{TRUE} make a 3D plot in an RGL window}
 
-\item{\code{dev.flat}}{Device handle for plotting flatplot updates to. If
-\code{NA} don't make any flat plots}
+\item{\code{dev.flat}}{Device handle for plotting flatplot updates to. If}
 
 \item{\code{dev.polar}}{Device handle for plotting polar plot updates
 to. If \code{NA} don't make any polar plots.}
+
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
+plot in the application.
+\code{NA} don't make any flat plots}
 
 \item{\code{control}}{Control argument to pass to \code{optim}}
 }
@@ -352,6 +360,7 @@ Optimise the mapping from the flat outline to the sphere
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
+  shinyOutput = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -372,6 +381,9 @@ Optimise the mapping from the flat outline to the sphere
 \item{\code{dev.flat}}{Device handle for plotting grid to}
 
 \item{\code{dev.polar}}{Device handle for plotting polar plot to}
+
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
+plot in the application.}
 
 \item{\code{...}}{Extra arguments to pass to \code{\link{fire}}}
 }
