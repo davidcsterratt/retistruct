@@ -5,6 +5,8 @@ abort.text <- "Press the red cancel button at the top of the screen to cancel"
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
 directories <- c(Home=fs::path_home())
+extdata       <- file.path(system.file(package = "retistruct"), "extdata")
+extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
 
 ##' @title Retistruct Shiny Server
 ##' @description The R shiny server responsible for storing a state for each 
@@ -75,7 +77,48 @@ server <- function(input, output, session) {
       )
     )
   }) |> bindEvent(input$demo)
-
+  
+  ## Demo button handlers
+  observeEvent(input$fig1, {
+    h.demo1(state, input, output, session, "GM509", "R-CONTRA")
+    removeModal()
+  })
+  
+  observeEvent(input$fig2a, {
+    h.demo1(state, input, output, session, "GMB530", "R-CONTRA")
+    removeModal()
+  })
+  
+  observeEvent(input$fig2e, {
+    h.demo1(state, input, output, session, "GM182-4", "R-CONTRA")
+    removeModal()
+  })
+  
+  observeEvent(input$smi32, {
+    h.demo1(state, input, output, session, "smi32", "")
+    removeModal()
+  })
+  
+  observeEvent(input$fig6lc, {
+    h.demo2(state, input, output, session, "Figure_6-data", "left-contra")
+    removeModal()
+  })
+  
+  observeEvent(input$fig6li, {
+    h.demo2(state, input, output, session, "Figure_6-data", "left-ipsi")
+    removeModal()
+  })
+  
+  observeEvent(input$fig6rc, {
+    h.demo2(state, input, output, session, "Figure_6-data", "right-contra")
+    removeModal()
+  })
+  
+  observeEvent(input$fig6ri, {
+    h.demo2(state, input, output, session, "Figure_6-data", "right-ipsi")
+    removeModal()
+  })
+  
   ## About handler
   observe({
     showModal(
