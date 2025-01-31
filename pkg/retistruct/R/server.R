@@ -1,12 +1,14 @@
 ## --------- All the server handlers are located in R/server-handler.R ---------
 time_out <- 1000 # How long to leave a status text before clearing in ms
 abort.text <- "Press the red cancel button at the top of the screen to cancel"
+extdata       <- file.path(system.file(package = "retistruct"), "extdata")
+extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
+cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
 
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
 directories <- c(Home=fs::path_home())
-extdata       <- file.path(system.file(package = "retistruct"), "extdata")
-extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
+
 
 ##' @title Retistruct Shiny Server
 ##' @description The R shiny server responsible for storing a state for each 
@@ -37,6 +39,7 @@ server <- function(input, output, session) {
   state$points_x <- c()
   state$points_y <- c()
   
+  ## ------------------- Navbar handlers -------------------
   ## Open project handler
   observeEvent(input$open, {
     shinyDirChoose(input, "open", roots = directories, session = session)
@@ -78,10 +81,67 @@ server <- function(input, output, session) {
     )
   }) |> bindEvent(input$demo)
   
-  ## Demo button handlers
+  #Properties handler
+  observe({
+    showModal(
+      modalDialog(
+        title="Properties",
+        easy_close=TRUE,
+        tags$strong("Colours"),
+        selectInput("out_colour", "Outline Colour", choices=cols,
+                    selected=getOption("outline.col", default="black")),
+        selectInput("tear_colour", "Tear Colour", choices=cols,
+                    selected=getOption("TF.col", default="red")),
+        selectInput("stitch_colour", "Stitch Colour", choices=cols,
+                    selected=getOption("stitch.col", default="cyan")),
+        selectInput("major_colour", "Major Gridline Colour", choices=cols,
+                    selected=getOption("grid.maj.col", default="black")),
+        selectInput("minor_colour", "Minor Gridline Colour", choices=cols,
+                    selected=getOption("grid.min.col", "grey")),
+        tags$strong("Bitmap/PDF Output"),
+        numericInput("output_width", "Maximum Width of Projection",
+                     value=getOption("max.proj.dim", default=400))
+      )
+    )
+  }) |> bindEvent(input$properties)
+
+  ## ---------- Properties option handlers ----------
+  observeEvent(input$out_colour, {
+    options("outline.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  observeEvent(input$out_colour, {
+    options("TF.col" = input$out_colour)
+    options("TB.col" = input$out_colour)
+    options("V.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  observeEvent(input$out_colour, {
+    options("stitch.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  observeEvent(input$out_colour, {
+    options("grid.maj.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  observeEvent(input$out_colour, {
+    options("grid.min.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  observeEvent(input$output_width, {
+    options("max.proj.dim" = input$output_width)
+    do.plot(state=state, input=input, output=output)
+  })
+  
+  ## ---------- Demo button handlers ----------
   observeEvent(input$fig1, {
     h.demo1(state, input, output, session, "GM509", "R-CONTRA")
-    removeModal()
+    removeModal() ## Closes the overlay automatically
   })
   
   observeEvent(input$fig2a, {
@@ -139,10 +199,6 @@ server <- function(input, output, session) {
     reset.state(state)
     set.status(output, "Operation Cancelled.")
     delay(time_out, {set.status(output, "")})
-  })
-  
-  observeEvent(input$smi32, {
-    removeModal()
   })
   
   ## Click handler for any click made onto the plot, doesn't do anything if 
@@ -235,7 +291,9 @@ server <- function(input, output, session) {
   ## server, the actual click handling is in the plot click handler.
   observeEvent(input$add_tear, {
     set.state(state, 1)
-    set.status(output, "Click on the three points of the tear in any order. Double click to remove the latest point added and press cancel, to cancel.")
+    set.status(output, "Click on the three points of the tear in any order.
+                Double click to remove the latest point added and press cancel,
+               to cancel.")
   })
   
   observeEvent(input$move_point, {
@@ -246,19 +304,21 @@ server <- function(input, output, session) {
   
   observeEvent(input$remove_tear, {
     set.state(state, 3)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.status(output, "Click on any point of the tear to remove it and press
+               cancel, to cancel.")
   })
   
   observeEvent(input$mark_nasal, {
     set.state(state, 4)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.status(output, "Click on any point of the tear to remove it and press
+               cancel, to cancel.")
   })
   
   observeEvent(input$mark_od, {
     set.state(state, 5)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.status(output, "Click on any point of the tear to remove it and press
+               cancel, to cancel.")
   })
-  
   
   # flip dv handler
   observeEvent(input$flip_dv, {

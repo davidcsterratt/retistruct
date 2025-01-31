@@ -17,5 +17,5 @@ server(input, output, session)
 The R shiny server responsible for storing a state for each 
 session, handling inputs from the UI to the server, and plotting outputs
 to the UI. The arguments are all handled by the shiny package and this 
-function should not be insantiated manually.
+function should not be instantiated manually.
 }
