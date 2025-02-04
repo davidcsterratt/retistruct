@@ -42,8 +42,8 @@ server <- function(input, output, session) {
   ## ------------------- Navbar handlers -------------------
   ## Open project handler
   observeEvent(input$open, {
-    shinyDirChoose(input, "open", roots = directories, session = session)
-    dirname <- parseDirPath(roots = directories, input$open)
+    shinyDirChoose(input, "open", roots=directories, session=session)
+    dirname <- parseDirPath(roots=directories, input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
       h.open(state=state, input=input, output=output, session=session)
@@ -59,139 +59,106 @@ server <- function(input, output, session) {
   observeEvent(input$reconstruct, {
     h.reconstruct(state=state, input=input, output=output, session=session)
   })
-  
-  ## Demo handler
-  observe({
-    showModal(
-      modalDialog(
-        title = "Choose one of the following demos to load",
-        easy_close = TRUE,
-        size="s",
-        fluidPage(
-          fluidRow(actionButton("fig1", "Figure 1")),
-          fluidRow(actionButton("fig2a", "Figure 2A-D: Low deformation")),
-          fluidRow(actionButton("fig2e", "Figure 2E-H: High deformation")),
-          fluidRow(actionButton("smi32", "smi32")),
-          fluidRow(actionButton("fig6lc", "Figure 6 Left Contra")),
-          fluidRow(actionButton("fig6li", "Figure 6 Left Ipsi")),
-          fluidRow(actionButton("fig6rc", "Figure 6 Right Contra")),
-          fluidRow(actionButton("fig6ri", "Figure 6 Right Ipsi"))
-        )
-      )
-    )
-  }) |> bindEvent(input$demo)
-  
-  #Properties handler
-  observe({
-    showModal(
-      modalDialog(
-        title="Properties",
-        easy_close=TRUE,
-        tags$strong("Colours"),
-        selectInput("out_colour", "Outline Colour", choices=cols,
-                    selected=getOption("outline.col", default="black")),
-        selectInput("tear_colour", "Tear Colour", choices=cols,
-                    selected=getOption("TF.col", default="red")),
-        selectInput("stitch_colour", "Stitch Colour", choices=cols,
-                    selected=getOption("stitch.col", default="cyan")),
-        selectInput("major_colour", "Major Gridline Colour", choices=cols,
-                    selected=getOption("grid.maj.col", default="black")),
-        selectInput("minor_colour", "Minor Gridline Colour", choices=cols,
-                    selected=getOption("grid.min.col", "grey")),
-        tags$strong("Bitmap/PDF Output"),
-        numericInput("output_width", "Maximum Width of Projection",
-                     value=getOption("max.proj.dim", default=400))
-      )
-    )
-  }) |> bindEvent(input$properties)
+
+  ## Properties handler
+  observeEvent(input$properties, showModal(properties.ui))
 
   ## ---------- Properties option handlers ----------
   observeEvent(input$out_colour, {
     options("outline.col" = input$out_colour)
     do.plot(state=state, input=input, output=output)
-  })
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
   observeEvent(input$tear_colour, {
     options("TF.col" = input$tear_colour)
     options("TB.col" = input$tear_colour)
     options("V.col" = input$tear_colour)
     do.plot(state=state, input=input, output=output)
-  })
-  
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+
   observeEvent(input$stitch_colour, {
     options("stitch.col" = input$stitch_colour)
     do.plot(state=state, input=input, output=output)
-  })
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
   observeEvent(input$major_colour, {
     options("grid.maj.col" = input$major_colour)
     do.plot(state=state, input=input, output=output)
-  })
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
   observeEvent(input$minor_colour, {
     options("grid.min.col" = input$minor_colour)
     do.plot(state=state, input=input, output=output)
-  })
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
   observeEvent(input$output_width, {
     options("max.proj.dim" = input$output_width)
     do.plot(state=state, input=input, output=output)
-  })
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
-  ## ---------- Demo button handlers ----------
+  ## Demo button handler
+  observeEvent(input$demo, showModal(demo.ui))
+  
+  ## ---------- Demo button option handlers ----------
   observeEvent(input$fig1, {
-    h.demo1(state, input, output, session, extdata, "GM509", "R-CONTRA")
+    enable.widgets(FALSE, state)
     removeModal() ## Closes the overlay automatically
+    h.demo1(state, input, output, session, extdata, "GM509", "R-CONTRA")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig2a, {
-    h.demo1(state, input, output, session, extdata, "GMB530", "R-CONTRA")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo1(state, input, output, session, extdata, "GMB530", "R-CONTRA")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig2e, {
-    h.demo1(state, input, output, session, extdata, "GM182-4", "R-CONTRA")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo1(state, input, output, session, extdata, "GM182-4", "R-CONTRA")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$smi32, {
-    h.demo1(state, input, output, session, extdata, "smi32", "")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo1(state, input, output, session, extdata, "smi32", "")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6lc, {
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6li, {
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6rc, {
+    enable.widgets(FALSE, state)
+    removeModal()
     h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
-    removeModal()
+    enable.widgets(TRUE, state)
   })
-  
+    
   observeEvent(input$fig6ri, {
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
+    enable.widgets(FALSE, state)
     removeModal()
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
+    enable.widgets(TRUE, state)
   })
+    
+  ## About button handler
+  observeEvent(input$about, showModal(about.ui))
   
-  ## About handler
-  observe({
-    showModal(
-      modalDialog(
-        title = "About",
-        easy_close = TRUE,
-        "Retistruct was written by David Sterratt at the University of Edinburgh
-        , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
-        Developmental Neurobiology, KCL. This work was supported by a Programme
-        Grant from the Wellcome Trust (G083305)."
-      )
-    )
-  }) |> bindEvent(input$about)
   
   ## Cancel button, this is to let the server know that the mode should be reset 
   ## and the captured points should be cleared.
@@ -219,7 +186,6 @@ server <- function(input, output, session) {
     ## Move points handler
     if (state$mode==2) {
       add.point(state, input$plot1click$x, input$plot1click$y)
-      print(length(state$points_x))
       if (length(state$points_x) == 1) {
         set.status(output, paste("Click on point to move it to.", abort.text))
       }
@@ -264,7 +230,6 @@ server <- function(input, output, session) {
       ## Whilst if statement not necessary, it adds redundancy in case there is
       ## more than one point added.
       if (length(state$points_x)==1) {
-        print(c(state$points_x, state$points_y))
         h.mark.d(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Marked dorasal successfully")
@@ -299,7 +264,6 @@ server <- function(input, output, session) {
   observeEvent(input$move_point, {
     set.state(state, 2)
     set.status(output, "Click on apex or vertex to move.")
-    print(length(state$points_x))
   })
   
   observeEvent(input$remove_tear, {

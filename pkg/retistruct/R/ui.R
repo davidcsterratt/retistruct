@@ -21,6 +21,60 @@ version.string <- function() {
                 " (", utils::packageDescription("retistruct", fields="Date"), ")"))
 }
 
+## Default values for properties
+default.val <- c(
+  outline = "black",
+  tear = "black",
+  stitch = "cyan",
+  maj = "black",
+  min = "grey",
+  proj = 400
+)
+
+properties.ui <- modalDialog(
+    title="Properties",
+    easy_close=TRUE,
+    tags$strong("Colours"),
+    selectInput("out_colour", "Outline Colour", choices=cols,
+                selected=getOption("outline.col", default.val["outline"])),
+    selectInput("tear_colour", "Tear Colour", choices=cols,
+                selected=getOption("TF.col", default=default.val["tear"])),
+    selectInput("stitch_colour", "Stitch Colour", choices=cols,
+                selected=getOption("stitch.col", default=default.val["stitch"])),
+    selectInput("major_colour", "Major Gridline Colour", choices=cols,
+                selected=getOption("grid.maj.col", default=default.val["maj"])),
+    selectInput("minor_colour", "Minor Gridline Colour", choices=cols,
+                selected=getOption("grid.min.col", default.val["min"])),
+    tags$strong("Bitmap/PDF Output"),
+    numericInput("output_width", "Maximum Width of Projection",
+                 value=getOption("max.proj.dim", default=default.val["proj"])),
+  ) 
+
+demo.ui <- modalDialog(
+    title = "Choose one of the following demos to load",
+    easy_close = TRUE,
+    size="s",
+    fluidPage(
+      fluidRow(actionButton("fig1", "Figure 1")),
+      fluidRow(actionButton("fig2a", "Figure 2A-D: Low deformation")),
+      fluidRow(actionButton("fig2e", "Figure 2E-H: High deformation")),
+      fluidRow(actionButton("smi32", "smi32")),
+      fluidRow(actionButton("fig6lc", "Figure 6 Left Contra")),
+      fluidRow(actionButton("fig6li", "Figure 6 Left Ipsi")),
+      fluidRow(actionButton("fig6rc", "Figure 6 Right Contra")),
+      fluidRow(actionButton("fig6ri", "Figure 6 Right Ipsi"))
+    )
+  )
+
+about.ui <- modalDialog(
+  title = "About",
+  easy_close = TRUE,
+  "Retistruct was written by David Sterratt at the University of Edinburgh
+        , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
+        Developmental Neurobiology, KCL. This work was supported by a Programme
+        Grant from the Wellcome Trust (G083305)."
+  )
+
 ##' @title Retistruct UI
 ##' @description
 ##' The Shiny UI element, runs on a browser and is similar to HTML, attempt to 
