@@ -5,6 +5,6 @@
 ##' @importFrom shiny shinyApp
 ##' @export
 retistruct <- function() {
-  options(rgl.useNULL = TRUE) ## Prevents rgl from making its own window 
+  options(rgl.useNULL = TRUE) ## Prevents rgl from making its own window
   shinyApp(ui = ui, server = server)
 }
