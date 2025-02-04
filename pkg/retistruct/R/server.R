@@ -1,8 +1,6 @@
 ## --------- All the server handlers are located in R/server-handler.R ---------
 time_out <- 1000 # How long to leave a status text before clearing in ms
 abort.text <- "Press the red cancel button at the top of the screen to cancel"
-extdata       <- file.path(system.file(package = "retistruct"), "extdata")
-extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
 cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
 
 ##' File system directories used by shinyFiles
@@ -38,6 +36,8 @@ server <- function(input, output, session) {
   ## The x and y coordinates captured by the click handler
   state$points_x <- c()
   state$points_y <- c()
+  extdata       <- file.path(system.file(package = "retistruct"), "extdata")
+  extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
   
   ## ------------------- Navbar handlers -------------------
   ## Open project handler
@@ -111,25 +111,25 @@ server <- function(input, output, session) {
     do.plot(state=state, input=input, output=output)
   })
   
-  observeEvent(input$out_colour, {
-    options("TF.col" = input$out_colour)
-    options("TB.col" = input$out_colour)
-    options("V.col" = input$out_colour)
+  observeEvent(input$tear_colour, {
+    options("TF.col" = input$tear_colour)
+    options("TB.col" = input$tear_colour)
+    options("V.col" = input$tear_colour)
     do.plot(state=state, input=input, output=output)
   })
   
-  observeEvent(input$out_colour, {
-    options("stitch.col" = input$out_colour)
+  observeEvent(input$stitch_colour, {
+    options("stitch.col" = input$stitch_colour)
     do.plot(state=state, input=input, output=output)
   })
   
-  observeEvent(input$out_colour, {
-    options("grid.maj.col" = input$out_colour)
+  observeEvent(input$major_colour, {
+    options("grid.maj.col" = input$major_colour)
     do.plot(state=state, input=input, output=output)
   })
   
-  observeEvent(input$out_colour, {
-    options("grid.min.col" = input$out_colour)
+  observeEvent(input$minor_colour, {
+    options("grid.min.col" = input$minor_colour)
     do.plot(state=state, input=input, output=output)
   })
   
@@ -140,42 +140,42 @@ server <- function(input, output, session) {
   
   ## ---------- Demo button handlers ----------
   observeEvent(input$fig1, {
-    h.demo1(state, input, output, session, "GM509", "R-CONTRA")
+    h.demo1(state, input, output, session, extdata, "GM509", "R-CONTRA")
     removeModal() ## Closes the overlay automatically
   })
   
   observeEvent(input$fig2a, {
-    h.demo1(state, input, output, session, "GMB530", "R-CONTRA")
+    h.demo1(state, input, output, session, extdata, "GMB530", "R-CONTRA")
     removeModal()
   })
   
   observeEvent(input$fig2e, {
-    h.demo1(state, input, output, session, "GM182-4", "R-CONTRA")
+    h.demo1(state, input, output, session, extdata, "GM182-4", "R-CONTRA")
     removeModal()
   })
   
   observeEvent(input$smi32, {
-    h.demo1(state, input, output, session, "smi32", "")
+    h.demo1(state, input, output, session, extdata, "smi32", "")
     removeModal()
   })
   
   observeEvent(input$fig6lc, {
-    h.demo2(state, input, output, session, "Figure_6-data", "left-contra")
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
     removeModal()
   })
   
   observeEvent(input$fig6li, {
-    h.demo2(state, input, output, session, "Figure_6-data", "left-ipsi")
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
     removeModal()
   })
   
   observeEvent(input$fig6rc, {
-    h.demo2(state, input, output, session, "Figure_6-data", "right-contra")
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
     removeModal()
   })
   
   observeEvent(input$fig6ri, {
-    h.demo2(state, input, output, session, "Figure_6-data", "right-ipsi")
+    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
     removeModal()
   })
   

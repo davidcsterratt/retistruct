@@ -383,13 +383,13 @@ h.mark.od <- function(state, input, output, session, x, y, ...) {
   do.plot(state=state, input=input, output=output)
 }
 
-h.demo1 <- function(state, input, output, session, directory1, directory2) {
+h.demo1 <- function(state, input, output, session, extdata, directory1, directory2) {
     state$dataset <- file.path(extdata, directory1, directory2)
     print(state$dataset)
     h.open(state, input, output, session)
 }
 
-h.demo2 <- function(state, input, output, session, directory1, directory2) {
+h.demo2 <- function(state, input, output, session, extdata.demos, directory1, directory2) {
   dataset <- file.path(extdata.demos, directory1, directory2)
   print(dataset)
   if (!file.exists(dataset)) {
