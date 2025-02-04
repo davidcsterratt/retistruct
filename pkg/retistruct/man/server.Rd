@@ -19,3 +19,6 @@ session, handling inputs from the UI to the server, and plotting outputs
 to the UI. The arguments are all handled by the shiny package and this 
 function should not be instantiated manually.
 }
+\author{
+Jan Okul
+}

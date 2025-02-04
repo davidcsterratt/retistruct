@@ -170,6 +170,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       report("Optimising mapping with no area constraint using BFGS...")
       self$optimiseMapping(alpha=0, x0=0, nu=1,
                            plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar, 
                            shinyOutput=shinyOutput)
       report("Optimising mapping with area constraint using FIRE...")
       ## FIXME: Need to put in some better heuristics for scaling
@@ -177,15 +178,18 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$optimiseMappingCart(alpha=self$alpha, x0=self$x0, nu=1,
                                dtmax=500, maxmove=0.002*sqrt(self$ol$A.tot),
                                tol=1e-5,
+                               dev.flat=dev.flat, dev.polar=dev.polar,
                                plot.3d=plot.3d,
                                shinyOutput=shinyOutput)
       report("Optimising mapping with strong area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=1,
                            plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar,
                            shinyOutput=shinyOutput)
       report("Optimising mapping with weak area constraint using BFGS...")
       self$optimiseMapping(alpha=self$alpha, x0=self$x0, nu=0.5,
                            plot.3d=plot.3d,
+                           dev.flat=dev.flat, dev.polar=dev.polar,
                            shinyOutput=shinyOutput)
       
       report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),

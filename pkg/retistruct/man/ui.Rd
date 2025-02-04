@@ -14,4 +14,7 @@ ui
 The Shiny UI element, runs on a browser and is similar to HTML, attempt to 
 mimic the original Retistruct UI as closely as possible.
 }
+\author{
+Jan Okul
+}
 \keyword{datasets}
