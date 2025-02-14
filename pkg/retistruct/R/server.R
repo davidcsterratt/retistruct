@@ -1,6 +1,6 @@
 ## --------- All the server handlers are located in R/server-handler.R ---------
-time_out <- 1000 # How long to leave a status text before clearing in ms
-abort.text <- "Press the red cancel button at the top of the screen to cancel"
+time_out <- 500 # How long to leave a status text before clearing in ms
+abort.text <- "Press cancel to abort adding the tear."
 cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
 
 ##' File system directories used by shinyFiles
@@ -132,31 +132,40 @@ server <- function(input, output, session) {
   observeEvent(input$fig6lc, {
     enable.widgets(FALSE, state)
     removeModal()
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
-    enable.widgets(TRUE, state)
+    ## Stops enabling widgets if no directory
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
   })
   
   observeEvent(input$fig6li, {
     enable.widgets(FALSE, state)
     removeModal()
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
-    enable.widgets(TRUE, state)
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
   })
   
   observeEvent(input$fig6rc, {
     enable.widgets(FALSE, state)
     removeModal()
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
-    enable.widgets(TRUE, state)
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
   })
-    
+  
   observeEvent(input$fig6ri, {
     enable.widgets(FALSE, state)
     removeModal()
-    h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
-    enable.widgets(TRUE, state)
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
   })
-    
+  
   ## About button handler
   observeEvent(input$about, showModal(about.ui))
   
@@ -257,32 +266,33 @@ server <- function(input, output, session) {
   ## server, the actual click handling is in the plot click handler.
   observeEvent(input$add_tear, {
     set.state(state, 1)
-    set.status(output, "Click on the three points of the tear in any order.
-                Double click to remove the latest point added and press cancel,
-               to cancel.")
+    set.status(output, paste("Click on the three points of the tear in any order.", abort.text))
   })
   
   observeEvent(input$move_point, {
     set.state(state, 2)
-    set.status(output, "Click on apex or vertex to move.")
+    set.status(output, paste("Click on apex or vertex to move.", abort.text))
   })
   
   observeEvent(input$remove_tear, {
     set.state(state, 3)
-    set.status(output, "Click on any point of the tear to remove it and press
-               cancel, to cancel.")
+    set.status(output, paste("Click on the apex of the tear to remove.", abort.text))
   })
   
   observeEvent(input$mark_nasal, {
     set.state(state, 4)
-    set.status(output, "Click on any point of the tear to remove it and press
-               cancel, to cancel.")
+    set.status(output, paste("Click on nasal point.", abort.text))
   })
   
-  observeEvent(input$mark_od, {
+  observeEvent(input$mark_dorsal, {
     set.state(state, 5)
-    set.status(output, "Click on any point of the tear to remove it and press
-               cancel, to cancel.")
+    set.status(output, paste("Click on dorsal point.", abort.text))
+  })
+  
+  
+  observeEvent(input$mark_od, {
+    set.state(state, 6)
+    set.status(output, paste("Click on a point on the optic disc.", abort.text))
   })
   
   # flip dv handler

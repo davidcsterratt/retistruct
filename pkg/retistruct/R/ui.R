@@ -70,9 +70,9 @@ about.ui <- modalDialog(
   title = "About",
   easy_close = TRUE,
   "Retistruct was written by David Sterratt at the University of Edinburgh
-        , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
-        Developmental Neurobiology, KCL. This work was supported by a Programme
-        Grant from the Wellcome Trust (G083305)."
+  , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
+  Developmental Neurobiology, KCL. This work was supported by a Programme
+  Grant from the Wellcome Trust (G083305)."
   )
 
 ##' @title Retistruct UI

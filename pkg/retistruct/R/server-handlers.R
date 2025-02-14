@@ -34,7 +34,7 @@ enable.widgets <- function(save, state) {
                  "bitmap1", "bitmap2", "pdf1", "pdf2", "projection",
                  "center.el", "center.az", "transform", "ax.el", "ax.az",
                  "ids"), save)
-  if (save) 
+  if (save  && !is.null(state$a)) 
     enable.group(c("mark_od"), length(state$a$getFeatureSet("LandmarkSet")$getIDs() > 0))
   if (!retistruct.check.markup(state$a)) {
     enable.group(c("reconstruct"), FALSE)
@@ -162,13 +162,12 @@ do.plot <- function(markup=NULL, state, input, output) {
 h.open <- function(state, input, output, session) {
   req(state$dataset)
   ## Read the raw data
-  print(state$dataset)
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$a <- retistruct.read.dataset(state$dataset, report=FALSE)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   
   ## Read the markup
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$a <- retistruct.read.markup(state$a, error=message)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   
@@ -177,7 +176,7 @@ h.open <- function(state, input, output, session) {
   updateRadioButtons(session, "eye", selected = state$a$side)
   updateCheckboxInput(session, "flip_dv", value = state$a$DVflip)
   
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$r <- retistruct.read.recdata(state$a, check=TRUE)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   
@@ -209,7 +208,7 @@ h.save <- function(h, state, ...) {
 h.reconstruct <- function(h, state, input, output, session, ...) {
   unsaved.data(TRUE, state)
   enable.widgets(FALSE, state)
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$r <- retistruct.reconstruct(state$a, report=function(m) set.status(output, m),
                                       plot.3d=getOption("show.sphere"), 
                                       shinyOutput=output)
@@ -222,7 +221,6 @@ h.reconstruct <- function(h, state, input, output, session, ...) {
 # Error Message
 h.error <- function(e, session) {
   showNotification(conditionMessage(e), duration=NULL, closeButton=TRUE, type="error", session=session)
-  stop(e)
 }
 
 ## Warning message
@@ -252,8 +250,8 @@ reset.state <- function(state) {
 
 ## Convenience function for capturing a click to the server state
 add.point <- function(state, x, y) {
-  state$points_x <- c(state$points_x, x)
-  state$points_y <- c(state$points_y, y)
+  state$points_x <- unique(c(state$points_x, x))
+  state$points_y <- unique(c(state$points_y, y))
 }
 
 ## Convencience function for resetting captured clicks
@@ -279,9 +277,10 @@ h.add <- function(state, input, output, session, xs, ys, ...) {
   for (i in 0:3) {
     pids <- c(pids, h.identify(xs[i], ys[i], P[,"X"], P[,"Y"]))
   }
-  withCallingHandlers({
-    state$a$addTear(pids)
-  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
+  
+  catchErrorsRecordWarnings({
+      state$a$addTear(pids)
+    }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))  
   do.plot(state=state, input=input, output=output)   #DOTHIS
 }
 
@@ -332,7 +331,7 @@ h.remove <- function(state, input, output, x, y, ...) {
 h.mark.n <- function(state, input, output, session, x, y, ...) {
   P <- state$a$getPoints()
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$a$setFixedPoint(id, "Nasal")
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
   do.plot(state=state, input=input, output=output)
@@ -342,7 +341,7 @@ h.mark.n <- function(state, input, output, session, x, y, ...) {
 h.mark.d <- function(state, input, output, session, x, y, ...) {
   P <- state$a$getPoints()
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
-  withCallingHandlers({
+  catchErrorsRecordWarnings({
     state$a$setFixedPoint(id, "Dorsal")
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
   do.plot(state=state, input=input, output=output)
@@ -385,22 +384,30 @@ h.mark.od <- function(state, input, output, session, x, y, ...) {
 
 h.demo1 <- function(state, input, output, session, extdata, directory1, directory2) {
     state$dataset <- file.path(extdata, directory1, directory2)
-    print(state$dataset)
     h.open(state, input, output, session)
 }
 
 h.demo2 <- function(state, input, output, session, extdata.demos, directory1, directory2) {
   dataset <- file.path(extdata.demos, directory1, directory2)
-  print(dataset)
+
   if (!file.exists(dataset)) {
     showNotification(
       "Install the retistructdemos package using
-      devtools::install_github(\"davidcsterratt/retistruct/pkg/retistructdemos",
+      devtools::install_github(\n\"davidcsterratt/retistruct/pkg/retistructdemos\n\")",
       duration=NULL, closeButton=TRUE, type="error", session=session)
+    stop()
   } else {
     state$dataset <- dataset
     h.open(state, input, output, session)
   }
+}
+
+catchErrorsRecordWarnings <- function(expr, warning, error) {
+  withCallingHandlers({
+    tryCatch({
+      expr
+    }, error=error)
+  }, warning=warning)
 }
 
 
