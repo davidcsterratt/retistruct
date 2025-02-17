@@ -11,7 +11,7 @@ An object of class \code{shiny.tag.list} (inherits from \code{list}) of length 4
 ui
 }
 \description{
-The Shiny UI element, runs on a browser and is similar to HTML, attempt to 
+The Shiny UI element, runs on a browser and is similar to HTML, attemptde to
 mimic the original Retistruct UI as closely as possible.
 }
 \author{

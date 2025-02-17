@@ -19,7 +19,7 @@ directories <- c(Home=fs::path_home())
 ##' @param session controls each open instance (Managed automatically by shiny)
 ##' @importFrom shiny observeEvent renderPlot renderText
 ##' @importFrom shinyjs useShinyjs enable disable delay
-##' @importFrom shinyFiles shinyDirChoose parseDirPath
+##' @import shinyFiles
 server <- function(input, output, session) {
   useShinyjs()
   
@@ -40,10 +40,16 @@ server <- function(input, output, session) {
   extdata       <- file.path(system.file(package = "retistruct"), "extdata")
   extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
   
+  ## shinyFiles handlers
+  shinyDirChoose(input, "open", roots=directories, session=session)
+  shinyFileSave(input, "bitmap1", session=session, roots=directories)
+  shinyFileSave(input, "pdf1", session=session, roots=directories)
+  shinyFileSave(input, "bitmap2", session=session, roots=directories)
+  shinyFileSave(input, "pdf2", session=session, roots=directories)
+
   ## ------------------- Navbar handlers -------------------
   ## Open project handler
   observeEvent(input$open, {
-    shinyDirChoose(input, "open", roots=directories, session=session)
     dirname <- parseDirPath(roots=directories, input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
@@ -97,6 +103,10 @@ server <- function(input, output, session) {
     do.plot(state=state, input=input, output=output)
   }, ignoreInit = TRUE, ignoreNULL = TRUE)
   
+  observeEvent(input$pdf_width, {
+    options("retistruct.print.pdf.width" = input$pdf_width)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
   ## Demo button handler
   observeEvent(input$demo, showModal(demo.ui))
   
@@ -327,6 +337,38 @@ server <- function(input, output, session) {
     do.plot(markup=TRUE, state=state, input=input, output=output)
   })
   
+  # ------------------- Print to bitmap/PDF handlers -------------------
+  observeEvent(input$bitmap1, {
+    file <- parseSavePath(roots=directories, input$bitmap1)
+    if (length(file$datapath) > 0) {
+      save.bitmap(state, input, output, session, file$datapath, TRUE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$pdf1, {
+      file <- parseSavePath(roots=directories, input$pdf1)
+      if (length(file$datapath) > 0) {
+        save.pdf(state, input, output, session, file$datapath,
+                  TRUE)
+      }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$bitmap2, {
+    file <- parseSavePath(roots=directories, input$bitmap2)
+    if (length(file$datapath) > 0) {
+      save.bitmap(state, input, output, session, file$datapath, FALSE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$pdf2, {
+    file <- parseSavePath(roots=directories, input$pdf2)
+    if (length(file$datapath) > 0) {
+      save.pdf(state, input, output, session, file$datapath,
+                FALSE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+
   ## Needed to render text boxes
   output$projcentre <- renderText("Projection Centre")
   output$axdir <- renderText("Axis Direction")

@@ -1,3 +1,5 @@
+## ---------- Translates strings from UI to function references  ----------
+
 ## Converts projections into a function, as values returned from ui are strings.
 translateProjections <- function() {
   return(list("0" = azimuthal.equidistant,
@@ -14,6 +16,7 @@ translateTransforms <- function() {
               "2" = invert.sphere.to.hemisphere))
 }
 
+## ---------- Enables and disables UI elements to prevent user error  ----------
 
 ## Enables or disables a vector of UI elements, using shinyJS.
 enable.group <- function(widgets, save = TRUE) {
@@ -67,6 +70,8 @@ set.status <- function(output, ...) {
   output$status <- renderText(paste0(...))
 }
 
+## ---------- Plotting functions  ----------
+
 plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
                            markup=NULL, state, input) {
   
@@ -96,6 +101,67 @@ plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
   }
 }  
 
+## Similar to do.plot, captures into a graphics device instead of a shiny output
+## used for saving to pdf or bitmap
+##' @importFrom grDevices dev.set
+do.plot.silent <- function(markup=NULL, state, input, d1=NULL, d2=NULL) {
+    if (is.null(markup)) {
+      markup = ("markup" %in% input$show)
+    }
+
+    if (is.null(state$r)) {
+      r <- state$a
+    } else {
+      r <- state$r
+    }
+
+    if (input$strain) {   # Strain plot
+      ## Capture the plot for printing to file
+      if (!is.null(d1)) {
+        dev.set(d1)
+        par(mar=c(0.5, 0.5, 0.5, 0.5), ps=11)
+        flatplot(r, axt="n",
+                 datapoints=FALSE,
+                 landmarks=FALSE,
+                 markup=FALSE,
+                 stitch=FALSE,
+                 grid=FALSE,
+                 mesh=FALSE,
+                 strain=TRUE,
+                 scalebar=1)
+        dev.off()
+      }
+      if (!is.null(d2)) {
+        dev.set(d2)
+        lvsLplot(r)
+        dev.off()
+      }
+    } else {
+
+      if (!is.null(d1)) {
+        dev.set(d1)
+        par(mar=c(0.5, 0.5, 0.5, 0.5), ps=11)
+        flatplot(r, axt="n",
+                 datapoints=("points" %in% input$show),
+                 grouped=("counts" %in% input$show),
+                 landmarks=("landmarks" %in% input$show),
+                 markup=markup,
+                 stitch=("stitch" %in% input$show),
+                 grid=("grid" %in% input$show),
+                 ids=input$ids,
+                 mesh=FALSE,
+                 scalebar=1)
+        dev.off()
+      }
+
+      if (!is.null(d2)) {
+        dev.set(d2)
+        par(mar=c(0.7, 0.7, 0.7, 0.7), ps=11)
+        plotProjection(max.proj.dim=400, markup=markup, state=state, input=input)
+        dev.off()
+      }
+    }
+  }
 
 ## Plot in edit pane
 do.plot <- function(markup=NULL, state, input, output) {
@@ -111,6 +177,7 @@ do.plot <- function(markup=NULL, state, input, output) {
   
   if (input$strain) {   # Strain plot
     output$plot1 <- renderPlot({
+      ## Capture the plot for printing to file
       par(mar=c(0.5, 0.5, 0.5, 0.5))
       flatplot(r, axt="n",
                datapoints=FALSE,
@@ -122,11 +189,11 @@ do.plot <- function(markup=NULL, state, input, output) {
                strain=TRUE,
                scalebar=1)
     })
-    
+
     output$plot2 <- renderPlot({
       lvsLplot(r)
     })
-    
+
     output$plot3 <- renderRglwidget({
       sphericalplot(r, strain=TRUE, datapoints=FALSE)
       rglwidget()
@@ -146,10 +213,12 @@ do.plot <- function(markup=NULL, state, input, output) {
                mesh=FALSE,
                scalebar=1)
     })
+
     output$plot2 <- renderPlot({
       par(mar=c(0.7, 0.7, 0.7, 0.7))
       plotProjection(max.proj.dim=400, markup=markup, state=state, input=input)
     })
+
     output$plot3 <- renderRglwidget({
       sphericalplot(r, datapoints=("points" %in% input$show))
       rglwidget()
@@ -158,7 +227,7 @@ do.plot <- function(markup=NULL, state, input, output) {
   set.status(output, "")
 }
 
-
+## ---------- Title bar button handlers ----------
 h.open <- function(state, input, output, session) {
   req(state$dataset)
   ## Read the raw data
@@ -218,19 +287,30 @@ h.reconstruct <- function(h, state, input, output, session, ...) {
   set.status(output, "")
 }
 
-# Error Message
-h.error <- function(e, session) {
-  showNotification(conditionMessage(e), duration=NULL, closeButton=TRUE, type="error", session=session)
+## ----------  Handlers for loading demos ----------
+
+h.demo1 <- function(state, input, output, session, extdata, directory1, directory2) {
+    state$dataset <- file.path(extdata, directory1, directory2)
+    h.open(state, input, output, session)
 }
 
-## Warning message
-h.warning <- function(w, state, session) {
-  e <- conditionMessage(w)
-  if (!(any(e %in% state$prior.warnings))) {
-    showNotification(e, duration=NULL, closeButton=TRUE, type="warning", session=session)
-    state$prior.warnings <- c(state$prior.warnings, e)
+h.demo2 <- function(state, input, output, session, extdata.demos, directory1, directory2) {
+  dataset <- file.path(extdata.demos, directory1, directory2)
+
+  if (!file.exists(dataset)) {
+    showNotification(
+      "Install the retistructdemos package using
+      devtools::install_github(\n\"davidcsterratt/retistruct/pkg/retistructdemos\n\")",
+      duration=NULL, closeButton=TRUE, type="error", session=session)
+    stop()
+  } else {
+    state$dataset <- dataset
+    h.open(state, input, output, session)
   }
 }
+
+
+## ---------- Handlers for modifying shiny server state  ----------
 
 ## Convenience function for setting the server mode
 set.state <- function(state, mode) {
@@ -269,6 +349,8 @@ h.identify <- function(click_x, click_y, points_x, points_y) {
   selected <- c(selected, closest_index)
   return(selected)
 }
+
+## ---------- Handlers for modifying left plot  ----------
 
 ## Add tear handler
 h.add <- function(state, input, output, session, xs, ys, ...) {
@@ -324,7 +406,7 @@ h.remove <- function(state, input, output, x, y, ...) {
   id <- c()
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
   state$a$removeTear(state$a$whichTear(id))
-  do.plot(state=state, input=input, output=output)   #DOTHIS
+  do.plot(state=state, input=input, output=output)
 }
 
 ## Mark nasal handler
@@ -382,26 +464,63 @@ h.mark.od <- function(state, input, output, session, x, y, ...) {
   do.plot(state=state, input=input, output=output)
 }
 
-h.demo1 <- function(state, input, output, session, extdata, directory1, directory2) {
-    state$dataset <- file.path(extdata, directory1, directory2)
-    h.open(state, input, output, session)
-}
+##'@importFrom grDevices png jpeg tiff dev.cur
+save.bitmap <- function(state, input, output, session, file, left) {
+  x = getOption("max.proj.dim")
 
-h.demo2 <- function(state, input, output, session, extdata.demos, directory1, directory2) {
-  dataset <- file.path(extdata.demos, directory1, directory2)
-
-  if (!file.exists(dataset)) {
-    showNotification(
-      "Install the retistructdemos package using
-      devtools::install_github(\n\"davidcsterratt/retistruct/pkg/retistructdemos\n\")",
-      duration=NULL, closeButton=TRUE, type="error", session=session)
-    stop()
+  if (grepl("\\.png$", file, ignore.case=TRUE)) {
+    png(file, width=x, height=x)
+  } else if (grepl("\\.jpeg$|\\.jpg$", file, ignore.case=TRUE)) {
+    jpeg(file, width=x, height=x)
+  } else if (grepl("\\.tif$|\\.tiff$", file, ignore.case=TRUE)) {
+    tiff(file, width=x, height=x)
   } else {
-    state$dataset <- dataset
-    h.open(state, input, output, session)
+    file <- paste0(file, ".png")
+    png(file, width=x, height=x)
+  }
+
+  did <- dev.cur()
+
+  # Call the plotting function
+  if (left) {
+    do.plot.silent(state=state, input=input, d1=did)
+  } else {
+    do.plot.silent(state=state, input=input, d2=did)
   }
 }
 
+##' @importFrom grDevices pdf dev.cur
+save.pdf <- function(state, input, output, session, file, left) {
+  width = getOption("retistruct.print.pdf.width")
+  pdf(file, width=width, height=width)
+  did <- dev.cur()
+  # Call the plotting function
+  if (left) {
+    do.plot.silent(state=state, input=input, d1=did)
+  } else {
+    do.plot.silent(state=state, input=input, d2=did)
+  }
+}
+
+## ---------- Warning and error handlers  ----------
+# Error Message
+h.error <- function(e, session) {
+  showNotification(conditionMessage(e), duration=NULL, closeButton=TRUE,
+                   type="error", session=session)
+}
+
+## Warning message
+h.warning <- function(w, state, session) {
+  e <- conditionMessage(w)
+  if (!(any(e %in% state$prior.warnings))) {
+    showNotification(e, duration=NULL, closeButton=TRUE, type="warning",
+                     session=session)
+    state$prior.warnings <- c(state$prior.warnings, e)
+  }
+}
+
+## Allows shiny app to continue running, whilst preventing warnings from
+## stopping functions completing
 catchErrorsRecordWarnings <- function(expr, warning, error) {
   withCallingHandlers({
     tryCatch({
