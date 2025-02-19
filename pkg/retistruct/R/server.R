@@ -68,7 +68,7 @@ server <- function(input, output, session) {
   })
 
   ## Properties handler
-  observeEvent(input$properties, showModal(properties.ui))
+  observeEvent(input$properties, showModal(properties.ui()))
 
   ## ---------- Properties option handlers ----------
   observeEvent(input$out_colour, {

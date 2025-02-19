@@ -25,7 +25,8 @@ version.string <- function() {
 picture.types <- list(picture=c("png", "jpg", "jpeg", "tif", "tiff"))
 pdf.type <- list(files=c("pdf"))
 
-properties.ui <- modalDialog(
+properties.ui <- function() {
+  modalDialog(
     title="Properties",
     easy_close=TRUE,
     tags$strong("Colours"),
@@ -45,6 +46,7 @@ properties.ui <- modalDialog(
     numericInput("pdf_width", "PDF Width",
                  value=getOption("retistruct.print.pdf.width"))
   ) 
+}
 
 demo.ui <- modalDialog(
     title = "Choose one of the following demos to load",
@@ -188,7 +190,7 @@ main.ui <- mainPanel(
 ##' @title Retistruct UI
 ##' @author Jan Okul
 ##' @description
-##' The Shiny UI element, runs on a browser and is similar to HTML, attemptde to
+##' The Shiny UI element, runs on a browser and is similar to HTML, attempted to
 ##' mimic the original Retistruct UI as closely as possible.
 ##' @importFrom shinyjs useShinyjs
 ##' @import shiny
