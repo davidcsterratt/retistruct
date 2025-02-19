@@ -7,7 +7,7 @@ r.good <- retistruct.read.markup(r.good)
 r.good <- retistruct.reconstruct(r.good)
 
 ## Titrate to give impression of whether reconstruction is good or bad
-t.good <- titrate.reconstructedOutline(r.good)
+t.good <- r.good$titrate()
 
 par(mar=c(3.5, 3.5, 0.5, 0.5), mgp=c(1.7, 0.5, 0), tcl=-0.2)
 with(t.good$dat, plot(phi0d, sqrt.E, type="l", xlab=expression(paste(italic(phi)[0], " (degrees)")), ylab=expression(sqrt(italic(E)[L]))))
