@@ -1,3 +1,47 @@
+CHANGES IN VERSION 0.8.0 - Released 2025/02/20
+
+NEW FEATURES
+
+* Issue #56: Port GUI to R shiny
+  https://github.com/davidcsterratt/retistruct/issues/56
+
+  This update removes the dependence on gWidgetsRGtk2, RGtk2 and the
+  GTK library, which has made installation on Mac and Windows
+  impossible, and has mean that Retistruct couldn not be hosted on
+  CRAN. Thanks to Jan Okul, who carried out this work as part of his
+  undergradate dissertation at the University of Edinburgh School of
+  Informatics.
+
+BUG FIXES
+
+* Issue #55: Windows 12 and R 4+ installation
+  https://github.com/davidcsterratt/retistruct/issues/55
+  Fixed by the port to Shiny (Issue #56)
+
+* Issue #52: Retistruct GUI no longer works in R 4.2.0
+  https://github.com/davidcsterratt/retistruct/issues/52
+  Fixed by the port to Shiny (Issue #56)
+
+* Issue #4: Running Retistruct GUI in MacOS X Mavericks and Yosemite
+  https://github.com/davidcsterratt/retistruct/issues/4
+  Fixed by the port to Shiny (Issue #56)
+
+REGRESSIONS
+
+* Issue #33: Make marking up retinae easier by enabling pan and zoom
+  https://github.com/davidcsterratt/retistruct/issues/33
+  Now that we have upgraded to Shiny, there may be better ways of
+  achieving magification and zooming of images
+
+* Issue #60: Highlight points when marking up retina
+  https://github.com/davidcsterratt/retistruct/issues/60
+  In the move to Shiny we have lost the basic highlighting of points
+  when marking up that used to work with identify(). We could
+  reinstate the functionality in a basic way, but this involves
+  redrawing the whole plot to highlight one point, which feels
+  suboptimal. It may be that moving to Plotly or a method involving
+  JavaScript would provide a better user experience.
+
 CHANGES IN VERSION 0.7.4 - Released 2023/02/04
 
 BUG FIX
