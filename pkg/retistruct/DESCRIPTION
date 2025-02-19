@@ -1,7 +1,7 @@
 Package: retistruct
 License: CC BY-NC-SA 4.0
 Title: Retinal Reconstruction Program
-Authors@R: c(person("David C.", "Sterratt", role=c("aut", "cre", "cph"),
+Authors@R: c(person(c("David", "C."), "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")), person("Jan", "Okul", role=c("aut", "cph")))
 Description: Reconstructs retinae by morphing a flat surface with fullcuts (a
