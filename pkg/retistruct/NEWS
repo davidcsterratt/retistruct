@@ -26,6 +26,14 @@ BUG FIXES
   https://github.com/davidcsterratt/retistruct/issues/4
   Fixed by the port to Shiny (Issue #56)
 
+* Issue #53: Fix demos that are not working in 0.7
+  https://github.com/davidcsterratt/retistruct/issues/53
+  Left over work from the previous upgrade
+
+* Issue #61: Plotting tears and cuts in sphericalplot is broken
+  https://github.com/davidcsterratt/retistruct/issues/61
+  Fix the plotting of tears and cuts
+
 REGRESSIONS
 
 * Issue #33: Make marking up retinae easier by enabling pan and zoom

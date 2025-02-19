@@ -1472,21 +1472,52 @@ sphericalplot.ReconstructedOutline <- function(r,
   with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
                     col="blue", size=5))
 
-  ## Shrink so that they appear inside the hemisphere
-  fac <- 0.997
+  ## Tears and full cuts are plotted inside and outside the sphere
+  ## according to these factors
+  fac.tear.inner <- 0.99
+  fac.tear.outer <- 1.01
 
-  ht <- r$ht
-  gb <- r$ol$gb
-  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-          lwd=3, color=getOption("TF.col"))
+  ## Plot Tears
+  Tss <- r$getTearCoords()
+  for (Ts in Tss) {
+    ## Plot
+    Tsc <- sphere.spherical.to.sphere.cart(Ts)
 
-  fac <- 1.006
-  lines3d(fac*rbind(P[ht[gb[gb]],1], P[ht[gb],1]),
-          fac*rbind(P[ht[gb[gb]],2], P[ht[gb],2]),
-          fac*rbind(P[ht[gb[gb]],3], P[ht[gb],3]),
-          lwd=3, color=getOption("TF.col"))
+    ## Shrink so lines appear inside the hemisphere
+    fac <- fac.tear.inner
+    lines3d(fac*Tsc[,1],
+            fac*Tsc[,2],
+            fac*Tsc[,3],
+            lwd=3, color=getOption("TF.col"))
+
+    ## Expand so lines appear inside the hemisphere
+    fac <- fac.tear.outer
+    lines3d(fac*Tsc[,1],
+            fac*Tsc[,2],
+            fac*Tsc[,3],
+            lwd=3, color=getOption("TF.col"))
+  }
+
+  ## Plot fullcuts
+  Css <- r$getFullCutCoords()
+  for (Cs in Css) {
+    ## Plot
+    Csc <- sphere.spherical.to.sphere.cart(Cs)
+
+    ## Shrink so lines appear inside the hemisphere
+    fac <- fac.tear.inner
+    lines3d(fac*Csc[,1],
+            fac*Csc[,2],
+            fac*Csc[,3],
+            lwd=3, color=getOption("C.col"))
+
+    ## Expand so lines appear inside the hemisphere
+    fac <- fac.tear.outer
+    lines3d(fac*Csc[,1],
+            fac*Csc[,2],
+            fac*Csc[,3],
+            lwd=3, color=getOption("C.col"))
+  }
 
   if (strain) {
     o <- r$getStrains()
