@@ -138,7 +138,14 @@ server <- function(input, output, session) {
     h.demo1(state, input, output, session, extdata, "smi32", "")
     enable.widgets(TRUE, state)
   })
-  
+
+  observeEvent(input$octants, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    h.demo1(state, input, output, session, extdata, "ijroimulti", "")
+    enable.widgets(TRUE, state)
+  })
+
   observeEvent(input$fig6lc, {
     enable.widgets(FALSE, state)
     removeModal()
@@ -203,6 +210,45 @@ server <- function(input, output, session) {
       }
     }
     
+    ## Remove tear handler
+    if (state$mode==3) {
+      add.point(state, input$plot1click$x, input$plot1click$y)
+      ## Whilst if statement not necessary, it adds redundancy in case there is
+      ## more than one point added.
+      if (length(state$points_x)==1) {
+        h.remove(state, input, output, state$points_x, state$points_y)
+        reset.state(state)
+        set.status(output, "Removed tear successfully")
+        delay(time_out, {set.status(output, "")})
+      }
+    }
+
+    ## Add full cut handler
+    if (state$mode==7) {
+      add.point(state, input$plot1click$x, input$plot1click$y)
+      ## Whilst if statement not necessary, it adds redundancy in case there is
+      ## more than one point added.
+      if (length(state$points_x)==4) {
+        h.add.fullcut(state, input, output, session, state$points_x, state$points_y)
+        reset.state(state)
+        set.status(output, "Added full cut successfully")
+        delay(time_out, {set.status(output, "")})
+      }
+    }
+
+    ## Remove full cut handler
+    if (state$mode==8) {
+      add.point(state, input$plot1click$x, input$plot1click$y)
+      ## Whilst if statement not necessary, it adds redundancy in case there is
+      ## more than one point added.
+      if (length(state$points_x)==1) {
+        h.remove.fullcut(state, input, output, state$points_x, state$points_y)
+        reset.state(state)
+        set.status(output, "Removed full cut successfully")
+        delay(time_out, {set.status(output, "")})
+      }
+    }
+
     ## Move points handler
     if (state$mode==2) {
       add.point(state, input$plot1click$x, input$plot1click$y)
@@ -217,20 +263,7 @@ server <- function(input, output, session) {
         delay(time_out, {set.status(output, "")})
       }
     }
-    
-    ## Remove tear handler
-    if (state$mode==3) {
-      add.point(state, input$plot1click$x, input$plot1click$y)
-      ## Whilst if statement not necessary, it adds redundancy in case there is
-      ## more than one point added.
-      if (length(state$points_x)==1) {
-        h.remove(state, input, output, state$points_x, state$points_y)
-        reset.state(state)
-        set.status(output, "Removed tear successfully")
-        delay(time_out, {set.status(output, "")})
-      }
-    }
-    
+
     ## Mark nasal handler
     if (state$mode==4) {
       add.point(state, input$plot1click$x, input$plot1click$y)
@@ -243,7 +276,7 @@ server <- function(input, output, session) {
         delay(time_out, {set.status(output, "")})
       }
     }
-    
+
     ## Mark dorsal handler
     if (state$mode==5) {
       add.point(state, input$plot1click$x, input$plot1click$y)
@@ -270,36 +303,45 @@ server <- function(input, output, session) {
       }
     }
   })
-  
-  ## These button handlers only change the state of the server, so that the 
+
+  ## These button handlers only change the state of the server, so that the
   ## server is willing to store click inputs, without blocking the rest of the
   ## server, the actual click handling is in the plot click handler.
   observeEvent(input$add_tear, {
     set.state(state, 1)
     set.status(output, paste("Click on the three points of the tear in any order.", abort.text))
   })
-  
-  observeEvent(input$move_point, {
-    set.state(state, 2)
-    set.status(output, paste("Click on apex or vertex to move.", abort.text))
-  })
-  
+
   observeEvent(input$remove_tear, {
     set.state(state, 3)
     set.status(output, paste("Click on the apex of the tear to remove.", abort.text))
   })
-  
+
+  observeEvent(input$add_fullcut, {
+    set.state(state, 7)
+    set.status(output, paste("Click on the four points of the full cut in any order.", abort.text))
+  })
+
+  observeEvent(input$remove_fullcut, {
+    set.state(state, 8)
+    set.status(output, paste("Click on one of the points of the full cut to remove.", abort.text))
+  })
+
+  observeEvent(input$move_point, {
+    set.state(state, 2)
+    set.status(output, paste("Click on apex or vertex to move.", abort.text))
+  })
+
   observeEvent(input$mark_nasal, {
     set.state(state, 4)
     set.status(output, paste("Click on nasal point.", abort.text))
   })
-  
+
   observeEvent(input$mark_dorsal, {
     set.state(state, 5)
     set.status(output, paste("Click on dorsal point.", abort.text))
   })
-  
-  
+
   observeEvent(input$mark_od, {
     set.state(state, 6)
     set.status(output, paste("Click on a point on the optic disc.", abort.text))

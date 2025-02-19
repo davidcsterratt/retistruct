@@ -31,7 +31,8 @@ enable.group <- function(widgets, save = TRUE) {
 
 ## Enables or disables all UI elements
 enable.widgets <- function(save, state) {
-  enable.group(c("add_tear", "move_point", "remove_tear", "reconstruct", "properties",
+  enable.group(c("add_tear", "remove_tear", "add_fullcut", "remove_fullcut",
+                 "move_point", "reconstruct", "properties",
                  "mark_nasal", "mark_dorsal", "mark_od",
                  "phi0", "show", "strain", "flip_dv", "eye",
                  "bitmap1", "bitmap2", "pdf1", "pdf2", "projection",
@@ -406,6 +407,29 @@ h.remove <- function(state, input, output, x, y, ...) {
   id <- c()
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
   state$a$removeTear(state$a$whichTear(id))
+  do.plot(state=state, input=input, output=output)
+}
+
+## Handler for adding a cut
+h.add.fullcut <- function(state, input, output, session, xs, ys, ...) {
+  P <- state$a$getPoints()
+  pids <- c()
+  for (i in 0:4) {
+    pids <- c(pids, h.identify(xs[i], ys[i], P[,"X"], P[,"Y"]))
+  }
+
+  catchErrorsRecordWarnings({
+      state$a$addFullCut(pids)
+    }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))
+  do.plot(state=state, input=input, output=output)   #DOTHIS
+}
+
+## Remove tear handler
+h.remove.fullcut <- function(state, input, output, x, y, ...) {
+  P <- state$a$getPoints()
+  id <- c()
+  id <- h.identify(x, y, P[,"X"], P[,"Y"])
+  state$a$removeFullCut(state$a$whichFullCut(id))
   do.plot(state=state, input=input, output=output)
 }
 
