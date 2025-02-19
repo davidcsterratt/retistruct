@@ -1,10 +1,12 @@
 ## --------- All the server handlers are located in R/server-handler.R ---------
-time_out <- 1000 # How long to leave a status text before clearing in ms
-abort.text <- "Press the red cancel button at the top of the screen to cancel"
+time_out <- 500 # How long to leave a status text before clearing in ms
+abort.text <- "Press cancel to abort adding the tear."
+cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
 
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
 directories <- c(Home=fs::path_home())
+
 
 ##' @title Retistruct Shiny Server
 ##' @author Jan Okul
@@ -17,7 +19,7 @@ directories <- c(Home=fs::path_home())
 ##' @param session controls each open instance (Managed automatically by shiny)
 ##' @importFrom shiny observeEvent renderPlot renderText
 ##' @importFrom shinyjs useShinyjs enable disable delay
-##' @importFrom shinyFiles shinyDirChoose parseDirPath
+##' @import shinyFiles
 server <- function(input, output, session) {
   useShinyjs()
   
@@ -35,11 +37,20 @@ server <- function(input, output, session) {
   ## The x and y coordinates captured by the click handler
   state$points_x <- c()
   state$points_y <- c()
+  extdata       <- file.path(system.file(package = "retistruct"), "extdata")
+  extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
   
+  ## shinyFiles handlers
+  shinyDirChoose(input, "open", roots=directories, session=session)
+  shinyFileSave(input, "bitmap1", session=session, roots=directories)
+  shinyFileSave(input, "pdf1", session=session, roots=directories)
+  shinyFileSave(input, "bitmap2", session=session, roots=directories)
+  shinyFileSave(input, "pdf2", session=session, roots=directories)
+
+  ## ------------------- Navbar handlers -------------------
   ## Open project handler
   observeEvent(input$open, {
-    shinyDirChoose(input, "open", roots = directories, session = session)
-    dirname <- parseDirPath(roots = directories, input$open)
+    dirname <- parseDirPath(roots=directories, input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
       h.open(state=state, input=input, output=output, session=session)
@@ -55,41 +66,119 @@ server <- function(input, output, session) {
   observeEvent(input$reconstruct, {
     h.reconstruct(state=state, input=input, output=output, session=session)
   })
-  
-  ## Demo handler
-  observe({
-    showModal(
-      modalDialog(
-        title = "Choose one of the following demos to load",
-        easy_close = TRUE,
-        size="s",
-        fluidPage(
-          fluidRow(actionButton("fig1", "Figure 1")),
-          fluidRow(actionButton("fig2a", "Figure 2A-D: Low deformation")),
-          fluidRow(actionButton("fig2e", "Figure 2E-H: High deformation")),
-          fluidRow(actionButton("smi32", "smi32")),
-          fluidRow(actionButton("fig6lc", "Figure 6 Left Contra")),
-          fluidRow(actionButton("fig6li", "Figure 6 Left Ipsi")),
-          fluidRow(actionButton("fig6rc", "Figure 6 Right Contra")),
-          fluidRow(actionButton("fig6ri", "Figure 6 Right Ipsi"))
-        )
-      )
-    )
-  }) |> bindEvent(input$demo)
 
-  ## About handler
-  observe({
-    showModal(
-      modalDialog(
-        title = "About",
-        easy_close = TRUE,
-        "Retistruct was written by David Sterratt at the University of Edinburgh
-        , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
-        Developmental Neurobiology, KCL. This work was supported by a Programme
-        Grant from the Wellcome Trust (G083305)."
-      )
-    )
-  }) |> bindEvent(input$about)
+  ## Properties handler
+  observeEvent(input$properties, showModal(properties.ui()))
+
+  ## ---------- Properties option handlers ----------
+  observeEvent(input$out_colour, {
+    options("outline.col" = input$out_colour)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  observeEvent(input$tear_colour, {
+    options("TF.col" = input$tear_colour)
+    options("TB.col" = input$tear_colour)
+    options("V.col" = input$tear_colour)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+
+  observeEvent(input$stitch_colour, {
+    options("stitch.col" = input$stitch_colour)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  observeEvent(input$major_colour, {
+    options("grid.maj.col" = input$major_colour)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  observeEvent(input$minor_colour, {
+    options("grid.min.col" = input$minor_colour)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  observeEvent(input$output_width, {
+    options("max.proj.dim" = input$output_width)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  observeEvent(input$pdf_width, {
+    options("retistruct.print.pdf.width" = input$pdf_width)
+    do.plot(state=state, input=input, output=output)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  ## Demo button handler
+  observeEvent(input$demo, showModal(demo.ui))
+  
+  ## ---------- Demo button option handlers ----------
+  observeEvent(input$fig1, {
+    enable.widgets(FALSE, state)
+    removeModal() ## Closes the overlay automatically
+    h.demo1(state, input, output, session, extdata, "GM509", "R-CONTRA")
+    enable.widgets(TRUE, state)
+  })
+  
+  observeEvent(input$fig2a, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    h.demo1(state, input, output, session, extdata, "GMB530", "R-CONTRA")
+    enable.widgets(TRUE, state)
+  })
+  
+  observeEvent(input$fig2e, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    h.demo1(state, input, output, session, extdata, "GM182-4", "R-CONTRA")
+    enable.widgets(TRUE, state)
+  })
+  
+  observeEvent(input$smi32, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    h.demo1(state, input, output, session, extdata, "smi32", "")
+    enable.widgets(TRUE, state)
+  })
+  
+  observeEvent(input$fig6lc, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    ## Stops enabling widgets if no directory
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
+  })
+  
+  observeEvent(input$fig6li, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
+  })
+  
+  observeEvent(input$fig6rc, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
+  })
+  
+  observeEvent(input$fig6ri, {
+    enable.widgets(FALSE, state)
+    removeModal()
+    tryCatch({
+      h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
+      enable.widgets(TRUE, state)
+    }, error=function(e){return()})
+  })
+  
+  ## About button handler
+  observeEvent(input$about, showModal(about.ui))
+  
   
   ## Cancel button, this is to let the server know that the mode should be reset 
   ## and the captured points should be cleared.
@@ -97,10 +186,6 @@ server <- function(input, output, session) {
     reset.state(state)
     set.status(output, "Operation Cancelled.")
     delay(time_out, {set.status(output, "")})
-  })
-  
-  observeEvent(input$smi32, {
-    removeModal()
   })
   
   ## Click handler for any click made onto the plot, doesn't do anything if 
@@ -121,7 +206,6 @@ server <- function(input, output, session) {
     ## Move points handler
     if (state$mode==2) {
       add.point(state, input$plot1click$x, input$plot1click$y)
-      print(length(state$points_x))
       if (length(state$points_x) == 1) {
         set.status(output, paste("Click on point to move it to.", abort.text))
       }
@@ -166,7 +250,6 @@ server <- function(input, output, session) {
       ## Whilst if statement not necessary, it adds redundancy in case there is
       ## more than one point added.
       if (length(state$points_x)==1) {
-        print(c(state$points_x, state$points_y))
         h.mark.d(state, input, output, session, state$points_x, state$points_y)
         reset.state(state)
         set.status(output, "Marked dorasal successfully")
@@ -193,30 +276,34 @@ server <- function(input, output, session) {
   ## server, the actual click handling is in the plot click handler.
   observeEvent(input$add_tear, {
     set.state(state, 1)
-    set.status(output, "Click on the three points of the tear in any order. Double click to remove the latest point added and press cancel, to cancel.")
+    set.status(output, paste("Click on the three points of the tear in any order.", abort.text))
   })
   
   observeEvent(input$move_point, {
     set.state(state, 2)
-    set.status(output, "Click on apex or vertex to move.")
-    print(length(state$points_x))
+    set.status(output, paste("Click on apex or vertex to move.", abort.text))
   })
   
   observeEvent(input$remove_tear, {
     set.state(state, 3)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.status(output, paste("Click on the apex of the tear to remove.", abort.text))
   })
   
   observeEvent(input$mark_nasal, {
     set.state(state, 4)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.status(output, paste("Click on nasal point.", abort.text))
   })
+  
+  observeEvent(input$mark_dorsal, {
+    set.state(state, 5)
+    set.status(output, paste("Click on dorsal point.", abort.text))
+  })
+  
   
   observeEvent(input$mark_od, {
-    set.state(state, 5)
-    set.status(output, "Click on any point of the tear to remove it and press cancel, to cancel.")
+    set.state(state, 6)
+    set.status(output, paste("Click on a point on the optic disc.", abort.text))
   })
-  
   
   # flip dv handler
   observeEvent(input$flip_dv, {
@@ -250,6 +337,38 @@ server <- function(input, output, session) {
     do.plot(markup=TRUE, state=state, input=input, output=output)
   })
   
+  # ------------------- Print to bitmap/PDF handlers -------------------
+  observeEvent(input$bitmap1, {
+    file <- parseSavePath(roots=directories, input$bitmap1)
+    if (length(file$datapath) > 0) {
+      save.bitmap(state, input, output, session, file$datapath, TRUE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$pdf1, {
+      file <- parseSavePath(roots=directories, input$pdf1)
+      if (length(file$datapath) > 0) {
+        save.pdf(state, input, output, session, file$datapath,
+                  TRUE)
+      }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$bitmap2, {
+    file <- parseSavePath(roots=directories, input$bitmap2)
+    if (length(file$datapath) > 0) {
+      save.bitmap(state, input, output, session, file$datapath, FALSE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+  observeEvent(input$pdf2, {
+    file <- parseSavePath(roots=directories, input$pdf2)
+    if (length(file$datapath) > 0) {
+      save.pdf(state, input, output, session, file$datapath,
+                FALSE)
+    }
+  }, ignoreInit=TRUE, ignoreNULL=TRUE)
+
+
   ## Needed to render text boxes
   output$projcentre <- renderText("Projection Centre")
   output$axdir <- renderText("Axis Direction")
