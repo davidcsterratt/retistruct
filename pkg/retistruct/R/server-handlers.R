@@ -75,7 +75,20 @@ set.status <- function(output, ...) {
 
 plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
                            markup=NULL, state, input) {
-  
+  if (is.na(input$center.el) || is.na(input$center.az)) {
+    showNotification("Value(s) in projection centre is not a number,
+                     stopping reconstruction. (You cannot do numerical
+                     computations within the input box)", type="error")
+    return()
+  }
+  if (is.na(input$ax.el) || is.na(input$ax.az)) {
+    showNotification("Value(s) in axis direction is not a number,
+                     stopping reconstuction. (You cannot do numerical
+                     computations within the input box)", type="error")
+
+    return()
+  }
+
   if (is.null(markup)) {
     markup <- ("markup" %in% input$show)
   }
@@ -276,6 +289,20 @@ h.save <- function(h, state, ...) {
 
 ## Handler for reconstruction
 h.reconstruct <- function(h, state, input, output, session, ...) {
+  if (is.na(input$center.el) || is.na(input$center.az)) {
+    showNotification("Value(s) in projection centre is not a number,
+                     stopping reconstruction. (You cannot do numerical
+                     computations within the input box)", type="error")
+    return()
+  }
+  if (is.na(input$ax.el) || is.na(input$ax.az)) {
+    showNotification("Value(s) in axis direction is not a number,
+                     stopping reconstuction. (You cannot do numerical
+                     computations within the input box)", type="error")
+
+    return()
+  }
+
   unsaved.data(TRUE, state)
   enable.widgets(FALSE, state)
   catchErrorsRecordWarnings({
@@ -529,16 +556,14 @@ save.pdf <- function(state, input, output, session, file, left) {
 ## ---------- Warning and error handlers  ----------
 # Error Message
 h.error <- function(e, session) {
-  showNotification(conditionMessage(e), duration=NULL, closeButton=TRUE,
-                   type="error", session=session)
+  showNotification(conditionMessage(e), duration=10, type="error", session=session)
 }
 
 ## Warning message
 h.warning <- function(w, state, session) {
   e <- conditionMessage(w)
   if (!(any(e %in% state$prior.warnings))) {
-    showNotification(e, duration=NULL, closeButton=TRUE, type="warning",
-                     session=session)
+    showNotification(e, duration=10, type="warning", session=session)
     state$prior.warnings <- c(state$prior.warnings, e)
   }
 }
