@@ -53,7 +53,9 @@ server <- function(input, output, session) {
     dirname <- parseDirPath(roots=directories, input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
-      h.open(state=state, input=input, output=output, session=session)
+      tryCatch({
+        h.open(state=state, input=input, output=output, session=session)
+      }, error=function(e) return())
     }
   })
   
@@ -152,8 +154,8 @@ server <- function(input, output, session) {
     ## Stops enabling widgets if no directory
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6li, {
@@ -161,8 +163,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6rc, {
@@ -170,8 +172,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6ri, {
@@ -179,8 +181,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   ## About button handler
@@ -356,6 +358,11 @@ server <- function(input, output, session) {
   
   # phi0 handler
   observeEvent(input$phi0, {
+    if (is.na(input$phi0)) {
+      showNotification("Value in phi0 is not a number, phi0 is unchanged.
+                       (You cannot do numerical computations within the input box)", type="error")
+      return()
+    }
     unsaved.data(TRUE, state)
     v <- input$phi0
     if (v < -80) {
