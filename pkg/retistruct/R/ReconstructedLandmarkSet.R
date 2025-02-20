@@ -16,6 +16,7 @@ ReconstructedLandmarkSet <- R6Class("ReconstructedLandmarkSet",
 )
 
 ##' @method projection ReconstructedLandmarkSet
+##' @export
 projection.ReconstructedLandmarkSet <-
   function(r,
            phi0,

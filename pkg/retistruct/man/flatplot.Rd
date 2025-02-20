@@ -4,16 +4,10 @@
 \alias{flatplot}
 \title{Plot "flat" (unreconstructed) representation of outline}
 \usage{
-flatplot(x, axt = "n", xlim = NULL, ylim = NULL, ...)
+flatplot(x, ...)
 }
 \arguments{
 \item{x}{\code{\link{Outline}}, \code{\link{AnnotatedOutline}},  \code{\link{StitchedOutline}} &c object}
-
-\item{axt}{whether to plot axes}
-
-\item{xlim}{x limits}
-
-\item{ylim}{y limits}
 
 \item{...}{Other plotting parameters}
 }

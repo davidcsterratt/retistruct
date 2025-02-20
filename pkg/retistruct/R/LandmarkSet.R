@@ -30,6 +30,7 @@ LandmarkSet <- R6Class("LandmarkSet",
 )
 
 ##' @method flatplot LandmarkSet
+##' @export
 flatplot.LandmarkSet <- function(x, ids=x$getIDs(), ...) {
   for (id in ids) {
     if (!is.null(x$getFeature(id))) {

@@ -1,17 +1,14 @@
 ##' Plot "flat" (unreconstructed) representation of outline
 ##' @param x \code{\link{Outline}}, \code{\link{AnnotatedOutline}},  \code{\link{StitchedOutline}} &c object
-##' @param axt whether to plot axes
-##' @param xlim x limits
-##' @param ylim y limits
 ##' @param ... Other plotting parameters
 ##' @author David Sterratt
 ##' @export
-flatplot <- function(x, axt="n", xlim=NULL, ylim=NULL, ...) {
+flatplot <- function(x, ...) {
   UseMethod("flatplot")
 }
 
 ##' @export
-flatplot.default <- function(x, axt="n", xlim=NULL, ylim=NULL, ...) {
+flatplot.default <- function(x, ...) {
 }
 
 ##' Plot projection of a reconstructed outline

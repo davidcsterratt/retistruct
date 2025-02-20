@@ -290,7 +290,8 @@ projection.RetinalReconstructedOutline <-
 
   }
 
-##' @method projection RetinalReconstructedOutline
+##' @method sphericalplot RetinalReconstructedOutline
+##' @export
 sphericalplot.RetinalReconstructedOutline <- function(r,
                                                       datapoints=TRUE,
                                                       ids=r$getIDs(), ...) {

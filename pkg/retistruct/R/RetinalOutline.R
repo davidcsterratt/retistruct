@@ -30,6 +30,7 @@ RetinalOutline <- R6Class("RetinalOutline",
 )
 
 ##' @method flatplot RetinalOutline
+##' @export
 flatplot.RetinalOutline <- function(x, axt="n", ylim=NULL,
                              datapoints=TRUE,
                              grouped=FALSE,

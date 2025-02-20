@@ -4,7 +4,7 @@ Title: Retinal Reconstruction Program
 Authors@R: c(person(c("David", "C."), "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")), person("Jan", "Okul", role=c("aut", "cph")))
-Description: Reconstructs retinae by morphing a flat surface with fullcuts (a
+Description: Reconstructs retinae by morphing a flat surface with cuts (a
     dissected flat-mount retina) onto a curvilinear surface (the standard retinal
     shape). It can estimate the position of a point on the intact adult retina
     to within 8 degrees of arc (3.6% of nasotemporal axis). The coordinates in

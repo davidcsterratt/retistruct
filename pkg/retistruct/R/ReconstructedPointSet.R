@@ -210,6 +210,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
 }
 
 ##' @method projection ReconstructedPointSet
+##' @export
 projection.ReconstructedPointSet <-
   function(r,
            phi0,
@@ -238,6 +239,7 @@ projection.ReconstructedPointSet <-
 }
 
 ##' @method sphericalplot ReconstructedPointSet
+##' @export
 sphericalplot.ReconstructedPointSet <- function(r,
                                                 datapoints=TRUE,
                                                 ids=r$getIDs(), ...) {
