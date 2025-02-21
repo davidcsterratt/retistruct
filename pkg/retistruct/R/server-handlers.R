@@ -76,10 +76,11 @@ set.status <- function(output, ...) {
 plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
                            markup=NULL, state, input) {
   validate(
-    need(is.numeric(input$center.el), "Center el is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$center.az), "Center az is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$ax.el), "Axis el is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$ax.az), "Axis az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.el), "Center el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(0 <= input$center.el && input$center.el <= 90, "Center el must be between 0 and 90"),
     need(0 <= input$center.az && input$center.az <= 90, "Center az must be between 0 and 90"),
     need(0 <= input$ax.el && input$ax.el <= 90, "Ax el must be between 0 and 90"),
     need(0 <= input$ax.az && input$ax.az <= 90, "Ax az must be between 0 and 90")
@@ -286,10 +287,10 @@ h.save <- function(h, state, ...) {
 ## Handler for reconstruction
 h.reconstruct <- function(h, state, input, output, session, ...) {
   validate(
-    need(is.numeric(input$center.el), "Center el is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$center.az), "Center az is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$ax.el), "Axis el is not a numeric, either. Check that the input is not an expression, or non-empty."),
-    need(is.numeric(input$ax.az), "Axis az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.el), "Center el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric. Check that the input is not an expression, or non-empty."),
     need(0 <= input$center.el && input$center.el <= 90, "Center el must be between 0 and 90"),
     need(0 <= input$center.az && input$center.az <= 90, "Center az must be between 0 and 90"),
     need(0 <= input$ax.el && input$ax.el <= 90, "Ax el must be between 0 and 90"),
