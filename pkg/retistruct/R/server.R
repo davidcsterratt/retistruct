@@ -358,11 +358,15 @@ server <- function(input, output, session) {
   
   # phi0 handler
   observeEvent(input$phi0, {
-    if (is.na(input$phi0)) {
-      showNotification("Value in phi0 is not a number, phi0 is unchanged.
-                       (You cannot do numerical computations within the input box)", type="error")
+    if (!is.numeric(input$phi0)) {
+      showNotification("Phi0 cannot be an expression, or non-empty. Phi0 will not be updated.", type="error")
       return()
     }
+    if (0 > input$phi0 || input$phi0 > 100) {
+      showNotification("Phi0 must be between 0 and 100. Phi0 will not be updated.", type="error")
+      return()
+    }
+    
     unsaved.data(TRUE, state)
     v <- input$phi0
     if (v < -80) {

@@ -25,6 +25,7 @@ version.string <- function() {
 picture.types <- list(picture=c("png", "jpg", "jpeg", "tif", "tiff"))
 pdf.type <- list(files=c("pdf"))
 
+## Function re-renders the modal every time it's called
 properties.ui <- function() {
   modalDialog(
     title="Properties",

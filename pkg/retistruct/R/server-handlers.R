@@ -75,19 +75,15 @@ set.status <- function(output, ...) {
 
 plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
                            markup=NULL, state, input) {
-  if (is.na(input$center.el) || is.na(input$center.az)) {
-    showNotification("Value(s) in projection centre is not a number,
-                     stopping reconstruction. (You cannot do numerical
-                     computations within the input box)", type="error")
-    return()
-  }
-  if (is.na(input$ax.el) || is.na(input$ax.az)) {
-    showNotification("Value(s) in axis direction is not a number,
-                     stopping reconstuction. (You cannot do numerical
-                     computations within the input box)", type="error")
-
-    return()
-  }
+  validate(
+    need(is.numeric(input$center.el), "Center el is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(0 <= input$center.az && input$center.az <= 90, "Center az must be between 0 and 90"),
+    need(0 <= input$ax.el && input$ax.el <= 90, "Ax el must be between 0 and 90"),
+    need(0 <= input$ax.az && input$ax.az <= 90, "Ax az must be between 0 and 90")
+    )
 
   if (is.null(markup)) {
     markup <- ("markup" %in% input$show)
@@ -289,19 +285,16 @@ h.save <- function(h, state, ...) {
 
 ## Handler for reconstruction
 h.reconstruct <- function(h, state, input, output, session, ...) {
-  if (is.na(input$center.el) || is.na(input$center.az)) {
-    showNotification("Value(s) in projection centre is not a number,
-                     stopping reconstruction. (You cannot do numerical
-                     computations within the input box)", type="error")
-    return()
-  }
-  if (is.na(input$ax.el) || is.na(input$ax.az)) {
-    showNotification("Value(s) in axis direction is not a number,
-                     stopping reconstuction. (You cannot do numerical
-                     computations within the input box)", type="error")
-
-    return()
-  }
+  validate(
+    need(is.numeric(input$center.el), "Center el is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric, either. Check that the input is not an expression, or non-empty."),
+    need(0 <= input$center.el && input$center.el <= 90, "Center el must be between 0 and 90"),
+    need(0 <= input$center.az && input$center.az <= 90, "Center az must be between 0 and 90"),
+    need(0 <= input$ax.el && input$ax.el <= 90, "Ax el must be between 0 and 90"),
+    need(0 <= input$ax.az && input$ax.az <= 90, "Ax az must be between 0 and 90")
+  )
 
   unsaved.data(TRUE, state)
   enable.widgets(FALSE, state)
@@ -391,7 +384,7 @@ h.add <- function(state, input, output, session, xs, ys, ...) {
   catchErrorsRecordWarnings({
       state$a$addTear(pids)
     }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))  
-  do.plot(state=state, input=input, output=output)   #DOTHIS
+  do.plot(state=state, input=input, output=output)
 }
 
 ## Handler for moving a point in a tear
