@@ -69,10 +69,26 @@ demo.ui <- modalDialog(
 about.ui <- modalDialog(
   title = "About",
   easy_close = TRUE,
-  "Retistruct was written by David Sterratt at the University of Edinburgh
-  , and tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
+  "Retistruct was written by David Sterratt at the University of Edinburgh and
+  tested by Daniel Lyngholm and Ian Thompson at the MRC Centre for
   Developmental Neurobiology, KCL. This work was supported by a Programme
   Grant from the Wellcome Trust (G083305).",
+  br(),
+  "Improvements to image handing and refactoring the code (released in
+  v0.6.0) were supported by The Jackson Laboratory (Bar Harbor, ME, USA)
+  Scientific Services Innovation Fund from 2016-2017 and an NIH R21
+  Laboratory.",
+  br(),
+  "The capabilities to reconstruct tissue comprised of separate fragments
+  (released in v0.7.0) and to reconstruct 3D data comprising an overhead
+  image and depth map (released in v0.7.2), and user interface
+  improvements (released in v0.7.0) were supported by an NIH R21 grant
+  (EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
+  Laboratory.",
+  br(),
+  "Jan Okul converted the user interface to Shiny as part of his
+  undergraduate project in the University of Edinburgh in 2024-2025
+  (released in v0.8.0).",
   br(),br(),
   paste("Version:", version.string())
  )
