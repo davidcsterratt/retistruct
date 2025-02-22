@@ -7,9 +7,9 @@ NEW FEATURES
 
   This update removes the dependence on gWidgetsRGtk2, RGtk2 and the
   GTK library, which has made installation on Mac and Windows
-  impossible, and has mean that Retistruct couldn not be hosted on
+  impossible, and has mean that Retistruct could not be hosted on
   CRAN. Thanks to Jan Okul, who carried out this work as part of his
-  undergradate dissertation at the University of Edinburgh School of
+  undergraduate dissertation at the University of Edinburgh School of
   Informatics.
 
 BUG FIXES
@@ -39,7 +39,7 @@ REGRESSIONS
 * Issue #33: Make marking up retinae easier by enabling pan and zoom
   https://github.com/davidcsterratt/retistruct/issues/33
   Now that we have upgraded to Shiny, there may be better ways of
-  achieving magification and zooming of images
+  achieving magnification and zooming of images
 
 * Issue #60: Highlight points when marking up retina
   https://github.com/davidcsterratt/retistruct/issues/60
@@ -70,14 +70,14 @@ NEW FEATURES
 
 * Determine the background value of depthmaps automatically
 
-* Allow minimum and maxium size of window for infering missing valus
+* Allow minimum and maximum size of window for inferring missing values
   in depthmaps to be specified
 
 CHANGES IN VERSION 0.7.2 - Released 2020/08/31
 
 BUG FIXES
 
-* Fix regression in v0.7.1 that caused some mulit-fragment outlines to fail
+* Fix regression in v0.7.1 that caused some multi-fragment outlines to fail
 
 * Improve image interpolation
 
@@ -142,7 +142,7 @@ NEW FEATURES
   (https://github.com/davidcsterratt/retistruct/issues/37)
 
 * Expose the mapping from flat coordinates to spherical coordinates in
-  reconstruected retina
+  reconstructed retina
   (https://github.com/davidcsterratt/retistruct/issues/20)
   This is achieved by the new member function mapFlatToSpherical() of
   a ReconstructedOutline object
@@ -213,7 +213,7 @@ RELEASE NOTES
     install.packages("gWidgets2RGtk2")
 
   in the R console and then running retistruct() again. (You may need
-  to quit R befor being able to run this command.) More information
+  to quit R before being able to run this command.) More information
   at: https://github.com/davidcsterratt/retistruct/issues/13
 
 NEW FEATURES
@@ -234,7 +234,7 @@ BUG FIXES
 * gWidgets2::gdroplist is deprecated
   (https://github.com/davidcsterratt/retistruct/issues/10)
 
-* Test failed buiding on Windows i386
+* Test failed building on Windows i386
   (https://github.com/davidcsterratt/retistruct/issues/14)
 
 * Issue with adding tears in retistruct
