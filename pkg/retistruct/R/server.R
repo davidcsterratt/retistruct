@@ -2,6 +2,10 @@
 time_out <- 500 # How long to leave a status text before clearing in ms
 abort.text <- "Press cancel to abort adding the tear."
 cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
+el.low <- -90
+el.high <- 90
+az.low <- -180
+az.high <- 180
 
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
