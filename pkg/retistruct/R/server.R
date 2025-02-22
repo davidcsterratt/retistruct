@@ -2,6 +2,10 @@
 time_out <- 500 # How long to leave a status text before clearing in ms
 abort.text <- "Press cancel to abort adding the tear."
 cols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "gray")
+el.low <- -90
+el.high <- 90
+az.low <- -180
+az.high <- 180
 
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
@@ -53,7 +57,9 @@ server <- function(input, output, session) {
     dirname <- parseDirPath(roots=directories, input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
-      h.open(state=state, input=input, output=output, session=session)
+      tryCatch({
+        h.open(state=state, input=input, output=output, session=session)
+      }, error=function(e) return())
     }
   })
   
@@ -152,8 +158,8 @@ server <- function(input, output, session) {
     ## Stops enabling widgets if no directory
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-contra")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6li, {
@@ -161,8 +167,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "left-ipsi")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6rc, {
@@ -170,8 +176,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-contra")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   observeEvent(input$fig6ri, {
@@ -179,8 +185,8 @@ server <- function(input, output, session) {
     removeModal()
     tryCatch({
       h.demo2(state, input, output, session, extdata.demos, "Figure_6-data", "right-ipsi")
-      enable.widgets(TRUE, state)
     }, error=function(e){return()})
+    enable.widgets(TRUE, state)
   })
   
   ## About button handler
@@ -356,6 +362,15 @@ server <- function(input, output, session) {
   
   # phi0 handler
   observeEvent(input$phi0, {
+    if (!is.numeric(input$phi0)) {
+      showNotification("Phi0 cannot be an expression, or non-empty. Phi0 will not be updated.", type="error")
+      return()
+    }
+    if (0 > input$phi0 || input$phi0 > 100) {
+      showNotification("Phi0 must be between 0 and 100. Phi0 will not be updated.", type="error")
+      return()
+    }
+    
     unsaved.data(TRUE, state)
     v <- input$phi0
     if (v < -80) {

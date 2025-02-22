@@ -75,7 +75,17 @@ set.status <- function(output, ...) {
 
 plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
                            markup=NULL, state, input) {
-  
+  validate(
+    need(is.numeric(input$center.el), "Center el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(el.low <= input$center.el && input$center.el <= el.high, "Center el must be between 0 and 90"),
+    need(az.low <= input$center.az && input$center.az <= az.high, "Center az must be between 0 and 90"),
+    need(el.low <= input$ax.el && input$ax.el <= el.high, "Ax el must be between 0 and 90"),
+    need(az.low <= input$ax.az && input$ax.az <= az.high, "Ax az must be between 0 and 90")
+    )
+
   if (is.null(markup)) {
     markup <- ("markup" %in% input$show)
   }
@@ -276,6 +286,17 @@ h.save <- function(h, state, ...) {
 
 ## Handler for reconstruction
 h.reconstruct <- function(h, state, input, output, session, ...) {
+  validate(
+    need(is.numeric(input$center.el), "Center el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$center.az), "Center az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.el), "Axis el is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(is.numeric(input$ax.az), "Axis az is not a numeric. Check that the input is not an expression, or non-empty."),
+    need(el.low <= input$center.el && input$center.el <= el.high, "Center el must be between 0 and 90"),
+    need(az.low <= input$center.az && input$center.az <= az.high, "Center az must be between 0 and 90"),
+    need(el.low <= input$ax.el && input$ax.el <= el.high, "Ax el must be between 0 and 90"),
+    need(az.low <= input$ax.az && input$ax.az <= az.high, "Ax az must be between 0 and 90")
+  )
+
   unsaved.data(TRUE, state)
   enable.widgets(FALSE, state)
   catchErrorsRecordWarnings({
@@ -364,7 +385,7 @@ h.add <- function(state, input, output, session, xs, ys, ...) {
   catchErrorsRecordWarnings({
       state$a$addTear(pids)
     }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))  
-  do.plot(state=state, input=input, output=output)   #DOTHIS
+  do.plot(state=state, input=input, output=output)
 }
 
 ## Handler for moving a point in a tear
@@ -529,16 +550,14 @@ save.pdf <- function(state, input, output, session, file, left) {
 ## ---------- Warning and error handlers  ----------
 # Error Message
 h.error <- function(e, session) {
-  showNotification(conditionMessage(e), duration=NULL, closeButton=TRUE,
-                   type="error", session=session)
+  showNotification(conditionMessage(e), duration=10, type="error", session=session)
 }
 
 ## Warning message
 h.warning <- function(w, state, session) {
   e <- conditionMessage(w)
   if (!(any(e %in% state$prior.warnings))) {
-    showNotification(e, duration=NULL, closeButton=TRUE, type="warning",
-                     session=session)
+    showNotification(e, duration=10, type="warning", session=session)
     state$prior.warnings <- c(state$prior.warnings, e)
   }
 }

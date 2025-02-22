@@ -25,6 +25,7 @@ version.string <- function() {
 picture.types <- list(picture=c("png", "jpg", "jpeg", "tif", "tiff"))
 pdf.type <- list(files=c("pdf"))
 
+## Function re-renders the modal every time it's called
 properties.ui <- function() {
   modalDialog(
     title="Properties",
@@ -141,15 +142,15 @@ view.panel <- tabPanel(
   selectInput("projection", "Projection", choices = getProjections()),
   tags$strong(textOutput("projcentre")),
   fluidRow(
-    column(6, numericInput("center.el", "El", value = 0, min = 0, max = 90)),
-    column(6, numericInput("center.az", "Az", value = 0, min = 0, max = 90))
+    column(6, numericInput("center.el", "El", value = 0, min = el.low, max = el.high)),
+    column(6, numericInput("center.az", "Az", value = 0, min = az.low, max = az.high))
   ),
   selectInput("transform", "Transform", choices = getTransforms()),
   tags$strong(textOutput("axdir")),
   fluidRow(
     # Width is 6
-    column(6, numericInput("ax.el", "El", value = 90, min = 0, max = 90)),
-    column(6, numericInput("ax.az", "Az", value = 0, min = 0, max = 90))
+    column(6, numericInput("ax.el", "El", value = 90, min = el.low, max = el.high)),
+    column(6, numericInput("ax.az", "Az", value = 0, min = az.low, max = az.high))
   ),
   checkboxGroupInput("ids", "IDs", choices=c("All"), selected =c("All")),
 )
