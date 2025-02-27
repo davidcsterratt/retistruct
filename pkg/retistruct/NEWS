@@ -14,6 +14,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #65: New CRAN submission: Added references to Description
+  https://github.com/davidcsterratt/retistruct/issues/65
+  Thanks to CRAN team for reporting.
+
 * Issue #55: Windows 12 and R 4+ installation
   https://github.com/davidcsterratt/retistruct/issues/55
   Fixed by the port to Shiny (Issue #56)
