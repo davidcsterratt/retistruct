@@ -14,9 +14,14 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #67: New CRAN submission: dontrun
+  https://github.com/davidcsterratt/retistruct/issues/67
+  Currently inpoerational Magnifier code removed; future versions
+  might use Plotly for viewing plots.
+
 * Issue #66: New CRAN submission: TRUE/FALSE and T/F
   https://github.com/davidcsterratt/retistruct/issues/66
-  All values of T relaced with Tr
+  All values of T relaced with Tr.
 
 * Issue #65: New CRAN submission: Added references to Description
   https://github.com/davidcsterratt/retistruct/issues/65
