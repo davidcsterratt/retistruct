@@ -1,13 +1,13 @@
-CHANGES IN VERSION 0.5.12 - Released 2017/08/08
+See NEWS file for updates in latest version.
 
-NEW FEATURES
+The reason for the Non-FOSS licence is because of the dependency on
+RTriangle:
+https://cran.r-project.org/web/packages/RTriangle/index.html a wrapper
+for the Triangle library http://www.cs.cmu.edu/~quake/triangle.html
+which has a non-FOSS licence. As maintainer of RTriangle, I tried, but
+failed to persuade the author of Triangle to make it available under a
+FOSS licence.
 
-* AnnotatedOutline() and Outline() are exported to allow use with
-  external packages
-  (https://github.com/davidcsterratt/retistruct/issues/17)
-  Thanks to Brian Cohn for the report and the patch.
-
-BUG FIXES
-
-* Documentation has been spell checked using devtools::spell_check()
-  (https://github.com/davidcsterratt/retistruct/issues/19)
+I've not found an R library that does constrained 2D mesh generation
+as efficiently with the required flexibility to omit holes and
+constrain angles for high quality meshes.
