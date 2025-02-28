@@ -197,7 +197,7 @@ minimise the energy function.
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
-  shinyOutput = NA,
+  shinyOutput = NULL,
   report = getOption("retistruct.report")
 )}\if{html}{\out{</div>}}
 }
@@ -213,8 +213,8 @@ minimise the energy function.
 \item{\code{dev.polar}}{Device handle for plotting polar plot updates
 to. If \code{NA} don't make any polar plots.}
 
-\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
-plot in the application.}
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a
+plot in the application. If \code{NA} or \code{NULL} don't output to Shiny.}
 
 \item{\code{report}}{Function to report progress.}
 

@@ -152,16 +152,20 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param dev.polar Device handle for plotting polar plot updates
     ##' to. If \code{NA} don't make any polar plots.
     ##' @param  Control argument to pass to \code{optim}
-    ##' @param shinyOutput A Shiny output element used to render and display a 
-    ##' plot in the application.
+    ##' @param shinyOutput A Shiny output element used to render and display a
+    ##' plot in the application. If \code{NA} or \code{NULL} don't output to Shiny.
     ##' @param report Function to report progress.
-    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NA,  
+    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NULL,
                            report=getOption("retistruct.report")) {
       ##   ## Initial plot in 3D space
       ##   if (plot.3d) {
       ##     sphericalplot(r)
       ##   }
       ## }
+
+      if (is.na(shinyOutput)) {
+        shinyOutput <- NULL
+      }
       
       ## Check for flipped triangles and record initial number
       ft <- flipped.triangles(self$getPoints(), self$Tt, self$R)
