@@ -20,8 +20,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ol0 = NULL,
     ##' @field Pt Transformed cartesian mesh points
     Pt = NULL,
-    ##' @field Tt Transformed triangulation   
-    Tt = NULL,
+    ##' @field Trt Transformed triangulation   
+    Trt = NULL,
     ##' @field Ct Transformed links
     Ct = NULL,
     ##' @field Cut Transformed links
@@ -168,7 +168,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       
       ## Check for flipped triangles and record initial number
-      ft <- flipped.triangles(self$getPoints(), self$Tt, self$R)
+      ft <- flipped.triangles(self$getPoints(), self$Trt, self$R)
       self$nflip0 <- sum(ft$flipped)
       
       report("Optimising mapping with no area constraint using BFGS...")
@@ -209,7 +209,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' Sets following fields
     ##' \describe{
     ##' \item{\code{Pt}}{Transformed point locations}
-    ##' \item{\code{Tt}}{Transformed triangulation}
+    ##' \item{\code{Trt}}{Transformed triangulation}
     ##' \item{\code{Ct}}{Transformed connection set}
     ##' \item{\code{Cut}}{Transformed symmetric connection set}
     ##' \item{\code{Bt}}{Transformed binary vector representation
@@ -227,12 +227,12 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' }
     mergePointsEdges = function() {
       h <- self$ol$h
-      T <- self$ol$T
+      Tr <- self$ol$Tr
       Cu <- self$ol$Cu
       L <- self$ol$L
       P <- self$ol$getPointsScaled()
       gf <- self$ol$gf
-      
+
       ## Form the mapping from a new set of consecutive indices
       ## the existing indices onto the existing indices
       u <- unique(h)
@@ -240,7 +240,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## Transform the point set into the new indices
       Pt  <- P[u,]
 
-      ## Transform the point correspondance mapping to the new index space  
+      ## Transform the point correspondance mapping to the new index space
       ht <- c()
       for (i in 1:length(h)) {
         ht[i] <- which(u == h[i])
@@ -254,7 +254,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## ht <- uinv[h[u]]
 
       ## Transform the triangulation to the new index space
-      Tt  <- matrix(ht[T], ncol=3)
+      Trt  <- matrix(ht[Tr], ncol=3)
 
       ## Tansform the forward pointer into the new indices
       gft <- ht[gf]
@@ -314,7 +314,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
 
       self$Pt = Pt
-      self$Tt = Tt
+      self$Trt = Trt
       self$Ct = Ct
       self$Cut = Cut
       self$Bt = Bt
@@ -347,7 +347,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       Lt <- self$Lt
       phi0 <- self$phi0
       lambda0 <- self$lambda0
-      
+
       Nt <- nrow(self$Pt)
       Nphi <- Nt - length(Rsett)
 
@@ -447,7 +447,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       R <- self$R
       phi0 <- self$phi0
       lambda0 <- self$lambda0
-      Tt <- self$Tt
+      Trt <- self$Trt
       A <- self$ol$A
       Cut <- self$Cut
       Ct <- self$Ct
@@ -467,20 +467,20 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         ## Optimise
         opt <- stats::optim(opt$p, E, gr=dE,
                             method=optim.method,
-                            T=Tt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
+                            Tr=Trt, A=A, Cu=Cut, C=Ct, L=Lt, B=Bt, R=R,
                             alpha=alpha,  N=Nt, x0=x0, nu=nu,
                             Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi,
                             verbose=FALSE, control=control)
 
         ## Report
-        E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+        E.tot <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, Tr=Trt, A=A,
                    alpha=alpha,  N=Nt, x0=x0, nu=nu,
                    Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
-        E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, T=Tt, A=A,
+        E.l <- E(opt$p, Cu=Cut, C=Ct, L=Lt, B=Bt,  R=R, Tr=Trt, A=A,
                  alpha=0,  N=Nt, x0=x0, nu=nu,
                  Rset=Rsett, i0=i0t, phi0=phi0, lambda0=lambda0, Nphi=Nphi)
 
-        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
+        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Trt, R)
         nflip <- sum(ft$flipped)
         report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip & self$debug) {
@@ -574,7 +574,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       R <- self$R
       phi0 <- self$phi0
       lambda0 <- self$lambda0
-      Tt <- self$Tt
+      Trt <- self$Trt
       A <- self$ol$A
       Cut <- self$Cut
       Ct <- self$Ct
@@ -603,22 +603,22 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       while (opt$conv && count) {
         ## Optimise
         opt <- fire(opt$x,
-                    force=function(x) {Fcart(x, Ct, Lt, Tt, A, R, alpha, x0, nu)},
+                    force=function(x) {Fcart(x, Ct, Lt, Trt, A, R, alpha, x0, nu)},
                     restraint=function(x) {Rcart(x, R, Rsett, i0t, phi0, lambda0)},
                     dt=1,
                     nstep=200,
                     m=m, verbose=TRUE, report=report, ...)
         count <- count - 1
         ## Report
-        E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+        E.tot <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, Tr=Trt, A=A,
                        alpha=alpha, x0=x0, nu=nu)
-        E.l <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, T=Tt, A=A,
+        E.l <- Ecart(opt$x, Cu=Cut, L=Lt, R=R, Tr=Trt, A=A,
                      alpha=0, x0=x0, nu=0)
 
         s <- sphere.cart.to.sphere.spherical(opt$x, R)
         phi <-    s[,"phi"]
         lambda <- s[,"lambda"]
-        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Tt, R)
+        ft <- flipped.triangles(cbind(phi=phi, lambda=lambda), Trt, R)
         nflip <- sum(ft$flipped)
         report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip) {
@@ -631,12 +631,12 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         if (plot.3d) {
           if (is.null(shinyOutput)) {
             sphericalplot(list(phi=phi, lambda=lambda, R=R,
-                               Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                               Trt=Trt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
                           datapoints=FALSE)
           } else {
             shinyOutput$plot3 <- renderRglwidget({
               sphericalplot(list(phi=phi, lambda=lambda, R=R,
-                                 Tt=Tt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
+                                 Trt=Trt, Rsett=Rsett, gb=self$ol$gb, ht=self$ol$ht),
                             datapoints=FALSE)
               rglwidget()
             })
@@ -724,12 +724,12 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         ## Find Barycentric coordinates of corners of pixels
 
         Ib <- tsearch(self$ol$getPointsXY()[,"X"], self$ol$getPointsXY()[,"Y"],
-                      self$ol$T, I[,1], I[,2], bary=TRUE)
+                      self$ol$Tr, I[,1], I[,2], bary=TRUE)
         rm(I)
         gc()
         ## Find 3D coordinates of mesh points
         Pc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
-        private$ims <- bary2sph(Ib, self$Tt, Pc)
+        private$ims <- bary2sph(Ib, self$Trt, Pc)
       }
     },
     ##' @description Get coordinates of corners of pixels of image in spherical
@@ -823,10 +823,10 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
       ## Meshpoints in Cartesian coordinates
       Ptc <- sph2cart(theta=self$lambda, phi=self$phi, r=1)
-      
+
       Pb <- tsearch(self$ol$getPoints()[,"X"],
                     self$ol$getPoints()[,"Y"],
-                    self$ol$T,
+                    self$ol$Tr,
                     P[,"X"],
                     P[,"Y"], bary=TRUE)
       oo <- is.na(Pb$idx)           # Points outwith outline
@@ -835,7 +835,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       }
       Pb$p   <- Pb$p[!oo,,drop=FALSE]
       Pb$idx <- Pb$idx[!oo]
-      return(bary2sph(Pb, self$Tt, Ptc))
+      return(bary2sph(Pb, self$Trt, Ptc))
     },
     ##' @description Try a range of values of phi0s in the reconstruction, recording the
     ##' energy of the mapping in each case.
@@ -912,7 +912,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
 
 ##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
 ##' of gridlines from the spherical retina (described by points
-##' \code{phi}, \code{lambda} and triangulation \code{Tt} and cut-off
+##' \code{phi}, \code{lambda} and triangulation \code{Trt} and cut-off
 ##' point \code{phi0}) onto a flattened retina (described by points
 ##' \code{P} and triangulation \code{T}).
 ##'
@@ -949,12 +949,12 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
   }
   
   ## Plot a gridline from the spherical retina (described by points phi,
-  ## lambda and triangulation Tt) onto a flattened retina (described by
-  ## points P and triangulation T). The gridline is described by a
+  ## lambda and triangulation Trt) onto a flattened retina (described by
+  ## points P and triangulation Tr). The gridline is described by a
   ## normal n to a plane and a distance to the plane. The intersection of
   ## the plane and the spehere is the gridline.
-  get.gridline.flat <- function(P, T, phi, lambda, Tt, n, d, ...) {
-    mu <- compute.intersections.sphere(phi, lambda, Tt, n, d)
+  get.gridline.flat <- function(P, Tr, phi, lambda, Trt, n, d, ...) {
+    mu <- compute.intersections.sphere(phi, lambda, Trt, n, d)
 
     ## Take out rows that are not intersections. If a plane intersects
     ## one edge of a triangle and the opposing vertex, in the row
@@ -965,7 +965,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
     tri.int <- (rowSums((mu >= 0) & (mu <= 1), na.rm=TRUE) == 2) 
     ## | apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
     if (any(tri.int)) {
-      T  <- T[tri.int,,drop=FALSE]
+      Tr  <- Tr[tri.int,,drop=FALSE]
       mu <- mu[tri.int,,drop=FALSE]
 
       ## Create a logical matrix of which points are involved in lines
@@ -977,13 +977,13 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
       line.int[is.na(line.int)] <- FALSE
 
       ## Order rows so that the false indicator is in the third column
-      T[!line.int[,2] ,] <- T[!line.int[,2], c(3,1,2)]
+      Tr[!line.int[,2] ,] <- Tr[!line.int[,2], c(3,1,2)]
       mu[!line.int[,2],] <- mu[!line.int[,2],c(3,1,2)]
-      T[!line.int[,1] ,] <- T[!line.int[,1], c(2,3,1)]
+      Tr[!line.int[,1] ,] <- Tr[!line.int[,1], c(2,3,1)]
       mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
 
-      P <- cbind(mu[,1] * P[T[,3],] + (1-mu[,1]) * P[T[,2],], 
-                 mu[,2] * P[T[,1],] + (1-mu[,2]) * P[T[,3],])
+      P <- cbind(mu[,1] * P[Tr[,3],] + (1-mu[,1]) * P[Tr[,2],], 
+                 mu[,2] * P[Tr[,1],] + (1-mu[,2]) * P[Tr[,3],])
                                         # suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
     } else {
       P <- matrix(0, nrow=1, ncol=4)
@@ -1010,7 +1010,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
       } else {
         col <- grid.min.col
       }
-      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$Tr, x$phi, x$lambda, x$Trt,
                               c(0,0,1), sin(Phi*pi/180))
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -1022,7 +1022,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
         col <- grid.min.col
       }
       Lambda <- Lambda * pi/180
-      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$T, x$phi, x$lambda, x$Tt,
+      P1 <- get.gridline.flat(x$ol$getPointsXY(), x$ol$Tr, x$phi, x$lambda, x$Trt,
                               c(sin(Lambda),cos(Lambda),0), 0)
       cols <- c(cols, rep(col, nrow(P1)))
       P <- rbind(P, P1)
@@ -1285,7 +1285,7 @@ projection.ReconstructedOutline <- function(r,
                                  axisdir*pi/180),
                      lambdalim=lambdalim*pi/180,
                      proj.centre=pi/180*proj.centre)
-    trimesh(r$Tt, Pt, col="gray", add=TRUE)
+    trimesh(r$Trt, Pt, col="gray", add=TRUE)
   }
   
   grid.maj.col <- getOption("grid.maj.col")
@@ -1459,20 +1459,20 @@ sphericalplot.ReconstructedOutline <- function(r,
   if (surf) {
     ## Outer triangles
     fac <- 1.005
-    triangles3d(matrix(fac*P[t(r$Tt[,c(2,1,3)]),1], nrow=3),
-                matrix(fac*P[t(r$Tt[,c(2,1,3)]),2], nrow=3),
-                matrix(fac*P[t(r$Tt[,c(2,1,3)]),3], nrow=3),
+    triangles3d(matrix(fac*P[t(r$Trt[,c(2,1,3)]),1], nrow=3),
+                matrix(fac*P[t(r$Trt[,c(2,1,3)]),2], nrow=3),
+                matrix(fac*P[t(r$Trt[,c(2,1,3)]),3], nrow=3),
                 color="darkgrey", alpha=1)
-    
+
     ## Inner triangles
-    triangles3d(matrix(P[t(r$Tt),1], nrow=3),
-                matrix(P[t(r$Tt),2], nrow=3),
-                matrix(P[t(r$Tt),3], nrow=3),
+    triangles3d(matrix(P[t(r$Trt),1], nrow=3),
+                matrix(P[t(r$Trt),2], nrow=3),
+                matrix(P[t(r$Trt),3], nrow=3),
                 color="white", alpha=1)
   }
-  
+
   ## Plot any flipped triangles
-  ft <- flipped.triangles(Ps, r$Tt)
+  ft <- flipped.triangles(Ps, r$Trt)
   with(ft, points3d(cents[flipped,1], cents[flipped,2], cents[flipped,3],
                     col="blue", size=5))
 

@@ -24,7 +24,7 @@ David Sterratt
 
 \item{\code{Pt}}{Transformed cartesian mesh points}
 
-\item{\code{Tt}}{Transformed triangulation}
+\item{\code{Trt}}{Transformed triangulation}
 
 \item{\code{Ct}}{Transformed links}
 
@@ -236,7 +236,7 @@ indices of the points linked by the edge.
 Sets following fields
 \describe{
 \item{\code{Pt}}{Transformed point locations}
-\item{\code{Tt}}{Transformed triangulation}
+\item{\code{Trt}}{Transformed triangulation}
 \item{\code{Ct}}{Transformed connection set}
 \item{\code{Cut}}{Transformed symmetric connection set}
 \item{\code{Bt}}{Transformed binary vector representation

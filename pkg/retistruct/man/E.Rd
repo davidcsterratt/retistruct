@@ -10,7 +10,7 @@ E(
   C,
   L,
   B,
-  T,
+  Tr,
   A,
   R,
   Rset,
@@ -36,7 +36,7 @@ E(
 
 \item{B}{Connectivity matrix}
 
-\item{T}{Triangulation in the flattened outline}
+\item{Tr}{Triangulation in the flattened outline}
 
 \item{A}{Area of each triangle in the flattened outline}
 

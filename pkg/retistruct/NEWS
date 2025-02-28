@@ -14,9 +14,13 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #66: New CRAN submission: TRUE/FALSE and T/F
+  https://github.com/davidcsterratt/retistruct/issues/66
+  All values of T relaced with Tr
+
 * Issue #65: New CRAN submission: Added references to Description
   https://github.com/davidcsterratt/retistruct/issues/65
-  Thanks to CRAN team for reporting.
+  Thanks to the CRAN team for reporting.
 
 * Issue #55: Windows 12 and R 4+ installation
   https://github.com/davidcsterratt/retistruct/issues/55

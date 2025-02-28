@@ -33,9 +33,9 @@
 TriangulatedOutline <- R6Class("TriangulatedOutline",
   inherit = AnnotatedOutline,
   public = list(
-    ##' @field T 3 column matrix in which each row contains IDs of
+    ##' @field Tr 3 column matrix in which each row contains IDs of
     ##'   points of each triangle
-    T =  matrix(NA, 0, 3),
+    Tr = matrix(NA, 0, 3),
     ##' @field A Area of each triangle in the mesh - has same number of
     ##'   elements as there are rows of \code{T}
     A = NULL,
@@ -53,7 +53,7 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
     ##'   whether to insert external Steiner points - see
     ##'   \link{TriangulatedFragment}
     triangulate = function(n=200, suppress.external.steiner=FALSE) {
-      self$T <- matrix(NA, 0, 3)
+      self$Tr <- matrix(NA, 0, 3)
       self$Cu <- matrix(NA, 0, 2)
       for (fid in self$getFragmentIDs()) {
         fragment <- self$getFragment(fid)
@@ -69,7 +69,7 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
       }
       ## Find areas and lengths of connections
       P <- self$getPointsScaled()
-      self$A <- tri.area(P, self$T)
+      self$A <- tri.area(P, self$Tr)
       self$L <- vecnorm(P[self$Cu[,1],] - P[self$Cu[,2],])
       self$A.tot <- sum(self$A)
     },
@@ -79,8 +79,8 @@ TriangulatedOutline <- R6Class("TriangulatedOutline",
     ##' @param pids Point IDs in TriangulatedOutline of points in \link{TriangulatedFragment}
     mapTriangulatedFragment = function(fragment, pids) {
       self$mapFragment(fragment, pids)
-      if (!is.null(fragment$T)) {
-        self$T <-  rbind(self$T,  matrix(pids[fragment$T], ncol=3))
+      if (!is.null(fragment$Tr)) {
+        self$Tr <-  rbind(self$Tr,  matrix(pids[fragment$Tr], ncol=3))
         self$Cu <- rbind(self$Cu, matrix(pids[fragment$Cu], ncol=2))
       }
     }
@@ -105,7 +105,7 @@ flatplot.TriangulatedOutline <- function(x, axt="n",
   NextMethod()
 
   if (mesh) 
-    trimesh(x$T, x$P, col="grey", add=TRUE)
+    trimesh(x$Tr, x$P, col="grey", add=TRUE)
 }
 
 ##' @rawNamespace import(rgl, except = triangulate)
@@ -113,12 +113,12 @@ flatplot.TriangulatedOutline <- function(x, axt="n",
 ##' @export
 depthplot3D.TriangulatedOutline <- function(r, ...) {
   clear3d()
-  if (nrow(r$T) == 0) {
+  if (nrow(r$Tr) == 0) {
     warning("Outline not yet triangulated - no depthplot will show")
   }
   P <- r$getPointsScaled()
-  triangles3d(matrix(P[t(r$T),"X"], nrow=3),
-              matrix(P[t(r$T),"Y"], nrow=3),
-              matrix(P[t(r$T),"Z"], nrow=3),
+  triangles3d(matrix(P[t(r$Tr),"X"], nrow=3),
+              matrix(P[t(r$Tr),"Y"], nrow=3),
+              matrix(P[t(r$Tr),"Z"], nrow=3),
               color="red", alpha=1)
 }

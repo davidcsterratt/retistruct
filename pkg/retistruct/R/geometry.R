@@ -28,20 +28,20 @@ vecnorm <- function(X) {
 
 ##' "Signed area" of triangles on a plane
 ##' @param P 3-column matrix of vertices of triangles
-##' @param Pt 3-column matrix of indices of rows of \code{P} giving
+##' @param Tr 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of signed areas of triangles. Positive sign
 ##' indicates points are anticlockwise direction; negative indicates
 ##' clockwise.
 ##' @author David Sterratt
 ##' @export
-tri.area.signed <- function(P, Pt) {
+tri.area.signed <- function(P, Tr) {
   if (ncol(P) != 3) {
     stop("P must have 3 columns")
   }
-  A <- P[Pt[,1],,drop=FALSE] 
-  B <- P[Pt[,2],,drop=FALSE]
-  C <- P[Pt[,3],,drop=FALSE]
+  A <- P[Tr[,1],,drop=FALSE] 
+  B <- P[Tr[,2],,drop=FALSE]
+  C <- P[Tr[,3],,drop=FALSE]
   AB <- B - A
   BC <- C - B
   vp <- extprod3d(AB, BC)
@@ -50,13 +50,13 @@ tri.area.signed <- function(P, Pt) {
 
 ##' Area of triangles on a plane
 ##' @param P 3-column matrix of vertices of triangles
-##' @param Pt 3-column matrix of indices of rows of \code{P} giving
+##' @param Tr 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of areas of triangles
 ##' @author David Sterratt
 ##' @export
-tri.area <- function(P, Pt) {
-  return(abs(tri.area.signed(P, Pt)))
+tri.area <- function(P, Tr) {
+  return(abs(tri.area.signed(P, Tr)))
 }
 
 ##' This uses L'Hullier's theorem to compute the spherical excess and
@@ -66,7 +66,7 @@ tri.area <- function(P, Pt) {
 ##' @param P 2-column matrix of vertices of triangles given in
 ##' spherical polar coordinates. Columns need to be labelled
 ##' \code{phi} (latitude) and \code{lambda} (longitude).
-##' @param Pt 3-column matrix of indices of rows of \code{P} giving
+##' @param Tr 3-column matrix of indices of rows of \code{P} giving
 ##' triangulation
 ##' @return Vectors of areas of triangles in units of steradians
 ##' @source Wolfram MathWorld
@@ -76,30 +76,30 @@ tri.area <- function(P, Pt) {
 ##' @examples
 ##' ## Something that should be an eighth of a sphere, i.e. pi/2
 ##' P <- cbind(phi=c(0, 0, pi/2), lambda=c(0, pi/2, pi/2))
-##' Pt <- cbind(1, 2, 3)
+##' Tr <- cbind(1, 2, 3)
 ##' ## The result of this should be 0.5
-##' print(sphere.tri.area(P, Pt)/pi)
+##' print(sphere.tri.area(P, Tr)/pi)
 ##'
 ##' ## Now a small triangle
 ##' P1 <- cbind(phi=c(0, 0, 0.01), lambda=c(0, 0.01, 0.01))
-##' Pt1 <- cbind(1, 2, 3)
+##' Tr1 <- cbind(1, 2, 3)
 ##' ## The result of this should approximately 0.01^2/2
-##' print(sphere.tri.area(P, Pt)/(0.01^2/2))
+##' print(sphere.tri.area(P, Tr)/(0.01^2/2))
 ##'
 ##' ## Now check that it works for both 
 ##' P <- rbind(P, P1)
-##' Pt <- rbind(1:3, 4:6)
+##' Tr <- rbind(1:3, 4:6)
 ##' ## Should have two components
-##' print(sphere.tri.area(P, Pt))
+##' print(sphere.tri.area(P, Tr))
 ##' @export
-sphere.tri.area <- function(P, Pt) {
+sphere.tri.area <- function(P, Tr) {
   ## Get lengths of sides of all triangles
-  a <- central.angle(P[Pt[,1],"phi"], P[Pt[,1],"lambda"],
-                     P[Pt[,2],"phi"], P[Pt[,2],"lambda"])
-  b <- central.angle(P[Pt[,2],"phi"], P[Pt[,2],"lambda"],
-                     P[Pt[,3],"phi"], P[Pt[,3],"lambda"])
-  c <- central.angle(P[Pt[,3],"phi"], P[Pt[,3],"lambda"],
-                     P[Pt[,1],"phi"], P[Pt[,1],"lambda"])
+  a <- central.angle(P[Tr[,1],"phi"], P[Tr[,1],"lambda"],
+                     P[Tr[,2],"phi"], P[Tr[,2],"lambda"])
+  b <- central.angle(P[Tr[,2],"phi"], P[Tr[,2],"lambda"],
+                     P[Tr[,3],"phi"], P[Tr[,3],"lambda"])
+  c <- central.angle(P[Tr[,3],"phi"], P[Tr[,3],"lambda"],
+                     P[Tr[,1],"phi"], P[Tr[,1],"lambda"])
   
   ## Semiperimeter is half perimeter
   s <- 1/2*(a + b + c)
@@ -324,7 +324,7 @@ sphere.spherical.to.sphere.cart <- function(Ps, R=1) {
 
 ##' Given a triangular mesh on a sphere described by mesh locations
 ##' (\code{phi}, \code{lambda}), a radius \code{R} and a triangulation
-##' \code{Tt}, determine the Cartesian coordinates of points \code{cb}
+##' \code{Trt}, determine the Cartesian coordinates of points \code{cb}
 ##' given in barycentric coordinates with respect to the mesh.
 ##'
 ##' @title Convert barycentric coordinates of points in mesh on sphere
@@ -332,7 +332,7 @@ sphere.spherical.to.sphere.cart <- function(Ps, R=1) {
 ##' @param phi Latitudes of mesh points
 ##' @param lambda Longitudes of mesh points
 ##' @param R Radius of sphere 
-##' @param Tt Triangulation
+##' @param Trt Triangulation
 ##' @param cb Object returned by tsearch containing information on the
 ##' triangle in which a point occurs and the barycentric coordinates
 ##' within that triangle
@@ -340,7 +340,7 @@ sphere.spherical.to.sphere.cart <- function(Ps, R=1) {
 ##' @author David Sterratt
 ##' @importFrom geometry bary2cart
 ##' @export
-bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
+bary.to.sphere.cart <- function(phi, lambda, R, Trt, cb) {
   ## Initialise output
   cc <- matrix(NA, nrow(cb$p), 3)
   colnames(cc) <- c("X", "Y", "Z")
@@ -355,7 +355,7 @@ bary.to.sphere.cart <- function(phi, lambda, R, Tt, cb) {
 
   ## Now find locations cc of datapoints in Cartesian coordinates  
   for(i in 1:nrow(cb$p)) {
-    cc[i,] <- bary2cart(P[Tt[cb$idx[i],],], cb$p[i,])
+    cc[i,] <- bary2cart(P[Trt[cb$idx[i],],], cb$p[i,])
   }
   return(cc)
 }

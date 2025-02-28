@@ -37,7 +37,9 @@ test_that("Reconstruct SMI32 (CSV format)", {
 
 test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
   dataset <- file.path(tempdir(), "GMB530", "R-CONTRA")
-  dir.create(file.path(tempdir(), "GMB530"))
+  if (!dir.exists(file.path(tempdir(), "GMB530"))) {
+    dir.create(file.path(tempdir(), "GMB530"))
+  }
   file.copy(file.path(system.file(package = "retistruct"), "extdata", "GMB530/R-CONTRA"), file.path(tempdir(), "GMB530"), recursive=TRUE, overwrite=TRUE)
 
   o <- retistruct.read.dataset(dataset)
@@ -91,7 +93,9 @@ test_that("Reconstruct GMB530/R-CONTRA (IDT format)", {
 
 test_that("Serialisation works with a particular example", {
   dataset <- file.path(tempdir(), "GM509", "R-CONTRA")
-  dir.create(file.path(tempdir(), "GM509"))
+  if (!dir.exists(file.path(tempdir(), "GM509"))) {
+    dir.create(file.path(tempdir(), "GM509"))
+  }
   file.copy(file.path(system.file(package = "retistruct"), "extdata", "GM509/R-CONTRA"), file.path(tempdir(), "GM509"), recursive=TRUE, overwrite=TRUE)
 
   a <- retistruct.read.dataset(dataset, report=FALSE)

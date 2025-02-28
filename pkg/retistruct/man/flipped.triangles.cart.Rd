@@ -4,18 +4,18 @@
 \alias{flipped.triangles.cart}
 \title{Determine indices of triangles that are flipped}
 \usage{
-flipped.triangles.cart(P, Tt, R)
+flipped.triangles.cart(P, Trt, R)
 }
 \arguments{
 \item{P}{Points in Cartesian coordinates}
 
-\item{Tt}{Triangulation of points}
+\item{Trt}{Triangulation of points}
 
 \item{R}{Radius of sphere}
 }
 \value{
 List containing:
-\item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
+\item{\code{flipped}}{Indices of in rows of \code{Trt} of flipped triangles.}
 \item{\code{cents}}{Vectors of centres.}
 \item{\code{areas}}{Areas of triangles.}
 }

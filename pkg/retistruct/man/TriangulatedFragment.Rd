@@ -17,7 +17,7 @@ David Sterratt
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{T}}{3 column matrix in which each row contains IDs of
+\item{\code{Tr}}{3 column matrix in which each row contains IDs of
 points of each triangle}
 
 \item{\code{A}}{Area of each triangle in the  mesh - has same number of

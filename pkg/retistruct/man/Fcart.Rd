@@ -4,7 +4,7 @@
 \alias{Fcart}
 \title{The deformation energy gradient function}
 \usage{
-Fcart(P, C, L, T, A, R, alpha = 1, x0, nu = 1, verbose = FALSE)
+Fcart(P, C, L, Tr, A, R, alpha = 1, x0, nu = 1, verbose = FALSE)
 }
 \arguments{
 \item{P}{N-by-3 matrix of point coordinates}
@@ -13,7 +13,7 @@ Fcart(P, C, L, T, A, R, alpha = 1, x0, nu = 1, verbose = FALSE)
 
 \item{L}{Length of each edge in the flattened outline}
 
-\item{T}{Triangulation in the flattened outline}
+\item{Tr}{Triangulation in the flattened outline}
 
 \item{A}{Area of each triangle in the flattened outline}
 

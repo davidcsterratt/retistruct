@@ -4,19 +4,19 @@
 \alias{flipped.triangles}
 \title{Determine indices of triangles that are flipped}
 \usage{
-flipped.triangles(Ps, Tt, R = 1)
+flipped.triangles(Ps, Trt, R = 1)
 }
 \arguments{
 \item{Ps}{N-by-2 matrix with columns containing latitudes
 (\code{phi}) and longitudes (\code{lambda}) of N points}
 
-\item{Tt}{Triangulation of points}
+\item{Trt}{Triangulation of points}
 
 \item{R}{Radius of sphere}
 }
 \value{
 List containing:
-\item{\code{flipped}}{Indices of in rows of \code{Tt} of flipped triangles.}
+\item{\code{flipped}}{Indices of in rows of \code{Trt} of flipped triangles.}
 \item{\code{cents}}{Vectors of centres.}
 \item{\code{areas}}{Areas of triangles.}
 }

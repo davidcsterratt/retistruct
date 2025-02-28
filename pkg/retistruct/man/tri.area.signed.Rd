@@ -4,12 +4,12 @@
 \alias{tri.area.signed}
 \title{"Signed area" of triangles on a plane}
 \usage{
-tri.area.signed(P, Pt)
+tri.area.signed(P, Tr)
 }
 \arguments{
 \item{P}{3-column matrix of vertices of triangles}
 
-\item{Pt}{3-column matrix of indices of rows of \code{P} giving
+\item{Tr}{3-column matrix of indices of rows of \code{P} giving
 triangulation}
 }
 \value{

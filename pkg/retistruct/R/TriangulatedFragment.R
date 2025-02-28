@@ -11,9 +11,9 @@
 TriangulatedFragment <- R6Class("TriangulatedFragment",
   inherit = Fragment,
   public = list(
-    ##' @field T 3 column matrix in which each row contains IDs of
+    ##' @field Tr 3 column matrix in which each row contains IDs of
     ##'   points of each triangle
-    T = NULL,
+    Tr = NULL,
     ##' @field A Area of each triangle in the  mesh - has same number of
     ##'   elements as there are rows of \code{T}
     A = NULL,
@@ -85,7 +85,7 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
         stop("Points changed in triangulation")
       }
       P <- out$P
-      T <- out$T
+      Tr <- out$T
 
       ## Create pointers from segments
 
@@ -96,21 +96,21 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
 
       ## We therefore find the triangle which contains the first segment
       S <- out$S
-      T1 <- which(apply(T, 1, function(x) {all(S[1,] %in% x)}))
+      Tr1 <- which(apply(Tr, 1, function(x) {all(S[1,] %in% x)}))
 
       ## Then find out which of the vertices in the triangle is not the
       ## one we need
-      i <- which((T[T1,] %in% S[1,]) == FALSE)
-      if (i == 3) S[1,] <- T[T1,c(1,2)]
-      if (i == 2) S[1,] <- T[T1,c(3,1)]
-      if (i == 1) S[1,] <- T[T1,c(2,3)]
+      i <- which((Tr[Tr1,] %in% S[1,]) == FALSE)
+      if (i == 3) S[1,] <- Tr[Tr1,c(1,2)]
+      if (i == 2) S[1,] <- Tr[Tr1,c(3,1)]
+      if (i == 1) S[1,] <- Tr[Tr1,c(2,3)]
 
       ## Now create the pointers from the segments
       gf <- segments2pointers(S)
       Rset <- na.omit(gf)
-      
+
       ## Derive edge matrix from triangulation
-      Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+      Cu <- rbind(Tr[,1:2], Tr[,2:3], Tr[,c(3,1)])
       Cu <- Unique(Cu, TRUE)
 
       ## If we are in the business of refining triangles (i.e. specifying
@@ -124,25 +124,25 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
                   (C2 == gf[C1]))) {
               ## Find triangles containing the line
               ## segments(P[C1,1], P[C1,2], P[C2,1], P[C2,2], col="yellow")
-              Tind <- which(apply(T, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
+              Trind <- which(apply(Tr, 1 ,function(x) {(C1 %in% x) && (C2 %in% x)}))
               report(paste("Non-adjacent points in rim connected by line:", C1, C2))
-              report(paste("In triangle:", paste(Tind, collapse=", ")))
-              ## Find points T1 & T2 in the two triangles which are
+              report(paste("In triangle:", paste(Trind, collapse=", ")))
+              ## Find points Tr1 & Tr2 in the two triangles which are
               ## not common with the edge
-              T1 <- setdiff(T[Tind[1],], Cu[i,])
-              T2 <- setdiff(T[Tind[2],], Cu[i,])
-              report(paste("Other points in triangles:", T1, T2))
+              Tr1 <- setdiff(Tr[Trind[1],], Cu[i,])
+              Tr2 <- setdiff(Tr[Trind[2],], Cu[i,])
+              report(paste("Other points in triangles:", Tr1, Tr2))
               ## Create a new point at the centroid of the four vertices
-              ## C1, C2, T1, T2
-              p <- apply(P[c(C1, C2, T1, T2),], 2, mean)
+              ## C1, C2, Tr1, Tr2
+              p <- apply(P[c(C1, C2, Tr1, Tr2),], 2, mean)
               P <- rbind(P, p)
               n <- nrow(P)
               ## Remove the two old triangles, and create the four new ones
-              T[Tind[1],] <- c(n, C1, T1)
-              T[Tind[2],] <- c(n, C1, T2)
-              T <- rbind(T,
-                         c(n, C2, T1),
-                         c(n, C2, T2))
+              Tr[Trind[1],] <- c(n, C1, Tr1)
+              Tr[Trind[2],] <- c(n, C1, Tr2)
+              Tr <- rbind(Tr,
+                         c(n, C2, Tr1),
+                         c(n, C2, Tr2))
             }
           }
         }
@@ -151,13 +151,13 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
         self$h <- c(self$h, (length(self$h)+1):nrow(P))
 
         ## Create the edge matrix from the triangulation
-        Cu <- rbind(T[,1:2], T[,2:3], T[,c(3,1)])
+        Cu <- rbind(Tr[,1:2], Tr[,2:3], Tr[,c(3,1)])
         Cu <- Unique(Cu, TRUE)
       }
 
       ## Swap orientation of triangles which have clockwise orientation
-      self$A.signed <- tri.area.signed(cbind(P, 0), T)
-      T[self$A.signed<0,c(2,3)] <- T[self$A.signed<0,c(3,2)]
+      self$A.signed <- tri.area.signed(cbind(P, 0), Tr)
+      Tr[self$A.signed<0,c(2,3)] <- Tr[self$A.signed<0,c(3,2)]
       self$A <- abs(self$A.signed)
       self$A.tot <- sum(self$A)
 
@@ -177,16 +177,15 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
       ## Backward pointer
       gb <- gf
       gb[na.omit(gf)] <- which(!is.na(gf))
-      
+
       self$P <- P
-      self$T <- T
+      self$Tr <- Tr
       self$gf <- gf
       self$gb <- gb
       self$Cu <- Cu
     }
   )
   )
-  
 
 ## Convert a matrix containing on each line the indices of the points
 ## forming a segment, and convert this to two sets of ordered pointers
