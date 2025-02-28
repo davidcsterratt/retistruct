@@ -20,7 +20,7 @@ test_that("CSV format is read correctly", {
 
 test_that("CSV format with depthmap is read correctly", {
     dataset <- file.path(system.file(package = "retistruct"), "extdata", "parabola")
-    r <- retistruct.read.dataset(dataset)
+    r <- expect_warning(retistruct.read.dataset(dataset), "The background value has been determined to be 0.")
     expect_false(is.null(r$dm))
     expect_equal(r$scale, 1)
     expect_equal(r$scalez, 0.680708333333333, tol=1E-5)
