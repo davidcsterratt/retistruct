@@ -7,7 +7,7 @@ test_that("bary2sph works correctly", {
              c(-1, 0, 0),
              c(0, -1, 0),
              c(0, 0, -1))
-  
+
   T <- rbind(c(1, 2, 3),
              c(1, 3, 4),
              c(1, 4, 5),

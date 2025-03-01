@@ -100,5 +100,3 @@ title(expression(paste("Contra: O.A. at ", 22 * degree, " el., ", 64 * degree, "
 
 
 dev.print(pdf, "figure6.pdf", width=width, height=height)
-
-

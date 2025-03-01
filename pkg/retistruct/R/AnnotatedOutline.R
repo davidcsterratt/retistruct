@@ -1,6 +1,6 @@
 ##' Class containing functions and data relating to annotating outlines
 ##'
-##' @description An AnnotatedOutline contains a function to annotate 
+##' @description An AnnotatedOutline contains a function to annotate
 ##'   tears on the outline.
 ##'
 ##' @return AnnotatedOutline object, with extra fields for tears
@@ -127,7 +127,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     },
     ##' @description Compute the parent relationships for a potential
     ##'   set of tears. The function throws an error if tears overlap.
-    ##' @param tears Matrix containing columns \code{V0} (Apices of tears) 
+    ##' @param tears Matrix containing columns \code{V0} (Apices of tears)
     ##'   \code{VB} (Backward vertices of tears) and \code{VF} (Forward
     ##'   vertices of tears)
     ##' @return List containing
@@ -157,17 +157,17 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       i.parent <- rep(0, M)   # Index of parent tear.
                                         # Is 0 if root otherwise
                                         # index of tear if in forward side
-                                        # or negative index if in backward side 
+                                        # or negative index if in backward side
       Rset <- na.omit(self$gf)
-      
+
       ## Create lists of forward and backward tears
       TFset <- list()
       TBset <- list()
       ## Convenience variables
       V0 <- tears[,"V0"]
       VF <- tears[,"VF"]
-      VB <- tears[,"VB"] 
-      
+      VB <- tears[,"VB"]
+
       if (M > 0) {
         ## Iterate through the tears to create tear sets and rim set
         for (j in 1:M) {
@@ -179,7 +179,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
           Rset <- setdiff(Rset, setdiff(TFset[[j]], VF[j]))
           Rset <- setdiff(Rset, setdiff(TBset[[j]], VB[j]))
         }
-        
+
         ## Search for parent tears
         ## Go through all tears
         for (j in 1:M) {
@@ -226,7 +226,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
                   hf=hf,
                   hb=hb))
     },
-    ##' @description Add tear to an AnnotatedOutline 
+    ##' @description Add tear to an AnnotatedOutline
     ##' @param pids Vector of three point IDs to be added
     addTear = function(pids) {
       M <- self$labelTearPoints(pids)
@@ -298,7 +298,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       return(list(Rim=intersect(TR$Rset, CR$Rset)))
     },
     ##' @description Ensure that the fixed point \code{i0} is in the rim, not a tear.
-    ##' Alters object in which \code{i0} may have been changed. 
+    ##' Alters object in which \code{i0} may have been changed.
     ensureFixedPointInRim = function() {
       Rset <- self$getRimSet()
       i0 <- self$i0
@@ -424,11 +424,11 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
       } else {
         Rset <- self$Rset
       }
-      
+
       ## Create lists of forward and backward fullcuts
       CFset <- list()
       CBset <- list()
-      
+
       if (M > 0) {
         ## Convenience variables
         VF0 <- fullcuts[,"VF0"]
@@ -439,7 +439,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
         ## Prevent infinite path loops
         hf[fullcuts] <- fullcuts
         hb[fullcuts] <- fullcuts
-        
+
         ## Iterate through the fullcuts to create corr sets and rim set
         for (j in 1:M) {
           ## Create sets of points for each corr and remove these points from
@@ -500,7 +500,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##' @param fid fragment id of the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
-    ##'   but an ID will be returned 
+    ##'   but an ID will be returned
     addPoints = function(P, fid) {
       pids <- super$addPoints(P, fid)
       ## For *new* points set forward and backward pointers
@@ -531,7 +531,7 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
 )
 
 ##' Plot flat \code{\link{AnnotatedOutline}}. The user markup is
-##' displayed by default. 
+##' displayed by default.
 ##'
 ##' @title Flat plot of AnnotatedOutline
 ##' @param x \code{\link{AnnotatedOutline}} object

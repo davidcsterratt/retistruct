@@ -30,7 +30,7 @@ representation}
 \item{dev.polar}{The ID of the device to which to plot the polar
 representation}
 
-\item{shinyOutput}{A Shiny output element used to render and display a 
+\item{shinyOutput}{A Shiny output element used to render and display a
 plot in the application.}
 
 \item{debug}{If \code{TRUE} print extra debugging output}

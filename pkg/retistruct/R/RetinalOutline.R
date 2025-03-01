@@ -1,5 +1,5 @@
 ##' Class containing functions and data relating to retinal outlines
-##' 
+##'
 ##' @description In addition to fields inherited from
 ##'   \link{StitchedOutline}, a RetinalOutline contains a
 ##'   \code{dataset} field, describing the system path to dataset
@@ -55,7 +55,7 @@ flatplot.RetinalOutline <- function(x, axt="n", ylim=NULL,
       flatplot(fs, ...)
     }
   }
-  
+
   if (grouped) {
     fs <- x$getFeatureSet("CountSet")
     if (!is.null(fs)) {
@@ -70,4 +70,3 @@ flatplot.RetinalOutline <- function(x, axt="n", ylim=NULL,
     }
   }
 }
-

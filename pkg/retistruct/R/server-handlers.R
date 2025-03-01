@@ -38,12 +38,12 @@ enable.widgets <- function(save, state) {
                  "bitmap1", "bitmap2", "pdf1", "pdf2", "projection",
                  "center.el", "center.az", "transform", "ax.el", "ax.az",
                  "ids"), save)
-  if (save  && !is.null(state$a)) 
+  if (save  && !is.null(state$a))
     enable.group(c("mark_od"), length(state$a$getFeatureSet("LandmarkSet")$getIDs() > 0))
   if (!retistruct.check.markup(state$a)) {
     enable.group(c("reconstruct"), FALSE)
   }
-  
+
   ## Turns the cancel button on or off depending on the server mode, see
   ## state$mode in server.R to understand why.
   if (state$mode!=0) {
@@ -105,12 +105,12 @@ plotProjection <- function(max.proj.dim=getOption("max.proj.dim"),
              markup=markup,
              ids=input$ids,
              max.proj.dim=max.proj.dim)
-  
+
   if (!is.null(state$r$EOD)) {
     polartext(paste("OD displacement:",
                     format(state$r$EOD, digits=3, nsmall=2), "deg"))
   }
-}  
+}
 
 ## Similar to do.plot, captures into a graphics device instead of a shiny output
 ## used for saving to pdf or bitmap
@@ -179,13 +179,13 @@ do.plot <- function(markup=NULL, state, input, output) {
   if (is.null(markup)) {
     markup = ("markup" %in% input$show)
   }
-  
+
   if (is.null(state$r)) {
     r <- state$a
   } else {
     r <- state$r
   }
-  
+
   if (input$strain) {   # Strain plot
     output$plot1 <- renderPlot({
       ## Capture the plot for printing to file
@@ -209,7 +209,7 @@ do.plot <- function(markup=NULL, state, input, output) {
       sphericalplot(r, strain=TRUE, datapoints=FALSE)
       rglwidget()
     })
-    
+
   } else {
     output$plot1 <- renderPlot({
       par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -245,26 +245,26 @@ h.open <- function(state, input, output, session) {
   catchErrorsRecordWarnings({
     state$a <- retistruct.read.dataset(state$dataset, report=FALSE)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
-  
+
   ## Read the markup
   catchErrorsRecordWarnings({
     state$a <- retistruct.read.markup(state$a, error=message)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
-  
+
   # Update UI based on loaded data
   updateNumericInput(session, "phi0", value = state$a$phi0 * 180 / pi)
   updateRadioButtons(session, "eye", selected = state$a$side)
   updateCheckboxInput(session, "flip_dv", value = state$a$DVflip)
-  
+
   catchErrorsRecordWarnings({
     state$r <- retistruct.read.recdata(state$a, check=TRUE)
   }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
-  
+
   ids <- state$a$getIDs()
   if (length(ids) > 0) {
     updateCheckboxGroupInput(session, "ids", choices=ids, selected=ids)
   }
-  
+
   unsaved.data(FALSE, state=state)
   enable.widgets(TRUE, state)
   do.plot(state=state, input=input, output=output)
@@ -301,9 +301,9 @@ h.reconstruct <- function(h, state, input, output, session, ...) {
   enable.widgets(FALSE, state)
   catchErrorsRecordWarnings({
     state$r <- retistruct.reconstruct(state$a, report=function(m) set.status(output, m),
-                                      plot.3d=getOption("show.sphere"), 
+                                      plot.3d=getOption("show.sphere"),
                                       shinyOutput=output)
-  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
+  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   enable.widgets(TRUE, state)
   do.plot(state=state, input=input, output=output)
   set.status(output, "")
@@ -338,7 +338,7 @@ h.demo2 <- function(state, input, output, session, extdata.demos, directory1, di
 set.state <- function(state, mode) {
   state$mode <- mode
   clear.points(state)
-  unsaved.data(TRUE, state) 
+  unsaved.data(TRUE, state)
   enable.widgets(FALSE, state)
 }
 
@@ -346,7 +346,7 @@ set.state <- function(state, mode) {
 reset.state <- function(state) {
   state$mode <- 0
   clear.points(state)
-  unsaved.data(TRUE, state) 
+  unsaved.data(TRUE, state)
   enable.widgets(TRUE, state)
 }
 
@@ -381,33 +381,33 @@ h.add <- function(state, input, output, session, xs, ys, ...) {
   for (i in 0:3) {
     pids <- c(pids, h.identify(xs[i], ys[i], P[,"X"], P[,"Y"]))
   }
-  
+
   catchErrorsRecordWarnings({
       state$a$addTear(pids)
-    }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))  
+    }, error=function(e) h.error(e, session), warning=function(w) h.warning(w, state, session))
   do.plot(state=state, input=input, output=output)
 }
 
 ## Handler for moving a point in a tear
 h.move <- function(state, input, output, session, xs, ys, ...) {
   P <- state$a$getPoints()
-  
+
   id1 <- h.identify(xs[1], ys[1], P[,"X"], P[,"Y"])
-  
+
   ## Locate tear ID in which the point occurs
   tid <- state$a$whichTear(id1)
-  
+
   ## If there is a tear in which it occurs, select a point to move it to
   if (!is.na(tid)) {
     ## Select second point
     id2 <- h.identify(xs[2], ys[2], P[,"X"], P[,"Y"])
-    
+
     ## Get point ids of exsiting tear
     pids <- state$a$getTear(tid)
-    
+
     ## Replace old point with desired new point
     if (length(id2)) pids[pids==id1] <- id2
-    
+
     ## It is possible to get the apex and vertex mixed up when moving points.
     ## Fix any errors.
     pids <- state$a$labelTearPoints(pids)
@@ -417,7 +417,7 @@ h.move <- function(state, input, output, session, xs, ys, ...) {
   } else {
     set.status(output, "Error: no tear at inital selected point")
   }
-  
+
   ## Display and cleanup
   do.plot(state=state, input=input, output=output)
 }
@@ -460,7 +460,7 @@ h.mark.n <- function(state, input, output, session, x, y, ...) {
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
   catchErrorsRecordWarnings({
     state$a$setFixedPoint(id, "Nasal")
-  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
+  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   do.plot(state=state, input=input, output=output)
 }
 
@@ -470,7 +470,7 @@ h.mark.d <- function(state, input, output, session, x, y, ...) {
   id <- h.identify(x, y, P[,"X"], P[,"Y"])
   catchErrorsRecordWarnings({
     state$a$setFixedPoint(id, "Dorsal")
-  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))  
+  }, warning=function(w) h.warning(w, state, session), error=function(e) h.error(e, session))
   do.plot(state=state, input=input, output=output)
 }
 
@@ -484,7 +484,7 @@ h.mark.od <- function(state, input, output, session, x, y, ...) {
   for (S in Ss) {
     Sm <- rbind(Sm, S)
   }
-  
+
   ## Identify a point
   id <- h.identify(x, y, Sm[,1], Sm[,2])
 
@@ -498,14 +498,14 @@ h.mark.od <- function(state, input, output, session, x, y, ...) {
 
   ## Set "OD" landmark
   fs$setID(i, "OD")
-  
+
   ## Update IDs panel
   checked <- state$a$getIDs() %in% c(input$ids, "OD")
   ids <- state$a$getIDs()
   if (length(ids) > 0) {
     updateCheckboxGroupInput(session, "ids", choices=ids, selected=ids)
   }
-  
+
   do.plot(state=state, input=input, output=output)
 }
 
@@ -571,6 +571,3 @@ catchErrorsRecordWarnings <- function(expr, warning, error) {
     }, error=error)
   }, warning=warning)
 }
-
-
-

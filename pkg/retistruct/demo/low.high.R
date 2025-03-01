@@ -52,4 +52,3 @@ panlabel("H")
 
 ## Printing
 ## dev.print(svg, file="fig2-retistruct-low-high.svg", width=6.83, height=6.83/2)
-

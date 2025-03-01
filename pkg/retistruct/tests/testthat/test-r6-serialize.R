@@ -52,12 +52,12 @@ test_that("R6 serialization works", {
   tc5l <- R6_to_list(tc5)
   tc5lr6 <- list_to_R6(tc5l)
 
-  
+
   ## Outline object
   ol <- Outline$new()
   oll <- R6_to_list(ol)
   ollr6 <- list_to_R6(oll)
   expect_equal(ol, ollr6)
 
-  
+
 })

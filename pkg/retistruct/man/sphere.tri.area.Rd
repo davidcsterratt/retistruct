@@ -39,7 +39,7 @@ Tr1 <- cbind(1, 2, 3)
 ## The result of this should approximately 0.01^2/2
 print(sphere.tri.area(P, Tr)/(0.01^2/2))
 
-## Now check that it works for both 
+## Now check that it works for both
 P <- rbind(P, P1)
 Tr <- rbind(1:3, 4:6)
 ## Should have two components

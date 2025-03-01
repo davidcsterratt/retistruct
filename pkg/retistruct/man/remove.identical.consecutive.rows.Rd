@@ -13,7 +13,7 @@ remove.identical.consecutive.rows(P)
 Matrix with identical consecutive rows removed.
 }
 \description{
-This is similar to unique(), but spares rows which are duplicated, but 
+This is similar to unique(), but spares rows which are duplicated, but
 at different points in the matrix
 }
 \author{

@@ -16,15 +16,15 @@ test_that("AnnotatedOutlines with tears work correctly", {
   ## Annotated outlines
   a <- AnnotatedOutline$new(P)
   expect_equal(sum(a$getRimLengths()), 16)
-  
+
   ## Check triangulation works
   f <- TriangulatedFragment$new(a, n=NA)
   expect_equal(f$A.tot, 4 + 4*2)
   expect_equal(sum(a$getRimLengths()), 16)
-  
+
   # If we ask for a non-existent tear, get NA
   expect_equal(NA, a$getTear(1))
-  
+
   ## Add a tear
   a$addTear(c(3, 4, 5))
   tear <- a$getTear(1)
@@ -32,7 +32,7 @@ test_that("AnnotatedOutlines with tears work correctly", {
 
   ## Overlapping tears throw an error
   expect_error(a$addTear(c(4, 5, 6)))
-  
+
   ## Remove a tear
   a$removeTear(1)
   expect_equal(NA, a$getTear(1))
@@ -43,12 +43,12 @@ test_that("AnnotatedOutlines with tears work correctly", {
 
   ## Check checkTears()
   expect_equal(length(a$checkTears()), 0)
-  
+
   ## Set a fixed point
   ## One that is in the rim should be fine
   a$setFixedPoint(5, "Nasal")
   expect_equal(a$i0, c(Nasal=5))
-  
+
   ## A fixed point in a tear should be moved
   a$setFixedPoint(4, "Nasal")
   expect_false(a$i0 == 4)
@@ -92,19 +92,19 @@ test_that("AnnotatedOutlines comprising fragments with tears work correctly", {
 
   # If we ask for a non-existent tear, get NA
   expect_equal(NA, a$getTear(1))
-  
+
   ## Add a tear
 
   ## Points across two fragments won't work
   expect_error(a$addTear(c(14, 15, 16)))
-  
+
   a$addTear(c(2, 3, 4))
   tear <- a$getTear(1)
   expect_equal(tear, c(V0=3, VB=2, VF=4))
 
   ## Overlapping tears throw an error
   expect_error(a$addTear(c(15, 16, 17)))
-  
+
   ## Remove a tear
   a$removeTear(1)
   expect_equal(NA, a$getTear(1))
@@ -126,26 +126,26 @@ test_that("AnnotatedOutlines comprising fragments with tears work correctly", {
 
   ## Non-existent points won't work
   expect_error(a$addFullCut(c(76, 35, 37, 44)))
-  
+
   ## 3 points in one fragment won't work
   expect_error(a$addFullCut(a, c(1, 2, 3, 9)))
-  
+
   ##  Points in more than two fragments won't work
   expect_error(a$addFullCut(c(1, 7, 10, 15)))
 
   ## Add a cut
   a$addFullCut(c(1, 5, 16, 20))
   expect_true(setequal(a$getFullCuts(), cbind(1, 5, 16, 20)))
-  
-  ## Check 
+
+  ## Check
   cr <- a$computeFullCutRelationships(a$fullcuts)
   expect_true(setequal(cr$Rset, c(1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 21)))
-  
+
   ## Set a fixed point
   ## One that is in the rim should be fine
   a$setFixedPoint(5, "Nasal")
   expect_equal(a$i0, c(Nasal=5))
-  
+
   ## One that is not in the rim should be moved
   a$setFixedPoint(2, "Nasal")
   expect_false(a$i0 == 2)
@@ -190,9 +190,3 @@ test_that("AnnotatedOutlines comprising fragments without tears work correctly",
     a$addFullCut(c(4, 8, 6, 7))
     a$addFullCut(c(8, 10, 9, 12))
 })
-
-
-
-
-
-

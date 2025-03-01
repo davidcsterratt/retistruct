@@ -8,7 +8,7 @@ AnnotatedOutline object, with extra fields for tears
   latitude of rim \code{phi0} and index of fixed point \code{i0}.
 }
 \description{
-An AnnotatedOutline contains a function to annotate 
+An AnnotatedOutline contains a function to annotate
   tears on the outline.
 }
 \examples{
@@ -224,7 +224,7 @@ Compute the parent relationships for a potential
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tears}}{Matrix containing columns \code{V0} (Apices of tears) 
+\item{\code{tears}}{Matrix containing columns \code{V0} (Apices of tears)
 \code{VB} (Backward vertices of tears) and \code{VF} (Forward
 vertices of tears)}
 }

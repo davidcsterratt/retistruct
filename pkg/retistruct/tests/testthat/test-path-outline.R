@@ -28,7 +28,7 @@ test_that("paths with no fullcuts work correctly", {
   expect_equal(po$h, c(1, 2, 3, 4, 5, 2, 7, 8, 5, 7))
   expect_equal(po$gf, c(NA, 9, 10,  5, 6, 7, 8, NA, 1, 2))
   expect_equal(po$gb, c(9, 10, NA, NA, 4, 5, 6, 7, 2, 3))
-  
+
 })
 
 test_that("paths with a cut in one path work correctly", {
@@ -75,7 +75,7 @@ test_that("paths with a cut in one path work correctly", {
   expect_equal(po$h, c(1, 2, 3, 2, 5, 6, 7, 8, 9, 7, 2, 8))
   expect_equal(po$gf, c(10, 3, 4, 12, NA, NA, 6, 11, 8, 2, 7, 5))
   expect_equal(po$gb, c(NA, 10, 2, 3, 12, 7, 11, 9, NA, 1, 8, 4))
-  
+
 })
 
 test_that("paths with fullcuts in each path work correctly", {
@@ -99,7 +99,7 @@ test_that("paths with fullcuts in each path work correctly", {
   po$hb[4] <- 2
   po$hf[9] <- 7
   po$hb[7] <- 9
-  
+
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=10, epsilon=0.01)
   expect_equal(po$getPointsXY(), P)
   expect_equal(po$h, c(1, 7, 3, 7, 5, 6, 7, 8, 7, 10))
@@ -120,7 +120,7 @@ test_that("paths with a double cut in one path works correctly", {
              c(2.8,-2),
              c(3,-1),
              c(4,-1))
-  
+
   po <- PathOutline$new()
   po$addPoints(P, 1)
   gf <- c(2, 3, 4, 5, NA, NA, 6, 7, 8, 9, 10, 11)
@@ -133,7 +133,7 @@ test_that("paths with a double cut in one path works correctly", {
   po$hb[7] <- 9
   po$hf[11] <- 9
   po$hb[9] <- 11
-  
+
   po$stitchSubpaths(VF0=1, VF1=5, VB0=6, VB1=12, epsilon=0.01)
   expect_equal(po$getPointsXY(), P)
   expect_equal(po$h, c(1, 7, 3, 7, 5, 6, 7, 8, 7, 10, 7, 12))

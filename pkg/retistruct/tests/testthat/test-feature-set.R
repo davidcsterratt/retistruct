@@ -1,12 +1,12 @@
 context("FeatureSet")
 test_that("FeatureSets work correctly", {
-  ## This should work 
+  ## This should work
   Ds <- list(a = cbind(X=1:10, Y=1:10))
   cols <- "blue"
   fs <- PointSet$new(data=Ds, cols=cols)
   expect_equal(fs$getIDs(), "a")
   expect_equal(fs$getFeature("a"), Ds[[1]])
-  
+
   ## If matrix columnames are not X and Y, an error should be thrown
   Ds <- list(a = cbind(x=1:10, y=1:10))
   cols <- "blue"
@@ -23,13 +23,13 @@ test_that("FeatureSets work correctly", {
 
 test_that("FeatureSets can be added to Outlines", {
   o <- Outline$new()
-  
+
   Ds <- list(a = cbind(X=1:10, Y=1:10))
   cols <- "blue"
   fs <- PointSet$new(data=Ds, cols=cols)
 
   o$addFeatureSet(fs)
-  
+
   expect_equal(o$getIDs(), "a")
   expect_equal(o$getFeatureSetTypes(), "PointSet")
   expect_error(o$addFeatureSet(fs), "There is already a PointSet attached to this outline")

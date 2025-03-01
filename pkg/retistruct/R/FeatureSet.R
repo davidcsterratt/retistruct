@@ -21,7 +21,7 @@ FeatureSet <- R6Class("FeatureSet",
     ##' @param cols Named vector of colours for each data set. The name is
     ##'   used as the ID (label) for the data set. The colours should be names
     ##'   present in the output of the \code{\link{colors}} function
-    ##' @param type String 
+    ##' @param type String
     initialize = function(data=NULL, cols=NULL, type=NULL) {
       if (!is.null(data)) {
         if (!is.list(data)) {

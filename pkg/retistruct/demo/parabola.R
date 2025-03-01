@@ -24,4 +24,3 @@ projection(rp, projection=azimuthal.conformal, datapoint.contours=FALSE, main="C
 par(mar=c(5, 4, 1, 1), mgp=c(1.5, 0.5, 0))
 lvsLplot(r, main="Strain plot of original retina")
 lvsLplot(rp, main="Strain plot of transformed retina")
-

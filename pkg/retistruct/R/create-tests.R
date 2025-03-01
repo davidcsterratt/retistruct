@@ -9,12 +9,12 @@
 morph.dataset.to.parabola <- function(orig.dataset=file.path(system.file(package = "retistruct"), "extdata", "smi32-csv"),
                                       morphed.dataset=NA,
                                       f=100) {
-  
+
   ## Set morphed.dataset if necessary
   if (is.na(morphed.dataset)) {
     morphed.dataset <- tempfile()
   }
-  
+
   ## Read outline
   ## P <- as.matrix(read.csv(file.path(orig.dataset, "P.csv")))
   o <- retistruct.read.dataset(orig.dataset)
@@ -37,11 +37,11 @@ morph.dataset.to.parabola <- function(orig.dataset=file.path(system.file(package
   Ds <- cbind(as.vector(outer(ys*0, xs, FUN="+")),
               as.vector(outer(ys, xs*0, FUN="+")))
   colnames(Ds) <- c("Test", "red")
-  
+
   ## Parabolic transform of outline. s will be the path length along
   ## the parabola, but is now the y-coordinate of each point
   s <- P[,2] - min(P[,2])
-  
+
   ## The parabola should be centred, so limits should be determined
   ## from the y-coordinate corresponding to half the arc
   y2 <- parabola.invarclength(0, max(s)/2, f)
@@ -58,7 +58,7 @@ morph.dataset.to.parabola <- function(orig.dataset=file.path(system.file(package
   ## Transform points
   s <- Ds[,2] - min(P[,2])
   Dst <- cbind(Ds[,1], parabola.invarclength(y1, s, f) + ycent)
-  
+
   ## Create a parabolic depthmap image
   Mt <- ceiling(max(Pt[,2]))              # Height
   Nt <- ceiling(max(Pt[,1]))              # Width
@@ -73,7 +73,7 @@ morph.dataset.to.parabola <- function(orig.dataset=file.path(system.file(package
   Pt[,2] <- Mt - Pt[,2]
   Dst[,2] <- Mt - Dst[,2]
   colnames(Dst) <- colnames(Ds)
-  
+
   ## Write the dataset
   dir.create(morphed.dataset, showWarnings=FALSE)
   imtiff <- tiff::writeTIFF(dm, file.path(morphed.dataset, "depthmap.tif"), reduce=TRUE)

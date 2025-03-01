@@ -35,7 +35,7 @@ idt.get.sys.boxes <- function(sys) {
                  sys[ci, "YGRIDCOO"]-sys[ci, "BOXSIZEY"])
   upper <- lower + rbind(2*sys[ci, "BOXSIZEX"],
                          2*sys[ci, "BOXSIZEY"])
-  
+
   return(list(lower = lower, upper = upper))
 }
 
@@ -109,7 +109,7 @@ idt.connect.segments <- function(segs, merge.rad=10) {
 
   ## Now create vector of neighbours of points n
   ## Each element is the index of the closest point
-  ## (apart from the point itself) 
+  ## (apart from the point itself)
   d <- as.matrix(stats::dist(t(P), diag=TRUE))
   diag(d) <- NA
   n <- apply(d, 1, which.min)           # Find index of closest point
@@ -137,12 +137,12 @@ idt.connect.segments <- function(segs, merge.rad=10) {
         T <- rbind(T, flipud(segs[[j]]))
         message(paste("Adding old segment", j))
       }
-      
+
       added[i] <- TRUE             # Ignore these indices in the future
       added[j] <- TRUE             # Ignore these indices in the future
       i <- n[j]                    # Closest index in another segment
     }
-      
+
     ## If the segment connects back to a previously included point,
     ## store the segment and find a new starting index, if one exists
     T <- remove.identical.consecutive.rows(T)
@@ -177,7 +177,7 @@ idt.plot.map <- function(map, seginfo=FALSE,
       col <- rainbow(10)[mod1(i,10)]
       text(seg[1,1], seg[1,2] + 100, labels=i, col=col)
     }
-    lines(seg[, 1], seg[, 2], lwd=2, col=col)    
+    lines(seg[, 1], seg[, 2], lwd=2, col=col)
   }
 }
 
@@ -200,10 +200,10 @@ idt.plot.boxes <- function(lower, upper) {
 idt.plot.sys.map <- function(sys, map) {
   idt.plot.map(map)
   idt.points.sys(sys)
-  
-  boxes <- idt.get.sys.boxes(sys) 
+
+  boxes <- idt.get.sys.boxes(sys)
   idt.plot.boxes(boxes$lower, boxes$upper)
-}  
+}
 
 # Function to plot the labelled RG cells
 idt.points.sys <- function(sys) {
@@ -257,21 +257,21 @@ idt.segment.to.pointers <- function(P) {
 ##' Read one of the Thompson lab's retinal datasets. Each dataset is a
 ##' folder containing a SYS file in SYSTAT format and a MAP file in
 ##' text format. The SYS file specifies the locations of the data
-##' points and the MAP file specifies the outline. 
+##' points and the MAP file specifies the outline.
 ##'
 ##' The function returns the outline of the retina. In order to do so,
 ##' it has to join up the segments of the MAP file. The tracings are
 ##' not always precise; sometimes there are gaps between points that
 ##' are actually the same point. The parameter \code{d.close} specifies
 ##' how close points must be to count as the same point.
-##' 
+##'
 ##' @title Read one of the Thompson lab's retinal datasets
 ##' @param dataset Path to directory containing as SYS and MAP file
 ##' @param report Function to report progress
 ##' @param d.close Maximum distance between points for them to count
 ##' as the same point. This is expressed as a fraction of the width of
 ##' the outline.
-##' @return 
+##' @return
 ##' \item{dataset}{The path to the directory given as an argument}
 ##' \item{raw}{List containing\describe{
 ##'    \item{\code{map}}{The raw MAP data}
@@ -333,11 +333,11 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
   bsx <- sapply(sys["BOXSIZEX"], mean, na.rm=TRUE)
   scale <- bsx/200
   names(scale) <- NULL
-  
+
   ## Create Outline object
   o <- RetinalOutline$new(P, scale=scale, units="um",
                           dataset=dataset)
-  
+
   ## Check that P is more-or-less closed
   if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
      idt.plot.map(map, TRUE)
@@ -376,7 +376,7 @@ idt.read.dataset <- function(dataset, report=message, d.close=0.25) {
   ##   }
   ##   return(G)
   ## })
-  
+
   ## Remove points outwith outline
   Gs <- lapply(Gs, function(G) {
     G[sp::point.in.polygon(G[,1], G[,2], o$P[,1], o$P[,2]) == 1,,drop=FALSE]})

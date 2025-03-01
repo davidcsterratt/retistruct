@@ -7,7 +7,7 @@
 ##'   \code{Y} describing the cartesian coordinates (in the unscaled
 ##'   coordinate frame) of the centres of boxes in the Outline, and a
 ##'   column \code{C} representing the counts in those boxes.
-##' 
+##'
 ##' @author David Sterratt
 ##' @export
 CountSet <- R6Class("CountSet",

@@ -143,7 +143,7 @@ read.datapoints <- function(dataset) {
       ## Force conversion to matrix, necessary when the data has only
       ## one row
       d <- matrix(d, ncol=2)
-      
+
       ## Any strings (e.g. empty ones) that don't convert will be
       ## converted to NA. Get rid of these.
       d <- na.omit(d)
@@ -151,7 +151,7 @@ read.datapoints <- function(dataset) {
       colnames(d) <- c("X", "Y")
 
       ## Add to lists with appropriate names
-      
+
       D <- list(d)
       names(D) <- names[1]
       Ds <- c(Ds, D)
@@ -204,14 +204,14 @@ read.datacounts <- function(dataset) {
       ## one row
       d <- matrix(d, ncol=3)
       colnames(d) <- c("X", "Y", "C")
-      
+
       ## Any strings (e.g. empty ones) that don't convert will be
       ## converted to NA. Get rid of these.
       d <- na.omit(d)
       attr(d, "na.action") <- NULL
 
       ## Add to lists with appropriate names
-      
+
       G <- list(d)
       names(G) <- names[1]
       Gs <- c(Gs, G)

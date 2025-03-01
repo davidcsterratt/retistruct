@@ -43,13 +43,13 @@ TestClass3 <-
                 }
               ))
 
-TestClass4 <- 
+TestClass4 <-
   R6::R6Class("TestClass4",
               public = list(
                 i = function() {}
               ))
 
-TestClass5 <- 
+TestClass5 <-
   R6::R6Class("TestClass5",
               public = list(
                 j = list(a=function() {}, b=7),
@@ -107,7 +107,7 @@ R6_to_list <- function(r, path="", envs=list()) {
   return(r)
 }
 
-##' Convert an list created by R6_to_list() into an R6 object. 
+##' Convert an list created by R6_to_list() into an R6 object.
 ##' @param l list created by R6_to_list()
 ##' @return R6 object or list list
 ##' @author David Sterratt

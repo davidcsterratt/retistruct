@@ -9,7 +9,7 @@ ijroi.checkDatadir <- function(dir=NULL) {
 ##' see \code{\link{read.datapoints}} for the format of this file. The
 ##' folder may also contain a file \code{od.roi} specifying the
 ##' coordinates of the optic disc.
-##' 
+##'
 ##' @title Read a retinal dataset in IJROI format
 ##' @param dataset Path to directory containing \code{outline.roi}
 ##' @param report Function to report progress
@@ -22,7 +22,7 @@ ijroi.read.dataset <- function(dataset, report=report) {
 
   ## Read scale
   scale <- read.scale(dataset)
-  
+
   ## If there is an image, read it
   im <- read.image(dataset, report=report)
 
@@ -33,7 +33,7 @@ ijroi.read.dataset <- function(dataset, report=report) {
   P <- out
   offset <- ifelse(is.null(im), max(P[,2]), nrow(im))
   P[,2] <- offset - P[,2]
-  
+
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each
@@ -47,7 +47,7 @@ ijroi.read.dataset <- function(dataset, report=report) {
   Ds <- c(Ds, dat$Ds)
   cols <- c(cols, dat$cols)
   Ds <- lapply(Ds, function(P) {cbind(X=P[,1], Y=(offset - P[,2]))})
-  
+
   ## Extract landmarks (currently optic disc)
   Ss <- list()
 
@@ -71,12 +71,12 @@ ijroi.read.dataset <- function(dataset, report=report) {
   Gs <- dat$Gs
   cols <- c(cols, dat$cols)
   Gs <- lapply(Gs, function(P) {cbind(X=P[,"X"], Y=offset - P[,"Y"], C=P[,"C"])})
-  
+
   ## Create forward and backward pointers
   o <- RetinalOutline$new(P, scale=scale[["XY"]], im=im,
                           units=scale[["Units"]],
                           dataset=dataset)
-  
+
   ## Check that P is more-or-less closed
   ## if (vecnorm(P[1,] - P[nrow(P),]) > (d.close * diff(range(P[,1])))) {
   ##    stop("Unable to find a closed outline.")

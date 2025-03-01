@@ -176,7 +176,7 @@ Reconstruction proceeds in a number of stages:
 \enumerate{
 
 \item The flat object is triangulated with at least \code{n}
-triangles. This can introduce new vertices in the rim. 
+triangles. This can introduce new vertices in the rim.
 
 \item The triangulated object is stitched.
 
@@ -290,7 +290,7 @@ have been deformed from their flat state.
 }
 
 \subsection{Returns}{
-A list containing two data frames \code{flat} and \code{spherical}. 
+A list containing two data frames \code{flat} and \code{spherical}.
 Each data frame contains for each edge in the flat or spherical meshes:
 \describe{
 \item{\code{L}}{Length of the edge in the flat outline }
@@ -337,7 +337,7 @@ Optimise the mapping from the flat outline to the sphere
 \item{\code{dev.polar}}{Device handle for plotting polar plot updates
 to. If \code{NA} don't make any polar plots.}
 
-\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a
 plot in the application.
 \code{NA} don't make any flat plots}
 
@@ -382,7 +382,7 @@ Optimise the mapping from the flat outline to the sphere
 
 \item{\code{dev.polar}}{Device handle for plotting polar plot to}
 
-\item{\code{shinyOutput}}{A Shiny output element used to render and display a 
+\item{\code{shinyOutput}}{A Shiny output element used to render and display a
 plot in the application.}
 
 \item{\code{...}}{Extra arguments to pass to \code{\link{fire}}}

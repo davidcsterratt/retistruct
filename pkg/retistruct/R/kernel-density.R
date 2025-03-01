@@ -1,4 +1,4 @@
-## Kernel density and kernel regression estimates 
+## Kernel density and kernel regression estimates
 
 ##' Kernel density estimate on sphere using Fisherian density
 ##' with Cartesian coordinates

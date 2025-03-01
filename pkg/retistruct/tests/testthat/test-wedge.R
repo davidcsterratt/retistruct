@@ -3,7 +3,7 @@ grid.coords <- function(grid.int.f=0.5, grid.int.psi=45,
   ## Funny things happen when f=0
   fs <- seq(1E-6, 1-1E-6, by=grid.int.f - 1E-6)
   psis <- seq(-90, 90, by=grid.int.psi)*pi/180
-  
+
   gfs   <- outer(fs, psis*0, "+")
   gpsis <- outer(fs*0, psis, "+")
 

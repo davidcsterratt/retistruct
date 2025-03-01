@@ -15,12 +15,12 @@ test_that("ReconstructededOutlines with a single fragment work correctly", {
 
   ## Stitched outlines
   a <- StitchedOutline$new(P)
-  
+
   ## Set a fixed point
   ## One that is in the rim should be fine
   a$setFixedPoint(5, "Nasal")
   expect_equal(a$i0, c(Nasal=5))
-  
+
   ## One that is not in the rim should be moved
   a$addTear(c(3, 4, 5))
   a$addTear(c(6, 7, 8))
@@ -67,12 +67,12 @@ test_that("ReconstructededOutlines with mutliple fragments work correctly", {
 
   ## Stitched outlines
   a <- StitchedOutline$new(P)
-  
+
   ## Set a fixed point
   ## One that is in the rim should be fine
   a$setFixedPoint(5, "Nasal")
   expect_equal(a$i0, c(Nasal=5))
-  
+
   ## One that is not in the rim should be moved
   a$addTear(c(9, 10, 11))
   a$addTear(c(2, 3, 4))

@@ -7,7 +7,7 @@
 ##'   which has columns labelled \code{phi} (latitude) and
 ##'   \code{lambda} (longitude) describing the spherical coordinates
 ##'   of points on the ReconstructedOutline.
-##' 
+##'
 ##' @author David Sterratt
 ##' @importFrom geometry delaunayn
 ##' @export
@@ -42,5 +42,3 @@ projection.ReconstructedLandmarkSet <-
     }
   }
 }
-
-

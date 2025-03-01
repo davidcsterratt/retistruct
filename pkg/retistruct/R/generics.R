@@ -40,7 +40,7 @@ sphericalplot.default <- function(r, ...) {
   bg3d(color="white")
 }
 
-##' Draw the "flat" outline in 3D with depth information 
+##' Draw the "flat" outline in 3D with depth information
 ##' @param r \code{\link{TriangulatedOutline}} object
 ##' @param ... Parameters depending on class of \code{r}
 ##' @author David Sterratt
@@ -55,7 +55,7 @@ depthplot3D.default <- function(r, ...) {
 
 
 ##' Plot the fractional change in length of mesh edges
-##' 
+##'
 ##' Plot the fractional change in length of mesh edges. The length of
 ##' each edge in the mesh in the reconstructed object is plotted
 ##' against each edge in the spherical object. The points are
@@ -72,4 +72,3 @@ lvsLplot <- function(r, ...) {
 ##' @export
 lvsLplot.default <- function(r, ...) {
 }
-

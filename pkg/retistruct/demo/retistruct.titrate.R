@@ -16,5 +16,3 @@ with(t.good,
 
 ## Printing
 ## dev.copy2pdf(file="retistruct-good-bad.pdf", width=6.83, height=6.83/2)
-
-

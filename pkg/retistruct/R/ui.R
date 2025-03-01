@@ -46,7 +46,7 @@ properties.ui <- function() {
                  value=getOption("max.proj.dim")),
     numericInput("pdf_width", "PDF Width",
                  value=getOption("retistruct.print.pdf.width"))
-  ) 
+  )
 }
 
 demo.ui <- modalDialog(
@@ -229,7 +229,7 @@ ui <- fluidPage(
         padding: 5px;
       }
     ")),
-  
+
   titlePanel(windowTitle=version.string(), title.bar),
   sidebarLayout(sidebar.ui, main.ui),
   textOutput("status")

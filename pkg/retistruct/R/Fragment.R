@@ -16,7 +16,7 @@ Fragment <- R6Class("Fragment",
     ##' @field h For each row of \code{P}, the cut of that
     ##'   point (which will be to itself initially)
     h = NULL,
-    ##' @field A.tot Total area of the Fragment    
+    ##' @field A.tot Total area of the Fragment
     A.tot = NULL,
     ##' @description Initialise a Fragment from a set of points
     ##' @param P An N-by-2 matrix of points of the \code{Outline}
@@ -53,7 +53,7 @@ Fragment <- R6Class("Fragment",
 ##' @title Simplify an outline object by removing short edges
 ##' @param P points to simplify
 ##' @param min.frac.length the minimum length as a fraction of the
-##' total length of the outline. 
+##' total length of the outline.
 ##' @param plot whether to display plotting or not during simplification
 ##' @return Simplified \code{outline} object
 ##' @author David Sterratt
@@ -64,7 +64,7 @@ simplifyFragment <- function(P, min.frac.length=0.001, plot=FALSE) {
   l <- vecnorm(v)                     # Length of each edge
   ## Compute outer products at each vertex
   e <- extprod3d(cbind(v[c(N, 1:(N-1)),], 0), cbind(v, 0))[,3]
-  
+
   ## Find short edges
   S <- l/sum(l) < min.frac.length
 

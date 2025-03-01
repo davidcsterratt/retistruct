@@ -139,7 +139,7 @@ projection.RetinalReconstructedOutline <-
 
 
     ## Plot FeatureSets
-    
+
     ## Datapoints
     if (datapoints) {
       message("Plotting points")
@@ -175,7 +175,7 @@ projection.RetinalReconstructedOutline <-
       }
     }
 
-    ## Count sets, formerly known as groups 
+    ## Count sets, formerly known as groups
     if (grouped) {
       message("Plotting counts")
       fs <- r$getFeatureSet("CountSet")
@@ -190,7 +190,7 @@ projection.RetinalReconstructedOutline <-
                                          ...)
       }
     }
-    
+
     ## KDE
     if (datapoint.contours) {
       message("Plotting point contours")
@@ -278,7 +278,7 @@ projection.RetinalReconstructedOutline <-
       }
     }
 
-    
+
     NextMethod(projection=projection,
                philim=philim,
                labels=labels,

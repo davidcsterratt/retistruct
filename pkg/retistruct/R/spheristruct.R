@@ -27,7 +27,7 @@ stretchMesh <- function(Cu, L, i.fix, P.fix) {
       message(paste("d", d, ":", which(C[d,]==1)))
     }
   }
-  
+
   ind <- as.vector(rbind(2*i.fix-1, 2*i.fix))
   A <- C[-ind, -ind]
   B <- C[-ind,  ind]
@@ -45,7 +45,7 @@ stretchMesh <- function(Cu, L, i.fix, P.fix) {
 
 ##
 ## Energy/error functions
-## 
+##
 
 ## Calculate lengths of connections on sphere
 compute.lengths <- function(phi, lambda, Cu, R) {

@@ -8,7 +8,7 @@
 ##'   (longitude) describing the spherical coordinates of points on
 ##'   the ReconstructedOutline, and a column \code{C} representing the
 ##'   counts at these points.
-##' 
+##'
 ##' @author David Sterratt
 ##' @importFrom geometry delaunayn
 ##' @export
@@ -84,7 +84,7 @@ projection.ReconstructedCountSet <-
                                                phi0=r$phi0),
                                      axisdir*pi/180),
                          proj.centre=pi/180*proj.centre)
-        
+
         text(rc[,"x"], rc[,"y"], r$getFeature(id)[,"C"],
              col=r$cols[[id]],
              ...)
@@ -92,5 +92,3 @@ projection.ReconstructedCountSet <-
     }
   }
 }
-
-

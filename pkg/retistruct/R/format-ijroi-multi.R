@@ -13,7 +13,7 @@ ijroimulti.checkDatadir <- function(dir=NULL) {
 ##' see \code{\link{read.datapoints}} for the format of this file. The
 ##' folder may also contain a file \code{od.roi} specifying the
 ##' coordinates of the optic disc.
-##' 
+##'
 ##' @title Read a retinal dataset in IJROI format
 ##' @param dataset Path to directory containing \code{outline.roi}
 ##' @return A \code{\link{RetinalOutline}} object
@@ -32,7 +32,7 @@ ijroimulti.read.dataset <- function(dataset) {
 
   ## Read scale
   scale <- read.scale(dataset)
-  
+
   ## If there is an image, read it
   im <- read.image(dataset)
 
@@ -46,7 +46,7 @@ ijroimulti.read.dataset <- function(dataset) {
       stop("\"Z\" must be specified in scale.csv when depthmap is present")
     }
   }
-  
+
   ## ImageJ ROI format plots has the coordinate (0, 0) in the top
   ## left.  We have the coordinate (0, 0) in the bottom left. We need
   ## to transform P so that the outline appears in the correct
@@ -57,7 +57,7 @@ ijroimulti.read.dataset <- function(dataset) {
     P[,2] <- offset - P[,2]
     return(P)
   })
-  
+
   ## Extract datapoints
   ##
   ## At present, for the plotting functions to work, the name of each

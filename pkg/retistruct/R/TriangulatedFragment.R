@@ -59,7 +59,7 @@ TriangulatedFragment <- R6Class("TriangulatedFragment",
       ## only using boundary segments
       out <- RTriangle::triangulate(RTriangle::pslg(P=out$P, S=out$S[out$SB==1,]),
                                     Y=TRUE, j=TRUE, Q=TRUE)
-      
+
       ## Sometimes a point exists which only belongs to one segment. The
       ## point to which it is connected is itself connected by three
       ## segments. We want to get rid of these points, and the easiest way

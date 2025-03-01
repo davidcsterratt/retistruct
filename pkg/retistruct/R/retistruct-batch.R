@@ -29,7 +29,7 @@ list.datasets <- function(path='.', verbose=FALSE) {
   for (d in dirs) {
     ## Determine if directory is a valid data directory. If it's a
     ## faulty one, we will let it pass to be picked up later on
-    
+
     id.data.dir <- TRUE
     ## Case of faulty directory
     tryCatch({
@@ -70,7 +70,7 @@ list.datasets <- function(path='.', verbose=FALSE) {
 ##'   given by the option \code{mc.cores}
 ##' @author David Sterratt
 ##' @export
-retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL, 
+retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                              device="pdf", titrate=FALSE,
                              cpu.time.limit=3600,
                              mc.cores=getOption("mc.cores", 2L)) {
@@ -108,10 +108,10 @@ retistruct.batch <- function(tldir='.', outputdir=tldir, datasets=NULL,
                           time=sapply(ret, function(x) {return(n(x$time))})))
   ## Defensive output, unless anything goes wrong at the next stage
   write.csv(dat, file.path(outputdir, "retistruct-batch-out.csv"))
-  
+
   summ <- retistruct.batch.summary(tldir)
   write.csv(dat, file.path(outputdir, "retistruct-batch-summ.csv"))
-  
+
   dat <- merge(summ, dat, by="dataset", all=TRUE)
   write.csv(dat, file.path(outputdir, "retistruct-batch.csv"))
   return(dat)
@@ -181,7 +181,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
           }
         }
       }
-      
+
       message(paste("Getting KR"))
       KR <- NULL
       fs <- r$getFeatureSet("CountSet")
@@ -200,7 +200,7 @@ retistruct.batch.summary <- function(tldir=".", cache=TRUE) {
           }
         }
       }
-      
+
       logdat <- merge(logdat, dat, all=TRUE)
     }
   }
@@ -309,7 +309,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
   abline(-10, 1, col="grey")
   abline(-20, 1, col="grey")
   panlabel("D")
-  
+
   with(summ, plot(sqrt.E.opt ~ sqrt.E,
                   asp=1,
                   xlab=expression(italic(e)[L]),
@@ -322,7 +322,7 @@ retistruct.batch.plot.titrations <- function(tdat) {
 
 
   with(summ, print(summary(1 - sqrt.E.opt/sqrt.E)))
-  
+
   return(list(dat=dat, summ=summ))
 }
 
@@ -355,14 +355,14 @@ retistruct.batch.export.matlab <- function(tldir=".") {
 ##' @export
 retistruct.batch.analyse.summary <- function(path) {
   dat <- read.csv(file.path(path, "retistruct-batch.csv"))
-  
+
   ## Detailed output codes
   etab <- sort(table(dat[,"mess"]), decreasing=TRUE)
   message("OUPUT CODES")
   message(rbind(format(etab, width=4), " ", paste(gsub("\n", "\n   ", gsub("\n$", "", names(etab))), "\n")))
 
   sqrt.E.fail <- 0.2
-  
+
   ## Get number of failures due to lack of time
   N.outtime <- sum(na.omit(dat$status) == 1)
 
@@ -373,14 +373,14 @@ retistruct.batch.analyse.summary <- function(path) {
   cpufail <- dat[grepl("CPU", dat[,"mess"]),]
   message(paste("\n", nrow(cpufail), "of", nrow(dat), "did not finish"))
   print(cpufail[,c("dataset")])
-  
+
   ## Get number of failures due to phi0d not being set
   nophis <- subset(sdat, sdat$phi0d == 0 | is.na(sdat$phi0d))
   N.nophi <- nrow(nophis)
   message(paste("\n", nrow(nophis), "of", nrow(sdat), "retinae do not have the rim angle set:"))
   print(nophis[,c("dataset", "phi0d")])
   sdat <- subset(sdat, sdat$phi0d != 0 & !is.na(sdat$phi0d))
-  
+
   ## Get number of failures due to sqrt.E being too large
   failures <- subset(sdat, sqrt.E >= sqrt.E.fail)
   N.fail <- nrow(failures)
@@ -388,9 +388,9 @@ retistruct.batch.analyse.summary <- function(path) {
   message(paste(nrow(failures), "of", nrow(sdat), "retinae have e_L (sqrt.E) greater than", sqrt.E.fail, ":"))
   print(failures[,c("dataset", "sqrt.E")])
   sdat <- subset(sdat, sqrt.E < sqrt.E.fail)
-  
+
   message("\nSTATISTICS")
-  
+
   message("sqrt.E")
   sqrt.E <- summary(sdat[,"sqrt.E"])
   print(sqrt.E)
@@ -409,7 +409,7 @@ retistruct.batch.analyse.summary <- function(path) {
   print(nflip)
   message("%with.flips")
   with.flips <- mean(sdat[,"nflip"] > 0) * 100
-  
+
   message("\nOUTLIERS")
   ## outliers <- subset(sdat, sqrt.E > (mean(sqrt.E) + 2*sd(sqrt.E)))
   outliers <- subset(sdat, sqrt.E >  0.1)
@@ -429,7 +429,7 @@ retistruct.batch.analyse.summary <- function(path) {
   hist(sdat[,"sqrt.E"], breaks=seq(0, max(sdat[,"sqrt.E"]), len=100),
        xlab=expression(italic(e)[L]), main="")
   panlabel("A")
-  
+
   ## Fig 4B: Boxplot of age for retinae of different ages
 
   ## Find datasets containing ("Pxx")
@@ -470,7 +470,7 @@ retistruct.batch.analyse.summary <- function(path) {
 
   ## par(mar=c(2.4, 2.6, 0.7, 0.5))
   ## par(mgp=c(1.3, 0.3, 0), tcl=-0.3)
-  
+
   ## summlm <- stats::lm(OD.res ~ sqrt.E, summ)
   ## with(summ, plot(sqrt.E, OD.res,
   ##                 xlab=expression(italic(e)[L]),
@@ -480,14 +480,14 @@ retistruct.batch.analyse.summary <- function(path) {
   ## panlabel("C")
   ## dev.print(svg, file=file.path(path, "fig4-retistruct-ods.svg"), width=6.83/2, height=6.83/6)
   ## print(summary(summlm))
-  
+
   ## with(sdat, table(sqrt.E ~ age))
 
   ## Print Fig. 4 to EPS file
   ## dev.print(postscript, file=file.path(path, "fig4-retistruct-goodness.eps"),
   ##           width=6.83, height=6.83/3,
   ##           onefile=FALSE, horizontal=TRUE)
-  
+
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
@@ -517,7 +517,7 @@ retistruct.batch.analyse.summary <- function(path) {
   mtext("B", adj=-0.15, font=2, line=-0.7)
   axis(1, labels=NA, at=seq(1, len=length(levels(sdat$age))))
   mtext(levels(sdat$age), 1, at=seq(1, len=length(levels(sdat$age))), line=0.3, cex=0.66)
-  
+
   ## with(sdat, table(sqrt.E ~ age))
   dev.copy2pdf(file=file.path(path, "retistruct-bandwidth.pdf"), width=4.5, height=3)
 
@@ -526,19 +526,19 @@ retistruct.batch.analyse.summary <- function(path) {
   levels(sdat$genotype) <- c("W", "B")
   sdat[grep("GMB", sdat$dataset), "genotype"] <- "B"
   kdat <- subset(sdat, sdat$kde.h.red < 4)
-  
+
   ## Plot of kernel density features
   par(mar=c(2.4, 2.3, 0.7, 0.2))
   par(mgp=c(1.4, 0.3, 0), tcl=-0.3)
   par(mfcol=c(1, 1))
-  
+
   with(kdat, boxplot(kde.h.red ~ genotype+age, col=c("white", "red"),
                      xlab="Postnatal day",
                      ylab=expression(italic(h)[red])))
   dev.copy2pdf(file=file.path(path, "retistruct-bandwidth-genotype.pdf"), width=12, height=8)
 
 
-  
+
   return(invisible(list(N=nrow(sdat),
                         N.outtime=N.outtime,
                         N.fail=N.fail,
@@ -552,12 +552,12 @@ retistruct.batch.analyse.summary <- function(path) {
 }
 
 ##' Extract statistics from a directory containing
-##' reconstruction directories. 
+##' reconstruction directories.
 ##'
 ##' @title Extract statistics from a directory containing
-##' reconstruction directories. 
+##' reconstruction directories.
 ##' @param path Directory containing reconstruction directories
-##' @return Data frame containing various statistics 
+##' @return Data frame containing various statistics
 ##' @author David Sterratt
 ##' @export
 retistruct.batch.analyse.summaries <- function(path) {
@@ -595,7 +595,7 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##' @param phi0d The rim angle for the plot
 ##' @param ... Other parameters, passed to projection
 ##' @return A pseudo retina, in which the optic disks are treated as
-##' datapoints 
+##' datapoints
 ##' @author David Sterratt
 ##' @export
 ##'
@@ -615,7 +615,7 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##   r$Dss$OD <- na.omit(summ[,c("OD.phi","OD.lambda")])
 ##   colnames(r$Dss$OD) <- c("phi", "lambda")
 ##   r$cols["OD"] <- "blue"
-  
+
 ##   km <- karcher.mean.sphere(r$Dss$OD, na.rm=TRUE, var=TRUE)
 ##   message(nrow(summ), " points")
 ##   message("Mean: Lat ", format(km$mean["phi"]*180/pi, digits=3),
@@ -625,7 +625,7 @@ retistruct.batch.analyse.summaries <- function(path) {
 ##                                       km$mean["lambda"],
 ##                                       -pi/2,
 ##                                       0),  " away from geometric centre")
-  
+
 ##   summ$OD.res <- 180/pi*central.angle(km$mean["phi"],
 ##                                       km$mean["lambda"],
 ##                                       r$Dss$OD[,"phi"],

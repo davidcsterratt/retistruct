@@ -1,6 +1,6 @@
 ##
 ## Utilities for plotting functions
-## 
+##
 
 ##' Generate colours for strain plots
 ##' @param x Vector of values of log strain

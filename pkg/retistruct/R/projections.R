@@ -57,7 +57,7 @@ orthographic <- function(r,
   }
   lambda0 <- proj.centre[1, "lambda"]
   phi0    <- proj.centre[1, "phi"]
-  
+
   ## First translate to Cartesian coordinates with only the rotation
   ## about the polar axis so that (0, lambda0) is at the centre of the
   ## projection.
@@ -70,7 +70,7 @@ orthographic <- function(r,
   P <- P %*% rbind(c(1, 0, 0),
                    c(0,  cos(phi0), sin(phi0)),
                    c(0, -sin(phi0), cos(phi0)))
-  
+
   ## Projection onto the x-y plane
   rc <- cbind(x=P[, 1], y=P[, 2])
 
@@ -116,7 +116,7 @@ azimuthal.equalarea <- function(r, ...) {
 ##' projection being the South Pole. The MathWorld equations are for
 ##' the more general case.
 ##' @references \url{https://en.wikipedia.org/wiki/Map_projection},
-##' \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}  
+##' \url{http://mathworld.wolfram.com/AzimuthalEquidistantProjection.html}
 ##' @export
 azimuthal.equidistant <- function(r, ...) {
   if (is.character(r) & identical(r, "boundary")) {
@@ -153,4 +153,3 @@ azimuthal.conformal <- function(r, ...) {
   y <- rho*sin(r[,"lambda"])
   return(cbind(x=x, y=y))
 }
-

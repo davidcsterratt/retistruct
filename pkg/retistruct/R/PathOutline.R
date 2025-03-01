@@ -28,7 +28,7 @@ PathOutline <- R6Class("PathOutline",
     ##' @param fid fragment id of the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
-    ##'   but an ID will be returned 
+    ##'   but an ID will be returned
     addPoints = function(P, fid) {
       pids <- super$addPoints(P, fid)
       ## For *new* points set forward and backward pointers
@@ -42,7 +42,7 @@ PathOutline <- R6Class("PathOutline",
       }
       return(pids)
     },
-    ##' @description Get next point in path for 
+    ##' @description Get next point in path for
     ##' @param pids Point IDs of points to get next position
     nextPoint = function(pids) {
       return(sapply(pids, function(i) {path.next(i, self$gf, self$hf)}))
@@ -116,7 +116,7 @@ PathOutline <- R6Class("PathOutline",
 
       sf0 <- 0
       sb0 <- 0
-  
+
       ## Start stitching
       while(!((i == VF1) && (j == VB1))) {
         ## Get distance to current points in either path
@@ -187,7 +187,7 @@ PathOutline <- R6Class("PathOutline",
                 ## If projection of forward point is within tolerance of
                 ## backward point, don't create a new point
                 report(paste("Point", i, "at", sf, "along forward path within",
-                                  epsilon, "of projection from", j, "in backward path")) 
+                                  epsilon, "of projection from", j, "in backward path"))
                 self$h[j] <- i
               } else {
                 ## Insert a point in the forward path. Point i is ahead.
@@ -229,7 +229,7 @@ flatplot.PathOutline <- function(x, axt="n",
     hf <- x$hf
     hb <- x$hb
     h  <- x$h
-    
+
     s <- which(!is.na(gf))
     d <- gf[s]
     arrows(P[s,1], P[s,2], P[d,1], P[d,2], col="red", lwd=2)
@@ -245,12 +245,12 @@ flatplot.PathOutline <- function(x, axt="n",
     s <- which(hb != 1:length(hb))
     d <- hb[s]
     arrows(P[s,1], P[s,2], P[d,1], P[d,2], col="blue", lty=2, lwd=1)
-    
+
     s <- which(h!=1:nrow(P))
     d <- h[s]
     arrows(P[s,1], P[s,2], P[d,1], P[d,2])
-    
-    points(P[,1], P[,2], cex=2.2, pch=21, bg="white") 
+
+    points(P[,1], P[,2], cex=2.2, pch=21, bg="white")
     text(P[,1], P[,2], 1:nrow(P), cex=0.7)
   }
 }

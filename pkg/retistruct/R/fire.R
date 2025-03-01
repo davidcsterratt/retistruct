@@ -33,7 +33,7 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
   Nsteps <- 0
   conv <- 1
   # Initialise velocity
-  v <- 0*r                              
+  v <- 0*r
   dt <- min(dt, dtmax)
 
   ## Counters for number of stops and hits of dtmax and maxmove
@@ -59,7 +59,7 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
       v <- (1 - a)*v + a*f/vecnorm(f)*vecnorm(v)
       if (Nsteps > Nmin) {
         dt <- min(dt*finc, dtmax)
-        if (dt==dtmax) ndtmax <- ndtmax + 1 
+        if (dt==dtmax) ndtmax <- ndtmax + 1
         a <- a*fa
       }
       Nsteps <- Nsteps + 1
@@ -92,4 +92,3 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
   }
   return(list(x=r, conv=conv, frms=frms))
 }
-

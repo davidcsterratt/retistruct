@@ -43,4 +43,3 @@ OutlineCommon <- R6Class("OutlineCommon",
     }
   )
 )
-  

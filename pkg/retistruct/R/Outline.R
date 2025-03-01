@@ -126,7 +126,7 @@ Outline <- R6Class("Outline",
     ##' @param fid ID of fragment to which to add  the points
     ##' @return The ID of each added point in the register. If points already
     ##'   exist a point will not be created in the register,
-    ##'   but an ID will be returned 
+    ##'   but an ID will be returned
     addPoints = function(P, fid) {
       if (!(is.vector(P) | is.matrix(P))) {
         stop("P must be a matrix with 2 or 3 columns, or a vector of length 2 or 3")
@@ -207,7 +207,7 @@ Outline <- R6Class("Outline",
       return(self$P[pids,"FID"])
     },
     ##' @description Get fragment IDs
-    ##' @return IDs of all fragments 
+    ##' @return IDs of all fragments
     getFragmentIDs = function() {
       return(unique(self$P[,"FID"]))
     },
@@ -278,7 +278,7 @@ plot.Outline <- function(x, ...) {
   plot(x$self$P)
 }
 
-##' Plot flat \code{\link{Outline}}. 
+##' Plot flat \code{\link{Outline}}.
 ##'
 ##' @title Flat plot of outline
 ##' @param x \code{\link{Outline}} object
@@ -320,7 +320,7 @@ flatplot.Outline <- function(x, axt="n",
 
   s <- which(!is.na(x$gb))                # source index
   d <- na.omit(x$gb)                      # destination index
-  
+
   if (!add) {
     im <- x$getImage()
     if (plot.image && !is.null(im)) {
@@ -342,7 +342,7 @@ flatplot.Outline <- function(x, axt="n",
     } else {
       xs <- x$getPoints()[s,"X"]
       ys <- x$getPoints()[s,"Y"]
-      
+
       plot(xs, ys, asp=1,
            pch=".", xaxt=axt, yaxt=axt, xlab="", ylab="",
            bty="n", xlim=xlim, ylim=ylim)
@@ -356,7 +356,7 @@ flatplot.Outline <- function(x, axt="n",
   if (pids) {
     text(x$P[,"X"], x$P[,"Y"] + runif(nrow(x$P), -pid.joggle, pid.joggle), 1:nrow(x$P), ...)
   }
-  
+
   ## Plot scalebar if required. scalebar is length in mm.
   if (!add && scalebar && !is.na(x$scale)) {
     sby <- min(ys) - 0.02*(max(ys) - min(ys))
@@ -373,7 +373,7 @@ flatplot.Outline <- function(x, axt="n",
 ##' @title Simplify an outline object by removing short edges
 ##' @param P points to simplify
 ##' @param min.frac.length the minimum length as a fraction of the
-##' total length of the outline. 
+##' total length of the outline.
 ##' @param plot whether to display plotting or not during simplification
 ##' @return Simplified \code{outline} object
 ##' @author David Sterratt
@@ -384,7 +384,7 @@ simplifyOutline <- function(P, min.frac.length=0.001, plot=FALSE) {
   l <- vecnorm(v)                     # Length of each edge
   ## Compute outer products at each vertex
   e <- extprod3d(cbind(v[c(N, 1:(N-1)),], 0), cbind(v, 0))[,3]
-  
+
   ## Find short edges
   S <- l/sum(l) < min.frac.length
 

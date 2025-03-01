@@ -31,4 +31,3 @@ test_that("Real-world depthmap 1 works", {
     ## r <- retistruct.reconstruct(o)
   }
 })
-

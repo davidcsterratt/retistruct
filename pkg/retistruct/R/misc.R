@@ -6,7 +6,7 @@
 ## Specifically, it returns
 ## i , if i <= N
 ## i - N, if i > N
-## 
+##
 mod1 <- function(i, N) {
   return((i - 1) %% N + 1)
 }
@@ -38,8 +38,8 @@ stdnames <- function(l) {
 
 ##' Return a new version of the list in which any unnamed elements
 ##' have been given standardised names
-##' 
-##' @param l the list with unnamed elements 
+##'
+##' @param l the list with unnamed elements
 ##' @return The list with standardised names
 ##' @author David Sterratt
 name.list <- function(l) {

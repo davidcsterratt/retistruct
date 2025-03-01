@@ -3,7 +3,7 @@
 ##'
 ##' @description The function \code{reconstruct} reconstructs outline
 ##'   into spherical surface Reconstruct outline into spherical
-##'   surface. 
+##'   surface.
 ##' @importFrom geometry tsearch sph2cart
 ##' @author David Sterratt
 ##' @export
@@ -20,7 +20,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ol0 = NULL,
     ##' @field Pt Transformed cartesian mesh points
     Pt = NULL,
-    ##' @field Trt Transformed triangulation   
+    ##' @field Trt Transformed triangulation
     Trt = NULL,
     ##' @field Ct Transformed links
     Ct = NULL,
@@ -116,10 +116,10 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       self$ol <- ol
       self$phi0 <- ol$phi0
       self$lambda0 <- ol$lambda0
-      
+
       report("Merging points...")
       self$mergePointsEdges()
-      
+
       report("Projecting to sphere...")
       self$projectToSphere()
     },
@@ -127,9 +127,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' Reconstruction proceeds in a number of stages:
     ##'
     ##' \enumerate{
-    ##' 
+    ##'
     ##' \item The flat object is triangulated with at least \code{n}
-    ##' triangles. This can introduce new vertices in the rim. 
+    ##' triangles. This can introduce new vertices in the rim.
     ##'
     ##' \item The triangulated object is stitched.
     ##'
@@ -145,7 +145,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' \item The locations of the points on the sphere are moved so as to
     ##' minimise the energy function.
     ##' }
-    ##' 
+    ##'
     ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
     ##' @param dev.flat Device handle for plotting flatplot updates to. If
     ##' \code{NA} don't make any flat plots
@@ -166,15 +166,15 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       if (is.na(shinyOutput)) {
         shinyOutput <- NULL
       }
-      
+
       ## Check for flipped triangles and record initial number
       ft <- flipped.triangles(self$getPoints(), self$Trt, self$R)
       self$nflip0 <- sum(ft$flipped)
-      
+
       report("Optimising mapping with no area constraint using BFGS...")
       self$optimiseMapping(alpha=0, x0=0, nu=1,
                            plot.3d=plot.3d,
-                           dev.flat=dev.flat, dev.polar=dev.polar, 
+                           dev.flat=dev.flat, dev.polar=dev.polar,
                            shinyOutput=shinyOutput)
       report("Optimising mapping with area constraint using FIRE...")
       ## FIXME: Need to put in some better heuristics for scaling
@@ -195,7 +195,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                            plot.3d=plot.3d,
                            dev.flat=dev.flat, dev.polar=dev.polar,
                            shinyOutput=shinyOutput)
-      
+
       report(paste("Mapping optimised. Deformation energy E:", format(self$opt$value, 5),
                    ";", self$nflip, "flipped triangles."))
     },
@@ -282,7 +282,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## Transform the edge set into the new indices
       Cut <- Cut[U,]
 
-      ## Transform the edge correspondance mapping to the new index space  
+      ## Transform the edge correspondance mapping to the new index space
       Ht <- c()
       for (i in 1:length(H)) {
         Ht[i] <- which(U == H[i])
@@ -390,7 +390,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @description Return strains edges are under in spherical retina
     ##' Set information about how edges on the sphere
     ##' have been deformed from their flat state.
-    ##' @return A list containing two data frames \code{flat} and \code{spherical}. 
+    ##' @return A list containing two data frames \code{flat} and \code{spherical}.
     ##' Each data frame contains for each edge in the flat or spherical meshes:
     ##' \describe{
     ##' \item{\code{L}}{Length of the edge in the flat outline }
@@ -433,7 +433,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param optim.method Method to pass to \code{optim}
     ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
     ##' @param dev.flat Device handle for plotting flatplot updates to. If
-    ##' @param shinyOutput A Shiny output element used to render and display a 
+    ##' @param shinyOutput A Shiny output element used to render and display a
     ##' plot in the application.
     ##' \code{NA} don't make any flat plots
     ##' @param dev.polar Device handle for plotting polar plot updates
@@ -503,7 +503,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         self$E.l <- E.l
         self$mean.strain    <- mean(abs(self$getStrains()$spherical$strain))
         self$mean.logstrain <- mean(abs(self$getStrains()$spherical$logstrain))
-        
+
         ## Plot
         if (plot.3d) {
           if (is.null(shinyOutput)) {
@@ -524,14 +524,14 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                      image=FALSE)
           })
         }
-        
+
         if (!is.na(dev.flat)) {
           dev.set(dev.flat)
           flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                    datapoints=FALSE, landmarks=FALSE,
                    image=FALSE)
         }
-        
+
         ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
@@ -542,14 +542,14 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
-        } 
-        
+        }
+
         if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
           self$clearFeatureSets()
           dev.set(dev.polar)
-          projection(self, mesh=TRUE, 
+          projection(self, mesh=TRUE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
         }
@@ -563,7 +563,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param plot.3d If \code{TRUE} make a 3D plot in an RGL window
     ##' @param dev.flat Device handle for plotting grid to
     ##' @param dev.polar Device handle for plotting polar plot to
-    ##' @param shinyOutput A Shiny output element used to render and display a 
+    ##' @param shinyOutput A Shiny output element used to render and display a
     ##' plot in the application.
     ##' @param ... Extra arguments to pass to \code{\link{fire}}
     optimiseMappingCart  = function(alpha=4, x0=0.5, nu=1, method="BFGS",
@@ -642,7 +642,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
             })
           }
         }
-        
+
         ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           shinyOutput$plot1 <- renderPlot({
@@ -650,15 +650,15 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
           })
-        } 
-        
+        }
+
         if (!is.na(dev.flat)) {
           dev.set(dev.flat)
           flatplot(self, grid=TRUE, strain=TRUE, mesh=FALSE, markup=FALSE,
                    datapoints=FALSE, landmarks=FALSE,
                    image=FALSE)
         }
-        
+
         ## FIXME try to get iterative update working in shiny
         if (!is.null(shinyOutput)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
@@ -671,8 +671,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                        datapoints=FALSE, landmarks=FALSE,
                        image=FALSE)
           })
-        } 
-        
+        }
+
         if (!is.na(dev.polar)) {
           ## Wipe any previous reconstruction of coordinates of pixels and feature sets
           private$ims <- NULL
@@ -680,7 +680,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
           dev.set(dev.polar)
           self$phi <- phi
           self$lambda <- lambda
-          projection(self, mesh=TRUE, 
+          projection(self, mesh=TRUE,
                      datapoints=FALSE, landmarks=FALSE,
                      image=FALSE)
         }
@@ -907,7 +907,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     }
   )
 )
-                           
+
 
 
 ##' Plot \code{\link{ReconstructedOutline}} object. This adds a mesh
@@ -947,7 +947,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
     segments(P[Cu[,1],1], P[Cu[,1],2],
              P[Cu[,2],1], P[Cu[,2],2], col=round(scols))
   }
-  
+
   ## Plot a gridline from the spherical retina (described by points phi,
   ## lambda and triangulation Trt) onto a flattened retina (described by
   ## points P and triangulation Tr). The gridline is described by a
@@ -962,7 +962,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
     ## value between 0 and 1. We get rid of the 1 in the
     ## following. Triangles in which one line is in the plane have mu
     ## values 0, 1 and NaN; we want to include these.
-    tri.int <- (rowSums((mu >= 0) & (mu <= 1), na.rm=TRUE) == 2) 
+    tri.int <- (rowSums((mu >= 0) & (mu <= 1), na.rm=TRUE) == 2)
     ## | apply(mu, 1, function(x) setequal(x, c(0, 1, NaN))))
     if (any(tri.int)) {
       Tr  <- Tr[tri.int,,drop=FALSE]
@@ -982,7 +982,7 @@ flatplot.ReconstructedOutline <- function(x, axt="n",
       Tr[!line.int[,1] ,] <- Tr[!line.int[,1], c(2,3,1)]
       mu[!line.int[,1],] <- mu[!line.int[,1],c(2,3,1)]
 
-      P <- cbind(mu[,1] * P[Tr[,3],] + (1-mu[,1]) * P[Tr[,2],], 
+      P <- cbind(mu[,1] * P[Tr[,3],] + (1-mu[,1]) * P[Tr[,2],],
                  mu[,2] * P[Tr[,1],] + (1-mu[,2]) * P[Tr[,3],])
                                         # suppressWarnings(segments(P1[,1], P1[,2], P2[,1], P2[,2], ...))
     } else {
@@ -1197,7 +1197,7 @@ projection.ReconstructedOutline <- function(r,
       C <- floor(N/B)
       ## In the Bth block there will be N-(B-1)*C columns
       ## print(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
-      
+
       ## Number of columns in block k
       Ck <- C
       for (k in 1:B) {
@@ -1211,7 +1211,7 @@ projection.ReconstructedOutline <- function(r,
         j0 <- (k - 1)*C + 1
         ## Index of rightmost column of image matrix needed
         j1 <- (k - 1)*C + Ck
-      
+
         ## Transform the pixel coordinates and compute x and y positions
         ## of corners of pixels.
         ## inds <- (k - 1)*(M + 1)*C + (1:((M + 1)*(Ci + 1)))
@@ -1287,7 +1287,7 @@ projection.ReconstructedOutline <- function(r,
                      proj.centre=pi/180*proj.centre)
     trimesh(r$Trt, Pt, col="gray", add=TRUE)
   }
-  
+
   grid.maj.col <- getOption("grid.maj.col")
   grid.min.col <- getOption("grid.min.col")
 
@@ -1358,7 +1358,7 @@ projection.ReconstructedOutline <- function(r,
     }
   }
 
-  if (grid) {  
+  if (grid) {
     ## Longitude labels around rim - not on actual frame of reference!
     if (!is.null(labels)) {
       ## Longitudes (meridians) at which to plot at
@@ -1420,8 +1420,8 @@ lvsLplot.ReconstructedOutline <- function(r, ...) {
                                         units1, ")")),
                             list(units1=units)))
   }
-  
-  
+
+
   plot(L, l, col=cols, pch=20,
        xlim=c(0, max(L, l)), ylim=c(0, max(L, l)),
        xlab=xlab, ylab=ylab,
@@ -1531,7 +1531,7 @@ sphericalplot.ReconstructedOutline <- function(r,
     fac <- 0.999
     P1 <- fac*P[r$Cut[,1],]
     P2 <- fac*P[r$Cut[,2],]
-    
+
     width <- 0.02
     ## Compute displacement vector to make sure that strips are
     ## parallel to surface of sphere

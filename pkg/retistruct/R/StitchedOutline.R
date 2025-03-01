@@ -56,7 +56,7 @@ StitchedOutline <- R6Class("StitchedOutline",
         stop(paste("Fixed Point", self$i0, "is not in rim points:",
           paste(self$Rset, collapse=", ")))
       }
-      
+
       self$hf <- r$hf
       self$hb <- r$hb
       self$h <- r$h
@@ -65,10 +65,10 @@ StitchedOutline <- R6Class("StitchedOutline",
                             self$tears[i,"V0"], self$tears[i,"VB"],
                             epsilon=self$epsilon)
       }
-      
+
       ## Link up points on rim
       self$h[self$Rset] <- self$hf[self$Rset]
-      
+
       ## Make sure that there are no chains of correspondences
       while (!all(self$h==self$h[self$h])) {
         self$h <- self$h[self$h]
@@ -100,14 +100,14 @@ StitchedOutline <- R6Class("StitchedOutline",
                             self$fullcuts[i,"VB0"], self$fullcuts[i,"VB1"],
                             epsilon=self$epsilon)
       }
-      
+
       ## Link up points on rim
       self$hf[self$Rset] <- r$hf[self$Rset]
       self$hb[self$Rset] <- r$hb[self$Rset]
       ## self$h <- r$h
 
       self$h[self$Rset] <- self$hf[self$Rset]
-      
+
       ## Make sure that there are no chains of correspondences
       while (!all(self$h==self$h[self$h])) {
         self$h <- self$h[self$h]

@@ -13,7 +13,7 @@ test_that("TriangulatedOutlines work correctly", {
   expect_equal(nrow(o$getPoints()), length(o$gf))
   expect_equal(nrow(o$getPoints()), length(o$gb))
   expect_equal(sum(o$getOutlineLengths()), 8)
-  
+
   ## Check area OK with xy scale
   o1 <- TriangulatedOutline$new(P, scale=2)
   o1$triangulate()

@@ -7,7 +7,7 @@
 ##'   which has columns labelled \code{phi} (latitude) and
 ##'   \code{lambda} (longitude) describing the spherical coordinates
 ##'   of points on the ReconstructedOutline.
-##' 
+##'
 ##' @author David Sterratt
 ##' @importFrom geometry delaunayn
 ##' @export
@@ -64,7 +64,7 @@ ReconstructedPointSet <- R6Class("ReconstructedPointSet",
 ##' and it should enclose about 5% of the points. The contour levels
 ##' are specified by  the \code{contour.levels} option; by default
 ##' they are \code{c(5, 25, 50, 75, 95)}.
-##' 
+##'
 ##' @title Kernel estimate over grid
 ##' @param Dss List of datasets. The first two columns of each datasets
 ##' are coordinates of points on the sphere in spherical polar
@@ -116,7 +116,7 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
     k[is.na(k)] <- 0
     return(k)
   }
-  
+
   ## Get data points
   KDE <- list()
   if (length(Dss) > 0) {
@@ -130,13 +130,13 @@ compute.kernel.estimate <- function(Dss, phi0, fhat, compute.conc) {
     ## Check conversion
     ## gcb <- sphere.spherical.to.polar.cart(gs, pa)
     ## points(rho.to.degrees(gcb, phi0, pa), pch='.')
-    
+
     for (i in names(Dss)) {
       if (nrow(Dss[[i]]) > 2) {
         ## Find the optimal concentration of the kernel density
         ## estimator
         kappa <- compute.conc(Dss[[i]])
-        
+
         ## Now we've found the concentration, let's try to estimate
         ## and display the density at grid points on an azimuthal
         ## equidistant projection (f) and on an aziumuthal equal-area
@@ -251,7 +251,7 @@ sphericalplot.ReconstructedPointSet <- function(r,
       if (!is.null(fs$getFeature(id))) {
         Dc <- sphere.spherical.to.sphere.cart(fs$getFeature(id))
         if (nrow(Dc) > 0) {
-          
+
           ## Find axis in z=0 plane that is orthogonal to projection of
           ## datapoint onto that plane
           ax1 <- 1/sqrt(apply(Dc[,1:2,drop=FALSE]^2, 1, sum)) * cbind(-Dc[,2], Dc[,1], 0)
@@ -273,7 +273,7 @@ sphericalplot.ReconstructedPointSet <- function(r,
           ## Plot the triangle inside and outside the sphere
           inmag <- 0.98
           outmag <- 1.02
-          
+
           x <- rbind(v2[,1], v1[,1], v3[,1])
           y <- rbind(v2[,2], v1[,2], v3[,2])
           z <- rbind(v2[,3], v1[,3], v3[,3])
@@ -289,4 +289,3 @@ sphericalplot.ReconstructedPointSet <- function(r,
     }
   }
 }
-  

@@ -104,7 +104,7 @@ flatplot.TriangulatedOutline <- function(x, axt="n",
                                          ...) {
   NextMethod()
 
-  if (mesh) 
+  if (mesh)
     trimesh(x$Tr, x$P, col="grey", add=TRUE)
 }
 

@@ -10,7 +10,7 @@
 ##'   \code{\link{ReconstructedCountSet}}, may have extra columns.
 ##'   Each matrix in the list has an associated label and colour,
 ##'   which is used by plotting functions.
-##' 
+##'
 ##' @author David Sterratt
 ##' @export
 ReconstructedFeatureSet <- R6Class("ReconstructedFeatureSet",
