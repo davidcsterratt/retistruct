@@ -155,7 +155,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##' @param shinyOutput A Shiny output element used to render and display a
     ##' plot in the application. If \code{NA} or \code{NULL} don't output to Shiny.
     ##' @param report Function to report progress.
-    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NULL,
+    reconstruct = function(plot.3d=FALSE, dev.flat=NA, dev.polar=NA, shinyOutput=NA,
                            report=getOption("retistruct.report")) {
       ##   ## Initial plot in 3D space
       ##   if (plot.3d) {
@@ -163,8 +163,10 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ##   }
       ## }
 
-      if (is.na(shinyOutput)) {
-        shinyOutput <- NULL
+      if (!is.null(shinyOutput)) {
+        if (is.na(shinyOutput)) {
+          shinyOutput <- NULL
+        }
       }
 
       ## Check for flipped triangles and record initial number
