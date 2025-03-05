@@ -223,7 +223,7 @@ retistruct.read.recdata <- function(o, check=TRUE) {
     if (check) {
       chk <- all.equal(o, r$ol0)
       if (!isTRUE(chk)) {
-        print(chk)
+        report(chk)
         unlink(recfile)
         warning("The base data has changed since this retina was last reconstructed, so the cached reconstruction data has been deleted.")
         return(NULL)
@@ -384,8 +384,6 @@ retistruct.export.matlab <- function(r, filename=NULL) {
         KDE[[i]] <- c(KDE[[i]], KDEi)
         names(KDE[[i]]$contour.areas) <- c()
       }
-      ## print(names(KDE))
-      ## print(names(unlist(KDE, recursive=FALSE)))
       KDE <- unlist(KDE, recursive=FALSE)
       names(KDE) <- gsub('\\.', '_', names(KDE))
     }

@@ -14,6 +14,11 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #68: New CRAN submission: Make messages suppressible
+  https://github.com/davidcsterratt/retistruct/issues/68
+  Remove instances of print() in functions and replace with message
+  (via the customisable report() function)
+
 * Issue #67: New CRAN submission: dontrun
   https://github.com/davidcsterratt/retistruct/issues/67
   Currently inpoerational Magnifier code removed; future versions

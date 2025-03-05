@@ -262,11 +262,11 @@ Ecart <- function(P, Cu, L, Tr, A, R,
   ## Compute lengths of edges
   ## l <- vecnorm(P2 - P1)
   l <- 2*R*asin(vecnorm(P[Cu[,2],] - P[Cu[,1],])/2/R)
-  if (verbose==2) { print(l) }
+  if (verbose==2) { report(l) }
 
   ## Compute spring energy
   E.E <- 0.5/sum(L)*sum((l - L)^2/L)
-  if (verbose>=1) { print(E.E) }
+  if (verbose>=1) { report(E.E) }
 
   ## Compute areal penalty term if alpha is nonzero
   E.A <- 0
@@ -309,7 +309,7 @@ Fcart <- function(P, C, L, Tr, A, R,
   ## Lengths of springs
   dP <- P[C[,2],] - P[C[,1],]
   l <- 2*R*asin(vecnorm(dP)/2/R)
-  if (verbose==2) { print(l) }
+  if (verbose==2) { report(l) }
 
   ## Compute general scaling factor
   fac <- 1/sum(L)*(l - c(L, L))/c(L, L)/c(L, L) #sqrt(1-(d/2/R)^2)/d

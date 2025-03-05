@@ -197,7 +197,7 @@ minimise the energy function.
   plot.3d = FALSE,
   dev.flat = NA,
   dev.polar = NA,
-  shinyOutput = NULL,
+  shinyOutput = NA,
   report = getOption("retistruct.report")
 )}\if{html}{\out{</div>}}
 }

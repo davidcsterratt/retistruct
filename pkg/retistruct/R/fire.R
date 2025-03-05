@@ -44,9 +44,7 @@ fire <- function(r, force, restraint, m=1, dt=0.1, maxmove=1E2, dtmax=1,
   for (i in 1:nstep) {
     f <- force(r)
     frad2 <- dot(f, r/vecnorm(r), 2)^2
-    ## print(frad2)
     ftan2 <- dot(f, f, 2) - frad2
-    ##print(ftan2)
     frms <- sqrt(mean(dot(f, f, 2)))
     ftanrms <- sqrt(mean(ftan2))
     if (ftanrms < tol) {

@@ -137,13 +137,20 @@ interpolate.image <- function(im, P, invert.y=FALSE, wmin=10, wmax=100) {
   return(z)
 }
 
+
+
 ##' Reporting utility function
 ##'
 ##' Calls function specified by option \code{retistruct.report}
+##' @param x First arguments to reporting function
 ##' @param ... Arguments to reporting function
 ##' @author David Sterratt
+##' @importFrom utils capture.output
 ##' @export
-report <- function(...) {
+report <- function(x, ...) {
   f <- getOption("retistruct.report")
-  f(...)
+  if (inherits(x, 'array')) {
+    x <- paste(capture.output(print(x)), collapse='\n')
+  }
+  f(x, ...)
 }

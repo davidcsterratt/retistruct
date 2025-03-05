@@ -98,5 +98,4 @@ projection(r.rc, projection=sinusoidal,
            add=TRUE)
 title(expression(paste("Contra: O.A. at ", 22 * degree, " el., ", 64 * degree, " az.")))
 
-
-dev.print(pdf, "figure6.pdf", width=width, height=height)
+# dev.print(pdf, "figure6.pdf", width=width, height=height)

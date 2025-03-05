@@ -520,9 +520,7 @@ azel.to.sphere.colatitude <- function(r, r0) {
               cbind(-sin(r0[,"alpha"])*sin(r0[,"theta"]),
                     -sin(r0[,"alpha"])*cos(r0[,"theta"]),
                      cos(r0[,"alpha"]))) %*% t(rc)
-  print(r0c)
-  print(rc)
-  print(t(pc))
+
   lambdap <- atan2(pc[2,], pc[1,])
 
   out <- cbind(psi, lambdap)
@@ -638,8 +636,8 @@ sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
   ## a sphere; they lie on the triangles that approximate the sphere.
   Rs <- sqrt(rowSums(P^2))
   if (any(abs(Rs - R)/R > 0.1)) {
-    print(abs(Rs - R)/R)
-    stop("Points do not lie approximately on unit sphere")
+    stop(paste("Points do not lie approximately on unit sphere:\n",
+               paste(capture.output(print(abs(Rs - R)/R)), collapse='\n')))
   }
   ## Normalise to unit sphere
   P <- P/Rs
@@ -663,8 +661,8 @@ sphere.cart.to.sphere.wedge <- function(P, phi0, R=1) {
   rownames(Pw) <- NULL
   ## Check that f is in bounds
   if (any(f > 1) || any(f < 0)) {
-    print(Pw)
-    stop("f is out of bounds")
+    stop(paste("f is out of bounds:\n",
+               paste(capture.output(print(Pw)), collapse='\n')))
   }
   return(Pw)
 }

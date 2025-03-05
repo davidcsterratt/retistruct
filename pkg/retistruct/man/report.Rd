@@ -4,9 +4,11 @@
 \alias{report}
 \title{Reporting utility function}
 \usage{
-report(...)
+report(x, ...)
 }
 \arguments{
+\item{x}{First arguments to reporting function}
+
 \item{...}{Arguments to reporting function}
 }
 \description{

@@ -295,7 +295,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       for (k in 1:length(U)) {
         is <- which(Ht == k)
         ## if (length(is)>1) {
-        ##   print(L[is])
+        ##   report(L[is])
         ## }
         Lt[k] <- mean(L[is])
       }
@@ -486,9 +486,9 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         nflip <- sum(ft$flipped)
         report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip & self$debug) {
-          print(data.frame(rbind(id=which(ft$flipped),
-                                 A=A[ft$flipped],
-                                 a=ft$areas[ft$flipped])))
+          report(data.frame(rbind(id=which(ft$flipped),
+                                  A=A[ft$flipped],
+                                  a=ft$areas[ft$flipped])))
         }
 
         ## Decode p vector
@@ -624,7 +624,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
         nflip <- sum(ft$flipped)
         report(sprintf("E = %8.5f | E_L = %8.5f | E_A = %8.5f | %3d flippped triangles", E.tot, E.l, E.tot - E.l,  nflip))
         if (nflip) {
-          print(data.frame(rbind(id=which(ft$flipped),
+          report(data.frame(rbind(id=which(ft$flipped),
                                  A=A[ft$flipped],
                                  a=ft$areas[ft$flipped])))
         }
@@ -1198,7 +1198,7 @@ projection.ReconstructedOutline <- function(r,
       ## Numnber of columns in the first B-1 blocks
       C <- floor(N/B)
       ## In the Bth block there will be N-(B-1)*C columns
-      ## print(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
+      ## report(paste("M =", M, "; N =", N, "; S =", S, "; B =", B, "; C =", C))
 
       ## Number of columns in block k
       Ck <- C
@@ -1219,7 +1219,7 @@ projection.ReconstructedOutline <- function(r,
         ## inds <- (k - 1)*(M + 1)*C + (1:((M + 1)*(Ci + 1)))
         l0 <-  (j0 - 1)*(M + 1) + 1
         l1 <- j1*(M + 1) + (M + 1)
-        ## print(paste("k =", k, "; Ck =", Ck, "; j0 =", j0, "; j1 =", j1,
+        ## report(paste("k =", k, "; Ck =", Ck, "; j0 =", j0, "; j1 =", j1,
         ##             "; l0 =", l0, "; l1 =", l1))
         inds <- l0:l1
         rc <- projection(
@@ -1249,8 +1249,8 @@ projection.ReconstructedOutline <- function(r,
         ## should be displayed and FALSE for those that should be
         ## masked. It is computed by finding the corners of the poly-pixel
         ## lie outwith the outline. These corners will have the coordinate
-        ## NA.  print("sum(!is.na(colSums(impx[1:4,])))")
-        ## print(sum(!is.na(colSums(impx[1:4,]))))
+        ## NA.  report("sum(!is.na(colSums(impx[1:4,])))")
+        ## report(sum(!is.na(colSums(impx[1:4,]))))
         immask <- matrix(!is.na(colSums(impx[1:4,])), M, Ck)
 
         ## We want to get rid of any poly-pixels that cross either end of
