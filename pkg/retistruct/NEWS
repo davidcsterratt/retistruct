@@ -14,19 +14,28 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #71: New CRAN submission: Reset options in examples & demos
+  https://github.com/davidcsterratt/retistruct/issues/71
+  Graphics parameters and options are saved and restored so that user
+  options are not changed.
+  Thanks to the CRAN team for reporting.
+
 * Issue #68: New CRAN submission: Make messages suppressible
   https://github.com/davidcsterratt/retistruct/issues/68
   Remove instances of print() in functions and replace with message
   (via the customisable report() function)
+  Thanks to the CRAN team for reporting.
 
 * Issue #67: New CRAN submission: dontrun
   https://github.com/davidcsterratt/retistruct/issues/67
   Currently inpoerational Magnifier code removed; future versions
   might use Plotly for viewing plots.
+  Thanks to the CRAN team for reporting.
 
 * Issue #66: New CRAN submission: TRUE/FALSE and T/F
   https://github.com/davidcsterratt/retistruct/issues/66
   All values of T relaced with Tr.
+  Thanks to the CRAN team for reporting.
 
 * Issue #65: New CRAN submission: Added references to Description
   https://github.com/davidcsterratt/retistruct/issues/65

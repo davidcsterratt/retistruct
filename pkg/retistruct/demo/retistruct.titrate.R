@@ -9,6 +9,8 @@ r.good <- retistruct.reconstruct(r.good)
 ## Titrate to give impression of whether reconstruction is good or bad
 t.good <- r.good$titrate()
 
+oldpar <- par(no.readonly=TRUE) # Save graphics parameters before plotting
+
 par(mar=c(3.5, 3.5, 0.5, 0.5), mgp=c(1.7, 0.5, 0), tcl=-0.2)
 with(t.good$dat, plot(phi0d, sqrt.E, type="l", xlab=expression(paste(italic(phi)[0], " (degrees)")), ylab=expression(sqrt(italic(E)[L]))))
 with(t.good,
@@ -16,3 +18,5 @@ with(t.good,
 
 ## Printing
 ## dev.copy2pdf(file="retistruct-good-bad.pdf", width=6.83, height=6.83/2)
+
+par(oldpar) # Restore graphics parameters

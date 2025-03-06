@@ -6,6 +6,7 @@ o <- retistruct.read.dataset(dataset)
 o <- retistruct.read.markup(o)
 
 ## Initial plot
+oldpar <- par(no.readonly=TRUE) # Save graphics parameters before plotting
 par(mar=c(0.1,0.1,0.1,0.1))
 flatplot(o)
 
@@ -19,3 +20,5 @@ flatplot(r, mesh=FALSE, stitch=FALSE, markup=FALSE)
 ## dev.print(pdf, file="../figures/orange-outline.pdf", width=5)
 ## dev.print(png, file="../figures/orange-no-grid.png", width=500)
 ## dev.print(png, file="../figures/orange-grid.png", width=5)
+
+par(oldpar) # Restore graphics parameters

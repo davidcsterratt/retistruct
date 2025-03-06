@@ -1,3 +1,5 @@
+oldpar <- par(no.readonly=TRUE) # Save graphics parameters before plotting
+
 par(mfcol=c(1, 2))
 
 P <- list(rbind(c(1,1.5),
@@ -28,12 +30,9 @@ P <- list(rbind(c(1,1.5),
 ## Stitched outlines
 a <- StitchedOutline$new(P)
 
-expect_false(a$isStitched())
-
 ## Set a fixed point
 ## One that is in the rim should be fine
 a$setFixedPoint(6, "Nasal")
-expect_equal(a$i0, c(Nasal=6))
 
 ## One that is not in the rim should be moved
 a$addTear(c(11, 12, 13))
@@ -57,4 +56,4 @@ r$reconstruct()
 flatplot(r)
 projection(r)
 
-par(mfcol=c(1, 1))
+par(oldpar) # Restore graphics parameters

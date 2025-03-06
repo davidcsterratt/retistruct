@@ -2,6 +2,8 @@ library(retistruct)
 ## Reconstruct left contra
 root <- system.file(package = "retistruct")
 
+oldop <- options()
+
 options(contour.levels=c(25, 50, 75, 95))
 
 dataset <- file.path(root, "extdata", "Figure_6-data", "left-contra")
@@ -27,9 +29,9 @@ r <- retistruct.read.dataset(dataset)
 r <- retistruct.read.markup(r)
 r.ri <- retistruct.reconstruct(r)
 
+oldpar <- par(no.readonly=TRUE) #  Save graphics parameters before plotting
 width <- 6.83
 height <- width*2/3
-## par(mfrow=c(2, 4))
 par(mar=c(0.5, 0.5, 1.5, 0.5))
 layout(rbind(c(1, 2, 5, 6),
              c(3, 4, 5, 6),
@@ -99,3 +101,7 @@ projection(r.rc, projection=sinusoidal,
 title(expression(paste("Contra: O.A. at ", 22 * degree, " el., ", 64 * degree, " az.")))
 
 # dev.print(pdf, "figure6.pdf", width=width, height=height)
+
+par(oldpar) # Restore graphics parameters
+options(oldop) # Restore options
+

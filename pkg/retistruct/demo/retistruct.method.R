@@ -1,4 +1,5 @@
 library(rgl)
+oldpar <- par(no.readonly=TRUE) # Save graphics parameters before plotting
 ## Set up a 3x3 grid for plotting
 par(mfrow=c(3, 3))
 par(mar=c(0.5, 0.5, 0.5, 0.5))
@@ -99,3 +100,5 @@ mtext("Fii", adj=0, font=2, line=-0.9)
 
 ## Save to PDF
 dev.print(pdf, file="retistruct-method.pdf", width=6.83, height=6.83)
+
+par(oldpar) # Restore graphics parameters

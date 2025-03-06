@@ -15,6 +15,7 @@ r  <- retistruct.reconstruct(a)
 message("Residual energy of original retina:", r$E.l)
 message("Residual energy of transformed retina:", rp$E.l)
 
+oldpar <- par(no.readonly=TRUE) # Save graphics parameters before plotting
 par(mfcol=c(2, 3))
 par(mar=c(1, 1, 1, 1))
 flatplot(r, mesh=TRUE, main="Original retina")
@@ -24,3 +25,5 @@ projection(rp, projection=azimuthal.conformal, datapoint.contours=FALSE, main="C
 par(mar=c(5, 4, 1, 1), mgp=c(1.5, 0.5, 0))
 lvsLplot(r, main="Strain plot of original retina")
 lvsLplot(rp, main="Strain plot of transformed retina")
+
+par(oldpar) # Restore graphics parameters
