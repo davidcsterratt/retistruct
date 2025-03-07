@@ -14,6 +14,12 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #70: New CRAN submission: options
+  https://github.com/davidcsterratt/retistruct/issues/70
+  Graphics parameters and options are saved and restored so that user
+  options are not changed.
+  Thanks to the CRAN team for reporting.
+
 * Issue #71: New CRAN submission: Reset options in examples & demos
   https://github.com/davidcsterratt/retistruct/issues/71
   Graphics parameters and options are saved and restored so that user

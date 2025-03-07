@@ -166,7 +166,11 @@ idt.segment.length <- function(S) {
 
 ## Function to plot the "map", i.e. the outline of the retina
 idt.plot.map <- function(map, seginfo=FALSE,
-                     xlim=range(map[,1]), ylim=range(map[,2])) {
+                         xlim=range(map[,1]), ylim=range(map[,2])) {
+  ## Ensure graphics paremeters are reset on exit
+  oldpar <- par(no.readonly=TRUE) 
+  on.exit(par(oldpar))
+
   par(mar=c(2,2,1.5,0.5))
   plot(NA, NA, xlim=xlim, ylim=ylim, xlab="", ylab="")
   segs <- idt.map.to.segments(map)

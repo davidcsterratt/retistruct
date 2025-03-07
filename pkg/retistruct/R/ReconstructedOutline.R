@@ -1406,6 +1406,10 @@ projection.ReconstructedOutline <- function(r,
 ##' @export
 ##' @importFrom graphics abline
 lvsLplot.ReconstructedOutline <- function(r, ...) {
+  ## Ensure graphics paremeters are reset on exit
+  oldpar <- par(no.readonly=TRUE)
+  on.exit(par(oldpar))
+
   Call <- match.call(expand.dots=TRUE)
   o <- r$getStrains()$spherical
   palette(rainbow(100)) ## Green is about 35; dark blue about 70

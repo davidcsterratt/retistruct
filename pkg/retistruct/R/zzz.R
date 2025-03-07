@@ -1,3 +1,4 @@
+## Default options
 .onLoad <- function(lib, pkg) {
   options(TF.col="darkcyan")
   options(TB.col="darkcyan")

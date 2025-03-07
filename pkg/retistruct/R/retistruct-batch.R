@@ -275,6 +275,10 @@ retistruct.batch.plot.titrations <- function(tdat) {
     }
   }
 
+  ## Ensure graphics paremeters are reset on exit
+  oldpar <- par(no.readonly=TRUE)
+  on.exit(par(oldpar))
+
   ## Do the detailed plot of all the lines
   par(mar=c(2.4, 3.2, 0.7, 0.2))
   par(mgp=c(1.3, 0.3, 0), tcl=-0.3)

@@ -50,8 +50,11 @@ retistruct.cli <- function(dataset, cpu.time.limit=Inf, outputdir=NA,
 ##' @export
 retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
                                    titrate=FALSE, matlab=TRUE) {
+  ## Ensure options are reset on exit
+  oldop <- options()
+  on.exit(options(oldop))
+
   ## Processing
-  warn.opt <- getOption("warn")
   options(warn=1)
   r <- retistruct.read.dataset(dataset)
   r <- retistruct.read.markup(r)
@@ -74,7 +77,6 @@ retistruct.cli.process <- function(dataset, outputdir=NA, device="pdf",
     retistruct.export.matlab(r)
   }
 
-  options(warn=warn.opt)
   return(r)
 }
 
@@ -101,6 +103,10 @@ retistruct.cli.basepath <- function(dataset) {
 retistruct.cli.figure <- function(dataset,
                                   outputdir, device="pdf", width=6, height=6,
                                   res=100) {
+  ## Ensure graphics paremeters are reset on exit
+  oldpar <- par(no.readonly=TRUE)
+  on.exit(par(oldpar))
+
   suppressMessages(r <- retistruct.read.recdata(list(dataset=dataset), check=FALSE))
   units <- NULL
   if (device!="pdf") {

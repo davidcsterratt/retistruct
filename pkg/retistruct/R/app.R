@@ -5,6 +5,10 @@
 ##' @importFrom shiny shinyApp
 ##' @export
 retistruct <- function() {
+  ## Ensure options are reset on exit
+  oldop <- options()
+  on.exit(options(oldop))
+
   options(rgl.useNULL = TRUE) ## Prevents rgl from making its own window
   shinyApp(ui = ui, server = server)
 }
