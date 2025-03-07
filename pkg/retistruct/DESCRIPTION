@@ -4,7 +4,6 @@ Title: Retinal Reconstruction Program
 Authors@R: c(person(c("David", "C."), "Sterratt", role=c("aut", "cre", "cph"),
     email="david.c.sterratt@ed.ac.uk"), person("Daniel", "Lyngholm",
     role=c("aut", "cph")), person("Jan", "Okul", role=c("aut", "cph")))
-Reference: 
 Description: Reconstructs retinae by morphing a flat surface with cuts
     (a dissected flat-mount retina) onto a curvilinear surface (the
     standard retinal shape). It can estimate the position of a point
