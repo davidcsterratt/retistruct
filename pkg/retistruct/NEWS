@@ -14,6 +14,11 @@ NEW FEATURES
 
 BUG FIXES
 
+* Issue #69: New CRAN submission: Writing in home filespace
+  https://github.com/davidcsterratt/retistruct/issues/69
+  Demos no longer write in home filespace
+  Thanks to the CRAN team for reporting.
+
 * Issue #70: New CRAN submission: options
   https://github.com/davidcsterratt/retistruct/issues/70
   Graphics parameters and options are saved and restored so that user
