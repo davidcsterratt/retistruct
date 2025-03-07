@@ -164,7 +164,7 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
       ## }
 
       if (!is.null(shinyOutput)) {
-        if (is.na(shinyOutput)) {
+        if (all(is.na(shinyOutput))) {
           shinyOutput <- NULL
         }
       }
