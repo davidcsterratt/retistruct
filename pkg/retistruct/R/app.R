@@ -10,5 +10,5 @@ retistruct <- function() {
   on.exit(options(oldop))
 
   options(rgl.useNULL = TRUE) ## Prevents rgl from making its own window
-  shinyApp(ui = ui, server = server)
+  shinyApp(ui = ui(), server = server)
 }

@@ -218,19 +218,21 @@ main.ui <- mainPanel(
 ##' @import shiny
 ##' @importFrom shinyFiles shinyDirButton shinySaveButton
 ##' @importFrom bslib navset_tab nav_panel
-ui <- fluidPage(
-  useShinyjs(),
-  ## CSS class to turn cancel button red when active.
-  tags$style(HTML("
-      .red {
-         background-color: red;
-        color: white;
-        font-weight: bold;
-        padding: 5px;
-      }
-    ")),
-
-  titlePanel(windowTitle=version.string(), title.bar),
-  sidebarLayout(sidebar.ui, main.ui),
-  textOutput("status")
-)
+ui <- function(...) {
+  fluidPage(
+    useShinyjs(),
+    ## CSS class to turn cancel button red when active.
+    tags$style(HTML("
+        .red {
+           background-color: red;
+          color: white;
+          font-weight: bold;
+          padding: 5px;
+        }
+      ")),
+  
+    titlePanel(windowTitle=version.string(), title.bar),
+    sidebarLayout(sidebar.ui, main.ui),
+    textOutput("status")
+  )
+}

@@ -9,7 +9,7 @@ az.high <- 180
 
 ##' File system directories used by shinyFiles
 ##' @importFrom fs path_home
-directories <- c(Home=fs::path_home())
+directories <- function(...) {c(Home=fs::path_home())}
 
 
 ##' @title Retistruct Shiny Server
@@ -25,8 +25,6 @@ directories <- c(Home=fs::path_home())
 ##' @importFrom shinyjs useShinyjs enable disable delay
 ##' @import shinyFiles
 server <- function(input, output, session) {
-  useShinyjs()
-
   ## The server state which remains seperate for each instance of shiny running
   state <- new.env()
   state$dataset <- NULL
