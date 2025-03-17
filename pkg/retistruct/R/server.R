@@ -43,16 +43,16 @@ server <- function(input, output, session) {
   extdata.demos <- file.path(system.file(package = "retistructdemos"), "extdata")
 
   ## shinyFiles handlers
-  shinyDirChoose(input, "open", roots=directories, session=session)
-  shinyFileSave(input, "bitmap1", session=session, roots=directories)
-  shinyFileSave(input, "pdf1", session=session, roots=directories)
-  shinyFileSave(input, "bitmap2", session=session, roots=directories)
-  shinyFileSave(input, "pdf2", session=session, roots=directories)
+  shinyDirChoose(input, "open", session=session, roots=directories())
+  shinyFileSave(input, "bitmap1", session=session, roots=directories())
+  shinyFileSave(input, "pdf1", session=session, roots=directories())
+  shinyFileSave(input, "bitmap2", session=session, roots=directories())
+  shinyFileSave(input, "pdf2", session=session, roots=directories())
 
   ## ------------------- Navbar handlers -------------------
   ## Open project handler
   observeEvent(input$open, {
-    dirname <- parseDirPath(roots=directories, input$open)
+    dirname <- parseDirPath(roots=directories(), input$open)
     if (length(dirname) > 0) {
       state$dataset <- dirname
       tryCatch({
@@ -394,14 +394,14 @@ server <- function(input, output, session) {
 
   # ------------------- Print to bitmap/PDF handlers -------------------
   observeEvent(input$bitmap1, {
-    file <- parseSavePath(roots=directories, input$bitmap1)
+    file <- parseSavePath(roots=directories(), input$bitmap1)
     if (length(file$datapath) > 0) {
       save.bitmap(state, input, output, session, file$datapath, TRUE)
     }
   }, ignoreInit=TRUE, ignoreNULL=TRUE)
 
   observeEvent(input$pdf1, {
-      file <- parseSavePath(roots=directories, input$pdf1)
+      file <- parseSavePath(roots=directories(), input$pdf1)
       if (length(file$datapath) > 0) {
         save.pdf(state, input, output, session, file$datapath,
                   TRUE)
@@ -409,14 +409,14 @@ server <- function(input, output, session) {
   }, ignoreInit=TRUE, ignoreNULL=TRUE)
 
   observeEvent(input$bitmap2, {
-    file <- parseSavePath(roots=directories, input$bitmap2)
+    file <- parseSavePath(roots=directories(), input$bitmap2)
     if (length(file$datapath) > 0) {
       save.bitmap(state, input, output, session, file$datapath, FALSE)
     }
   }, ignoreInit=TRUE, ignoreNULL=TRUE)
 
   observeEvent(input$pdf2, {
-    file <- parseSavePath(roots=directories, input$pdf2)
+    file <- parseSavePath(roots=directories(), input$pdf2)
     if (length(file$datapath) > 0) {
       save.pdf(state, input, output, session, file$datapath,
                 FALSE)
