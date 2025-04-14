@@ -1,10 +1,25 @@
+CHANGES IN VERSION 0.8.1 - Released 2025/04/14
+
+BUG FIXES
+
+* Issue #74: Testing issues with at least one Mac M1 configuration
+  https://github.com/davidcsterratt/retistruct/issues/74
+
+  A floating point issue with Apple clang 17 on the Mac M1
+  architecture caused RTriangle to give different triangulations on
+  that architecture from other architectures. This triangulation
+  caused a reproducibility test in Retistruct to fail. This issue was
+  fixed in RTriangle 1.6-0.15
+  (https://github.com/davidcsterratt/RTriangle/issues/23) and we
+  increase the version of RTriangle required correspondingly. Thanks
+  to the CRAN team for reporting.
+
 CHANGES IN VERSION 0.8.0 - Released 2025/02/20
 
 NEW FEATURES
 
 * Issue #56: Port GUI to R shiny
   https://github.com/davidcsterratt/retistruct/issues/56
-
   This update removes the dependence on gWidgetsRGtk2, RGtk2 and the
   GTK library, which has made installation on Mac and Windows
   impossible, and has mean that Retistruct could not be hosted on

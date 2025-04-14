@@ -151,7 +151,7 @@ test_that("StitchedOutlines with multiple fragments work correctly", {
   expect_equal(which(a$hf != 1:length(a$hf)), c(2, 9, 19))
   expect_equal(which(a$hb != 1:length(a$hb)), c(4, 11, 17))
 
-  ## Stitch corresopndences
+  ## Stitch correspondences
   a$stitchFullCuts()
   ## Points in tears should not be in rim set
   expect_false(any(c(3, 33, 28, 223, 18, 230, 98, 10, 83) %in% a$Rset))
@@ -303,7 +303,7 @@ test_that("StitchedOutlines with multiple fragments with a hole work correctly",
   expect_equal(which(a$hf != 1:length(a$hf)), c(3, 11, 23))
   expect_equal(which(a$hb != 1:length(a$hb)), c(5, 13, 21))
 
-  ## Stitch corresopndences
+  ## Stitch correspondences
   a$stitchFullCuts()
   expect_true(a$isStitched())
 
