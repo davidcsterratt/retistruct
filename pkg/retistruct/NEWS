@@ -1,10 +1,17 @@
-CHANGES IN VERSION 0.8.1 - Released 2025/04/14
+CHANGES IN VERSION 0.8.1 - Released 2025/06/07
 
 BUG FIXES
 
+* Issue #73: Bugs opening files due to Shiny JS not loading properly
+  https://github.com/davidcsterratt/retistruct/issues/73
+  Due to Shiny JS not loading properly and hard-coding directory names
+  at compile-time, files would not open in the file chooser in the
+  Windows and Mac binaries. Thanks to Jan Okul, who carried out this
+  work as part of his undergraduate dissertation at the University of
+  Edinburgh School of Informatics.
+
 * Issue #74: Testing issues with at least one Mac M1 configuration
   https://github.com/davidcsterratt/retistruct/issues/74
-
   A floating point issue with Apple clang 17 on the Mac M1
   architecture caused RTriangle to give different triangulations on
   that architecture from other architectures. This triangulation
@@ -14,7 +21,7 @@ BUG FIXES
   increase the version of RTriangle required correspondingly. Thanks
   to the CRAN team for reporting.
 
-CHANGES IN VERSION 0.8.0 - Released 2025/02/20
+CHANGES IN VERSION 0.8.0 - Released 2025/03/07
 
 NEW FEATURES
 
@@ -22,7 +29,7 @@ NEW FEATURES
   https://github.com/davidcsterratt/retistruct/issues/56
   This update removes the dependence on gWidgetsRGtk2, RGtk2 and the
   GTK library, which has made installation on Mac and Windows
-  impossible, and has mean that Retistruct could not be hosted on
+  impossible, and has meant that Retistruct could not be hosted on
   CRAN. Thanks to Jan Okul, who carried out this work as part of his
   undergraduate dissertation at the University of Edinburgh School of
   Informatics.
