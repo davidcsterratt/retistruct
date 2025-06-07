@@ -2,6 +2,11 @@ CHANGES IN VERSION 0.8.1 - Released 2025/06/07
 
 BUG FIXES
 
+* Issue #76: High resolution images not being output correctly
+  https://github.com/davidcsterratt/retistruct/issues/76
+  In the Shiny interface the "Maximum Width of Projection" option was
+  not being respected.
+
 * Issue #73: Bugs opening files due to Shiny JS not loading properly
   https://github.com/davidcsterratt/retistruct/issues/73
   Due to Shiny JS not loading properly and hard-coding directory names

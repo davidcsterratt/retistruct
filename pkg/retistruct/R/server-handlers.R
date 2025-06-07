@@ -168,7 +168,7 @@ do.plot.silent <- function(markup=NULL, state, input, d1=NULL, d2=NULL) {
       if (!is.null(d2)) {
         dev.set(d2)
         par(mar=c(0.7, 0.7, 0.7, 0.7), ps=11)
-        plotProjection(max.proj.dim=400, markup=markup, state=state, input=input)
+        plotProjection(markup=markup, state=state, input=input)
         dev.off()
       }
     }
@@ -227,7 +227,7 @@ do.plot <- function(markup=NULL, state, input, output) {
 
     output$plot2 <- renderPlot({
       par(mar=c(0.7, 0.7, 0.7, 0.7))
-      plotProjection(max.proj.dim=400, markup=markup, state=state, input=input)
+      plotProjection(markup=markup, state=state, input=input)
     })
 
     output$plot3 <- renderRglwidget({

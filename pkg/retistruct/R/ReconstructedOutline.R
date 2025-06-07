@@ -1170,16 +1170,14 @@ projection.ReconstructedOutline <- function(r,
       Ms <- seq(1, M - (M %% by), by=by)
       Ns <- seq(1, N - (N %% by), by=by)
 
-      ## Downsample the image
-      ## This should not create a new version of the image
       if (by > 1) {
+        ## Downsample the image
+        ## This should not create a new version of the image
         report("Downsampling image by factor of ", by)
         im <- im[Ms, Ns]
-      }
 
-      ## Now need to do the more complex job of downsampling the matrix
-      ## containing the coordinates of the corners of pixels
-      if (by > 1) {
+        ## Now need to do the more complex job of downsampling the matrix
+        ## containing the coordinates of the corners of pixels
         report("Downsampling pixel corner spherical coordinates by factor of ", by)
         imsmask <- matrix(FALSE, M+1, N+1)
         imsmask[c(Ms, (max(Ms) + by)), c(Ns, (max(Ns) + by))] <- TRUE
