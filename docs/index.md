@@ -37,12 +37,8 @@ energy function.
 
 ## Installation and documentation
 
-Retistruct has been tested on GNU/Linux (Ubuntu 16.04), Mac OS X 10.8
-and Microsoft Windows 7. Installing the graphical user interface
-on Mac OS X 10.9 (Mavericks) and 10.10 (Yosemite) is possible, but
-requires the GTK library to be installed first; <a
-href="https://github.com/davidcsterratt/retistruct/issues/4">see
-this issue on Github for more help</a>.
+Retistruct has been tested on GNU/Linux, Mac OS X and Microsoft
+Windows.
 
 ### Stable version
 
@@ -212,5 +208,7 @@ Laboratory.
  -->
 <!--  LocalWords:  EY sphericalplots ijroi csv tsearch Curcio Pubmed
  -->
-<!--  LocalWords:  MRC KCL Wellcome Harbor
+<!--  LocalWords:  MRC KCL Wellcome Harbor ynarski Sumser Symonova
+<!--  LocalWords:  Svatoň
+ -->
  -->

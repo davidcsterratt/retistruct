@@ -10,15 +10,11 @@ the intact adult retina to within 8° of arc (3.6% of nasotemporal
 axis). The coordinates in reconstructed retinae can be transformed to
 visuotopic coordinates.
 
-For full details go to the home page: http://davidcsterratt.github.io/retistruct/
+For full details, including how to install from CRAN, go to the
+[Retistruct home page](http://davidcsterratt.github.io/retistruct/).
 
 Installation from Github
 ========================
-
-Retistruct is currently not installable from CRAN, as described on the
-[Retistruct homepage](http://davidcsterratt.github.io/retistruct/). In
-addition, a number of the packages on which Retistruct depends are no
-longer on CRAN. Therefore, you need to install from Github.
 
 ## Install the `devtoools` package to enable installation from Github
 
@@ -28,24 +24,6 @@ install.packages("devtools")
 ```
 followed by `Return`. This command will take some time to run, as it has to install a number of packages that it depends on.
 
-## Install the requirements for the graphical user interface (GUI)
-
-To use the graphical user interface of Retistruct, you will need to
-install the GTK libraries as follows:
-
-* Mac: using [this guidance](https://github.com/davidcsterratt/retistruct/issues/4)
-* Ubuntu Linux:
-  ```
-  sudo apt-get install r-base r-base-dev libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev
-  ```
-
-Then install three R packages, as follows:
-```
-devtools::install_github('https://github.com/lawremi/cairoDevice')
-devtools::install_github('https://github.com/lawremi/RGtk2/RGtk2', subdir='RGtk2')
-devtools::install_github('https://github.com/jverzani/gWidgets2RGtk2', force=TRUE)
-```
-
 ## Install Retistruct
 
 Then, do one of the following from the R console:
@@ -53,19 +31,20 @@ Then, do one of the following from the R console:
 * To install the latest development branch (not yet released on
    CRAN):
    ```
-   devtools::install_github("davidcsterratt/retistruct@v0.7.x", subdir="pkg/retistruct")
-   ```
-   The development [User guide](https://github.com/davidcsterratt/retistruct/blob/v0.7.x/docs/retistruct-user-guide.pdf) has more details on how to use the new features.
-
-* To install from the stable development branch, use the R devtools package like this:
-   ```
    devtools::install_github("davidcsterratt/retistruct", subdir="pkg/retistruct")
+   ```
+   The development [User guide](https://github.com/davidcsterratt/retistruct/blob/docs/retistruct-user-guide.pdf) has more details on how to use the new features.
+
+* To install from the stable branch (incremental improvements not yet
+   released to CRAN), use the R devtools package like this:
+   ```
+   devtools::install_github("davidcsterratt/retistruct@v0.8.x", subdir="pkg/retistruct")
    ```
 
 * To install the current stable version, use the R devtools package
    like this: ```
-   devtools::install_github("davidcsterratt/retistruct@v0.6.4",
-   subdir="pkg/retistruct") ``` You will need to replace `0.6.4` with
+   devtools::install_github("davidcsterratt/retistruct@v0.8.1",
+   subdir="pkg/retistruct") ``` You will need to replace `0.8.1` with
    the version number of the latest release.
 
 Roadmap
@@ -101,5 +80,7 @@ Laboratory.
 
 <!--  LocalWords:  Retistruct Github CRAN devtools davidcsterratt EY
  -->
-<!--  LocalWords:  subdir retistruct Roadmap Wellcome Harbor
+<!--  LocalWords:  subdir retistruct Roadmap Wellcome Harbor retinae
+<!--  LocalWords:  devtoools
+ -->
  -->

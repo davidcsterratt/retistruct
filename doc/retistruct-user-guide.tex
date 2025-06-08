@@ -1,7 +1,7 @@
 
 \documentclass{book}
 
-\newcommand{\svninfo}{Retistruct version: 0.7.3 , Date: 2020-09-12}
+\newcommand{\svninfo}{Retistruct version: 0.8.1 , Date: 2025-06-08}
 \pagestyle{myheadings}
 \markboth{\svninfo}{\svninfo}
 
@@ -38,112 +38,98 @@
 \chapter{Installation}
 \label{manual:sec:installation}
 
-\section{Install the necessary system packages}
+\section{Install R}
 
 \subsection{Ubuntu Linux}
 
-Follow the instructions at
-\url{https://cran.r-project.org/bin/linux/ubuntu/}
-to obtain the latest stable version of R. For example, for Ubuntu
-16.04 (Xenial) to download R from the Bristol UK mirror, enter the
-following in a terminal window:
-\begin{verbatim}
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
-sudo apt-add-repository deb https://https://www.stats.bris.ac.uk/R/bin/linux/ubuntu xenial/
-sudo apt-get install r-base r-base-dev libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev
-\end{verbatim}
-% Need to install RGtk2 separately??
-
-\subsection{Fedora Linux }
-
-\emph{NOTE: these instructions have not been tested since at least
-  2015.}
-
-As root,
-
-\begin{verbatim}
-yum install R-core
-yum install R-devel
-yum install gtk2
-yum install gtk2-devel
-yum install mesa-libGL-devel
-yum install mesa-libGLU-devel
-\end{verbatim}
-
-
-\subsection{Mac OS X}
+Install R using the instructions
+at \url{https://cran.r-project.org/bin/linux/ubuntu/}.
+\subsection{macOS}
 \label{retistruct-manual:sec:mac}
 
-First install R for Mac OS X, available from
-\url{http://www.r-project.org/}. Under Mac OS X Leopard and Lion, this
-should be sufficient. 
-
-\subsubsection{Under Mac OS X 10.8 (Snow Leopard),} it may be necessary to
-install the following external packages:
 \begin{itemize}
-\item Xcode (free from App Store)
-\item Xquartz (\href{http://xquartz.macosforge.org/}{http://xquartz.macosforge.org/})
-\item GTK (\href{http://r.research.att.com/libs/GTK_2.18.5-X11.pkg}{http://r.research.att.com/libs/GTK\_2.18.5-X11.pkg})
+\item Install R for macOS, available
+  at \url{https://cran.r-project.org/bin/macosx/}.
+\item Install XQaurtz, using the instructions on that page
 \end{itemize}
 
-\subsubsection{Under Mac OS X 10.9 (Mavericks) or Mac OS X 10.10
-  (Yosemite),}
-See this issue on Github: \url{https://github.com/davidcsterratt/retistruct/issues/4}
+\subsection{Windows}
 
-\subsection{MS/Windows}
+\begin{itemize}
+\item Install R for Windows, available
+  at \url{https://cran.r-project.org/bin/windows/base/}.
+\end{itemize}
 
-First install R for MS/Windows, available from \url{http://www.r-project.org/}.
+\section{Optional: Install RStudio}
+
+Rstudio, available
+at
+\url{https://posit.co/download/rstudio-desktop/},
+provides and Integrated Development Environment for R. RStudio is not
+necessary to run Retistruct, but provides a user-friendly interface
+for R.
 
 \section{Install the core \textsc{Retistruct} package}
 
 \begin{enumerate}
-\item Start \textsc{R}
- \item  Type:
+\item Start \textsc{R} or \textsc{RStudio}
+\item In the R Console, type:
 \begin{verbatim}
 install.packages("retistruct")
 \end{verbatim}
-   The first time this runs, it should create a personal directory for
-   R packages, and it will take a few minutes to install some required
-   packages.
- \item Test that it is working as follows (from within R)
-\begin{verbatim}
-   library(retistruct)
-   demo("retistruct.method")
-\end{verbatim}
-   If all is well, you should be prompted to press \textbf{Return} a
-   few times and Figure 1 from the paper \cite{SterrattEtal2012} will
-   appear (drawing the 3D renditions takes some time). There will be
-   reports of warnings; they are to do with printing the figures to
-   files. You can view them by typing \texttt{warnings()}.
- \item A further test produces Figure~2:
-\begin{verbatim}
-   demo("low.high")
-\end{verbatim}
- \item A further (quite long-running) test produces Figure~6:
-\begin{verbatim}
-   demo("figure6")
-\end{verbatim}
+  The first time this runs, it should create a personal directory for
+  R packages, and it will take a few minutes to install some required
+  packages.
 \end{enumerate}
 
-\section{Install the \textsc{Retistruct} GUI}
-\label{retistruct-manual:sec:inst-retistr-gui}
+\section{Run Retistruct}
+\label{retistruct-user-guide:sec:run-retistruct}
 
-If the previous step works:
 \begin{enumerate}
 \item Type:
 \begin{verbatim}
+library(retistruct)
 retistruct()
 \end{verbatim}
-\item Some more packages will be downloaded -- this may take a
-  minute or so.
-\item If you are using MS/Windows, there may be an error message
-  saying that libatk-1.0-0.dll is missing from your computer. Click on
-  \textbf{OK}. Another message will appear, asking if you want to
-  install GTK+. Agree to this.  After this has finished, quit R
-  (without saving the workspace image) and restart.
-\item If all works, an interface window should appear. A number of
-  sets of demonstration data are available from the \textbf{Demo} menu item.
+\item An interface window should appear.
+\item It can be helpful to maximise the window to fill the screen.
+\item A number of sets of demonstration data are available from the
+  \textbf{Demo} menu item.
 \end{enumerate}
+
+\section{Run a demo from the Graphical User Interface (GUI)}
+\label{retistruct-user-guide:sec:run-demo-from}
+
+\begin{itemize}
+\item Select the “SMI32” demo from the \textbf{Demo} menu
+\item The image of a flatmount retina should appear in the left of the
+  window
+\item Click on the \textbf{Reconstruct} button. After a short delay,
+  the reconstructed retina should appear at the right of the screen.
+\end{itemize}
+
+% \section{Optional: run demos}
+% \label{retistruct-user-guide:sec:optional:-run-demos}
+
+% \begin{enumerate}
+% \item Test that it is working as follows (from within R)
+% \begin{verbatim}
+%    demo("retistruct.method")
+% \end{verbatim}
+%   If all is well, you should be prompted to press \textbf{Return} a
+%   few times and Figure 1 from the paper \cite{SterrattEtal2012} will
+%   appear (drawing the 3D renditions takes some time). There will be
+%   reports of warnings; they are to do with printing the figures to
+%   files. You can view them by typing \texttt{warnings()}.
+% \item A further test produces Figure~2:
+% \begin{verbatim}
+%    demo("low.high")
+% \end{verbatim}
+% \item A further (quite long-running) test produces Figure~6:
+% \begin{verbatim}
+%    demo("figure6")
+% \end{verbatim}
+% \end{enumerate}
 
 % \section{A tutorial}
 % \label{retistruct-user-guide:sec:tutorial}
@@ -1061,4 +1047,5 @@ each directory there are two files:
 %  LocalWords:  Csefalvay's workspace od ReconstructedOutline getDss
 %  LocalWords:  ReconstructedDataset getSss Xenial Github datacounts
 %  LocalWords:  Wulff Az El uncheck lll Azimuthal Conformal RoiSet
-% LocalWords:  depthmap visuotopic
+% LocalWords:  depthmap visuotopic macOS XQaurtz RStudio Rstudio SMI
+% LocalWords:  RetinalReconstructedOutline
