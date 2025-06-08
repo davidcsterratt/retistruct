@@ -812,7 +812,8 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
     ##'   to point on the flat outline
     ##' @param P Cartesian coordinates  on flat outline as a matrix
     ##'   with \code{X} and \code{Y} columns
-    mapFlatToSpherical = function(P) {
+    ##' @param dropna Whether to drop points outwith the outline
+    mapFlatToSpherical = function(P, dropna=TRUE) {
       if (!(is.numeric(P))) {
         stop("P must be numeric")
       }
@@ -831,12 +832,14 @@ ReconstructedOutline <- R6Class("ReconstructedOutline",
                     self$ol$Tr,
                     P[,"X"],
                     P[,"Y"], bary=TRUE)
-      oo <- is.na(Pb$idx)           # Points outwith outline
-      if (any(oo)) {
-        warning(paste(sum(oo), "points outwith the outline will be ignored"))
+      if (dropna) {
+        oo <- is.na(Pb$idx)           # Points outwith outline
+        if (any(oo)) {
+          warning(paste(sum(oo), "points outwith the outline will be ignored"))
+        }
+        Pb$p   <- Pb$p[!oo,,drop=FALSE]
+        Pb$idx <- Pb$idx[!oo]
       }
-      Pb$p   <- Pb$p[!oo,,drop=FALSE]
-      Pb$idx <- Pb$idx[!oo]
       return(bary2sph(Pb, self$Trt, Ptc))
     },
     ##' @description Try a range of values of phi0s in the reconstruction, recording the

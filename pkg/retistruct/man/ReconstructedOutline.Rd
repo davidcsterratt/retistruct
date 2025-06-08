@@ -511,7 +511,7 @@ Matrix with columns \code{phi} (latitude) and \code{lambda}
 Return location of point on sphere corresponding
   to point on the flat outline
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$mapFlatToSpherical(P)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ReconstructedOutline$mapFlatToSpherical(P, dropna = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -519,6 +519,8 @@ Return location of point on sphere corresponding
 \describe{
 \item{\code{P}}{Cartesian coordinates  on flat outline as a matrix
 with \code{X} and \code{Y} columns}
+
+\item{\code{dropna}}{Whether to drop points outwith the outline}
 }
 \if{html}{\out{</div>}}
 }

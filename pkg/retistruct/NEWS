@@ -1,3 +1,11 @@
+CHANGES IN VERSION 0.8.2 - Released 2025/??/??
+
+NEW FEATURES
+
+* Issue #79: Export spherical coordinates of points outwith flat outline
+  https://github.com/davidcsterratt/retistruct/issues/79
+  dropna option added to ReconstructedOutline$mapFlatToSpherical(); TRUE by default
+
 CHANGES IN VERSION 0.8.1 - Released 2025/06/07
 
 BUG FIXES

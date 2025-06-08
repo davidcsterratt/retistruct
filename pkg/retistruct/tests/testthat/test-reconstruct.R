@@ -17,6 +17,8 @@ test_that("Reconstruct SMI32 (CSV format)", {
   expect_error(r$mapFlatToSpherical(0), "P must be matrix")
   expect_error(r$mapFlatToSpherical(c(0, 0)), "P must be matrix")
   expect_warning(r$mapFlatToSpherical(cbind(X=0, Y=0)), "1 points outwith the outline will be ignored")
+  expect_equal(r$mapFlatToSpherical(cbind(X=0, Y=0), dropna=FALSE),
+               cbind(phi=as.double(NA), lambda=as.double(NA)))
   expect_equal(r$mapFlatToSpherical(cbind(X=200,Y=200)), cbind(phi=-0.1686439, lambda=-1.559814), tol=0.001)
 
   ## Serialisation
