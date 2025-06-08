@@ -73,14 +73,8 @@ improvements (released in v0.7.0) were supported by an NIH R21 grant
 (EY027894) from 2018-2020 to Dr. Mark P. Krebs, The Jackson
 Laboratory.
 
-<!-- badges: start -->
-[![Travis build status](https://travis-ci.com/davidcsterratt/retistruct.svg?branch=master)](https://travis-ci.com/davidcsterratt/retistruct)
-<!-- badges: end -->
-
-
 <!--  LocalWords:  Retistruct Github CRAN devtools davidcsterratt EY
  -->
 <!--  LocalWords:  subdir retistruct Roadmap Wellcome Harbor retinae
 <!--  LocalWords:  devtoools
- -->
  -->
