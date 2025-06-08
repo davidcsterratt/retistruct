@@ -3,8 +3,9 @@
 ##' @description An AnnotatedOutline contains a function to annotate
 ##'   tears on the outline.
 ##'
-##' @return AnnotatedOutline object, with extra fields for tears
-##'   latitude of rim \code{phi0} and index of fixed point \code{i0}.
+##' @return AnnotatedOutline object, with extra fields for tears, full
+##'   cuts, the latitude of rim \code{phi0} and the index of fixed
+##'   point \code{i0}.
 ##' @author David Sterratt
 ##' @export
 ##' @importFrom R6 R6Class
@@ -37,9 +38,9 @@ AnnotatedOutline <- R6Class("AnnotatedOutline",
     ##'   indices into the outline points of the apex (\code{V0}) and
     ##'   backward (\code{VB}) and forward (\code{VF}) points
     tears = matrix(0, 0, 3),
-    ##' @field fullcuts Matrix in which each row represents a cut by the
-    ##'   indices into the outline points of the apex (\code{V0}) and
-    ##'   backward (\code{VB}) and forward (\code{VF}) points
+    ##' @field fullcuts Matrix in which each row represents a full cut by the
+    ##'   indices into the outline points of the forward cut (\code{VF0} and \code{VF1})and
+    ##'   backward cut (\code{VB0} and \code{VB1}).
     fullcuts = matrix(0, 0, 4),
     ##' @field phi0 rim angle in radians
     phi0 = 0,
