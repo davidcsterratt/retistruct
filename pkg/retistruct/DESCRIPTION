@@ -12,7 +12,7 @@ Description: Reconstructs retinae by morphing a flat surface with cuts
     be transformed to visuotopic coordinates. For more details see
     Sterratt, D. C., Lyngholm, D., Willshaw, D. J. and Thompson, I. D.
     (2013) <doi:10.1371/journal.pcbi.1002921>.
-Version: 0.8.1
+Version: 0.8.2
 URL: http://davidcsterratt.github.io/retistruct/
 BugReports: https://github.com/davidcsterratt/retistruct/issues
 Date: 2025-06-07

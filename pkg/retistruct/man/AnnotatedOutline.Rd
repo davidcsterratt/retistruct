@@ -4,8 +4,9 @@
 \alias{AnnotatedOutline}
 \title{Class containing functions and data relating to annotating outlines}
 \value{
-AnnotatedOutline object, with extra fields for tears
-  latitude of rim \code{phi0} and index of fixed point \code{i0}.
+AnnotatedOutline object, with extra fields for tears, full
+  cuts, the latitude of rim \code{phi0} and the index of fixed
+  point \code{i0}.
 }
 \description{
 An AnnotatedOutline contains a function to annotate
@@ -47,9 +48,9 @@ David Sterratt
 indices into the outline points of the apex (\code{V0}) and
 backward (\code{VB}) and forward (\code{VF}) points}
 
-\item{\code{fullcuts}}{Matrix in which each row represents a cut by the
-indices into the outline points of the apex (\code{V0}) and
-backward (\code{VB}) and forward (\code{VF}) points}
+\item{\code{fullcuts}}{Matrix in which each row represents a full cut by the
+indices into the outline points of the forward cut (\code{VF0} and \code{VF1})and
+backward cut (\code{VB0} and \code{VB1}).}
 
 \item{\code{phi0}}{rim angle in radians}
 
